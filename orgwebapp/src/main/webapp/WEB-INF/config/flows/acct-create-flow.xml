@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow
+		http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+<!-- 
+  This file is a work in progress!!
+ -->
+
+  <view-state id="welcomeAcctCreate" view="acctCreate/welcomeAcctCreate">
+    <transition on="submit" to="askUserInfo" />
+  </view-state>
+
+  <action-state id="askUserInfo">
+    <evaluate expression="userInfoService.persist()" />
+    <transition on="success" to="reviewAcct"></transition>
+  </action-state>
+
+  <view-state id="reviewAcct" view="acctCreate/reviewAcct">
+    <transition on="submit" to="finish"></transition>
+  </view-state>
+
+  <end-state id="finish" view="acctCreate/acctComplete" />
+
+</flow>

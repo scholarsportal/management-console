@@ -1,0 +1,12 @@
+::versions::
+maven-2.0.9
+tomcat-6.0.18
+
+::build::
+mvn clean install
+
+::deploy::
+mvn tomcat:deploy
+[subsequently, mvn tomcat:redeploy]
+
+http://localhost:8080/orgwebapp
