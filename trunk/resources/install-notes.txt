@@ -1,0 +1,34 @@
+
+::Tomcat::
+To use the tomcat-maven plugin to (re)deploy the webapp, add the user to 'tomcat-users.xml' :
+
+<tomcat-users>
+  <role rolename="manager"/>
+  <role rolename="admin"/>
+  <user username="tomcat" password="password" roles="admin,manager"/>
+</tomcat-users>
+
+
+::Maven::
+To use the tomcat plugin, also add the 'server' to your maven 'settings.xml':
+
+<server>
+  <id>tomcat-server</id>
+  <username>tomcat</username>
+  <password>password</password>
+</server>
+
+
+
+
+Eclipse:
+To make your .classpath resolve, from trunk run:
+mvn clean install
+
+Then in the 'Libraries' tab of the 'build-path-configuration' add a new 'variable' named 'M2_REPO'.
+>Name: 'M2_REPO'
+>Path: '/home/awoods/.m2/repository' [or wherever your repository is]
+
+
+
+
