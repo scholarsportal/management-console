@@ -5,6 +5,11 @@ tomcat-6.0.18
 ::build::
 mvn clean install
 
+::test::
+mvn clean test
+mvn -Dtest=TestStorageProviderRest test
+mvn -Dtest=TestServiceRest test
+
 ::deploy::
 mvn tomcat:deploy
 [subsequently, mvn tomcat:redeploy]
