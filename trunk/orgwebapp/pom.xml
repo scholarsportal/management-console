@@ -134,10 +134,19 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tomcat-maven-plugin</artifactId>
-        <configuration>
-          <warFile>target/${artifactId}-${version}.war</warFile>
-          <server>tomcat-server</server>
-        </configuration>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>deploy-only</goal>
+            </goals>
+            <configuration>
+              <warFile>target/${artifactId}-${version}.war</warFile>
+              <server>tomcat-server</server>
+              <update>true</update>
+            </configuration>
+          </execution>        
+        </executions>        
       </plugin>
       
     </plugins>
