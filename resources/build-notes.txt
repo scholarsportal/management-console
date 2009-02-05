@@ -2,16 +2,10 @@
 maven-2.0.9
 tomcat-6.0.18
 
-::build::
+::build, run unit tests::
+mvn clean package
+
+::build, run unit tests, deploy, run integration tests::
 mvn clean install
-
-::test::
-mvn clean test
-mvn -Dtest=TestStorageProviderRest test
-mvn -Dtest=TestServiceRest test
-
-::deploy::
-mvn tomcat:deploy
-[subsequently, mvn tomcat:redeploy]
 
 http://localhost:8080/orgwebapp

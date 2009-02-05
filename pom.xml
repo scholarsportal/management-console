@@ -76,11 +76,8 @@
           <properties>
 
               <log.dir>~/duraspace.log</log.dir>
-
-              <envIncludesRegExp1>**/*Tests.class</envIncludesRegExp1>
-              <envIncludesRegExp2>**/*Test.class</envIncludesRegExp2>
-              <envIncludesRegExp3>**/*TestCase.class</envIncludesRegExp3>
-
+              <unitTests>**/*Test.class</unitTests>
+              <integrationTests>**/Test*.class</integrationTests>
           </properties>
       </profile>
   </profiles>
@@ -177,19 +174,33 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemProperties>
-
           </systemProperties>
           <excludes>
-            <exclude>${envExcludesRegExp1}</exclude>
-            <exclude>${envExcludesRegExp2}</exclude>
-            <exclude>${envExcludesRegExp3}</exclude>
+            <exclude>${integrationTests}</exclude>
           </excludes>
           <includes>
-            <include>${envIncludesRegExp1}</include>
-            <include>${envIncludesRegExp2}</include>
-            <include>${envIncludesRegExp3}</include>
+            <include>${unitTests}</include>
           </includes>
         </configuration>
+        <executions>
+          <execution>
+            <id>integrationtest</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <systemProperties>
+              </systemProperties>
+              <excludes>
+                <exclude>${unitTests}</exclude>
+              </excludes>
+              <includes>
+                <include>${integrationTests}</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>        
       </plugin>
 
       <plugin>
