@@ -52,11 +52,11 @@
 
   <modules>
       <module>orgwebapp</module>
+      <module>instancewebapp</module>
       <!--
       <module>common</module>
       <module>computeprovider</module>
       <module>instancecore</module>
-      <module>instancewebapp</module>
       <module>storageprovider</module>
       <module>uploadclient</module>
       <module>uploadserver</module>
