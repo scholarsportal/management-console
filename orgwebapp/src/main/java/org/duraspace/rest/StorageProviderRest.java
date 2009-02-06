@@ -37,9 +37,8 @@ public class StorageProviderRest extends BaseRest {
     @Path("/{customerID}")
     @GET
     @Produces(XML)
-    public Response getStorageProviderAccounts(
-                     @PathParam("customerID")
-                     String customerID) {
+    public Response getStorageProviderAccounts(@PathParam("customerID")
+                                               String customerID) {
         String xml = StorageProviderResource.
             getStorageProviderAccounts(customerID);
         return Response.ok(xml, TEXT_XML).build();
@@ -52,11 +51,10 @@ public class StorageProviderRest extends BaseRest {
     @Path("/{customerID}/{providerID}")
     @GET
     @Produces(XML)
-    public Response getStorageProviderAccount(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("providerID")
-                     String storageProviderID){
+    public Response getStorageProviderAccount(@PathParam("customerID")
+                                              String customerID,
+                                              @PathParam("providerID")
+                                              String storageProviderID){
         String xml = StorageProviderResource.
             getStorageProviderAccount(customerID, storageProviderID);
         return Response.ok(xml, TEXT_XML).build();
@@ -68,11 +66,10 @@ public class StorageProviderRest extends BaseRest {
      */
     @Path("/{customerID}/{providerID}")
     @PUT
-    public Response addStorageProviderAccount(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("providerID")
-                     String storageProviderID){
+    public Response addStorageProviderAccount(@PathParam("customerID")
+                                              String customerID,
+                                              @PathParam("providerID")
+                                              String storageProviderID){
         StorageProviderResource.
             addStorageProviderAccount(customerID, storageProviderID);
         URI location = uriInfo.getRequestUri();
@@ -85,11 +82,10 @@ public class StorageProviderRest extends BaseRest {
      */
     @Path("/{customerID}/{providerID}")
     @DELETE
-    public Response closeStorageProviderAccount(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("providerID")
-                     String storageProviderID){
+    public Response closeStorageProviderAccount(@PathParam("customerID")
+                                                String customerID,
+                                                @PathParam("providerID")
+                                                String storageProviderID){
         StorageProviderResource.
             closeStorageProviderAccount(customerID, storageProviderID);
         String responseText = "Account for provider " + storageProviderID + " closed";
@@ -102,11 +98,10 @@ public class StorageProviderRest extends BaseRest {
      */
     @Path("/{customerID}/{providerID}")
     @POST
-    public Response setPrimaryStorageProvider(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("providerID")
-                     String storageProviderID){
+    public Response setPrimaryStorageProvider(@PathParam("customerID")
+                                              String customerID,
+                                              @PathParam("providerID")
+                                              String storageProviderID){
         StorageProviderResource.
             setPrimaryStorageProvider(customerID, storageProviderID);
         String responseText = "Provider " + storageProviderID + " set to primary";

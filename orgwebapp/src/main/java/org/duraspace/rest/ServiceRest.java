@@ -47,9 +47,8 @@ public class ServiceRest extends BaseRest {
     @Path("/{customerID}")
     @GET
     @Produces(XML)
-    public Response getServiceSubscriptions(
-                     @PathParam("customerID")
-                     String customerID) {
+    public Response getServiceSubscriptions(@PathParam("customerID")
+                                            String customerID) {
         String xml = ServiceResource.getServiceSubscriptions(customerID);
         return Response.ok(xml, TEXT_XML).build();
     }
@@ -61,11 +60,10 @@ public class ServiceRest extends BaseRest {
     @Path("/{customerID}/{serviceID}")
     @GET
     @Produces(XML)
-    public Response getServiceConfiguration(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("serviceID")
-                     String serviceID) {
+    public Response getServiceConfiguration(@PathParam("customerID")
+                                            String customerID,
+                                            @PathParam("serviceID")
+                                            String serviceID) {
         String xml = ServiceResource.getServiceConfiguration(customerID, serviceID);
         return Response.ok(xml, TEXT_XML).build();
     }
@@ -80,11 +78,10 @@ public class ServiceRest extends BaseRest {
     @Path("/{customerID}/{serviceID}")
     @PUT
     @Consumes(XML)
-    public Response addServiceSubscription(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("serviceID")
-                     String serviceID) {
+    public Response addServiceSubscription(@PathParam("customerID")
+                                           String customerID,
+                                           @PathParam("serviceID")
+                                           String serviceID) {
         String configurationXML = getRequestXML();
         ServiceResource.addServiceSubscription(customerID, serviceID, configurationXML);
         URI location = uriInfo.getRequestUri();
@@ -101,11 +98,10 @@ public class ServiceRest extends BaseRest {
     @Path("/{customerID}/{serviceID}")
     @POST
     @Consumes(XML)
-    public Response updateServiceConfiguration(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("serviceID")
-                     String serviceID) {
+    public Response updateServiceConfiguration(@PathParam("customerID")
+                                               String customerID,
+                                               @PathParam("serviceID")
+                                               String serviceID) {
         String configurationXML = getRequestXML();
         ServiceResource.updateServiceConfiguration(customerID, serviceID, configurationXML);
         String responseText = "Service configuration for " + serviceID +
@@ -119,11 +115,10 @@ public class ServiceRest extends BaseRest {
      */
     @Path("/{customerID}/{serviceID}")
     @DELETE
-    public Response removeServiceSubscription(
-                     @PathParam("customerID")
-                     String customerID,
-                     @PathParam("serviceID")
-                     String serviceID) {
+    public Response removeServiceSubscription(@PathParam("customerID")
+                                              String customerID,
+                                              @PathParam("serviceID")
+                                              String serviceID) {
         ServiceResource.removeServiceSubscription(customerID, serviceID);
         String responseText = "Subscription for service " + serviceID + " removed";
         return Response.ok(responseText, TEXT_PLAIN).build();
