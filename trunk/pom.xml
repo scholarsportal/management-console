@@ -89,10 +89,6 @@
             <unitTests>**/*Test.class</unitTests>
             <integrationTests>**/Test*.class</integrationTests>
           </properties>
-
-          <modules>
-            <module>instancewebapp</module>
-          </modules>
           
           <build>
             <plugins>
@@ -101,7 +97,7 @@
                 <artifactId>maven-scm-plugin</artifactId>
                 <version>1.0</version>
                 <configuration>
-                  <goals>install</goals>
+                  <goals>package</goals>
                   <connectionType>connection</connectionType>
                 </configuration>
               </plugin>

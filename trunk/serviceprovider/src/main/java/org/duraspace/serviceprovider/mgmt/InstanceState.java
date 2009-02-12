@@ -1,5 +1,5 @@
-package org.duraspace.serviceprovider.mgmt;
 
+package org.duraspace.serviceprovider.mgmt;
 
 public enum InstanceState {
 
@@ -11,16 +11,13 @@ public enum InstanceState {
 
     private final String text;
 
-    private InstanceState(String s)
-    {
+    private InstanceState(String s) {
         text = s;
     }
-    public static InstanceState fromString(String s)
-    {
-        for (InstanceState state : values())
-        {
-            if (state.text.equalsIgnoreCase(s))
-            {
+
+    public static InstanceState fromString(String s) {
+        for (InstanceState state : values()) {
+            if (state.text.equalsIgnoreCase(s)) {
                 return state;
             }
         }
