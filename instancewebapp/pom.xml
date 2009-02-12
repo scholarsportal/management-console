@@ -16,6 +16,14 @@
   </parent>
   
   <dependencies>
+  
+    <!-- internal projects -->
+    <dependency>
+      <groupId>org.duraspace</groupId>
+      <artifactId>common</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  
     
     <dependency>
       <groupId>commons-logging</groupId>

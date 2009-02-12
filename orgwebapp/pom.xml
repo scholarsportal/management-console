@@ -5,7 +5,7 @@
   <artifactId>orgwebapp</artifactId>
   <packaging>war</packaging>
   <version>1.0.0</version>
-  <name>DuraSpace-Org Webapp</name>
+  <name>DuraSpace Org Webapp</name>
   <url>http://localhost:8080/${artifactId}</url>
 
   <parent>
