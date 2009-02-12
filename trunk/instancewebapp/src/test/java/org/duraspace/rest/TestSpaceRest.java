@@ -1,10 +1,11 @@
 package org.duraspace.rest;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
-import org.duraspace.rest.RestTestHelper.HttpResponse;
+import org.duraspace.common.web.RestHttpHelper;
+import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+
+import junit.framework.TestCase;
 
 /**
  * Runtime test of space REST API. The instancewebapp
@@ -16,7 +17,7 @@ import org.duraspace.rest.RestTestHelper.HttpResponse;
 public class TestSpaceRest
         extends TestCase {
 
-    private static RestTestHelper restHelper = new RestTestHelper();
+    private static RestHttpHelper restHelper = new RestHttpHelper();
     private static String baseUrl = "http://localhost:8080/instancewebapp";
 
     @Test

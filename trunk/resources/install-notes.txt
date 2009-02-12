@@ -18,10 +18,13 @@ To use the tomcat plugin, also add the 'server' to your maven 'settings.xml':
   <password>password</password>
 </server>
 
+Until we have an internal maven repository to host third-party jars that do not exist in an m2 repository, run the following command(s) from ./trunk:
 
+mvn install:install-file -Dfile=resources/libs/amazon-ec2-2008-12-01-java-library.jar -DgroupId=com.amazonaws -DartifactId=ec2 -Dversion=2008-12-01 -Dpackaging=jar
 
+mvn install:install-file -Dfile=resources/libs/amazon-ec2-2008-12-01-java-library-src.jar -DgroupId=com.amazonaws -DartifactId=ec2-src -Dversion=2008-12-01 -Dpackaging=jar
 
-Eclipse:
+::Eclipse::
 To make your .classpath resolve, from trunk run:
 mvn clean install
 

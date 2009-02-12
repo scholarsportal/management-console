@@ -1,7 +1,5 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duraspace</groupId>
   <artifactId>duraspace</artifactId>
@@ -51,16 +49,11 @@
   </organization>
 
   <modules>
-      <module>orgwebapp</module>
-      <module>instancewebapp</module>
-      <!--
       <module>common</module>
-      <module>computeprovider</module>
-      <module>instancecore</module>
-      <module>storageprovider</module>
-      <module>uploadclient</module>
-      <module>uploadserver</module>
-      -->
+      <module>serviceprovider</module>
+      <module>ec2serviceprovider</module>
+      <module>orgwebapp</module>
+      <module>instancewebapp</module> 
   </modules>
 
   <profiles>
@@ -75,11 +68,48 @@
           </activation>
           <properties>
 
-              <log.dir>~/duraspace.log</log.dir>
+              <log.dir>duraspace.log</log.dir>
               <unitTests>**/*Test.class</unitTests>
               <integrationTests>**/Test*.class</integrationTests>
           </properties>
       </profile>
+
+      <profile>
+          <id>profile-bootstrap</id>
+          <activation>
+              <activeByDefault>false</activeByDefault>
+              <property>
+                  <name>profile</name>
+                  <value>bootstrap</value>
+              </property>
+          </activation>
+          <properties>
+
+            <log.dir>duraspace.log</log.dir>
+            <unitTests>**/*Test.class</unitTests>
+            <integrationTests>**/Test*.class</integrationTests>
+          </properties>
+
+          <modules>
+            <module>instancewebapp</module>
+          </modules>
+          
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                  <goals>install</goals>
+                  <connectionType>connection</connectionType>
+                </configuration>
+              </plugin>
+            </plugins>
+          </build>
+      </profile>
+
+      
   </profiles>
 
   <properties>
@@ -143,6 +173,11 @@
     </pluginRepository>
     -->
   </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:https://www.fedora-commons.org/svn/duraspace/trunk</connection>
+  </scm>
+
 
   <build>
     <directory>target</directory>
