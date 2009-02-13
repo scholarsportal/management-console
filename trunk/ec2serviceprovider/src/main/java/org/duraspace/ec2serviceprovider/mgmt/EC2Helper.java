@@ -13,7 +13,7 @@ import com.amazonaws.ec2.model.TerminateInstancesResponse;
 import com.amazonaws.ec2.model.TerminateInstancesResult;
 import com.amazonaws.ec2.model.TerminatingInstance;
 
-public class EC2ServiceHelper {
+public class EC2Helper {
 
     protected static RunningInstance getFirstRunningInstance(RunInstancesResponse response) {
         if (response.isSetRunInstancesResult()) {

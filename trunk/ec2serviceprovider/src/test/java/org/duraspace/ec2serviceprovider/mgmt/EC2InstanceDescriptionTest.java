@@ -51,7 +51,7 @@ public class EC2InstanceDescriptionTest {
 
     private com.amazonaws.ec2.model.InstanceState mockState;
 
-    private EC2ServiceProperties props;
+    private EC2ServiceProviderProperties props;
 
     private AmazonEC2Exception e;
 
@@ -75,7 +75,7 @@ public class EC2InstanceDescriptionTest {
     @Before
     public void setUp() throws Exception {
         buildMockObjects();
-        props = new EC2ServiceProperties();
+        props = new EC2ServiceProviderProperties();
         props.load(new FileInputStream(configFilePath));
         e = new AmazonEC2Exception(exceptionMsg);
     }

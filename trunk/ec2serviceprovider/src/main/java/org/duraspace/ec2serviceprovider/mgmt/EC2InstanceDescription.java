@@ -21,12 +21,12 @@ public class EC2InstanceDescription
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    private EC2ServiceProperties props;
+    private EC2ServiceProviderProperties props;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'";
 
     public EC2InstanceDescription(DescribeInstancesResponse descResp,
-                                  EC2ServiceProperties props) {
+                                  EC2ServiceProviderProperties props) {
         this.props = props;
         this.exception = null;
         setMembersFromDescribeResponse(descResp);
@@ -37,7 +37,7 @@ public class EC2InstanceDescription
     }
 
     private void setMembersFromDescribeResponse(DescribeInstancesResponse descResp) {
-        setMembersFromInstance(EC2ServiceHelper
+        setMembersFromInstance(EC2Helper
                 .getFirstRunningInstance(descResp));
     }
 
@@ -77,7 +77,7 @@ public class EC2InstanceDescription
         }
     }
 
-    public void setProps(EC2ServiceProperties props) {
+    public void setProps(EC2ServiceProviderProperties props) {
         this.props = props;
     }
 

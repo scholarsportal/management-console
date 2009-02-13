@@ -13,9 +13,9 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 
-public class EC2ServicePropertiesTest {
+public class EC2ServiceProviderPropertiesTest {
 
-    private EC2ServiceProperties props;
+    private EC2ServiceProviderProperties props;
     private String content;
     private final String provider = "test-amazon-provider";
     private final String signatureMethod = "test-signature-method";
@@ -30,7 +30,7 @@ public class EC2ServicePropertiesTest {
 
     @Before
     public void setUp() throws Exception {
-        props = new EC2ServiceProperties();
+        props = new EC2ServiceProviderProperties();
 
         props.setProvider(provider);
         props.setSignatureMethod(signatureMethod);
@@ -81,7 +81,7 @@ public class EC2ServicePropertiesTest {
     public void testLoad()
     {
         assertNotNull(content);
-        EC2ServiceProperties p = new EC2ServiceProperties();
+        EC2ServiceProviderProperties p = new EC2ServiceProviderProperties();
         p.load(getContentAsStream());
 
         String pvdr = p.getProvider();

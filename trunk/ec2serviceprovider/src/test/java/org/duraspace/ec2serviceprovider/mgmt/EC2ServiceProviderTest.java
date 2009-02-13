@@ -28,13 +28,11 @@ import static org.easymock.classextension.EasyMock.replay;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-public class EC2ServiceImplTest {
+public class EC2ServiceProviderTest {
 
-    private EC2ServiceProviderImpl serviceProvider;
+    private EC2ServiceProvider serviceProvider;
 
-    private EC2Wrapper mockWrapper;
-
-    private AmazonEC2 mockEC2Service;
+    private AmazonEC2 mockEC2;
 
     private RunInstancesRequest mockRunRequest;
 
@@ -51,19 +49,18 @@ public class EC2ServiceImplTest {
     private final String configFilePath =
             "src/test/resources/test-service-props.xml";
 
-    private EC2ServiceProperties props;
+    private EC2ServiceProviderProperties props;
 
     @Before
     public void setUp() throws Exception {
-        props = new EC2ServiceProperties();
+        props = new EC2ServiceProviderProperties();
         props.load(new FileInputStream(configFilePath));
-        serviceProvider = new EC2ServiceProviderImpl();
+        serviceProvider = new EC2ServiceProvider();
         serviceProvider.setProps(props);
     }
 
     private void buildMockStartServiceWrapper() throws AmazonEC2Exception {
-        mockWrapper = org.easymock.EasyMock.createMock(EC2Wrapper.class);
-        mockEC2Service = org.easymock.EasyMock.createMock(AmazonEC2.class);
+        mockEC2 = org.easymock.EasyMock.createMock(AmazonEC2.class);
         mockRunRequest = createMock(RunInstancesRequest.class);
         mockRunResponse = createMock(RunInstancesResponse.class);
         mockRunResult = createMock(RunInstancesResult.class);
@@ -89,17 +86,9 @@ public class EC2ServiceImplTest {
 
         replay(mockRunRequest);
 
-        org.easymock.EasyMock.expect(mockEC2Service.runInstances(EasyMock
+        org.easymock.EasyMock.expect(mockEC2.runInstances(EasyMock
                 .not(EasyMock.eq(mockRunRequest)))).andReturn(mockRunResponse);
-        org.easymock.EasyMock.replay(mockEC2Service);
-
-        org.easymock.EasyMock.expect(mockWrapper.getService())
-                .andReturn(mockEC2Service);
-        org.easymock.EasyMock.replay(mockWrapper);
-    }
-
-    private void buildMockStopServiceWrapper()
-    {
+        org.easymock.EasyMock.replay(mockEC2);
 
     }
 
@@ -107,8 +96,7 @@ public class EC2ServiceImplTest {
     public void tearDown() throws Exception {
         props = null;
         serviceProvider = null;
-        mockWrapper = null;
-        mockEC2Service = null;
+        mockEC2 = null;
         mockRunRequest = null;
         mockRunResponse = null;
         mockRunResult = null;
@@ -119,7 +107,7 @@ public class EC2ServiceImplTest {
     @Test
     public void testStart() throws Exception {
         buildMockStartServiceWrapper();
-        serviceProvider.setService(mockWrapper);
+        serviceProvider.setEC2(mockEC2);
 
         String instId = serviceProvider.start(imageId);
         assertNotNull(instId);
@@ -128,7 +116,6 @@ public class EC2ServiceImplTest {
 
 //    @Test
     public void testStop() throws Exception {
-        buildMockStopServiceWrapper();
         serviceProvider.stop(instanceId);
     }
 

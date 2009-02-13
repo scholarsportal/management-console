@@ -10,13 +10,11 @@ import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 
 import static junit.framework.Assert.assertNotNull;
 
-public class EC2ServiceImplDriver {
+public class EC2ServiceProviderDriver {
 
     Log log = LogFactory.getLog(this.getClass());
 
-    private EC2ServiceProviderImpl service;
-
-    private AmazonEC2WrapperImpl ec2Wrapper;
+    private EC2ServiceProvider service;
 
     private final String accessKeyId = "0YMHVZZZ5GP0P7VFJV82";
 
@@ -27,24 +25,20 @@ public class EC2ServiceImplDriver {
     private final String configFilePath =
             "src/test/resources/test-service-props.xml";
 
-    private EC2ServiceProperties props;
+    private EC2ServiceProviderProperties props;
 
-    public EC2ServiceImplDriver(String secretAccessKey) {
+    public EC2ServiceProviderDriver(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
     }
 
     public void setUp() throws Exception {
-        props = new EC2ServiceProperties();
+        props = new EC2ServiceProviderProperties();
         props.load(new FileInputStream(configFilePath));
 
-        ec2Wrapper = new AmazonEC2WrapperImpl();
-        ec2Wrapper.setAccessKeyId(accessKeyId);
-        ec2Wrapper.setSecretAccessKey(secretAccessKey);
-        ec2Wrapper.setProps(props);
-
-        service = new EC2ServiceProviderImpl();
+        service = new EC2ServiceProvider();
         service.setProps(props);
-        service.setService(ec2Wrapper);
+        service.setAccessKeyId(accessKeyId);
+        service.setSecretAccessKey(secretAccessKey);
     }
 
     public void testStart() throws Exception {
@@ -96,7 +90,7 @@ public class EC2ServiceImplDriver {
         if (args.length != 1) usageAndQuit();
 
         String secretAccessKey = args[0];
-        EC2ServiceImplDriver driver = new EC2ServiceImplDriver(secretAccessKey);
+        EC2ServiceProviderDriver driver = new EC2ServiceProviderDriver(secretAccessKey);
         try {
             driver.setUp();
 
