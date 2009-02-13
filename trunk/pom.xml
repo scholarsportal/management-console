@@ -52,6 +52,7 @@
       <module>common</module>
       <module>serviceprovider</module>
       <module>ec2serviceprovider</module>
+      <module>storageprovider</module>
       <module>orgwebapp</module>
       <module>instancewebapp</module> 
   </modules>
