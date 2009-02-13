@@ -3,7 +3,7 @@ package org.duraspace.ec2serviceprovider.mgmt;
 
 import java.io.Serializable;
 
-import org.duraspace.serviceprovider.mgmt.ServiceProperties;
+import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
 
 /**
  * POJO container for EC2-specific configuration information. -load/store is
@@ -11,8 +11,8 @@ import org.duraspace.serviceprovider.mgmt.ServiceProperties;
  *
  * @author Andrew Woods
  */
-public class EC2ServiceProperties
-        extends ServiceProperties
+public class EC2ServiceProviderProperties
+        extends ServiceProviderProperties
         implements Serializable {
 
     private static final long serialVersionUID = -960605896468718060L;
@@ -39,7 +39,7 @@ public class EC2ServiceProperties
 
     @Override
     protected void setMembers(Object obj) {
-        EC2ServiceProperties props = (EC2ServiceProperties) obj;
+        EC2ServiceProviderProperties props = (EC2ServiceProviderProperties) obj;
         this.setProvider(props.getProvider());
         this.setMaxAsyncThreads(props.getMaxAsyncThreads());
         this.setKeyname(props.getKeyname());

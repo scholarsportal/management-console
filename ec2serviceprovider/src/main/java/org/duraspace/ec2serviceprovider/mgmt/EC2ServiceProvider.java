@@ -5,6 +5,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.amazonaws.ec2.AmazonEC2;
+import com.amazonaws.ec2.AmazonEC2Client;
+import com.amazonaws.ec2.AmazonEC2Config;
 import com.amazonaws.ec2.AmazonEC2Exception;
 import com.amazonaws.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.ec2.model.DescribeInstancesResponse;
@@ -21,21 +23,25 @@ import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.InstanceState;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
 
-public class EC2ServiceProviderImpl
+public class EC2ServiceProvider
         implements ServiceProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    private AmazonEC2 service;
+    private AmazonEC2 ec2;
 
-    private EC2ServiceProperties props;
+    private String accessKeyId;
+
+    private String secretAccessKey;
+
+    private EC2ServiceProviderProperties props;
 
     /**
      * {@inheritDoc}
      */
     public String start(String imageId) throws AmazonEC2Exception {
         RunInstancesResponse response =
-                service.runInstances(createStartRequest());
+                getEC2().runInstances(createStartRequest());
 
         return getInstanceId(response);
     }
@@ -51,7 +57,7 @@ public class EC2ServiceProviderImpl
     }
 
     private String getInstanceId(RunInstancesResponse response) {
-        return EC2ServiceHelper.getFirstRunningInstance(response)
+        return EC2Helper.getFirstRunningInstance(response)
                 .getInstanceId();
     }
 
@@ -59,7 +65,7 @@ public class EC2ServiceProviderImpl
      * {@inheritDoc}
      */
     public void stop(String instanceId) throws Exception {
-        service.terminateInstances(new TerminateInstancesRequest()
+        getEC2().terminateInstances(new TerminateInstancesRequest()
                 .withInstanceId(instanceId));
     }
 
@@ -87,7 +93,7 @@ public class EC2ServiceProviderImpl
 
     private DescribeInstancesResponse requestRunningInstanceDescription(String instanceId)
             throws AmazonEC2Exception {
-        return service.describeInstances(new DescribeInstancesRequest()
+        return getEC2().describeInstances(new DescribeInstancesRequest()
                 .withInstanceId(instanceId));
     }
 
@@ -128,12 +134,36 @@ public class EC2ServiceProviderImpl
         return statusCode;
     }
 
-    public void setProps(EC2ServiceProperties props) {
+    public AmazonEC2 getEC2() {
+        if (ec2 == null) {
+            AmazonEC2Config config = convertConfigurationFrom(props);
+            ec2 = new AmazonEC2Client(accessKeyId, secretAccessKey, config);
+        }
+        return ec2;
+    }
+
+    private AmazonEC2Config convertConfigurationFrom(EC2ServiceProviderProperties props) {
+        AmazonEC2Config config = new AmazonEC2Config();
+        config.setSignatureMethod(props.getSignatureMethod());
+        config.setMaxAsyncThreads(props.getMaxAsyncThreads());
+
+        return config;
+    }
+
+    public void setProps(EC2ServiceProviderProperties props) {
         this.props = props;
     }
 
-    public void setService(EC2Wrapper serviceWrapper) {
-        this.service = serviceWrapper.getService();
+    public void setEC2(AmazonEC2 ec2) {
+        this.ec2 = ec2;
+    }
+
+    public void setAccessKeyId(String accessKeyId) {
+        this.accessKeyId = accessKeyId;
+    }
+
+    public void setSecretAccessKey(String secretAccessKey) {
+        this.secretAccessKey = secretAccessKey;
     }
 
 }

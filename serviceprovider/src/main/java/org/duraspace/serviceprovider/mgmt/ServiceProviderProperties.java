@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 
-public abstract class ServiceProperties {
+public abstract class ServiceProviderProperties {
 
     public void load(InputStream in) {
         XStream xstream = new XStream(new DomDriver());
