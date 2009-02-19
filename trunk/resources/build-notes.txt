@@ -9,3 +9,4 @@ mvn clean package
 mvn clean install
 
 http://localhost:8080/orgwebapp
+http://localhost:8080/instancewebapp

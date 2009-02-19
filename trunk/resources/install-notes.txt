@@ -32,6 +32,8 @@ Then in the 'Libraries' tab of the 'build-path-configuration' add a new 'variabl
 >Name: 'M2_REPO'
 >Path: '/home/awoods/.m2/repository' [or wherever your repository is]
 
-
+::Sources::
+To download source jars for all dependent libraries run:
+mvn dependency:sources
 
 
