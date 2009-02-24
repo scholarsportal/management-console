@@ -14,6 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import org.duraspace.common.web.RestResourceException;
+
 /**
  * Provides interaction with spaces via REST
  *
@@ -31,8 +33,12 @@ public class SpaceRest extends BaseRest {
     @Produces(XML)
     public Response getSpaces(@PathParam("customerID")
                               String customerID) {
-        String xml = SpaceResource.getSpaces(customerID);
-        return Response.ok(xml, TEXT_XML).build();
+        try {
+            String xml = SpaceResource.getSpaces(customerID);
+            return Response.ok(xml, TEXT_XML).build();
+        } catch(RestResourceException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     /**
@@ -50,13 +56,17 @@ public class SpaceRest extends BaseRest {
                              @QueryParam("properties")
                              @DefaultValue("false")
                              boolean properties){
-        String xml = null;
-        if(properties) {
-            xml = SpaceResource.getSpaceProperties(customerID, spaceID);
-        } else {
-            xml = SpaceResource.getSpaceContents(customerID, spaceID);
+        try {
+            String xml = null;
+            if(properties) {
+                xml = SpaceResource.getSpaceProperties(customerID, spaceID);
+            } else {
+                xml = SpaceResource.getSpaceContents(customerID, spaceID);
+            }
+            return Response.ok(xml, TEXT_XML).build();
+        } catch(RestResourceException e) {
+            return Response.serverError().entity(e.getMessage()).build();
         }
-        return Response.ok(xml, TEXT_XML).build();
     }
 
     /**
@@ -72,11 +82,15 @@ public class SpaceRest extends BaseRest {
                              @FormParam("spaceName")
                              String spaceName,
                              @FormParam("spaceAccess")
-                             @DefaultValue("closed")
+                             @DefaultValue("CLOSED")
                              String spaceAccess){
-        SpaceResource.addSpace(customerID, spaceID, spaceName, spaceAccess);
-        URI location = uriInfo.getRequestUri();
-        return Response.created(location).build();
+        try {
+            SpaceResource.addSpace(customerID, spaceID, spaceName, spaceAccess);
+            URI location = uriInfo.getRequestUri();
+            return Response.created(location).build();
+        } catch(RestResourceException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     /**
@@ -92,10 +106,15 @@ public class SpaceRest extends BaseRest {
                                           @FormParam("spaceName")
                                           String spaceName,
                                           @FormParam("spaceAccess")
+                                          @DefaultValue("CLOSED")
                                           String spaceAccess){
-        SpaceResource.updateSpaceProperties(customerID, spaceID, spaceName, spaceAccess);
-        String responseText = "Space " + spaceID + " updated successfully";
-        return Response.ok(responseText, TEXT_PLAIN).build();
+        try {
+            SpaceResource.updateSpaceProperties(customerID, spaceID, spaceName, spaceAccess);
+            String responseText = "Space " + spaceID + " updated successfully";
+            return Response.ok(responseText, TEXT_PLAIN).build();
+        } catch(RestResourceException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     /**
@@ -108,8 +127,12 @@ public class SpaceRest extends BaseRest {
                                 String customerID,
                                 @PathParam("spaceID")
                                 String spaceID){
-        SpaceResource.deleteSpace(customerID, spaceID);
-        String responseText = "Space " + spaceID + " deleted successfully";
-        return Response.ok(responseText, TEXT_PLAIN).build();
+        try {
+            SpaceResource.deleteSpace(customerID, spaceID);
+            String responseText = "Space " + spaceID + " deleted successfully";
+            return Response.ok(responseText, TEXT_PLAIN).build();
+        } catch(RestResourceException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 }

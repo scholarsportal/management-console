@@ -40,9 +40,9 @@ public class S3StorageProviderTestDriver {
     public void testS3StorageProvider() throws Exception {
         String spaceId = "duraspace-test-bucket";
         String contentId = "duraspace-test-content";
-        String spaceMetadataName = "space-name";
+        String spaceMetadataName = StorageProvider.METADATA_SPACE_NAME;
         String spaceMetadataValue = "Testing Space";
-        String contentMetadataName = "content-name";
+        String contentMetadataName = StorageProvider.METADATA_CONTENT_NAME;
         String contentMetadataValue = "Testing Content";
         String contentData = "Test Content";
 
@@ -136,6 +136,13 @@ public class S3StorageProviderTestDriver {
         String contentLine = reader.readLine();
         assertTrue(contentLine.equals(contentData));
 
+        // test invalid content
+        System.out.println("Test getContent() with invalid content ID");
+        System.out.println("-- Begin expected error log -- ");
+        is = s3Provider.getContent(spaceId, "non-existant-content");
+        assertTrue(is == null);
+        System.out.println("-- End expected error log --");
+
         // test setContentMetadata()
         System.out.println("Test setContentMetadata()");
         Properties contentMetadata = new Properties();
@@ -183,6 +190,7 @@ public class S3StorageProviderTestDriver {
             new S3StorageProviderTestDriver(provider);
 
         testDriver.testS3StorageProvider();
+        System.out.println("Tests passed successfully");
     }
 
 }

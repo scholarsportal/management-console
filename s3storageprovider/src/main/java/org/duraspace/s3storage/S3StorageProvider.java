@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.duraspace.storage.StorageException;
 import org.duraspace.storage.StorageProvider;
 import org.jets3t.service.S3Service;
@@ -34,6 +37,7 @@ import org.jets3t.service.security.AWSCredentials;
  */
 public class S3StorageProvider implements StorageProvider {
 
+    private final Log log = LogFactory.getLog(this.getClass());
     private static final String SPACE_METADATA_SUFFIX = "-space-metadata";
 
     private String accessKeyId = null;
@@ -150,15 +154,19 @@ public class S3StorageProvider implements StorageProvider {
         String bucketName = getBucketName(spaceId);
         InputStream is = getContent(spaceId, bucketName+SPACE_METADATA_SUFFIX);
 
-        try {
-            Properties spaceProps = new Properties();
-            spaceProps.loadFromXML(is);
-            return spaceProps;
-        } catch(Exception e) {
-            String err = "Could not read metadata for space " + spaceId +
-                         " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
+        Properties spaceProps = null;
+        if(is != null) {
+            try {
+                spaceProps = new Properties();
+                spaceProps.loadFromXML(is);
+                is.close();
+            } catch(Exception e) {
+                String err = "Could not read metadata for space " + spaceId +
+                             " due to error: " + e.getMessage();
+                throw new StorageException(err, e);
+            }
         }
+        return spaceProps;
     }
 
     /**
@@ -296,18 +304,12 @@ public class S3StorageProvider implements StorageProvider {
                 s3Service.getObject(s3Service.getBucket(bucketName), contentId);
             content = contentItem.getDataInputStream();
         } catch(S3ServiceException e) {
+            content = null;
             String err = "Could not retrieve content " + contentId +
                          " in S3 bucket " + bucketName + " due to error: " +
                          e.getMessage();
-            throw new StorageException(err, e);
+            log.warn(err);
         }
-
-        if(content == null) {
-            String err = "No data is available for item " + contentId +
-                         " in S3 bucket " + bucketName;
-            throw new StorageException(err);
-        }
-
         return content;
     }
 
