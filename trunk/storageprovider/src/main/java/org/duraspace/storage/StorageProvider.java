@@ -15,6 +15,11 @@ public interface StorageProvider {
 
     public enum AccessType {OPEN, CLOSED};
 
+    /* Names for metadata properties */
+    public static final String METADATA_SPACE_NAME = "name";
+    public static final String METADATA_SPACE_ACCESS = "access";
+    public static final String METADATA_CONTENT_NAME = "name";
+
     /**
      * Provides a listing of all spaces owned by a customer.
      *
@@ -62,7 +67,7 @@ public interface StorageProvider {
      * Retrieves the metadata associated with a space.
      *
      * @param spaceId
-     * @return Properties list of space metadata
+     * @return Properties list of space metadata or null if no metadata exists
      * @throws StorageException
      */
     public Properties getSpaceMetadata(String spaceId)
@@ -122,7 +127,7 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @param contentId
-     * @return
+     * @return the content stream or null if the content does not exist
      * @throws StorageException
      */
     public InputStream getContent(String spaceId,

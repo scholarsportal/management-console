@@ -4,7 +4,9 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/storageprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/s3storageprovider"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0/commons-logging-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.6/spring-core-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar"/>
@@ -25,5 +27,6 @@
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

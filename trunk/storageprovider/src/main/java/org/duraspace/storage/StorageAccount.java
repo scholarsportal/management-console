@@ -8,8 +8,22 @@ package org.duraspace.storage;
  */
 public class StorageAccount {
 
-    String id = null;
-    String credentials = null;
+    public enum AccountType {S3, Azure};
+
+    private String id = null;
+    private String username = null;
+    private String password = null;
+    private AccountType type = null;
+
+    public StorageAccount(String id,
+                          String username,
+                          String password,
+                          AccountType type) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.type = type;
+    }
 
     /**
      * @return the id
@@ -26,17 +40,45 @@ public class StorageAccount {
     }
 
     /**
-     * @return the credentials
+     * @return the username
      */
-    public String getCredentials() {
-        return credentials;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * @param credentials the credentials to set
+     * @param username the username to set
      */
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the type
+     */
+    public AccountType getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(AccountType type) {
+        this.type = type;
     }
 
 }
