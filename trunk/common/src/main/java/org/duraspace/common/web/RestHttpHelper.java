@@ -67,6 +67,8 @@ public class RestHttpHelper {
             if (requestContent != null) {
                 postMethod.setRequestEntity(
                     new StringRequestEntity(requestContent, mimeType, "utf-8"));
+                String contentLength = String.valueOf(requestContent.length());
+                postMethod.setRequestHeader("Content-Length", contentLength);
             }
             httpMethod = postMethod;
         } else if(method.equals(Method.PUT)) {

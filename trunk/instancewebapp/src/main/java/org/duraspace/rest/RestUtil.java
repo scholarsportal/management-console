@@ -1,19 +1,22 @@
 package org.duraspace.rest;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import javax.mail.BodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.server.impl.model.HttpHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
 /**
@@ -30,54 +33,76 @@ public class RestUtil {
      * @return InputStream from the request
      */
     public RequestContent getRequestContent(HttpServletRequest request,
-                                            MediaType mediaType) {
-        RequestContent rContent = new RequestContent();
-        if(mediaType != null) {
-            rContent.mimeType = mediaType.toString();
+                                            HttpHeaders headers)
+    throws Exception {
+        RequestContent rContent = null;
+
+        // Make sure we have a file upload request
+        if(ServletFileUpload.isMultipartContent(request)) {
+
+            // Create a new file upload handler
+            ServletFileUpload upload = new ServletFileUpload();
+
+            // Parse the request, use the first available File field
+            FileItemIterator iter = upload.getItemIterator(request);
+            while (iter.hasNext()) {
+                FileItemStream item = iter.next();
+                if (!item.isFormField()) {
+                    rContent = new RequestContent();
+                    rContent.contentStream = item.openStream();
+                    rContent.mimeType = item.getContentType();
+
+                    String contentLength = item.getHeaders().getHeader("Content-Length");
+                    if(contentLength != null) {
+                        rContent.size = Integer.parseInt(contentLength);
+                    }
+
+                    break;
+                }
+            }
         }
 
-        try {
+        // If the content stream was not been found as a multipart,
+        // try to use the stream from the request directly
+        if(rContent == null) {
             if (request.getContentLength() > 0) {
-                rContent.contentStream = request.getInputStream();
+              rContent = new RequestContent();
+              rContent.contentStream = request.getInputStream();
+              rContent.size = request.getContentLength();
             } else {
-                String transferEncoding = request.getHeader("Transfer-Encoding");
+                String transferEncoding =
+                        request.getHeader("Transfer-Encoding");
                 if (transferEncoding != null && transferEncoding.contains("chunked")) {
                     BufferedInputStream bis =
                         new BufferedInputStream(request.getInputStream());
                     bis.mark(2);
                     if (bis.read() > 0) {
                         bis.reset();
+                        rContent = new RequestContent();
                         rContent.contentStream = bis;
                     }
                 }
             }
+        }
 
-            if (rContent.contentStream != null) {
-                String multipartRelated = "multipart/related";
-                String multipartForm = "multipart/form-data";
+        // Attempt to set the mime type and size if not already set
+        if(rContent != null) {
+            if(rContent.mimeType == null) {
+                MediaType mediaType = headers.getMediaType();
                 if(mediaType != null) {
-                    BodyPart bodyPart = null;
-                    if (mediaType.isCompatible(HttpHelper.getContentType(multipartForm))) {
-                        ByteArrayDataSource ds =
-                            new ByteArrayDataSource(rContent.contentStream, multipartForm);
-                        bodyPart = new MimeMultipart(ds).getBodyPart(0);
-
-                    } else if (mediaType.isCompatible(HttpHelper.getContentType(multipartRelated))) {
-                        ByteArrayDataSource ds =
-                            new ByteArrayDataSource(rContent.contentStream, multipartRelated);
-                        bodyPart = new MimeMultipart(ds).getBodyPart(1);
-                    }
-
-                    if(bodyPart != null) {
-                        rContent.mimeType = bodyPart.getContentType();
-                        rContent.size = bodyPart.getSize();
-                        rContent.contentStream = bodyPart.getInputStream();
-                    }
+                    rContent.mimeType = mediaType.toString();
                 }
             }
-        } catch (Exception e) {
-            logger.error("Could not retrieve content from request: " + e.getMessage());
-            return null;
+
+            if(rContent.size == 0) {
+                List<String> lengthHeaders =
+                    headers.getRequestHeader("Content-Length");
+                if(lengthHeaders != null && lengthHeaders.size() > 0) {
+                    rContent.size = Integer.parseInt(lengthHeaders.get(0));
+                }
+            }
+        } else {
+            throw new IOException("Could not retrieve content from http request.");
         }
 
         return rContent;

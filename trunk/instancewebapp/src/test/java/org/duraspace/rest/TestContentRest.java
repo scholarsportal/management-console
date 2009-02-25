@@ -1,11 +1,14 @@
 package org.duraspace.rest;
 
+import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
-
-import junit.framework.TestCase;
+import org.duraspace.storage.StorageProvider;
 
 /**
  * Runtime test of content REST API. The instancewebapp
@@ -19,53 +22,29 @@ public class TestContentRest
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
     private static String baseUrl = "http://localhost:8080/instancewebapp";
+    private static final String CONTENT = "<content />";
 
-    @Test
-    public void testGetContent() throws Exception {
+    private String nameTag = StorageProvider.METADATA_CONTENT_NAME;
+    private String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
+
+    @Override
+    @Before
+    protected void setUp() throws Exception {
+        // Add space1
+        HttpResponse response =
+            RestTestHelper.addSpace(baseUrl, "customer1", "space1");
+        assertTrue(response.getStatusCode() == 201);
+
+        // Add content1 to space1
         String url = baseUrl + "/content/customer1/space1/content1";
-        HttpResponse response = restHelper.get(url);
-
-        assertTrue(response.getStatusCode() == 200);
-        assertTrue("content".equals(response.getResponseBody()));
+        response = restHelper.put(url, CONTENT, false);
+        assertTrue(response.getStatusCode() == 201);
     }
 
-    @Test
-    public void testGetContentProperties() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1?properties=true";
-        HttpResponse response = restHelper.get(url);
-
-        assertTrue(response.getStatusCode() == 200);
-        assertTrue("<content />".equals(response.getResponseBody()));
-    }
-
-    @Test
-    public void testUpdateContentProperties() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1";
-        String formParams = "contentName=test";
-        HttpResponse response = restHelper.post(url, formParams, true);
-
-        assertTrue(response.getStatusCode() == 200);
-        String responseText = response.getResponseBody();
-        assertNotNull(responseText);
-        assertTrue(responseText.contains("content1"));
-        assertTrue(responseText.contains("updated"));
-    }
-
-    @Test
-    public void testAddContent() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1";
-        String content = "<content />";
-        HttpResponse response = restHelper.put(url, content, false);
-
-        assertTrue(response.getStatusCode() == 200);
-        String responseText = response.getResponseBody();
-        assertNotNull(responseText);
-        assertTrue(responseText.contains("content1"));
-        assertTrue(responseText.contains("added"));
-    }
-
-    @Test
-    public void testDeleteContent() throws Exception {
+    @Override
+    @After
+    protected void tearDown() throws Exception {
+        // Delete content1 from space1
         String url = baseUrl + "/content/customer1/space1/content1";
         HttpResponse response = restHelper.delete(url);
 
@@ -74,5 +53,56 @@ public class TestContentRest
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
         assertTrue(responseText.contains("deleted"));
+
+        // Delete space1
+        response =
+            RestTestHelper.deleteSpace(baseUrl, "customer1", "space1");
+        assertTrue(response.getStatusCode() == 200);
+    }
+
+    @Test
+    public void testGetContent() throws Exception {
+        String url = baseUrl + "/content/customer1/space1/content1";
+        HttpResponse response = restHelper.get(url);
+
+        assertTrue(response.getStatusCode() == 200);
+        String content = response.getResponseBody();
+        assertNotNull(content);
+        assertTrue(CONTENT.equals(content));
+    }
+
+    @Test
+    public void testGetContentProperties() throws Exception {
+        String url = baseUrl + "/content/customer1/space1/content1?properties=true";
+        HttpResponse response = restHelper.get(url);
+
+        assertTrue(response.getStatusCode() == 200);
+        String propsXML = response.getResponseBody();
+        assertNotNull(propsXML);
+        assertTrue(propsXML.contains("<"+nameTag+">content1</"+nameTag+">"));
+        assertTrue(propsXML.contains("<"+mimeTag+">text/xml"));
+    }
+
+    @Test
+    public void testUpdateContentProperties() throws Exception {
+        String url = baseUrl + "/content/customer1/space1/content1";
+        String formParams = "contentName=Test+Content&contentMimeType=text/plain";
+        HttpResponse response = restHelper.post(url, formParams, true);
+
+        assertTrue(response.getStatusCode() == 200);
+        String responseText = response.getResponseBody();
+        assertNotNull(responseText);
+        assertTrue(responseText.contains("content1"));
+        assertTrue(responseText.contains("updated"));
+
+        // Make sure the changes were saved
+        url = baseUrl + "/content/customer1/space1/content1?properties=true";
+        response = restHelper.get(url);
+
+        assertTrue(response.getStatusCode() == 200);
+        String propsXML = response.getResponseBody();
+        assertNotNull(propsXML);
+        assertTrue(propsXML.contains("<"+nameTag+">Test Content</"+nameTag+">"));
+        assertTrue(propsXML.contains("<"+mimeTag+">text/plain</"+mimeTag+">"));
     }
 }

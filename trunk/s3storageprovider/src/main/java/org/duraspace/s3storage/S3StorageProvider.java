@@ -267,15 +267,13 @@ public class S3StorageProvider implements StorageProvider {
                            int contentSize,
                            InputStream content)
     throws StorageException {
-        if(contentSize <= 0) {
-            String err = "Cannot add an empty content item.";
-            throw new StorageException(err);
-        }
-
         S3Object contentItem = new S3Object(contentId);
         contentItem.setContentType(contentMimeType);
-        contentItem.setContentLength(contentSize);
         contentItem.setDataInputStream(content);
+
+        if(contentSize > 0) {
+            contentItem.setContentLength(contentSize);
+        }
 
         String bucketName = getBucketName(spaceId);
         try {
@@ -342,7 +340,10 @@ public class S3StorageProvider implements StorageProvider {
         Enumeration<?> metadataKeys = contentMetadata.propertyNames();
         while(metadataKeys.hasMoreElements()) {
             String key = (String)metadataKeys.nextElement();
-            metadataMap.put(key, contentMetadata.getProperty(key));
+            String value = contentMetadata.getProperty(key);
+            if(value != null) {
+                metadataMap.put(key, value);
+            }
         }
 
         // Get the object and replace its metadata

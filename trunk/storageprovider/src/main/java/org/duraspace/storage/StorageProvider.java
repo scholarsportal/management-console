@@ -16,9 +16,10 @@ public interface StorageProvider {
     public enum AccessType {OPEN, CLOSED};
 
     /* Names for metadata properties */
-    public static final String METADATA_SPACE_NAME = "name";
-    public static final String METADATA_SPACE_ACCESS = "access";
-    public static final String METADATA_CONTENT_NAME = "name";
+    public static final String METADATA_SPACE_NAME = "space-name";
+    public static final String METADATA_SPACE_ACCESS = "space-access";
+    public static final String METADATA_CONTENT_NAME = "content-name";
+    public static final String METADATA_CONTENT_MIMETYPE = "content-mimetype";
 
     /**
      * Provides a listing of all spaces owned by a customer.
