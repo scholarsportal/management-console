@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duraspace.storage.StorageProvider;
 
 /**
  * Runtime test of space REST API. The instancewebapp
@@ -22,22 +23,22 @@ public class TestSpaceRest
     private static RestHttpHelper restHelper = new RestHttpHelper();
     private static String baseUrl = "http://localhost:8080/instancewebapp";
 
+    private String nameTag = StorageProvider.METADATA_SPACE_NAME;
+    private String accessTag = StorageProvider.METADATA_SPACE_ACCESS;
+
     @Override
     @Before
     protected void setUp() throws Exception {
-        // Add space 'space1'
-        String url = baseUrl + "/space/customer1/space1";
-        String formParams = "spaceName=Testing+Space&spaceAccess=OPEN";
-        HttpResponse response = restHelper.put(url, formParams, true);
+        HttpResponse response =
+            RestTestHelper.addSpace(baseUrl, "customer1", "space1");
         assertTrue(response.getStatusCode() == 201);
     }
 
     @Override
     @After
     protected void tearDown() throws Exception {
-        // Delete space 'space1'
-        String url = baseUrl + "/space/customer1/space1";
-        HttpResponse response = restHelper.delete(url);
+        HttpResponse response =
+            RestTestHelper.deleteSpace(baseUrl, "customer1", "space1");
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
@@ -63,8 +64,8 @@ public class TestSpaceRest
         String responseText = response.getResponseBody();
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue(responseText.contains("<access>OPEN</access>"));
-        assertTrue(responseText.contains("<name>Testing Space</name>"));
+        assertTrue(responseText.contains("<"+nameTag+">Testing Space</"+nameTag+">"));
+        assertTrue(responseText.contains("<"+accessTag+">OPEN</"+accessTag+">"));
     }
 
     @Test
@@ -95,8 +96,8 @@ public class TestSpaceRest
         responseText = response.getResponseBody();
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue(responseText.contains("<access>CLOSED</access>"));
-        assertTrue(responseText.contains("<name>Test2</name>"));
+        assertTrue(responseText.contains("<"+nameTag+">Test2</"+nameTag+">"));
+        assertTrue(responseText.contains("<"+accessTag+">CLOSED</"+accessTag+">"));
     }
 
  }

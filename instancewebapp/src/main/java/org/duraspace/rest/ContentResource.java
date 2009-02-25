@@ -1,7 +1,21 @@
 package org.duraspace.rest;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import java.util.Enumeration;
+import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.duraspace.common.web.RestResourceException;
+import org.duraspace.storage.StorageException;
+import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.StorageProviderUtility;
+import org.duraspace.storage.StorageProvider.AccessType;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 
 /**
  * Provides interaction with content
@@ -9,6 +23,8 @@ import java.io.InputStream;
  * @author Bill Branan
  */
 public class ContentResource {
+
+    private static final Log log = LogFactory.getLog(ContentResource.class);
 
     /**
      * Retrieves content from a space.
@@ -20,10 +36,24 @@ public class ContentResource {
      */
     public static InputStream getContent(String customerID,
                                          String spaceID,
-                                         String contentID) {
-        String content = "content";
-        ByteArrayInputStream is = new ByteArrayInputStream(content.getBytes());
-        return is;
+                                         String contentID)
+    throws RestResourceException {
+        try {
+            StorageProvider storage =
+                StorageProviderUtility.getStorageProvider(customerID);
+
+            AccessType access = storage.getSpaceAccess(spaceID);
+            if(access.equals(AccessType.CLOSED)) {
+                // TODO: Check user permissions
+            }
+
+            return storage.getContent(spaceID, contentID);
+        } catch (StorageException e) {
+            String error = "Error attempting to get content '" + contentID +
+                           "' in '" + spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
     }
 
     /**
@@ -36,9 +66,43 @@ public class ContentResource {
      */
     public static String getContentProperties(String customerID,
                                               String spaceID,
-                                              String contentID) {
-        String xml = "<content />";
-        return xml;
+                                              String contentID)
+    throws RestResourceException {
+        Element contentElem = new Element("content");
+        contentElem.setAttribute("id", spaceID);
+        Element propsElem = new Element("properties");
+        contentElem.addContent(propsElem);
+
+        try {
+            StorageProvider storage =
+                StorageProviderUtility.getStorageProvider(customerID);
+
+            AccessType access = storage.getSpaceAccess(spaceID);
+            if(access.equals(AccessType.CLOSED)) {
+                // TODO: Check user permissions
+            }
+
+            Properties metadata = storage.getContentMetadata(spaceID, contentID);
+            if(metadata != null) {
+                Enumeration<?> metadataNames = metadata.propertyNames();
+                while(metadataNames.hasMoreElements()) {
+                    String metadataName = (String)metadataNames.nextElement();
+                    String metadataValue = metadata.getProperty(metadataName);
+                    Element metadataElem = new Element(metadataName);
+                    metadataElem.setText(metadataValue);
+                    propsElem.addContent(metadataElem);
+                }
+            }
+        } catch (StorageException e) {
+            String error = "Error attempting to get properties for content '" +
+                           contentID + "' in '" + spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
+
+        Document doc = new Document(contentElem);
+        XMLOutputter xmlConverter = new XMLOutputter();
+        return xmlConverter.outputString(doc);
     }
 
     /**
@@ -46,11 +110,37 @@ public class ContentResource {
      *
      * @return success
      */
-    public static boolean updateContentProperties(String customerID,
-                                                 String spaceID,
-                                                 String contentID,
-                                                 String contentName) {
-        return true;
+    public static void updateContentProperties(String customerID,
+                                               String spaceID,
+                                               String contentID,
+                                               String contentName,
+                                               String contentMimeType)
+    throws RestResourceException {
+        // TODO: Check user permissions
+
+        try {
+            StorageProvider storage =
+                StorageProviderUtility.getStorageProvider(customerID);
+
+            Properties metadata = storage.getContentMetadata(spaceID, contentID);
+
+            // Set content name if a new value was provided
+            if(contentName != null && !contentName.equals("")) {
+                metadata.put(StorageProvider.METADATA_CONTENT_NAME, contentName);
+            }
+
+            // Set content mime type if a new value was provided
+            if(contentMimeType != null && !contentMimeType.equals("")) {
+                metadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE, contentMimeType);
+            }
+
+            storage.setContentMetadata(spaceID, contentID, metadata);
+        } catch (StorageException e) {
+            String error = "Error attempting to update properties for content '" +
+                           contentID + "' in '" + spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
     }
 
     /**
@@ -58,13 +148,30 @@ public class ContentResource {
      *
      * @return success
      */
-    public static boolean addContent(String customerID,
+    public static void addContent(String customerID,
                                      String spaceID,
                                      String contentID,
                                      InputStream content,
                                      String contentMimeType,
-                                     int contentSize) {
-        return true;
+                                     int contentSize)
+    throws RestResourceException {
+        // TODO: Check user permissions
+
+        try {
+            StorageProvider storage =
+                StorageProviderUtility.getStorageProvider(customerID);
+
+            storage.addContent(spaceID,
+                               contentID,
+                               contentMimeType,
+                               contentSize,
+                               content);
+        } catch (StorageException e) {
+            String error = "Error attempting to add content '" + contentID +
+                           "' in '" + spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
     }
 
     /**
@@ -75,10 +182,23 @@ public class ContentResource {
      * @param contentID
      * @return success
      */
-    public static boolean deleteContent(String customerID,
+    public static void deleteContent(String customerID,
                                         String spaceID,
-                                        String contentID) {
-        return true;
+                                        String contentID)
+    throws RestResourceException {
+        // TODO: Check user permissions
+
+        try {
+            StorageProvider storage =
+                StorageProviderUtility.getStorageProvider(customerID);
+
+            storage.deleteContent(spaceID, contentID);
+        } catch (StorageException e) {
+            String error = "Error attempting to delete content '" + contentID +
+                           "' in '" + spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
     }
 
 }

@@ -182,9 +182,9 @@ public class SpaceResource {
      * @param spaceAccess
      */
     public static void addSpace(String customerID,
-                                   String spaceID,
-                                   String spaceName,
-                                   String spaceAccess)
+                                String spaceID,
+                                String spaceName,
+                                String spaceAccess)
     throws RestResourceException {
         // TODO: Check user permissions
 
@@ -220,30 +220,34 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderUtility.getStorageProvider(customerID);
 
-            // Set space properties
-            Properties spaceProps = storage.getSpaceMetadata(spaceID);
-            if(spaceProps == null) {
-                spaceProps = new Properties();
-            }
-            spaceProps.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
-            storage.setSpaceMetadata(spaceID, spaceProps);
-
-            // Set space access
-            AccessType access = storage.getSpaceAccess(spaceID);
-            AccessType newAccessType = null;
-            if(spaceAccess.toUpperCase().equals("CLOSED")) {
-                newAccessType = AccessType.CLOSED;
-            } else if(spaceAccess.toUpperCase().equals("OPEN")) {
-                newAccessType = AccessType.OPEN;
+            // Set space properties if a new value was provided
+            if(spaceName != null && !spaceName.equals("")) {
+                Properties spaceProps = storage.getSpaceMetadata(spaceID);
+                if(spaceProps == null) {
+                    spaceProps = new Properties();
+                }
+                spaceProps.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
+                storage.setSpaceMetadata(spaceID, spaceProps);
             }
 
-            if(null == newAccessType) {
-                String error = "Space Access must be set to either OPEN or CLOSED. '" +
-                                spaceAccess +"' is not a valid access setting";
-                throw new RestResourceException(error);
-            } else {
-                if(!access.equals(newAccessType)) {
-                    storage.setSpaceAccess(spaceID, newAccessType);
+            // Set space access if a new value was provided
+            if(spaceAccess != null) {
+                AccessType access = storage.getSpaceAccess(spaceID);
+                AccessType newAccessType = null;
+                if(spaceAccess.toUpperCase().equals("CLOSED")) {
+                    newAccessType = AccessType.CLOSED;
+                } else if(spaceAccess.toUpperCase().equals("OPEN")) {
+                    newAccessType = AccessType.OPEN;
+                }
+
+                if(null == newAccessType) {
+                    String error = "Space Access must be set to either OPEN or CLOSED. '" +
+                                    spaceAccess +"' is not a valid access setting";
+                    throw new RestResourceException(error);
+                } else {
+                    if(!access.equals(newAccessType)) {
+                        storage.setSpaceAccess(spaceID, newAccessType);
+                    }
                 }
             }
         } catch (StorageException e) {
