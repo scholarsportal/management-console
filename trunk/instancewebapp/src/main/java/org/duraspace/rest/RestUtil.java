@@ -11,12 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -26,7 +25,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  */
 public class RestUtil {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger log = Logger.getLogger(getClass());
 
     /**
      * Retrieves the contents of the HTTP Request.

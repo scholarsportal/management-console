@@ -1,7 +1,6 @@
 package org.duraspace.acct;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.duraspace.domain.User;
 import org.springframework.validation.BindException;
@@ -10,7 +9,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class LoginController extends SimpleFormController {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = Logger.getLogger(getClass());
 
     private User user;
 

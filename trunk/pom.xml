@@ -54,7 +54,7 @@
       <module>ec2serviceprovider</module>
       <module>storageprovider</module>
       <module>s3storageprovider</module>
-      <module>orgwebapp</module>
+      <module>mainwebapp</module>
       <module>instancewebapp</module> 
   </modules>
 

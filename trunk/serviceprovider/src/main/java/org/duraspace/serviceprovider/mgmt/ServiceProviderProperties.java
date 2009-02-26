@@ -1,3 +1,4 @@
+
 package org.duraspace.serviceprovider.mgmt;
 
 import java.io.IOException;
@@ -6,7 +7,6 @@ import java.io.OutputStream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-
 
 public abstract class ServiceProviderProperties {
 
@@ -26,6 +26,5 @@ public abstract class ServiceProviderProperties {
         XStream xstream = new XStream(new DomDriver());
         return xstream.toXML(this);
     }
-
 
 }
