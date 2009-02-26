@@ -109,7 +109,7 @@ public class EC2ServiceProviderTest {
         buildMockStartServiceWrapper();
         serviceProvider.setEC2(mockEC2);
 
-        String instId = serviceProvider.start(imageId);
+        String instId = serviceProvider.start(props);
         assertNotNull(instId);
         assertTrue(instId.equals(instanceId));
     }

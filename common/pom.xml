@@ -26,11 +26,26 @@
 
   <dependencies>
   
+    <!-- Internal projects -->
+    <dependency>
+      <groupId>org.duraspace</groupId>
+      <artifactId>serviceprovider</artifactId>
+      <version>1.0.0</version>
+    </dependency>    
+  
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
       <version>3.1</version>      
     </dependency>
+    
+    <!-- mock objects -->
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>      
      
   </dependencies>
 </project>

@@ -4,12 +4,10 @@ package org.duraspace.ec2serviceprovider.mgmt;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.amazonaws.ec2.AmazonEC2Exception;
 import com.amazonaws.ec2.model.DescribeInstancesResponse;
 import com.amazonaws.ec2.model.RunningInstance;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.duraspace.common.util.DateUtil;
 import org.duraspace.common.util.ExceptionUtil;
@@ -19,7 +17,7 @@ import org.duraspace.serviceprovider.mgmt.InstanceState;
 public class EC2InstanceDescription
         extends InstanceDescription {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    protected final Logger log = Logger.getLogger(getClass());
 
     private EC2ServiceProviderProperties props;
 
@@ -32,7 +30,7 @@ public class EC2InstanceDescription
         setMembersFromDescribeResponse(descResp);
     }
 
-    public EC2InstanceDescription(AmazonEC2Exception e) {
+    public EC2InstanceDescription(Exception e) {
         this.exception = e;
     }
 

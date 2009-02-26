@@ -3,8 +3,7 @@ package org.duraspace.ec2serviceprovider.mgmt;
 
 import java.io.FileInputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 
@@ -12,7 +11,7 @@ import static junit.framework.Assert.assertNotNull;
 
 public class EC2ServiceProviderDriver {
 
-    Log log = LogFactory.getLog(this.getClass());
+    protected final Logger log = Logger.getLogger(getClass());
 
     private EC2ServiceProvider service;
 
@@ -42,7 +41,8 @@ public class EC2ServiceProviderDriver {
     }
 
     public void testStart() throws Exception {
-        instanceId = service.start(props.getImageId());
+//        instanceId = service.start(props.getImageId());
+        instanceId = "i-95ec7bfc";
         log.info("instance id: " + instanceId);
 
         InstanceDescription desc = null;

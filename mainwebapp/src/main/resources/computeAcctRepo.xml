@@ -1,0 +1,52 @@
+<computeAccts>
+  <computeAcct>
+    <id>id0</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>provider</computeProviderId>
+    <computeCredential>
+      <username>username0</username>
+      <password>password0</password>
+    </computeCredential>
+    <props class="org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties">
+      <prop0>propA</prop0>
+      <prop1>propB</prop1>
+      <prop2>propC</prop2>
+    </props>
+  </computeAcct>
+  <computeAcct>
+    <id>amazon-ec2-awoods</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>amazon-ec2</computeProviderId>
+    <computeCredential>
+      <username>REPLACE-ME</username>
+      <password>REPLACE-ME</password>
+    </computeCredential>
+    <props class="org.duraspace.ec2serviceprovider.mgmt.EC2ServiceProviderProperties">
+      <provider>amazon-ec2</provider>
+      <signatureMethod>HmacSHA1</signatureMethod>
+      <keyname>awoods-keypair</keyname>
+      <imageId>ami-92f314fb</imageId>
+      <minInstanceCount>1</minInstanceCount>
+      <maxInstanceCount>1</maxInstanceCount>
+      <maxAsyncThreads>35</maxAsyncThreads>
+      <webappProtocol>http</webappProtocol>
+      <webappPort>8080</webappPort>
+      <webappName>/instancewebapp</webappName>
+    </props>
+  </computeAcct>
+  <computeAcct>
+    <id>id2</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>provider</computeProviderId>
+    <computeCredential>
+      <username>username2</username>
+      <password>password2</password>
+    </computeCredential>
+    <instanceId>instanceId</instanceId>
+    <props class="org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties">
+      <prop0>propA</prop0>
+      <prop1>propB</prop1>
+      <prop2>propC</prop2>
+    </props>
+  </computeAcct>
+</computeAccts>

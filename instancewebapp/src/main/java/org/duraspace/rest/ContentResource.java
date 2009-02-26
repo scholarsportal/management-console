@@ -5,8 +5,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.duraspace.common.web.RestResourceException;
 import org.duraspace.storage.StorageException;
@@ -24,7 +23,7 @@ import org.jdom.output.XMLOutputter;
  */
 public class ContentResource {
 
-    private static final Log log = LogFactory.getLog(ContentResource.class);
+    private static final Logger log = Logger.getLogger(ContentResource.class);
 
     /**
      * Retrieves content from a space.

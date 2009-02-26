@@ -5,8 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 public class SubDirController extends UrlFilenameViewController
 {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger log = Logger.getLogger(getClass());
 
     @Override
     public ModelAndView handleRequestInternal(HttpServletRequest request,
@@ -24,7 +23,7 @@ public class SubDirController extends UrlFilenameViewController
         String now = (new Date()).toString();
 
         String viewName = this.getViewNameForRequest(request);
-        logger.info("Returning subDir view with "+ now +", and view: '"+viewName+"'");
+        log.info("Returning subDir view with "+ now +", and view: '"+viewName+"'");
 
         ModelAndView mav = new ModelAndView(viewName);
         mav.addObject("now", now);

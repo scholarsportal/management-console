@@ -4,8 +4,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.duraspace.common.web.RestResourceException;
 import org.duraspace.storage.StorageException;
@@ -23,7 +22,7 @@ import org.jdom.output.XMLOutputter;
  */
 public class SpaceResource {
 
-    private static final Log log = LogFactory.getLog(SpaceResource.class);
+    protected static final Logger log = Logger.getLogger(SpaceResource.class);
 
     /**
      * Provides a listing of all spaces for a customer. Open spaces are
