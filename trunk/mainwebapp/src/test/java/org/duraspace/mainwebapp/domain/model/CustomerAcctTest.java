@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +50,7 @@ public class CustomerAcctTest {
 
         Map<String, String> map = new HashMap<String, String>();
         map.put(MOCK_PROVIDER, MOCK_PROVIDER_CLASSNAME);
-        ComputeProviderFactoryImpl.setIdToClassMap(map);
+        ComputeProviderFactory.setIdToClassMap(map);
 
         cred = new Credential();
         cred.setUsername(username);

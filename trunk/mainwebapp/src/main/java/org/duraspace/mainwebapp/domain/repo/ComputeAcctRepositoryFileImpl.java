@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.log4j.Logger;
 
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 
 public class ComputeAcctRepositoryFileImpl
         implements ComputeAcctRepository {
@@ -87,7 +87,7 @@ public class ComputeAcctRepositoryFileImpl
         XStream xstream = new XStream(new DomDriver());
 
         xstream.omitField(ComputeAcct.class, "log");
-        xstream.omitField(ComputeProviderFactoryImpl.class, "log");
+        xstream.omitField(ComputeProviderFactory.class, "log");
         xstream.alias("computeAcct", ComputeAcct.class);
         xstream.alias("computeAccts", List.class);
         return xstream;
@@ -117,34 +117,11 @@ public class ComputeAcctRepositoryFileImpl
             }
         }
 
-        //        // Load customer accounts if this is the first time used.
-        //        if (computeAccts == null) {
-        //            XStream xstream = getXStream();
-        //            try {
-        //                computeAccts =
-        //                        (List<ComputeAcct>) xstream
-        //                                .fromXML(new FileInputStream(new File(repoLocation)));
-        //            } catch (FileNotFoundException e) {
-        //                log.warn(e);
-        //            }
-        //        }
-
         // Initialize customer accounts if the repository is empty.
         if (computeAccts == null) {
             computeAccts = new ArrayList<ComputeAcct>();
         }
         return computeAccts;
-    }
-
-    public List<String> getComputeAcctIds() throws Exception {
-        List<String> ids = new ArrayList<String>();
-
-        Iterator<ComputeAcct> acctItr = getComputeAccts().iterator();
-        while (acctItr.hasNext()) {
-            ids.add(acctItr.next().getId());
-        }
-
-        return ids;
     }
 
     public int getNumComputeAccts() throws Exception {

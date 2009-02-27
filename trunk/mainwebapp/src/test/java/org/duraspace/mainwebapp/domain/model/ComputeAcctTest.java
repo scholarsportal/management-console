@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties;
 
@@ -41,7 +41,7 @@ public class ComputeAcctTest {
     public void setUp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put(MOCK_PROVIDER, MOCK_PROVIDER_CLASSNAME);
-        ComputeProviderFactoryImpl.setIdToClassMap(map);
+        ComputeProviderFactory.setIdToClassMap(map);
 
         props = new MockServiceProviderProperties();
         props.setProp0(propA);

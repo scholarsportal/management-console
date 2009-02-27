@@ -88,7 +88,6 @@ public class ComputeManagerImpl
         return compAcct;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -104,6 +103,9 @@ public class ComputeManagerImpl
         return compAcct;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ComputeAcct findComputeAccount(String computeAcctId)
             throws Exception {
         ComputeAcct compAcct =

@@ -40,7 +40,7 @@ public class ComputeProviderFactoryImplTest {
                      "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl");
         map.put(BAD, "org.duraspace.serviceprovider.mgmt.Mockxxxxxxxxx");
 
-        ComputeProviderFactoryImpl.setIdToClassMap(map);
+        ComputeProviderFactory.setIdToClassMap(map);
 
         credential = new Credential();
         credential.setUsername(username);
@@ -56,7 +56,7 @@ public class ComputeProviderFactoryImplTest {
     @Test
     public void testGetComputeProvider() throws Exception {
         ServiceProvider provider =
-                ComputeProviderFactoryImpl.getComputeProvider(AMAZON);
+                ComputeProviderFactory.getComputeProvider(AMAZON);
         assertNotNull(provider);
 
         assertFalse(provider.isInstanceRunning(credential, instanceId));
@@ -66,7 +66,7 @@ public class ComputeProviderFactoryImplTest {
     public void testGetInvalidComputeProvider() {
         ServiceProvider provider = null;
         try {
-            provider = ComputeProviderFactoryImpl.getComputeProvider(BAD);
+            provider = ComputeProviderFactory.getComputeProvider(BAD);
             fail("Should throw and exception!");
         } catch (Exception e) {
         }

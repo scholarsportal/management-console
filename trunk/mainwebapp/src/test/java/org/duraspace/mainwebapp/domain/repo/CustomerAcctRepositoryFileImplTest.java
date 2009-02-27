@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 
 public class CustomerAcctRepositoryFileImplTest {
 
-    private CustomerAcctRepository repo;
+    private CustomerAcctRepositoryFileImpl repo;
 
     private final String testRepoLoc =
             "src/test/java/org/duraspace/mainwebapp/domain/repo/test-repo.xml";

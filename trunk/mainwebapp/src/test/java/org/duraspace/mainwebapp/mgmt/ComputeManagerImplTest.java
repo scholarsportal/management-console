@@ -12,11 +12,9 @@ import org.junit.Test;
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
-import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepositoryFileImpl;
-import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepositoryFileImpl;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 
 import junit.framework.Assert;
 
@@ -29,9 +27,9 @@ public class ComputeManagerImplTest {
 
     private ComputeManagerImpl mgr;
 
-    private ComputeAcctRepository computeRepo;
+    private ComputeAcctRepositoryFileImpl computeRepo;
 
-    private CustomerAcctRepository customerRepo;
+    private CustomerAcctRepositoryFileImpl customerRepo;
 
     private final String testRepoLocKey =
             CustomerAcctRepositoryFileImpl.REPO_LOCATION;
@@ -55,7 +53,7 @@ public class ComputeManagerImplTest {
     public void setUp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put(MOCK_PROVIDER, MOCK_PROVIDER_CLASSNAME);
-        ComputeProviderFactoryImpl.setIdToClassMap(map);
+        ComputeProviderFactory.setIdToClassMap(map);
 
         mgr = new ComputeManagerImpl();
         computeRepo = new ComputeAcctRepositoryFileImpl();
