@@ -6,8 +6,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.mainwebapp.domain.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 
 public class CustomerAcctRepositoryDBImpl

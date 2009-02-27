@@ -4,7 +4,7 @@ package org.duraspace.mainwebapp.domain.repo;
 import java.util.List;
 import java.util.Properties;
 
-import org.duraspace.mainwebapp.domain.model.Credential;
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 
 public interface CustomerAcctRepository {

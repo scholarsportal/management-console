@@ -3,6 +3,8 @@ package org.duraspace.mainwebapp.domain.model;
 
 import java.util.List;
 
+import org.duraspace.common.model.Credential;
+
 public class CustomerAcct {
 
     private String id;

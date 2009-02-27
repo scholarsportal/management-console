@@ -16,8 +16,8 @@
   <storageAcct ownerId="owner0" isPrimary="true">
     <storageProviderId>amazon-s3</storageProviderId>
     <storageProviderCred>
-      <username>usernameA</username>
-      <password>passwordA</password>
+      <username>${amazon.accessKeyId}</username>
+      <password>${amazon.secretAccessKey}</password>
     </storageProviderCred>
   </storageAcct>
   <storageAcct ownerId="customer1" isPrimary="true">

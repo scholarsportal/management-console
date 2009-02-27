@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.easymock.EasyMock;
 
@@ -32,14 +33,24 @@ public class EC2ServiceProviderTest {
 
     private EC2ServiceProvider serviceProvider;
 
+    private Credential credential;
+
+    private final String username = "username";
+
+    private final String password = "password";
+
     private AmazonEC2 mockEC2;
 
     private RunInstancesRequest mockRunRequest;
 
     private RunInstancesResponse mockRunResponse;
+
     private RunInstancesResult mockRunResult;
+
     private Reservation mockReservation;
+
     private List<RunningInstance> mockRunningInstances;
+
     private RunningInstance mockRunningInstance;
 
     private final String imageId = "test-image-id";
@@ -53,6 +64,10 @@ public class EC2ServiceProviderTest {
 
     @Before
     public void setUp() throws Exception {
+        credential = new Credential();
+        credential.setUsername(username);
+        credential.setPassword(password);
+
         props = new EC2ServiceProviderProperties();
         props.load(new FileInputStream(configFilePath));
         serviceProvider = new EC2ServiceProvider();
@@ -60,6 +75,7 @@ public class EC2ServiceProviderTest {
     }
 
     private void buildMockStartServiceWrapper() throws AmazonEC2Exception {
+
         mockEC2 = org.easymock.EasyMock.createMock(AmazonEC2.class);
         mockRunRequest = createMock(RunInstancesRequest.class);
         mockRunResponse = createMock(RunInstancesResponse.class);
@@ -73,7 +89,8 @@ public class EC2ServiceProviderTest {
         mockRunningInstances.add(mockRunningInstance);
 
         expect(mockReservation.isSetRunningInstance()).andReturn(true);
-        expect(mockReservation.getRunningInstance()).andReturn(mockRunningInstances);
+        expect(mockReservation.getRunningInstance())
+                .andReturn(mockRunningInstances);
         replay(mockReservation);
 
         expect(mockRunResult.isSetReservation()).andReturn(true);
@@ -81,13 +98,14 @@ public class EC2ServiceProviderTest {
         replay(mockRunResult);
 
         expect(mockRunResponse.isSetRunInstancesResult()).andReturn(true);
-        expect(mockRunResponse.getRunInstancesResult()).andReturn(mockRunResult);
+        expect(mockRunResponse.getRunInstancesResult())
+                .andReturn(mockRunResult);
         replay(mockRunResponse);
 
         replay(mockRunRequest);
 
-        org.easymock.EasyMock.expect(mockEC2.runInstances(EasyMock
-                .not(EasyMock.eq(mockRunRequest)))).andReturn(mockRunResponse);
+        org.easymock.EasyMock.expect(mockEC2.runInstances(EasyMock.not(EasyMock
+                .eq(mockRunRequest)))).andReturn(mockRunResponse);
         org.easymock.EasyMock.replay(mockEC2);
 
     }
@@ -96,6 +114,7 @@ public class EC2ServiceProviderTest {
     public void tearDown() throws Exception {
         props = null;
         serviceProvider = null;
+        credential = null;
         mockEC2 = null;
         mockRunRequest = null;
         mockRunResponse = null;
@@ -109,32 +128,32 @@ public class EC2ServiceProviderTest {
         buildMockStartServiceWrapper();
         serviceProvider.setEC2(mockEC2);
 
-        String instId = serviceProvider.start(props);
+        String instId = serviceProvider.start(credential, props);
         assertNotNull(instId);
         assertTrue(instId.equals(instanceId));
     }
 
-//    @Test
+    //    @Test
     public void testStop() throws Exception {
-        serviceProvider.stop(instanceId);
+        serviceProvider.stop(credential, instanceId);
     }
 
-//    @Test
+    //    @Test
     public void testDescribeRunningInstance() throws Exception {
         InstanceDescription instDesc =
-                serviceProvider.describeRunningInstance(instanceId);
+                serviceProvider.describeRunningInstance(credential, instanceId);
         assertNotNull(instDesc);
     }
 
-//    @Test
+    //    @Test
     public void testIsInstanceRunning() throws Exception {
-        boolean r = serviceProvider.isInstanceRunning(instanceId);
+        boolean r = serviceProvider.isInstanceRunning(credential, instanceId);
         assertTrue(r);
     }
 
-//    @Test
+    //    @Test
     public void testIsWebappRunning() throws Exception {
-        boolean r = serviceProvider.isWebappRunning(instanceId);
+        boolean r = serviceProvider.isWebappRunning(credential, instanceId);
         assertTrue(r);
     }
 

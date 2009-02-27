@@ -3,6 +3,8 @@ package org.duraspace.serviceprovider.mgmt;
 
 import java.net.URL;
 
+import org.duraspace.common.model.Credential;
+
 public interface ServiceProvider {
 
     /**
@@ -11,12 +13,13 @@ public interface ServiceProvider {
      * @param imageId
      * @return ID of running instance.
      */
-    public String start(ServiceProviderProperties props) throws Exception;
+    public String start(Credential credential, ServiceProviderProperties props)
+            throws Exception;
 
     /**
      * This method stops the running instance.
      */
-    public void stop(String instanceId) throws Exception;
+    public void stop(Credential credential, String instanceId) throws Exception;
 
     /**
      * This method returns true if the instance is successfully running.
@@ -24,7 +27,8 @@ public interface ServiceProvider {
      * @param instanceId
      * @return
      */
-    public boolean isInstanceRunning(String instanceId) throws Exception;
+    public boolean isInstanceRunning(Credential credential, String instanceId)
+            throws Exception;
 
     /**
      * This method returns true if the webapp of provided instance is
@@ -33,7 +37,8 @@ public interface ServiceProvider {
      * @param instanceId
      * @return
      */
-    public boolean isWebappRunning(String instanceId) throws Exception;
+    public boolean isWebappRunning(Credential credential, String instanceId)
+            throws Exception;
 
     /**
      * This method returns true if the webapp of provided instance is currently
@@ -42,7 +47,8 @@ public interface ServiceProvider {
      * @param instanceId
      * @return
      */
-    public boolean isInstanceBooting(String instanceId) throws Exception;
+    public boolean isInstanceBooting(Credential credential, String instanceId)
+            throws Exception;
 
     /**
      * This method returns the URL of the instancewebapp on the instance with
@@ -52,7 +58,8 @@ public interface ServiceProvider {
      * @return
      * @throws Exception
      */
-    public URL getWebappURL(String instanceId) throws Exception;
+    public URL getWebappURL(Credential credential, String instanceId)
+            throws Exception;
 
     /**
      * This method retrieves description of initiated instance.
@@ -60,6 +67,7 @@ public interface ServiceProvider {
      * @param instanceId
      * @return
      */
-    public InstanceDescription describeRunningInstance(String instanceId);
+    public InstanceDescription describeRunningInstance(Credential credential,
+                                                       String instanceId);
 
 }

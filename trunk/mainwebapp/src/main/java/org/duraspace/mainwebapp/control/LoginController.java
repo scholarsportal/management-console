@@ -3,7 +3,7 @@ package org.duraspace.mainwebapp.control;
 
 import org.apache.log4j.Logger;
 
-import org.duraspace.mainwebapp.domain.model.Credential;
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepository;
 import org.springframework.validation.BindException;

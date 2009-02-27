@@ -10,8 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.mainwebapp.domain.model.Credential;
 import org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties;
 
 import static org.junit.Assert.assertEquals;

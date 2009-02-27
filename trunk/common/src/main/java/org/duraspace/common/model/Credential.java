@@ -1,5 +1,5 @@
 
-package org.duraspace.mainwebapp.domain.model;
+package org.duraspace.common.model;
 
 import java.io.Serializable;
 
