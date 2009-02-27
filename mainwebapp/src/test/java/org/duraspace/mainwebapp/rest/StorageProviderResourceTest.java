@@ -6,7 +6,6 @@ import java.util.Properties;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duraspace.mainwebapp.domain.repo.StorageAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryFileImpl;
 import org.duraspace.mainwebapp.mgmt.StorageManagerImpl;
 
@@ -32,7 +31,7 @@ public class StorageProviderResourceTest
         Properties props = new Properties();
         props.put(repoLocationKey, repoLocation);
 
-        StorageAcctRepository repo = new StorageAcctRepositoryFileImpl();
+        StorageAcctRepositoryFileImpl repo = new StorageAcctRepositoryFileImpl();
         repo.setProperties(props);
 
         StorageManagerImpl mgr = new StorageManagerImpl();

@@ -16,6 +16,9 @@ public class StorageManagerImpl
 
     private StorageAcctRepository repo;
 
+    /**
+     * {@inheritDoc}
+     */
     public List<StorageAcct> getStorageProviderAccounts(String customerId) {
         List<StorageAcct> accts = new ArrayList<StorageAcct>();
         try {

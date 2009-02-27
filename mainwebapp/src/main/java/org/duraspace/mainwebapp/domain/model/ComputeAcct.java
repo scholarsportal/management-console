@@ -6,7 +6,7 @@ import java.net.URL;
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
 import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
@@ -184,7 +184,7 @@ public class ComputeAcct {
     }
 
     private ServiceProvider getServiceProvider() throws Exception {
-        return ComputeProviderFactoryImpl.getComputeProvider(computeProviderId);
+        return ComputeProviderFactory.getComputeProvider(computeProviderId);
     }
 
     public ComputeProviderFactory getComputeProviderFactory() {

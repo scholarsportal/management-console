@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 import org.duraspace.mainwebapp.domain.model.User;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
+import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 
 public class CustomerAcctRepositoryFileImpl
         implements CustomerAcctRepository {
@@ -88,7 +88,7 @@ public class CustomerAcctRepositoryFileImpl
     private XStream getXStream() {
         XStream xstream = new XStream(new DomDriver());
 
-        xstream.omitField(ComputeProviderFactoryImpl.class, "log");
+        xstream.omitField(ComputeProviderFactory.class, "log");
         xstream.alias("customerAcct", CustomerAcct.class);
         xstream.alias("customerAccts", List.class);
         xstream.alias("user", User.class);
@@ -124,17 +124,6 @@ public class CustomerAcctRepositoryFileImpl
             custAccts = new ArrayList<CustomerAcct>();
         }
         return custAccts;
-    }
-
-    public List<String> getCustomerAcctIds() throws Exception {
-        List<String> ids = new ArrayList<String>();
-
-        Iterator<CustomerAcct> acctItr = getCustAccts().iterator();
-        while (acctItr.hasNext()) {
-            ids.add(acctItr.next().getId());
-        }
-
-        return ids;
     }
 
     public int getNumCustomerAccts() throws Exception {

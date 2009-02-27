@@ -5,25 +5,47 @@ import java.net.URL;
 
 import org.duraspace.common.model.Credential;
 
+/**
+ * <pre>
+ * This interface exposes basic management capabilities of ComputeProviders:
+ * start, stop, describe...
+ *
+ * It provides an abstraction layer from implementations such as:
+ * Amazon-EC2 MicroSoft-Azure ...
+ * </pre>
+ *
+ * @author Andrew Woods
+ */
 public interface ServiceProvider {
 
     /**
-     * This method asynchronously starts an instance-image with provided id.
+     * This method starts an instance-image with provided credential and
+     * Compute-provider properties.
      *
-     * @param imageId
+     * @param credential
+     * @param props
+     *        Provider-specific properties
      * @return ID of running instance.
+     * @throws Exception
      */
     public String start(Credential credential, ServiceProviderProperties props)
             throws Exception;
 
     /**
-     * This method stops the running instance.
+     * This method stops the running instance with provided id.
+     *
+     * @param credential
+     *        Compute-provider credentials
+     * @param instanceId
+     * @throws Exception
      */
     public void stop(Credential credential, String instanceId) throws Exception;
 
     /**
      * This method returns true if the instance is successfully running.
      *
+     * @param credential
+     *        Compute-provider credentials
      * @param instanceId
      * @return
      */
@@ -34,6 +56,8 @@ public interface ServiceProvider {
      * This method returns true if the webapp of provided instance is
      * successfully running.
      *
+     * @param credential
+     *        Compute-provider credentials
      * @param instanceId
      * @return
      */
@@ -44,6 +68,8 @@ public interface ServiceProvider {
      * This method returns true if the webapp of provided instance is currently
      * booting.
      *
+     * @param credential
+     *        Compute-provider credentials
      * @param instanceId
      * @return
      */
@@ -54,6 +80,8 @@ public interface ServiceProvider {
      * This method returns the URL of the instancewebapp on the instance with
      * the provided id.
      *
+     * @param credential
+     *        Compute-provider credentials
      * @param instanceId
      * @return
      * @throws Exception
@@ -64,6 +92,8 @@ public interface ServiceProvider {
     /**
      * This method retrieves description of initiated instance.
      *
+     * @param credential
+     *        Compute-provider credentials
      * @param instanceId
      * @return
      */

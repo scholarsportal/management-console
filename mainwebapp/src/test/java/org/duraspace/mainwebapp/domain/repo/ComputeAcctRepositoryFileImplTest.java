@@ -3,7 +3,6 @@ package org.duraspace.mainwebapp.domain.repo;
 
 import java.io.File;
 
-import java.util.List;
 import java.util.Properties;
 
 import org.junit.After;
@@ -223,18 +222,6 @@ public class ComputeAcctRepositoryFileImplTest {
         assertNotNull(repo.findComputeAcct(id1));
         assertNotNull(repo.findComputeAcct(id2));
 
-    }
-
-    @Test
-    public void testGetComputeAcctIds() throws Exception {
-        List<String> ids = repo.getComputeAcctIds();
-        assertNotNull(ids);
-        assertEquals(NUM_ACCTS, ids.size());
-
-        ids.remove(id0);
-        ids.remove(id1);
-        ids.remove(id2);
-        assertEquals(0, ids.size());
     }
 
     @Test
