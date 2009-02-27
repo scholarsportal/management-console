@@ -18,7 +18,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.apache.log4j.Logger;
 
-import org.duraspace.mainwebapp.domain.model.Credential;
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 import org.duraspace.mainwebapp.domain.model.User;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;

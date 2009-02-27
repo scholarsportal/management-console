@@ -17,6 +17,7 @@ import com.amazonaws.ec2.model.TerminateInstancesRequest;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
@@ -31,9 +32,9 @@ public class EC2ServiceProvider
 
     private AmazonEC2 ec2;
 
-    private String accessKeyId = "REPLACE-ME";
+    private String accessKeyId = "ZZZZZZZZZZZZZZZZZZZZ";
 
-    private String secretAccessKey = "REPLACE-ME";
+    private String secretAccessKey = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
 
     private EC2ServiceProviderProperties props;
 
@@ -42,8 +43,12 @@ public class EC2ServiceProvider
      *
      * @throws Exception
      */
-    public String start(ServiceProviderProperties argProps) throws Exception {
+    public String start(Credential credential,
+                        ServiceProviderProperties argProps) throws Exception {
         log.info("start(" + argProps + ")");
+        setAccessKeyId(credential.getUsername());
+        setSecretAccessKey(credential.getPassword());
+
         setProps((EC2ServiceProviderProperties) argProps);
 
         RunInstancesResponse response =
@@ -69,7 +74,7 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public void stop(String instanceId) throws Exception {
+    public void stop(Credential credential, String instanceId) throws Exception {
         getEC2().terminateInstances(new TerminateInstancesRequest()
                 .withInstanceId(instanceId));
     }
@@ -79,7 +84,7 @@ public class EC2ServiceProvider
      *
      * @throws Exception
      */
-    public InstanceDescription describeRunningInstance(String instanceId) {
+    public InstanceDescription describeRunningInstance(Credential credential, String instanceId) {
         return getDescription(instanceId);
     }
 
@@ -107,7 +112,7 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public boolean isInstanceRunning(String instanceId) throws Exception {
+    public boolean isInstanceRunning(Credential credential, String instanceId) throws Exception {
         InstanceDescription description = getDescription(instanceId);
         return isInstanceRunning(description);
     }
@@ -120,7 +125,7 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public boolean isWebappRunning(String instanceId) throws Exception {
+    public boolean isWebappRunning(Credential credential, String instanceId) throws Exception {
         InstanceDescription description = getDescription(instanceId);
         return isWebappRunning(description);
     }
@@ -132,7 +137,7 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public boolean isInstanceBooting(String instanceId) throws Exception {
+    public boolean isInstanceBooting(Credential credential, String instanceId) throws Exception {
         InstanceDescription description = getDescription(instanceId);
         return isInstanceBooting(description);
     }
@@ -157,7 +162,7 @@ public class EC2ServiceProvider
         return statusCode;
     }
 
-    public URL getWebappURL(String instanceId) throws Exception {
+    public URL getWebappURL(Credential credential, String instanceId) throws Exception {
         InstanceDescription description = getDescription(instanceId);
 
         if (description == null) {

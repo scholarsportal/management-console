@@ -8,5 +8,9 @@ mvn clean package
 ::build, run unit tests, deploy, run integration tests::
 mvn clean install
 
-http://localhost:8080/orgwebapp
+http://localhost:8080/mainwebapp
 http://localhost:8080/instancewebapp
+
+::useful commands::
+1. Until a database is put under the webapps, you can insert Amazon EC2/S3 credentials at build-time with the following command-line args:
+mvn clean install -Damazon.accessKeyId=[YOUR-ACCESS-KEY-ID] -Damazon.secretAccessKey=[YOUR-SECRET-ACCESS-KEY]

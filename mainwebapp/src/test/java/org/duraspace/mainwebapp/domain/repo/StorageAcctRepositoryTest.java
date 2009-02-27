@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duraspace.mainwebapp.domain.model.Credential;
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
 
 import static org.junit.Assert.assertNotNull;

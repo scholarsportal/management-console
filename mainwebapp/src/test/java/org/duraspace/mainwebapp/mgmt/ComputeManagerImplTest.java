@@ -9,8 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.mainwebapp.domain.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepositoryFileImpl;

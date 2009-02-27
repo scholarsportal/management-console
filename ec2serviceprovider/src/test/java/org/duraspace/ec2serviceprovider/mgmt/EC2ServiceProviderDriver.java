@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 
 import static junit.framework.Assert.assertNotNull;
@@ -18,6 +19,8 @@ public class EC2ServiceProviderDriver {
     private final String accessKeyId = "0YMHVZZZ5GP0P7VFJV82";
 
     private final String secretAccessKey;
+
+    private Credential credential;
 
     private String instanceId;
 
@@ -36,22 +39,25 @@ public class EC2ServiceProviderDriver {
 
         service = new EC2ServiceProvider();
         service.setProps(props);
-        service.setAccessKeyId(accessKeyId);
-        service.setSecretAccessKey(secretAccessKey);
+
+        credential = new Credential();
+        credential.setUsername(accessKeyId);
+        credential.setPassword(secretAccessKey);
+
     }
 
     public void testStart() throws Exception {
-//        instanceId = service.start(props.getImageId());
-        instanceId = "i-95ec7bfc";
+        instanceId = service.start(credential, props);
+
         log.info("instance id: " + instanceId);
 
         InstanceDescription desc = null;
-        while (!service.isInstanceRunning(instanceId)) {
-            desc = service.describeRunningInstance(instanceId);
+        while (!service.isInstanceRunning(credential, instanceId)) {
+            desc = service.describeRunningInstance(credential, instanceId);
             log.info("instance state: " + desc.getState().name());
             Thread.sleep(10000);
         }
-        desc = service.describeRunningInstance(instanceId);
+        desc = service.describeRunningInstance(credential, instanceId);
         assertNotNull(desc);
         log.info("instance state:     " + desc.getState().name());
         log.info("launch time: " + desc.getLaunchTime());
@@ -62,7 +68,7 @@ public class EC2ServiceProviderDriver {
         while (!done) {
             Thread.sleep(10000);
             try {
-                done = service.isWebappRunning(instanceId);
+                done = service.isWebappRunning(credential, instanceId);
                 log.info("webapp state: " + done);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -75,7 +81,7 @@ public class EC2ServiceProviderDriver {
 
     public void testStop() throws Exception {
         log.info("stopping instance: " + instanceId);
-        service.stop(instanceId);
+        service.stop(credential, instanceId);
     }
 
     private static void usageAndQuit() {
@@ -90,7 +96,8 @@ public class EC2ServiceProviderDriver {
         if (args.length != 1) usageAndQuit();
 
         String secretAccessKey = args[0];
-        EC2ServiceProviderDriver driver = new EC2ServiceProviderDriver(secretAccessKey);
+        EC2ServiceProviderDriver driver =
+                new EC2ServiceProviderDriver(secretAccessKey);
         try {
             driver.setUp();
 

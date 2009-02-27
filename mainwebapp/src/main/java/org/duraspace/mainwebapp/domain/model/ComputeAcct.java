@@ -3,6 +3,7 @@ package org.duraspace.mainwebapp.domain.model;
 
 import java.net.URL;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactoryImpl;
@@ -34,7 +35,10 @@ public class ComputeAcct {
     public InstanceDescription describeRunningInstance() throws Exception {
         InstanceDescription desc = null;
         try {
-            desc = getServiceProvider().describeRunningInstance(instanceId);
+            desc =
+                    getServiceProvider()
+                            .describeRunningInstance(computeCredential,
+                                                     instanceId);
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
             throw e;
@@ -45,7 +49,7 @@ public class ComputeAcct {
     public void startInstance() throws Exception {
         System.err.println("starting instance...");
         try {
-            instanceId = getServiceProvider().start(props);
+            instanceId = getServiceProvider().start(computeCredential, props);
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
             throw e;
@@ -54,7 +58,7 @@ public class ComputeAcct {
 
     public void stopInstance() throws Exception {
         try {
-            getServiceProvider().stop(instanceId);
+            getServiceProvider().stop(computeCredential, instanceId);
             System.err.println("stopping instance:" + instanceId
                     + " ...removing ID.");
             instanceId = null;
@@ -68,7 +72,10 @@ public class ComputeAcct {
         boolean flag = false;
         if (instanceId != null) {
             try {
-                flag = getServiceProvider().isInstanceRunning(instanceId);
+                flag =
+                        getServiceProvider()
+                                .isInstanceRunning(computeCredential,
+                                                   instanceId);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -81,7 +88,9 @@ public class ComputeAcct {
         boolean flag = false;
         if (instanceId != null) {
             try {
-                flag = getServiceProvider().isWebappRunning(instanceId);
+                flag =
+                        getServiceProvider().isWebappRunning(computeCredential,
+                                                             instanceId);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -94,7 +103,10 @@ public class ComputeAcct {
         boolean flag = false;
         if (instanceId != null) {
             try {
-                flag = getServiceProvider().isInstanceBooting(instanceId);
+                flag =
+                        getServiceProvider()
+                                .isInstanceBooting(computeCredential,
+                                                   instanceId);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -106,7 +118,9 @@ public class ComputeAcct {
     public String getWebappURL() throws Exception {
         URL url = null;
         try {
-            url = getServiceProvider().getWebappURL(instanceId);
+            url =
+                    getServiceProvider().getWebappURL(computeCredential,
+                                                      instanceId);
 
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));

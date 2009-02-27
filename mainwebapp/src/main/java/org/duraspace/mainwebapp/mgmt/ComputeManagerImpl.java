@@ -3,8 +3,8 @@ package org.duraspace.mainwebapp.mgmt;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.mainwebapp.domain.model.Credential;
 import org.duraspace.mainwebapp.domain.model.CustomerAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepository;

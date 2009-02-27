@@ -18,8 +18,8 @@
     <namespace>namespace0</namespace>
     <computeProviderId>amazon-ec2</computeProviderId>
     <computeCredential>
-      <username>REPLACE-ME</username>
-      <password>REPLACE-ME</password>
+      <username>${amazon.accessKeyId}</username>
+      <password>${amazon.secretAccessKey}</password>
     </computeCredential>
     <props class="org.duraspace.ec2serviceprovider.mgmt.EC2ServiceProviderProperties">
       <provider>amazon-ec2</provider>

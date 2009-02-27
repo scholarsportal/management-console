@@ -10,6 +10,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import org.duraspace.common.model.Credential;
+
 public class StorageAcct {
 
     private String id;
