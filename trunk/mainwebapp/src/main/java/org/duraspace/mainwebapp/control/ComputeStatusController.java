@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.cmd.ComputeStatusCmd;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.mgmt.ComputeManager;
@@ -34,16 +35,19 @@ public class ComputeStatusController
         ComputeStatusCmd params = (ComputeStatusCmd) command;
 
         String computeAcctId = params.getComputeAcctId();
+        String timer = calculateTimer(params.getTimer());
 
         log.info("user cmd       : " + params.getCmd());
         log.info("compute acct id: " + computeAcctId);
 
-        ComputeAcct computeAcct =
-                executeCommand(params.getCmd(), computeAcctId);
+        ComputeAcctWrapper inputToView = new ComputeAcctWrapper();
+        inputToView.setComputeAcct(executeCommand(params.getCmd(),
+                                                  computeAcctId));
+        inputToView.setTimer(timer);
 
         return new ModelAndView("acctUpdate/computeStatus",
-                                "computeAcct",
-                                computeAcct);
+                                "input",
+                                inputToView);
     }
 
     private ComputeAcct executeCommand(String cmd, String computeAcctId)
@@ -60,6 +64,29 @@ public class ComputeStatusController
             acct = computeManager.findComputeAccount(computeAcctId);
         }
         return acct;
+    }
+
+    private String calculateTimer(String arg) {
+        StringBuilder timer = new StringBuilder();
+        String tail = "...";
+        if (hasTail(arg, tail)) {
+            int lessCount = previousCount(arg, tail) - 1;
+            timer.append(arg + lessCount);
+        } else {
+            timer.append("9");
+        }
+        timer.append(tail);
+        return timer.toString();
+    }
+
+    private boolean hasTail(String arg, String tail) {
+        return (arg != null && arg.endsWith(tail) && arg.length() > tail
+                .length());
+    }
+
+    private int previousCount(String arg, String tail) {
+        return Character.getNumericValue(arg.charAt(arg.length()
+                - tail.length() - 1));
     }
 
     public ComputeManager getComputeManager() {

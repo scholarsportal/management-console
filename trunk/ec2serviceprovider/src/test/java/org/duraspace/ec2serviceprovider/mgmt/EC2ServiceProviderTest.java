@@ -53,8 +53,6 @@ public class EC2ServiceProviderTest {
 
     private RunningInstance mockRunningInstance;
 
-    private final String imageId = "test-image-id";
-
     private final String instanceId = "test-instance-id";
 
     private final String configFilePath =
@@ -71,7 +69,6 @@ public class EC2ServiceProviderTest {
         props = new EC2ServiceProviderProperties();
         props.load(new FileInputStream(configFilePath));
         serviceProvider = new EC2ServiceProvider();
-        serviceProvider.setProps(props);
     }
 
     private void buildMockStartServiceWrapper() throws AmazonEC2Exception {
@@ -135,25 +132,30 @@ public class EC2ServiceProviderTest {
 
     //    @Test
     public void testStop() throws Exception {
-        serviceProvider.stop(credential, instanceId);
+        serviceProvider.stop(credential, instanceId, props);
     }
 
     //    @Test
     public void testDescribeRunningInstance() throws Exception {
         InstanceDescription instDesc =
-                serviceProvider.describeRunningInstance(credential, instanceId);
+                serviceProvider.describeRunningInstance(credential,
+                                                        instanceId,
+                                                        props);
         assertNotNull(instDesc);
     }
 
     //    @Test
     public void testIsInstanceRunning() throws Exception {
-        boolean r = serviceProvider.isInstanceRunning(credential, instanceId);
+        boolean r =
+                serviceProvider
+                        .isInstanceRunning(credential, instanceId, props);
         assertTrue(r);
     }
 
     //    @Test
     public void testIsWebappRunning() throws Exception {
-        boolean r = serviceProvider.isWebappRunning(credential, instanceId);
+        boolean r =
+                serviceProvider.isWebappRunning(credential, instanceId, props);
         assertTrue(r);
     }
 

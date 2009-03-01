@@ -31,6 +31,8 @@ public class ComputeProviderFactoryImplTest {
 
     private final String password = "password";
 
+    private final ServiceProviderProperties props = null;
+
     @Before
     public void setUp() throws Exception {
 
@@ -59,7 +61,7 @@ public class ComputeProviderFactoryImplTest {
                 ComputeProviderFactory.getComputeProvider(AMAZON);
         assertNotNull(provider);
 
-        assertFalse(provider.isInstanceRunning(credential, instanceId));
+        assertFalse(provider.isInstanceRunning(credential, instanceId, props));
     }
 
     @Test

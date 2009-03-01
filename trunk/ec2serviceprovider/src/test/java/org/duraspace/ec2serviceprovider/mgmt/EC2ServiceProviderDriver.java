@@ -38,7 +38,6 @@ public class EC2ServiceProviderDriver {
         props.load(new FileInputStream(configFilePath));
 
         service = new EC2ServiceProvider();
-        service.setProps(props);
 
         credential = new Credential();
         credential.setUsername(accessKeyId);
@@ -52,12 +51,15 @@ public class EC2ServiceProviderDriver {
         log.info("instance id: " + instanceId);
 
         InstanceDescription desc = null;
-        while (!service.isInstanceRunning(credential, instanceId)) {
-            desc = service.describeRunningInstance(credential, instanceId);
+        while (!service.isInstanceRunning(credential, instanceId, props)) {
+            desc =
+                    service.describeRunningInstance(credential,
+                                                    instanceId,
+                                                    props);
             log.info("instance state: " + desc.getState().name());
             Thread.sleep(10000);
         }
-        desc = service.describeRunningInstance(credential, instanceId);
+        desc = service.describeRunningInstance(credential, instanceId, props);
         assertNotNull(desc);
         log.info("instance state:     " + desc.getState().name());
         log.info("launch time: " + desc.getLaunchTime());
@@ -68,7 +70,7 @@ public class EC2ServiceProviderDriver {
         while (!done) {
             Thread.sleep(10000);
             try {
-                done = service.isWebappRunning(credential, instanceId);
+                done = service.isWebappRunning(credential, instanceId, props);
                 log.info("webapp state: " + done);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -81,7 +83,7 @@ public class EC2ServiceProviderDriver {
 
     public void testStop() throws Exception {
         log.info("stopping instance: " + instanceId);
-        service.stop(credential, instanceId);
+        service.stop(credential, instanceId, props);
     }
 
     private static void usageAndQuit() {

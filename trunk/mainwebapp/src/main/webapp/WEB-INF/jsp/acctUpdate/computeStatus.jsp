@@ -2,53 +2,69 @@
 
 <html>
 <head>
-<c:if test="${ !empty computeAcct}">
-	<c:if test="${computeAcct.instanceBooting}">
+<c:if test="${ !empty input.computeAcct}">
+	<c:if test="${input.computeAcct.instanceBooting}">
 		<title>Please wait... system is coming up.</title>
 		<meta http-equiv="refresh"
-			content="60;computeStatus.htm?computeAcctId=${computeAcct.id}&cmd=Refresh" />
+			content="20;computeStatus.htm?computeAcctId=${input.computeAcct.id}&cmd=Refresh&timer=${input.timer}" />
 	</c:if>
 </c:if>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style type="text/css">
-  p {font-style: italic}
+p {
+	font-style: italic
+}
 </style>
 </head>
 <body>
 
 <form method="POST" action="computeStatus.htm"><!-- Add credentials to command object -->
-<c:if test="${ !empty computeAcct.id}">
-	<input type="hidden" name="computeAcctId" value="${computeAcct.id}" />
-</c:if> 
+<c:if test="${ !empty input.computeAcct.id}">
+	<input type="hidden" name="computeAcctId"
+		value="${input.computeAcct.id}" />
+</c:if> <!-- Wait for boot of instance server to complete. --> <c:choose>
+	<c:when test="${input.computeAcct.instanceBooting}">
+		<h4>Please wait... system is coming up.</h4>
+		<br />
+		<br />
+		<h3><c:out value="${input.timer}" /></h3>
 
-<!-- Wait for boot of instance server to complete. --> 
-<c:choose>
-	<c:when test="${computeAcct.instanceBooting}">
-		<h3>Please wait... system is coming up.</h3>
 	</c:when>
 	<c:otherwise>
 
-		<h3>Compute account properties</h3>
+		<h2>Compute account properties</h2>
 		<table>
 
 
 			<tr>
 				<td>Instance id:</td>
 				<td><c:choose>
-					<c:when test="${ !empty compAcct.instanceId}">
-						<c:out value="${compAcct.instanceId}" />
+					<c:when test="${ !empty input.computeAcct.instanceId}">
+						<c:out value="${input.computeAcct.instanceId}" />
 					</c:when>
 					<c:otherwise>
 						<p>No running compute instance</p>
 					</c:otherwise>
 				</c:choose></td>
 			</tr>
+			<tr>
+				<td>Account namespace:</td>
+				<td><c:out value="${input.computeAcct.namespace}" /></td>
+			</tr>
+			<tr>
+				<td>Compute Provider:</td>
+				<td><c:out value="${input.computeAcct.computeProviderId}" /></td>
+			</tr>
+			<tr>
+				<td>Webapp name:</td>
+				<td><c:out value="${input.computeAcct.props.webappName}" /></td>
+			</tr>
 
 
 			<tr>
 				<td>Instance state:</td>
 				<td><c:choose>
-					<c:when test="${computeAcct.instanceRunning}">
+					<c:when test="${input.computeAcct.instanceRunning}">
 						<p>Running</p>
 						<td><input type="submit" class="button" name="cmd"
 							value="Stop" /></td>
@@ -66,9 +82,9 @@
 			</tr>
 
 		</table>
-		<c:if test="${computeAcct.webappRunning}">
-			<iframe src="${computeAcct.webappURL}" width="100%" height="500px"
-				frameborder="0">
+		<c:if test="${input.computeAcct.webappRunning}">
+			<iframe src="${input.computeAcct.webappURL}" width="100%"
+				height="500px" frameborder="0">
 			<p>Your browser does not support iframes.</p>
 			</iframe>
 		</c:if>

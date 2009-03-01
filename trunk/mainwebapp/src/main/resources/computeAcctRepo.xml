@@ -25,7 +25,7 @@
       <provider>amazon-ec2</provider>
       <signatureMethod>HmacSHA1</signatureMethod>
       <keyname>awoods-keypair</keyname>
-      <imageId>ami-92f314fb</imageId>
+      <imageId>ami-9ad532f3</imageId>
       <minInstanceCount>1</minInstanceCount>
       <maxInstanceCount>1</maxInstanceCount>
       <maxAsyncThreads>35</maxAsyncThreads>

@@ -19,7 +19,8 @@
 <table>
 	<c:forEach items="${custAcct.users}" var="user">
 		<tr>
-			<td class="user"><c:out value="${user.firstname}" /></td>
+			<td class="user"><c:out value="${user.lastname}" />, <c:out
+				value="${user.firstname}" /></td>
 		</tr>
 	</c:forEach>
 

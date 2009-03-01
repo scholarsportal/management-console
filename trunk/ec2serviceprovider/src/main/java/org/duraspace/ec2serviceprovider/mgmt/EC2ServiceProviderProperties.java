@@ -52,6 +52,22 @@ public class EC2ServiceProviderProperties
         this.setWebappName(props.getWebappName());
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("EC2Props[");
+        sb.append("\n\tprovider:" + provider);
+        sb.append("\n\tsignatureMethod:" + signatureMethod);
+        sb.append("\n\tkeyname:" + keyname);
+        sb.append("\n\timageId:" + imageId);
+        sb.append("\n\tminInstanceCount:" + minInstanceCount);
+        sb.append("\n\tmaxInstanceCount:" + maxInstanceCount);
+        sb.append("\n\tmaxAsyncThreads:" + maxAsyncThreads);
+        sb.append("\n\twebappProtocol:" + webappProtocol);
+        sb.append("\n\twebappPort:" + webappPort);
+        sb.append("\n\twebappName:" + webappName);
+        sb.append("]");
+        return sb.toString();
+    }
 
     public String getProvider() {
         return provider;

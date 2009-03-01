@@ -16,29 +16,37 @@ public class MockComputeProviderImpl
     private final String url = "http://www.instance.org";
 
     public InstanceDescription describeRunningInstance(Credential credential,
-                                                       String instanceId) {
+                                                       String instanceId,
+                                                       ServiceProviderProperties props) {
         return new MockInstanceDescription();
     }
 
-    public URL getWebappURL(Credential credential, String instanceId)
-            throws Exception {
-        if (!isInstanceRunning(credential, instanceId)) {
+    public URL getWebappURL(Credential credential,
+                            String instanceId,
+                            ServiceProviderProperties props) throws Exception {
+        if (!isInstanceRunning(credential, instanceId, props)) {
             throw new Exception("Mock web app is not running: no url!");
         }
         return new URL(url);
     }
 
-    public boolean isInstanceBooting(Credential credential, String instanceId)
+    public boolean isInstanceBooting(Credential credential,
+                                     String instanceId,
+                                     ServiceProviderProperties props)
             throws Exception {
         return false;
     }
 
-    public boolean isInstanceRunning(Credential credential, String instanceId)
+    public boolean isInstanceRunning(Credential credential,
+                                     String instanceId,
+                                     ServiceProviderProperties props)
             throws Exception {
         return this.instanceId.equals(instanceId);
     }
 
-    public boolean isWebappRunning(Credential credential, String instanceId)
+    public boolean isWebappRunning(Credential credential,
+                                   String instanceId,
+                                   ServiceProviderProperties props)
             throws Exception {
         return this.instanceId.equals(instanceId);
     }
@@ -48,7 +56,9 @@ public class MockComputeProviderImpl
         return instanceId;
     }
 
-    public void stop(Credential credential, String instanceId) throws Exception {
+    public void stop(Credential credential,
+                     String instanceId,
+                     ServiceProviderProperties props) throws Exception {
     }
 
 }
