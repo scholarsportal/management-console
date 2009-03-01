@@ -37,9 +37,13 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @throws Exception
      */
-    public void stop(Credential credential, String instanceId) throws Exception;
+    public void stop(Credential credential,
+                     String instanceId,
+                     ServiceProviderProperties props) throws Exception;
 
     /**
      * This method returns true if the instance is successfully running.
@@ -47,9 +51,13 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @return
      */
-    public boolean isInstanceRunning(Credential credential, String instanceId)
+    public boolean isInstanceRunning(Credential credential,
+                                     String instanceId,
+                                     ServiceProviderProperties props)
             throws Exception;
 
     /**
@@ -59,9 +67,13 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @return
      */
-    public boolean isWebappRunning(Credential credential, String instanceId)
+    public boolean isWebappRunning(Credential credential,
+                                   String instanceId,
+                                   ServiceProviderProperties props)
             throws Exception;
 
     /**
@@ -71,9 +83,13 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @return
      */
-    public boolean isInstanceBooting(Credential credential, String instanceId)
+    public boolean isInstanceBooting(Credential credential,
+                                     String instanceId,
+                                     ServiceProviderProperties props)
             throws Exception;
 
     /**
@@ -83,11 +99,14 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @return
      * @throws Exception
      */
-    public URL getWebappURL(Credential credential, String instanceId)
-            throws Exception;
+    public URL getWebappURL(Credential credential,
+                            String instanceId,
+                            ServiceProviderProperties props) throws Exception;
 
     /**
      * This method retrieves description of initiated instance.
@@ -95,9 +114,12 @@ public interface ServiceProvider {
      * @param credential
      *        Compute-provider credentials
      * @param instanceId
+     * @param props
+     *        Provider-specific properties
      * @return
      */
     public InstanceDescription describeRunningInstance(Credential credential,
-                                                       String instanceId);
+                                                       String instanceId,
+                                                       ServiceProviderProperties props);
 
 }

@@ -7,6 +7,8 @@ public class ComputeStatusCmd {
 
     private String computeAcctId;
 
+    private String timer;
+
     public String getCmd() {
         return cmd;
     }
@@ -21,6 +23,14 @@ public class ComputeStatusCmd {
 
     public void setComputeAcctId(String computeAcctId) {
         this.computeAcctId = computeAcctId;
+    }
+
+    public String getTimer() {
+        return timer;
+    }
+
+    public void setTimer(String timer) {
+        this.timer = timer;
     }
 
 }
