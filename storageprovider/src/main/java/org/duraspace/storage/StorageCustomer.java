@@ -1,12 +1,16 @@
 package org.duraspace.storage;
 
+import java.net.URL;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
-import org.duraspace.common.web.RestHttpHelper;
-import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.storage.StorageAccount.AccountType;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
 /**
  * Provides a starting point for dealing with a customer's
@@ -16,59 +20,64 @@ import org.duraspace.storage.StorageAccount.AccountType;
  */
 public class StorageCustomer {
 
+    protected final Logger log = Logger.getLogger(getClass());
+
     private String customerId = null;
     private String primaryStorageProviderId = null;
     private HashMap<String, StorageAccount> storageAccounts = null;
 
-    public StorageCustomer(String customerId)
+    public StorageCustomer(String customerId, String host, int port)
     throws StorageException {
         this.customerId = customerId;
         storageAccounts = new HashMap<String, StorageAccount>();
 
-        /* TODO:
-         * - Get a list of the storage accounts for this customer from DuraSpace.org
-         * - Parse XML response and create StorageAccount objects
-         * - Set the primary storage provider id
-         */
-
-        // For now, create a storage account for testing
-        String accountId = "duraspace-test-s3-account";
-        primaryStorageProviderId = accountId;
-
-        RestHttpHelper restHelper = new RestHttpHelper();
-        String url = "http://localhost:8080/awsCredentials";
-
-        String accessKey = null;
-        String secretKey = null;
         try {
-            HttpResponse response = restHelper.get(url);
-            if(404 == response.getStatusCode()) {
-                throw new Exception();
-            }
+            URL url = new URL("http", host, port, "/mainwebapp/storage/" + customerId);
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(url);
+            Element accounts = doc.getRootElement();
 
-            String credentials = response.getResponseBody();
-            credentials = credentials.trim();
-            String[] credentialParts = credentials.split(":");
-            if(credentialParts.length > 2) {
-                throw new Exception();
-            }
+            Iterator<?> accountList = accounts.getChildren().iterator();
+            while(accountList.hasNext()) {
+                Element account = (Element)accountList.next();
+                String accountId = account.getChildText("storageProviderId");
+                // TODO: Storage provider type should be in a <storageProviderType> tag
+                String type = account.getChildText("storageProviderId");
+                Element credentials = account.getChild("storageProviderCred");
+                String username = credentials.getChildText("username");
+                String password = credentials.getChildText("password");
 
-            accessKey = credentialParts[0];
-            secretKey = credentialParts[1];
+                StorageAccount storageAccount = null;
+                if(type.equals("amazon-s3")) {
+                    storageAccount =
+                        new StorageAccount(accountId,
+                                           username,
+                                           password,
+                                           AccountType.S3);
+                    storageAccounts.put(accountId, storageAccount);
+                } else if(type.equals("ms-azure")) {
+                    storageAccount =
+                        new StorageAccount(accountId,
+                                           username,
+                                           password,
+                                           AccountType.Azure);
+                    storageAccounts.put(accountId, storageAccount);
+                } else {
+                    log.warn("While creating storage account list for customer '" +
+                             customerId + "' skipping storage account with accountId '" +
+                             accountId + "' due to an unsupported type '" + type + "'");
+                }
+
+                String primary = account.getAttributeValue("isPrimary");
+                if(primary.equalsIgnoreCase("true")) {
+                    primaryStorageProviderId = accountId;
+                }
+            }
         } catch (Exception e) {
-            String error =
-                "Unable to retrieve credentials for Amazon S3 Account. " +
-            	"While the integration between the DuraSpace instance and " +
-            	"the DuraSpace.org site is in work you must add a file that " +
-            	"is accessable at this URL: http://localhost:8080/awsCredentials. " +
-            	"This file should include on a single line: Your Amazon Access Key ID, " +
-            	"followed by a colon, followed by your Amazon Secret Access Key.";
-            throw new StorageException(error);
+            String error = "Unable to retrieve storage account information for '" +
+                           customerId + "' due to error" + e.getMessage();
+            throw new StorageException(error, e);
         }
-
-        StorageAccount storageAccount =
-            new StorageAccount(accountId, accessKey, secretKey, AccountType.S3);
-        storageAccounts.put(accountId, storageAccount);
     }
 
     public String getCustomerId() {

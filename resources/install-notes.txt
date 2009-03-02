@@ -37,12 +37,8 @@ To download source jars for all dependent libraries run:
 mvn dependency:sources
 
 ** NOTE **
-While the integration between the DuraSpace instance and the DuraSpace.org site is in work
-there is no good way to retrieve credentials to access Amazon S3. To get around this, you
-must add a file that is accessable at this URL: http://localhost:8080/awsCredentials.
-This file should include, on a single line with no spaces: Your Amazon Access Key ID followed 
-by a colon, followed by your Amazon Secret Access Key. Using Tomcat, you can place this file (named
-awsCredentials) in the webapps/ROOT directory and it will be served at the URL listed above.
-If this file is not available, the integration tests for instancewebapp will fail.
+Until a database is consistenly available for DuraSpace, you'll need to follow the instructions
+in the build-notes file for providing Amazon credentials via the command line in order for the
+integration tests in the instancewebapp to pass.
 
 

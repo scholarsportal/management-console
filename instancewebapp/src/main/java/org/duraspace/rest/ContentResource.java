@@ -148,11 +148,11 @@ public class ContentResource {
      * @return success
      */
     public static void addContent(String customerID,
-                                     String spaceID,
-                                     String contentID,
-                                     InputStream content,
-                                     String contentMimeType,
-                                     int contentSize)
+                                  String spaceID,
+                                  String contentID,
+                                  InputStream content,
+                                  String contentMimeType,
+                                  int contentSize)
     throws RestResourceException {
         // TODO: Check user permissions
 
@@ -182,8 +182,8 @@ public class ContentResource {
      * @return success
      */
     public static void deleteContent(String customerID,
-                                        String spaceID,
-                                        String contentID)
+                                     String spaceID,
+                                     String contentID)
     throws RestResourceException {
         // TODO: Check user permissions
 

@@ -30,13 +30,18 @@ public class TestContentRest
     @Override
     @Before
     protected void setUp() throws Exception {
+        // Initialize the Instance
+        String url = baseUrl + "/initialize";
+        String formParams = "host=localhost&port=8080";
+        HttpResponse response = restHelper.post(url, formParams, true);
+        assertTrue(response.getStatusCode() == 200);
+
         // Add space1
-        HttpResponse response =
-            RestTestHelper.addSpace(baseUrl, "customer1", "space1");
+        response = RestTestHelper.addSpace(baseUrl, "owner0", "space1");
         assertTrue(response.getStatusCode() == 201);
 
         // Add content1 to space1
-        String url = baseUrl + "/content/customer1/space1/content1";
+        url = baseUrl + "/content/owner0/space1/content1";
         response = restHelper.put(url, CONTENT, false);
         assertTrue(response.getStatusCode() == 201);
     }
@@ -45,7 +50,7 @@ public class TestContentRest
     @After
     protected void tearDown() throws Exception {
         // Delete content1 from space1
-        String url = baseUrl + "/content/customer1/space1/content1";
+        String url = baseUrl + "/content/owner0/space1/content1";
         HttpResponse response = restHelper.delete(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -56,13 +61,13 @@ public class TestContentRest
 
         // Delete space1
         response =
-            RestTestHelper.deleteSpace(baseUrl, "customer1", "space1");
+            RestTestHelper.deleteSpace(baseUrl, "owner0", "space1");
         assertTrue(response.getStatusCode() == 200);
     }
 
     @Test
     public void testGetContent() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1";
+        String url = baseUrl + "/content/owner0/space1/content1";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -73,7 +78,7 @@ public class TestContentRest
 
     @Test
     public void testGetContentProperties() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1?properties=true";
+        String url = baseUrl + "/content/owner0/space1/content1?properties=true";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -85,7 +90,7 @@ public class TestContentRest
 
     @Test
     public void testUpdateContentProperties() throws Exception {
-        String url = baseUrl + "/content/customer1/space1/content1";
+        String url = baseUrl + "/content/owner0/space1/content1";
         String formParams = "contentName=Test+Content&contentMimeType=text/plain";
         HttpResponse response = restHelper.post(url, formParams, true);
 
@@ -96,7 +101,7 @@ public class TestContentRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/content/customer1/space1/content1?properties=true";
+        url = baseUrl + "/content/owner0/space1/content1?properties=true";
         response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
