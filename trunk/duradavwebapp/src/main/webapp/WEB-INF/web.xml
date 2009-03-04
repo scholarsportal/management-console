@@ -6,12 +6,12 @@
          http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <servlet>
-    <servlet-name>DAVServlet</servlet-name>
-    <servlet-class>org.duraspace.duradav.DAVServlet</servlet-class>
+    <servlet-name>WebdavServlet</servlet-name>
+    <servlet-class>org.duraspace.duradav.WebdavServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>DAVServlet</servlet-name>
+    <servlet-name>WebdavServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 

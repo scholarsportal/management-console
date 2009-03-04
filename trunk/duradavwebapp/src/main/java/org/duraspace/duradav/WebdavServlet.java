@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class DAVServlet extends HttpServlet {
+public class WebdavServlet extends HttpServlet {
 
     public static final long serialVersionUID = 1L;
 
