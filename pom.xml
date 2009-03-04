@@ -56,6 +56,7 @@
       <module>s3storageprovider</module>
       <module>mainwebapp</module>
       <module>instancewebapp</module> 
+      <module>duradavwebapp</module> 
   </modules>
 
   <profiles>
