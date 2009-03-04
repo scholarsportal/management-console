@@ -7,9 +7,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class WebdavServlet extends HttpServlet {
 
     public static final long serialVersionUID = 1L;
+
+    private static Logger logger = LoggerFactory.getLogger(WebdavServlet.class);
 
     private WebdavHandler handler;
 
@@ -49,7 +54,8 @@ public class WebdavServlet extends HttpServlet {
             } else if (method.equals("PROPPATCH")) {
                 handler.handlePropPatch(req, resp);
             } else {
-                throw new WebdavException("Unrecognized method: " + method);
+                throw new WebdavException("Unrecognized method: " + method,
+                                          HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (WebdavException e) {
             handleError(e, resp);
@@ -60,22 +66,28 @@ public class WebdavServlet extends HttpServlet {
 
     private static void handleError(WebdavException error,
                                     HttpServletResponse resp) {
-        // TODO: log as INFO and send appropriate response
+        String logMessage = "Request failed [" + error.getStatusCode() + "] - "
+            + error.getMessage();
+        if (logger.isDebugEnabled()) {
+            logger.debug(logMessage, error);
+        } else {
+            logger.error(logMessage);
+        }
         try {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, error.getMessage());
+            resp.sendError(error.getStatusCode(), error.getMessage());
         } catch (IOException e) {
-            // TODO: log as ERROR
+            logger.error("IO error while sending webdav failure reponse", e);
         }
     }
 
     private static void handleFault(Throwable fault,
                                     HttpServletResponse resp) {
-        // TODO: log as ERROR and send appropriate response
+        logger.error("Fault while servicing webdav request", fault);
         try {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                            fault.getMessage());
         } catch (IOException e) {
-            // TODO: log as ERROR
+            logger.error("IO error while sending fault reponse", e);
         }
     }
 
