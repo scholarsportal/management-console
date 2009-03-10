@@ -1,5 +1,6 @@
 package org.duraspace.duradav;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -24,7 +25,7 @@ public class WebdavServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // TODO: init handler based on config
-        handler = new DuraspaceWebdavHandler();
+        handler = new DuraspaceWebdavHandler(new File("/tmp/duradav"));
     }
 
     /**
