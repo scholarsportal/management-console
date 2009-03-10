@@ -22,6 +22,8 @@ public class StorageAcct {
 
     private String storageProviderId;
 
+    private String storageProviderType;
+
     private Credential storageProviderCred;
 
     public boolean hasOwner(String customerId) {
@@ -77,6 +79,16 @@ public class StorageAcct {
 
     public void setStorageProviderCred(Credential storageProviderCred) {
         this.storageProviderCred = storageProviderCred;
+    }
+
+
+    public String getStorageProviderType() {
+        return storageProviderType;
+    }
+
+
+    public void setStorageProviderType(String storageProviderType) {
+        this.storageProviderType = storageProviderType;
     }
 
 }

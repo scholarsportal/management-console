@@ -40,9 +40,8 @@ public class ComputeStatusController
         log.info("user cmd       : " + params.getCmd());
         log.info("compute acct id: " + computeAcctId);
 
-        ComputeAcctWrapper inputToView = new ComputeAcctWrapper();
-        inputToView.setComputeAcct(executeCommand(params.getCmd(),
-                                                  computeAcctId));
+        ComputeAcctWrapper inputToView =
+                executeCommand(params.getCmd(), computeAcctId);
         inputToView.setTimer(timer);
 
         return new ModelAndView("acctUpdate/computeStatus",
@@ -50,20 +49,29 @@ public class ComputeStatusController
                                 inputToView);
     }
 
-    private ComputeAcct executeCommand(String cmd, String computeAcctId)
+    private ComputeAcctWrapper executeCommand(String cmd, String computeAcctId)
             throws Exception {
+
         ComputeAcct acct = null;
+        ComputeAcctWrapper wrapper = new ComputeAcctWrapper();
+
         if (cmd.equals("Start")) {
             log.info("Starting instance...");
             acct = computeManager.startComputeInstance(computeAcctId);
         } else if (cmd.equals("Stop")) {
             log.info("Stopping instance...");
             acct = computeManager.stopComputeInstance(computeAcctId);
+        } else if (cmd.equals("View Compute Console")) {
+            log.info("Initializing instance...");
+            acct = computeManager.initializeComputeApp(computeAcctId);
+            wrapper.setComputeAppInitialized(true);
         } else {
             log.info("Refreshing instance...");
             acct = computeManager.findComputeAccount(computeAcctId);
         }
-        return acct;
+
+        wrapper.setComputeAcct(acct);
+        return wrapper;
     }
 
     private String calculateTimer(String arg) {

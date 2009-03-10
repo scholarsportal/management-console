@@ -9,7 +9,6 @@ import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
 import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
-import org.springframework.web.context.ContextLoader;
 
 public class ComputeAcct {
 
@@ -22,8 +21,6 @@ public class ComputeAcct {
     private String namespace;
 
     private String computeProviderId;
-
-    private ComputeProviderFactory computeProviderFactory;
 
     private Credential computeCredential;
 
@@ -189,25 +186,6 @@ public class ComputeAcct {
 
     private ServiceProvider getServiceProvider() throws Exception {
         return ComputeProviderFactory.getComputeProvider(computeProviderId);
-    }
-
-    public ComputeProviderFactory getComputeProviderFactory() {
-        if (computeProviderFactory == null) {
-            System.err
-                    .println("Trying to load ComputeAcct.computeProviderFactory from Spring context.");
-
-            computeProviderFactory =
-                    (ComputeProviderFactory) ContextLoader
-                            .getCurrentWebApplicationContext()
-                            .getBean("computeProviderFactory");
-
-            System.err.println("...loaded: " + computeProviderFactory == null);
-        }
-        return computeProviderFactory;
-    }
-
-    public void setComputeProviderFactory(ComputeProviderFactory computeProviderFactory) {
-        this.computeProviderFactory = computeProviderFactory;
     }
 
     public Credential getComputeCredential() {

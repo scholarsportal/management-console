@@ -45,9 +45,13 @@ public class StorageAcctRepositoryTest {
 
     private final String passwordC = "passwordC";
 
-    private final String providerIdX = "amazon-s3";
+    private final String providerIdX = "amazon-s3-id0";
 
-    private final String providerIdZ = "ms-azure";
+    private final String providerIdZ = "ms-azure-id0";
+
+    private final String providerTypeX = "amazon-s3";
+
+    private final String providerTypeZ = "ms-azure";
 
     @Before
     public void setUp() throws Exception {
@@ -87,6 +91,7 @@ public class StorageAcctRepositoryTest {
         acctA.setPrimary(true);
         acctA.setStorageProviderCred(credA);
         acctA.setStorageProviderId(providerIdX);
+        acctA.setStorageProviderType(providerTypeX);
         accts.add(acctA);
 
         StorageAcct acctB = new StorageAcct();
@@ -94,6 +99,7 @@ public class StorageAcctRepositoryTest {
         acctB.setPrimary(false);
         acctB.setStorageProviderCred(credB);
         acctB.setStorageProviderId(providerIdZ);
+        acctB.setStorageProviderType(providerTypeZ);
         accts.add(acctB);
 
         StorageAcct acctC = new StorageAcct();
@@ -101,6 +107,7 @@ public class StorageAcctRepositoryTest {
         acctC.setPrimary(true);
         acctC.setStorageProviderCred(credC);
         acctC.setStorageProviderId(providerIdX);
+        acctC.setStorageProviderType(providerTypeX);
         accts.add(acctC);
     }
 
@@ -118,10 +125,12 @@ public class StorageAcctRepositoryTest {
 
             if (acct.getIsPrimary()) {
                 assertTrue(providerIdX.equals(acct.getStorageProviderId()));
+                assertTrue(providerTypeX.equals(acct.getStorageProviderType()));
                 assertTrue(usernameA.equals(cred.getUsername()));
                 assertTrue(passwordA.equals(cred.getPassword()));
             } else {
                 assertTrue(providerIdZ.equals(acct.getStorageProviderId()));
+                assertTrue(providerTypeZ.equals(acct.getStorageProviderType()));
                 assertTrue(usernameB.equals(cred.getUsername()));
                 assertTrue(passwordB.equals(cred.getPassword()));
             }

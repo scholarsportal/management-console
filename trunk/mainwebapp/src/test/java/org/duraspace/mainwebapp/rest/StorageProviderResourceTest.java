@@ -55,7 +55,8 @@ public class StorageProviderResourceTest
         StringBuilder sb = new StringBuilder();
         sb.append("<storageProviderAccounts>");
         sb.append("<storageAcct ownerId=\"customer1\" isPrimary=\"true\">");
-        sb.append("<storageProviderId>amazon-s3</storageProviderId>");
+        sb.append("<storageProviderId>amazon-s3-id0</storageProviderId>");
+        sb.append("<storageProviderType>amazon-s3</storageProviderType>");
         sb.append("<storageProviderCred>");
         sb.append("<username>usernameA</username>");
         sb.append("<password>passwordA</password>");
