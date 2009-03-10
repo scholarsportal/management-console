@@ -1,9 +1,9 @@
 
 package org.duraspace.common.util;
 
-import java.io.InputStream;
-
 import java.util.Properties;
+
+import org.apache.commons.io.input.AutoCloseInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -30,12 +30,12 @@ public class ApplicationConfig {
 
     protected static Properties getProps(String resourceName) throws Exception {
         Properties props = new Properties();
-        InputStream in =
-                ApplicationConfig.class.getClassLoader()
-                        .getResourceAsStream(resourceName);
-        if (in != null) {
+        AutoCloseInputStream in =
+                new AutoCloseInputStream(ApplicationConfig.class
+                        .getClassLoader().getResourceAsStream(resourceName));
+        try {
             props.load(in);
-        } else {
+        } catch (Exception e) {
             log.warn("Unable to find resource: '" + resourceName + "'");
         }
         return props;

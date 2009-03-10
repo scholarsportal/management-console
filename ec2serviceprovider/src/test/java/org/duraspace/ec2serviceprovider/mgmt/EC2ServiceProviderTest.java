@@ -14,6 +14,8 @@ import com.amazonaws.ec2.model.RunInstancesResponse;
 import com.amazonaws.ec2.model.RunInstancesResult;
 import com.amazonaws.ec2.model.RunningInstance;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +69,8 @@ public class EC2ServiceProviderTest {
         credential.setPassword(password);
 
         props = new EC2ServiceProviderProperties();
-        props.load(new FileInputStream(configFilePath));
+        props
+                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
         serviceProvider = new EC2ServiceProvider();
     }
 

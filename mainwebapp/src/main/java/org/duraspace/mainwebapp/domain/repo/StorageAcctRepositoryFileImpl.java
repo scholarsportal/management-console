@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,6 +14,8 @@ import java.util.Properties;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import org.apache.commons.io.input.AutoCloseInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -73,13 +74,13 @@ public class StorageAcctRepositoryFileImpl
     private List<StorageAcct> getStorageAccts() {
         // Load storage accounts if this is the first time used.
         if (storageAccts == null) {
-            InputStream in =
-                    this.getClass().getClassLoader()
-                            .getResourceAsStream(repoLocation);
-            if (in != null) {
+            AutoCloseInputStream in =
+                    new AutoCloseInputStream(this.getClass().getClassLoader()
+                            .getResourceAsStream(repoLocation));
+            try {
                 XStream xstream = getXStream();
                 storageAccts = (List<StorageAcct>) xstream.fromXML(in);
-            } else {
+            } catch (Exception e) {
                 log.warn("Unable to find repo at: '" + repoLocation + "'");
             }
         }
