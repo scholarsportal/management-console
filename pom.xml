@@ -70,6 +70,7 @@
               </property>
           </activation>
           <properties>
+              <tomcat.port>${tomcat.port.default}</tomcat.port>
               <log.dir>duraspace.log</log.dir>
               <unitTests>**/*Test.class</unitTests>
               <integrationTests>**/Test*.class</integrationTests>
@@ -86,7 +87,7 @@
               </property>
           </activation>
           <properties>
-
+            <tomcat.port>${tomcat.port.default}</tomcat.port>
             <log.dir>duraspace.log</log.dir>
             <unitTests>**/*Test.class</unitTests>
             <integrationTests>**/Test*.class</integrationTests>
@@ -111,6 +112,7 @@
   </profiles>
 
   <properties>
+      <tomcat.port.default>8080</tomcat.port.default>
       <test.jdbc.url>${jdbc.url}</test.jdbc.url>
       <test.jdbc.username>${jdbc.username}</test.jdbc.username>
       <test.jdbc.password>${jdbc.password}</test.jdbc.password>

@@ -51,6 +51,20 @@ public interface ComputeManager {
             throws Exception;
 
     /**
+     * This method passes parameters to the compute instance needed for proper
+     * functioning.
+     *
+     * <pre>
+     * These parameters include the host and port of the main-duraspace
+     * web application.
+     * </pre>
+     *
+     * @param computeAcctId
+     * @return ComputeAcct that was initialized
+     */
+    public abstract ComputeAcct initializeComputeApp(String computeAcctId);
+
+    /**
      * This method terminates the compute instance associated with the provided
      * Duraspace credentials.
      *

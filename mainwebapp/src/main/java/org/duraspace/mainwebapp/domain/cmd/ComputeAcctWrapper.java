@@ -9,6 +9,8 @@ public class ComputeAcctWrapper {
 
     private String timer;
 
+    private boolean isComputeAppInitialized;
+
     public String getTimer() {
         return timer;
     }
@@ -23,6 +25,14 @@ public class ComputeAcctWrapper {
 
     public void setComputeAcct(ComputeAcct computeAcct) {
         this.computeAcct = computeAcct;
+    }
+
+    public boolean isComputeAppInitialized() {
+        return isComputeAppInitialized;
+    }
+
+    public void setComputeAppInitialized(boolean isComputeAppInitialized) {
+        this.isComputeAppInitialized = isComputeAppInitialized;
     }
 
 }

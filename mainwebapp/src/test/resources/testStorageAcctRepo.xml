@@ -1,27 +1,31 @@
 <storageAccts>
   <storageAcct ownerId="owner0" isPrimary="false">
-    <storageProviderId>ms-azure</storageProviderId>
+    <storageProviderId>ms-azure-id0</storageProviderId>
+    <storageProviderType>ms-azure</storageProviderType>
     <storageProviderCred>
       <username>usernameB</username>
       <password>passwordB</password>
     </storageProviderCred>
   </storageAcct>
   <storageAcct ownerId="owner1" isPrimary="true">
-    <storageProviderId>amazon-s3</storageProviderId>
+    <storageProviderId>amazon-s3-id0</storageProviderId>
+    <storageProviderType>amazon-s3</storageProviderType>
     <storageProviderCred>
       <username>usernameC</username>
       <password>passwordC</password>
     </storageProviderCred>
   </storageAcct>
   <storageAcct ownerId="owner0" isPrimary="true">
-    <storageProviderId>amazon-s3</storageProviderId>
+    <storageProviderId>amazon-s3-id0</storageProviderId>
+    <storageProviderType>amazon-s3</storageProviderType>
     <storageProviderCred>
       <username>usernameA</username>
       <password>passwordA</password>
     </storageProviderCred>
   </storageAcct>
   <storageAcct ownerId="customer1" isPrimary="true">
-    <storageProviderId>amazon-s3</storageProviderId>
+    <storageProviderId>amazon-s3-id0</storageProviderId>
+    <storageProviderType>amazon-s3</storageProviderType>
     <storageProviderCred>
       <username>usernameA</username>
       <password>passwordA</password>

@@ -83,10 +83,18 @@ p {
 
 		</table>
 		<c:if test="${input.computeAcct.webappRunning}">
-			<iframe src="${input.computeAcct.webappURL}" width="100%"
-				height="500px" frameborder="0">
-			<p>Your browser does not support iframes.</p>
-			</iframe>
+			<c:choose>
+				<c:when test="${ !input.computeAppInitialized}">
+					<input type="submit" class="button" name="cmd"
+						value="View Compute Console" />
+				</c:when>
+				<c:otherwise>
+					<iframe src="${input.computeAcct.webappURL}" width="100%"
+						height="500px" frameborder="0">
+					<p>Your browser does not support iframes.</p>
+					</iframe>
+				</c:otherwise>
+			</c:choose>
 		</c:if>
 	</c:otherwise>
 </c:choose></form>
