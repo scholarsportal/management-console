@@ -3,6 +3,8 @@ package org.duraspace.ec2serviceprovider.mgmt;
 
 import java.io.FileInputStream;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
+
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
@@ -35,7 +37,8 @@ public class EC2ServiceProviderDriver {
 
     public void setUp() throws Exception {
         props = new EC2ServiceProviderProperties();
-        props.load(new FileInputStream(configFilePath));
+        props
+                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
 
         service = new EC2ServiceProvider();
 

@@ -1,9 +1,12 @@
+
 package org.duraspace.ec2serviceprovider.mgmt;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.io.input.AutoCloseInputStream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,20 +15,30 @@ import org.junit.Test;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-
 public class EC2ServiceProviderPropertiesTest {
 
     private EC2ServiceProviderProperties props;
+
     private String content;
+
     private final String provider = "test-amazon-provider";
+
     private final String signatureMethod = "test-signature-method";
+
     private final String keyname = "test-keypair";
+
     private final String imageId = "test-image-id";
+
     private final int minCount = 3;
+
     private final int maxCount = 4;
+
     private final int maxAsyncThreads = 123;
+
     private final String protocol = "http";
+
     private final int port = 8080;
+
     private final String appname = "test-app-name";
 
     @Before
@@ -46,12 +59,12 @@ public class EC2ServiceProviderPropertiesTest {
         populateContent();
     }
 
-    private void populateContent() throws IOException
-    {
+    private void populateContent() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         props.store(out);
         out.flush();
         content = out.toString();
+        out.close();
     }
 
     @After
@@ -60,10 +73,8 @@ public class EC2ServiceProviderPropertiesTest {
         content = null;
     }
 
-
     @Test
-    public void testStore()
-    {
+    public void testStore() {
         assertNotNull(content);
         assertTrue(content.indexOf(provider) > 0);
         assertTrue(content.indexOf(signatureMethod) > 0);
@@ -78,8 +89,7 @@ public class EC2ServiceProviderPropertiesTest {
     }
 
     @Test
-    public void testLoad()
-    {
+    public void testLoad() {
         assertNotNull(content);
         EC2ServiceProviderProperties p = new EC2ServiceProviderProperties();
         p.load(getContentAsStream());
@@ -121,11 +131,11 @@ public class EC2ServiceProviderPropertiesTest {
 
     }
 
-    private InputStream getContentAsStream()
-    {
-        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
+    private InputStream getContentAsStream() {
+        AutoCloseInputStream in =
+                new AutoCloseInputStream(new ByteArrayInputStream(content
+                        .getBytes()));
         return in;
     }
-
 
 }

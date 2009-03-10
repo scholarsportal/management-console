@@ -17,6 +17,8 @@ import com.amazonaws.ec2.model.DescribeInstancesResult;
 import com.amazonaws.ec2.model.Reservation;
 import com.amazonaws.ec2.model.RunningInstance;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +78,8 @@ public class EC2InstanceDescriptionTest {
     public void setUp() throws Exception {
         buildMockObjects();
         props = new EC2ServiceProviderProperties();
-        props.load(new FileInputStream(configFilePath));
+        props
+                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
         e = new AmazonEC2Exception(exceptionMsg);
     }
 
