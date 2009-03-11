@@ -1,4 +1,4 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.core;
 
 import java.util.Date;
 

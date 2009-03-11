@@ -1,4 +1,4 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.core;
 
 /**
  * The location of a file or directory.
@@ -14,7 +14,7 @@ package org.duraspace.duradav;
  *   <li> /dir1/file2.txt</li>
  * </ul>
  */
-class Path {
+public class Path {
 
     public static final Path ROOT = new Path("/");
 

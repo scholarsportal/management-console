@@ -1,4 +1,4 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.handler;
 
 import java.io.Closeable;
 import java.io.File;
@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.duraspace.duradav.core.Body;
+import org.duraspace.duradav.core.Content;
+import org.duraspace.duradav.core.Path;
+import org.duraspace.duradav.core.WebdavException;
 
 /**
  * Initial impl just writes to local filesystem.
