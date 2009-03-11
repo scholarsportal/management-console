@@ -1,36 +1,48 @@
 package org.duraspace.duradav.core;
 
 /**
- * Signals a webdav error.
+ * Signals an error defined by the WebDAV protocol.
  */
-public class WebdavException
+public abstract class WebdavException
         extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    private final Path path;
+
     private final int statusCode;
 
     /**
-     * Creates an instance with a message and http status code.
+     * Creates an instance.
      *
-     * @param message the message
+     * @param path the path of the resource in question
      * @param statusCode the status code
      */
-    public WebdavException(String message, int statusCode) {
-        super(message);
+    public WebdavException(Path path, int statusCode) {
+        super(path.toString());
+        this.path = path;
         this.statusCode = statusCode;
     }
 
     /**
-     * Creates an instance with a message, http status code, and cause.
+     * Creates an instance with details.
      *
-     * @param message the message
+     * @param path the path of the resource in question
      * @param statusCode the status code
-     * @param cause the underlying cause of this exception
      */
-    public WebdavException(String message, int statusCode, Throwable cause) {
-        super(message, cause);
+    public WebdavException(Path path, int statusCode, String details) {
+        super(path.toString() + " (" + details + ")");
+        this.path = path;
         this.statusCode = statusCode;
+    }
+
+    /**
+     * Gets the path of the resource in question.
+     *
+     * @return the path.
+     */
+    public Path getPath() {
+        return path;
     }
 
     /**
@@ -41,4 +53,5 @@ public class WebdavException
     public int getStatusCode() {
         return statusCode;
     }
+
 }
