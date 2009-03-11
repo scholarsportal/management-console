@@ -1,4 +1,4 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.servlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.duraspace.duradav.core.WebdavException;
+import org.duraspace.duradav.handler.DuraspaceWebdavHandler;
+import org.duraspace.duradav.handler.WebdavHandler;
 
 public class WebdavServlet extends HttpServlet {
 

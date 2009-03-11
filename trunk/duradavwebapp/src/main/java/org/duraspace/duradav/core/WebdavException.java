@@ -1,4 +1,4 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.core;
 
 /**
  * Signals a webdav error.

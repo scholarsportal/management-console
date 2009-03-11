@@ -1,7 +1,9 @@
-package org.duraspace.duradav;
+package org.duraspace.duradav.handler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.duraspace.duradav.core.WebdavException;
 
 public interface WebdavHandler {
 
