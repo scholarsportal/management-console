@@ -14,42 +14,43 @@ package org.duraspace.duradav.core;
  *   <li> /dir1/file2.txt</li>
  * </ul>
  */
-public class Path {
+public abstract class Path {
 
-    public static final Path ROOT = new Path("/");
+    public static final CollectionPath ROOT = new CollectionPath("/");
 
     private final String string;
 
-    private Path parent;
+    private final boolean isCollection;
 
-    private Path(String string) {
-        this.string = string;
+    private CollectionPath parent;
+
+    protected Path(String string, boolean isCollection) {
+        this.string = string.trim();
+        this.isCollection = isCollection;
+        validate();
     }
 
-    public static Path fromString(String string) {
-        if (string == null) {
-            return ROOT;
+    private void validate() {
+        if (string.length() == 0) {
+            throw new IllegalArgumentException("Path cannot be empty");
         }
-        String trimmed = string.trim();
-        if (trimmed.length() == 0 || trimmed.equals("/")) {
-            return ROOT;
+        if (!string.startsWith("/")) {
+            throw new IllegalArgumentException("Path must begin with '/'");
         }
-        if (trimmed.startsWith("/")) {
-            return new Path(trimmed);
+        if (string.endsWith("/")) {
+            if (!isCollection) {
+                throw new IllegalArgumentException("Content path cannot end"
+                                                   + " with '/'");
+            }
+        } else {
+            if (isCollection) {
+                throw new IllegalArgumentException("Collection path must end"
+                                                   + " with '/'");
+            }
         }
-        throw new IllegalArgumentException(
-                "Path string (" + trimmed + ") does not begin with '/'");
     }
 
-    public boolean denotesDir() {
-        return string.endsWith("/");
-    }
-
-    public boolean denotesFile() {
-        return !denotesDir();
-    }
-
-    public Path getParent() {
+    public CollectionPath getParent() {
         if (parent == null) {
             setParent();
         }
@@ -73,13 +74,13 @@ public class Path {
     }
 
     private void setParent() {
-        if (this == ROOT) return;
+        if (equals(ROOT)) return;
         String temp = toString();
-        if (denotesDir()) {
+        if (isCollection) {
             temp = temp.substring(0, temp.length() - 1);
         }
         temp = temp.substring(0, temp.lastIndexOf('/') + 1);
-        parent = Path.fromString(temp);
+        parent = new CollectionPath(temp);
     }
 
 }

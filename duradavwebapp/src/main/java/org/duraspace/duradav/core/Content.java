@@ -2,7 +2,9 @@ package org.duraspace.duradav.core;
 
 import java.util.Date;
 
-public class Content {
+public class Content extends Resource {
+
+    private final ContentPath contentPath;
 
     private final Body body;
 
@@ -10,16 +12,20 @@ public class Content {
 
     private final String mediaType;
 
-    private final Date modifiedDate;
-
-    public Content(Body body,
+    public Content(ContentPath path,
+                   Date modifiedDate,
+                   Body body,
                    long length,
-                   String mediaType,
-                   Date modifiedDate) {
+                   String mediaType) {
+        super(path, modifiedDate);
+        this.contentPath = path;
         this.body = body;
         this.length = length;
         this.mediaType = mediaType;
-        this.modifiedDate = modifiedDate;
+    }
+
+    public ContentPath getContentPath() {
+        return contentPath;
     }
 
     public Body getBody() {
@@ -32,10 +38,6 @@ public class Content {
 
     public String getMediaType() {
         return mediaType;
-    }
-
-    public Date getModifiedDate() {
-        return modifiedDate;
     }
 
 }
