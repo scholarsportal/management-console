@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,7 +69,10 @@ public class S3StorageProvider implements StorageProvider {
 
             List<String> spaces = new ArrayList<String>();
             for(S3Bucket bucket : buckets) {
-                spaces.add(getSpaceId(bucket.getName()));
+                String bucketName = bucket.getName();
+                if(isSpace(bucketName)) {
+                    spaces.add(getSpaceId(bucketName));
+                }
             }
             return spaces;
         } catch(S3ServiceException e) {
@@ -94,7 +98,7 @@ public class S3StorageProvider implements StorageProvider {
     throws StorageException {
         String bucketName = getBucketName(spaceId);
         try {
-            S3Bucket bucket = s3Service.getBucket(bucketName);
+            S3Bucket bucket = new S3Bucket(bucketName);
             S3Object[] objects = s3Service.listObjects(bucket);
 
             List<String> contentItems = new ArrayList<String>();
@@ -117,7 +121,13 @@ public class S3StorageProvider implements StorageProvider {
         String bucketName = getBucketName(spaceId);
         try {
             // TODO: Convert to using getOrCreateBucket() with JetS3t 0.7.x
-            s3Service.createBucket(bucketName);
+            S3Bucket bucket = s3Service.createBucket(bucketName);
+
+            // Add space metadata
+            Properties spaceProps = new Properties();
+            Date created = bucket.getCreationDate();
+            spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+            setSpaceMetadata(spaceId, spaceProps);
         } catch(S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName +
                          " due to error: " + e.getMessage();
@@ -154,10 +164,9 @@ public class S3StorageProvider implements StorageProvider {
         String bucketName = getBucketName(spaceId);
         InputStream is = getContent(spaceId, bucketName+SPACE_METADATA_SUFFIX);
 
-        Properties spaceProps = null;
+        Properties spaceProps = new Properties();
         if(is != null) {
             try {
-                spaceProps = new Properties();
                 spaceProps.loadFromXML(is);
                 is.close();
             } catch(Exception e) {
@@ -166,6 +175,25 @@ public class S3StorageProvider implements StorageProvider {
                 throw new StorageException(err, e);
             }
         }
+
+        try {
+            if(!spaceProps.containsKey(METADATA_SPACE_CREATED)) {
+                S3Bucket bucket = s3Service.getBucket(bucketName);
+                Date created = bucket.getCreationDate();
+                spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+            }
+
+            List<String> spaceContents = getSpaceContents(spaceId);
+            spaceProps.put(METADATA_SPACE_COUNT, String.valueOf(spaceContents.size()));
+
+            AccessType access = getSpaceAccess(spaceId);
+            spaceProps.put(METADATA_SPACE_ACCESS, access.toString());
+        } catch(S3ServiceException e) {
+            String err = "Could not retrieve metadata from S3 bucket " + bucketName +
+                         " due to error: " + e.getMessage();
+            log.warn(err, e);
+        }
+
         return spaceProps;
     }
 
@@ -176,6 +204,10 @@ public class S3StorageProvider implements StorageProvider {
                                  Properties spaceMetadata)
     throws StorageException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        // Pull out any computed values
+        spaceMetadata.remove(METADATA_SPACE_COUNT);
+        spaceMetadata.remove(METADATA_SPACE_ACCESS);
 
         try {
             spaceMetadata.storeToXML(os, "Metadata for " + spaceId);
@@ -241,7 +273,7 @@ public class S3StorageProvider implements StorageProvider {
                 bucketAcl.revokeAllPermissions(GroupGrantee.ALL_USERS);
                 bucketAcl.revokeAllPermissions(GroupGrantee.AUTHENTICATED_USERS);
             }
-            S3Bucket bucket = s3Service.getBucket(bucketName);
+            S3Bucket bucket = new S3Bucket(bucketName);
             bucket.setAcl(bucketAcl);
             s3Service.putBucketAcl(bucket);
 
@@ -277,6 +309,7 @@ public class S3StorageProvider implements StorageProvider {
 
         String bucketName = getBucketName(spaceId);
         try {
+            // Set access control to mirror the bucket
             AccessControlList bucketAcl = s3Service.getBucketAcl(bucketName);
             contentItem.setAcl(bucketAcl);
             s3Service.putObject(bucketName, contentItem);
@@ -286,6 +319,9 @@ public class S3StorageProvider implements StorageProvider {
                          + bucketName + " due to error: " + e.getMessage();
             throw new StorageException(err, e);
         }
+
+        // Set default content metadata values
+        setContentMetadata(spaceId, contentId, new Properties());
     }
 
     /**
@@ -299,7 +335,7 @@ public class S3StorageProvider implements StorageProvider {
         InputStream content = null;
         try {
             contentItem =
-                s3Service.getObject(s3Service.getBucket(bucketName), contentId);
+                s3Service.getObject(new S3Bucket(bucketName), contentId);
             content = contentItem.getDataInputStream();
         } catch(S3ServiceException e) {
             content = null;
@@ -349,9 +385,58 @@ public class S3StorageProvider implements StorageProvider {
         // Get the object and replace its metadata
         String bucketName = getBucketName(spaceId);
         try {
-            S3Object contentItem = s3Service.
-                getObjectDetails(s3Service.getBucket(bucketName), contentId);
+            S3Bucket bucket = new S3Bucket(bucketName);
+            S3Object contentItem = s3Service.getObjectDetails(bucket, contentId);
+            contentItem.setAcl(s3Service.getObjectAcl(bucket, contentId));
             contentItem.addAllMetadata(metadataMap);
+
+            // Ensure expected metadata values are set
+            if(!contentItem.containsMetadata(METADATA_CONTENT_NAME)) {
+                contentItem.addMetadata(METADATA_CONTENT_NAME, spaceId);
+            }
+
+            if(!contentItem.containsMetadata(METADATA_CONTENT_MIMETYPE)) {
+                String contentType =
+                    contentItem.getMetadata("Content-Type").toString();
+                if(contentType != null) {
+                    contentItem.addMetadata(METADATA_CONTENT_MIMETYPE, contentType);
+                }
+            } else {
+                // Set S3 Content-Type field along with DuraSpace metadata value
+                String mimetype =
+                    contentItem.getMetadata(METADATA_CONTENT_MIMETYPE).toString();
+                contentItem.addMetadata("Content-Type", mimetype);
+            }
+
+            if(!contentItem.containsMetadata(METADATA_CONTENT_SIZE)) {
+                String contentLength =
+                    contentItem.getMetadata("Content-Length").toString();
+                if(contentLength != null) {
+                    contentItem.addMetadata(METADATA_CONTENT_SIZE, contentLength);
+                }
+            }
+
+            if(!contentItem.containsMetadata(METADATA_CONTENT_CHECKSUM)) {
+                String checksum =
+                    contentItem.getMetadata("ETag").toString();
+                if(checksum.indexOf("\"") == 0 &&
+                   checksum.lastIndexOf("\"") == checksum.length()-1) {
+                    // Remove wrapping quotes
+                    checksum = checksum.substring(1, checksum.length()-1);
+                }
+                if(checksum != null) {
+                    contentItem.addMetadata(METADATA_CONTENT_CHECKSUM, checksum);
+                }
+            }
+
+            if(!contentItem.containsMetadata(METADATA_CONTENT_MODIFIED)) {
+                String modified =
+                    contentItem.getMetadata("Last-Modified").toString();
+                if(modified != null) {
+                    contentItem.addMetadata(METADATA_CONTENT_MODIFIED, modified);
+                }
+            }
+
             s3Service.updateObjectMetadata(bucketName, contentItem);
         } catch(S3ServiceException e) {
             String err = "Could not update metadata for content " +
@@ -374,7 +459,7 @@ public class S3StorageProvider implements StorageProvider {
         S3Object contentItem = null;
         try {
             contentItem = s3Service.
-                getObjectDetails(s3Service.getBucket(bucketName), contentId);
+                getObjectDetails(new S3Bucket(bucketName), contentId);
         } catch(S3ServiceException e) {
             String err = "Could not retrieve metadata for content " +
                          contentId + " from S3 bucket " + bucketName +
@@ -428,10 +513,23 @@ public class S3StorageProvider implements StorageProvider {
      */
     protected String getSpaceId(String bucketName) {
         String spaceId = bucketName;
-        if(spaceId.startsWith(accessKeyId.toLowerCase())) {
+        if(isSpace(bucketName)) {
             spaceId = spaceId.substring(accessKeyId.length() + 1);
         }
         return spaceId;
     }
 
+    /**
+     * Determines if an S3 bucket is a DuraSpace space
+     *
+     * @param bucketName
+     * @return
+     */
+    protected boolean isSpace(String bucketName) {
+        boolean isSpace = false;
+        if(bucketName.startsWith(accessKeyId.toLowerCase())) {
+            isSpace = true;
+        }
+        return isSpace;
+    }
 }

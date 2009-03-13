@@ -110,22 +110,27 @@ public class ContentRest extends BaseRest {
             return Response.serverError().entity(e.getMessage()).build();
         }
 
-        try {
-            ContentResource.addContent(customerID,
-                                       spaceID,
-                                       contentID,
-                                       content.getContentStream(),
-                                       content.getMimeType(),
-                                       content.getSize());
-            ContentResource.updateContentProperties(customerID,
-                                                    spaceID,
-                                                    contentID,
-                                                    contentID,
-                                                    content.getMimeType());
-            URI location = uriInfo.getRequestUri();
-            return Response.created(location).build();
-        } catch(RestResourceException e) {
-            return Response.serverError().entity(e.getMessage()).build();
+        if(content != null) {
+            try {
+                ContentResource.addContent(customerID,
+                                           spaceID,
+                                           contentID,
+                                           content.getContentStream(),
+                                           content.getMimeType(),
+                                           content.getSize());
+                ContentResource.updateContentProperties(customerID,
+                                                        spaceID,
+                                                        contentID,
+                                                        contentID,
+                                                        content.getMimeType());
+                URI location = uriInfo.getRequestUri();
+                return Response.created(location).build();
+            } catch(RestResourceException e) {
+                return Response.serverError().entity(e.getMessage()).build();
+            }
+        } else {
+            String error = "Content must be included as part of the request.";
+            return Response.status(400).entity(error).build();
         }
     }
 

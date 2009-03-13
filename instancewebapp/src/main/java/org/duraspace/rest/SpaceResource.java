@@ -103,17 +103,6 @@ public class SpaceResource {
         StorageProvider storage =
             StorageProviderUtility.getStorageProvider(customerID);
 
-        AccessType access = storage.getSpaceAccess(spaceID);
-        Element accessElem =
-            new Element(StorageProvider.METADATA_SPACE_ACCESS);
-        if(access.equals(AccessType.OPEN)) {
-            accessElem.setText("OPEN");
-        } else {
-            // TODO: Check user permissions
-            accessElem.setText("CLOSED");
-        }
-        propsElem.addContent(accessElem);
-
         Properties metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
             Enumeration<?> metadataNames = metadata.propertyNames();

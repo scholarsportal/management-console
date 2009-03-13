@@ -11,13 +11,13 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 public class DuraHandlerExceptionResolver extends SimpleMappingExceptionResolver
 {
-	
-	public ModelAndView resolveException(HttpServletRequest request, 
+
+	public ModelAndView resolveException(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 	{
 		Map<String, String> errors = new HashMap<String, String>();
-		errors.put("a-key", "a-value");
-		return new ModelAndView("acctCreate/error", errors);
+		errors.put("error", ex.getMessage());
+		return new ModelAndView("error", errors);
 	}
 
 }
