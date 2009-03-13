@@ -26,6 +26,9 @@ public class TestContentRest
 
     private String nameTag = StorageProvider.METADATA_CONTENT_NAME;
     private String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
+    private String sizeTag = StorageProvider.METADATA_CONTENT_SIZE;
+    private String checksumTag = StorageProvider.METADATA_CONTENT_CHECKSUM;
+    private String modifiedTag = StorageProvider.METADATA_CONTENT_MODIFIED;
 
     @Override
     @Before
@@ -86,6 +89,9 @@ public class TestContentRest
         assertNotNull(propsXML);
         assertTrue(propsXML.contains("<"+nameTag+">content1</"+nameTag+">"));
         assertTrue(propsXML.contains("<"+mimeTag+">text/xml"));
+        assertTrue(propsXML.contains("<"+sizeTag+">"));
+        assertTrue(propsXML.contains("<"+checksumTag+">"));
+        assertTrue(propsXML.contains("<"+modifiedTag+">"));
     }
 
     @Test

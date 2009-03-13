@@ -5,17 +5,35 @@
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean
-    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+  <!-- Map URLs to Controllers -->
+  <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/login.htm">loginController</prop>
-        <prop key="/home.htm">homeController</prop>
-        <prop key="/spaces.htm">homeController</prop>
-        <prop key="/content.htm">homeController</prop>
+        <prop key="/spaces.htm">spacesController</prop>
+        <prop key="/contents.htm">contentsController</prop>
+        <prop key="/content.htm">contentController</prop>
       </props>
     </property>
     <property name="order" value="1" />
+  </bean>
+
+  <!-- Request Controllers - processes request -->
+  <bean id="spacesController" class="org.duraspace.controller.SpacesController">
+  </bean>
+
+  <bean id="contentsController" class="org.duraspace.controller.ContentsController">
+  </bean>
+
+  <bean id="contentController" class="org.duraspace.controller.ContentController">
+  </bean>
+
+  <!-- View Resolvers - select the JSP to display results -->
+  <bean id="duraViewResolver"
+    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass"
+      value="org.springframework.web.servlet.view.JstlView"></property>
+    <property name="prefix" value="/WEB-INF/jsp/"></property>
+    <property name="suffix" value=".jsp"></property>
   </bean>
 
   <bean id="exceptionResolver" class="org.duraspace.common.DuraHandlerExceptionResolver">
@@ -27,28 +45,7 @@
     <property name="order" value="2" />
   </bean>
 
-  <bean id="loginController" class="org.duraspace.acct.LoginController">
-    <property name="formView" value="/acct/login" />
-    <property name="successView" value="/home/home" />
-    <property name="user" ref="userRef" />    
-  </bean>
-
-  <bean id="homeController" class="org.duraspace.common.SubDirController">
-    <property name="prefix" value="/home/" />
-  </bean>
-
-  <bean id="duraViewResolver"
-    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="viewClass"
-      value="org.springframework.web.servlet.view.JstlView"></property>
-    <property name="prefix" value="/WEB-INF/jsp/"></property>
-    <property name="suffix" value=".jsp"></property>
-  </bean>
-
-  <bean id="userRef" class="org.duraspace.domain.User" />
-
   <!-- Enables plain Controllers -->
-  <bean
-    class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
 </beans>

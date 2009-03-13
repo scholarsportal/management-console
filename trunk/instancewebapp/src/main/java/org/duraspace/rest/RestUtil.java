@@ -1,7 +1,6 @@
 package org.duraspace.rest;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -36,13 +36,13 @@ public class RestUtil {
     throws Exception {
         RequestContent rContent = null;
 
-        // Make sure we have a file upload request
+        // See if the request is a multi-part file upload request
         if(ServletFileUpload.isMultipartContent(request)) {
 
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload();
 
-            // Parse the request, use the first available File field
+            // Parse the request, use the first available File item
             FileItemIterator iter = upload.getItemIterator(request);
             while (iter.hasNext()) {
                 FileItemStream item = iter.next();
@@ -51,34 +51,37 @@ public class RestUtil {
                     rContent.contentStream = item.openStream();
                     rContent.mimeType = item.getContentType();
 
-                    String contentLength = item.getHeaders().getHeader("Content-Length");
-                    if(contentLength != null) {
-                        rContent.size = Integer.parseInt(contentLength);
+                    FileItemHeaders itemHeaders = item.getHeaders();
+                    if(itemHeaders != null) {
+                        String contentLength = itemHeaders.getHeader("Content-Length");
+                        if(contentLength != null) {
+                            rContent.size = Integer.parseInt(contentLength);
+                        }
                     }
 
                     break;
                 }
             }
-        }
-
-        // If the content stream was not been found as a multipart,
-        // try to use the stream from the request directly
-        if(rContent == null) {
-            if (request.getContentLength() > 0) {
-              rContent = new RequestContent();
-              rContent.contentStream = request.getInputStream();
-              rContent.size = request.getContentLength();
-            } else {
-                String transferEncoding =
-                        request.getHeader("Transfer-Encoding");
-                if (transferEncoding != null && transferEncoding.contains("chunked")) {
-                    BufferedInputStream bis =
-                        new BufferedInputStream(request.getInputStream());
-                    bis.mark(2);
-                    if (bis.read() > 0) {
-                        bis.reset();
-                        rContent = new RequestContent();
-                        rContent.contentStream = bis;
+        } else {
+            // If the content stream was not been found as a multipart,
+            // try to use the stream from the request directly
+            if(rContent == null) {
+                if (request.getContentLength() > 0) {
+                  rContent = new RequestContent();
+                  rContent.contentStream = request.getInputStream();
+                  rContent.size = request.getContentLength();
+                } else {
+                    String transferEncoding =
+                            request.getHeader("Transfer-Encoding");
+                    if (transferEncoding != null && transferEncoding.contains("chunked")) {
+                        BufferedInputStream bis =
+                            new BufferedInputStream(request.getInputStream());
+                        bis.mark(2);
+                        if (bis.read() > 0) {
+                            bis.reset();
+                            rContent = new RequestContent();
+                            rContent.contentStream = bis;
+                        }
                     }
                 }
             }
@@ -100,17 +103,15 @@ public class RestUtil {
                     rContent.size = Integer.parseInt(lengthHeaders.get(0));
                 }
             }
-        } else {
-            throw new IOException("Could not retrieve content from http request.");
         }
 
         return rContent;
     }
 
     class RequestContent {
-        InputStream contentStream = null;
-        String mimeType = null;
-        int size = 0;
+        private InputStream contentStream = null;
+        private String mimeType = null;
+        private int size = 0;
 
         /**
          * @return the contentStream
