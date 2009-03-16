@@ -1,42 +1,28 @@
-package org.duraspace.controller;
+/* The contents of this file are subject to the license and copyright terms
+ * detailed in the license directory at the root of the source tree (also
+ * available online at http://www.fedora.info/license/).
+ */
+package org.duraspace.domain;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-
-import org.duraspace.domain.Account;
-import org.duraspace.domain.Space;
-import org.duraspace.domain.SpaceMetadata;
+import org.duraspace.storage.StorageException;
 import org.duraspace.storage.StorageProvider;
 import org.duraspace.storage.StorageProviderUtility;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
 
-public class SpacesController extends AbstractCommandController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+/**
+ * Provides utility methods for spaces.
+ *
+ * @author Bill Branan
+ */
+public class SpaceUtil {
 
-	public SpacesController()
-	{
-		setCommandClass(Account.class);
-		setCommandName("account");
-	}
-
-    @Override
-    protected ModelAndView handle(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  Object command,
-                                  BindException errors) throws Exception {
-        Account account = (Account) command;
-        String customerId = account.getCustomerId();
-
+    public static List<Space> getSpacesList(String customerId)
+    throws StorageException{
         StorageProvider storage =
             StorageProviderUtility.getStorageProvider(customerId);
 
@@ -66,11 +52,6 @@ public class SpacesController extends AbstractCommandController {
                 spaces.add(space);
             }
         }
-
-        ModelAndView mav = new ModelAndView("spaces");
-        mav.addObject("spaces", spaces);
-
-        return mav;
+        return spaces;
     }
-
 }

@@ -12,19 +12,26 @@
         <prop key="/spaces.htm">spacesController</prop>
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
+        <prop key="/addSpace.htm">addSpaceController</prop>
       </props>
     </property>
     <property name="order" value="1" />
   </bean>
 
   <!-- Request Controllers - processes request -->
-  <bean id="spacesController" class="org.duraspace.controller.SpacesController">
+  <bean id="spacesController" class="org.duraspace.control.SpacesController">
   </bean>
 
-  <bean id="contentsController" class="org.duraspace.controller.ContentsController">
+  <bean id="contentsController" class="org.duraspace.control.ContentsController">
+    <property name="successView" value="contents" />
   </bean>
 
-  <bean id="contentController" class="org.duraspace.controller.ContentController">
+  <bean id="contentController" class="org.duraspace.control.ContentController">
+    <property name="successView" value="content" />  
+  </bean>
+
+  <bean id="addSpaceController" class="org.duraspace.control.AddSpaceController">
+    <property name="successView" value="spaces" /> 
   </bean>
 
   <!-- View Resolvers - select the JSP to display results -->

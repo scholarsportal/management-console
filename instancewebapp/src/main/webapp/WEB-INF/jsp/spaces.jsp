@@ -9,8 +9,9 @@
 <body>
 
     <h2>Spaces</h2>
+        
 	<c:forEach items="${spaces}" var="space">
-	  <table border="solid">
+	  <table class="space">
 	    <tr>
 	      <th>ID</th>
           <th><c:out value="${space.spaceId}"/></th>
@@ -32,15 +33,19 @@
           <td><c:out value="${space.metadata.count}"/></td>
         </tr>
 	  </table>
-	  <br />
-      <form:form action="contents.htm?customerId=${space.customerId}&spaceId=${space.spaceId}"
-                 method="POST"
-                 enctype="multipart/form-data"
-                 commandName="space">
+      <form:form action="contents.htm" method="post" commandName="spaces">             
+        <input type="hidden" name="customerId" value="<c:out value="${account.customerId}"/>" />
+        <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
         <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>"/>
-      </form:form>
-      <br />
+      </form:form>    
     </c:forEach>
+
+    <h3>Add Space</h3>
+    <form:form action="addSpace.htm" method="post" commandName="add_space">             
+      <input type="hidden" name="customerId" value="<c:out value="${account.customerId}"/>" />
+      Space Id <input type="text" name="spaceId" />
+      <input type='submit' value="Add Space"/>
+    </form:form>
 
 </body>
 </html>
