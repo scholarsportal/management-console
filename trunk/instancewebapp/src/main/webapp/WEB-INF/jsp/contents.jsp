@@ -14,17 +14,18 @@
         <tr>
           <td>
             <c:out value="${content}"/>
-          </td>
+          </td>        
           <td>
-            <form:form action="content.htm?customerId=${space.customerId}&spaceId=${space.spaceId}&contentId=${content}"
-                       htmlEscape="false"
-                       method="POST"
-                       enctype="multipart/form-data"
+            <form:form action="content.htm"
+                       method="post"
                        target="content_target"
                        commandName="content">
+              <input type="hidden" name="customerId" value="<c:out value="${space.customerId}"/>" />
+              <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
+              <input type="hidden" name="contentId" value="<c:out value="${content}"/>" />                       
               <input type='submit' value="View Properties"/>
             </form:form>
-          </td>
+          </td>          
           <td>
             <form action="content/<c:out value="${space.customerId}/${space.spaceId}/${content}"/>">
               <input type='submit' value="Download Content"/>

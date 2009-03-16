@@ -16,7 +16,8 @@ public class DuraHandlerExceptionResolver extends SimpleMappingExceptionResolver
 			HttpServletResponse response, Object handler, Exception ex)
 	{
 		Map<String, String> errors = new HashMap<String, String>();
-		errors.put("error", ex.getMessage());
+		errors.put("message", ex.getMessage());
+		errors.put("stack", ex.getStackTrace().toString());
 		return new ModelAndView("error", errors);
 	}
 

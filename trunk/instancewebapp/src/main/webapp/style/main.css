@@ -1,4 +1,12 @@
 
+.space {
+  border:1px solid;
+}
+
+#add_space {
+  margin-top:20px;
+}
+
 #content_list {
   float:left;
   margin-right:20px;
@@ -9,4 +17,8 @@
   width:400px;
   height:250px;
   border:0px solid #fff;
+}
+
+td {
+  padding:5px;
 }
