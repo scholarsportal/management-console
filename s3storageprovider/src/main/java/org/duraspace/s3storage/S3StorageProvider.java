@@ -127,6 +127,7 @@ public class S3StorageProvider implements StorageProvider {
             Properties spaceProps = new Properties();
             Date created = bucket.getCreationDate();
             spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+            spaceProps.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
             setSpaceMetadata(spaceId, spaceProps);
         } catch(S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName +
