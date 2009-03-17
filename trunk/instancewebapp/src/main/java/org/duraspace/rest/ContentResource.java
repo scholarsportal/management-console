@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.duraspace.common.web.RestResourceException;
 import org.duraspace.storage.StorageException;
 import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProviderUtility;
 import org.duraspace.storage.StorageProvider.AccessType;
+import org.duraspace.util.StorageProviderUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -28,18 +28,18 @@ public class ContentResource {
     /**
      * Retrieves content from a space.
      *
-     * @param customerID
+     * @param accountID
      * @param spaceID
      * @param contentID
      * @return InputStream which can be used to read content.
      */
-    public static InputStream getContent(String customerID,
+    public static InputStream getContent(String accountID,
                                          String spaceID,
                                          String contentID)
     throws RestResourceException {
         try {
             StorageProvider storage =
-                StorageProviderUtility.getStorageProvider(customerID);
+                StorageProviderUtil.getStorageProvider(accountID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -58,12 +58,12 @@ public class ContentResource {
     /**
      * Retrieves the properties of a piece of content.
      *
-     * @param customerID
+     * @param accountID
      * @param spaceID
      * @param contentID
      * @return XML listing of content properties
      */
-    public static String getContentProperties(String customerID,
+    public static String getContentProperties(String accountID,
                                               String spaceID,
                                               String contentID)
     throws RestResourceException {
@@ -74,7 +74,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtility.getStorageProvider(customerID);
+                StorageProviderUtil.getStorageProvider(accountID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -109,7 +109,7 @@ public class ContentResource {
      *
      * @return success
      */
-    public static void updateContentProperties(String customerID,
+    public static void updateContentProperties(String accountID,
                                                String spaceID,
                                                String contentID,
                                                String contentName,
@@ -119,7 +119,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtility.getStorageProvider(customerID);
+                StorageProviderUtil.getStorageProvider(accountID);
 
             Properties metadata = storage.getContentMetadata(spaceID, contentID);
 
@@ -147,7 +147,7 @@ public class ContentResource {
      *
      * @return success
      */
-    public static void addContent(String customerID,
+    public static void addContent(String accountID,
                                   String spaceID,
                                   String contentID,
                                   InputStream content,
@@ -158,7 +158,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtility.getStorageProvider(customerID);
+                StorageProviderUtil.getStorageProvider(accountID);
 
             storage.addContent(spaceID,
                                contentID,
@@ -176,12 +176,12 @@ public class ContentResource {
     /**
      * Removes a piece of content.
      *
-     * @param customerID
+     * @param accountID
      * @param spaceID
      * @param contentID
      * @return success
      */
-    public static void deleteContent(String customerID,
+    public static void deleteContent(String accountID,
                                      String spaceID,
                                      String contentID)
     throws RestResourceException {
@@ -189,7 +189,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtility.getStorageProvider(customerID);
+                StorageProviderUtil.getStorageProvider(accountID);
 
             storage.deleteContent(spaceID, contentID);
         } catch (StorageException e) {

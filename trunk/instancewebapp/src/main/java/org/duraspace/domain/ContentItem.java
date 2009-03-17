@@ -7,17 +7,17 @@ public class ContentItem implements Serializable {
 
     private static final long serialVersionUID = -5835779644282347055L;
 
-    private String customerId;
+    private String accountId;
     private String spaceId;
     private String contentId;
     private ContentMetadata metadata;
 
-    public String getCustomerId() {
-        return customerId;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public String getSpaceId() {

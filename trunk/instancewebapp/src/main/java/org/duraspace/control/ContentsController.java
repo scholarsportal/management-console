@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.domain.Space;
 import org.duraspace.domain.SpaceMetadata;
 import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProviderUtility;
+import org.duraspace.util.StorageProviderUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -27,11 +27,11 @@ public class ContentsController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         Space space = (Space) command;
-        String customerId = space.getCustomerId();
+        String accountId = space.getAccountId();
         String spaceId = space.getSpaceId();
 
         StorageProvider storage =
-            StorageProviderUtility.getStorageProvider(customerId);
+            StorageProviderUtil.getStorageProvider(accountId);
 
         // Get the name of the space
         Properties spaceProps = storage.getSpaceMetadata(spaceId);

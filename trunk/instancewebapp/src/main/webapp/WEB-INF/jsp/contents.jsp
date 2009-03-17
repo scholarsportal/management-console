@@ -20,14 +20,14 @@
                        method="post"
                        target="content_target"
                        commandName="content">
-              <input type="hidden" name="customerId" value="<c:out value="${space.customerId}"/>" />
+              <input type="hidden" name="accountId" value="<c:out value="${space.accountId}"/>" />
               <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
               <input type="hidden" name="contentId" value="<c:out value="${content}"/>" />                       
               <input type='submit' value="View Properties"/>
             </form:form>
           </td>          
           <td>
-            <form action="content/<c:out value="${space.customerId}/${space.spaceId}/${content}"/>">
+            <form action="content/<c:out value="${space.accountId}/${space.spaceId}/${content}"/>">
               <input type='submit' value="Download Content"/>
             </form>
           </td>

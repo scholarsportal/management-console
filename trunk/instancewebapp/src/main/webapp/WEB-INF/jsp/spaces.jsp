@@ -9,7 +9,13 @@
 <body>
 
     <h2>Spaces</h2>
-        
+    
+    <c:if test="${not empty error}">
+      <div id="error">
+        <c:out value="${error}" />
+      </div>
+    </c:if>
+    
 	<c:forEach items="${spaces}" var="space">
 	  <table class="space">
 	    <tr>
@@ -34,16 +40,16 @@
         </tr>
 	  </table>
       <form:form action="contents.htm" method="post" commandName="spaces">             
-        <input type="hidden" name="customerId" value="<c:out value="${account.customerId}"/>" />
+        <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
         <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
         <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>"/>
       </form:form>    
     </c:forEach>
 
     <h3>Add Space</h3>
-    <form:form action="addSpace.htm" method="post" commandName="add_space">             
-      <input type="hidden" name="customerId" value="<c:out value="${account.customerId}"/>" />
-      Space Id <input type="text" name="spaceId" />
+    <form:form action="addSpace.htm" method="post" commandName="add_space">          
+      <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
+      Space ID <input type="text" name="spaceId" />
       <input type='submit' value="Add Space"/>
     </form:form>
 

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.domain.Account;
 import org.duraspace.domain.Space;
-import org.duraspace.domain.SpaceUtil;
+import org.duraspace.util.SpaceUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -29,13 +29,17 @@ public class SpacesController extends AbstractCommandController {
                                   HttpServletResponse response,
                                   Object command,
                                   BindException errors) throws Exception {
-        Account account = (Account) command;
-        String customerId = account.getCustomerId();
+        Account cmdAccount = (Account) command;
+        String accountId = cmdAccount.getAccountId();
 
-        List<Space> spaces = SpaceUtil.getSpacesList(customerId);
+        if(accountId == null || accountId.equals("")) {
+            throw new Exception("Account must be provided in order to view spaces.");
+        }
+
+        List<Space> spaces = SpaceUtil.getSpacesList(accountId);
 
         ModelAndView mav = new ModelAndView("spaces");
-        mav.addObject("account", account);
+        mav.addObject("accountId", accountId);
         mav.addObject("spaces", spaces);
 
         return mav;

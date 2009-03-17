@@ -22,17 +22,17 @@ public class StorageCustomer {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    private String customerId = null;
+    private String duraspaceAccountId = null;
     private String primaryStorageProviderId = null;
     private HashMap<String, StorageAccount> storageAccounts = null;
 
-    public StorageCustomer(String customerId, String host, int port)
+    public StorageCustomer(String duraspaceAccountId, String host, int port)
     throws StorageException {
-        this.customerId = customerId;
+        this.duraspaceAccountId = duraspaceAccountId;
         storageAccounts = new HashMap<String, StorageAccount>();
 
         try {
-            URL url = new URL("http", host, port, "/mainwebapp/storage/" + customerId);
+            URL url = new URL("http", host, port, "/mainwebapp/storage/" + duraspaceAccountId);
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(url);
             Element accounts = doc.getRootElement();
@@ -40,7 +40,7 @@ public class StorageCustomer {
             Iterator<?> accountList = accounts.getChildren().iterator();
             while(accountList.hasNext()) {
                 Element account = (Element)accountList.next();
-                String accountId = account.getChildText("storageProviderId");
+                String storageAccountId = account.getChildText("storageProviderId");
                 // TODO: Storage provider type should be in a <storageProviderType> tag
                 String type = account.getChildText("storageProviderId");
                 Element credentials = account.getChild("storageProviderCred");
@@ -50,38 +50,38 @@ public class StorageCustomer {
                 StorageAccount storageAccount = null;
                 if(type.equals("amazon-s3")) {
                     storageAccount =
-                        new StorageAccount(accountId,
+                        new StorageAccount(storageAccountId,
                                            username,
                                            password,
                                            AccountType.S3);
-                    storageAccounts.put(accountId, storageAccount);
+                    storageAccounts.put(storageAccountId, storageAccount);
                 } else if(type.equals("ms-azure")) {
                     storageAccount =
-                        new StorageAccount(accountId,
+                        new StorageAccount(storageAccountId,
                                            username,
                                            password,
                                            AccountType.Azure);
-                    storageAccounts.put(accountId, storageAccount);
+                    storageAccounts.put(storageAccountId, storageAccount);
                 } else {
                     log.warn("While creating storage account list for customer '" +
-                             customerId + "' skipping storage account with accountId '" +
-                             accountId + "' due to an unsupported type '" + type + "'");
+                             duraspaceAccountId + "' skipping storage account with storageAccountId '" +
+                             storageAccountId + "' due to an unsupported type '" + type + "'");
                 }
 
                 String primary = account.getAttributeValue("isPrimary");
                 if(primary.equalsIgnoreCase("true")) {
-                    primaryStorageProviderId = accountId;
+                    primaryStorageProviderId = storageAccountId;
                 }
             }
         } catch (Exception e) {
             String error = "Unable to retrieve storage account information for '" +
-                           customerId + "' due to error" + e.getMessage();
+                           duraspaceAccountId + "' due to error" + e.getMessage();
             throw new StorageException(error, e);
         }
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getDuraspaceAccountId() {
+        return duraspaceAccountId;
     }
 
     public StorageAccount getPrimaryStorageAccount() {

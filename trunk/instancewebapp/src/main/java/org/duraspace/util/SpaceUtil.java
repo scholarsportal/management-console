@@ -2,17 +2,17 @@
  * detailed in the license directory at the root of the source tree (also
  * available online at http://www.fedora.info/license/).
  */
-package org.duraspace.domain;
+package org.duraspace.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.duraspace.domain.Space;
+import org.duraspace.domain.SpaceMetadata;
 import org.duraspace.storage.StorageException;
 import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProviderUtility;
-
 
 /**
  * Provides utility methods for spaces.
@@ -21,10 +21,10 @@ import org.duraspace.storage.StorageProviderUtility;
  */
 public class SpaceUtil {
 
-    public static List<Space> getSpacesList(String customerId)
+    public static List<Space> getSpacesList(String accountId)
     throws StorageException{
         StorageProvider storage =
-            StorageProviderUtility.getStorageProvider(customerId);
+            StorageProviderUtil.getStorageProvider(accountId);
 
         List<String> spaceIds = storage.getSpaces();
 
@@ -34,7 +34,7 @@ public class SpaceUtil {
             while(spaceIdIterator.hasNext()) {
                 String spaceId = spaceIdIterator.next();
                 Space space = new Space();
-                space.setCustomerId(customerId);
+                space.setAccountId(accountId);
                 space.setSpaceId(spaceId);
 
                 Properties spaceProps = storage.getSpaceMetadata(spaceId);

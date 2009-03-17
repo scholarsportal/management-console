@@ -1,8 +1,12 @@
-package org.duraspace.storage;
+package org.duraspace.util;
 
 import java.util.HashMap;
 
 import org.duraspace.s3storage.S3StorageProvider;
+import org.duraspace.storage.StorageAccount;
+import org.duraspace.storage.StorageCustomer;
+import org.duraspace.storage.StorageException;
+import org.duraspace.storage.StorageProvider;
 import org.duraspace.storage.StorageAccount.AccountType;
 
 /**
@@ -10,7 +14,7 @@ import org.duraspace.storage.StorageAccount.AccountType;
  *
  * @author Bill Branan
  */
-public class StorageProviderUtility {
+public class StorageProviderUtil {
 
     private static String mainHost = null;
     private static int mainPort = 0;
@@ -42,13 +46,13 @@ public class StorageProviderUtility {
     /**
      * Retrieves the primary storage provider for a given customer.
      *
-     * @param customerId
+     * @param account
      * @return
      * @throws StorageException
      */
-    public static StorageProvider getStorageProvider(String customerId)
+    public static StorageProvider getStorageProvider(String duraspaceAccountId)
     throws StorageException {
-        return getStorageProvider(customerId, null);
+        return getStorageProvider(duraspaceAccountId, null);
     }
 
     /**
@@ -56,12 +60,13 @@ public class StorageProviderUtility {
      * If the a storage account cannot be retrieved based on the given
      * accountId, the primary storage provider account is used.
      *
-     * @param customerId
+     * @param account
      * @param accountId - the ID of the storage provider account
      * @return
      * @throws StorageException
      */
-    public static StorageProvider getStorageProvider(String customerId, String accountId)
+    public static StorageProvider getStorageProvider(String duraspaceAccountId,
+                                                     String storageAccountId)
     throws StorageException {
         if(mainHost == null || mainPort == 0) {
             String error = "The Storage Provider Utility must be initilized " +
@@ -71,15 +76,15 @@ public class StorageProviderUtility {
         }
 
         StorageCustomer customer = null;
-        if(storageCustomers.containsKey(customerId)) {
-            customer = storageCustomers.get(customerId);
+        if(storageCustomers.containsKey(duraspaceAccountId)) {
+            customer = storageCustomers.get(duraspaceAccountId);
         } else {
-            customer = new StorageCustomer(customerId, mainHost, mainPort);
-            storageCustomers.put(customerId, customer);
+            customer = new StorageCustomer(duraspaceAccountId, mainHost, mainPort);
+            storageCustomers.put(duraspaceAccountId, customer);
         }
 
-        StorageAccount account = customer.getStorageAccount(accountId);
-        if(accountId == null) {
+        StorageAccount account = customer.getStorageAccount(storageAccountId);
+        if(storageAccountId == null) {
             account = customer.getPrimaryStorageAccount();
         }
         String username = account.getUsername();

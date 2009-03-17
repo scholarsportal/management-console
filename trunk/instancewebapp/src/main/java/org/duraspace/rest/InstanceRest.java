@@ -5,7 +5,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import org.duraspace.storage.StorageProviderUtility;
+import org.duraspace.util.StorageProviderUtil;
 
 /**
  * Provides direct interaction with this instance via REST
@@ -29,7 +29,7 @@ public class InstanceRest extends BaseRest {
                                        @FormParam("port")
                                        int port){
         try {
-            StorageProviderUtility.initialize(host, port);
+            StorageProviderUtil.initialize(host, port);
             String responseText = "Instance initialized";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(Exception e) {
