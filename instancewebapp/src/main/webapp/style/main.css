@@ -3,6 +3,13 @@
   border:1px solid;
 }
 
+.wrapper {
+  float: left;
+  margin-right: 20px;	
+  margin-bottom: 20px;
+}
+
+
 #add_space {
   margin-top:20px;
 }
