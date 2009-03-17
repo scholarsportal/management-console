@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.domain.ContentItem;
 import org.duraspace.domain.ContentMetadata;
 import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProviderUtility;
+import org.duraspace.util.StorageProviderUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -27,12 +27,12 @@ public class ContentController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         ContentItem contentItem = (ContentItem) command;
-        String customerId = contentItem.getCustomerId();
+        String accountId = contentItem.getAccountId();
         String spaceId = contentItem.getSpaceId();
         String contentId = contentItem.getContentId();
 
         StorageProvider storage =
-            StorageProviderUtility.getStorageProvider(customerId);
+            StorageProviderUtil.getStorageProvider(accountId);
 
         Properties contentProps =
             storage.getContentMetadata(spaceId, contentId);

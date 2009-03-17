@@ -43,7 +43,7 @@
     <property name="suffix" value=".jsp"></property>
   </bean>
 
-  <bean id="exceptionResolver" class="org.duraspace.common.DuraHandlerExceptionResolver">
+  <bean id="exceptionResolver" class="org.duraspace.common.SimpleExceptionResolver">
     <property name="exceptionMappings">
       <props>
         <prop key="java.lang.Exception">error</prop>

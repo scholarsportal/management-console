@@ -9,17 +9,17 @@ public class Space implements Serializable {
 
     private static final long serialVersionUID = 3008516494814826947L;
 
-    private String customerId;
+    private String accountId;
     private String spaceId;
     private SpaceMetadata metadata;
     private List<String> contents;
 
-    public String getCustomerId() {
-        return customerId;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public String getSpaceId() {

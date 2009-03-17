@@ -486,7 +486,8 @@ public class S3StorageProvider implements StorageProvider {
     }
 
     /**
-     * Converts a provided space ID into a valid S3 bucket name.
+     * Converts a provided space ID into a valid and unique
+     * S3 bucket name.
      *
      * @param spaceId
      * @return
@@ -495,8 +496,18 @@ public class S3StorageProvider implements StorageProvider {
         String bucketName = accessKeyId + "." + spaceId;
         bucketName = bucketName.toLowerCase();
         bucketName = bucketName.replaceAll("[^a-z0-9-.]", "-");
-        bucketName = bucketName.replaceAll("-[.]", "-");
-        bucketName = bucketName.replaceAll("[.]-", ".");
+
+        // Remove duplicate separators (. and -)
+        while(bucketName.contains("--") ||
+              bucketName.contains("..") ||
+              bucketName.contains("-.") ||
+              bucketName.contains(".-")) {
+            bucketName = bucketName.replaceAll("[-]+", "-");
+            bucketName = bucketName.replaceAll("[.]+", ".");
+            bucketName = bucketName.replaceAll("-[.]", "-");
+            bucketName = bucketName.replaceAll("[.]-", ".");
+        }
+
         if(bucketName.length() > 63) {
             bucketName = bucketName.substring(0, 63);
         }
