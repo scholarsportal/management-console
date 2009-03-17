@@ -17,6 +17,7 @@
     </c:if>
     
 	<c:forEach items="${spaces}" var="space">
+	<div class="wrapper">
 	  <table class="space">
 	    <tr>
 	      <th>ID</th>
@@ -43,15 +44,35 @@
         <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
         <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
         <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>"/>
-      </form:form>    
+      </form:form>
+      <form:form action="setSpaceAccess.htm" method="post" commandName="set_space">           
+        <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
+        <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
+        <c:choose>        
+          <c:when test="${space.metadata.access == 'OPEN'}">
+            <input type='submit' value="Set access CLOSED" />
+          </c:when>
+          <c:otherwise>
+            <input type='submit' value="Set access OPEN" />
+          </c:otherwise>  
+        </c:choose>
+      </form:form>      
+      <form:form action="deleteSpace.htm" method="post" commandName="delete_space">             
+        <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
+        <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
+        <input type='submit' value="Delete <c:out value="${space.metadata.name}"/>"/>
+      </form:form>
+    </div>   
     </c:forEach>
 
-    <h3>Add Space</h3>
-    <form:form action="addSpace.htm" method="post" commandName="add_space">          
-      <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
-      Space ID <input type="text" name="spaceId" />
-      <input type='submit' value="Add Space"/>
-    </form:form>
+    <div class="wrapper">
+      <h2>Add Space</h2>
+      <form:form action="addSpace.htm" method="post" commandName="add_space">          
+        <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
+          Space ID <input type="text" name="spaceId" />
+        <input type='submit' value="Add Space"/>
+      </form:form>
+    </div>
 
 </body>
 </html>

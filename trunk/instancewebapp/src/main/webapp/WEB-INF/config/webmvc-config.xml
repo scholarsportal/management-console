@@ -13,6 +13,8 @@
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
         <prop key="/addSpace.htm">addSpaceController</prop>
+        <prop key="/deleteSpace.htm">deleteSpaceController</prop>
+        <prop key="/setSpaceAccess.htm">setSpaceAccessController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -31,6 +33,14 @@
   </bean>
 
   <bean id="addSpaceController" class="org.duraspace.control.AddSpaceController">
+    <property name="successView" value="spaces" /> 
+  </bean>
+
+  <bean id="deleteSpaceController" class="org.duraspace.control.DeleteSpaceController">
+    <property name="successView" value="spaces" /> 
+  </bean>
+
+  <bean id="setSpaceAccessController" class="org.duraspace.control.SetSpaceAccessController">
     <property name="successView" value="spaces" /> 
   </bean>
 
