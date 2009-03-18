@@ -1,7 +1,5 @@
 package org.duraspace.rest;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +7,8 @@ import org.junit.Test;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.storage.StorageProvider;
+
+import junit.framework.TestCase;
 
 /**
  * Runtime test of content REST API. The instancewebapp
@@ -24,8 +24,8 @@ public class TestContentRest
     private static String baseUrl = "http://localhost:8080/instancewebapp";
     private static final String CONTENT = "<content />";
 
-    private String nameTag = StorageProvider.METADATA_CONTENT_NAME;
-    private String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
+    private final String nameTag = StorageProvider.METADATA_CONTENT_NAME;
+    private final String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
     private String sizeTag = StorageProvider.METADATA_CONTENT_SIZE;
     private String checksumTag = StorageProvider.METADATA_CONTENT_CHECKSUM;
     private String modifiedTag = StorageProvider.METADATA_CONTENT_MODIFIED;
@@ -40,11 +40,11 @@ public class TestContentRest
         assertTrue(response.getStatusCode() == 200);
 
         // Add space1
-        response = RestTestHelper.addSpace(baseUrl, "owner0", "space1");
+        response = RestTestHelper.addSpace(baseUrl, "1", "space1");
         assertTrue(response.getStatusCode() == 201);
 
         // Add content1 to space1
-        url = baseUrl + "/content/owner0/space1/content1";
+        url = baseUrl + "/content/1/space1/content1";
         response = restHelper.put(url, CONTENT, false);
         assertTrue(response.getStatusCode() == 201);
     }
@@ -53,7 +53,7 @@ public class TestContentRest
     @After
     protected void tearDown() throws Exception {
         // Delete content1 from space1
-        String url = baseUrl + "/content/owner0/space1/content1";
+        String url = baseUrl + "/content/1/space1/content1";
         HttpResponse response = restHelper.delete(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -64,13 +64,13 @@ public class TestContentRest
 
         // Delete space1
         response =
-            RestTestHelper.deleteSpace(baseUrl, "owner0", "space1");
+            RestTestHelper.deleteSpace(baseUrl, "1", "space1");
         assertTrue(response.getStatusCode() == 200);
     }
 
     @Test
     public void testGetContent() throws Exception {
-        String url = baseUrl + "/content/owner0/space1/content1";
+        String url = baseUrl + "/content/1/space1/content1";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -81,7 +81,7 @@ public class TestContentRest
 
     @Test
     public void testGetContentProperties() throws Exception {
-        String url = baseUrl + "/content/owner0/space1/content1?properties=true";
+        String url = baseUrl + "/content/1/space1/content1?properties=true";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -96,7 +96,7 @@ public class TestContentRest
 
     @Test
     public void testUpdateContentProperties() throws Exception {
-        String url = baseUrl + "/content/owner0/space1/content1";
+        String url = baseUrl + "/content/1/space1/content1";
         String formParams = "contentName=Test+Content&contentMimeType=text/plain";
         HttpResponse response = restHelper.post(url, formParams, true);
 
@@ -107,7 +107,7 @@ public class TestContentRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/content/owner0/space1/content1?properties=true";
+        url = baseUrl + "/content/1/space1/content1?properties=true";
         response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);

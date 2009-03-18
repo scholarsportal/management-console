@@ -10,13 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 
 import static org.junit.Assert.assertTrue;
 
 public class CustomerAcctTest {
 
-    private CustomerAcct acct;
+    private DuraSpaceAcct acct;
 
     private final String computeAcctId = "test-compute-acct-id";
 
@@ -40,7 +41,7 @@ public class CustomerAcctTest {
 
     private final String lastnameB = "lastnameB";
 
-    private final String MOCK_PROVIDER = "mockProvider";
+    private final ComputeProviderType MOCK_PROVIDER = ComputeProviderType.SUN;
 
     private final String MOCK_PROVIDER_CLASSNAME =
             "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl";
@@ -49,7 +50,7 @@ public class CustomerAcctTest {
     public void setUp() throws Exception {
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put(MOCK_PROVIDER, MOCK_PROVIDER_CLASSNAME);
+        map.put(MOCK_PROVIDER.toString(), MOCK_PROVIDER_CLASSNAME);
         ComputeProviderFactory.setIdToClassMap(map);
 
         cred = new Credential();
@@ -65,7 +66,7 @@ public class CustomerAcctTest {
         userA.setLastname(lastnameA);
         userB.setLastname(lastnameB);
 
-        acct = new CustomerAcct();
+        acct = new DuraSpaceAcct();
         acct.setComputeAcctId(computeAcctId);
         acct.setDuraspaceCredential(cred);
         acct.setUsers(users);

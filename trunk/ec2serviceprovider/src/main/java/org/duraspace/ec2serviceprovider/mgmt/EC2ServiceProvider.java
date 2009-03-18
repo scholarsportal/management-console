@@ -16,12 +16,12 @@ import com.amazonaws.ec2.model.TerminateInstancesRequest;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.InstanceState;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
-import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
 
 public class EC2ServiceProvider
         implements ServiceProvider {
@@ -37,10 +37,10 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public String start(Credential credential, ServiceProviderProperties props)
+    public String start(Credential credential, String xmlProps)
             throws Exception {
-        log.info("start(" + credential + ", " + props + ")");
-        initialize(credential, props);
+        log.info("start(" + credential + ", " + xmlProps + ")");
+        initialize(credential, xmlProps);
 
         RunInstancesResponse response =
                 getEC2().runInstances(createStartRequest());
@@ -65,10 +65,9 @@ public class EC2ServiceProvider
     /**
      * {@inheritDoc}
      */
-    public void stop(Credential credential,
-                     String instanceId,
-                     ServiceProviderProperties props) throws Exception {
-        initialize(credential, props);
+    public void stop(Credential credential, String instanceId, String xmlProps)
+            throws Exception {
+        initialize(credential, xmlProps);
 
         getEC2().terminateInstances(new TerminateInstancesRequest()
                 .withInstanceId(instanceId));
@@ -81,8 +80,8 @@ public class EC2ServiceProvider
      */
     public InstanceDescription describeRunningInstance(Credential credential,
                                                        String instanceId,
-                                                       ServiceProviderProperties props) {
-        initialize(credential, props);
+                                                       String xmlProps) {
+        initialize(credential, xmlProps);
 
         return getDescription(instanceId);
     }
@@ -113,9 +112,8 @@ public class EC2ServiceProvider
      */
     public boolean isInstanceRunning(Credential credential,
                                      String instanceId,
-                                     ServiceProviderProperties props)
-            throws Exception {
-        initialize(credential, props);
+                                     String xmlProps) throws Exception {
+        initialize(credential, xmlProps);
         InstanceDescription description = getDescription(instanceId);
         return isInstanceRunning(description);
     }
@@ -130,9 +128,8 @@ public class EC2ServiceProvider
      */
     public boolean isWebappRunning(Credential credential,
                                    String instanceId,
-                                   ServiceProviderProperties props)
-            throws Exception {
-        initialize(credential, props);
+                                   String xmlProps) throws Exception {
+        initialize(credential, xmlProps);
         InstanceDescription description = getDescription(instanceId);
         return isWebappRunning(description);
     }
@@ -146,9 +143,8 @@ public class EC2ServiceProvider
      */
     public boolean isInstanceBooting(Credential credential,
                                      String instanceId,
-                                     ServiceProviderProperties props)
-            throws Exception {
-        initialize(credential, props);
+                                     String xmlProps) throws Exception {
+        initialize(credential, xmlProps);
         InstanceDescription description = getDescription(instanceId);
         return isInstanceBooting(description);
     }
@@ -178,8 +174,8 @@ public class EC2ServiceProvider
      */
     public URL getWebappURL(Credential credential,
                             String instanceId,
-                            ServiceProviderProperties props) throws Exception {
-        initialize(credential, props);
+                            String xmlProps) throws Exception {
+        initialize(credential, xmlProps);
 
         InstanceDescription description = getDescription(instanceId);
 
@@ -197,8 +193,15 @@ public class EC2ServiceProvider
         return config;
     }
 
-    private void setProps(EC2ServiceProviderProperties props) {
-        this.props = props;
+    private void setProps(String xmlProps) {
+        this.props = new EC2ServiceProviderProperties();
+        try {
+            this.props.loadFromXml(xmlProps);
+        } catch (Exception e) {
+            log.fatal("Unable to load properties: " + xmlProps);
+            log.fatal(e.getMessage());
+            log.fatal(ExceptionUtil.getStackTraceAsString(e));
+        }
     }
 
     public EC2ServiceProviderProperties getProps() throws Exception {
@@ -229,9 +232,9 @@ public class EC2ServiceProvider
         this.ec2 = ec2;
     }
 
-    private void initialize(Credential cred, ServiceProviderProperties props) {
+    private void initialize(Credential cred, String xmlProps) {
         setCredential(cred);
-        setProps((EC2ServiceProviderProperties) props);
+        setProps(xmlProps);
     }
 
     private void setCredential(Credential credential) {

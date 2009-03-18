@@ -4,8 +4,8 @@ package org.duraspace.mainwebapp.control;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
-import org.duraspace.mainwebapp.domain.model.CustomerAcct;
-import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepository;
+import org.duraspace.mainwebapp.domain.model.DuraSpaceAcct;
+import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -15,7 +15,7 @@ public class LoginController
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    private CustomerAcctRepository acctRepository;
+    private DuraSpaceAcctManager duraSpaceAcctManager;
 
     public LoginController() {
         setCommandClass(Credential.class);
@@ -31,10 +31,10 @@ public class LoginController
             throw new Exception("Invalid username/password.");
         }
 
-        CustomerAcct custAcct = acctRepository.findCustomerAcct(cred);
-        log.info("submitting user: " + custAcct.getDuraspaceCredential());
+        DuraSpaceAcct duraAcct = getDuraSpaceAcctManager().findDuraSpaceAccount(cred);
+        log.info("submitting acct: " + duraAcct.toString());
 
-        return new ModelAndView(getSuccessView(), "custAcct", custAcct);
+        return new ModelAndView(getSuccessView(), "duraAcct", duraAcct);
     }
 
     private boolean credentialsValid(Credential cred) {
@@ -42,12 +42,12 @@ public class LoginController
         return true;
     }
 
-    public CustomerAcctRepository getAcctRepository() {
-        return acctRepository;
+    public DuraSpaceAcctManager getDuraSpaceAcctManager() {
+        return duraSpaceAcctManager;
     }
 
-    public void setAcctRepository(CustomerAcctRepository acctRepository) {
-        this.acctRepository = acctRepository;
+    public void setDuraSpaceAcctManager(DuraSpaceAcctManager duraSpaceAcctManager) {
+        this.duraSpaceAcctManager = duraSpaceAcctManager;
     }
 
 }

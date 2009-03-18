@@ -28,7 +28,7 @@ public interface ServiceProvider {
      * @return ID of running instance.
      * @throws Exception
      */
-    public String start(Credential credential, ServiceProviderProperties props)
+    public String start(Credential credential, String xmlProps)
             throws Exception;
 
     /**
@@ -41,9 +41,8 @@ public interface ServiceProvider {
      *        Provider-specific properties
      * @throws Exception
      */
-    public void stop(Credential credential,
-                     String instanceId,
-                     ServiceProviderProperties props) throws Exception;
+    public void stop(Credential credential, String instanceId, String xmlProps)
+            throws Exception;
 
     /**
      * This method returns true if the instance is successfully running.
@@ -57,8 +56,7 @@ public interface ServiceProvider {
      */
     public boolean isInstanceRunning(Credential credential,
                                      String instanceId,
-                                     ServiceProviderProperties props)
-            throws Exception;
+                                     String xmlProps) throws Exception;
 
     /**
      * This method returns true if the webapp of provided instance is
@@ -73,8 +71,7 @@ public interface ServiceProvider {
      */
     public boolean isWebappRunning(Credential credential,
                                    String instanceId,
-                                   ServiceProviderProperties props)
-            throws Exception;
+                                   String xmlPropss) throws Exception;
 
     /**
      * This method returns true if the webapp of provided instance is currently
@@ -89,8 +86,7 @@ public interface ServiceProvider {
      */
     public boolean isInstanceBooting(Credential credential,
                                      String instanceId,
-                                     ServiceProviderProperties props)
-            throws Exception;
+                                     String xmlPropss) throws Exception;
 
     /**
      * This method returns the URL of the instancewebapp on the instance with
@@ -106,7 +102,7 @@ public interface ServiceProvider {
      */
     public URL getWebappURL(Credential credential,
                             String instanceId,
-                            ServiceProviderProperties props) throws Exception;
+                            String xmlProps) throws Exception;
 
     /**
      * This method retrieves description of initiated instance.
@@ -120,6 +116,6 @@ public interface ServiceProvider {
      */
     public InstanceDescription describeRunningInstance(Credential credential,
                                                        String instanceId,
-                                                       ServiceProviderProperties props);
+                                                       String xmlProps);
 
 }

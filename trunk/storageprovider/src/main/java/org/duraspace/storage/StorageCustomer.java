@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import org.duraspace.storage.StorageAccount.AccountType;
@@ -40,10 +41,13 @@ public class StorageCustomer {
             Iterator<?> accountList = accounts.getChildren().iterator();
             while(accountList.hasNext()) {
                 Element account = (Element)accountList.next();
+
+                Element provider = account.getChild("storageProvider");
+
                 String storageAccountId = account.getChildText("storageProviderId");
                 // TODO: Storage provider type should be in a <storageProviderType> tag
-                String type = account.getChildText("storageProviderId");
-                Element credentials = account.getChild("storageProviderCred");
+                String type = provider.getChildText("providerName");
+                Element credentials = account.getChild("storageProviderCredential");
                 String username = credentials.getChildText("username");
                 String password = credentials.getChildText("password");
 
@@ -69,7 +73,7 @@ public class StorageCustomer {
                 }
 
                 String primary = account.getAttributeValue("isPrimary");
-                if(primary.equalsIgnoreCase("true")) {
+                if(primary.equalsIgnoreCase("1")) {
                     primaryStorageProviderId = storageAccountId;
                 }
             }

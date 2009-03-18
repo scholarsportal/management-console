@@ -9,7 +9,7 @@
   <bean id="storageProviderRest" class="org.duraspace.mainwebapp.rest.StorageProviderRest" />
   
   <bean id="storageProviderResource" class="org.duraspace.mainwebapp.rest.StorageProviderResource" >
-    <property name="storageManager" ref="storageMgr" />
+    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
   </bean>
   
   <bean id="serviceResource" class="org.duraspace.mainwebapp.rest.ServiceRest" />

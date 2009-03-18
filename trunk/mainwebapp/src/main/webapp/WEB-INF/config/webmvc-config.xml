@@ -28,6 +28,7 @@
         <prop key="/aboutTech.htm">homeController</prop>
         <prop key="/contactUs.htm">homeController</prop>
         <prop key="/login.htm">loginController</prop>
+        <prop key="/address.htm">addrController</prop>
         <prop key="/acctStatus.htm">acctStatusController</prop>
         <prop key="/computeStatus.htm">computeStatusController</prop>
         <prop key="/welcomeAcctCreate.htm">acctController</prop>
@@ -51,17 +52,23 @@
   </bean>
 
   <bean id="loginController" class="org.duraspace.mainwebapp.control.LoginController">
-    <property name="acctRepository" ref="customerAcctRepo" />
+    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
     <property name="formView" value="/acctUpdate/login" />
     <property name="successView" value="/acctUpdate/acctStatus" />
   </bean>
   
+  <bean id="addrController" class="org.duraspace.mainwebapp.control.AddressController">
+    <property name="addressRepository" ref="addressRepo" />
+    <property name="formView" value="/acctCreate/addressCreate" />
+    <property name="successView" value="/acctUpdate/acctComplete" />
+  </bean>
+  
   <bean id="acctStatusController" class="org.duraspace.mainwebapp.control.AcctStatusController" >
-    <property name="computeManager" ref="computeMgr" />
+    <property name="duraAcctManager" ref="duraSpaceAcctMgr" />
   </bean>
 
   <bean id="computeStatusController" class="org.duraspace.mainwebapp.control.ComputeStatusController" >
-    <property name="computeManager" ref="computeMgr" />
+    <property name="computeManager" ref="computeAcctMgr" />
   </bean>
 
   <bean id="acctController" class="org.duraspace.mainwebapp.control.SubDirController">
@@ -78,28 +85,38 @@
   </bean>
 
 
-  <!-- domain beans -->
-  <bean id="computeMgr" class="org.duraspace.mainwebapp.mgmt.ComputeManagerImpl">
-    <property name="customerAcctRepository" ref="customerAcctRepo" />
+  <!-- domain beans --> 
+  
+  <bean id="credentialMgr" class="org.duraspace.mainwebapp.mgmt.CredentialManagerImpl">
+    <property name="credentialRepository" ref="credentialRepo" />
+    <property name="authorityRepository" ref="authorityRepo" />
+  </bean>
+ 
+  <bean id="computeAcctMgr" class="org.duraspace.mainwebapp.mgmt.ComputeAcctManagerImpl">
     <property name="computeAcctRepository" ref="computeAcctRepo" />
+    <property name="computeProviderRepository" ref="computeProviderRepo" />
+    <property name="credentialManager" ref="credentialMgr" />
+  </bean>
+    
+  <bean id="storageAcctMgr" class="org.duraspace.mainwebapp.mgmt.StorageAcctManagerImpl">
+    <property name="storageAcctRepository" ref="storageAcctRepo" />
+    <property name="storageProviderRepository" ref="storageProviderRepo" /> 
+    <property name="credentialManager" ref="credentialMgr" />
   </bean>
   
-  <bean id="customerAcctRepo" class="org.duraspace.mainwebapp.domain.repo.CustomerAcctRepositoryFileImpl">
-    <property name="properties">
-      <props>
-        <prop key="repoLocation" >customerAcctRepo.xml</prop>
-      </props>
-    </property>
+  <bean id="duraSpaceAcctMgr" class="org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManagerImpl">
+    <property name="computeAcctManager" ref="computeAcctMgr" />
+    <property name="storageAcctManager" ref="storageAcctMgr" />
+    <property name="duraSpaceAcctRepository" ref="duraSpaceAcctRepo" />
+    <property name="userManager" ref="userMgr" />
   </bean>
   
-  <bean id="computeAcctRepo" class="org.duraspace.mainwebapp.domain.repo.ComputeAcctRepositoryFileImpl">
-    <property name="properties">
-      <props>
-        <prop key="repoLocation" >computeAcctRepo.xml</prop>
-      </props>
-    </property>
-  </bean>  
-
+  <bean id="userMgr" class="org.duraspace.mainwebapp.mgmt.UserManagerImpl">
+    <property name="userRepository" ref="userRepo" />
+    <property name="addressRepository" ref="addressRepo" />
+    <property name="credentialManager" ref="credentialMgr" />
+  </bean>
+  
   <bean id="computeProviderFactory" class="org.duraspace.serviceprovider.mgmt.ComputeProviderFactory">
     <property name="idToClassMap">
       <map>
@@ -108,19 +125,12 @@
     </property>
   </bean>
   
-  <bean id="storageMgr" class="org.duraspace.mainwebapp.mgmt.StorageManagerImpl">
-    <property name="repo" ref="storageAcctRepo" />
+  <bean id="dbLoader" class="org.duraspace.mainwebapp.domain.repo.db.MainDatabaseLoader">
+    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+    <property name="computeProviderRepository" ref="computeProviderRepo" />
+    <property name="storageProviderRepository" ref="storageProviderRepo" />
   </bean>
   
-  <bean id="storageAcctRepo" class="org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryFileImpl">
-    <property name="properties">
-      <props>
-        <prop key="repoLocation">storageAcctRepo.xml</prop>
-      </props>  
-    </property>
-  </bean>
-
-
   <!-- Enables plain Controllers -->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 

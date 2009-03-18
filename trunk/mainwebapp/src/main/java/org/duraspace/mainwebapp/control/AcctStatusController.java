@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.cmd.AcctStatusCmd;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
-import org.duraspace.mainwebapp.mgmt.ComputeManager;
+import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -19,7 +19,7 @@ public class AcctStatusController
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    private ComputeManager computeManager;
+    private DuraSpaceAcctManager duraAcctManager;
 
     public AcctStatusController() {
         setCommandClass(AcctStatusCmd.class);
@@ -34,27 +34,28 @@ public class AcctStatusController
 
         AcctStatusCmd params = (AcctStatusCmd) command;
 
-        Credential cred = new Credential();
-        cred.setUsername(params.getUsername());
-        cred.setPassword(params.getPassword());
+        Credential duraCred = new Credential();
+        duraCred.setUsername(params.getUsername());
+        duraCred.setPassword(params.getPassword());
 
         log.info("user cmd : " + params.getCmd());
-        log.info("user cred: " + cred);
+        log.info("user cred: " + duraCred);
 
         ComputeAcctWrapper inputToView = new ComputeAcctWrapper();
-        inputToView.setComputeAcct(computeManager.findComputeAccount(cred));
+        inputToView
+                .setComputeAcct(duraAcctManager.findComputeAccount(duraCred));
 
         return new ModelAndView("acctUpdate/computeStatus",
                                 "input",
                                 inputToView);
     }
 
-    public ComputeManager getComputeManager() {
-        return computeManager;
+    public DuraSpaceAcctManager getDuraAcctManager() {
+        return duraAcctManager;
     }
 
-    public void setComputeManager(ComputeManager computeManager) {
-        this.computeManager = computeManager;
+    public void setDuraAcctManager(DuraSpaceAcctManager duraAcctManager) {
+        this.duraAcctManager = duraAcctManager;
     }
 
 }

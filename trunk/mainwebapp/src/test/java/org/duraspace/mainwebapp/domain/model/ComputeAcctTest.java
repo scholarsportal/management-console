@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties;
@@ -20,7 +21,7 @@ public class ComputeAcctTest {
 
     private ComputeAcct acct;
 
-    private final String id = "id";
+    private final int id = 66;
 
     private final String namespace = "namespace";
 
@@ -32,7 +33,14 @@ public class ComputeAcctTest {
 
     private final String propC = "propC";
 
-    private final String MOCK_PROVIDER = "mockProvider";
+    private final ComputeProviderType providerType =
+            ComputeProviderType.AMAZON_EC2;
+
+    private final int providerId = 99;
+
+    private final int credentialId = 88;
+
+    private final int duraAcctId = 77;
 
     private final String MOCK_PROVIDER_CLASSNAME =
             "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl";
@@ -40,7 +48,7 @@ public class ComputeAcctTest {
     @Before
     public void setUp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
-        map.put(MOCK_PROVIDER, MOCK_PROVIDER_CLASSNAME);
+        map.put(providerType.toString(), MOCK_PROVIDER_CLASSNAME);
         ComputeProviderFactory.setIdToClassMap(map);
 
         props = new MockServiceProviderProperties();
@@ -49,11 +57,14 @@ public class ComputeAcctTest {
         props.setProp2(propC);
 
         acct = new ComputeAcct();
-        acct.setComputeProviderId(MOCK_PROVIDER);
-        acct.setId(id);
         acct.setInstanceId(null);
         acct.setNamespace(namespace);
-        acct.setProps(props);
+        acct.setXmlProps(props.getAsXml());
+        acct.setComputeProviderType(providerType);
+        acct.setComputeProviderId(providerId);
+        acct.setComputeCredentialId(credentialId);
+        acct.setDuraAcctId(duraAcctId);
+        acct.setId(id);
 
     }
 
@@ -92,26 +103,28 @@ public class ComputeAcctTest {
     }
 
     @Test
-    public void testGetProps() {
-        MockServiceProviderProperties pps =
-                (MockServiceProviderProperties) acct.getProps();
+    public void testGetProps() throws Exception {
+        String pps = acct.getXmlProps();
         assertNotNull(pps);
-        assertEquals(pps.getProp0(), propA);
-        assertEquals(pps.getProp1(), propB);
-        assertEquals(pps.getProp2(), propC);
+
+        MockServiceProviderProperties p = new MockServiceProviderProperties();
+        p.loadFromXml(pps);
+        assertEquals(p.getProp0(), propA);
+        assertEquals(p.getProp1(), propB);
+        assertEquals(p.getProp2(), propC);
     }
 
     @Test
     public void testMembers() {
-        String compId = acct.getComputeProviderId();
-        String anId = acct.getId();
+        int compId = acct.getComputeProviderId();
+        int anId = acct.getId();
         String nspace = acct.getNamespace();
 
         assertNotNull(compId);
         assertNotNull(anId);
         assertNotNull(nspace);
 
-        assertEquals(compId, MOCK_PROVIDER);
+        assertEquals(compId, providerId);
         assertEquals(anId, id);
         assertEquals(nspace, namespace);
 

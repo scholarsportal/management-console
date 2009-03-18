@@ -1,12 +1,10 @@
 
 package org.duraspace.ec2serviceprovider.mgmt;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.commons.io.IOUtils;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,27 +42,17 @@ public class EC2ServiceProviderPropertiesTest {
     @Before
     public void setUp() throws Exception {
         props = new EC2ServiceProviderProperties();
-
-        props.setProvider(provider);
-        props.setSignatureMethod(signatureMethod);
-        props.setKeyname(keyname);
-        props.setImageId(imageId);
-        props.setMinInstanceCount(minCount);
-        props.setMaxInstanceCount(maxCount);
-        props.setMaxAsyncThreads(maxAsyncThreads);
-        props.setWebappProtocol(protocol);
-        props.setWebappPort(port);
-        props.setWebappName(appname);
-
         populateContent();
     }
 
-    private void populateContent() throws IOException {
+    private void populateContent() throws Exception {
+        InputStream in =
+                EC2ServiceProviderPropertiesTest.class.getClassLoader()
+                        .getResourceAsStream("testEC2Config.properties");
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        props.store(out);
-        out.flush();
-        content = out.toString();
-        out.close();
+        IOUtils.copy(in, out);
+        content = new String(out.toByteArray());
     }
 
     @After
@@ -74,36 +62,40 @@ public class EC2ServiceProviderPropertiesTest {
     }
 
     @Test
-    public void testStore() {
-        assertNotNull(content);
-        assertTrue(content.indexOf(provider) > 0);
-        assertTrue(content.indexOf(signatureMethod) > 0);
-        assertTrue(content.indexOf(keyname) > 0);
-        assertTrue(content.indexOf(imageId) > 0);
-        assertTrue(content.indexOf(Integer.toString(minCount)) > 0);
-        assertTrue(content.indexOf(Integer.toString(maxCount)) > 0);
-        assertTrue(content.indexOf(Integer.toString(maxAsyncThreads)) > 0);
-        assertTrue(content.indexOf(protocol) > 0);
-        assertTrue(content.indexOf(Integer.toString(port)) > 0);
-        assertTrue(content.indexOf(appname) > 0);
+    public void testStore() throws Exception
+    {
+        props.loadFromXml(content);
+
+        String xml = props.getAsXml();
+        assertNotNull(xml);
+        assertTrue(xml.indexOf(provider) > 0);
+        assertTrue(xml.indexOf(signatureMethod) > 0);
+        assertTrue(xml.indexOf(keyname) > 0);
+        assertTrue(xml.indexOf(imageId) > 0);
+        assertTrue(xml.indexOf(Integer.toString(minCount)) > 0);
+        assertTrue(xml.indexOf(Integer.toString(maxCount)) > 0);
+        assertTrue(xml.indexOf(Integer.toString(maxAsyncThreads)) > 0);
+        assertTrue(xml.indexOf(protocol) > 0);
+        assertTrue(xml.indexOf(Integer.toString(port)) > 0);
+        assertTrue(xml.indexOf(appname) > 0);
+
     }
 
     @Test
-    public void testLoad() {
+    public void testLoad() throws Exception {
         assertNotNull(content);
-        EC2ServiceProviderProperties p = new EC2ServiceProviderProperties();
-        p.load(getContentAsStream());
+        props.loadFromXml(content);
 
-        String pvdr = p.getProvider();
-        String sig = p.getSignatureMethod();
-        String key = p.getKeyname();
-        String img = p.getImageId();
-        int minCnt = p.getMinInstanceCount();
-        int maxCnt = p.getMaxInstanceCount();
-        int threads = p.getMaxAsyncThreads();
-        String proto = p.getWebappProtocol();
-        int prt = p.getWebappPort();
-        String app = p.getWebappName();
+        String pvdr = props.getProvider();
+        String sig = props.getSignatureMethod();
+        String key = props.getKeyname();
+        String img = props.getImageId();
+        int minCnt = props.getMinInstanceCount();
+        int maxCnt = props.getMaxInstanceCount();
+        int threads = props.getMaxAsyncThreads();
+        String proto = props.getWebappProtocol();
+        int prt = props.getWebappPort();
+        String app = props.getWebappName();
 
         assertNotNull(pvdr);
         assertTrue(pvdr.equals(provider));
@@ -129,13 +121,6 @@ public class EC2ServiceProviderPropertiesTest {
         assertNotNull(app);
         assertTrue(app.equals(appname));
 
-    }
-
-    private InputStream getContentAsStream() {
-        AutoCloseInputStream in =
-                new AutoCloseInputStream(new ByteArrayInputStream(content
-                        .getBytes()));
-        return in;
     }
 
 }

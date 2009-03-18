@@ -22,20 +22,15 @@ public interface ComputeAcctRepository {
     public ComputeAcct findComputeAcct(String acctId) throws Exception;
 
     /**
-     * This method returns the total number of compute-accounts stored in the
-     * repository.
-     *
-     * @return
-     * @throws Exception
-     */
-    public int getNumComputeAccts() throws Exception;
-
-    /**
      * This method persists the provided compute-account-data to the repository.
      *
      * @param acct
      * @throws Exception
      */
-    public void saveComputeAcct(ComputeAcct acct) throws Exception;
+    public int saveComputeAcct(ComputeAcct acct) throws Exception;
+
+    public ComputeAcct findComputeAcctByDuraAcctId(int id) throws Exception;
+
+    public ComputeAcct findComputeAcctById(int id) throws Exception;
 
 }

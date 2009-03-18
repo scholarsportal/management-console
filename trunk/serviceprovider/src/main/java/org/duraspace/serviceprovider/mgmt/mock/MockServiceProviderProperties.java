@@ -1,48 +1,55 @@
 
 package org.duraspace.serviceprovider.mgmt.mock;
 
-import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
+import java.util.Properties;
+
+import org.duraspace.common.util.ApplicationConfig;
 
 public class MockServiceProviderProperties
-        extends ServiceProviderProperties {
+        extends ApplicationConfig {
 
-    private String prop0;
+    private Properties props;
 
-    private String prop1;
+    private final String prop0Key = "prop0";
 
-    private String prop2;
+    private final String prop1Key = "prop1";
 
-    @Override
-    protected void setMembers(Object obj) {
-        MockServiceProviderProperties props =
-                (MockServiceProviderProperties) obj;
-        this.setProp0(props.getProp0());
-        this.setProp1(props.getProp1());
-        this.setProp2(props.getProp2());
+    private final String prop2Key = "prop2";
+
+    public MockServiceProviderProperties() {
+        props = new Properties();
+    }
+
+    public String getAsXml() throws Exception {
+        return ApplicationConfig.getXmlFromProps(props);
+    }
+
+    public void loadFromXml(String xml) throws Exception {
+        props = ApplicationConfig.getPropsFromXml(xml);
     }
 
     public String getProp0() {
-        return prop0;
+        return props.getProperty(prop0Key);
     }
 
     public void setProp0(String prop0) {
-        this.prop0 = prop0;
+        props.put(prop0Key, prop0);
     }
 
     public String getProp1() {
-        return prop1;
+        return props.getProperty(prop1Key);
     }
 
     public void setProp1(String prop1) {
-        this.prop1 = prop1;
+        props.put(prop1Key, prop1);
     }
 
     public String getProp2() {
-        return prop2;
+        return props.getProperty(prop2Key);
     }
 
     public void setProp2(String prop2) {
-        this.prop2 = prop2;
+        props.setProperty(prop2Key, prop2);
     }
 
 }

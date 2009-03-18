@@ -29,16 +29,17 @@ public class EC2ServiceProviderDriver {
     private final String configFilePath =
             "src/test/resources/test-service-props.xml";
 
-    private EC2ServiceProviderProperties props;
+    private String xmlProps;
 
     public EC2ServiceProviderDriver(String secretAccessKey) {
         this.secretAccessKey = secretAccessKey;
     }
 
     public void setUp() throws Exception {
-        props = new EC2ServiceProviderProperties();
+        EC2ServiceProviderProperties props = new EC2ServiceProviderProperties();
         props
-                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
+                .loadFromXmlStream(new AutoCloseInputStream(new FileInputStream(configFilePath)));
+        xmlProps = props.getAsXml();
 
         service = new EC2ServiceProvider();
 
@@ -49,20 +50,23 @@ public class EC2ServiceProviderDriver {
     }
 
     public void testStart() throws Exception {
-        instanceId = service.start(credential, props);
+        instanceId = service.start(credential, xmlProps);
 
         log.info("instance id: " + instanceId);
 
         InstanceDescription desc = null;
-        while (!service.isInstanceRunning(credential, instanceId, props)) {
+        while (!service.isInstanceRunning(credential, instanceId, xmlProps)) {
             desc =
                     service.describeRunningInstance(credential,
                                                     instanceId,
-                                                    props);
+                                                    xmlProps);
             log.info("instance state: " + desc.getState().name());
             Thread.sleep(10000);
         }
-        desc = service.describeRunningInstance(credential, instanceId, props);
+        desc =
+                service.describeRunningInstance(credential,
+                                                instanceId,
+                                                xmlProps);
         assertNotNull(desc);
         log.info("instance state:     " + desc.getState().name());
         log.info("launch time: " + desc.getLaunchTime());
@@ -73,7 +77,10 @@ public class EC2ServiceProviderDriver {
         while (!done) {
             Thread.sleep(10000);
             try {
-                done = service.isWebappRunning(credential, instanceId, props);
+                done =
+                        service.isWebappRunning(credential,
+                                                instanceId,
+                                                xmlProps);
                 log.info("webapp state: " + done);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -86,7 +93,7 @@ public class EC2ServiceProviderDriver {
 
     public void testStop() throws Exception {
         log.info("stopping instance: " + instanceId);
-        service.stop(credential, instanceId, props);
+        service.stop(credential, instanceId, xmlProps);
     }
 
     private static void usageAndQuit() {
