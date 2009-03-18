@@ -1,16 +1,16 @@
 
-.space {
+table.space {
   border:1px solid;
 }
 
-.wrapper {
+div.space {
   float: left;
   margin-right: 20px;	
   margin-bottom: 20px;
 }
 
-
-#add_space {
+div.space_action {
+  clear:both;
   margin-top:20px;
 }
 
@@ -33,5 +33,5 @@ td {
 #error {
   font-size: 1.2em;
   color: red;
-  margin-top: 20px 0px; 
+  margin: 20px 0px; 
 }
