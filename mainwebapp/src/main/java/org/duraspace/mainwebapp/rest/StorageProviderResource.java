@@ -1,10 +1,11 @@
 
 package org.duraspace.mainwebapp.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
-import org.duraspace.mainwebapp.mgmt.StorageManager;
+import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
 
 /**
  * Provides interaction with storage provider accounts
@@ -13,7 +14,7 @@ import org.duraspace.mainwebapp.mgmt.StorageManager;
  */
 public class StorageProviderResource {
 
-    private static StorageManager storageManager;
+    private static DuraSpaceAcctManager duraSpaceAcctManager;
 
     /**
      * Provides a listing of all storage providers that are available to
@@ -28,14 +29,21 @@ public class StorageProviderResource {
 
     /**
      * Provides a listing of all storage provider account subscriptions for a
-     * given user.
+     * given DuraSpace account.
      *
-     * @param customerID
+     * @param DuraSpace
+     *        account name
      * @return XML listing of storage provider accounts
      */
-    public static String getStorageProviderAccounts(String customerID) {
-        List<StorageAcct> accts =
-                storageManager.getStorageProviderAccounts(customerID);
+    public static String getStorageProviderAccounts(String duraAcctId) {
+        List<StorageAcct> accts = new ArrayList<StorageAcct>();
+        try {
+            int id = Integer.parseInt(duraAcctId);
+            accts = duraSpaceAcctManager.findStorageProviderAccounts(id);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         StringBuilder xml = new StringBuilder("<storageProviderAccounts>");
         for (StorageAcct acct : accts) {
@@ -101,11 +109,12 @@ public class StorageProviderResource {
         return true;
     }
 
-    public StorageManager getStorageManager() {
-        return storageManager;
+    public DuraSpaceAcctManager getDuraSpaceAcctManager() {
+        return duraSpaceAcctManager;
     }
 
-    public static void setStorageManager(StorageManager mgr) {
-        storageManager = mgr;
+    public static void setDuraSpaceAcctManager(DuraSpaceAcctManager duraSpaceAcctManager) {
+        StorageProviderResource.duraSpaceAcctManager = duraSpaceAcctManager;
     }
+
 }

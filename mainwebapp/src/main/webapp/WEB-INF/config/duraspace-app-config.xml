@@ -10,10 +10,10 @@
   <!--
     Imports the configurations of the different infrastructure systems
     of the application
-  -->
+  --> 
+  <import resource="data-access-config.xml" />
   <import resource="webmvc-config.xml" />
   <import resource="webflow-config.xml" />
-  <!--  <import resource="data-access-config.xml" />-->
   <!--  <import resource="security-config.xml" />-->
   <import resource="restapi-config.xml" />
 

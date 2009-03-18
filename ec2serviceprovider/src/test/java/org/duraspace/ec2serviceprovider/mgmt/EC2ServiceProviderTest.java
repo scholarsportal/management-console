@@ -58,9 +58,9 @@ public class EC2ServiceProviderTest {
     private final String instanceId = "test-instance-id";
 
     private final String configFilePath =
-            "src/test/resources/test-service-props.xml";
+            "src/test/resources/testEC2Config.properties";
 
-    private EC2ServiceProviderProperties props;
+    private String xmlProps;
 
     @Before
     public void setUp() throws Exception {
@@ -68,9 +68,11 @@ public class EC2ServiceProviderTest {
         credential.setUsername(username);
         credential.setPassword(password);
 
-        props = new EC2ServiceProviderProperties();
+        EC2ServiceProviderProperties props = new EC2ServiceProviderProperties();
         props
-                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
+                .loadFromXmlStream(new AutoCloseInputStream(new FileInputStream(configFilePath)));
+        xmlProps = props.getAsXml();
+
         serviceProvider = new EC2ServiceProvider();
     }
 
@@ -112,7 +114,7 @@ public class EC2ServiceProviderTest {
 
     @After
     public void tearDown() throws Exception {
-        props = null;
+        xmlProps = null;
         serviceProvider = null;
         credential = null;
         mockEC2 = null;
@@ -128,14 +130,14 @@ public class EC2ServiceProviderTest {
         buildMockStartServiceWrapper();
         serviceProvider.setEC2(mockEC2);
 
-        String instId = serviceProvider.start(credential, props);
+        String instId = serviceProvider.start(credential, xmlProps);
         assertNotNull(instId);
         assertTrue(instId.equals(instanceId));
     }
 
     //    @Test
     public void testStop() throws Exception {
-        serviceProvider.stop(credential, instanceId, props);
+        serviceProvider.stop(credential, instanceId, xmlProps);
     }
 
     //    @Test
@@ -143,22 +145,25 @@ public class EC2ServiceProviderTest {
         InstanceDescription instDesc =
                 serviceProvider.describeRunningInstance(credential,
                                                         instanceId,
-                                                        props);
+                                                        xmlProps);
         assertNotNull(instDesc);
     }
 
     //    @Test
     public void testIsInstanceRunning() throws Exception {
         boolean r =
-                serviceProvider
-                        .isInstanceRunning(credential, instanceId, props);
+                serviceProvider.isInstanceRunning(credential,
+                                                  instanceId,
+                                                  xmlProps);
         assertTrue(r);
     }
 
     //    @Test
     public void testIsWebappRunning() throws Exception {
         boolean r =
-                serviceProvider.isWebappRunning(credential, instanceId, props);
+                serviceProvider.isWebappRunning(credential,
+                                                instanceId,
+                                                xmlProps);
         assertTrue(r);
     }
 

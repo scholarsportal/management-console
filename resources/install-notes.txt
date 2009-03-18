@@ -41,4 +41,18 @@ Until a database is consistenly available for DuraSpace, you'll need to follow t
 in the build-notes file for providing Amazon credentials via the command line in order for the
 integration tests in the instancewebapp to pass.
 
+::Database::
+The mainwebapp requires account information stored in an underlying database.
+Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
+>Run the following java-app: org.duraspace.mainwebapp.domain.repo.db.MainDatabaseUtil <location-of-new-DB>
 
+To ensure that the classpath is setup properly, it is probably easiest to run this from within eclipse.
+
+>Now the mainwebapp needs to know where this newly created database is.
+ Spring injects the dataSource which it receives with a jndi lookup from the container.
+ To let the container know where the database is, set the same location that you used above (<location-of-new-DB>) in the following file:
+>mainwebapp/src/main/webapp/META-INF/context.xml
+>Currently the line is set as:
+ url="jdbc:derby:/opt/derby/duraspaceDB"
+>Change it to:
+ url="jdbc:derby:<location-of-new-DB>"

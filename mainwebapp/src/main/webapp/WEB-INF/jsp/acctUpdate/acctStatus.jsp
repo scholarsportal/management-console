@@ -11,13 +11,13 @@
 <form method="POST" action="computeStatus.htm">
 
 <p /><!-- Add credentials to command object --> <c:if
-	test="${ !empty custAcct.computeAcctId}">
+	test="${ !empty duraAcct.computeAcctId}">
 	<input type="hidden" name="computeAcctId"
-		value="${custAcct.computeAcctId}" />
+		value="${duraAcct.computeAcctId}" />
 </c:if>
 <h3>Registered account users</h3>
 <table>
-	<c:forEach items="${custAcct.users}" var="user">
+	<c:forEach items="${duraAcct.users}" var="user">
 		<tr>
 			<td class="user"><c:out value="${user.lastname}" />, <c:out
 				value="${user.firstname}" /></td>
@@ -28,7 +28,7 @@
 <h3>Account Details</h3>
 <table>
 	<c:choose>
-		<c:when test="${ !empty custAcct.computeAcctId}">
+		<c:when test="${ !empty duraAcct.computeAcctId}">
 			<tr>
 				<td><input type="submit" class="button" name="cmd"
 					value="View Compute Status" /></td>

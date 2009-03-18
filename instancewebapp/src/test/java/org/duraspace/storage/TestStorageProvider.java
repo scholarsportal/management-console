@@ -1,12 +1,12 @@
 package org.duraspace.storage;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import org.duraspace.s3storage.S3StorageProvider;
 import org.duraspace.storage.StorageAccount.AccountType;
 import org.duraspace.util.StorageProviderUtil;
+
+import junit.framework.TestCase;
 
 /**
  * Runtime test of Storage Provider classes. The mainwebapp
@@ -23,7 +23,7 @@ public class TestStorageProvider
 
     @Test
     public void testStorageCustomer() throws Exception {
-        StorageCustomer customer = new StorageCustomer("owner0",
+        StorageCustomer customer = new StorageCustomer("2",
                                                        mainHost,
                                                        mainPort);
         assertNotNull(customer);
@@ -39,7 +39,7 @@ public class TestStorageProvider
     public void testStorageProviderUtility() throws Exception {
         StorageProviderUtil.initialize(mainHost, mainPort);
         StorageProvider storage =
-            StorageProviderUtil.getStorageProvider("owner0");
+            StorageProviderUtil.getStorageProvider("2");
 
         assertNotNull(storage);
         assertTrue(storage instanceof S3StorageProvider);

@@ -16,15 +16,27 @@ import org.duraspace.mainwebapp.domain.model.StorageAcct;
 public interface StorageAcctRepository {
 
     /**
-     * This method returns all customer-storage-accounts that belong to the
-     * customer associated with the provided id.
+     * This method returns storage-account associated with the provided storage
+     * acct id.
      *
-     * @param customerId
+     * @param Storage Acct Id
      * @return
      * @throws Exception
      *         If no accounts are found.
      */
-    public List<StorageAcct> findStorageAccts(String customerId)
+    public StorageAcct findStorageAcctById(int storageAcctId)
+            throws Exception;
+
+    /**
+     * This method returns all storage-accounts associated with the provided
+     * DuraSpace id.
+     *
+     * @param DuraSpace Account id
+     * @return
+     * @throws Exception
+     *         If no accounts are found.
+     */
+    public List<StorageAcct> findStorageAcctsByDuraAcctId(int duraAcctId)
             throws Exception;
 
     /**
@@ -33,6 +45,6 @@ public interface StorageAcctRepository {
      * @param acct
      * @throws Exception
      */
-    public void saveStorageAcct(StorageAcct acct) throws Exception;
+    public int saveStorageAcct(StorageAcct acct) throws Exception;
 
 }

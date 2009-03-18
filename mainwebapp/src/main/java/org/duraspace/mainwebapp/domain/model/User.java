@@ -3,14 +3,12 @@ package org.duraspace.mainwebapp.domain.model;
 
 import java.io.Serializable;
 
-import java.util.List;
-
 public class User
         implements Serializable {
 
     private static final long serialVersionUID = 1816069045684903936L;
 
-    private String id;
+    private int id;
 
     private String lastname;
 
@@ -18,21 +16,30 @@ public class User
 
     private String email;
 
-    private int phoneWork;
+    private String phoneWork;
 
-    private int phoneOther;
+    private String phoneOther;
 
-    private List<Address> addrShippings;
+    private int addrShippingId;
 
-    public User() {
+    private int credentialId;
 
+    private int duraAcctId;
+
+    public boolean hasId() {
+        return id > 0;
     }
 
-    public User getDefaultUser() {
-        User user = new User();
-        user.setFirstname("first-name");
-        user.setLastname("last-name");
-        return user;
+    public boolean hasAddrShippingId() {
+        return addrShippingId > 0;
+    }
+
+    public boolean hasCredentialId() {
+        return credentialId > 0;
+    }
+
+    public boolean hasDuraAcctId() {
+        return duraAcctId > 0;
     }
 
     @Override
@@ -44,14 +51,6 @@ public class User
         sb.append(this.firstname);
         sb.append("]");
         return sb.toString();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getLastname() {
@@ -78,28 +77,52 @@ public class User
         this.email = email;
     }
 
-    public int getPhoneWork() {
+    public String getPhoneWork() {
         return phoneWork;
     }
 
-    public void setPhoneWork(int phoneWork) {
+    public void setPhoneWork(String phoneWork) {
         this.phoneWork = phoneWork;
     }
 
-    public int getPhoneOther() {
+    public String getPhoneOther() {
         return phoneOther;
     }
 
-    public void setPhoneOther(int phoneOther) {
+    public void setPhoneOther(String phoneOther) {
         this.phoneOther = phoneOther;
     }
 
-    public List<Address> getAddrShippings() {
-        return addrShippings;
+    public int getAddrShippingId() {
+        return addrShippingId;
     }
 
-    public void setAddrShippings(List<Address> addrShippings) {
-        this.addrShippings = addrShippings;
+    public void setAddrShippingId(int addrShippingId) {
+        this.addrShippingId = addrShippingId;
+    }
+
+    public int getCredentialId() {
+        return credentialId;
+    }
+
+    public void setCredentialId(int credentialId) {
+        this.credentialId = credentialId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getDuraAcctId() {
+        return duraAcctId;
+    }
+
+    public void setDuraAcctId(int duraAcctId) {
+        this.duraAcctId = duraAcctId;
     }
 
 }

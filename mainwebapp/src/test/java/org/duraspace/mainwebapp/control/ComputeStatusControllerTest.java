@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
-import org.duraspace.mainwebapp.domain.repo.CustomerAcctRepository;
-import org.duraspace.mainwebapp.mgmt.ComputeManagerImpl;
+import org.duraspace.mainwebapp.mgmt.ComputeAcctManagerImpl;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.easymock.EasyMock;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,7 +41,10 @@ public class ComputeStatusControllerTest {
     private final String mockProvider =
             "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl";
 
-    private final String computeProviderId = "mock-provider";
+    private final ComputeProviderType computeProviderType =
+            ComputeProviderType.UNKNOWN;
+
+    private final int computeProviderId = 111;
 
     private MockHttpServletRequest request;
 
@@ -49,7 +52,7 @@ public class ComputeStatusControllerTest {
 
     private final String computeAcctIdParamName = "computeAcctId";
 
-    private final String computeAcctId = "compute-acct-id0";
+    private final Integer computeAcctId = 1234;
 
     private final String mockInstanceId = "mockInstanceId";
 
@@ -70,6 +73,7 @@ public class ComputeStatusControllerTest {
         acctWrapper = new ComputeAcctWrapper();
 
         computeAcct = new ComputeAcct();
+        computeAcct.setComputeProviderType(computeProviderType);
         computeAcct.setComputeProviderId(computeProviderId);
 
         control = new ComputeStatusController();
@@ -77,12 +81,13 @@ public class ComputeStatusControllerTest {
         request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setRequestURI("/computeStatus.htm");
-        request.setParameter(computeAcctIdParamName, computeAcctId);
+        request.setParameter(computeAcctIdParamName, computeAcctId.toString());
 
         response = new MockHttpServletResponse();
 
         idToComputeProviderMap = new HashMap<String, String>();
-        idToComputeProviderMap.put(computeProviderId, mockProvider);
+        idToComputeProviderMap
+                .put(computeProviderType.toString(), mockProvider);
         ComputeProviderFactory.setIdToClassMap(idToComputeProviderMap);
 
     }
@@ -102,6 +107,7 @@ public class ComputeStatusControllerTest {
 
         setUpControllerInit(mockInstanceId);
         request.setParameter(cmdParamName, initCmd);
+        request.setParameter(computeAcctIdParamName, computeAcctId.toString());
 
         acctWrapper = sendRequest(request);
         assertNotNull(acctWrapper);
@@ -127,22 +133,17 @@ public class ComputeStatusControllerTest {
     }
 
     private void setUpControllerInit(String instanceId) throws Exception {
-        ComputeManagerImpl mgrImpl = new ComputeManagerImpl();
+        ComputeAcctManagerImpl mgrImpl = new ComputeAcctManagerImpl();
 
         computeAcct.setInstanceId(instanceId);
 
         ComputeAcctRepository computeAcctRepo =
                 EasyMock.createMock(ComputeAcctRepository.class);
-        expect(computeAcctRepo.findComputeAcct(computeAcctId))
+        expect(computeAcctRepo.findComputeAcctById(computeAcctId))
                 .andReturn(computeAcct);
         replay(computeAcctRepo);
 
-        CustomerAcctRepository customerAcctRepo =
-                EasyMock.createMock(CustomerAcctRepository.class);
-        replay(customerAcctRepo);
-
         mgrImpl.setComputeAcctRepository(computeAcctRepo);
-        mgrImpl.setCustomerAcctRepository(customerAcctRepo);
 
         control.setComputeManager(mgrImpl);
     }

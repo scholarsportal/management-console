@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/jee
+           http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
+    
+    <jee:jndi-lookup id="dataSource" jndi-name="jdbc/mainDatasource" resource-ref="true"/>
+    
+    
+    <bean id="duraSpaceAcctRepo" class="org.duraspace.mainwebapp.domain.repo.DuraSpaceAcctRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="addressRepo" class="org.duraspace.mainwebapp.domain.repo.AddressRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>  
+
+    <bean id="userRepo" class="org.duraspace.mainwebapp.domain.repo.UserRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="credentialRepo" class="org.duraspace.mainwebapp.domain.repo.CredentialRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="authorityRepo" class="org.duraspace.mainwebapp.domain.repo.AuthorityRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="authenticationDao" class="org.springframework.security.userdetails.jdbc.JdbcDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="computeAcctRepo" class="org.duraspace.mainwebapp.domain.repo.ComputeAcctRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean> 
+    
+    <bean id="computeProviderRepo" class="org.duraspace.mainwebapp.domain.repo.ComputeProviderRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="storageAcctRepo" class="org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <bean id="storageProviderRepo" class="org.duraspace.mainwebapp.domain.repo.StorageProviderRepositoryDBImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+   
+</beans>

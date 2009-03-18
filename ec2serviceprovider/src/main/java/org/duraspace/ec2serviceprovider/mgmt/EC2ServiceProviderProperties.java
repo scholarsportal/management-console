@@ -1,9 +1,13 @@
 
 package org.duraspace.ec2serviceprovider.mgmt;
 
-import java.io.Serializable;
+import java.io.InputStream;
 
-import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+
+import org.duraspace.common.util.ApplicationConfig;
 
 /**
  * POJO container for EC2-specific configuration information. -load/store is
@@ -12,141 +16,128 @@ import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
  * @author Andrew Woods
  */
 public class EC2ServiceProviderProperties
-        extends ServiceProviderProperties
-        implements Serializable {
+        extends ApplicationConfig {
 
-    private static final long serialVersionUID = -960605896468718060L;
+    protected static final Logger log =
+            Logger.getLogger(EC2ServiceProviderProperties.class);
 
-    private String provider;
+    private Properties props;
 
-    private String signatureMethod;
+    private final String providerKey = "provider";
 
-    private String keyname;
+    private final String signatureMethodKey = "signatureMethod";
 
-    private String imageId;
+    private final String keynameKey = "keyname";
 
-    private int minInstanceCount;
+    private final String imageIdKey = "imageId";
 
-    private int maxInstanceCount;
+    private final String minInstanceCountKey = "minInstanceCount";
 
-    private int maxAsyncThreads;
+    private final String maxInstanceCountKey = "maxInstanceCount";
 
-    private String webappProtocol;
+    private final String maxAsyncThreadsKey = "maxAsyncThreads";
 
-    private int webappPort;
+    private final String webappProtocolKey = "webappProtocol";
 
-    private String webappName;
+    private final String webappPortKey = "webappPort";
 
-    @Override
-    protected void setMembers(Object obj) {
-        EC2ServiceProviderProperties props = (EC2ServiceProviderProperties) obj;
-        this.setProvider(props.getProvider());
-        this.setMaxAsyncThreads(props.getMaxAsyncThreads());
-        this.setKeyname(props.getKeyname());
-        this.setImageId(props.getImageId());
-        this.setMinInstanceCount(props.getMinInstanceCount());
-        this.setMaxInstanceCount(props.getMaxInstanceCount());
-        this.setSignatureMethod(props.getSignatureMethod());
-        this.setWebappProtocol(props.getWebappProtocol());
-        this.setWebappPort(props.getWebappPort());
-        this.setWebappName(props.getWebappName());
+    private final String webappNameKey = "webappName";
+
+    public EC2ServiceProviderProperties() {
+        props = new Properties();
+    }
+
+    public void loadFromXml(String xml) throws Exception {
+        props = ApplicationConfig.getPropsFromXml(xml);
+    }
+
+    public void loadFromXmlStream(InputStream propsXmlStream) throws Exception {
+        props = ApplicationConfig.getPropsFromXmlStream(propsXmlStream);
+    }
+
+    public String getAsXml() throws Exception {
+        return ApplicationConfig.getXmlFromProps(props);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("EC2Props[");
-        sb.append("\n\tprovider:" + provider);
-        sb.append("\n\tsignatureMethod:" + signatureMethod);
-        sb.append("\n\tkeyname:" + keyname);
-        sb.append("\n\timageId:" + imageId);
-        sb.append("\n\tminInstanceCount:" + minInstanceCount);
-        sb.append("\n\tmaxInstanceCount:" + maxInstanceCount);
-        sb.append("\n\tmaxAsyncThreads:" + maxAsyncThreads);
-        sb.append("\n\twebappProtocol:" + webappProtocol);
-        sb.append("\n\twebappPort:" + webappPort);
-        sb.append("\n\twebappName:" + webappName);
+        sb.append("\n\tprovider:" + getProvider());
+        sb.append("\n\tsignatureMethod:" + getSignatureMethod());
+        sb.append("\n\tkeyname:" + getKeyname());
+        sb.append("\n\timageId:" + getImageId());
+        sb.append("\n\tminInstanceCount:" + getMinInstanceCount());
+        sb.append("\n\tmaxInstanceCount:" + getMaxInstanceCount());
+        sb.append("\n\tmaxAsyncThreads:" + getMaxAsyncThreads());
+        sb.append("\n\twebappProtocol:" + getWebappProtocol());
+        sb.append("\n\twebappPort:" + getWebappPort());
+        sb.append("\n\twebappName:" + getWebappName());
         sb.append("]");
         return sb.toString();
     }
 
     public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(String provider) {
-        this.provider = provider;
+        return props.getProperty(providerKey);
     }
 
     public String getSignatureMethod() {
-        return signatureMethod;
-    }
-
-    public void setSignatureMethod(String signatureMethod) {
-        this.signatureMethod = signatureMethod;
+        return props.getProperty(signatureMethodKey);
     }
 
     public String getKeyname() {
-        return keyname;
-    }
-
-    public void setKeyname(String keyname) {
-        this.keyname = keyname;
+        return props.getProperty(keynameKey);
     }
 
     public String getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
+        return props.getProperty(imageIdKey);
     }
 
     public int getMinInstanceCount() {
-        return minInstanceCount;
-    }
-
-    public void setMinInstanceCount(int minCount) {
-        this.minInstanceCount = minCount;
+        int val = -1;
+        try {
+            val = Integer.parseInt(props.getProperty(minInstanceCountKey));
+        } catch (NumberFormatException e) {
+            log.error(e);
+        }
+        return val;
     }
 
     public int getMaxInstanceCount() {
-        return maxInstanceCount;
-    }
-
-    public void setMaxInstanceCount(int maxCount) {
-        this.maxInstanceCount = maxCount;
+        int val = -1;
+        try {
+            val = Integer.parseInt(props.getProperty(maxInstanceCountKey));
+        } catch (NumberFormatException e) {
+            log.error(e);
+        }
+        return val;
     }
 
     public int getMaxAsyncThreads() {
-        return maxAsyncThreads;
-    }
-
-    public void setMaxAsyncThreads(int maxAsyncThreads) {
-        this.maxAsyncThreads = maxAsyncThreads;
+        int val = -1;
+        try {
+            val = Integer.parseInt(props.getProperty(maxAsyncThreadsKey));
+        } catch (NumberFormatException e) {
+            log.error(e);
+        }
+        return val;
     }
 
     public String getWebappProtocol() {
-        return webappProtocol;
-    }
-
-    public void setWebappProtocol(String webappProtocol) {
-        this.webappProtocol = webappProtocol;
+        return props.getProperty(webappProtocolKey);
     }
 
     public int getWebappPort() {
-        return webappPort;
-    }
-
-    public void setWebappPort(int port) {
-        this.webappPort = port;
+        int val = -1;
+        try {
+            val = Integer.parseInt(props.getProperty(webappPortKey));
+        } catch (NumberFormatException e) {
+            log.error(e);
+        }
+        return val;
     }
 
     public String getWebappName() {
-        return webappName;
-    }
-
-    public void setWebappName(String appname) {
-        this.webappName = appname;
+        return props.getProperty(webappNameKey);
     }
 
 }

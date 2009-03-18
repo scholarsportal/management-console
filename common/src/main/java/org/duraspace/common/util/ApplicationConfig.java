@@ -1,6 +1,12 @@
 
 package org.duraspace.common.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
@@ -15,20 +21,8 @@ public class ApplicationConfig {
     protected static final Logger log =
             Logger.getLogger(ApplicationConfig.class);
 
-    private static String MAIN_WEBAPP_PROPERTIES_NAME = "mainwebapp.properties";
-
-    /**
-     * This method returns a configuration properties associated with the
-     * duraspace mainwebapp.
-     *
-     * @return properties of mainwebapp
-     * @throws Exception
-     */
-    public static Properties getMainWebAppProps() throws Exception {
-        return getProps(MAIN_WEBAPP_PROPERTIES_NAME);
-    }
-
-    protected static Properties getProps(String resourceName) throws Exception {
+    protected static Properties getPropsFromResource(String resourceName)
+            throws Exception {
         Properties props = new Properties();
         AutoCloseInputStream in =
                 new AutoCloseInputStream(ApplicationConfig.class
@@ -36,9 +30,64 @@ public class ApplicationConfig {
         try {
             props.load(in);
         } catch (Exception e) {
-            log.warn("Unable to find resource: '" + resourceName + "'");
+            log.warn("Unable to find resource: '" + resourceName + "': "
+                    + e.getMessage());
+            throw e;
         }
         return props;
+    }
+
+    public static Properties getPropsFromXml(String propsXml)
+            throws Exception {
+        AutoCloseInputStream in =
+                new AutoCloseInputStream(new ByteArrayInputStream(propsXml
+                        .getBytes()));
+
+        return getPropsFromXmlStream(in);
+    }
+
+    protected static Properties getPropsFromXmlStream(InputStream propsXmlStream)
+            throws Exception {
+        Properties props = new Properties();
+        try {
+            props.loadFromXML(propsXmlStream);
+        } catch (InvalidPropertiesFormatException e) {
+            log.error(e.getMessage());
+            log.error(ExceptionUtil.getStackTraceAsString(e));
+            throw e;
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            log.error(ExceptionUtil.getStackTraceAsString(e));
+            throw e;
+        } finally {
+            if (propsXmlStream != null) {
+                propsXmlStream.close();
+            }
+        }
+
+        return props;
+    }
+
+    protected static String getXmlFromProps(Properties props) throws Exception {
+        String comment = null;
+        String xml = new String();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            props.storeToXML(os, comment);
+            os.flush();
+            xml = os.toString();
+        } catch (IOException e) {
+            log.error("IO exception for props: '" + props + "'");
+            log.error(e.getMessage());
+            log.error(ExceptionUtil.getStackTraceAsString(e));
+            throw e;
+        } finally {
+            if (os != null) {
+                os.close();
+            }
+        }
+
+        return xml;
     }
 
 }

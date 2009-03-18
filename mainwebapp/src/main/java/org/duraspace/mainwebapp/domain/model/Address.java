@@ -3,7 +3,7 @@ package org.duraspace.mainwebapp.domain.model;
 
 public class Address {
 
-    private final String id;
+    private int id;
 
     private String street1;
 
@@ -15,14 +15,18 @@ public class Address {
 
     private String state;
 
-    private int zip;
+    private String zip;
 
-    public Address() {
-        this.id = "none";
+    public int getId() {
+        return id;
     }
 
-    public String getId() {
-        return id;
+    public boolean hasId() {
+        return id > 0;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getStreet1() {
@@ -65,11 +69,11 @@ public class Address {
         this.state = state;
     }
 
-    public int getZip() {
+    public String getZip() {
         return zip;
     }
 
-    public void setZip(int zip) {
+    public void setZip(String zip) {
         this.zip = zip;
     }
 

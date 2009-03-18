@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -21,9 +22,9 @@ public class ComputeProviderFactoryImplTest {
 
     private Map<String, String> map;
 
-    private final String AMAZON = "amazon-ec2";
+    private final ComputeProviderType AMAZON = ComputeProviderType.AMAZON_EC2;
 
-    private final String BAD = "bad";
+    private final ComputeProviderType BAD = ComputeProviderType.UNKNOWN;
 
     private Credential credential;
 
@@ -31,16 +32,17 @@ public class ComputeProviderFactoryImplTest {
 
     private final String password = "password";
 
-    private final ServiceProviderProperties props = null;
+    private final String xmlProps = null;
 
     @Before
     public void setUp() throws Exception {
 
         map = new HashMap<String, String>();
         map
-                .put(AMAZON,
+                .put(AMAZON.toString(),
                      "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl");
-        map.put(BAD, "org.duraspace.serviceprovider.mgmt.Mockxxxxxxxxx");
+        map.put(BAD.toString(),
+                "org.duraspace.serviceprovider.mgmt.Mockxxxxxxxxx");
 
         ComputeProviderFactory.setIdToClassMap(map);
 
@@ -61,7 +63,7 @@ public class ComputeProviderFactoryImplTest {
                 ComputeProviderFactory.getComputeProvider(AMAZON);
         assertNotNull(provider);
 
-        assertFalse(provider.isInstanceRunning(credential, instanceId, props));
+        assertFalse(provider.isInstanceRunning(credential, instanceId, xmlProps));
     }
 
     @Test

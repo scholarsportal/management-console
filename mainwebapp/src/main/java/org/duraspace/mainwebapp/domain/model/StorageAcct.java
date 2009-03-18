@@ -11,20 +11,35 @@ import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.storage.domain.StorageProviderType;
 
 public class StorageAcct {
 
-    private String id;
+    private int id;
 
-    private String ownerId; // reference to parent CustomerAcct.
+    //FIXME:awoods , need to replace ownerId with duraAcctId
+    private String ownerId; // reference to parent DuraSpaceAcct.
 
-    private boolean isPrimary;
+    private int isPrimary;
 
-    private String storageProviderId;
+    private String namespace;
 
-    private String storageProviderType;
+    private StorageProviderType storageProviderType;
 
-    private Credential storageProviderCred;
+    private int storageProviderId;
+
+    private int storageCredentialId;
+
+    private int duraAcctId;
+
+    // The attributes below are loaded from IDs above.
+    private StorageProvider storageProvider;
+
+    private Credential storageProviderCredential;
+
+    public boolean hasId() {
+        return id > 0;
+    }
 
     public boolean hasOwner(String customerId) {
         return ownerId.equals(customerId);
@@ -44,9 +59,22 @@ public class StorageAcct {
         });
         xstream.alias("storageAcct", StorageAcct.class);
         xstream.alias("storageAccts", Set.class);
+        xstream.omitField(Credential.class, "id");
         xstream.useAttributeFor("ownerId", String.class);
-        xstream.useAttributeFor("isPrimary", boolean.class);
+        xstream.useAttributeFor("isPrimary", int.class);
         return xstream;
+    }
+
+    public boolean hasStorageProviderId() {
+        return storageProviderId > 0;
+    }
+
+    public boolean hasStorageCredentialId() {
+        return storageCredentialId > 0;
+    }
+
+    public boolean hasDuraAcctId() {
+        return duraAcctId > 0;
     }
 
     public String getOwnerId() {
@@ -57,38 +85,84 @@ public class StorageAcct {
         this.ownerId = ownerId;
     }
 
-    public boolean getIsPrimary() {
+    public int getIsPrimary() {
         return isPrimary;
     }
 
-    public void setPrimary(boolean isPrimary) {
+    public void setPrimary(int isPrimary) {
         this.isPrimary = isPrimary;
     }
 
-    public String getStorageProviderId() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public int getStorageProviderId() {
         return storageProviderId;
     }
 
-    public void setStorageProviderId(String storageProviderId) {
+    public void setStorageProviderId(int storageProviderId) {
         this.storageProviderId = storageProviderId;
     }
 
-    public Credential getStorageProviderCred() {
-        return storageProviderCred;
+    public int getDuraAcctId() {
+        return duraAcctId;
     }
 
-    public void setStorageProviderCred(Credential storageProviderCred) {
-        this.storageProviderCred = storageProviderCred;
+    public void setDuraAcctId(int duraAcctId) {
+        this.duraAcctId = duraAcctId;
     }
 
+    public int getStorageCredentialId() {
+        return storageCredentialId;
+    }
 
-    public String getStorageProviderType() {
+    public void setStorageCredentialId(int storageCredentialId) {
+        this.storageCredentialId = storageCredentialId;
+    }
+
+    public StorageProviderType getStorageProviderType() {
         return storageProviderType;
     }
 
-
-    public void setStorageProviderType(String storageProviderType) {
+    public void setStorageProviderType(StorageProviderType storageProviderType) {
         this.storageProviderType = storageProviderType;
     }
+
+    public void setStorageProviderType(String storageProviderType) {
+        this.storageProviderType =
+                StorageProviderType.fromString(storageProviderType);
+    }
+
+    public StorageProvider getStorageProvider() {
+        return storageProvider;
+    }
+
+    public void setStorageProvider(StorageProvider storageProvider) {
+        this.storageProvider = storageProvider;
+    }
+
+
+    public Credential getStorageProviderCredential() {
+        return storageProviderCredential;
+    }
+
+
+    public void setStorageProviderCredential(Credential storageProviderCredential) {
+        this.storageProviderCredential = storageProviderCredential;
+    }
+
 
 }

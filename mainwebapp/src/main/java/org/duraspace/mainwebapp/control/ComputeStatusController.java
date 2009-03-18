@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.cmd.ComputeStatusCmd;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
-import org.duraspace.mainwebapp.mgmt.ComputeManager;
+import org.duraspace.mainwebapp.mgmt.ComputeAcctManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
@@ -19,7 +19,7 @@ public class ComputeStatusController
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    private ComputeManager computeManager;
+    private ComputeAcctManager computeManager;
 
     public ComputeStatusController() {
         setCommandClass(ComputeStatusCmd.class);
@@ -34,7 +34,7 @@ public class ComputeStatusController
 
         ComputeStatusCmd params = (ComputeStatusCmd) command;
 
-        String computeAcctId = params.getComputeAcctId();
+        int computeAcctId = params.getComputeAcctIdAsInt();
         String timer = calculateTimer(params.getTimer());
 
         log.info("user cmd       : " + params.getCmd());
@@ -49,7 +49,7 @@ public class ComputeStatusController
                                 inputToView);
     }
 
-    private ComputeAcctWrapper executeCommand(String cmd, String computeAcctId)
+    private ComputeAcctWrapper executeCommand(String cmd, int computeAcctId)
             throws Exception {
 
         ComputeAcct acct = null;
@@ -97,11 +97,11 @@ public class ComputeStatusController
                 - tail.length() - 1));
     }
 
-    public ComputeManager getComputeManager() {
+    public ComputeAcctManager getComputeManager() {
         return computeManager;
     }
 
-    public void setComputeManager(ComputeManager computeManager) {
+    public void setComputeManager(ComputeAcctManager computeManager) {
         this.computeManager = computeManager;
     }
 

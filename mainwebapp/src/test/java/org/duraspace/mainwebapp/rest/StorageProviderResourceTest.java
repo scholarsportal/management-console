@@ -1,13 +1,15 @@
 
 package org.duraspace.mainwebapp.rest;
 
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryFileImpl;
-import org.duraspace.mainwebapp.mgmt.StorageManagerImpl;
+import org.duraspace.mainwebapp.domain.model.StorageAcct;
+import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
+import org.easymock.EasyMock;
 
 import junit.framework.TestCase;
 
@@ -19,24 +21,28 @@ import junit.framework.TestCase;
 public class StorageProviderResourceTest
         extends TestCase {
 
-    private final String repoLocationKey =
-            StorageAcctRepositoryFileImpl.REPO_LOCATION;
+    private final Integer duraAcctId = 123;
 
-    private final String repoLocation = "testStorageAcctRepo.xml";
+    private final int storageAcctId = 111;
+
+    private final StorageAcct storageAcct = new StorageAcct();
+
+    private final List<StorageAcct> storageAccts = new ArrayList<StorageAcct>();
 
     @Override
     @Before
     public void setUp() throws Exception {
 
-        Properties props = new Properties();
-        props.put(repoLocationKey, repoLocation);
+        storageAcct.setId(storageAcctId);
+        storageAccts.add(storageAcct);
 
-        StorageAcctRepositoryFileImpl repo = new StorageAcctRepositoryFileImpl();
-        repo.setProperties(props);
+        DuraSpaceAcctManager mgr =
+                EasyMock.createMock(DuraSpaceAcctManager.class);
+        EasyMock.expect(mgr.findStorageProviderAccounts(duraAcctId))
+                .andReturn(storageAccts);
+        EasyMock.replay(mgr);
 
-        StorageManagerImpl mgr = new StorageManagerImpl();
-        mgr.setRepo(repo);
-        StorageProviderResource.setStorageManager(mgr);
+        StorageProviderResource.setDuraSpaceAcctManager(mgr);
     }
 
     @Test
@@ -50,22 +56,13 @@ public class StorageProviderResourceTest
     @Test
     public void testGetStorageProviderAccounts() throws Exception {
         String xml =
-                StorageProviderResource.getStorageProviderAccounts("customer1");
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<storageProviderAccounts>");
-        sb.append("<storageAcct ownerId=\"customer1\" isPrimary=\"true\">");
-        sb.append("<storageProviderId>amazon-s3-id0</storageProviderId>");
-        sb.append("<storageProviderType>amazon-s3</storageProviderType>");
-        sb.append("<storageProviderCred>");
-        sb.append("<username>usernameA</username>");
-        sb.append("<password>passwordA</password>");
-        sb.append("</storageProviderCred>");
-        sb.append("</storageAcct>");
-        sb.append("</storageProviderAccounts>");
+                StorageProviderResource.getStorageProviderAccounts(duraAcctId
+                        .toString());
 
         assertNotNull(xml);
-        assertEquals(xml, sb.toString());
+
+        String idElement = "<id>" + storageAcctId + "</id>";
+        assertTrue(xml.indexOf(idElement) > 0);
     }
 
     @Test

@@ -57,7 +57,7 @@ public class EC2InstanceDescriptionTest {
 
     private AmazonEC2Exception e;
 
-    private final String provider = "amazon-ec2";
+    private final String provider = "test-amazon-provider";
 
     private final String instanceId = "test-instanceId";
 
@@ -67,19 +67,19 @@ public class EC2InstanceDescriptionTest {
 
     private final String urlSpec = "test.org";
 
-    private final String url = "http://" + urlSpec + ":8080/instancewebapp";
+    private final String url = "http://" + urlSpec + ":8080test-app-name";
 
     private final String exceptionMsg = "test-exception";
 
     private final String configFilePath =
-            "src/test/resources/test-service-props.xml";
+            "src/test/resources/testEC2Config.properties";
 
     @Before
     public void setUp() throws Exception {
         buildMockObjects();
         props = new EC2ServiceProviderProperties();
         props
-                .load(new AutoCloseInputStream(new FileInputStream(configFilePath)));
+                .loadFromXmlStream(new AutoCloseInputStream(new FileInputStream(configFilePath)));
         e = new AmazonEC2Exception(exceptionMsg);
     }
 
@@ -161,7 +161,7 @@ public class EC2InstanceDescriptionTest {
         assertTrue(d8.equals(DateUtil.convertToDate(launch)));
         assertTrue(pvdr.equals(provider));
         assertTrue(st.equals(state));
-        assertTrue("expect: " + urlSpec + ", found: " + u, u.toString()
+        assertTrue("expect: " + url + ", found: " + u, u.toString()
                 .equals(url));
 
     }

@@ -5,10 +5,10 @@ import java.net.URL;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.ExceptionUtil;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
-import org.duraspace.serviceprovider.mgmt.ServiceProviderProperties;
 
 public class ComputeAcct {
 
@@ -16,17 +16,31 @@ public class ComputeAcct {
     // TODO
     //    protected final Logger log = Logger.getLogger(getClass());
 
-    private String id;
+    private int id;
 
     private String namespace;
 
-    private String computeProviderId;
-
-    private Credential computeCredential;
-
     private String instanceId;
 
-    private ServiceProviderProperties props;
+    private String xmlProps;
+
+    private ComputeProviderType computeProviderType;
+
+    private int computeProviderId;
+
+    private int computeCredentialId;
+
+    private int duraAcctId;
+
+    // FIXME:awoods :get rid of this member
+    private Credential computeCredential;
+
+    // FIXME:awoods :get rid of this member
+    private String ownerId; // reference to parent DuraSpaceAcct.
+
+    public boolean hasId() {
+        return id > 0;
+    }
 
     public InstanceDescription describeRunningInstance() throws Exception {
         InstanceDescription desc = null;
@@ -35,7 +49,7 @@ public class ComputeAcct {
                     getServiceProvider()
                             .describeRunningInstance(computeCredential,
                                                      instanceId,
-                                                     props);
+                                                     xmlProps);
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
             throw e;
@@ -46,7 +60,7 @@ public class ComputeAcct {
     public void startInstance() throws Exception {
         System.err.println("starting instance...");
         try {
-            instanceId = getServiceProvider().start(computeCredential, props);
+            instanceId = getServiceProvider().start(computeCredential, xmlProps);
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
             throw e;
@@ -55,7 +69,7 @@ public class ComputeAcct {
 
     public void stopInstance() throws Exception {
         try {
-            getServiceProvider().stop(computeCredential, instanceId, props);
+            getServiceProvider().stop(computeCredential, instanceId, xmlProps);
             System.err.println("stopping instance:" + instanceId
                     + " ...removing ID.");
             instanceId = null;
@@ -73,7 +87,7 @@ public class ComputeAcct {
                         getServiceProvider()
                                 .isInstanceRunning(computeCredential,
                                                    instanceId,
-                                                   props);
+                                                   xmlProps);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -89,7 +103,7 @@ public class ComputeAcct {
                 flag =
                         getServiceProvider().isWebappRunning(computeCredential,
                                                              instanceId,
-                                                             props);
+                                                             xmlProps);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -106,7 +120,7 @@ public class ComputeAcct {
                         getServiceProvider()
                                 .isInstanceBooting(computeCredential,
                                                    instanceId,
-                                                   props);
+                                                   xmlProps);
             } catch (Exception e) {
                 System.err.println(ExceptionUtil.getStackTraceAsString(e));
                 throw e;
@@ -121,7 +135,7 @@ public class ComputeAcct {
             url =
                     getServiceProvider().getWebappURL(computeCredential,
                                                       instanceId,
-                                                      props);
+                                                      xmlProps);
 
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
@@ -130,8 +144,20 @@ public class ComputeAcct {
         return url.toString();
     }
 
-    public boolean authenticates(String acctId) {
-        return (acctId != null && id.equals(acctId));
+    public boolean authenticates(int acctId) {
+        return id == acctId;
+    }
+
+    public boolean hasComputeProviderId() {
+        return computeProviderId > 0;
+    }
+
+    public boolean hasComputeCredentialId() {
+        return computeCredentialId > 0;
+    }
+
+    public boolean hasDuraAcctId() {
+        return duraAcctId > 0;
     }
 
     @Override
@@ -142,14 +168,6 @@ public class ComputeAcct {
         sb.append("|instanceId:" + instanceId);
         sb.append("]");
         return sb.toString();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getNamespace() {
@@ -168,24 +186,16 @@ public class ComputeAcct {
         this.instanceId = instanceId;
     }
 
-    public ServiceProviderProperties getProps() {
-        return props;
+    public String getXmlProps() {
+        return xmlProps;
     }
 
-    public void setProps(ServiceProviderProperties props) {
-        this.props = props;
-    }
-
-    public String getComputeProviderId() {
-        return computeProviderId;
-    }
-
-    public void setComputeProviderId(String computeProviderId) {
-        this.computeProviderId = computeProviderId;
+    public void setXmlProps(String xmlProps) {
+        this.xmlProps = xmlProps;
     }
 
     private ServiceProvider getServiceProvider() throws Exception {
-        return ComputeProviderFactory.getComputeProvider(computeProviderId);
+        return ComputeProviderFactory.getComputeProvider(computeProviderType);
     }
 
     public Credential getComputeCredential() {
@@ -194,6 +204,51 @@ public class ComputeAcct {
 
     public void setComputeCredential(Credential computeCredential) {
         this.computeCredential = computeCredential;
+    }
+
+    public ComputeProviderType getComputeProviderType() {
+        return computeProviderType;
+    }
+
+    public void setComputeProviderType(ComputeProviderType computeProviderType) {
+        this.computeProviderType = computeProviderType;
+    }
+
+    public void setComputeProviderType(String computeProviderType) {
+        this.computeProviderType =
+                ComputeProviderType.fromString(computeProviderType);
+    }
+
+    public int getComputeProviderId() {
+        return computeProviderId;
+    }
+
+    public void setComputeProviderId(int computeProviderId) {
+        this.computeProviderId = computeProviderId;
+    }
+
+    public int getComputeCredentialId() {
+        return computeCredentialId;
+    }
+
+    public void setComputeCredentialId(int computeCredentialId) {
+        this.computeCredentialId = computeCredentialId;
+    }
+
+    public int getDuraAcctId() {
+        return duraAcctId;
+    }
+
+    public void setDuraAcctId(int duraAcctId) {
+        this.duraAcctId = duraAcctId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }
