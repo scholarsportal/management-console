@@ -12,9 +12,6 @@
         <prop key="/spaces.htm">spacesController</prop>
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
-        <prop key="/addSpace.htm">addSpaceController</prop>
-        <prop key="/deleteSpace.htm">deleteSpaceController</prop>
-        <prop key="/setSpaceAccess.htm">setSpaceAccessController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -22,6 +19,7 @@
 
   <!-- Request Controllers - processes request -->
   <bean id="spacesController" class="org.duraspace.control.SpacesController">
+    <property name="successView" value="spaces" />
   </bean>
 
   <bean id="contentsController" class="org.duraspace.control.ContentsController">
@@ -30,18 +28,6 @@
 
   <bean id="contentController" class="org.duraspace.control.ContentController">
     <property name="successView" value="content" />  
-  </bean>
-
-  <bean id="addSpaceController" class="org.duraspace.control.AddSpaceController">
-    <property name="successView" value="spaces" /> 
-  </bean>
-
-  <bean id="deleteSpaceController" class="org.duraspace.control.DeleteSpaceController">
-    <property name="successView" value="spaces" /> 
-  </bean>
-
-  <bean id="setSpaceAccessController" class="org.duraspace.control.SetSpaceAccessController">
-    <property name="successView" value="spaces" /> 
   </bean>
 
   <!-- View Resolvers - select the JSP to display results -->

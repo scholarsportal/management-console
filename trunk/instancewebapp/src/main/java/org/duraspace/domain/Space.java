@@ -9,10 +9,21 @@ public class Space implements Serializable {
 
     private static final long serialVersionUID = 3008516494814826947L;
 
+    private String action;
     private String accountId;
     private String spaceId;
+    private String name;
+    private String access;
     private SpaceMetadata metadata;
     private List<String> contents;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public String getAccountId() {
         return accountId;
@@ -28,6 +39,22 @@ public class Space implements Serializable {
 
     public void setSpaceId(String spaceId) {
         this.spaceId = spaceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAccess() {
+        return access;
+    }
+
+    public void setAccess(String access) {
+        this.access = access;
     }
 
     public SpaceMetadata getMetadata() {
