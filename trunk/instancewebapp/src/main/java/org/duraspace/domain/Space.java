@@ -61,7 +61,6 @@ public class Space implements Serializable {
         return metadata;
     }
 
-
     public void setMetadata(SpaceMetadata metadata) {
         this.metadata = metadata;
     }

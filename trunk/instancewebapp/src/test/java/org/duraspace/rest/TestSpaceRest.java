@@ -36,7 +36,7 @@ public class TestSpaceRest
         assertTrue(response.getStatusCode() == 200);
 
         // Add space1
-        response = RestTestHelper.addSpace(baseUrl, "owner0", "space1");
+        response = RestTestHelper.addSpace(baseUrl, "1", "space1");
         assertTrue(response.getStatusCode() == 201);
     }
 
@@ -44,7 +44,7 @@ public class TestSpaceRest
     @After
     protected void tearDown() throws Exception {
         HttpResponse response =
-            RestTestHelper.deleteSpace(baseUrl, "owner0", "space1");
+            RestTestHelper.deleteSpace(baseUrl, "1", "space1");
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
@@ -55,7 +55,7 @@ public class TestSpaceRest
 
     @Test
     public void testGetSpaces() throws Exception {
-        String url = baseUrl + "/space/owner0";
+        String url = baseUrl + "/space/1";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
@@ -65,7 +65,7 @@ public class TestSpaceRest
 
     @Test
     public void testGetSpaceProperties() throws Exception {
-        String url = baseUrl + "/space/owner0/space1?properties=true";
+        String url = baseUrl + "/space/1/space1?properties=true";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
@@ -76,7 +76,7 @@ public class TestSpaceRest
 
     @Test
     public void testGetSpaceContents() throws Exception {
-        String url = baseUrl + "/space/owner0/space1";
+        String url = baseUrl + "/space/1/space1";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
@@ -86,7 +86,7 @@ public class TestSpaceRest
 
     @Test
     public void testUpdateSpaceProperties() throws Exception {
-        String url = baseUrl + "/space/owner0/space1";
+        String url = baseUrl + "/space/1/space1";
         String formParams = "spaceName=Test2&spaceAccess=closed";
         HttpResponse response = restHelper.post(url, formParams, true);
 
@@ -97,7 +97,7 @@ public class TestSpaceRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/space/owner0/space1?properties=true";
+        url = baseUrl + "/space/1/space1?properties=true";
         response = restHelper.get(url);
         responseText = response.getResponseBody();
 

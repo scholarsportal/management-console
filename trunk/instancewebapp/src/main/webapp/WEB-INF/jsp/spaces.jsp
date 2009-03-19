@@ -39,19 +39,19 @@
             <td><c:out value="${space.metadata.count}" /></td>
           </tr>
         </table>
-        <form:form action="contents.htm" method="post">
+        <form action="contents.htm" method="post">
           <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>" />
-        </form:form>
-        <form:form action="spaces.htm" method="post">
+        </form>
+        <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="update-name" />
           <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type="text" name="name" value="<c:out value="${space.metadata.name}"/>" />
           <input type='submit' value="Update Name" />
-        </form:form>
-        <form:form action="spaces.htm" method="post">
+        </form>
+        <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="update-access" />
           <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
@@ -65,34 +65,41 @@
               <input type='submit' value="Set access to Open" />
             </c:otherwise>
           </c:choose>
-        </form:form>
-        <form:form action="spaces.htm" method="post">
+        </form>
+        <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="delete" />
           <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type='submit' value="Delete <c:out value="${space.metadata.name}"/>" />
-        </form:form>
+        </form>
       </div>
     </c:forEach>
     </div>
     
     <div class="space_action">
       <h2>Add Space</h2>
-      <form:form action="spaces.htm" method="post" commandName="add_space">
+      <form action="spaces.htm" method="post">
         <input type="hidden" name="action" value="add" />
         <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
-        Space ID <input type="text" name="spaceId" />
-        <br />
-        Space Name <input type="text" name="name" />
-        <br />
-        Space Access 
-        <select name="access">
-          <option value="OPEN" selected>Open</option>
-          <option value="CLOSED">Closed</option>
-        </select>
-        <br />
-        <input type='submit' value="Add Space" />
-      </form:form>
+        <p>
+          <label for="spaceId">Space ID</label>
+          <input type="text" id="spaceId" name="spaceId" />
+        </p>
+        <p>
+          <label for="name">Space Name</label>          
+          <input type="text" id="name" name="name" />
+        </p>
+        <p>
+          <label for="access">Space Access</label> 
+          <select id="access" name="access">
+            <option value="OPEN" selected>Open</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+        </p>
+        <p>
+          <input type='submit' value="Add Space" />
+        </p>
+      </form>
     </div>
   </body>
 </html>

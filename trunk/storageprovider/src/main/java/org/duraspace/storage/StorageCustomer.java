@@ -42,34 +42,34 @@ public class StorageCustomer {
             while(accountList.hasNext()) {
                 Element account = (Element)accountList.next();
 
-                Element provider = account.getChild("storageProvider");
-
-                String storageAccountId = account.getChildText("storageProviderId");
-                // TODO: Storage provider type should be in a <storageProviderType> tag
-                String type = provider.getChildText("providerName");
+                String storageAccountId = account.getChildText("id");
+                String type = account.getChildText("storageProviderType");
                 Element credentials = account.getChild("storageProviderCredential");
                 String username = credentials.getChildText("username");
                 String password = credentials.getChildText("password");
 
                 StorageAccount storageAccount = null;
-                if(type.equals("amazon-s3")) {
-                    storageAccount =
-                        new StorageAccount(storageAccountId,
-                                           username,
-                                           password,
-                                           AccountType.S3);
+                AccountType storageAccountType = null;
+                if(type.equals("AMAZON_S3")) {
+                    storageAccountType = AccountType.S3;
+                } else if(type.equals("MS_AZURE")) {
+                    storageAccountType = AccountType.Azure;
+                } else if(type.equals("SUN")) {
+                    storageAccountType = AccountType.Sun;
+                }
+
+                if(storageAccountType != null) {
+                    storageAccount = new StorageAccount(storageAccountId,
+                                                        username,
+                                                        password,
+                                                        storageAccountType);
                     storageAccounts.put(storageAccountId, storageAccount);
-                } else if(type.equals("ms-azure")) {
-                    storageAccount =
-                        new StorageAccount(storageAccountId,
-                                           username,
-                                           password,
-                                           AccountType.Azure);
-                    storageAccounts.put(storageAccountId, storageAccount);
-                } else {
+                }
+                else {
                     log.warn("While creating storage account list for customer '" +
-                             duraspaceAccountId + "' skipping storage account with storageAccountId '" +
-                             storageAccountId + "' due to an unsupported type '" + type + "'");
+                             duraspaceAccountId + "' skipping storage account with" +
+                             " storageAccountId '" + storageAccountId +
+                             "' due to an unsupported type '" + type + "'");
                 }
 
                 String primary = account.getAttributeValue("isPrimary");
@@ -77,9 +77,23 @@ public class StorageCustomer {
                     primaryStorageProviderId = storageAccountId;
                 }
             }
+
+            // Make sure that there is at least one storage account
+            if(storageAccounts.isEmpty()) {
+                String error = "There are no available storage accounts " +
+                               "for duraspace account " + duraspaceAccountId;
+                throw new Exception(error);
+            } else {
+                // Make sure a primary provider is set
+                if(primaryStorageProviderId == null) {
+                    primaryStorageProviderId =
+                        storageAccounts.values().iterator().next().getId();
+                }
+            }
         } catch (Exception e) {
             String error = "Unable to retrieve storage account information for '" +
-                           duraspaceAccountId + "' due to error" + e.getMessage();
+                           duraspaceAccountId + "' due to error: " + e.getMessage();
+            log.error(error);
             throw new StorageException(error, e);
         }
     }
