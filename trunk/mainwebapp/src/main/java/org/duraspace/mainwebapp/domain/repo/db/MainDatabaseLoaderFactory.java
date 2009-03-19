@@ -1,6 +1,7 @@
 
 package org.duraspace.mainwebapp.domain.repo.db;
 
+import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.DatabaseUtil;
 import org.duraspace.mainwebapp.domain.repo.AddressRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.AuthorityRepositoryDBImpl;
@@ -59,6 +60,10 @@ public class MainDatabaseLoaderFactory {
     private final MainDatabaseLoader loader;
 
     public MainDatabaseLoaderFactory(DatabaseUtil dbUtil) {
+        this(dbUtil, new Credential("username", "password"));
+    }
+
+    public MainDatabaseLoaderFactory(DatabaseUtil dbUtil, Credential amazonCred) {
         addressRepository.setDataSource(dbUtil.getDataSource());
         userRepository.setDataSource(dbUtil.getDataSource());
         authorityRepository.setDataSource(dbUtil.getDataSource());
@@ -98,7 +103,7 @@ public class MainDatabaseLoaderFactory {
                 .setStorageProviderRepository(storageProviderRepository);
         storageAcctManager.setCredentialManager(credentialManager);
 
-        loader = new MainDatabaseLoader();
+        loader = new MainDatabaseLoader(amazonCred);
         loader.setDuraSpaceAcctManager(duraSpaceAcctManager);
         loader.setComputeProviderRepository(computeProviderRepository);
         loader.setStorageProviderRepository(storageProviderRepository);

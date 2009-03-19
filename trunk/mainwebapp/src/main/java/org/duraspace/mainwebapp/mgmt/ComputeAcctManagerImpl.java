@@ -3,6 +3,8 @@ package org.duraspace.mainwebapp.mgmt;
 
 import java.net.HttpURLConnection;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
@@ -12,6 +14,7 @@ import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 
@@ -45,7 +48,8 @@ public class ComputeAcctManagerImpl
      * {@inheritDoc}
      */
     public ComputeAcct startComputeInstance(int computeAcctId) throws Exception {
-        ComputeAcct compAcct = findComputeAccount(computeAcctId);
+        ComputeAcct compAcct =
+                findComputeAccountAndLoadCredential(computeAcctId);
 
         // Make sure instance is not already running.
         if (compAcct.isInstanceRunning() || compAcct.isInstanceBooting()) {
@@ -81,7 +85,8 @@ public class ComputeAcctManagerImpl
      * {@inheritDoc}
      */
     public ComputeAcct stopComputeInstance(int computeAcctId) throws Exception {
-        ComputeAcct compAcct = findComputeAccount(computeAcctId);
+        ComputeAcct compAcct =
+                findComputeAccountAndLoadCredential(computeAcctId);
 
         // Stop instance.
         compAcct.stopInstance();
@@ -95,10 +100,10 @@ public class ComputeAcctManagerImpl
     /**
      * {@inheritDoc}
      */
-    public ComputeAcct findComputeAccountByDuraAcctId(int duraAcctId)
+    public List<ComputeAcct> findComputeAccountsByDuraAcctId(int duraAcctId)
             throws Exception {
         return getComputeAcctRepository()
-                .findComputeAcctByDuraAcctId(duraAcctId);
+                .findComputeAcctsByDuraAcctId(duraAcctId);
     }
 
     /**
@@ -118,10 +123,17 @@ public class ComputeAcctManagerImpl
     /**
      * {@inheritDoc}
      */
-    public ComputeAcct findComputeAccount(int computeAcctId) throws Exception {
-        ComputeAcct compAcct =
+    public ComputeAcct findComputeAccountAndLoadCredential(int computeAcctId)
+            throws Exception {
+        ComputeAcct computeAcct =
                 getComputeAcctRepository().findComputeAcctById(computeAcctId);
-        return compAcct;
+        Credential computeCred =
+                getCredentialManager().findCredentialById(computeAcct
+                        .getComputeCredentialId());
+
+        computeAcct.setComputeCredential(computeCred);
+
+        return computeAcct;
     }
 
     /**
@@ -130,7 +142,7 @@ public class ComputeAcctManagerImpl
     public ComputeAcct initializeComputeApp(int computeAcctId) {
         ComputeAcct acct = null;
         try {
-            acct = findComputeAccount(computeAcctId);
+            acct = findComputeAccountAndLoadCredential(computeAcctId);
 
             String baseUrl = getBaseInitializeURL(acct);
             String params = getLocalHostAndPortParams();
@@ -182,6 +194,14 @@ public class ComputeAcctManagerImpl
             msg.append(params);
             log.error(msg.toString());
         }
+    }
+
+    public ComputeProvider findComputeProviderForComputeAcct(int computeAcctId)
+            throws Exception {
+        ComputeAcct acct =
+                getComputeAcctRepository().findComputeAcctById(computeAcctId);
+        return getComputeProviderRepository().findComputeProviderById(acct
+                .getComputeProviderId());
     }
 
     public int saveComputeAcct(ComputeAcct computeAcct) throws Exception {

@@ -32,11 +32,8 @@ public class ComputeAcct {
 
     private int duraAcctId;
 
-    // FIXME:awoods :get rid of this member
+    // This member is loaded by a manager class before functionality available.
     private Credential computeCredential;
-
-    // FIXME:awoods :get rid of this member
-    private String ownerId; // reference to parent DuraSpaceAcct.
 
     public boolean hasId() {
         return id > 0;
@@ -60,7 +57,8 @@ public class ComputeAcct {
     public void startInstance() throws Exception {
         System.err.println("starting instance...");
         try {
-            instanceId = getServiceProvider().start(computeCredential, xmlProps);
+            instanceId =
+                    getServiceProvider().start(computeCredential, xmlProps);
         } catch (Exception e) {
             System.err.println(ExceptionUtil.getStackTraceAsString(e));
             throw e;

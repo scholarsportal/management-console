@@ -56,3 +56,6 @@ To ensure that the classpath is setup properly, it is probably easiest to run th
  url="jdbc:derby:/opt/derby/duraspaceDB"
 >Change it to:
  url="jdbc:derby:<location-of-new-DB>"
+>Finally, tomcat needs to have access to the derby jdbc driver.
+ So put a copy of the derbyxxx.jar that is found in the mainwebapp/WEB-INF/lib under CATALINA_HOME/lib.
+

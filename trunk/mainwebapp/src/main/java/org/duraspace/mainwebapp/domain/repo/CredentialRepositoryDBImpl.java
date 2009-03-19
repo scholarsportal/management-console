@@ -156,9 +156,11 @@ public class CredentialRepositoryDBImpl
                                    }
                                },
                                id);
-        if (credentials.size() == 0) {
-            throw new Exception("Credential not found with id: '" + id + "'");
+        if (credentials.size() != 1) {
+            throw new Exception("A single Credential was not found for ID: "
+                    + id);
         }
+
         return credentials.get(0);
     }
 

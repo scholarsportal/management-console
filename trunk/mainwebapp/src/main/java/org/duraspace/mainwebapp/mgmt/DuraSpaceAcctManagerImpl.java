@@ -27,6 +27,25 @@ public class DuraSpaceAcctManagerImpl
 
     private UserManager userManager;
 
+    public void verifyCredential(Credential duraCred) throws Exception {
+        try {
+            getUserManager().findUser(duraCred);
+        } catch (Exception e) {
+            log.info("Credential validation failed: " + duraCred);
+            throw e;
+        }
+    }
+
+    public List<ComputeAcct> findComputeAccounts(int duraAcctId)
+            throws Exception {
+        return getComputeAcctManager()
+                .findComputeAccountsByDuraAcctId(duraAcctId);
+    }
+
+    public List<User> findUsers(int duraAcctId) throws Exception {
+        return getUserManager().findUsersByDuraAcctId(duraAcctId);
+    }
+
     public DuraSpaceAcct findDuraSpaceAccount(Credential duraCred)
             throws Exception {
         User user = this.getUserManager().findUser(duraCred);
@@ -35,14 +54,14 @@ public class DuraSpaceAcctManagerImpl
         return getDuraSpaceAcctRepository().findDuraAcctById(duraAcctId);
     }
 
-    public ComputeAcct findComputeAccount(Credential duraCred) throws Exception {
+    public List<ComputeAcct> findComputeAccounts(Credential duraCred) throws Exception {
         DuraSpaceAcct duraAcct = findDuraSpaceAccount(duraCred);
 
-        return getComputeAcctManager().findComputeAccountByDuraAcctId(duraAcct
+        return getComputeAcctManager().findComputeAccountsByDuraAcctId(duraAcct
                 .getId());
     }
 
-    public List<StorageAcct> findStorageProviderAccounts(int duraAcctId)
+    public List<StorageAcct> findStorageAccounts(int duraAcctId)
             throws Exception {
         log.info("finding storage provider accts for id: " + duraAcctId);
         return getStorageAcctManager()
@@ -64,8 +83,12 @@ public class DuraSpaceAcctManagerImpl
         return getUserManager().saveCredentialForUser(cred, userId);
     }
 
-    public int saveDuraAcct(DuraSpaceAcct duraAcct) throws Exception {
-        return getDuraSpaceAcctRepository().saveDuraAcct(duraAcct);
+    public int saveDuraAcctForUser(DuraSpaceAcct duraAcct, int userId)
+            throws Exception {
+        int duraAcctId = getDuraSpaceAcctRepository().saveDuraAcct(duraAcct);
+        getUserManager().saveDuraAcctIdForUser(duraAcctId, userId);
+
+        return duraAcctId;
     }
 
     public int saveComputeAcct(ComputeAcct computeAcct) throws Exception {

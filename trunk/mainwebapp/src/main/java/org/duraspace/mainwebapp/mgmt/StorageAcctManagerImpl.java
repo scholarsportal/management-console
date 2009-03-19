@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
+import org.duraspace.mainwebapp.domain.model.StorageProvider;
 import org.duraspace.mainwebapp.domain.repo.StorageAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.StorageProviderRepository;
 
@@ -52,10 +53,29 @@ public class StorageAcctManagerImpl
      */
     public StorageAcct getStorageProviderAccount(int storageAcctId)
             throws Exception {
+        return getStorageAcctRepository().findStorageAcctById(storageAcctId);
+    }
 
+    public StorageAcct findStorageAccountAndLoadCredential(int storageAcctId)
+            throws Exception {
         StorageAcct acct =
                 getStorageAcctRepository().findStorageAcctById(storageAcctId);
+
+        Credential storageCred =
+                getCredentialManager().findCredentialById(acct
+                        .getStorageCredentialId());
+
+        acct.setStorageProviderCredential(storageCred);
         return acct;
+    }
+
+    public StorageProvider findStorageProviderForStorageAcct(int storageAcctId)
+            throws Exception {
+        StorageAcct acct =
+                getStorageAcctRepository().findStorageAcctById(storageAcctId);
+
+        return getStorageProviderRepository().findStorageProviderById(acct
+                .getStorageProviderId());
     }
 
     public int saveStorageAcct(StorageAcct storageAcct) throws Exception {

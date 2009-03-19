@@ -25,8 +25,8 @@ public class CredentialManagerImpl
 
         return getCredentialRepository().saveCredential(cred);
     }
-    public Credential findCredentialById(int storageCredId) throws Exception {
-        return getCredentialRepository().findCredentialById(storageCredId);
+    public Credential findCredentialById(int credId) throws Exception {
+        return getCredentialRepository().findCredentialById(credId);
     }
     public CredentialRepository getCredentialRepository() {
         return credentialRepository;

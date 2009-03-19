@@ -38,7 +38,7 @@ public class StorageProviderResourceTest
 
         DuraSpaceAcctManager mgr =
                 EasyMock.createMock(DuraSpaceAcctManager.class);
-        EasyMock.expect(mgr.findStorageProviderAccounts(duraAcctId))
+        EasyMock.expect(mgr.findStorageAccounts(duraAcctId))
                 .andReturn(storageAccts);
         EasyMock.replay(mgr);
 

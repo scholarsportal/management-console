@@ -1,6 +1,8 @@
 
 package org.duraspace.mainwebapp.mgmt;
 
+import java.util.List;
+
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.Address;
 import org.duraspace.mainwebapp.domain.model.User;
@@ -24,6 +26,10 @@ public class UserManagerImpl
         return getUserRepository().findUserByDuraCredId(duraCredId);
     }
 
+    public List<User> findUsersByDuraAcctId(int duraAcctId) throws Exception {
+        return getUserRepository().findUsersByDuraAcctId(duraAcctId);
+    }
+
     public int saveAddressForUser(Address addr, int userId) throws Exception {
         int addrId = getAddressRepository().saveAddress(addr);
         User user = getUserRepository().findUserById(userId);
@@ -39,6 +45,13 @@ public class UserManagerImpl
         user.setCredentialId(credId);
         getUserRepository().saveUser(user);
         return credId;
+    }
+
+    public void saveDuraAcctIdForUser(int duraAcctId, int userId)
+            throws Exception {
+        User user = getUserRepository().findUserById(userId);
+        user.setDuraAcctId(duraAcctId);
+        getUserRepository().saveUser(user);
     }
 
     public int saveUser(User user) throws Exception {

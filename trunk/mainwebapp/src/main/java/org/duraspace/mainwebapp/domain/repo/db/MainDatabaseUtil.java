@@ -75,15 +75,19 @@ public class MainDatabaseUtil
 
     private static void usage() {
         StringBuilder sb = new StringBuilder("Usage:");
-        sb.append("\n\tMainDatabaseUtil <location-of-database>");
+        sb.append("\n\tMainDatabaseUtil " +
+        		"<location-of-database> <accessKeyId> <secretAccessKey>");
         sb.append("\n\n\tWhere <location-of-database> is the full path to ");
         sb.append("\n\tthe desired location of the populated database.");
+        sb.append("\n\n\tWhere <accessKeyId> <secretAccessKey> are amazon");
+        sb.append("\n\tcredentials. " +
+        		"[The credential fields can be populated with junk as well.]");
         System.out.println(sb.toString());
     }
 
     public static void main(String[] args) {
 
-        if (args.length != 1) {
+        if (args.length != 3) {
             usage();
             System.exit(0);
         }
@@ -92,13 +96,17 @@ public class MainDatabaseUtil
             dbName = "/opt/derby/duraspaceDB";
         }
 
+        String accessKey = args[1];
+        String secret = args[2];
+        Credential amazonCred = new Credential(accessKey, secret);
+
         try {
             Credential dbCred = MainWebAppConfig.getDbCredential();
             MainDatabaseUtil dbUtil = new MainDatabaseUtil(dbCred, dbName);
             dbUtil.initializeDB();
 
             MainDatabaseLoader loader =
-                    new MainDatabaseLoaderFactory(dbUtil)
+                    new MainDatabaseLoaderFactory(dbUtil, amazonCred)
                             .getMainDatabaseLoader();
             loader.loadTestData();
         } catch (Exception e) {

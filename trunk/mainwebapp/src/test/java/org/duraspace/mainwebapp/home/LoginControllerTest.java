@@ -1,6 +1,9 @@
 
 package org.duraspace.mainwebapp.home;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.After;
@@ -9,7 +12,10 @@ import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.control.LoginController;
+import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.DuraSpaceAcct;
+import org.duraspace.mainwebapp.domain.model.StorageAcct;
+import org.duraspace.mainwebapp.domain.model.User;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManagerImpl;
 import org.easymock.EasyMock;
@@ -20,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 import junit.framework.TestCase;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 public class LoginControllerTest
         extends TestCase {
@@ -45,6 +50,16 @@ public class LoginControllerTest
 
     private final String duraAcctName = "duraAcctName";
 
+    private final int duraAcctId = 123;
+
+    private final List<User> users = Arrays.asList(new User(), new User());
+
+    private final List<ComputeAcct> computeAccts =
+            Arrays.asList(new ComputeAcct());
+
+    private final List<StorageAcct> storageAccts =
+            Arrays.asList(new StorageAcct());
+
     @Override
     @Before
     protected void setUp() throws Exception {
@@ -57,6 +72,7 @@ public class LoginControllerTest
         cred.setPassword(password);
         duraAcct = new DuraSpaceAcct();
         duraAcct.setAccountName(duraAcctName);
+        duraAcct.setId(duraAcctId);
 
         request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -95,6 +111,12 @@ public class LoginControllerTest
 
     private void setUpHappyDay() throws Exception {
         expect(dsAcctManager.findDuraSpaceAccount(cred)).andReturn(duraAcct);
-        replay(dsAcctManager);
+        expect(dsAcctManager.findUsers(duraAcctId)).andReturn(users);
+        expect(dsAcctManager.findComputeAccounts(duraAcctId))
+                .andReturn(computeAccts);
+        expect(dsAcctManager.findStorageAccounts(duraAcctId))
+                .andReturn(storageAccts);
+        dsAcctManager.verifyCredential(cred);
+        EasyMock.replay(dsAcctManager);
     }
 }
