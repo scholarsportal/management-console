@@ -7,10 +7,21 @@ public class ContentItem implements Serializable {
 
     private static final long serialVersionUID = -5835779644282347055L;
 
+    private String action;
     private String accountId;
     private String spaceId;
     private String contentId;
+    private String contentName;
+    private String contentMimetype;
     private ContentMetadata metadata;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public String getAccountId() {
         return accountId;
@@ -34,6 +45,22 @@ public class ContentItem implements Serializable {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
+    }
+
+    public String getContentName() {
+        return contentName;
+    }
+
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
+    }
+
+    public String getContentMimetype() {
+        return contentMimetype;
+    }
+
+    public void setContentMimetype(String contentMimetype) {
+        this.contentMimetype = contentMimetype;
     }
 
     public ContentMetadata getMetadata() {

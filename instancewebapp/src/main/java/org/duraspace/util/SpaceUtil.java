@@ -36,22 +36,25 @@ public class SpaceUtil {
                 Space space = new Space();
                 space.setAccountId(accountId);
                 space.setSpaceId(spaceId);
-
-                Properties spaceProps = storage.getSpaceMetadata(spaceId);
-                SpaceMetadata spaceMetadata = new SpaceMetadata();
-                spaceMetadata.setName(
-                    spaceProps.getProperty(StorageProvider.METADATA_SPACE_NAME));
-                spaceMetadata.setCreated(
-                    spaceProps.getProperty(StorageProvider.METADATA_SPACE_CREATED));
-                spaceMetadata.setCount(
-                    spaceProps.getProperty(StorageProvider.METADATA_SPACE_COUNT));
-                spaceMetadata.setAccess(
-                    spaceProps.getProperty(StorageProvider.METADATA_SPACE_ACCESS));
-                space.setMetadata(spaceMetadata);
-
+                space.setMetadata(getSpaceMetadata(storage, spaceId));
                 spaces.add(space);
             }
         }
         return spaces;
+    }
+
+    public static SpaceMetadata getSpaceMetadata(StorageProvider storage, String spaceId)
+    throws StorageException{
+        Properties spaceProps = storage.getSpaceMetadata(spaceId);
+        SpaceMetadata spaceMetadata = new SpaceMetadata();
+        spaceMetadata.setName(
+            spaceProps.getProperty(StorageProvider.METADATA_SPACE_NAME));
+        spaceMetadata.setCreated(
+            spaceProps.getProperty(StorageProvider.METADATA_SPACE_CREATED));
+        spaceMetadata.setCount(
+            spaceProps.getProperty(StorageProvider.METADATA_SPACE_COUNT));
+        spaceMetadata.setAccess(
+            spaceProps.getProperty(StorageProvider.METADATA_SPACE_ACCESS));
+        return spaceMetadata;
     }
 }

@@ -181,7 +181,9 @@ public class S3StorageProvider implements StorageProvider {
             if(!spaceProps.containsKey(METADATA_SPACE_CREATED)) {
                 S3Bucket bucket = s3Service.getBucket(bucketName);
                 Date created = bucket.getCreationDate();
-                spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+                if(created != null) {
+                    spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+                }
             }
 
             List<String> spaceContents = getSpaceContents(spaceId);
@@ -383,6 +385,14 @@ public class S3StorageProvider implements StorageProvider {
             }
         }
 
+        // Remove calculated properties
+        metadataMap.remove(METADATA_CONTENT_CHECKSUM);
+        metadataMap.remove(METADATA_CONTENT_MODIFIED);
+        metadataMap.remove(METADATA_CONTENT_SIZE);
+
+        // Remove mimetype to set later
+        String mimeType = metadataMap.remove(METADATA_CONTENT_MIMETYPE);
+
         // Get the object and replace its metadata
         String bucketName = getBucketName(spaceId);
         try {
@@ -391,51 +401,14 @@ public class S3StorageProvider implements StorageProvider {
             contentItem.setAcl(s3Service.getObjectAcl(bucket, contentId));
             contentItem.addAllMetadata(metadataMap);
 
-            // Ensure expected metadata values are set
+            // Set name to spaceId if it is not set already
             if(!contentItem.containsMetadata(METADATA_CONTENT_NAME)) {
                 contentItem.addMetadata(METADATA_CONTENT_NAME, spaceId);
             }
 
-            if(!contentItem.containsMetadata(METADATA_CONTENT_MIMETYPE)) {
-                String contentType =
-                    contentItem.getMetadata("Content-Type").toString();
-                if(contentType != null) {
-                    contentItem.addMetadata(METADATA_CONTENT_MIMETYPE, contentType);
-                }
-            } else {
-                // Set S3 Content-Type field along with DuraSpace metadata value
-                String mimetype =
-                    contentItem.getMetadata(METADATA_CONTENT_MIMETYPE).toString();
-                contentItem.addMetadata("Content-Type", mimetype);
-            }
-
-            if(!contentItem.containsMetadata(METADATA_CONTENT_SIZE)) {
-                String contentLength =
-                    contentItem.getMetadata("Content-Length").toString();
-                if(contentLength != null) {
-                    contentItem.addMetadata(METADATA_CONTENT_SIZE, contentLength);
-                }
-            }
-
-            if(!contentItem.containsMetadata(METADATA_CONTENT_CHECKSUM)) {
-                String checksum =
-                    contentItem.getMetadata("ETag").toString();
-                if(checksum.indexOf("\"") == 0 &&
-                   checksum.lastIndexOf("\"") == checksum.length()-1) {
-                    // Remove wrapping quotes
-                    checksum = checksum.substring(1, checksum.length()-1);
-                }
-                if(checksum != null) {
-                    contentItem.addMetadata(METADATA_CONTENT_CHECKSUM, checksum);
-                }
-            }
-
-            if(!contentItem.containsMetadata(METADATA_CONTENT_MODIFIED)) {
-                String modified =
-                    contentItem.getMetadata("Last-Modified").toString();
-                if(modified != null) {
-                    contentItem.addMetadata(METADATA_CONTENT_MODIFIED, modified);
-                }
+            // Update Content-Type to the new mime type
+            if(mimeType != null && mimeType != "") {
+                contentItem.addMetadata("Content-Type", mimeType);
             }
 
             s3Service.updateObjectMetadata(bucketName, contentItem);
@@ -472,6 +445,39 @@ public class S3StorageProvider implements StorageProvider {
             String err = "No metadata is available for item " + contentId +
                          " in S3 bucket " + bucketName;
             throw new StorageException(err);
+        }
+
+        // Set MIMETYPE
+        Object contentType = contentItem.getMetadata("Content-Type");
+        if(contentType != null) {
+            contentItem.addMetadata(METADATA_CONTENT_MIMETYPE,
+                                    contentType.toString());
+        }
+
+        // Set SIZE
+        Object contentLength = contentItem.getMetadata("Content-Length");
+        if(contentLength != null) {
+            contentItem.addMetadata(METADATA_CONTENT_SIZE,
+                                    contentLength.toString());
+        }
+
+        // Set CHECKSUM
+        Object checksumObj = contentItem.getMetadata("ETag");
+        if(checksumObj != null) {
+            String checksum = checksumObj.toString();
+            if(checksum.indexOf("\"") == 0 &&
+               checksum.lastIndexOf("\"") == checksum.length()-1) {
+                // Remove wrapping quotes
+                checksum = checksum.substring(1, checksum.length()-1);
+            }
+            contentItem.addMetadata(METADATA_CONTENT_CHECKSUM, checksum);
+        }
+
+        // Set MODIFIED
+        Object modified = contentItem.getMetadata("Last-Modified");
+        if(modified != null) {
+            contentItem.addMetadata(METADATA_CONTENT_MODIFIED,
+                                    modified.toString());
         }
 
         // Convert from Map to Properties
