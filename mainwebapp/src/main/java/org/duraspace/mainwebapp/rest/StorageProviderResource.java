@@ -39,7 +39,7 @@ public class StorageProviderResource {
         List<StorageAcct> accts = new ArrayList<StorageAcct>();
         try {
             int id = Integer.parseInt(duraAcctId);
-            accts = duraSpaceAcctManager.findStorageProviderAccounts(id);
+            accts = duraSpaceAcctManager.findStorageAccounts(id);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

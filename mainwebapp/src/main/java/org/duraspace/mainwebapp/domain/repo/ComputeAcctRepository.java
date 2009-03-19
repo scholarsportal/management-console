@@ -1,6 +1,8 @@
 
 package org.duraspace.mainwebapp.domain.repo;
 
+import java.util.List;
+
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 
 /**
@@ -29,7 +31,7 @@ public interface ComputeAcctRepository {
      */
     public int saveComputeAcct(ComputeAcct acct) throws Exception;
 
-    public ComputeAcct findComputeAcctByDuraAcctId(int id) throws Exception;
+    public List<ComputeAcct> findComputeAcctsByDuraAcctId(int id) throws Exception;
 
     public ComputeAcct findComputeAcctById(int id) throws Exception;
 

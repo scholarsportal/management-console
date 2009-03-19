@@ -241,7 +241,7 @@ public class ComputeAcctRepositoryDBImpl
     /**
      * {@inheritDoc}
      */
-    public ComputeAcct findComputeAcctByDuraAcctId(int id) throws Exception {
+    public List<ComputeAcct> findComputeAcctsByDuraAcctId(int id) throws Exception {
         List<ComputeAcct> accts =
                 this.getSimpleJdbcTemplate()
                         .query(COMPUTE_ACCT_SELECT_BY_DURAACCT_ID,
@@ -274,11 +274,7 @@ public class ComputeAcctRepositoryDBImpl
         if (accts.size() == 0) {
             throw new Exception(tablename + " not found with id: '" + id + "'");
         }
-        if (accts.size() != 1) {
-            throw new Exception(tablename
-                    + " more than 1 ComputeAcct with id: '" + id + "'");
-        }
-        return accts.get(0);
+        return accts;
     }
 
     @SuppressWarnings("unchecked")

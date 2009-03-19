@@ -13,7 +13,9 @@ import org.junit.Test;
 
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
+import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.duraspace.mainwebapp.mgmt.ComputeAcctManagerImpl;
 import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
@@ -135,15 +137,25 @@ public class ComputeStatusControllerTest {
     private void setUpControllerInit(String instanceId) throws Exception {
         ComputeAcctManagerImpl mgrImpl = new ComputeAcctManagerImpl();
 
+        ComputeProvider computeProvider = new ComputeProvider();
+
+        ComputeProviderRepository computeProviderRepo =
+                EasyMock.createMock(ComputeProviderRepository.class);
+        expect(computeProviderRepo.findComputeProviderById(computeProviderId))
+                .andReturn(computeProvider);
+        replay(computeProviderRepo);
+
         computeAcct.setInstanceId(instanceId);
+        computeAcct.setComputeProviderId(computeProviderId);
 
         ComputeAcctRepository computeAcctRepo =
                 EasyMock.createMock(ComputeAcctRepository.class);
         expect(computeAcctRepo.findComputeAcctById(computeAcctId))
-                .andReturn(computeAcct);
+                .andReturn(computeAcct).times(2);
         replay(computeAcctRepo);
 
         mgrImpl.setComputeAcctRepository(computeAcctRepo);
+        mgrImpl.setComputeProviderRepository(computeProviderRepo);
 
         control.setComputeManager(mgrImpl);
     }

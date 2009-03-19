@@ -2,10 +2,13 @@
 package org.duraspace.mainwebapp.domain.cmd;
 
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 
 public class ComputeAcctWrapper {
 
     private ComputeAcct computeAcct;
+
+    private ComputeProvider computeProvider;
 
     private String timer;
 
@@ -19,6 +22,14 @@ public class ComputeAcctWrapper {
         this.timer = timer;
     }
 
+    public boolean isComputeAppInitialized() {
+        return isComputeAppInitialized;
+    }
+
+    public void setComputeAppInitialized(boolean isComputeAppInitialized) {
+        this.isComputeAppInitialized = isComputeAppInitialized;
+    }
+
     public ComputeAcct getComputeAcct() {
         return computeAcct;
     }
@@ -27,12 +38,12 @@ public class ComputeAcctWrapper {
         this.computeAcct = computeAcct;
     }
 
-    public boolean isComputeAppInitialized() {
-        return isComputeAppInitialized;
+    public ComputeProvider getComputeProvider() {
+        return computeProvider;
     }
 
-    public void setComputeAppInitialized(boolean isComputeAppInitialized) {
-        this.isComputeAppInitialized = isComputeAppInitialized;
+    public void setComputeProvider(ComputeProvider computeProvider) {
+        this.computeProvider = computeProvider;
     }
 
 }

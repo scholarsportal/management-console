@@ -9,7 +9,7 @@ public interface CredentialRepository {
 
     public abstract int saveCredential(Credential cred) throws Exception;
 
-    public abstract Credential findCredentialById(int storageCredId)
+    public abstract Credential findCredentialById(int credId)
             throws Exception;
 
 }

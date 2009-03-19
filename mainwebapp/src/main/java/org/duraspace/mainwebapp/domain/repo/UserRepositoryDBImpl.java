@@ -63,6 +63,9 @@ public class UserRepositoryDBImpl
     private final String USER_SELECT_BY_CRED_ID =
             USER_SELECT + " WHERE " + credentialIdCol + " = ?";
 
+    private final String USER_SELECT_BY_DURA_ACCT_ID =
+            USER_SELECT + " WHERE " + duraAcctIdCol + " = ?";
+
     private final String ID_SELECT = "SELECT " + idCol + " FROM " + tablename;
 
     private final String ID_SELECT_FOR_SINGLE_USER = ID_SELECT + " WHERE ";
@@ -181,33 +184,9 @@ public class UserRepositoryDBImpl
      */
     public User findUserById(int id) throws Exception {
         List<User> users =
-                this.getSimpleJdbcTemplate()
-                        .query(USER_SELECT_BY_ID,
-                               new ParameterizedRowMapper<User>() {
-
-                                   public User mapRow(ResultSet rs, int rowNum)
-                                           throws SQLException {
-                                       User user = new User();
-                                       user.setId(rs.getInt(idCol));
-                                       user.setLastname(rs
-                                               .getString(lastnameCol));
-                                       user.setFirstname(rs
-                                               .getString(firstnameCol));
-                                       user.setEmail(rs.getString(emailCol));
-                                       user.setPhoneWork(rs
-                                               .getString(phoneWorkCol));
-                                       user.setPhoneOther(rs
-                                               .getString(phoneOtherCol));
-                                       user.setAddrShippingId(rs
-                                               .getInt(addrShippingIdCol));
-                                       user.setCredentialId(rs
-                                               .getInt(credentialIdCol));
-                                       user.setDuraAcctId(rs
-                                               .getInt(duraAcctIdCol));
-                                       return user;
-                                   }
-                               },
-                               id);
+                this.getSimpleJdbcTemplate().query(USER_SELECT_BY_ID,
+                                                   new UserRowMapper(),
+                                                   id);
         if (users.size() == 0) {
             throw new Exception(tablename + " not found with id: '" + id + "'");
         }
@@ -240,38 +219,12 @@ public class UserRepositoryDBImpl
         return ids;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    // TODO:awoods :try to remove this method
     public User findUserByDuraCredId(int id) throws Exception {
         List<User> users =
-                this.getSimpleJdbcTemplate()
-                        .query(USER_SELECT_BY_CRED_ID,
-                               new ParameterizedRowMapper<User>() {
-
-                                   public User mapRow(ResultSet rs, int rowNum)
-                                           throws SQLException {
-                                       User user = new User();
-                                       user.setId(rs.getInt(idCol));
-                                       user.setLastname(rs
-                                               .getString(lastnameCol));
-                                       user.setFirstname(rs
-                                               .getString(firstnameCol));
-                                       user.setEmail(rs.getString(emailCol));
-                                       user.setPhoneWork(rs
-                                               .getString(phoneWorkCol));
-                                       user.setPhoneOther(rs
-                                               .getString(phoneOtherCol));
-                                       user.setAddrShippingId(rs
-                                               .getInt(addrShippingIdCol));
-                                       user.setCredentialId(rs
-                                               .getInt(credentialIdCol));
-                                       user.setDuraAcctId(rs
-                                               .getInt(duraAcctIdCol));
-                                       return user;
-                                   }
-                               },
-                               id);
+                this.getSimpleJdbcTemplate().query(USER_SELECT_BY_CRED_ID,
+                                                   new UserRowMapper(),
+                                                   id);
         if (users.size() == 0) {
             throw new Exception(tablename + " not found with id: '" + id + "'");
         }
@@ -280,6 +233,19 @@ public class UserRepositoryDBImpl
                     + "'");
         }
         return users.get(0);
+    }
+
+    public List<User> findUsersByDuraAcctId(int duraAcctId) throws Exception {
+        List<User> users =
+                this.getSimpleJdbcTemplate().query(USER_SELECT_BY_DURA_ACCT_ID,
+                                                   new UserRowMapper(),
+                                                   duraAcctId);
+        if (users.size() == 0) {
+            throw new Exception(tablename + " not found with duraAcctId: '"
+                    + duraAcctId + "'");
+        }
+        return users;
+
     }
 
     public static TableSpec getTableSpec() {
@@ -350,4 +316,28 @@ public class UserRepositoryDBImpl
         return id;
     }
 
+    /**
+     * This class provides a mapping of ResultSet items to their User
+     * representation
+     *
+     * @author Andrew Woods
+     */
+    private class UserRowMapper
+            implements ParameterizedRowMapper<User> {
+
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User();
+            user.setId(rs.getInt(idCol));
+            user.setLastname(rs.getString(lastnameCol));
+            user.setFirstname(rs.getString(firstnameCol));
+            user.setEmail(rs.getString(emailCol));
+            user.setPhoneWork(rs.getString(phoneWorkCol));
+            user.setPhoneOther(rs.getString(phoneOtherCol));
+            user.setAddrShippingId(rs.getInt(addrShippingIdCol));
+            user.setCredentialId(rs.getInt(credentialIdCol));
+            user.setDuraAcctId(rs.getInt(duraAcctIdCol));
+            return user;
+        }
+
+    }
 }

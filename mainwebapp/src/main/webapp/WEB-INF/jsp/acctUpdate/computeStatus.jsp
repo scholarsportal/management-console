@@ -32,7 +32,7 @@ p {
 	</c:when>
 	<c:otherwise>
 
-		<h2>Compute account properties</h2>
+		<h2>Compute Account Properties</h2>
 		<table>
 
 
@@ -53,11 +53,12 @@ p {
 			</tr>
 			<tr>
 				<td>Compute Provider:</td>
-				<td><c:out value="${input.computeAcct.computeProviderId}" /></td>
+				<td><a href="${input.computeProvider.url}"><c:out
+					value="${input.computeProvider.providerName}" /></a></td>
 			</tr>
 			<tr>
-				<td>Webapp name:</td>
-				<td><c:out value="${input.computeAcct.props.webappName}" /></td>
+				<td>Webapp properties:</td>
+				<td><c:out value="${input.computeAcct.xmlProps}" /></td>
 			</tr>
 
 

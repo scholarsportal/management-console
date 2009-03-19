@@ -39,6 +39,7 @@ public class MainDatabaseLoader {
 
     private final Map<String, Integer> storageProviderIds;
 
+    private final Credential amazonCred;
 
     private final String BILL = "bill";
 
@@ -52,7 +53,28 @@ public class MainDatabaseLoader {
 
     private final String MICHELLE = "michelle";
 
+    private final String EC2_PROPS =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                    + "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">"
+                    + "<properties>"
+                    + "<entry key=\"provider\">amazon-ec2</entry>"
+                    + "<entry key=\"signatureMethod\">HmacSHA1</entry>"
+                    + "<entry key=\"keyname\">awoods-keypair</entry>"
+                    + "<entry key=\"imageId\">ami-92f314fb</entry>"
+                    + "<entry key=\"minInstanceCount\">1</entry>"
+                    + "<entry key=\"maxInstanceCount\">1</entry>"
+                    + "<entry key=\"maxAsyncThreads\">35</entry>"
+                    + "<entry key=\"webappProtocol\">http</entry>"
+                    + "<entry key=\"webappPort\">8080</entry>"
+                    + "<entry key=\"webappName\">/instancewebapp</entry>"
+                    + "</properties>";
+
     public MainDatabaseLoader() {
+        this(new Credential("username", "password"));
+    }
+
+    public MainDatabaseLoader(Credential amazonCred) {
+        this.amazonCred = amazonCred;
         userIds = new HashMap<String, Integer>();
         duraAcctIds = new HashMap<String, Integer>();
         computeProviderIds = new HashMap<String, Integer>();
@@ -202,11 +224,17 @@ public class MainDatabaseLoader {
         acctSandyMichelle.setAccountName("Duraspace: M&S");
 
         duraAcctIds.put(BILL, getDuraSpaceAcctManager()
-                .saveDuraAcct(acctBillChris));
+                .saveDuraAcctForUser(acctBillChris, userIds.get(BILL)));
+        duraAcctIds.put(BILL, getDuraSpaceAcctManager()
+                .saveDuraAcctForUser(acctBillChris, userIds.get(CHRIS)));
         duraAcctIds.put(BRAD, getDuraSpaceAcctManager()
-                .saveDuraAcct(acctBradAndrew));
+                .saveDuraAcctForUser(acctBradAndrew, userIds.get(BRAD)));
+        duraAcctIds.put(BRAD, getDuraSpaceAcctManager()
+                .saveDuraAcctForUser(acctBradAndrew, userIds.get(ANDREW)));
         duraAcctIds.put(SANDY, getDuraSpaceAcctManager()
-                .saveDuraAcct(acctSandyMichelle));
+                .saveDuraAcctForUser(acctSandyMichelle, userIds.get(SANDY)));
+        duraAcctIds.put(SANDY, getDuraSpaceAcctManager()
+                .saveDuraAcctForUser(acctSandyMichelle, userIds.get(MICHELLE)));
     }
 
     private void loadComputeProviders() throws Exception {
@@ -214,23 +242,23 @@ public class MainDatabaseLoader {
         providerAmazon.setProviderName(ComputeProviderType.AMAZON_EC2
                 .toString());
         providerAmazon.setProviderType(ComputeProviderType.AMAZON_EC2);
-        providerAmazon.setUrl("http://amazon.com");
+        providerAmazon.setUrl("http://aws.amazon.com/ec2");
 
         ComputeProvider providerMS = new ComputeProvider();
         providerMS.setProviderName(ComputeProviderType.MICROSOFT_AZURE
                 .toString());
         providerMS.setProviderType(ComputeProviderType.MICROSOFT_AZURE);
-        providerMS.setUrl("http://microsoft.com");
+        providerMS.setUrl("http://www.microsoft.com/azure");
 
         ComputeProvider providerSun = new ComputeProvider();
         providerSun.setProviderName(ComputeProviderType.SUN.toString());
         providerSun.setProviderType(ComputeProviderType.SUN);
-        providerSun.setUrl("http://sun.com");
+        providerSun.setUrl("http://www.sun.com/cloud");
 
         ComputeProvider providerUnknown = new ComputeProvider();
         providerUnknown.setProviderName(ComputeProviderType.UNKNOWN.toString());
         providerUnknown.setProviderType(ComputeProviderType.UNKNOWN);
-        providerUnknown.setUrl("http://unknown.com");
+        providerUnknown.setUrl("http://google.com");
 
         computeProviderIds.put(ComputeProviderType.AMAZON_EC2.toString(),
                                getComputeProviderRepository()
@@ -249,7 +277,7 @@ public class MainDatabaseLoader {
     private void loadComputeAccts() throws Exception {
         ComputeAcct acctBillChris = new ComputeAcct();
         acctBillChris.setNamespace("namespaceBC");
-        acctBillChris.setXmlProps("a=b");
+        acctBillChris.setXmlProps(EC2_PROPS);
         acctBillChris.setComputeProviderType(ComputeProviderType.AMAZON_EC2);
         acctBillChris.setComputeProviderId(computeProviderIds
                 .get(ComputeProviderType.AMAZON_EC2.toString()));
@@ -257,7 +285,7 @@ public class MainDatabaseLoader {
 
         ComputeAcct acctBradAndrew = new ComputeAcct();
         acctBradAndrew.setNamespace("namespaceBA");
-        acctBradAndrew.setXmlProps("a=b");
+        acctBradAndrew.setXmlProps(EC2_PROPS);
         acctBradAndrew.setComputeProviderType(ComputeProviderType.AMAZON_EC2);
         acctBradAndrew.setComputeProviderId(computeProviderIds
                 .get(ComputeProviderType.AMAZON_EC2.toString()));
@@ -265,7 +293,7 @@ public class MainDatabaseLoader {
 
         ComputeAcct acctSandyMichelle = new ComputeAcct();
         acctSandyMichelle.setNamespace("namespaceSM");
-        acctSandyMichelle.setXmlProps("a=b");
+        acctSandyMichelle.setXmlProps(EC2_PROPS);
         acctSandyMichelle.setComputeProviderType(ComputeProviderType.SUN);
         acctSandyMichelle.setComputeProviderId(computeProviderIds
                 .get(ComputeProviderType.SUN.toString()));
@@ -278,13 +306,12 @@ public class MainDatabaseLoader {
         int acctIdSandyMichelle =
                 getDuraSpaceAcctManager().saveComputeAcct(acctSandyMichelle);
 
-        Credential credCompute = new Credential("username", "password");
-        getDuraSpaceAcctManager().saveCredentialForComputeAcct(credCompute,
+        getDuraSpaceAcctManager().saveCredentialForComputeAcct(amazonCred,
                                                                acctIdBillChris);
         getDuraSpaceAcctManager()
-                .saveCredentialForComputeAcct(credCompute, acctIdBradAndrew);
+                .saveCredentialForComputeAcct(amazonCred, acctIdBradAndrew);
         getDuraSpaceAcctManager()
-                .saveCredentialForComputeAcct(credCompute, acctIdSandyMichelle);
+                .saveCredentialForComputeAcct(amazonCred, acctIdSandyMichelle);
     }
 
     private void loadStorageProviders() throws Exception {
@@ -292,23 +319,23 @@ public class MainDatabaseLoader {
         providerAmazon
                 .setProviderName(StorageProviderType.AMAZON_S3.toString());
         providerAmazon.setProviderType(StorageProviderType.AMAZON_S3);
-        providerAmazon.setUrl("http://amazon.com");
+        providerAmazon.setUrl("http://aws.amazon.com/s3");
 
         StorageProvider providerMS = new StorageProvider();
         providerMS.setProviderName(StorageProviderType.MICROSOFT_AZURE
                 .toString());
         providerMS.setProviderType(StorageProviderType.MICROSOFT_AZURE);
-        providerMS.setUrl("http://microsoft.com");
+        providerMS.setUrl("http://www.microsoft.com/azure");
 
         StorageProvider providerSun = new StorageProvider();
         providerSun.setProviderName(StorageProviderType.SUN.toString());
         providerSun.setProviderType(StorageProviderType.SUN);
-        providerSun.setUrl("http://sun.com");
+        providerSun.setUrl("http://www.sun.com/cloud");
 
         StorageProvider providerUnknown = new StorageProvider();
         providerUnknown.setProviderName(StorageProviderType.UNKNOWN.toString());
         providerUnknown.setProviderType(StorageProviderType.UNKNOWN);
-        providerUnknown.setUrl("http://unknown.com");
+        providerUnknown.setUrl("http://google.com");
 
         storageProviderIds.put(StorageProviderType.AMAZON_S3.toString(),
                                getStorageProviderRepository()
@@ -354,13 +381,12 @@ public class MainDatabaseLoader {
         int acctIdSandyMichelle =
                 getDuraSpaceAcctManager().saveStorageAcct(acctSandyMichelle);
 
-        Credential credStorage = new Credential("username", "password");
-        getDuraSpaceAcctManager().saveCredentialForStorageAcct(credStorage,
+        getDuraSpaceAcctManager().saveCredentialForStorageAcct(amazonCred,
                                                                acctIdBillChris);
         getDuraSpaceAcctManager()
-                .saveCredentialForStorageAcct(credStorage, acctIdBradAndrew);
+                .saveCredentialForStorageAcct(amazonCred, acctIdBradAndrew);
         getDuraSpaceAcctManager()
-                .saveCredentialForStorageAcct(credStorage, acctIdSandyMichelle);
+                .saveCredentialForStorageAcct(amazonCred, acctIdSandyMichelle);
     }
 
     public DuraSpaceAcctManager getDuraSpaceAcctManager() {

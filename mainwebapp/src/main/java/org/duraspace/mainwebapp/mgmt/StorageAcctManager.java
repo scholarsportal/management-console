@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
+import org.duraspace.mainwebapp.domain.model.StorageProvider;
 
 /**
  * <pre>
@@ -32,5 +33,11 @@ public interface StorageAcctManager {
 
     public int saveCredentialForStorageAcct(Credential storageAcctCred,
                                             int storageAcctId) throws Exception;
+
+    public StorageProvider findStorageProviderForStorageAcct(int storageAcctId)
+            throws Exception;
+
+    public StorageAcct findStorageAccountAndLoadCredential(int storageAcctId)
+            throws Exception;
 
 }

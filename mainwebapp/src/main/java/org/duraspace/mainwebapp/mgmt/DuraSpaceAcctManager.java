@@ -12,12 +12,21 @@ import org.duraspace.mainwebapp.domain.model.User;
 
 public interface DuraSpaceAcctManager {
 
+    public void verifyCredential(Credential cred) throws Exception;
+
+    public List<User> findUsers(int duraAcctId) throws Exception;
+
+    public List<ComputeAcct> findComputeAccounts(int duraAcctId)
+            throws Exception;
+
     public DuraSpaceAcct findDuraSpaceAccount(Credential duraCred)
             throws Exception;
 
-    public ComputeAcct findComputeAccount(Credential duraCred) throws Exception;
+    // TODO:awoods :remove this method
+    public List<ComputeAcct> findComputeAccounts(Credential duraCred)
+            throws Exception;
 
-    public List<StorageAcct> findStorageProviderAccounts(int duraAcctId)
+    public List<StorageAcct> findStorageAccounts(int duraAcctId)
             throws Exception;
 
     public int saveUser(User user) throws Exception;
@@ -27,7 +36,8 @@ public interface DuraSpaceAcctManager {
     public int saveCredentialForUser(Credential cred, int userId)
             throws Exception;
 
-    public int saveDuraAcct(DuraSpaceAcct duraAcct) throws Exception;
+    public int saveDuraAcctForUser(DuraSpaceAcct duraAcct, int userId)
+            throws Exception;
 
     public int saveComputeAcct(ComputeAcct computeAcct) throws Exception;
 

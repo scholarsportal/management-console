@@ -8,16 +8,9 @@
 </head>
 <body>
 
-<form method="POST" action="computeStatus.htm">
-
-<p /><!-- Add credentials to command object --> <c:if
-	test="${ !empty duraAcct.computeAcctId}">
-	<input type="hidden" name="computeAcctId"
-		value="${duraAcct.computeAcctId}" />
-</c:if>
-<h3>Registered account users</h3>
+<h2>Registered Account Users</h2>
 <table>
-	<c:forEach items="${duraAcct.users}" var="user">
+	<c:forEach items="${wrapper.users}" var="user">
 		<tr>
 			<td class="user"><c:out value="${user.lastname}" />, <c:out
 				value="${user.firstname}" /></td>
@@ -25,23 +18,58 @@
 	</c:forEach>
 
 </table>
-<h3>Account Details</h3>
+<h2>Account Details</h2>
 <table>
-	<c:choose>
-		<c:when test="${ !empty duraAcct.computeAcctId}">
-			<tr>
-				<td><input type="submit" class="button" name="cmd"
-					value="View Compute Status" /></td>
-			</tr>
 
-		</c:when>
-		<c:otherwise>
-			<tr>
-				<td>No compute account created :-(</td>
-			</tr>
-		</c:otherwise>
-	</c:choose>
+	<c:if test="${ !empty wrapper.duraAcct}">
+		<form method="GET" action="computeStatus.htm"><c:choose>
+			<c:when test="${ !empty wrapper.computeAccts}">
+				<tr>
+					<td>
+					<h5>Compute Accounts</h5>
+					</td>
+				</tr>
+				<c:forEach items="${wrapper.computeAccts}" var="computeAcct">
+					<tr>
+						<td class="computeAcct"><c:out
+							value="${computeAcct.computeProviderType}" /></td>
+						<td><input type="hidden" name="computeAcctId"
+							value="${computeAcct.id}" /><input type="submit" class="button"
+							name="cmd" value="View Status" /></td>
+					</tr>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<tr>
+					<td>No compute accounts :-(</td>
+				</tr>
+			</c:otherwise>
+		</c:choose></form>
+		<form method="GET" action="storageStatus.htm"><c:choose>
+			<c:when test="${ !empty wrapper.storageAccts}">
+				<tr>
+					<td>
+					<h5>Storage Accounts</h5>
+					</td>
+				</tr>
+				<c:forEach items="${wrapper.storageAccts}" var="storageAcct">
+					<tr>
+						<td class="storageAcct"><c:out
+							value="${storageAcct.storageProviderType}" /></td>
 
+						<td><input type="hidden" name="storageAcctId"
+							value="${storageAcct.id}" /><input type="submit" class="button"
+							name="cmd" value="View Status" /></td>
+					</tr>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<tr>
+					<td>No storage accounts :-(</td>
+				</tr>
+			</c:otherwise>
+		</c:choose></form>
+	</c:if>
 </table>
 </body>
 </html>

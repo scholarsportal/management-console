@@ -83,7 +83,7 @@ public class TestComputeAcctRepositoryDBImpl {
         assertNotNull(acct);
         assertEquals(namespace, acct.getNamespace());
         assertEquals(instanceId, acct.getInstanceId());
-        //FIXME:awoods            assertEquals(computeProps, acct.getProps());
+        assertEquals(computeProps, acct.getXmlProps());
         assertEquals(providerType, acct.getComputeProviderType());
 
     }
@@ -123,22 +123,22 @@ public class TestComputeAcctRepositoryDBImpl {
             assertNotNull(acct);
             String ns = acct.getNamespace();
             String ii = acct.getInstanceId();
-            //            Properties cp = acct.getProps(); FIXME:awoods
+            String cp = acct.getXmlProps();
             ComputeProviderType ty = acct.getComputeProviderType();
             assertNotNull(ns);
             assertNotNull(ii);
-            //            assertNotNull(cp); FIXME:awoods
+            assertNotNull(cp);
             assertNotNull(ty);
 
             // Save same ComputeAcct with updates.
             ComputeAcct acctNew = new ComputeAcct();
             String nsNew = ns + "test";
             String iiNew = ii + "test";
-            //            Properties cpNew = cp; FIXME:awoods
+            String cpNew = cp;
             ComputeProviderType tyNew = ComputeProviderType.SUN;
             acctNew.setNamespace(nsNew);
             acctNew.setInstanceId(iiNew);
-            //            acctNew.setProps(cpNew); FIXME: awoods
+            acctNew.setXmlProps(cpNew);
             acctNew.setComputeProviderType(tyNew);
 
             // Setting the ID is how the update happens.
@@ -150,7 +150,7 @@ public class TestComputeAcctRepositoryDBImpl {
             assertNotNull(acctUpdated);
             assertEquals(nsNew, acctUpdated.getNamespace());
             assertEquals(iiNew, acctUpdated.getInstanceId());
-            //            assertEquals(cpNew, acctUpdated.getProps());FIXME: awoods
+            assertEquals(cpNew, acctUpdated.getXmlProps());
             assertEquals(tyNew, acctUpdated.getComputeProviderType());
         }
     }

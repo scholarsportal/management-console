@@ -9,6 +9,6 @@ public interface CredentialManager {
 
     public int saveCredential(Credential cred) throws Exception;
 
-    public Credential findCredentialById(int storageCredId) throws Exception;
+    public Credential findCredentialById(int credId) throws Exception;
 
 }

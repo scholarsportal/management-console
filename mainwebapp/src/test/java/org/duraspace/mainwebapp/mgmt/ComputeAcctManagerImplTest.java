@@ -1,7 +1,9 @@
 
 package org.duraspace.mainwebapp.mgmt;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -81,6 +83,7 @@ public class ComputeAcctManagerImplTest {
     public void tearDown() throws Exception {
         mgr = null;
         computeAcctRepo = null;
+        credentialMgr = null;
         credential = null;
     }
 
@@ -95,10 +98,13 @@ public class ComputeAcctManagerImplTest {
     }
 
     private void setUp_testStartComputeInstance() throws Exception {
+        EasyMock.expect(credentialMgr.findCredentialById(0))
+                .andReturn(credential).times(3);
         EasyMock.expect(computeAcctRepo.findComputeAcctById(computeAcctId))
                 .andReturn(computeAcct).times(3);
         EasyMock.expect(computeAcctRepo.saveComputeAcct(computeAcct))
                 .andReturn(1);
+        EasyMock.replay(credentialMgr);
         EasyMock.replay(computeAcctRepo);
     }
 
@@ -106,7 +112,8 @@ public class ComputeAcctManagerImplTest {
     public void testFindComputeAcct() throws Exception {
         setUp_testFindComputeAcct();
 
-        ComputeAcct computeAcct = mgr.findComputeAccount(computeAcctId);
+        ComputeAcct computeAcct =
+                mgr.findComputeAccountAndLoadCredential(computeAcctId);
         assertNotNull(computeAcct);
     }
 
@@ -117,19 +124,19 @@ public class ComputeAcctManagerImplTest {
     }
 
     @Test
-    public void testFindComputeAcctByDuraAcctId() throws Exception {
-        setUp_testFindComputeAcctByDuraAcctId();
+    public void testFindComputeAcctsByDuraAcctId() throws Exception {
+        setUp_testFindComputeAcctsByDuraAcctId();
 
-        ComputeAcct computeAcct =
-                mgr.findComputeAccountByDuraAcctId(duraAcctId);
-        assertNotNull(computeAcct);
+        List<ComputeAcct> computeAccts =
+                mgr.findComputeAccountsByDuraAcctId(duraAcctId);
+        assertNotNull(computeAccts);
 
     }
 
-    private void setUp_testFindComputeAcctByDuraAcctId() throws Exception {
-        EasyMock
-                .expect(computeAcctRepo.findComputeAcctByDuraAcctId(duraAcctId))
-                .andReturn(computeAcct);
+    private void setUp_testFindComputeAcctsByDuraAcctId() throws Exception {
+        EasyMock.expect(computeAcctRepo
+                .findComputeAcctsByDuraAcctId(duraAcctId)).andReturn(Arrays
+                .asList(computeAcct));
         EasyMock.replay(computeAcctRepo);
     }
 
@@ -149,12 +156,15 @@ public class ComputeAcctManagerImplTest {
     }
 
     private void setUp_testDoubleStartComputeInstance() throws Exception {
+        EasyMock.expect(credentialMgr.findCredentialById(0))
+                .andReturn(credential).times(4);
         EasyMock.expect(computeAcctRepo.findComputeAcctById(computeAcctId))
                 .andReturn(computeAcct).times(3);
         EasyMock.expect(computeAcctRepo.saveComputeAcct(computeAcct))
                 .andReturn(1);
         EasyMock.expect(computeAcctRepo.findComputeAcctById(computeAcctId))
                 .andReturn(computeAcct);
+        EasyMock.replay(credentialMgr);
         EasyMock.replay(computeAcctRepo);
     }
 
@@ -180,17 +190,20 @@ public class ComputeAcctManagerImplTest {
     }
 
     private void setUp_testStopComputeInstance() throws Exception {
+        EasyMock.expect(credentialMgr.findCredentialById(0))
+                .andReturn(credential).times(6);
         EasyMock.expect(computeAcctRepo.findComputeAcctById(computeAcctId))
                 .andReturn(computeAcct).times(6);
         EasyMock.expect(computeAcctRepo.saveComputeAcct(computeAcct))
                 .andReturn(1).times(3);
+        EasyMock.replay(credentialMgr);
         EasyMock.replay(computeAcctRepo);
     }
 
     @Test
     public void testRefresh() throws Exception {
         setUp_testRefresh();
-        assertNotNull(mgr.findComputeAccount(computeAcctId));
+        assertNotNull(mgr.findComputeAccountAndLoadCredential(computeAcctId));
     }
 
     private void setUp_testRefresh() throws Exception {
@@ -200,13 +213,15 @@ public class ComputeAcctManagerImplTest {
     }
 
     private void verifyComputeInstanceRunning(int acctId) throws Exception {
-        ComputeAcct computeAcct = mgr.findComputeAccount(acctId);
+        ComputeAcct computeAcct =
+                mgr.findComputeAccountAndLoadCredential(acctId);
         assertNotNull(computeAcct);
         assertTrue(computeAcct.isInstanceRunning());
     }
 
     private void verifyComputeInstanceNotRunning(int acctId) throws Exception {
-        ComputeAcct computeAcct = mgr.findComputeAccount(acctId);
+        ComputeAcct computeAcct =
+                mgr.findComputeAccountAndLoadCredential(acctId);
         assertNotNull(computeAcct);
         assertTrue(!computeAcct.isInstanceRunning());
     }

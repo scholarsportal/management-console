@@ -1,8 +1,11 @@
 
 package org.duraspace.mainwebapp.mgmt;
 
+import java.util.List;
+
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 
 /**
  * This interface encapsulates the navigation of account repositories and the
@@ -28,23 +31,12 @@ public interface ComputeAcctManager {
      * associated instance-id.
      * </pre>
      *
-     * @param cred
-     *        Duraspace credential
+     * @param compute
+     *        -acct-id
      * @return
      * @throws Exception
      *         If there is an error from the underlying compute-provider or if
      *         an instance is already running.
-     */
-    //FIXME:awoods :does anyone use this method?
-    //    public abstract DuraSpaceAcct startComputeInstance(Credential cred)
-    //            throws Exception;
-    /**
-     * This method overrides the above method, starting a compute instance
-     * associated with the provided compute-account-id.
-     *
-     * @param computeAcctId
-     * @return
-     * @throws Exception
      */
     public abstract ComputeAcct startComputeInstance(int computeAcctId)
             throws Exception;
@@ -64,19 +56,6 @@ public interface ComputeAcctManager {
     public abstract ComputeAcct initializeComputeApp(int computeAcctId);
 
     /**
-     * This method terminates the compute instance associated with the provided
-     * Duraspace credentials.
-     *
-     * @param cred
-     *        Duraspace credential
-     * @return
-     * @throws Exception
-     *         If error from underlying compute-provider.
-     */
-    //FIXME:awoods :does anyone use this method?
-    //    public abstract DuraSpaceAcct stopComputeInstance(Credential cred)
-    //            throws Exception;
-    /**
      * This method overrides the above method, stopping a compute instance
      * associated with the provided compute-account-id.
      *
@@ -88,18 +67,6 @@ public interface ComputeAcctManager {
             throws Exception;
 
     /**
-     * This method returns the compute-account data associated with the provided
-     * Duraspace credential.
-     *
-     * @param cred
-     *        Duraspace credential.
-     * @return
-     * @throws Exception
-     */
-    //FIXME:awoods :should be able to drop this.
-    //    public abstract ComputeAcct findComputeAccount(Credential cred)
-    //            throws Exception;
-    /**
      * This method overrides the above method, returning the compute-account
      * data associated with the provided compute-account-id.
      *
@@ -107,10 +74,10 @@ public interface ComputeAcctManager {
      * @return
      * @throws Exception
      */
-    public abstract ComputeAcct findComputeAccount(int computeAcctId)
+    public abstract ComputeAcct findComputeAccountAndLoadCredential(int computeAcctId)
             throws Exception;
 
-    public ComputeAcct findComputeAccountByDuraAcctId(int duraAcctId)
+    public List<ComputeAcct> findComputeAccountsByDuraAcctId(int duraAcctId)
             throws Exception;
 
     public abstract int saveComputeAcct(ComputeAcct computeAcct)
@@ -118,6 +85,9 @@ public interface ComputeAcctManager {
 
     public abstract int saveCredentialForComputeAcct(Credential computeAcctCred,
                                                      int computeAcctId)
+            throws Exception;
+
+    public abstract ComputeProvider findComputeProviderForComputeAcct(int computeAcctId)
             throws Exception;
 
 }

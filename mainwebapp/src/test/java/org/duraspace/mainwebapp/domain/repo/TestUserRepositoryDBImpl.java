@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.DatabaseUtil;
+import org.duraspace.mainwebapp.domain.model.DuraSpaceAcct;
 import org.duraspace.mainwebapp.domain.model.User;
 import org.duraspace.mainwebapp.domain.repo.db.MainDatabaseUtil;
 
@@ -231,6 +232,40 @@ public class TestUserRepositoryDBImpl {
 
     }
 
+    @Test
+    public void testFindUsersByDuraAcctId() throws Exception {
+        String accountName = "testDuraAcctName";
+        DuraSpaceAcct duraAcct = new DuraSpaceAcct();
+        duraAcct.setAccountName(accountName);
+        int duraAcctId = insertTestDuraAcct(duraAcct);
+        assertTrue(duraAcctId > 0);
+
+        // Add Users with created duraAcctId.
+        userA.setDuraAcctId(duraAcctId); // <--
+
+        User userB = new User();
+        userB.setLastname(lastname + "x");
+        userB.setFirstname(firstname);
+        userB.setEmail(email);
+        userB.setPhoneWork(phoneWork);
+        userB.setPhoneOther(phoneOther);
+        userB.setDuraAcctId(duraAcctId); // <--
+
+        repo.saveUser(userA);
+        repo.saveUser(userB);
+
+        // Execute method under test.
+        List<User> usersFound = repo.findUsersByDuraAcctId(duraAcctId);
+        assertNotNull(usersFound);
+        assertEquals(usersFound.size(), 2);
+
+        for (User userFound : usersFound) {
+            assertEquals(duraAcctId, userFound.getDuraAcctId());
+            assertEquals(firstname, userFound.getFirstname());
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     private void verifyTableSize(int size) {
         List results =
@@ -281,4 +316,20 @@ public class TestUserRepositoryDBImpl {
                 .update("INSERT INTO Authority (username,authority) VALUES ('"
                         + username + "','some-authority')");
     }
+
+    private int insertTestDuraAcct(DuraSpaceAcct duraSpaceAcct) {
+        dbUtil.getOps()
+                .update("INSERT INTO DuraSpaceAcct (accountname) VALUES ('"
+                        + duraSpaceAcct.getAccountName() + "')");
+        int id =
+                dbUtil
+                        .getOps()
+                        .queryForInt("SELECT id FROM DuraSpaceAcct WHERE accountname='"
+                                             + duraSpaceAcct.getAccountName()
+                                             + "'",
+                                     null,
+                                     null);
+        return id;
+    }
+
 }

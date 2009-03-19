@@ -29,8 +29,9 @@
         <prop key="/contactUs.htm">homeController</prop>
         <prop key="/login.htm">loginController</prop>
         <prop key="/address.htm">addrController</prop>
-        <prop key="/acctStatus.htm">acctStatusController</prop>
+        <prop key="/acctStatus.htm">acctStatusController</prop><!-- this controller not use -->
         <prop key="/computeStatus.htm">computeStatusController</prop>
+        <prop key="/storageStatus.htm">storageStatusController</prop>
         <prop key="/welcomeAcctCreate.htm">acctController</prop>
       </props>
     </property>
@@ -71,6 +72,10 @@
     <property name="computeManager" ref="computeAcctMgr" />
   </bean>
 
+  <bean id="storageStatusController" class="org.duraspace.mainwebapp.control.StorageStatusController" >
+    <property name="storageManager" ref="storageAcctMgr" />
+  </bean>
+  
   <bean id="acctController" class="org.duraspace.mainwebapp.control.SubDirController">
     <property name="prefix" value="/acctCreate/" />
   </bean>

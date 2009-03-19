@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.cmd.ComputeStatusCmd;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.mgmt.ComputeAcctManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,14 +35,14 @@ public class ComputeStatusController
 
         ComputeStatusCmd params = (ComputeStatusCmd) command;
 
+        String cmd = params.getCmd();
         int computeAcctId = params.getComputeAcctIdAsInt();
         String timer = calculateTimer(params.getTimer());
 
-        log.info("user cmd       : " + params.getCmd());
+        log.info("user cmd       : " + cmd);
         log.info("compute acct id: " + computeAcctId);
 
-        ComputeAcctWrapper inputToView =
-                executeCommand(params.getCmd(), computeAcctId);
+        ComputeAcctWrapper inputToView = executeCommand(cmd, computeAcctId);
         inputToView.setTimer(timer);
 
         return new ModelAndView("acctUpdate/computeStatus",
@@ -55,6 +56,8 @@ public class ComputeStatusController
         ComputeAcct acct = null;
         ComputeAcctWrapper wrapper = new ComputeAcctWrapper();
 
+        wrapper.setComputeProvider(getComputeProvider(computeAcctId));
+
         if (cmd.equals("Start")) {
             log.info("Starting instance...");
             acct = computeManager.startComputeInstance(computeAcctId);
@@ -67,7 +70,7 @@ public class ComputeStatusController
             wrapper.setComputeAppInitialized(true);
         } else {
             log.info("Refreshing instance...");
-            acct = computeManager.findComputeAccount(computeAcctId);
+            acct = computeManager.findComputeAccountAndLoadCredential(computeAcctId);
         }
 
         wrapper.setComputeAcct(acct);
@@ -95,6 +98,12 @@ public class ComputeStatusController
     private int previousCount(String arg, String tail) {
         return Character.getNumericValue(arg.charAt(arg.length()
                 - tail.length() - 1));
+    }
+
+    private ComputeProvider getComputeProvider(int computeAcctId)
+            throws Exception {
+        return getComputeManager()
+                .findComputeProviderForComputeAcct(computeAcctId);
     }
 
     public ComputeAcctManager getComputeManager() {

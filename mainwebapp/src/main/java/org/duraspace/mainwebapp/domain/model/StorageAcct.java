@@ -17,9 +17,6 @@ public class StorageAcct {
 
     private int id;
 
-    //FIXME:awoods , need to replace ownerId with duraAcctId
-    private String ownerId; // reference to parent DuraSpaceAcct.
-
     private int isPrimary;
 
     private String namespace;
@@ -39,10 +36,6 @@ public class StorageAcct {
 
     public boolean hasId() {
         return id > 0;
-    }
-
-    public boolean hasOwner(String customerId) {
-        return ownerId.equals(customerId);
     }
 
     public String toXml() {
@@ -77,20 +70,16 @@ public class StorageAcct {
         return duraAcctId > 0;
     }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public int getIsPrimary() {
         return isPrimary;
     }
 
     public void setPrimary(int isPrimary) {
         this.isPrimary = isPrimary;
+    }
+
+    public String getIsPrimaryAsString() {
+        return isPrimary == 1 ? "true" : "false";
     }
 
     public int getId() {
@@ -154,15 +143,12 @@ public class StorageAcct {
         this.storageProvider = storageProvider;
     }
 
-
     public Credential getStorageProviderCredential() {
         return storageProviderCredential;
     }
 
-
     public void setStorageProviderCredential(Credential storageProviderCredential) {
         this.storageProviderCredential = storageProviderCredential;
     }
-
 
 }

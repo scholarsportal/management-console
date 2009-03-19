@@ -47,4 +47,7 @@ public interface UserRepository {
      */
     public abstract User findUserByDuraCredId(int id) throws Exception;
 
+    public abstract List<User> findUsersByDuraAcctId(int duraAcctId)
+            throws Exception;
+
 }

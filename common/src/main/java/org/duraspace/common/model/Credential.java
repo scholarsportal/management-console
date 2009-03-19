@@ -17,7 +17,7 @@ public class Credential
     private Integer isEnabled;
 
     public boolean hasId() {
-        return id >= 0;
+        return id > 0;
     }
 
     public Credential() {

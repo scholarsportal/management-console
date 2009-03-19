@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.cmd.AcctStatusCmd;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
@@ -32,18 +31,19 @@ public class AcctStatusController
                                   Object command,
                                   BindException arg3) throws Exception {
 
-        AcctStatusCmd params = (AcctStatusCmd) command;
-
-        Credential duraCred = new Credential();
-        duraCred.setUsername(params.getUsername());
-        duraCred.setPassword(params.getPassword());
-
-        log.info("user cmd : " + params.getCmd());
-        log.info("user cred: " + duraCred);
-
-        ComputeAcctWrapper inputToView = new ComputeAcctWrapper();
-        inputToView
-                .setComputeAcct(duraAcctManager.findComputeAccount(duraCred));
+//        AcctStatusCmd params = (AcctStatusCmd) command;
+//
+//        Credential duraCred = new Credential();
+//        duraCred.setUsername(params.getUsername());
+//        duraCred.setPassword(params.getPassword());
+//
+//        log.info("user cmd : " + params.getCmd());
+//        log.info("user cred: " + duraCred);
+//
+//        ComputeAcctWrapper inputToView = new ComputeAcctWrapper();
+//        inputToView.setComputeAccts(getDuraAcctManager()
+//                .findComputeAccounts(duraCred));
+        ComputeAcctWrapper inputToView = null;
 
         return new ModelAndView("acctUpdate/computeStatus",
                                 "input",
