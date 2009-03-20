@@ -71,7 +71,8 @@ public class StorageProviderUtil {
         if(mainHost == null || mainPort == 0) {
             String error = "The Storage Provider Utility must be initilized " +
             		       "with a valid host and port at which the DuraSpace " +
-            		       "Main webapp can be accessed before it can fulfill.";
+            		       "Main webapp can be accessed before it can fulfill " +
+            		       "any requests.";
             throw new StorageException(error);
         }
 

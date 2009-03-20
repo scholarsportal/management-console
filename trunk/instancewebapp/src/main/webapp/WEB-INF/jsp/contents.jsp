@@ -7,6 +7,11 @@
     <title>Contents of <c:out value="${space.metadata.name}"/></title>
   </head>
   <body>
+    <form action="spaces.htm" method="get">
+      <input type="hidden" name="accountId" value="<c:out value="${space.accountId}"/>" />                  
+      <input type='submit' value="<- Back to Spaces Listing"/>
+    </form> 
+
     <c:if test="${not empty error}">
       <div id="error"><c:out value="${error}" /></div>
     </c:if>
@@ -24,9 +29,7 @@
               <c:out value="${content}"/>
             </td>        
             <td>
-              <form action="content.htm"
-                         method="post"
-                         target="content_target">
+              <form action="content.htm"  method="get" target="content_target">
                 <input type="hidden" name="accountId" value="<c:out value="${space.accountId}"/>" />
                 <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
                 <input type="hidden" name="contentId" value="<c:out value="${content}"/>" />                       
@@ -39,8 +42,7 @@
               </form>
             </td>
             <td>
-              <form action="removeContent.htm"
-                         method="post">
+              <form action="removeContent.htm" method="post">
                 <input type="hidden" name="action" value="delete" />
                 <input type="hidden" name="accountId" value="<c:out value="${space.accountId}"/>" />
                 <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
@@ -50,12 +52,10 @@
             </td>          
           </tr>
         </c:forEach>
-      </table>
+      </table>       
     
-      <h2>Add Content</h2>
-      <form action="addContent.htm"
-            method="post">
-            <!-- enctype="multipart/form-data">-->
+      <h4>Add Content</h4>
+      <form action="addContent.htm" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="add" />
         <input type="hidden" name="accountId" value="<c:out value="${space.accountId}"/>" />
         <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />

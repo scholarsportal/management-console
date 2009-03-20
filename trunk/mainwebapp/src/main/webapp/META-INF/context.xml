@@ -12,7 +12,7 @@
               username="duraspace" 
               password="duraspace" 
               driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
-              url="jdbc:derby:/opt/derby/duraspaceDB"
+              url="jdbc:derby:C:/work/programs/duraspace/derby"
               maxActive="100" 
               maxIdle="30" 
               maxWait="10000"/>

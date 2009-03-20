@@ -127,7 +127,7 @@ public interface StorageProvider {
     public void addContent(String spaceId,
                            String contentId,
                            String contentMimeType,
-                           int contentSize,
+                           long contentSize,
                            InputStream content)
     throws StorageException;
 

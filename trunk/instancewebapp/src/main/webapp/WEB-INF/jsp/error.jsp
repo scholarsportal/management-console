@@ -7,12 +7,9 @@
     <title>Error</title>
   </head>
   <body>
-	<form method="post" action="spaces.htm">
-		<h3>An error prevented this page from loading correctly.</h3>
-        <input type="submit" class="button" value="Return to Spaces"/>
-    </form>
-    
-	<h5>Message</h5>
+    <h3>An error prevented this page from loading correctly.</h3>   
+	
+    <h5>Message</h5>
     <c:out value="${message}"/>
 
 	<h5>Stack trace</h5>

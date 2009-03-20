@@ -2,6 +2,8 @@ package org.duraspace.control;
 
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 import org.duraspace.domain.ContentItem;
@@ -21,6 +23,12 @@ public class ContentController extends SimpleFormController {
 		setCommandClass(ContentItem.class);
 		setCommandName("content");
 	}
+
+    @Override
+    protected boolean isFormSubmission(HttpServletRequest request){
+        // Process both GET and POST requests as form submissions
+        return true;
+    }
 
     @Override
     protected ModelAndView onSubmit(Object command,
