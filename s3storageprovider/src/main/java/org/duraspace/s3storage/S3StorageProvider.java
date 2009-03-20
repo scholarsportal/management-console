@@ -299,7 +299,7 @@ public class S3StorageProvider implements StorageProvider {
     public void addContent(String spaceId,
                            String contentId,
                            String contentMimeType,
-                           int contentSize,
+                           long contentSize,
                            InputStream content)
     throws StorageException {
         S3Object contentItem = new S3Object(contentId);

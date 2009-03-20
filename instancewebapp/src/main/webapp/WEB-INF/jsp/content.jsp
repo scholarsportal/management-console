@@ -19,7 +19,7 @@
         </tr>
         <tr>
           <td>Size</td>
-          <td><c:out value="${content.metadata.size}"/></td>
+          <td><c:out value="${content.metadata.size}"/> bytes</td>
         </tr>
         <tr>
           <td>MIME type</td>

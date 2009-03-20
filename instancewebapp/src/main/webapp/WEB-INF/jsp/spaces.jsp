@@ -39,7 +39,7 @@
             <td><c:out value="${space.metadata.count}" /></td>
           </tr>
         </table>
-        <form action="contents.htm" method="post">
+        <form action="contents.htm" method="get">
           <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>" />
