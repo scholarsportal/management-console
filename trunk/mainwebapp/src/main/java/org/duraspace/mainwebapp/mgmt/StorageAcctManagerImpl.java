@@ -11,6 +11,7 @@ import org.duraspace.mainwebapp.domain.model.StorageAcct;
 import org.duraspace.mainwebapp.domain.model.StorageProvider;
 import org.duraspace.mainwebapp.domain.repo.StorageAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.StorageProviderRepository;
+import org.duraspace.storage.domain.StorageProviderType;
 
 public class StorageAcctManagerImpl
         implements StorageAcctManager {
@@ -78,6 +79,12 @@ public class StorageAcctManagerImpl
                 .getStorageProviderId());
     }
 
+    public int findStorageProviderIdByProviderType(StorageProviderType providerType)
+            throws Exception {
+        return getStorageProviderRepository()
+                .findStorageProviderIdByProviderType(providerType);
+    }
+
     public int saveStorageAcct(StorageAcct storageAcct) throws Exception {
         return getStorageAcctRepository().saveStorageAcct(storageAcct);
     }
@@ -90,6 +97,11 @@ public class StorageAcctManagerImpl
         storageAcct.setStorageCredentialId(credId);
         saveStorageAcct(storageAcct);
         return credId;
+    }
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace) {
+        return getStorageAcctRepository()
+                .isStorageNamespaceTaken(storageAcctNamespace);
     }
 
     public StorageAcctRepository getStorageAcctRepository() {

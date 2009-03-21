@@ -58,10 +58,13 @@ public class StorageAcctRepositoryDBImpl
     private final String STORAGE_ACCT_SELECT_BY_DURAACCT_ID =
             STORAGE_ACCT_SELECT + " WHERE " + duraAcctIdCol + " = ?";
 
-    private final String IDS_SELECT = "SELECT " + idCol + " FROM " + tablename;
+    private final String ID_SELECT = "SELECT " + idCol + " FROM " + tablename;
 
     private final String ID_SELECT_FOR_SINGLE_STORAGE_ACCT =
-            IDS_SELECT + " WHERE ";
+            ID_SELECT + " WHERE ";
+
+    private final String ID_SELECT_BY_NAMESPACE =
+            ID_SELECT + " WHERE " + namespaceCol + " = ?";
 
     // Leaving DDL hard-coded for legibility.
     private final static String ddl =
@@ -188,16 +191,8 @@ public class StorageAcctRepositoryDBImpl
      */
     public List<Integer> getStorageAcctIds() throws Exception {
         List<Integer> ids =
-                this.getSimpleJdbcTemplate()
-                        .query(IDS_SELECT,
-                               new ParameterizedRowMapper<Integer>() {
-
-                                   public Integer mapRow(ResultSet rs,
-                                                         int rowNum)
-                                           throws SQLException {
-                                       return new Integer(rs.getString(idCol));
-                                   }
-                               });
+                this.getSimpleJdbcTemplate().query(ID_SELECT,
+                                                   new IntegerRowMapper());
         if (ids.size() == 0) {
             throw new Exception("Table is empty: '" + tablename + "'");
         }
@@ -221,32 +216,19 @@ public class StorageAcctRepositoryDBImpl
 
     private List<StorageAcct> findStorageAccts(String query, Object... params) {
         List<StorageAcct> accts =
-                this.getSimpleJdbcTemplate()
-                        .query(query,
-                               new ParameterizedRowMapper<StorageAcct>() {
-
-                                   public StorageAcct mapRow(ResultSet rs,
-                                                             int rowNum)
-                                           throws SQLException {
-                                       StorageAcct acct = new StorageAcct();
-                                       acct.setId(rs.getInt(idCol));
-                                       acct.setPrimary(rs.getInt(isPrimaryCol));
-                                       acct.setNamespace(rs
-                                               .getString(namespaceCol));
-                                       acct
-                                               .setStorageProviderType(rs
-                                                       .getString(storageProviderTypeCol));
-                                       acct.setStorageProviderId(rs
-                                               .getInt(storageProviderIdCol));
-                                       acct.setStorageCredentialId(rs
-                                               .getInt(credentialIdCol));
-                                       acct.setDuraAcctId(rs
-                                               .getInt(duraAcctIdCol));
-                                       return acct;
-                                   }
-                               },
-                               params);
+                this.getSimpleJdbcTemplate().query(query,
+                                                   new StorageAcctRowMapper(),
+                                                   params);
         return accts;
+    }
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace) {
+        List<Integer> ids =
+                this.getSimpleJdbcTemplate().query(ID_SELECT_BY_NAMESPACE,
+                                                   new IntegerRowMapper(),
+                                                   storageAcctNamespace);
+
+        return ids.size() != 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -302,6 +284,38 @@ public class StorageAcctRepositoryDBImpl
             throw new Exception("ID not found for : '" + acct + "'");
         }
         return id;
+    }
+
+    /**
+     * This class provides a mapping of ResultSet entries to their StorageAcct
+     * representation.
+     */
+    private class StorageAcctRowMapper
+            implements ParameterizedRowMapper<StorageAcct> {
+
+        public StorageAcct mapRow(ResultSet rs, int rowNum) throws SQLException {
+            StorageAcct acct = new StorageAcct();
+            acct.setId(rs.getInt(idCol));
+            acct.setPrimary(rs.getInt(isPrimaryCol));
+            acct.setNamespace(rs.getString(namespaceCol));
+            acct.setStorageProviderType(rs.getString(storageProviderTypeCol));
+            acct.setStorageProviderId(rs.getInt(storageProviderIdCol));
+            acct.setStorageCredentialId(rs.getInt(credentialIdCol));
+            acct.setDuraAcctId(rs.getInt(duraAcctIdCol));
+            return acct;
+        }
+    }
+
+    /**
+     * This class provides a mapping of ResultSet entries to their Integer
+     * representation.
+     */
+    private class IntegerRowMapper
+            implements ParameterizedRowMapper<Integer> {
+
+        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Integer(rs.getString(idCol));
+        }
     }
 
     public static TableSpec getTableSpec() {

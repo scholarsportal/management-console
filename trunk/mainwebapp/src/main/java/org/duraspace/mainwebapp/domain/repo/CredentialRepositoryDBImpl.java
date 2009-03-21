@@ -40,6 +40,9 @@ public class CredentialRepositoryDBImpl
             "SELECT " + idCol + "," + usernameCol + "," + passwordCol + ","
                     + enabledCol + " FROM " + tablename;
 
+    private final String CREDENTIAL_SELECT_BY_USERNAME =
+            CREDENTIAL_SELECT + " WHERE " + usernameCol + " = ?";
+
     private final String CREDENTIAL_SELECT_BY_USERNAME_PASSWORD =
             "SELECT " + idCol + " FROM " + tablename + " WHERE " + usernameCol
                     + " = ? AND " + passwordCol + " = ?";
@@ -137,25 +140,9 @@ public class CredentialRepositoryDBImpl
      */
     public Credential findCredentialById(int id) throws Exception {
         List<Credential> credentials =
-                this.getSimpleJdbcTemplate()
-                        .query(CREDENTIAL_SELECT_BY_ID,
-                               new ParameterizedRowMapper<Credential>() {
-
-                                   public Credential mapRow(ResultSet rs,
-                                                            int rowNum)
-                                           throws SQLException {
-                                       Credential credential = new Credential();
-                                       credential.setId(rs.getInt(idCol));
-                                       credential.setUsername(rs
-                                               .getString(usernameCol));
-                                       credential.setPassword(rs
-                                               .getString(passwordCol));
-                                       credential.setEnabled(rs
-                                               .getInt(enabledCol));
-                                       return credential;
-                                   }
-                               },
-                               id);
+                this.getSimpleJdbcTemplate().query(CREDENTIAL_SELECT_BY_ID,
+                                                   new CredentialRowMapper(),
+                                                   id);
         if (credentials.size() != 1) {
             throw new Exception("A single Credential was not found for ID: "
                     + id);
@@ -188,6 +175,19 @@ public class CredentialRepositoryDBImpl
         return ids;
     }
 
+    public Credential findCredentialByUsername(String username)
+            throws Exception {
+        List<Credential> credentials =
+                this.getSimpleJdbcTemplate()
+                        .query(CREDENTIAL_SELECT_BY_USERNAME,
+                               new CredentialRowMapper(),
+                               username);
+        if (credentials.size() == 0) {
+            throw new Exception("ID not found for: '" + username + "'");
+        }
+        return credentials.get(0);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -213,6 +213,20 @@ public class CredentialRepositoryDBImpl
             throw new Exception("ID not found for: '" + cred + "'");
         }
         return ids.get(0);
+    }
+
+    private class CredentialRowMapper
+            implements ParameterizedRowMapper<Credential> {
+
+        public Credential mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Credential credential = new Credential();
+            credential.setId(rs.getInt(idCol));
+            credential.setUsername(rs.getString(usernameCol));
+            credential.setPassword(rs.getString(passwordCol));
+            credential.setEnabled(rs.getInt(enabledCol));
+            return credential;
+
+        }
     }
 
     public static TableSpec getTableSpec() {

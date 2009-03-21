@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.common.util.TableSpec;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
@@ -50,6 +51,9 @@ public class ComputeProviderRepositoryDBImpl
 
     private final String ID_SELECT_FOR_SINGLE_COMPUTE_PROVIDER =
             ID_SELECT + " WHERE ";
+
+    private final String ID_SELECT_BY_PROVIDER_TYPE =
+            ID_SELECT + " WHERE " + providerTypeCol + " = ?";
 
     // Leaving DDL hard-coded for legibility.
     private final static String ddl =
@@ -168,6 +172,32 @@ public class ComputeProviderRepositoryDBImpl
         this.getSimpleJdbcTemplate().update(COMPUTE_PROVIDER_INSERT, params);
 
         return findIdFor(provider);
+    }
+
+    public int findComputeProviderIdByProviderType(ComputeProviderType providerType)
+            throws Exception {
+        List<Integer> ids =
+                this.getSimpleJdbcTemplate()
+                        .query(ID_SELECT_BY_PROVIDER_TYPE,
+                               new ParameterizedRowMapper<Integer>() {
+
+                                   public Integer mapRow(ResultSet rs,
+                                                         int rowNum)
+                                           throws SQLException {
+                                       return new Integer(rs.getString(idCol));
+                                   }
+                               },
+                               providerType.toString());
+        if (ids.size() == 0) {
+            throw new Exception("Table is empty: '" + tablename + "'");
+        }
+        if (ids.size() != 1) {
+            throw new Exception(tablename
+                    + " contains more than one entry for providerType: "
+                    + providerType.toString());
+        }
+
+        return ids.get(0);
     }
 
     @SuppressWarnings("unchecked")

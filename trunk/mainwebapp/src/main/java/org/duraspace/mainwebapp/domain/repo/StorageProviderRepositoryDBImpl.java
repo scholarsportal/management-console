@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.common.util.TableSpec;
 import org.duraspace.mainwebapp.domain.model.StorageProvider;
+import org.duraspace.storage.domain.StorageProviderType;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
@@ -51,6 +52,9 @@ public class StorageProviderRepositoryDBImpl
     private final String ID_SELECT_FOR_SINGLE_STORAGE_PROVIDER =
             ID_SELECT + " WHERE ";
 
+    private final String ID_SELECT_BY_PROVIDER_TYPE =
+            ID_SELECT + " WHERE " + providerTypeCol + " = ?";
+
     // Leaving DDL hard-coded for legibility.
     private final static String ddl =
             "CREATE TABLE StorageProvider ("
@@ -66,22 +70,7 @@ public class StorageProviderRepositoryDBImpl
         List<StorageProvider> providers =
                 this.getSimpleJdbcTemplate()
                         .query(STORAGE_PROVIDER_SELECT_BY_ID,
-                               new ParameterizedRowMapper<StorageProvider>() {
-
-                                   public StorageProvider mapRow(ResultSet rs,
-                                                                 int rowNum)
-                                           throws SQLException {
-                                       StorageProvider provider =
-                                               new StorageProvider();
-                                       provider.setId(rs.getInt(idCol));
-                                       provider.setProviderName(rs
-                                               .getString(providerNameCol));
-                                       provider.setProviderType(rs
-                                               .getString(providerTypeCol));
-                                       provider.setUrl(rs.getString(urlCol));
-                                       return provider;
-                                   }
-                               },
+                               new StorageProviderRowMapper(),
                                id);
         if (providers.size() == 0) {
             throw new Exception("StorageProvider not found with id: '" + id
@@ -95,16 +84,8 @@ public class StorageProviderRepositoryDBImpl
      */
     public List<Integer> getStorageProviderIds() throws Exception {
         List<Integer> ids =
-                this.getSimpleJdbcTemplate()
-                        .query(ID_SELECT,
-                               new ParameterizedRowMapper<Integer>() {
-
-                                   public Integer mapRow(ResultSet rs,
-                                                         int rowNum)
-                                           throws SQLException {
-                                       return new Integer(rs.getString(idCol));
-                                   }
-                               });
+                this.getSimpleJdbcTemplate().query(ID_SELECT,
+                                                   new IntegerRowMapper());
         if (ids.size() == 0) {
             throw new Exception("Table is empty: '" + tablename + "'");
         }
@@ -170,6 +151,24 @@ public class StorageProviderRepositoryDBImpl
         return findIdFor(provider);
     }
 
+    public int findStorageProviderIdByProviderType(StorageProviderType providerType)
+            throws Exception {
+        List<Integer> ids =
+                this.getSimpleJdbcTemplate().query(ID_SELECT_BY_PROVIDER_TYPE,
+                                                   new IntegerRowMapper(),
+                                                   providerType.toString());
+        if (ids.size() == 0) {
+            throw new Exception("Table is empty: '" + tablename + "'");
+        }
+        if (ids.size() != 1) {
+            throw new Exception(tablename
+                    + " contains more than one entry for providerType: "
+                    + providerType.toString());
+        }
+
+        return ids.get(0);
+    }
+
     @SuppressWarnings("unchecked")
     private int findIdFor(StorageProvider provider) throws Exception {
         Integer id = null;
@@ -211,6 +210,36 @@ public class StorageProviderRepositoryDBImpl
             throw new Exception("ID not found for : '" + provider + "'");
         }
         return id;
+    }
+
+    /**
+     * This class provides a mapping of ResultSet entries to their
+     * StorageProvider representation.
+     */
+    private class StorageProviderRowMapper
+            implements ParameterizedRowMapper<StorageProvider> {
+
+        public StorageProvider mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            StorageProvider provider = new StorageProvider();
+            provider.setId(rs.getInt(idCol));
+            provider.setProviderName(rs.getString(providerNameCol));
+            provider.setProviderType(rs.getString(providerTypeCol));
+            provider.setUrl(rs.getString(urlCol));
+            return provider;
+        }
+    }
+
+    /**
+     * This class provides a mapping of ResultSet entries to their Integer
+     * representation.
+     */
+    private class IntegerRowMapper
+            implements ParameterizedRowMapper<Integer> {
+
+        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Integer(rs.getString(idCol));
+        }
     }
 
     public static TableSpec getTableSpec() {

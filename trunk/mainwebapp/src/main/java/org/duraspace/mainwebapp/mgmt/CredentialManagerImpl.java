@@ -25,9 +25,16 @@ public class CredentialManagerImpl
 
         return getCredentialRepository().saveCredential(cred);
     }
+
     public Credential findCredentialById(int credId) throws Exception {
         return getCredentialRepository().findCredentialById(credId);
     }
+
+    public Credential findCredentialByUsername(String username)
+            throws Exception {
+        return getCredentialRepository().findCredentialByUsername(username);
+    }
+
     public CredentialRepository getCredentialRepository() {
         return credentialRepository;
     }
@@ -43,6 +50,5 @@ public class CredentialManagerImpl
     public void setAuthorityRepository(AuthorityRepository authorityRepository) {
         this.authorityRepository = authorityRepository;
     }
-
 
 }

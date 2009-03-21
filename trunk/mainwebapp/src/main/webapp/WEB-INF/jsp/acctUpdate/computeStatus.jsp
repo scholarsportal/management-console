@@ -36,6 +36,28 @@ p {
 		<table>
 
 
+
+			<tr>
+				<td>Account namespace:</td>
+				<td><c:out value="${input.computeAcct.namespace}" /></td>
+			</tr>
+			<tr>
+				<td>Compute Provider:</td>
+				<td><a href="${input.computeProvider.url}"><c:out
+					value="${input.computeProvider.providerName}" /></a></td>
+			</tr>
+			<tr>
+				<td>
+				<h5>Webapp properties:</h5>
+				</td>
+				<c:forEach items="${input.computeAcct.properties}" var="prop">
+					<tr>
+						<td>.</td>
+						<td><c:out value="${prop}" /></td>
+					</tr>
+				</c:forEach>
+			</tr>
+
 			<tr>
 				<td>Instance id:</td>
 				<td><c:choose>
@@ -47,21 +69,6 @@ p {
 					</c:otherwise>
 				</c:choose></td>
 			</tr>
-			<tr>
-				<td>Account namespace:</td>
-				<td><c:out value="${input.computeAcct.namespace}" /></td>
-			</tr>
-			<tr>
-				<td>Compute Provider:</td>
-				<td><a href="${input.computeProvider.url}"><c:out
-					value="${input.computeProvider.providerName}" /></a></td>
-			</tr>
-			<tr>
-				<td>Webapp properties:</td>
-				<td><c:out value="${input.computeAcct.xmlProps}" /></td>
-			</tr>
-
-
 			<tr>
 				<td>Instance state:</td>
 				<td><c:choose>

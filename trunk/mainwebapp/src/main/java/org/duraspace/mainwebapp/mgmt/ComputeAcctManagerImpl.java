@@ -17,6 +17,7 @@ import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 public class ComputeAcctManagerImpl
         implements ComputeAcctManager {
@@ -204,6 +205,12 @@ public class ComputeAcctManagerImpl
                 .getComputeProviderId());
     }
 
+    public int findComputeProviderIdByProviderType(ComputeProviderType providerType)
+            throws Exception {
+        return getComputeProviderRepository()
+                .findComputeProviderIdByProviderType(providerType);
+    }
+
     public int saveComputeAcct(ComputeAcct computeAcct) throws Exception {
         return getComputeAcctRepository().saveComputeAcct(computeAcct);
     }
@@ -217,6 +224,11 @@ public class ComputeAcctManagerImpl
         saveComputeAcct(computeAcct);
         return credId;
 
+    }
+
+    public boolean isComputeNamespaceTaken(String computeAcctNamespace) {
+        return getComputeAcctRepository()
+                .isComputeNamespaceTaken(computeAcctNamespace);
     }
 
     public ComputeAcctRepository getComputeAcctRepository() {

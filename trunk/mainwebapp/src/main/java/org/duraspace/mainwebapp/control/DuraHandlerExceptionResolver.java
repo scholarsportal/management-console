@@ -27,7 +27,7 @@ public class DuraHandlerExceptionResolver
         errors.put("message", message);
         errors.put("stack", stack);
 
-        return new ModelAndView("acctCreate/error", "errors", errors);
+        return new ModelAndView("error", "errors", errors);
     }
 
 }

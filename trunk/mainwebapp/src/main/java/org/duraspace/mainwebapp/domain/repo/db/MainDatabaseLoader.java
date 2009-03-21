@@ -60,7 +60,7 @@ public class MainDatabaseLoader {
                     + "<entry key=\"provider\">amazon-ec2</entry>"
                     + "<entry key=\"signatureMethod\">HmacSHA1</entry>"
                     + "<entry key=\"keyname\">awoods-keypair</entry>"
-                    + "<entry key=\"imageId\">ami-92f314fb</entry>"
+                    + "<entry key=\"imageId\">ami-9ad532f3</entry>"
                     + "<entry key=\"minInstanceCount\">1</entry>"
                     + "<entry key=\"maxInstanceCount\">1</entry>"
                     + "<entry key=\"maxAsyncThreads\">35</entry>"

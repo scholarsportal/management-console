@@ -49,4 +49,13 @@ public interface DuraSpaceAcctManager {
     public int saveCredentialForComputeAcct(Credential computeAcctCred,
                                             int computeAcctId) throws Exception;
 
+    public DuraSpaceAcct findDuraSpaceAccountByAcctName(String acctName)
+            throws Exception;
+
+    public DuraSpaceAcct findDuraSpaceAcctById(int duraAcctId) throws Exception;
+
+    public boolean isComputeNamespaceTaken(String computeAcctNamespace);
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace);
+
 }

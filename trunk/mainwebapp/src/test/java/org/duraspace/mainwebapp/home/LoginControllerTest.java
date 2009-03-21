@@ -111,6 +111,7 @@ public class LoginControllerTest
 
     private void setUpHappyDay() throws Exception {
         expect(dsAcctManager.findDuraSpaceAccount(cred)).andReturn(duraAcct);
+        expect(dsAcctManager.findDuraSpaceAcctById(duraAcctId)).andReturn(duraAcct);
         expect(dsAcctManager.findUsers(duraAcctId)).andReturn(users);
         expect(dsAcctManager.findComputeAccounts(duraAcctId))
                 .andReturn(computeAccts);

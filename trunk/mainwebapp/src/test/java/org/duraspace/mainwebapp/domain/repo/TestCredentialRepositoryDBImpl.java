@@ -123,6 +123,38 @@ public class TestCredentialRepositoryDBImpl {
     }
 
     @Test
+    public void testFindCredentialForUsername() throws Exception {
+        verifyTableSize(0);
+
+        String usernameGood = "usernameGood";
+        String usernameBad = "usernameBad";
+
+        insertTestAuthority(usernameGood);
+        insertTestAuthority(usernameBad); // <-- this is not necessary
+
+        Credential cred0 = new Credential();
+        cred0.setUsername(usernameGood);
+        cred0.setPassword(password);
+        cred0.setEnabled(enabled);
+        repo.saveCredential(cred0);
+
+        verifyTableSize(1);
+
+        try {
+            repo.findCredentialByUsername(usernameBad);
+            fail("Should throw exception.");
+        } catch (Exception e) {
+        }
+
+        Credential credFound = repo.findCredentialByUsername(usernameGood);
+        assertNotNull(credFound);
+        assertEquals(usernameGood, credFound.getUsername());
+        assertEquals(password, credFound.getPassword());
+        assertEquals(enabled, credFound.getIsEnabled().intValue());
+
+    }
+
+    @Test
     public void testBadRetrieval() throws Exception {
         verifyTableSize(0);
         insertTestData(2);

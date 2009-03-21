@@ -6,6 +6,7 @@ import java.util.List;
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 /**
  * This interface encapsulates the navigation of account repositories and the
@@ -88,6 +89,11 @@ public interface ComputeAcctManager {
             throws Exception;
 
     public abstract ComputeProvider findComputeProviderForComputeAcct(int computeAcctId)
+            throws Exception;
+
+    public abstract boolean isComputeNamespaceTaken(String computeAcctNamespace);
+
+    public abstract int findComputeProviderIdByProviderType(ComputeProviderType providerType)
             throws Exception;
 
 }

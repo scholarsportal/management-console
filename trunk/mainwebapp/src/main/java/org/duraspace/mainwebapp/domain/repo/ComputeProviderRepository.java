@@ -4,6 +4,7 @@ package org.duraspace.mainwebapp.domain.repo;
 import java.util.List;
 
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 public interface ComputeProviderRepository {
 
@@ -25,6 +26,9 @@ public interface ComputeProviderRepository {
     public abstract List<Integer> getComputeProviderIds() throws Exception;
 
     public abstract int saveComputeProvider(ComputeProvider computeProvider)
+            throws Exception;
+
+    public abstract int findComputeProviderIdByProviderType(ComputeProviderType providerType)
             throws Exception;
 
 }

@@ -32,18 +32,13 @@ td.italic {
 	</tr>
 	<tr>
 		<td>Is Primary Account?:</td>
-		<td class="italic"><c:out value="${input.storageAcct.isPrimaryAsString}" /></td>
-	</tr>
-
-
-	<br />
-	<br />
-	<br />
-	<tr>
-		<td><a href="home.htm">Home</a></td>
+		<td class="italic"><c:out
+			value="${input.storageAcct.isPrimaryAsString}" /></td>
 	</tr>
 
 </table>
-</form>
+<br />
+<br />
+<a href="home.htm">Home</a></form>
 </body>
 </html>

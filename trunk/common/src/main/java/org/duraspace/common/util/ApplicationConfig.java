@@ -37,8 +37,7 @@ public class ApplicationConfig {
         return props;
     }
 
-    public static Properties getPropsFromXml(String propsXml)
-            throws Exception {
+    public static Properties getPropsFromXml(String propsXml) throws Exception {
         AutoCloseInputStream in =
                 new AutoCloseInputStream(new ByteArrayInputStream(propsXml
                         .getBytes()));
@@ -46,7 +45,7 @@ public class ApplicationConfig {
         return getPropsFromXmlStream(in);
     }
 
-    protected static Properties getPropsFromXmlStream(InputStream propsXmlStream)
+    public static Properties getPropsFromXmlStream(InputStream propsXmlStream)
             throws Exception {
         Properties props = new Properties();
         try {
@@ -68,7 +67,23 @@ public class ApplicationConfig {
         return props;
     }
 
-    protected static String getXmlFromProps(Properties props) throws Exception {
+    public static Properties getPropsFromXmlResource(String resourceName)
+            throws Exception {
+        Properties props = new Properties();
+        AutoCloseInputStream in =
+                new AutoCloseInputStream(ApplicationConfig.class
+                        .getClassLoader().getResourceAsStream(resourceName));
+        try {
+            props.loadFromXML(in);
+        } catch (Exception e) {
+            log.warn("Unable to find resource: '" + resourceName + "': "
+                    + e.getMessage());
+            throw e;
+        }
+        return props;
+    }
+
+    public static String getXmlFromProps(Properties props) throws Exception {
         String comment = null;
         String xml = new String();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
