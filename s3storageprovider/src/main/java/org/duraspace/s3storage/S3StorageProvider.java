@@ -323,6 +323,7 @@ public class S3StorageProvider implements StorageProvider {
             throw new StorageException(err, e);
         }
 
+
         // Set default content metadata values
         setContentMetadata(spaceId, contentId, new Properties());
     }

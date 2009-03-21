@@ -205,6 +205,23 @@ public class TestComputeAcctRepositoryDBImpl {
         verifyTableSize(0);
     }
 
+    @Test
+    public void testIsComputeNamespaceTaken() throws Exception {
+        verifyTableSize(0);
+        insertTestData(3);
+        verifyTableSize(3);
+
+        String testNamespace = "aJunkNamespaceForTesting";
+
+        assertTrue(!repo.isComputeNamespaceTaken(testNamespace));
+
+        // Add acct with namespace and test again.
+        acctA.setNamespace(testNamespace);
+        repo.saveComputeAcct(acctA);
+
+        assertTrue(repo.isComputeNamespaceTaken(testNamespace));
+    }
+
     @SuppressWarnings("unchecked")
     private void verifyTableSize(int size) {
         List results =

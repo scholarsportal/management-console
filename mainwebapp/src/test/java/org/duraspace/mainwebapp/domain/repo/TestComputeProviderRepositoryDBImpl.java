@@ -17,6 +17,7 @@ import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestComputeProviderRepositoryDBImpl {
 
@@ -119,6 +120,23 @@ public class TestComputeProviderRepositoryDBImpl {
         } catch (Exception e) {
         }
         assertTrue(provider == null);
+    }
+
+    @Test
+    public void testFindIdByProviderType() throws Exception {
+        verifyTableSize(0);
+        insertTestData(1);
+        verifyTableSize(1);
+
+        assertTrue(repo
+                .findComputeProviderIdByProviderType(ComputeProviderType.UNKNOWN) > 0);
+
+        try {
+            repo.findComputeProviderIdByProviderType(null);
+            fail("Should throw exception");
+        } catch (Exception e) {
+        }
+
     }
 
     @SuppressWarnings("unchecked")

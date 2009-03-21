@@ -1,7 +1,12 @@
 
 package org.duraspace.mainwebapp.domain.model;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address
+        implements Serializable {
+
+    private static final long serialVersionUID = -6938113234951090425L;
 
     private int id;
 

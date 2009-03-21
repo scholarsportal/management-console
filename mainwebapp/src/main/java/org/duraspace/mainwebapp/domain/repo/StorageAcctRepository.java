@@ -19,19 +19,20 @@ public interface StorageAcctRepository {
      * This method returns storage-account associated with the provided storage
      * acct id.
      *
-     * @param Storage Acct Id
+     * @param Storage
+     *        Acct Id
      * @return
      * @throws Exception
      *         If no accounts are found.
      */
-    public StorageAcct findStorageAcctById(int storageAcctId)
-            throws Exception;
+    public StorageAcct findStorageAcctById(int storageAcctId) throws Exception;
 
     /**
      * This method returns all storage-accounts associated with the provided
      * DuraSpace id.
      *
-     * @param DuraSpace Account id
+     * @param DuraSpace
+     *        Account id
      * @return
      * @throws Exception
      *         If no accounts are found.
@@ -46,5 +47,7 @@ public interface StorageAcctRepository {
      * @throws Exception
      */
     public int saveStorageAcct(StorageAcct acct) throws Exception;
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace);
 
 }

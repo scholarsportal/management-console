@@ -37,7 +37,7 @@
 		<td><a href="login.htm">My Account</a></td>
 	</tr>
 	<tr>
-		<td><a href="welcomeAcctCreate.htm">Create an account</a></td>
+		<td><a href="createAcct.htm?_flowId=acct-create-flow">Create an account</a></td>
 	</tr>
 </table>
 

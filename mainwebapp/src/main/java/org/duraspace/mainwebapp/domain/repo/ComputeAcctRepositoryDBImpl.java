@@ -66,6 +66,9 @@ public class ComputeAcctRepositoryDBImpl
     private final String ID_SELECT_FOR_SINGLE_COMPUTE_ACCT =
             ID_SELECT + " WHERE ";
 
+    private final String ID_SELECT_BY_NAMESPACE =
+            ID_SELECT + " WHERE " + namespaceCol + " = ?";
+
     // Leaving DDL hard-coded for legibility.
     private final static String ddl =
             "CREATE TABLE ComputeAcct ("
@@ -178,34 +181,9 @@ public class ComputeAcctRepositoryDBImpl
      */
     public ComputeAcct findComputeAcctById(int id) throws Exception {
         List<ComputeAcct> accts =
-                this.getSimpleJdbcTemplate()
-                        .query(COMPUTE_ACCT_SELECT_BY_ID,
-                               new ParameterizedRowMapper<ComputeAcct>() {
-
-                                   public ComputeAcct mapRow(ResultSet rs,
-                                                             int rowNum)
-                                           throws SQLException {
-                                       ComputeAcct acct = new ComputeAcct();
-                                       acct.setId(rs.getInt(idCol));
-                                       acct.setNamespace(rs
-                                               .getString(namespaceCol));
-                                       acct.setInstanceId(rs
-                                               .getString(instanceIdCol));
-                                       acct.setXmlProps(rs
-                                               .getString(computePropsCol));
-                                       acct
-                                               .setComputeProviderType(rs
-                                                       .getString(computeProviderTypeCol));
-                                       acct.setComputeProviderId(rs
-                                               .getInt(computeProviderIdCol));
-                                       acct.setComputeCredentialId(rs
-                                               .getInt(credentialIdCol));
-                                       acct.setDuraAcctId(rs
-                                               .getInt(duraAcctIdCol));
-                                       return acct;
-                                   }
-                               },
-                               id);
+                this.getSimpleJdbcTemplate().query(COMPUTE_ACCT_SELECT_BY_ID,
+                                                   new ComputeAcctRowMapper(),
+                                                   id);
         if (accts.size() == 0) {
             throw new Exception(tablename + " not found with id: '" + id + "'");
         }
@@ -222,16 +200,8 @@ public class ComputeAcctRepositoryDBImpl
      */
     public List<Integer> getComputeAcctIds() throws Exception {
         List<Integer> ids =
-                this.getSimpleJdbcTemplate()
-                        .query(ID_SELECT,
-                               new ParameterizedRowMapper<Integer>() {
-
-                                   public Integer mapRow(ResultSet rs,
-                                                         int rowNum)
-                                           throws SQLException {
-                                       return new Integer(rs.getString(idCol));
-                                   }
-                               });
+                this.getSimpleJdbcTemplate().query(ID_SELECT,
+                                                   new IntegerRowMapper());
         if (ids.size() == 0) {
             throw new Exception("Table is empty: '" + tablename + "'");
         }
@@ -241,35 +211,12 @@ public class ComputeAcctRepositoryDBImpl
     /**
      * {@inheritDoc}
      */
-    public List<ComputeAcct> findComputeAcctsByDuraAcctId(int id) throws Exception {
+    public List<ComputeAcct> findComputeAcctsByDuraAcctId(int id)
+            throws Exception {
         List<ComputeAcct> accts =
                 this.getSimpleJdbcTemplate()
                         .query(COMPUTE_ACCT_SELECT_BY_DURAACCT_ID,
-                               new ParameterizedRowMapper<ComputeAcct>() {
-
-                                   public ComputeAcct mapRow(ResultSet rs,
-                                                             int rowNum)
-                                           throws SQLException {
-                                       ComputeAcct acct = new ComputeAcct();
-                                       acct.setId(rs.getInt(idCol));
-                                       acct.setNamespace(rs
-                                               .getString(namespaceCol));
-                                       acct.setInstanceId(rs
-                                               .getString(instanceIdCol));
-                                       acct.setXmlProps(rs
-                                               .getString(computePropsCol));
-                                       acct
-                                               .setComputeProviderType(rs
-                                                       .getString(computeProviderTypeCol));
-                                       acct.setComputeProviderId(rs
-                                               .getInt(computeProviderIdCol));
-                                       acct.setComputeCredentialId(rs
-                                               .getInt(credentialIdCol));
-                                       acct.setDuraAcctId(rs
-                                               .getInt(duraAcctIdCol));
-                                       return acct;
-                                   }
-                               },
+                               new ComputeAcctRowMapper(),
                                id);
         if (accts.size() == 0) {
             throw new Exception(tablename + " not found with id: '" + id + "'");
@@ -295,9 +242,8 @@ public class ComputeAcctRepositoryDBImpl
                         + "' AND ");
             }
             if (acct.getXmlProps() != null) {
-                sb
-                        .append(computePropsCol + " = '" + acct.getXmlProps()
-                                + "' AND ");
+                sb.append(computePropsCol + " = '" + acct.getXmlProps()
+                        + "' AND ");
             }
             if (acct.getComputeProviderType() != null) {
                 sb.append(computeProviderTypeCol + " = '"
@@ -334,6 +280,47 @@ public class ComputeAcctRepositoryDBImpl
             throw new Exception("ID not found for : '" + acct + "'");
         }
         return id;
+    }
+
+    public boolean isComputeNamespaceTaken(String computeAcctNamespace) {
+        List<Integer> ids =
+                this.getSimpleJdbcTemplate().query(ID_SELECT_BY_NAMESPACE,
+                                                   new IntegerRowMapper(),
+                                                   computeAcctNamespace);
+
+        return ids.size() != 0;
+    }
+
+    /**
+     * This class provides a mapper of ResultSet entries to their ComputeAcct
+     * representation.
+     */
+    private class ComputeAcctRowMapper
+            implements ParameterizedRowMapper<ComputeAcct> {
+
+        public ComputeAcct mapRow(ResultSet rs, int rowNum) throws SQLException {
+            ComputeAcct acct = new ComputeAcct();
+            acct.setId(rs.getInt(idCol));
+            acct.setNamespace(rs.getString(namespaceCol));
+            acct.setInstanceId(rs.getString(instanceIdCol));
+            acct.setXmlProps(rs.getString(computePropsCol));
+            acct.setComputeProviderType(rs.getString(computeProviderTypeCol));
+            acct.setComputeProviderId(rs.getInt(computeProviderIdCol));
+            acct.setComputeCredentialId(rs.getInt(credentialIdCol));
+            acct.setDuraAcctId(rs.getInt(duraAcctIdCol));
+            return acct;
+        }
+    }
+
+    /**
+     * This class provides the IDs of entries of a ResultSet.
+     */
+    private class IntegerRowMapper
+            implements ParameterizedRowMapper<Integer> {
+
+        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Integer(rs.getString(idCol));
+        }
     }
 
     public static TableSpec getTableSpec() {

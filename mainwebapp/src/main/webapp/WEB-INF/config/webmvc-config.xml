@@ -6,17 +6,14 @@
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <!-- URL to flow mapping rules -->
-  <bean
-    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+  <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
-      <value>/acct/create.htm=acctCreateFlowHandler
-      </value>
+      <props>
+        <prop key="/createAcct.htm">flowController</prop>
+      </props>
     </property>
     <property name="order" value="0" />
   </bean>
-
-  <!-- Controls access to the account creation flow -->
-  <bean id="acctCreateFlowHandler" class="org.duraspace.mainwebapp.control.AcctCreateFlowHandler" />
 
 
   <bean
@@ -28,11 +25,11 @@
         <prop key="/aboutTech.htm">homeController</prop>
         <prop key="/contactUs.htm">homeController</prop>
         <prop key="/login.htm">loginController</prop>
-        <prop key="/address.htm">addrController</prop>
-        <prop key="/acctStatus.htm">acctStatusController</prop><!-- this controller not use -->
+<!--        <prop key="/acctStatus.htm">acctStatusController</prop> TODO enable soon -->
         <prop key="/computeStatus.htm">computeStatusController</prop>
         <prop key="/storageStatus.htm">storageStatusController</prop>
-        <prop key="/welcomeAcctCreate.htm">acctController</prop>
+        <prop key="/computeCreate.htm">computeCreateController</prop>
+        <prop key="/storageCreate.htm">storageCreateController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -58,15 +55,9 @@
     <property name="successView" value="/acctUpdate/acctStatus" />
   </bean>
   
-  <bean id="addrController" class="org.duraspace.mainwebapp.control.AddressController">
-    <property name="addressRepository" ref="addressRepo" />
-    <property name="formView" value="/acctCreate/addressCreate" />
-    <property name="successView" value="/acctUpdate/acctComplete" />
-  </bean>
-  
-  <bean id="acctStatusController" class="org.duraspace.mainwebapp.control.AcctStatusController" >
-    <property name="duraAcctManager" ref="duraSpaceAcctMgr" />
-  </bean>
+<!--  <bean id="acctStatusController" class="org.duraspace.mainwebapp.control.AcctStatusController" >-->
+<!--    <property name="duraAcctManager" ref="duraSpaceAcctMgr" />-->
+<!--  </bean>-->
 
   <bean id="computeStatusController" class="org.duraspace.mainwebapp.control.ComputeStatusController" >
     <property name="computeManager" ref="computeAcctMgr" />
@@ -76,15 +67,24 @@
     <property name="storageManager" ref="storageAcctMgr" />
   </bean>
   
-  <bean id="acctController" class="org.duraspace.mainwebapp.control.SubDirController">
-    <property name="prefix" value="/acctCreate/" />
+  <bean id="computeCreateController" class="org.duraspace.mainwebapp.control.ComputeCreateController" >
+    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+    <property name="computeAcctManager" ref="computeAcctMgr" />
+    <property name="formView" value="/acctCreate/provider/inputComputeAcctInfo" />
+    <property name="successView" value="/acctUpdate/acctStatus" />
   </bean>
-
+  
+  <bean id="storageCreateController" class="org.duraspace.mainwebapp.control.StorageCreateController" >
+    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+    <property name="storageAcctManager" ref="storageAcctMgr" />
+    <property name="formView" value="/acctCreate/provider/inputStorageAcctInfo" />
+    <property name="successView" value="/acctUpdate/acctStatus" />
+  </bean>
+  
 
   <bean id="duraViewResolver"
     class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="viewClass"
-      value="org.springframework.web.servlet.view.JstlView"></property>
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
     <property name="prefix" value="/WEB-INF/jsp/"></property>
     <property name="suffix" value=".jsp"></property>
   </bean>
@@ -138,10 +138,5 @@
   
   <!-- Enables plain Controllers -->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
-
-  <!-- Enables FlowHandlers -->
-  <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
-    <property name="flowExecutor" ref="flowExecutor" />
-  </bean>
 
 </beans>

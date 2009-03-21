@@ -35,4 +35,6 @@ public interface ComputeAcctRepository {
 
     public ComputeAcct findComputeAcctById(int id) throws Exception;
 
+    public boolean isComputeNamespaceTaken(String computeAcctNamespace);
+
 }

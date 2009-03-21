@@ -51,10 +51,15 @@ public class DuraSpaceAcctManagerImpl
         User user = this.getUserManager().findUser(duraCred);
         int duraAcctId = user.getDuraAcctId();
 
+        return this.findDuraSpaceAcctById(duraAcctId);
+    }
+
+    public DuraSpaceAcct findDuraSpaceAcctById(int duraAcctId) throws Exception {
         return getDuraSpaceAcctRepository().findDuraAcctById(duraAcctId);
     }
 
-    public List<ComputeAcct> findComputeAccounts(Credential duraCred) throws Exception {
+    public List<ComputeAcct> findComputeAccounts(Credential duraCred)
+            throws Exception {
         DuraSpaceAcct duraAcct = findDuraSpaceAccount(duraCred);
 
         return getComputeAcctManager().findComputeAccountsByDuraAcctId(duraAcct
@@ -67,6 +72,11 @@ public class DuraSpaceAcctManagerImpl
         return getStorageAcctManager()
                 .getStorageProviderAccountsByDuraAcctId(duraAcctId);
 
+    }
+
+    public DuraSpaceAcct findDuraSpaceAccountByAcctName(String acctName)
+            throws Exception {
+        return getDuraSpaceAcctRepository().findDuraAcctByName(acctName);
     }
 
     public int saveUser(User user) throws Exception {
@@ -109,6 +119,16 @@ public class DuraSpaceAcctManagerImpl
                                             int computeAcctId) throws Exception {
         return getComputeAcctManager()
                 .saveCredentialForComputeAcct(computeAcctCred, computeAcctId);
+    }
+
+    public boolean isComputeNamespaceTaken(String computeAcctNamespace) {
+        return getComputeAcctManager()
+                .isComputeNamespaceTaken(computeAcctNamespace);
+    }
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace) {
+        return getStorageAcctManager()
+                .isStorageNamespaceTaken(storageAcctNamespace);
     }
 
     public ComputeAcctManager getComputeAcctManager() {

@@ -11,4 +11,7 @@ public interface CredentialManager {
 
     public Credential findCredentialById(int credId) throws Exception;
 
+    public Credential findCredentialByUsername(String username)
+            throws Exception;
+
 }

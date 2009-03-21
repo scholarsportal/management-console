@@ -3,7 +3,10 @@ package org.duraspace.mainwebapp.domain.model;
 
 import java.net.URL;
 
+import java.util.Properties;
+
 import org.duraspace.common.model.Credential;
+import org.duraspace.common.util.ApplicationConfig;
 import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
@@ -182,6 +185,17 @@ public class ComputeAcct {
 
     public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
+    }
+
+    public Properties getProperties() {
+        Properties p = new Properties();
+        try {
+            p = ApplicationConfig.getPropsFromXml(getXmlProps());
+        } catch (Exception e) {
+            System.err.println("Unable to create props from: '" + getXmlProps()
+                    + "'");
+        }
+        return p;
     }
 
     public String getXmlProps() {

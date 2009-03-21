@@ -219,6 +219,23 @@ public class TestStorageAcctRepositoryDBImpl {
         verifyTableSize(0);
     }
 
+    @Test
+    public void testIsStorageNamespaceTaken() throws Exception {
+        verifyTableSize(0);
+        insertTestData(3);
+        verifyTableSize(3);
+
+        String testNamespace = "aJunkNamespaceForTesting";
+
+        assertTrue(!repo.isStorageNamespaceTaken(testNamespace));
+
+        // Add acct with namespace and test again.
+        acctA.setNamespace(testNamespace);
+        repo.saveStorageAcct(acctA);
+
+        assertTrue(repo.isStorageNamespaceTaken(testNamespace));
+    }
+
     @SuppressWarnings("unchecked")
     private void verifyTableSize(int size) {
         List results =

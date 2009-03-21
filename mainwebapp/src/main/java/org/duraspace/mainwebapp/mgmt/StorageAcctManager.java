@@ -6,6 +6,7 @@ import java.util.List;
 import org.duraspace.common.model.Credential;
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
 import org.duraspace.mainwebapp.domain.model.StorageProvider;
+import org.duraspace.storage.domain.StorageProviderType;
 
 /**
  * <pre>
@@ -39,5 +40,10 @@ public interface StorageAcctManager {
 
     public StorageAcct findStorageAccountAndLoadCredential(int storageAcctId)
             throws Exception;
+
+    public int findStorageProviderIdByProviderType(StorageProviderType providerType)
+            throws Exception;
+
+    public boolean isStorageNamespaceTaken(String storageAcctNamespace);
 
 }

@@ -17,6 +17,7 @@ import org.duraspace.storage.domain.StorageProviderType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestStorageProviderRepositoryDBImpl {
 
@@ -119,6 +120,23 @@ public class TestStorageProviderRepositoryDBImpl {
         } catch (Exception e) {
         }
         assertTrue(provider == null);
+    }
+
+    @Test
+    public void testFindIdByProviderType() throws Exception {
+        verifyTableSize(0);
+        insertTestData(1);
+        verifyTableSize(1);
+
+        assertTrue(repo
+                .findStorageProviderIdByProviderType(StorageProviderType.UNKNOWN) > 0);
+
+        try {
+            repo.findStorageProviderIdByProviderType(null);
+            fail("Should throw exception");
+        } catch (Exception e) {
+        }
+
     }
 
     @SuppressWarnings("unchecked")
