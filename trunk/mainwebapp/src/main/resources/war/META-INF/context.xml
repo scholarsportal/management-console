@@ -1,4 +1,3 @@
-
 <!--  CONTEXT added per JNDI How-to for datasource setup  -->
 <Context reloadable="false">
 
@@ -6,17 +5,13 @@
     <Manager pathname=""/>
     -->
 
-    <!-- 
-        NOTE: This file is replaced at build-time by 
-                src/main/resources/war/META-INF/context.xml 
-    -->
     <Resource name="jdbc/mainDatasource" 
               auth="Container" 
               type="javax.sql.DataSource"              
               username="duraspace" 
               password="duraspace" 
               driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
-              url="jdbc:derby:/opt/derby/duraspaceDB"
+              url="jdbc:derby:${database.home}"
               maxActive="100" 
               maxIdle="30" 
               maxWait="10000"/>

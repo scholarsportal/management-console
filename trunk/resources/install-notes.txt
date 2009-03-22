@@ -36,11 +36,6 @@ Then in the 'Libraries' tab of the 'build-path-configuration' add a new 'variabl
 To download source jars for all dependent libraries run:
 mvn dependency:sources
 
-** NOTE **
-Until a database is consistenly available for DuraSpace, you'll need to follow the instructions
-in the build-notes file for providing Amazon credentials via the command line in order for the
-integration tests in the instancewebapp to pass.
-
 ::Database::
 The mainwebapp requires account information stored in an underlying database.
 Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
@@ -50,12 +45,9 @@ To ensure that the classpath is setup properly, it is probably easiest to run th
 
 >Now the mainwebapp needs to know where this newly created database is.
  Spring injects the dataSource which it receives with a jndi lookup from the container.
- To let the container know where the database is, set the same location that you used above (<location-of-new-DB>) in the following file:
->mainwebapp/src/main/webapp/META-INF/context.xml
->Currently the line is set as:
- url="jdbc:derby:/opt/derby/duraspaceDB"
->Change it to:
- url="jdbc:derby:<location-of-new-DB>"
+ To let the container know where the database is, set the same location that you used above (<location-of-new-DB>) at build-time:
+>mvn clean install -Ddatabase.home.default=<location-of-new-DB>
+>This sets a variable defining the database resource in the context.xml. 
 >Finally, tomcat needs to have access to the derby jdbc driver.
  So put a copy of the derbyxxx.jar that is found in the mainwebapp/WEB-INF/lib under CATALINA_HOME/lib.
 

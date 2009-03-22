@@ -71,6 +71,7 @@
           </activation>
           <properties>
               <tomcat.port>${tomcat.port.default}</tomcat.port>
+              <database.home>${database.home.default}</database.home>
               <log.dir>duraspace.log</log.dir>
               <unitTests>**/*Test.class</unitTests>
               <integrationTests>**/Test*.class</integrationTests>
@@ -88,6 +89,7 @@
           </activation>
           <properties>
             <tomcat.port>${tomcat.port.default}</tomcat.port>
+            <database.home>${database.home.default}</database.home>
             <log.dir>duraspace.log</log.dir>
             <unitTests>**/*Test.class</unitTests>
             <integrationTests>**/Test*.class</integrationTests>
@@ -113,6 +115,7 @@
 
   <properties>
       <tomcat.port.default>8080</tomcat.port.default>
+      <database.home.default>/opt/derby/duraspaceDB</database.home.default>
       <test.jdbc.url>${jdbc.url}</test.jdbc.url>
       <test.jdbc.username>${jdbc.username}</test.jdbc.username>
       <test.jdbc.password>${jdbc.password}</test.jdbc.password>
@@ -203,6 +206,21 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>src/main/resources/war</directory>
+              <filtering>true</filtering>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
