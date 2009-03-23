@@ -213,7 +213,7 @@
         <configuration>
           <webResources>
             <resource>
-              <directory>src/main/resources/war</directory>
+              <directory>src/main/resources</directory>
               <filtering>true</filtering>
             </resource>
           </webResources>
