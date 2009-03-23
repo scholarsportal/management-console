@@ -17,7 +17,7 @@ public class Content extends Resource {
                    Body body,
                    long length,
                    String mediaType) {
-        super(path, modifiedDate);
+        super(path, modifiedDate, false);
         this.contentPath = path;
         this.body = body;
         this.length = length;

@@ -2,16 +2,20 @@ package org.duraspace.duradav.core;
 
 import java.util.Date;
 
-public class Resource {
+public abstract class Resource {
 
     private final Path path;
 
     private final Date modifiedDate;
 
-    public Resource(Path path,
-                    Date modifiedDate) {
+    private final boolean isCollection;
+
+    protected Resource(Path path,
+                       Date modifiedDate,
+                       boolean isCollection) {
         this.path = path;
         this.modifiedDate = modifiedDate;
+        this.isCollection = isCollection;
     }
 
     public Path getPath() {
@@ -20,6 +24,10 @@ public class Resource {
 
     public Date getModifiedDate() {
         return modifiedDate;
+    }
+
+    public boolean isCollection() {
+        return isCollection;
     }
 
 }
