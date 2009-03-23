@@ -201,8 +201,7 @@ public class ComputeAcctManagerImpl
         String url = new String();
         try {
             ComputeAcct acct =
-                    getComputeAcctRepository()
-                            .findComputeAcctById(computeAcctId);
+                    findComputeAccountAndLoadCredential(computeAcctId);
             url = getBaseSpacesURLWithDuraAcctId(acct);
             log.info("spaces request url: " + url);
         } catch (Exception e) {
