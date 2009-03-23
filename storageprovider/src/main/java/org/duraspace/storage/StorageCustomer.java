@@ -82,7 +82,7 @@ public class StorageCustomer {
             if(storageAccounts.isEmpty()) {
                 String error = "There are no available storage accounts " +
                                "for duraspace account " + duraspaceAccountId;
-                throw new Exception(error);
+                throw new StorageException(error);
             } else {
                 // Make sure a primary provider is set
                 if(primaryStorageProviderId == null) {

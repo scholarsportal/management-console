@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 import org.duraspace.domain.Space;
+import org.duraspace.storage.StorageException;
 import org.duraspace.storage.StorageProvider;
 import org.duraspace.storage.StorageProvider.AccessType;
 import org.duraspace.util.SpaceUtil;
@@ -43,8 +44,14 @@ public class SpacesController extends SimpleFormController {
             throw new IllegalArgumentException("Account ID must be provided.");
         }
 
-        StorageProvider storage =
-            StorageProviderUtil.getStorageProvider(accountId);
+        StorageProvider storage = null;
+        try {
+            storage = StorageProviderUtil.getStorageProvider(accountId);
+        } catch(StorageException se) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("error", se.getMessage());
+            return mav;
+        }
 
         String error = null;
         String action = space.getAction();
@@ -108,7 +115,7 @@ public class SpacesController extends SimpleFormController {
 
         List<Space> spaces = SpaceUtil.getSpacesList(accountId);
 
-        ModelAndView mav = new ModelAndView("spaces");
+        ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("accountId", accountId);
         mav.addObject("spaces", spaces);
 

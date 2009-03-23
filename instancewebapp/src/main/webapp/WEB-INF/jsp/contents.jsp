@@ -81,7 +81,7 @@
       </form>        
     </div>
 
-    <iframe id='content_target' name='content_target' src='#'></iframe>
+    <iframe id='content_target' name='content_target'></iframe>
 
   </body>
 </html>
