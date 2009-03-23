@@ -20,13 +20,13 @@ public abstract class Path {
 
     private final String string;
 
-    private final boolean isCollection;
+    private final boolean denotesCollection;
 
     private CollectionPath parent;
 
-    protected Path(String string, boolean isCollection) {
+    protected Path(String string, boolean denotesCollection) {
         this.string = string.trim();
-        this.isCollection = isCollection;
+        this.denotesCollection = denotesCollection;
         validate();
     }
 
@@ -38,16 +38,20 @@ public abstract class Path {
             throw new IllegalArgumentException("Path must begin with '/'");
         }
         if (string.endsWith("/")) {
-            if (!isCollection) {
+            if (!denotesCollection) {
                 throw new IllegalArgumentException("Content path cannot end"
                                                    + " with '/'");
             }
         } else {
-            if (isCollection) {
+            if (denotesCollection) {
                 throw new IllegalArgumentException("Collection path must end"
                                                    + " with '/'");
             }
         }
+    }
+
+    public boolean denotesCollection() {
+        return denotesCollection;
     }
 
     public CollectionPath getParent() {
@@ -76,7 +80,7 @@ public abstract class Path {
     private void setParent() {
         if (equals(ROOT)) return;
         String temp = toString();
-        if (isCollection) {
+        if (denotesCollection) {
             temp = temp.substring(0, temp.length() - 1);
         }
         temp = temp.substring(0, temp.lastIndexOf('/') + 1);

@@ -11,7 +11,7 @@ public class Collection extends Resource {
     public Collection(CollectionPath path,
                       Date modifiedDate,
                       Iterable<String> children) {
-        super(path, modifiedDate);
+        super(path, modifiedDate, true);
         this.collectionPath = path;
         this.children = children;
     }
@@ -20,6 +20,11 @@ public class Collection extends Resource {
         return collectionPath;
     }
 
+    /**
+     * Gets the path suffixes of each direct child of this collection.
+     * Suffixes are of the form "name" or "name/", for content and collection
+     * children, respectively.
+     */
     public Iterable<String> getChildren() {
         return children;
     }

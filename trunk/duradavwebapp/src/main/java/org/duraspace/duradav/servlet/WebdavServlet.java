@@ -3,9 +3,6 @@ package org.duraspace.duradav.servlet;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,20 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.duraspace.duradav.core.BadRequestException;
+import org.duraspace.duradav.core.Collection;
 import org.duraspace.duradav.core.CollectionPath;
+import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
+import org.duraspace.duradav.core.MethodNotAllowedException;
+import org.duraspace.duradav.core.NotFoundException;
 import org.duraspace.duradav.core.Path;
+import org.duraspace.duradav.core.Resource;
 import org.duraspace.duradav.core.WebdavException;
-import org.duraspace.duradav.handler.GetHandler;
-import org.duraspace.duradav.handler.Handler;
-import org.duraspace.duradav.handler.HeadHandler;
-import org.duraspace.duradav.handler.MkColHandler;
-import org.duraspace.duradav.handler.MoveHandler;
-import org.duraspace.duradav.handler.OptionsHandler;
-import org.duraspace.duradav.handler.PropFindHandler;
-import org.duraspace.duradav.handler.PropPatchHandler;
-import org.duraspace.duradav.handler.PutHandler;
+import org.duraspace.duradav.methods.Method;
 import org.duraspace.duradav.store.WebdavStore;
 import org.duraspace.duradav.store.filesystem.FilesystemStore;
 
@@ -40,7 +33,7 @@ public class WebdavServlet extends HttpServlet {
 
     private static Logger logger = LoggerFactory.getLogger(WebdavServlet.class);
 
-    private final Map<String, Handler> handlers = new HashMap<String, Handler>();
+    private WebdavStore store;
 
     /**
      * Initializes the servlet.
@@ -48,83 +41,73 @@ public class WebdavServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // TODO: init impl from config
-        WebdavStore store = new FilesystemStore(new File("/tmp/duradav"));
-
-        // register a handler for each recognized method
-        handlers.put("GET", new GetHandler(store));
-        handlers.put("HEAD", new HeadHandler(store));
-        handlers.put("MOVE", new MoveHandler(store));
-        handlers.put("MKCOL", new MkColHandler(store));
-        handlers.put("OPTIONS", new OptionsHandler(store));
-        handlers.put("PUT", new PutHandler(store));
-        handlers.put("PROPFIND", new PropFindHandler(store));
-        handlers.put("PROPPATCH", new PropPatchHandler(store));
+        store = new FilesystemStore(new File("/tmp/duradav"));
     }
 
     /**
-     * Dispatches a request to the appropriate handler.
+     * Sends the request to the appropriate handler.
      */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
-        String method = null;
+        String methodName = null;
         Path path = null;
 
         try {
-            method = req.getMethod();
+            methodName = req.getMethod();
             path = getPath(req);
-            handleRequest(handlers.get(method), path, req, resp);
+            Method method = Method.fromName(methodName);
+            if (method == null) {
+                throw new MethodNotAllowedException(path,
+                        "Method not supported: " + methodName);
+            }
+            logger.debug("Got " + method.getName() + " request for " + path);
+            Resource resource = getResource(path,
+                                            method.requiresExistingResource(),
+                                            req,
+                                            resp);
+            method.getHandler().handleRequest(store,
+                                              resource,
+                                              req,
+                                              resp);
         } catch (WebdavException e) {
-            handleError(method, path, e, resp);
+            handleError(methodName, path, e, resp);
         } catch (Throwable th) {
-            handleFault(method, path, th, resp);
+            handleFault(methodName, path, th, resp);
         }
     }
 
-    private static void handleError(String method,
-                                    Path path,
-                                    WebdavException error,
-                                    HttpServletResponse resp) {
-        String logMessage = method + " request failed on " + path
-                + " [" + error.getStatusCode() + "] - " + error.getMessage();
-        if (logger.isDebugEnabled()) {
-            logger.debug(logMessage, error);
-        } else {
-            logger.error(logMessage);
-        }
-        try {
-            resp.sendError(error.getStatusCode(), error.getMessage());
-        } catch (IOException e) {
-            logger.error("IO error while sending webdav failure reponse", e);
-        }
-    }
-
-    private static void handleFault(String method,
-                                    Path path,
-                                    Throwable fault,
-                                    HttpServletResponse resp) {
-        logger.error("Fault while servicing " + method + " request on " + path,
-                     fault);
-        try {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           fault.getMessage());
-        } catch (IOException e) {
-            logger.error("IO error while sending fault reponse", e);
-        }
-    }
-
-    private static void handleRequest(Handler handler,
-                                      Path path,
-                                      HttpServletRequest req,
-                                      HttpServletResponse resp)
+    // sends Content-Location header if necessary
+    private Resource getResource(Path path,
+                                 boolean fromStore,
+                                 HttpServletRequest req,
+                                 HttpServletResponse resp)
             throws WebdavException {
-        if (handler == null) {
-            throw new BadRequestException(path, "Method not supported");
+        if (path.denotesCollection()) {
+            CollectionPath collPath = (CollectionPath) path;
+            if (fromStore) {
+                return store.getCollection(collPath);
+            }
+            return new Collection(collPath, null, null);
         }
-        if (path instanceof CollectionPath) {
-            handler.handleCollectionRequest((CollectionPath) path, req, resp);
-        } else {
-            handler.handleContentRequest((ContentPath) path, req, resp);
+
+        ContentPath contPath = (ContentPath) path;
+        if (fromStore) {
+            try {
+                return store.getContent(contPath);
+            } catch (NotFoundException noSuchContent) {
+                // recover if a collection exists at path + '/'
+                CollectionPath collPath = new CollectionPath(path + "/");
+                try {
+                    Collection collection = store.getCollection(collPath);
+                    resp.setHeader("Content-Location",
+                                   req.getRequestURL() + "/");
+                    return collection;
+                } catch (NotFoundException noSuchCollection) {
+                    throw noSuchContent;
+                }
+            }
         }
+        return new Content(contPath, null, null, -1, null);
     }
 
     private static Path getPath(HttpServletRequest req) {
@@ -143,6 +126,38 @@ public class WebdavServlet extends HttpServlet {
             pathInfo = req.getServletPath();
         }
         return pathInfo;
+    }
+
+    private static void handleError(String methodName,
+                                    Path path,
+                                    WebdavException error,
+                                    HttpServletResponse resp) {
+        String logMessage = methodName + " request failed on " + path
+                + " [" + error.getStatusCode() + "] - " + error.getMessage();
+        if (logger.isDebugEnabled()) {
+            logger.debug(logMessage, error);
+        } else {
+            logger.error(logMessage);
+        }
+        try {
+            resp.sendError(error.getStatusCode(), error.getMessage());
+        } catch (IOException e) {
+            logger.error("IO error while sending webdav failure reponse", e);
+        }
+    }
+
+    private static void handleFault(String methodName,
+                                    Path path,
+                                    Throwable fault,
+                                    HttpServletResponse resp) {
+        logger.error("Fault while servicing " + methodName + " request on "
+                     + path, fault);
+        try {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                           fault.getMessage());
+        } catch (IOException e) {
+            logger.error("IO error while sending fault reponse", e);
+        }
     }
 
 }

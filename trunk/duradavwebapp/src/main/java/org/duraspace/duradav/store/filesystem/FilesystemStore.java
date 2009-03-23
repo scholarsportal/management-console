@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -62,26 +63,31 @@ public class FilesystemStore implements WebdavStore {
      * {@inheritDoc}
      */
     public Collection getCollection(CollectionPath path) throws WebdavException {
-        File dir = getFile(path);
+        final File dir = getFile(path);
         if (!dir.isDirectory()) {
             throw new NotFoundException(path);
         }
-        return new Collection(path,
-                              new Date(dir.lastModified()),
-                              getChildren(dir));
-    }
 
-    private static Iterable<String> getChildren(File dir) {
-        List<String> list = new ArrayList<String>();
-        for (String name : dir.list()) {
-            File file = new File(dir, name);
-            if (file.isFile()) {
-                list.add(name);
-            } else {
-                list.add(name + "/");
+        // children will be lazily determined
+        Iterable<String> children = new Iterable<String>() {
+            private List<String> children;
+            public Iterator<String> iterator() {
+                if (children == null) {
+                    children = new ArrayList<String>();
+                    for (String name : dir.list()) {
+                        File file = new File(dir, name);
+                        if (file.isFile()) {
+                            children.add(name);
+                        } else {
+                            children.add(name + "/");
+                        }
+                    }
+                }
+                return children.iterator();
             }
-        }
-        return list;
+        };
+
+        return new Collection(path, new Date(dir.lastModified()), children);
     }
 
     /**
