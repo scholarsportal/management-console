@@ -17,6 +17,7 @@ import org.duraspace.mainwebapp.domain.repo.DuraSpaceAcctRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.StorageProviderRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.UserRepositoryDBImpl;
+import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 import static org.junit.Assert.assertEquals;
 
@@ -90,7 +91,7 @@ public class MainDatabaseLoaderTest {
         verifyRowCount(DuraSpaceAcctRepositoryDBImpl.getTableSpec()
                 .getTableName(), 3);
         verifyRowCount(ComputeProviderRepositoryDBImpl.getTableSpec()
-                .getTableName(), 4);
+                .getTableName(), ComputeProviderType.values().length);
         verifyRowCount(ComputeAcctRepositoryDBImpl.getTableSpec()
                 .getTableName(), 3);
         verifyRowCount(StorageProviderRepositoryDBImpl.getTableSpec()

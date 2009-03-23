@@ -60,7 +60,7 @@ public class MainDatabaseLoader {
                     + "<entry key=\"provider\">amazon-ec2</entry>"
                     + "<entry key=\"signatureMethod\">HmacSHA1</entry>"
                     + "<entry key=\"keyname\">awoods-keypair</entry>"
-                    + "<entry key=\"imageId\">ami-9ad532f3</entry>"
+                    + "<entry key=\"imageId\">ami-210ee948</entry>"
                     + "<entry key=\"minInstanceCount\">1</entry>"
                     + "<entry key=\"maxInstanceCount\">1</entry>"
                     + "<entry key=\"maxAsyncThreads\">35</entry>"
@@ -238,40 +238,17 @@ public class MainDatabaseLoader {
     }
 
     private void loadComputeProviders() throws Exception {
-        ComputeProvider providerAmazon = new ComputeProvider();
-        providerAmazon.setProviderName(ComputeProviderType.AMAZON_EC2
-                .toString());
-        providerAmazon.setProviderType(ComputeProviderType.AMAZON_EC2);
-        providerAmazon.setUrl("http://aws.amazon.com/ec2");
 
-        ComputeProvider providerMS = new ComputeProvider();
-        providerMS.setProviderName(ComputeProviderType.MICROSOFT_AZURE
-                .toString());
-        providerMS.setProviderType(ComputeProviderType.MICROSOFT_AZURE);
-        providerMS.setUrl("http://www.microsoft.com/azure");
+        for (ComputeProviderType providerType : ComputeProviderType.values()) {
+            ComputeProvider provider = new ComputeProvider();
+            provider.setProviderName(providerType.toString());
+            provider.setProviderType(providerType);
+            provider.setUrl(providerType.getUrl());
 
-        ComputeProvider providerSun = new ComputeProvider();
-        providerSun.setProviderName(ComputeProviderType.SUN.toString());
-        providerSun.setProviderType(ComputeProviderType.SUN);
-        providerSun.setUrl("http://www.sun.com/cloud");
-
-        ComputeProvider providerUnknown = new ComputeProvider();
-        providerUnknown.setProviderName(ComputeProviderType.UNKNOWN.toString());
-        providerUnknown.setProviderType(ComputeProviderType.UNKNOWN);
-        providerUnknown.setUrl("http://google.com");
-
-        computeProviderIds.put(ComputeProviderType.AMAZON_EC2.toString(),
-                               getComputeProviderRepository()
-                                       .saveComputeProvider(providerAmazon));
-        computeProviderIds.put(ComputeProviderType.MICROSOFT_AZURE.toString(),
-                               getComputeProviderRepository()
-                                       .saveComputeProvider(providerMS));
-        computeProviderIds.put(ComputeProviderType.SUN.toString(),
-                               getComputeProviderRepository()
-                                       .saveComputeProvider(providerSun));
-        computeProviderIds.put(ComputeProviderType.UNKNOWN.toString(),
-                               getComputeProviderRepository()
-                                       .saveComputeProvider(providerUnknown));
+            computeProviderIds.put(provider.getProviderName(),
+                                   getComputeProviderRepository()
+                                           .saveComputeProvider(provider));
+        }
     }
 
     private void loadComputeAccts() throws Exception {

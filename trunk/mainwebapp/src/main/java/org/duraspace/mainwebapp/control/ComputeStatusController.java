@@ -67,10 +67,15 @@ public class ComputeStatusController
         } else if (cmd.equals("View Compute Console")) {
             log.info("Initializing instance...");
             acct = computeManager.initializeComputeApp(computeAcctId);
+            acct =
+                    computeManager
+                            .sendComputeAppDuraAcctIdForComputeId(computeAcctId);
             wrapper.setComputeAppInitialized(true);
         } else {
             log.info("Refreshing instance...");
-            acct = computeManager.findComputeAccountAndLoadCredential(computeAcctId);
+            acct =
+                    computeManager
+                            .findComputeAccountAndLoadCredential(computeAcctId);
         }
 
         wrapper.setComputeAcct(acct);

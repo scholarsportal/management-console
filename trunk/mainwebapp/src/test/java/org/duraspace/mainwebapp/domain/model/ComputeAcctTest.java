@@ -43,7 +43,7 @@ public class ComputeAcctTest {
     private final int duraAcctId = 77;
 
     private final String MOCK_PROVIDER_CLASSNAME =
-            "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl";
+            "org.duraspace.serviceprovider.mgmt.mock.LocalComputeProviderImpl";
 
     @Before
     public void setUp() throws Exception {

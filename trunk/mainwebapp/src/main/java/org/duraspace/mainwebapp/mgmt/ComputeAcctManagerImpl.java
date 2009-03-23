@@ -183,9 +183,9 @@ public class ComputeAcctManagerImpl
 
     private void requestInitialization(String baseUrl, String params)
             throws Exception {
-
+        boolean formData = true;
         HttpResponse response =
-                new RestHttpHelper().post(baseUrl, params, true);
+                new RestHttpHelper().post(baseUrl, params, formData);
 
         if (response != null
                 && HttpURLConnection.HTTP_OK == response.getStatusCode()) {
@@ -193,6 +193,41 @@ public class ComputeAcctManagerImpl
             msg.append("Error initializing instancewebapp: ");
             msg.append(baseUrl);
             msg.append(params);
+            log.error(msg.toString());
+        }
+    }
+
+    public ComputeAcct sendComputeAppDuraAcctIdForComputeId(int computeAcctId) {
+        ComputeAcct acct = null;
+        try {
+            acct = findComputeAccountAndLoadCredential(computeAcctId);
+            String baseUrl = getBaseSpacesURLWithDuraAcctId(acct);
+            requestAcctSpaces(baseUrl);
+        } catch (Exception e) {
+            log.error("Unable to initialize computeApp: " + computeAcctId);
+            log.error(ExceptionUtil.getStackTraceAsString(e));
+        }
+        return acct;
+    }
+
+    private String getBaseSpacesURLWithDuraAcctId(ComputeAcct compAcct)
+            throws Exception {
+        String baseUrl = compAcct.getWebappURL();
+        if (baseUrl == null) {
+            throw new Exception("baseUrl is null.");
+        }
+
+        return baseUrl + "/spaces.htm?accountId=" + compAcct.getDuraAcctId();
+    }
+
+    private void requestAcctSpaces(String baseUrl) throws Exception {
+        HttpResponse response = new RestHttpHelper().get(baseUrl);
+
+        if (response != null
+                && HttpURLConnection.HTTP_OK == response.getStatusCode()) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Error requesting spaces for instancewebapp: ");
+            msg.append(baseUrl);
             log.error(msg.toString());
         }
     }
