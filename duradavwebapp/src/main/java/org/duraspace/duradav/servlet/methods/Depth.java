@@ -6,6 +6,8 @@ enum Depth {
     ONE ("1"),
     INFINITY ("infinity");
 
+    public static final String HEADER = "Depth";
+
     private final String string;
 
     Depth(String string) {
