@@ -16,7 +16,7 @@ public class SimpleExceptionResolver extends SimpleMappingExceptionResolver
 	                                     Object handler,
 	                                     Exception ex)
 	{
-        ModelAndView mav = new ModelAndView("error");
+        ModelAndView mav = new ModelAndView("exception");
         mav.addObject("message", ex.getMessage());
 
         StringWriter stackTrace = new StringWriter();

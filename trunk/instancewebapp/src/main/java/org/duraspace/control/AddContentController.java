@@ -40,38 +40,39 @@ public class AddContentController extends SimpleFormController {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
 
-        MultipartFile file = content.getFile();
-        if(file == null) {
-            throw new IllegalArgumentException("A file must be provided.");
-        }
-
-        String contentId = content.getContentId();
-        if(contentId == null || contentId.equals("")){
-            contentId = file.getOriginalFilename();
-        }
-
-        String contentName = content.getContentName();
-        if(contentName == null || contentName.equals("")){
-            contentName = file.getOriginalFilename();
-        }
-
-        String contentMime = content.getContentMimetype();
-        if(contentMime == null || contentMime.equals("")) {
-            contentMime = file.getContentType();
-        }
-
         StorageProvider storage =
             StorageProviderUtil.getStorageProvider(accountId);
 
-        storage.addContent(spaceId,
-                           contentId,
-                           contentMime,
-                           file.getSize(),
-                           file.getInputStream());
+        String error = null;
+        MultipartFile file = content.getFile();
+        if(file == null || file.isEmpty()) {
+            error = "A file must be provided in order to add content.";
+        } else {
+            String contentId = content.getContentId();
+            if(contentId == null || contentId.equals("")){
+                contentId = file.getOriginalFilename();
+            }
 
-        Properties contentProps = storage.getContentMetadata(spaceId, contentId);
-        contentProps.setProperty(StorageProvider.METADATA_CONTENT_NAME, contentName);
-        storage.setContentMetadata(spaceId, contentId, contentProps);
+            String contentName = content.getContentName();
+            if(contentName == null || contentName.equals("")){
+                contentName = file.getOriginalFilename();
+            }
+
+            String contentMime = content.getContentMimetype();
+            if(contentMime == null || contentMime.equals("")) {
+                contentMime = file.getContentType();
+            }
+
+            storage.addContent(spaceId,
+                               contentId,
+                               contentMime,
+                               file.getSize(),
+                               file.getInputStream());
+
+            Properties contentProps = storage.getContentMetadata(spaceId, contentId);
+            contentProps.setProperty(StorageProvider.METADATA_CONTENT_NAME, contentName);
+            storage.setContentMetadata(spaceId, contentId, contentProps);
+        }
 
         // Create a Space for the view
         Space space = new Space();
@@ -87,6 +88,10 @@ public class AddContentController extends SimpleFormController {
 
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("space", space);
+
+        if(error != null) {
+            mav.addObject("error", error);
+        }
 
         return mav;
     }

@@ -7,6 +7,13 @@
     <title>Error</title>
   </head>
   <body>
-    <div id="error"><c:out value="${error}"/></div>
+    <h3>An error prevented this page from loading correctly.</h3>
+
+    <h5>Message</h5>
+    <c:out value="${message}"/>
+
+	<h5>Stack trace</h5>
+	<c:out value="${stack}"/>
+
   </body>
 </html>
