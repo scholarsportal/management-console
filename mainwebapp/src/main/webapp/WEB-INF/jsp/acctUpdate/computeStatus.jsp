@@ -97,7 +97,7 @@ p {
 						value="View Compute Console" />
 				</c:when>
 				<c:otherwise>
-					<iframe src="${input.computeAcct.webappURL}" width="100%"
+					<iframe src="${input.spacesURL}" width="100%"
 						height="500px" frameborder="0">
 					<p>Your browser does not support iframes.</p>
 					</iframe>
