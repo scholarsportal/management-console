@@ -14,6 +14,8 @@ public class ComputeAcctWrapper {
 
     private boolean isComputeAppInitialized;
 
+    private String spacesURL;
+
     public String getTimer() {
         return timer;
     }
@@ -44,6 +46,14 @@ public class ComputeAcctWrapper {
 
     public void setComputeProvider(ComputeProvider computeProvider) {
         this.computeProvider = computeProvider;
+    }
+
+    public String getSpacesURL() {
+        return spacesURL;
+    }
+
+    public void setSpacesURL(String spacesURL) {
+        this.spacesURL = spacesURL;
     }
 
 }

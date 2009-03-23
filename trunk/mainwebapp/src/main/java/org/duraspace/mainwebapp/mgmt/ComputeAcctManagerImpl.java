@@ -197,17 +197,19 @@ public class ComputeAcctManagerImpl
         }
     }
 
-    public ComputeAcct sendComputeAppDuraAcctIdForComputeId(int computeAcctId) {
-        ComputeAcct acct = null;
+    public String getSpacesRequestURL(int computeAcctId) throws Exception {
+        String url = new String();
         try {
-            acct = findComputeAccountAndLoadCredential(computeAcctId);
-            String baseUrl = getBaseSpacesURLWithDuraAcctId(acct);
-            requestAcctSpaces(baseUrl);
+            ComputeAcct acct =
+                    getComputeAcctRepository()
+                            .findComputeAcctById(computeAcctId);
+            url = getBaseSpacesURLWithDuraAcctId(acct);
+            log.info("spaces request url: " + url);
         } catch (Exception e) {
-            log.error("Unable to initialize computeApp: " + computeAcctId);
+            log.error("Error getting spaces computeApp: " + computeAcctId);
             log.error(ExceptionUtil.getStackTraceAsString(e));
         }
-        return acct;
+        return url;
     }
 
     private String getBaseSpacesURLWithDuraAcctId(ComputeAcct compAcct)
@@ -218,18 +220,6 @@ public class ComputeAcctManagerImpl
         }
 
         return baseUrl + "/spaces.htm?accountId=" + compAcct.getDuraAcctId();
-    }
-
-    private void requestAcctSpaces(String baseUrl) throws Exception {
-        HttpResponse response = new RestHttpHelper().get(baseUrl);
-
-        if (response != null
-                && HttpURLConnection.HTTP_OK == response.getStatusCode()) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("Error requesting spaces for instancewebapp: ");
-            msg.append(baseUrl);
-            log.error(msg.toString());
-        }
     }
 
     public ComputeProvider findComputeProviderForComputeAcct(int computeAcctId)

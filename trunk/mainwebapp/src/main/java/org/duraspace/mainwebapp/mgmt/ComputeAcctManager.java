@@ -96,6 +96,7 @@ public interface ComputeAcctManager {
     public abstract int findComputeProviderIdByProviderType(ComputeProviderType providerType)
             throws Exception;
 
-    public abstract ComputeAcct sendComputeAppDuraAcctIdForComputeId(int computeAcctId);
+    public abstract String getSpacesRequestURL(int computeAcctId)
+            throws Exception;
 
 }
