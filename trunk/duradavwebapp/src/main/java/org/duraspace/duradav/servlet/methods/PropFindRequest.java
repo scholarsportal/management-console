@@ -1,4 +1,4 @@
-package org.duraspace.duradav.methods;
+package org.duraspace.duradav.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +20,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.duraspace.duradav.core.BadRequestException;
 import org.duraspace.duradav.core.Path;
+import org.duraspace.duradav.error.BadRequestException;
 
 class PropFindRequest {
 

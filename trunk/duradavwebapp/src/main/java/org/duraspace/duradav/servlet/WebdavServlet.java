@@ -15,12 +15,12 @@ import org.duraspace.duradav.core.Collection;
 import org.duraspace.duradav.core.CollectionPath;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
-import org.duraspace.duradav.core.MethodNotAllowedException;
-import org.duraspace.duradav.core.NotFoundException;
 import org.duraspace.duradav.core.Path;
 import org.duraspace.duradav.core.Resource;
-import org.duraspace.duradav.core.WebdavException;
-import org.duraspace.duradav.methods.Method;
+import org.duraspace.duradav.error.MethodNotAllowedException;
+import org.duraspace.duradav.error.NotFoundException;
+import org.duraspace.duradav.error.WebdavException;
+import org.duraspace.duradav.servlet.methods.Method;
 import org.duraspace.duradav.store.WebdavStore;
 import org.duraspace.duradav.store.filesystem.FilesystemStore;
 

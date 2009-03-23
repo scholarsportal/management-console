@@ -1,6 +1,8 @@
-package org.duraspace.duradav.core;
+package org.duraspace.duradav.error;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.duraspace.duradav.core.Path;
 
 /**
  * HTTP 400 (Bad Request).

@@ -1,4 +1,4 @@
-package org.duraspace.duradav.methods;
+package org.duraspace.duradav.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ import org.duraspace.duradav.core.Collection;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.Path;
 import org.duraspace.duradav.core.Resource;
-import org.duraspace.duradav.core.WebdavException;
+import org.duraspace.duradav.error.WebdavException;
 import org.duraspace.duradav.store.WebdavStore;
 
 /**
