@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.duraspace.duradav.core.Path;
 import org.duraspace.duradav.error.BadRequestException;
 
+import static org.duraspace.duradav.servlet.methods.Constants.UTF8;
+
 class PropFindRequest {
 
     public static final int ALL = 0;
@@ -60,8 +62,8 @@ class PropFindRequest {
     public static PropFindRequest createRequest(Path path,
                                                 HttpServletRequest req)
             throws BadRequestException {
-        String depthHeader = req.getHeader("Depth");
-        Depth depth = Depth.parse(req.getHeader("Depth"), Depth.INFINITY);
+        String depthHeader = req.getHeader(Depth.HEADER);
+        Depth depth = Depth.parse(depthHeader, Depth.INFINITY);
         if (depth == null) {
             throw new BadRequestException(path, "Invalid Depth header: "
                                           + depthHeader);
@@ -75,7 +77,7 @@ class PropFindRequest {
         InputStream bodyStream = null;
         try {
             bodyStream = req.getInputStream();
-            String body = IOUtils.toString(bodyStream, "UTF-8");
+            String body = IOUtils.toString(bodyStream, UTF8);
             if ("".equals(body)) {
                 return new PropFindRequest(PropFindRequest.ALL, depth, null);
             }
@@ -106,33 +108,37 @@ class PropFindRequest {
             throws XMLStreamException {
 
         reader.nextTag();
-        if (!reader.getNamespaceURI().equals("DAV:")
-                || !reader.getLocalName().equals("propfind")) {
-            throw new XMLStreamException("Expected DAV:propfind root element");
+        if (!reader.getName().equals(DAVElement.PROPFIND)) {
+            throw new XMLStreamException("Expected root element: "
+                                         + DAVElement.PROPFIND);
         }
 
         reader.nextTag();
-        if (reader.getNamespaceURI().equals("DAV:")) {
-            if (reader.getLocalName().equals("allprop")) {
-                return new PropFindRequest(ALL, depth, null);
-            } else if (reader.getLocalName().equals("prop")) {
-                List<QName> names = new ArrayList<QName>();
-                QName prop = new QName("DAV:", "prop");
-                int event = reader.nextTag();
-                while (!(reader.getName().equals(prop)
-                        && event == XMLEvent.END_ELEMENT)) {
-                    if (event == XMLEvent.START_ELEMENT) {
-                        names.add(reader.getName());
-                    }
-                    event = reader.nextTag();
+        QName name = reader.getName();
+        if (name.equals(DAVElement.ALLPROP)) {
+            logger.debug("PROPFIND: Client requested all values");
+            return new PropFindRequest(ALL, depth, null);
+        } else if (name.equals(DAVElement.PROP)) {
+            List<QName> names = new ArrayList<QName>();
+            int event = reader.nextTag();
+            name = reader.getName();
+            while (!(name.equals(DAVElement.PROP)
+                    && event == XMLEvent.END_ELEMENT)) {
+                if (event == XMLEvent.START_ELEMENT) {
+                    names.add(name);
                 }
-                return new PropFindRequest(BY_NAME, depth, names);
-            } else if (reader.getLocalName().equals("propname")) {
-                return new PropFindRequest(LIST_NAMES, depth, null);
+                event = reader.nextTag();
+                name = reader.getName();
             }
+            logger.debug("PROPFIND: Client requested " + names.size() + " by name");
+            return new PropFindRequest(BY_NAME, depth, names);
+        } else if (name.equals(DAVElement.PROPNAME)) {
+            logger.debug("PROPFIND: Client requested list of names");
+            return new PropFindRequest(LIST_NAMES, depth, null);
         }
-        throw new XMLStreamException("Expected DAV:allprop, DAV:propname,"
-                + " or DAV:prop as first child of DAV:propfind root element");
+        throw new XMLStreamException("Expected first child of root element to"
+                + " be " + DAVElement.ALLPROP + ", " + DAVElement.PROP
+                + ", or " + DAVElement.PROPNAME);
     }
 
 }

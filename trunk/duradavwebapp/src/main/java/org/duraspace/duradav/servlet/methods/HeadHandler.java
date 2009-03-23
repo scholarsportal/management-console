@@ -44,7 +44,7 @@ class HeadHandler implements MethodHandler {
         String mediaType = content.getMediaType();
         if (mediaType != null) {
             resp.setContentType(mediaType);
-        } // TODO: else guess based on extension?
+        }
     }
 
     private static final void setCommonHeaders(Resource resource,

@@ -10,6 +10,8 @@ import org.duraspace.duradav.core.Path;
 public class NotFoundException
         extends WebdavException {
 
+    public static final String STATUS_LINE = "HTTP/1.1 404 Not Found";
+
     private static final long serialVersionUID = 1L;
 
     public NotFoundException(Path path) {

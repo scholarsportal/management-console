@@ -6,12 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,21 +28,25 @@ import org.duraspace.duradav.core.CollectionPath;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
 import org.duraspace.duradav.core.Resource;
+import org.duraspace.duradav.error.NotFoundException;
 import org.duraspace.duradav.error.WebdavException;
 import org.duraspace.duradav.store.WebdavStore;
+
+import static org.duraspace.duradav.servlet.methods.Constants.DAV_PREFIX;
+import static org.duraspace.duradav.servlet.methods.Constants.DAV_URI;
+import static org.duraspace.duradav.servlet.methods.Constants.UTF8;
+import static org.duraspace.duradav.servlet.methods.Constants.XML_MEDIATYPE;
 
 /**
  * Handles PROPFIND requests.
  */
 class PropFindHandler implements MethodHandler {
 
+    private static final String HTTP_200_OK = "HTTP/1.1 200 OK";
+
+    private static final int MULTISTATUS_CODE = 207;
+
     private static final Logger logger = LoggerFactory.getLogger(PropFindHandler.class);
-
-    private static final String DAV_PREFIX = "D";
-
-    private static final String DAV_URI = "DAV:";
-
-    private static final String RFC_1123_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
     public void handleRequest(WebdavStore store,
                               Resource resource,
@@ -54,7 +55,8 @@ class PropFindHandler implements MethodHandler {
             throws WebdavException {
         PropFindRequest propReq = PropFindRequest.createRequest(
                 resource.getPath(), req);
-        sendMultiStatusHeader(resp);
+        resp.setStatus(MULTISTATUS_CODE);
+        resp.setContentType(XML_MEDIATYPE);
         String href = req.getContextPath() + resource.getPath().toString();
         if (propReq.getType() == PropFindRequest.LIST_NAMES) {
             sendBody(store, href, resource, null, true, propReq.getDepth(), resp);
@@ -62,11 +64,6 @@ class PropFindHandler implements MethodHandler {
             sendBody(store, href, resource, propReq.getNames(), false,
                      propReq.getDepth(), resp);
         }
-    }
-
-    private static void sendMultiStatusHeader(HttpServletResponse resp) {
-        resp.setStatus(207);
-        resp.setContentType("application/xml; charset=\"utf-8\"");
     }
 
     private static void sendBody(WebdavStore store,
@@ -80,10 +77,10 @@ class PropFindHandler implements MethodHandler {
         OutputStream out = null;
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            XMLStreamWriter writer = factory.createXMLStreamWriter(bout, "UTF-8");
+            XMLStreamWriter writer = factory.createXMLStreamWriter(bout, UTF8);
             writer.writeStartDocument();
             writer.setPrefix(DAV_PREFIX, DAV_URI);
-            writer.writeStartElement(DAV_URI, "multistatus");
+            writeStartElement(DAVElement.MULTISTATUS, writer);
             writer.writeNamespace(DAV_PREFIX, DAV_URI);
             writeResponseElement(href, resource, propNames, omitValues, writer);
             if (resource.isCollection() && depth != Depth.ZERO) {
@@ -99,7 +96,7 @@ class PropFindHandler implements MethodHandler {
             writer.writeEndDocument();
             writer.close();
             if (logger.isDebugEnabled()) {
-                logger.debug("PROPFIND reponse body: " + bout.toString("UTF-8"));
+                logger.debug("PROPFIND reponse body: " + bout.toString(UTF8));
             }
             byte[] body = bout.toByteArray();
             InputStream in = new ByteArrayInputStream(body);
@@ -114,6 +111,20 @@ class PropFindHandler implements MethodHandler {
             IOUtils.closeQuietly(out);
         }
 
+    }
+
+    private static void writeEmptyElement(QName qName,
+                                          XMLStreamWriter writer)
+            throws XMLStreamException {
+        writer.writeEmptyElement(qName.getNamespaceURI(),
+                                 qName.getLocalPart());
+    }
+
+    private static void writeStartElement(QName qName,
+                                          XMLStreamWriter writer)
+            throws XMLStreamException {
+        writer.writeStartElement(qName.getNamespaceURI(),
+                                 qName.getLocalPart());
     }
 
     private static void writeChildResponseElements(WebdavStore store,
@@ -157,83 +168,124 @@ class PropFindHandler implements MethodHandler {
                                              boolean omitValues,
                                              XMLStreamWriter writer)
             throws XMLStreamException {
-        writer.writeStartElement(DAV_URI, "response");
-        writer.writeStartElement(DAV_URI, "href");
+        writeStartElement(DAVElement.RESPONSE, writer);
+        writeStartElement(DAVElement.HREF, writer);
         writer.writeCharacters(href);
         writer.writeEndElement();
-        writer.writeStartElement(DAV_URI, "propstat");
-        writer.writeStartElement(DAV_URI, "prop");
+        writeStartElement(DAVElement.PROPSTAT, writer);
+        writeStartElement(DAVElement.PROP, writer);
+        List<QName> notFound = new ArrayList<QName>();
         if (propNames == null) {
             // do all that exist
             if (!resource.isCollection()) {
                 Content content = (Content) resource;
-                writeDAVProperty("getcontentlength",
-                                 content.getLength(),
-                                 omitValues,
-                                 writer);
-                writeDAVProperty("getcontenttype",
-                                 content.getMediaType(),
-                                 omitValues,
-                                 writer);
+                writeProperty(DAVElement.GET_CONTENT_LENGTH,
+                              content.getLength(),
+                              omitValues,
+                              writer);
+                writeProperty(DAVElement.GET_CONTENT_TYPE,
+                              content.getMediaType(),
+                              omitValues,
+                              writer);
             }
-            writeDAVProperty("getlastmodified",
-                             resource.getModifiedDate(),
-                             omitValues,
-                             writer);
+            writeProperty(DAVElement.GET_LAST_MODIFIED,
+                          resource.getModifiedDate(),
+                          omitValues,
+                          writer);
             writeResourceType(resource.isCollection(),
                               omitValues,
                               writer);
         } else {
             // do just the requested ones that exist
-            for (QName q : propNames) {
-                if (q.getNamespaceURI().equals(DAV_URI)) {
-                    String n = q.getLocalPart();
-                    if (!resource.isCollection()) {
+            for (QName name : propNames) {
+                if (name.equals(DAVElement.GET_CONTENT_LENGTH)) {
+                    if (resource.isCollection()) {
+                        notFound.add(name);
+                    } else {
                         Content content = (Content) resource;
-                        if (n.equals("getcontentlength")) {
-                            writeDAVProperty(n,
-                                             content.getLength(),
-                                             omitValues,
-                                             writer);
-                        } else if (n.equals("getcontenttype")) {
-                            writeDAVProperty(n,
-                                             content.getMediaType(),
-                                             omitValues,
-                                             writer);
+                        if (!writeProperty(name,
+                                           content.getLength(),
+                                           omitValues,
+                                           writer)) {
+                            notFound.add(name);
                         }
                     }
-                    if (n.equals("getlastmodified")) {
-                        writeDAVProperty(n,
-                                         resource.getModifiedDate(),
-                                         omitValues,
-                                         writer);
-                    } else if (n.equals("resourcetype")) {
-                        writeResourceType(resource.isCollection(),
-                                          omitValues,
-                                          writer);
+                } else if (name.equals(DAVElement.GET_CONTENT_TYPE)) {
+                    if (resource.isCollection()) {
+                        writeProperty(name,
+                                      GetHandler.COLLECTION_CONTENT_TYPE,
+                                      omitValues,
+                                      writer);
+                    } else {
+                        Content content = (Content) resource;
+                        if (!writeProperty(name,
+                                           content.getMediaType(),
+                                           omitValues,
+                                           writer)) {
+                            notFound.add(name);
+                        }
                     }
+                } else if (name.equals(DAVElement.GET_LAST_MODIFIED)) {
+                    if (!writeProperty(name,
+                                       resource.getModifiedDate(),
+                                       omitValues,
+                                       writer)) {
+                        notFound.add(name);
+                    }
+                } else if (name.equals(DAVElement.RESOURCE_TYPE)) {
+                    writeResourceType(resource.isCollection(),
+                                      omitValues,
+                                      writer);
+                } else {
+                    // TODO: support additional properties?
+                    notFound.add(name);
                 }
             }
         }
         writer.writeEndElement();
-        writer.writeStartElement(DAV_URI, "status");
-        writer.writeCharacters("HTTP/1.1 200 OK");
+        writeStartElement(DAVElement.STATUS, writer);
+        writer.writeCharacters(HTTP_200_OK);
         writer.writeEndElement();
         writer.writeEndElement();
-        // TODO: do a 404 that includes any requested props that didn't exist
+        if (notFound.size() > 0) {
+            write404PropStat(notFound, writer);
+        }
         writer.writeEndElement();
     }
 
-    private static boolean writeDAVProperty(String name,
-                                            String value,
-                                            boolean omitValues,
-                                            XMLStreamWriter writer)
+    private static void write404PropStat(List<QName> notFound,
+                                         XMLStreamWriter writer)
+            throws XMLStreamException {
+        writeStartElement(DAVElement.PROPSTAT, writer);
+        writeStartElement(DAVElement.PROP, writer);
+        for (QName name : notFound) {
+            writeEmptyElement(name, writer);
+        }
+        writer.writeEndElement();
+        writeStartElement(DAVElement.STATUS, writer);
+        writer.writeCharacters(NotFoundException.STATUS_LINE);
+        writer.writeEndElement();
+        writeStartElement(DAVElement.RESPONSE_DESCRIPTION, writer);
+        if (notFound.size() == 1) {
+            writer.writeCharacters("Requested property not found");
+        } else {
+            writer.writeCharacters(notFound.size()
+                                   + " requested properties not found");
+        }
+        writer.writeEndElement();
+        writer.writeEndElement();
+    }
+
+    private static boolean writeProperty(QName name,
+                                         String value,
+                                         boolean omitValues,
+                                         XMLStreamWriter writer)
             throws XMLStreamException {
         if (value != null) {
             if (omitValues) {
-                writer.writeEmptyElement(DAV_URI, name);
+                writeEmptyElement(name, writer);
             } else {
-                writer.writeStartElement(DAV_URI, name);
+                writeStartElement(name, writer);
                 writer.writeCharacters(value);
                 writer.writeEndElement();
             }
@@ -242,28 +294,25 @@ class PropFindHandler implements MethodHandler {
         return false;
     }
 
-    private static boolean writeDAVProperty(String name,
-                                            long value,
-                                            boolean omitValues,
-                                            XMLStreamWriter writer)
+    private static boolean writeProperty(QName name,
+                                         long value,
+                                         boolean omitValues,
+                                         XMLStreamWriter writer)
             throws XMLStreamException {
         if (value > -1) {
-            writeDAVProperty(name, "" + value, omitValues, writer);
+            writeProperty(name, "" + value, omitValues, writer);
             return true;
         }
         return false;
     }
 
-    private static boolean writeDAVProperty(String name,
-                                            Date value,
-                                            boolean omitValues,
-                                            XMLStreamWriter writer)
+    private static boolean writeProperty(QName name,
+                                         Date value,
+                                         boolean omitValues,
+                                         XMLStreamWriter writer)
             throws XMLStreamException {
         if (value != null) {
-            DateFormat formatter = new SimpleDateFormat(RFC_1123_FORMAT,
-                                                        Locale.ENGLISH);
-            formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-            writeDAVProperty(name, formatter.format(value), omitValues, writer);
+            writeProperty(name, Helper.formatDate(value), omitValues, writer);
             return true;
         }
         return false;
@@ -274,10 +323,10 @@ class PropFindHandler implements MethodHandler {
                                           XMLStreamWriter writer)
             throws XMLStreamException {
         if (omitValues || !isCollection) {
-            writer.writeEmptyElement(DAV_URI, "resourcetype");
+            writeEmptyElement(DAVElement.RESOURCE_TYPE, writer);
         } else {
-            writer.writeStartElement(DAV_URI, "resourcetype");
-            writer.writeEmptyElement(DAV_URI, "collection");
+            writeStartElement(DAVElement.RESOURCE_TYPE, writer);
+            writeEmptyElement(DAVElement.COLLECTION, writer);
             writer.writeEndElement();
         }
     }
