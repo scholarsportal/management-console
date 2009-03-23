@@ -1,4 +1,4 @@
-package org.duraspace.duradav.methods;
+package org.duraspace.duradav.servlet.methods;
 
 public enum Method {
 

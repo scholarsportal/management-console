@@ -20,9 +20,9 @@ import org.duraspace.duradav.core.Collection;
 import org.duraspace.duradav.core.CollectionPath;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
-import org.duraspace.duradav.core.NotFoundException;
 import org.duraspace.duradav.core.Path;
-import org.duraspace.duradav.core.WebdavException;
+import org.duraspace.duradav.error.NotFoundException;
+import org.duraspace.duradav.error.WebdavException;
 import org.duraspace.duradav.store.WebdavStore;
 
 /**

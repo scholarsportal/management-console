@@ -1,4 +1,6 @@
-package org.duraspace.duradav.core;
+package org.duraspace.duradav.error;
+
+import org.duraspace.duradav.core.Path;
 
 /**
  * Signals an error defined by the WebDAV protocol.

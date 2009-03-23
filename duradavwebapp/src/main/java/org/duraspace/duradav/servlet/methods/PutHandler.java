@@ -1,4 +1,4 @@
-package org.duraspace.duradav.methods;
+package org.duraspace.duradav.servlet.methods;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import org.duraspace.duradav.core.Body;
-import org.duraspace.duradav.core.ConflictException;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
-import org.duraspace.duradav.core.MethodNotAllowedException;
 import org.duraspace.duradav.core.Resource;
-import org.duraspace.duradav.core.WebdavException;
+import org.duraspace.duradav.error.ConflictException;
+import org.duraspace.duradav.error.MethodNotAllowedException;
+import org.duraspace.duradav.error.WebdavException;
 import org.duraspace.duradav.store.WebdavStore;
 
 /**
