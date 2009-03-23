@@ -1,7 +1,9 @@
 
 package org.duraspace.mainwebapp.control;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -52,13 +54,14 @@ public class ComputeCreateController
     @SuppressWarnings("unchecked")
     @Override
     protected Map referenceData(HttpServletRequest request) throws Exception {
-        Map<String, String[]> providers = new HashMap<String, String[]>();
-        String[] computeProviderList =
-                {ComputeProviderType.AMAZON_EC2.toString(),
-                        ComputeProviderType.MICROSOFT_AZURE.toString(),
-                        ComputeProviderType.SUN.toString()};
+        List<String> computeProviderList = new ArrayList<String>();
+        for (ComputeProviderType providerType : ComputeProviderType.values()) {
+            computeProviderList.add(providerType.toString());
+        }
 
-        providers.put("computeProviders", computeProviderList);
+        Map<String, String[]> providers = new HashMap<String, String[]>();
+        providers.put("computeProviders", computeProviderList
+                .toArray(new String[] {}));
         return providers;
     }
 

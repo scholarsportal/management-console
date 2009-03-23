@@ -151,7 +151,7 @@ public class ComputeStatusControllerTest {
         ComputeAcctRepository computeAcctRepo =
                 EasyMock.createMock(ComputeAcctRepository.class);
         expect(computeAcctRepo.findComputeAcctById(computeAcctId))
-                .andReturn(computeAcct).times(2);
+                .andReturn(computeAcct).times(3);
         replay(computeAcctRepo);
 
         mgrImpl.setComputeAcctRepository(computeAcctRepo);

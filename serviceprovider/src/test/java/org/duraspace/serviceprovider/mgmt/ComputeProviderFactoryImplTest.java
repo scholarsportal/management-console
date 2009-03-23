@@ -40,7 +40,7 @@ public class ComputeProviderFactoryImplTest {
         map = new HashMap<String, String>();
         map
                 .put(AMAZON.toString(),
-                     "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl");
+                     "org.duraspace.serviceprovider.mgmt.mock.LocalComputeProviderImpl");
         map.put(BAD.toString(),
                 "org.duraspace.serviceprovider.mgmt.Mockxxxxxxxxx");
 

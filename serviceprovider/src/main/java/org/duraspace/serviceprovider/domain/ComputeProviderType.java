@@ -2,13 +2,19 @@
 package org.duraspace.serviceprovider.domain;
 
 public enum ComputeProviderType {
-    AMAZON_EC2("amazon-ec2"), MICROSOFT_AZURE("ms-azure"), SUN("sun"), UNKNOWN(
-            "unknown");
+    AMAZON_EC2("amazon-ec2", "http://aws.amazon.com/ec2"), MICROSOFT_AZURE(
+            "ms-azure", "http://www.microsoft.com/azure"), SUN("sun",
+            "http://www.sun.com/cloud"),
+    LOCAL("local", "http://localhost:8080"), UNKNOWN("unknown",
+            "http://www.google.com");
 
     private final String text;
 
-    private ComputeProviderType(String pt) {
-        text = pt;
+    private String url;
+
+    private ComputeProviderType(String pt, String url) {
+        this.text = pt;
+        this.url = url;
     }
 
     public static ComputeProviderType fromString(String pt) {
@@ -24,4 +30,9 @@ public enum ComputeProviderType {
     public String toString() {
         return text;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
 }

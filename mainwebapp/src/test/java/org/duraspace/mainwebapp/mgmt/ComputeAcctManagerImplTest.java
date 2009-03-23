@@ -45,7 +45,7 @@ public class ComputeAcctManagerImplTest {
             ComputeProviderType.AMAZON_EC2.toString();
 
     private final String MOCK_PROVIDER_CLASSNAME =
-            "org.duraspace.serviceprovider.mgmt.mock.MockComputeProviderImpl";
+            "org.duraspace.serviceprovider.mgmt.mock.LocalComputeProviderImpl";
 
     private Credential credential;
 

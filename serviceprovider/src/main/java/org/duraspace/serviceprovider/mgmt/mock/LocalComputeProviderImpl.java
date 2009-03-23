@@ -7,12 +7,12 @@ import org.duraspace.common.model.Credential;
 import org.duraspace.serviceprovider.mgmt.InstanceDescription;
 import org.duraspace.serviceprovider.mgmt.ServiceProvider;
 
-public class MockComputeProviderImpl
+public class LocalComputeProviderImpl
         implements ServiceProvider {
 
     private final String instanceId = "mockInstanceId";
 
-    private final String url = "http://www.instance.org";
+    private final String url = "http://localhost:8080/instancewebapp";
 
     public InstanceDescription describeRunningInstance(Credential credential,
                                                        String instanceId,
