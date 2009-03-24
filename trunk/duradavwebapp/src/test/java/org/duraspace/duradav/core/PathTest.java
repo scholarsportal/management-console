@@ -43,9 +43,33 @@ public class PathTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void testFromStringBad() {
-        // TODO: test difference cases
+    public void testFromStringBadCollectionEmpty() {
+        new CollectionPath("");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testFromStringBadCollectionNoLeadingSlash() {
         new CollectionPath("no/leading/slash");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testFromStringBadCollectionNoTrailingSlash() {
+        new CollectionPath("/no/trailing/slash");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testFromStringBadContentEmpty() {
+        new ContentPath("");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testFromStringBadContentNoLeadingSlash() {
+        new ContentPath("no/leading/slash");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testFromStringBadContentTrailingSlash() {
+        new ContentPath("/trailing/slash/");
     }
 
     @Test

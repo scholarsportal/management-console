@@ -44,7 +44,7 @@ class PutHandler implements MethodHandler {
             replaced = store.putContent(new Content(contentPath,
                                                     null,
                                                     Body.fromStream(source),
-                                                    getLength(req),
+                                                    Helper.getLength(req),
                                                     req.getContentType()));
         } catch (IOException e) {
             throw new RuntimeException("Error writing content", e);
@@ -61,15 +61,6 @@ class PutHandler implements MethodHandler {
         }
     }
 
-    // TODO: move to a common place
-    private static long getLength(HttpServletRequest req) {
-        try {
-            String string = req.getHeader("Content-Length");
-            if (string == null) return -1;
-            return Long.parseLong(string);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
+
 
 }
