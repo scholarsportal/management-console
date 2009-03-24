@@ -19,4 +19,8 @@ public interface WebdavStore {
 
     boolean putContent(Content content);
 
+    void deleteContent(ContentPath path) throws WebdavException;
+
+    void deleteCollection(CollectionPath path) throws WebdavException;
+
 }

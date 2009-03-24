@@ -34,14 +34,23 @@ public class FilesystemStore implements WebdavStore {
 
     private final File baseDir;
 
-    public FilesystemStore(File baseDir) {
+    private final File tempDir;
+
+    public FilesystemStore(File baseDir, File tempDir) {
         this.baseDir = baseDir;
-        if (!baseDir.exists()) {
-            if (!baseDir.mkdirs()) {
-                throw new RuntimeException("Error creating dir " + baseDir);
+        this.tempDir = tempDir;
+        ensureDirExists(baseDir);
+        ensureDirExists(tempDir);
+        logger.info("Initialized with baseDir: {}, tempDir: {}",
+                    baseDir.getPath(), tempDir.getPath());
+    }
+
+    private static void ensureDirExists(File dir) {
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new RuntimeException("Error creating dir " + dir);
             }
         }
-        logger.info("Initialized with baseDir: {}", baseDir.getPath());
     }
 
     /**
@@ -117,6 +126,62 @@ public class FilesystemStore implements WebdavStore {
         } finally {
             IOUtils.closeQuietly(source);
             IOUtils.closeQuietly(sink);
+        }
+    }
+
+    public void deleteContent(ContentPath path) throws WebdavException {
+        File file = getFile(path);
+        if (!file.delete()) {
+            if (!file.isFile()) {
+                throw new NotFoundException(path);
+            } else {
+                throw new RuntimeException("Unable to delete file: " + file);
+            }
+        }
+    }
+
+    public void deleteCollection(CollectionPath path) throws WebdavException {
+        File srcDir = getFile(path);
+        if (!srcDir.isDirectory()) {
+            throw new NotFoundException(path);
+        }
+        File destDir = moveToTemp(srcDir);
+        depthFirstDelete(destDir);
+    }
+
+    private static final void depthFirstDelete(File file) {
+        if (file.isFile()) {
+            if (!file.delete()) {
+                logger.warn("Unable to delete file: " + file);
+            }
+        } else {
+            for (File child : file.listFiles()) {
+                depthFirstDelete(child);
+            }
+            if (!file.delete()) {
+                logger.warn("Unable to delete dir: " + file);
+            }
+        }
+    }
+
+    private File moveToTemp(File srcDir) {
+        // Atomically move srcDir to temporary area.
+        // The move should either succeed or fail, but this behavior can
+        // only be guaranteed on Linux and when tempDir is on the same device
+        // as baseDir.
+        try {
+            File destDir = File.createTempFile("todel", ".tmp", tempDir);
+            if (!destDir.delete()) {
+                throw new RuntimeException("Error deleting temp file: "
+                                           + destDir);
+            }
+            if (!srcDir.renameTo(destDir)) {
+                throw new RuntimeException("Error renaming srcDir: "
+                                           + srcDir);
+            }
+            return destDir;
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating temp file", e);
         }
     }
 
