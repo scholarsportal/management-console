@@ -41,7 +41,8 @@ public class WebdavServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // TODO: init impl from config
-        store = new FilesystemStore(new File("/tmp/duradav"));
+        store = new FilesystemStore(new File("/tmp/duradav-base"),
+                                    new File("/tmp/duradav-temp"));
     }
 
     /**
