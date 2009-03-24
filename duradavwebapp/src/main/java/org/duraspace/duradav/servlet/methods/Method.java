@@ -2,20 +2,18 @@ package org.duraspace.duradav.servlet.methods;
 
 public enum Method {
 
-//    COPY      ("COPY",      true),
-//    DELETE    ("DELETE",    true),
-//    LOCK      ("LOCK",      true),
-//    POST      ("POST",      false),
-//    UNLOCK    ("UNLOCK",    true);
-
+    COPY      ("COPY",      new CopyHandler(),      true),
+    DELETE    ("DELETE",    new DeleteHandler(),    true),
     GET       ("GET",       new GetHandler(),       true),
     HEAD      ("HEAD",      new HeadHandler(),      true),
+    LOCK      ("LOCK",      new LockHandler(),      true),
     MKCOL     ("MKCOL",     new MkColHandler(),     false),
     MOVE      ("MOVE",      new MoveHandler(),      true),
     OPTIONS   ("OPTIONS",   new OptionsHandler(),   true),
     PROPFIND  ("PROPFIND",  new PropFindHandler(),  true),
     PROPPATCH ("PROPPATCH", new PropPatchHandler(), true),
-    PUT       ("PUT",       new PutHandler(),       false);
+    PUT       ("PUT",       new PutHandler(),       false),
+    UNLOCK    ("UNLOCK",    new UnlockHandler(),    true);
 
     private final String name;
 

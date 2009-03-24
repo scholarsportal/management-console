@@ -135,7 +135,7 @@ public class WebdavServlet extends HttpServlet {
         String logMessage = methodName + " request failed on " + path
                 + " [" + error.getStatusCode() + "] - " + error.getMessage();
         if (logger.isDebugEnabled()) {
-            logger.debug(logMessage, error);
+            logger.error(logMessage, error);
         } else {
             logger.error(logMessage);
         }

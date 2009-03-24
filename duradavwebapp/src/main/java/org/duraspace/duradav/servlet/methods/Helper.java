@@ -13,18 +13,13 @@ abstract class Helper {
 
     private static final String RFC_1123_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
-    public static int getDepth(HttpServletRequest req, int defaultValue) {
-        String depth = req.getHeader("Depth");
-        if (depth == null) {
-            return defaultValue;
-        } else if (depth.equals("0")) {
-            return 0;
-        } else if (depth.equals("1")) {
-            return 1;
-        } else if (depth.equals("infinity")) {
+    public static long getLength(HttpServletRequest req) {
+        try {
+            String string = req.getHeader("Content-Length");
+            if (string == null) return -1;
+            return Long.parseLong(string);
+        } catch (NumberFormatException e) {
             return -1;
-        } else {
-            throw new RuntimeException("Unrecognized Depth: " + depth);
         }
     }
 
