@@ -21,6 +21,8 @@ import org.duraspace.duradav.core.CollectionPath;
 import org.duraspace.duradav.core.Content;
 import org.duraspace.duradav.core.ContentPath;
 import org.duraspace.duradav.core.Path;
+import org.duraspace.duradav.error.ConflictException;
+import org.duraspace.duradav.error.MethodNotAllowedException;
 import org.duraspace.duradav.error.NotFoundException;
 import org.duraspace.duradav.error.WebdavException;
 import org.duraspace.duradav.store.WebdavStore;
@@ -50,6 +52,45 @@ public class FilesystemStore implements WebdavStore {
             if (!dir.mkdirs()) {
                 throw new RuntimeException("Error creating dir " + dir);
             }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean putContent(Content content) {
+        File file = getFile(content.getPath());
+        boolean replaced = false;
+        if (file.exists()) {
+            replaced = true;
+        }
+        InputStream source = content.getBody().getStream();
+        FileOutputStream sink = null;
+        try {
+            sink = new FileOutputStream(file);
+            IOUtils.copy(source, sink);
+            return replaced;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(source);
+            IOUtils.closeQuietly(sink);
+        }
+    }
+
+    public  void createCollection(Collection collection) throws WebdavException {
+        File dir = getFile(collection.getPath());
+        if (dir.exists()) {
+            throw new MethodNotAllowedException(collection.getPath(),
+                                                "Collection already exists");
+        }
+        File parentDir = getFile(collection.getPath().getParent());
+        if (!parentDir.isDirectory()) {
+            throw new ConflictException(collection.getPath(),
+                                        "Parent collection does not exist");
+        }
+        if (!dir.mkdir()) {
+            throw new RuntimeException("Unable to create directory: " + dir);
         }
     }
 
@@ -104,29 +145,6 @@ public class FilesystemStore implements WebdavStore {
      */
     public boolean hasCollection(CollectionPath path) {
         return getFile(path).isDirectory();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean putContent(Content content) {
-        File file = getFile(content.getPath());
-        boolean replaced = false;
-        if (file.exists()) {
-            replaced = true;
-        }
-        InputStream source = content.getBody().getStream();
-        FileOutputStream sink = null;
-        try {
-            sink = new FileOutputStream(file);
-            IOUtils.copy(source, sink);
-            return replaced;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(source);
-            IOUtils.closeQuietly(sink);
-        }
     }
 
     public void deleteContent(ContentPath path) throws WebdavException {
