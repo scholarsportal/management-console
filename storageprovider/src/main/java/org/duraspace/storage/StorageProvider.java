@@ -20,6 +20,7 @@ public interface StorageProvider {
     public static final String METADATA_SPACE_COUNT = "space-count";
     public static final String METADATA_SPACE_NAME = "space-name";
     public static final String METADATA_SPACE_ACCESS = "space-access";
+    public static final String METADATA_SPACE_SIZE = "space-size";
 
     /* Names for content metadata properties */
     public static final String METADATA_CONTENT_NAME = "content-name";

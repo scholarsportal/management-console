@@ -2,6 +2,7 @@ package org.duraspace.util;
 
 import java.util.HashMap;
 
+import org.duraspace.rackspacestorage.RackspaceStorageProvider;
 import org.duraspace.s3storage.S3StorageProvider;
 import org.duraspace.storage.StorageAccount;
 import org.duraspace.storage.StorageCustomer;
@@ -97,6 +98,12 @@ public class StorageProviderUtil {
             storageProvider = new S3StorageProvider(username, password);
         } else if(type.equals(AccountType.Azure)) {
             // TODO: Create Azure storage provider
+        } else if(type.equals(AccountType.Sun)) {
+            // TODO: Create Sun storage provider
+        } else if(type.equals(AccountType.Rackspace)) {
+            storageProvider = new RackspaceStorageProvider(username, password);
+        } else if(type.equals(AccountType.EMC)) {
+            // TODO: Create EMC storage provider
         }
 
         return storageProvider;

@@ -402,9 +402,9 @@ public class S3StorageProvider implements StorageProvider {
             contentItem.setAcl(s3Service.getObjectAcl(bucket, contentId));
             contentItem.addAllMetadata(metadataMap);
 
-            // Set name to spaceId if it is not set already
+            // Set name to contentId if it is not set already
             if(!contentItem.containsMetadata(METADATA_CONTENT_NAME)) {
-                contentItem.addMetadata(METADATA_CONTENT_NAME, spaceId);
+                contentItem.addMetadata(METADATA_CONTENT_NAME, contentId);
             }
 
             // Update Content-Type to the new mime type
