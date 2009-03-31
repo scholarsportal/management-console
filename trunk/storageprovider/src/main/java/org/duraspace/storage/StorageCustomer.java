@@ -56,6 +56,10 @@ public class StorageCustomer {
                     storageAccountType = AccountType.Azure;
                 } else if(type.equals("SUN")) {
                     storageAccountType = AccountType.Sun;
+                } else if(type.equals("RACKSPACE")) {
+                    storageAccountType = AccountType.Rackspace;
+                } else if(type.equals("EMC")) {
+                    storageAccountType = AccountType.EMC;
                 }
 
                 if(storageAccountType != null) {

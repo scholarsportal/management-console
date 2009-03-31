@@ -36,6 +36,12 @@
       <version>1.0.0</version>
     </dependency>
     
+    <dependency>
+      <groupId>org.duraspace</groupId>
+      <artifactId>rackspacestorageprovider</artifactId>
+      <version>1.0.0</version>
+    </dependency>    
+    
 <!--    <dependency>-->
 <!--      <groupId>commons-logging</groupId>-->
 <!--      <artifactId>commons-logging</artifactId>-->

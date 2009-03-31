@@ -8,7 +8,7 @@ package org.duraspace.storage;
  */
 public class StorageAccount {
 
-    public enum AccountType {S3, Azure, Sun};
+    public enum AccountType {S3, Azure, Sun, Rackspace, EMC};
 
     private String id = null;
     private String username = null;

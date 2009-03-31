@@ -54,6 +54,7 @@
       <module>ec2serviceprovider</module>
       <module>storageprovider</module>
       <module>s3storageprovider</module>
+      <module>rackspacestorageprovider</module>
       <module>mainwebapp</module>
       <module>instancewebapp</module> 
       <module>duradavwebapp</module> 
