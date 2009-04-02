@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.storage.StorageAccount.AccountType;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -45,8 +46,12 @@ public class StorageCustomer {
                 String storageAccountId = account.getChildText("id");
                 String type = account.getChildText("storageProviderType");
                 Element credentials = account.getChild("storageProviderCredential");
-                String username = credentials.getChildText("username");
-                String password = credentials.getChildText("password");
+                String encUsername = credentials.getChildText("username");
+                String encPassword = credentials.getChildText("password");
+
+                EncryptionUtil encryptUtil = new EncryptionUtil();
+                String username = encryptUtil.decrypt(encUsername);
+                String password = encryptUtil.decrypt(encPassword);
 
                 StorageAccount storageAccount = null;
                 AccountType storageAccountType = null;
