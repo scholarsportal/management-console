@@ -4,6 +4,8 @@ package org.duraspace.mainwebapp.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.duraspace.common.model.Credential;
+import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.mainwebapp.domain.model.StorageAcct;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
 
@@ -40,6 +42,17 @@ public class StorageProviderResource {
         try {
             int id = Integer.parseInt(duraAcctId);
             accts = duraSpaceAcctManager.findStorageAccounts(id);
+
+            EncryptionUtil encryptUtil = new EncryptionUtil();
+            for(StorageAcct acct : accts) {
+                Credential credential = acct.getStorageProviderCredential();
+                if(credential != null) {
+                    String encUsername = encryptUtil.encrypt(credential.getUsername());
+                    String encPassword = encryptUtil.encrypt(credential.getPassword());
+                    credential.setUsername(encUsername);
+                    credential.setPassword(encPassword);
+                }
+            }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
