@@ -140,26 +140,8 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-binding</artifactId>
       <version>1.0.5</version>
-    </dependency> 
-    <!-- 
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.binding</artifactId>
-      <version>2.0.2.RELEASE</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.js</artifactId>
-      <version>2.0.2.RELEASE</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.webflow</artifactId>
-      <version>2.0.2.RELEASE</version>
-    </dependency>
--->    
+    
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>servlet-api</artifactId>
@@ -223,7 +205,7 @@
     </dependency> 
     
   </dependencies>
-
+     
   <build>
     <resources>
       <resource>
@@ -231,29 +213,6 @@
         <filtering>true</filtering>
       </resource>
     </resources>
-  
-    <plugins>
-    
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>tomcat-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>deploy-only</goal>
-            </goals>
-            <configuration>
-              <warFile>target/${artifactId}-${version}.war</warFile>
-              <server>tomcat-server</server>
-              <url>http://localhost:${tomcat.port}/manager</url>
-              <update>true</update>
-            </configuration>
-          </execution>        
-        </executions>        
-      </plugin>
-      
-    </plugins>
   </build>
 
 </project>
