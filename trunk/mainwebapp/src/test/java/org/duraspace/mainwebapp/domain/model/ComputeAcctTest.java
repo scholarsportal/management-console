@@ -8,10 +8,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
-import org.duraspace.serviceprovider.mgmt.InstanceDescription;
-import org.duraspace.serviceprovider.mgmt.mock.MockServiceProviderProperties;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
+import org.duraspace.computeprovider.mgmt.InstanceDescription;
+import org.duraspace.computeprovider.mgmt.mock.MockComputeProviderProperties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -25,7 +25,7 @@ public class ComputeAcctTest {
 
     private final String namespace = "namespace";
 
-    private MockServiceProviderProperties props;
+    private MockComputeProviderProperties props;
 
     private final String propA = "propA";
 
@@ -43,7 +43,7 @@ public class ComputeAcctTest {
     private final int duraAcctId = 77;
 
     private final String MOCK_PROVIDER_CLASSNAME =
-            "org.duraspace.serviceprovider.mgmt.mock.LocalComputeProviderImpl";
+            "org.duraspace.computeprovider.mgmt.mock.LocalComputeProviderImpl";
 
     @Before
     public void setUp() throws Exception {
@@ -51,7 +51,7 @@ public class ComputeAcctTest {
         map.put(providerType.toString(), MOCK_PROVIDER_CLASSNAME);
         ComputeProviderFactory.setIdToClassMap(map);
 
-        props = new MockServiceProviderProperties();
+        props = new MockComputeProviderProperties();
         props.setProp0(propA);
         props.setProp1(propB);
         props.setProp2(propC);
@@ -107,7 +107,7 @@ public class ComputeAcctTest {
         String pps = acct.getXmlProps();
         assertNotNull(pps);
 
-        MockServiceProviderProperties p = new MockServiceProviderProperties();
+        MockComputeProviderProperties p = new MockComputeProviderProperties();
         p.loadFromXml(pps);
         assertEquals(p.getProp0(), propA);
         assertEquals(p.getProp1(), propB);

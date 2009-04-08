@@ -12,12 +12,12 @@ import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.common.web.NetworkUtil;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 public class ComputeAcctManagerImpl
         implements ComputeAcctManager {

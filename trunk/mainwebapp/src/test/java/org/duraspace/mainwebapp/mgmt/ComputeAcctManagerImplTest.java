@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.easymock.EasyMock;
 
 import junit.framework.Assert;
@@ -45,7 +45,7 @@ public class ComputeAcctManagerImplTest {
             ComputeProviderType.AMAZON_EC2.toString();
 
     private final String MOCK_PROVIDER_CLASSNAME =
-            "org.duraspace.serviceprovider.mgmt.mock.LocalComputeProviderImpl";
+            "org.duraspace.computeprovider.mgmt.mock.LocalComputeProviderImpl";
 
     private Credential credential;
 

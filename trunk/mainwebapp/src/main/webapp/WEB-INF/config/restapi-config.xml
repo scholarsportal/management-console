@@ -12,6 +12,6 @@
     <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
   </bean>
   
-  <bean id="serviceResource" class="org.duraspace.mainwebapp.rest.ServiceRest" />
+  <bean id="computeResource" class="org.duraspace.mainwebapp.rest.ComputeRest" />
 
 </beans>

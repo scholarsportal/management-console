@@ -1,7 +1,7 @@
 
 package org.duraspace.mainwebapp.domain.model;
 
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 
 public class ComputeProvider {
 

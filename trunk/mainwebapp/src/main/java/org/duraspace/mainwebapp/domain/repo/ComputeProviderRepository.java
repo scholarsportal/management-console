@@ -3,8 +3,8 @@ package org.duraspace.mainwebapp.domain.repo;
 
 import java.util.List;
 
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 public interface ComputeProviderRepository {
 

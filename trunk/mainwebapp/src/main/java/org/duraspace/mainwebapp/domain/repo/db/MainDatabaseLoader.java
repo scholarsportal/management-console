@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.model.Address;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
@@ -17,7 +18,6 @@ import org.duraspace.mainwebapp.domain.model.User;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.duraspace.mainwebapp.domain.repo.StorageProviderRepository;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.duraspace.storage.domain.StorageProviderType;
 
 public class MainDatabaseLoader {

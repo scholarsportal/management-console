@@ -4,9 +4,9 @@ package org.duraspace.mainwebapp.mgmt;
 import java.util.List;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 /**
  * This interface encapsulates the navigation of account repositories and the

@@ -15,12 +15,12 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.ApplicationConfig;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.cmd.ComputeCreateCmd;
 import org.duraspace.mainwebapp.domain.cmd.DuraAcctWrapper;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.mgmt.ComputeAcctManager;
 import org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManager;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;

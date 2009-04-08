@@ -7,8 +7,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0.5/spring-webflow-1.0.5.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0.5/spring-binding-1.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0.5/spring-webflow-1.0.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0.5/spring-binding-1.0.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.6/spring-core-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.5.6/spring-web-2.5.6.jar"/>
@@ -20,7 +20,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-mock/2.0.8/spring-mock-2.0.8.jar"/>
-<!--	<classpathentry kind="var" path="M2_REPO/org/springframework/webflow/org.springframework.webflow/2.0.2.RELEASE/org.springframework.webflow-2.0.2.RELEASE.jar"/>-->
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
@@ -31,7 +30,7 @@
 	<classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar"/>
-    <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/1.4/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar"/>
@@ -39,8 +38,8 @@
 	<classpathentry kind="var" path="M2_REPO/org/easymock/easymockclassextension/2.4/easymockclassextension-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/easymock/easymock/2.4/easymock-2.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ec2serviceprovider"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/serviceprovider"/>
-    <classpathentry combineaccessrules="false" kind="src" path="/storageprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ec2computeprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/computeprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/storageprovider"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
