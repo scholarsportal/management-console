@@ -11,8 +11,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.util.TableSpec;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 

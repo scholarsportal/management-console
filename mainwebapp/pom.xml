@@ -26,7 +26,7 @@
     
     <dependency>
       <groupId>org.duraspace</groupId>
-      <artifactId>serviceprovider</artifactId>
+      <artifactId>computeprovider</artifactId>
       <version>1.0.0</version>
     </dependency>     
     
@@ -38,7 +38,7 @@
     
     <dependency>
       <groupId>org.duraspace</groupId>
-      <artifactId>ec2serviceprovider</artifactId>
+      <artifactId>ec2computeprovider</artifactId>
       <version>1.0.0</version>
       <scope>deploy</scope>
     </dependency>  

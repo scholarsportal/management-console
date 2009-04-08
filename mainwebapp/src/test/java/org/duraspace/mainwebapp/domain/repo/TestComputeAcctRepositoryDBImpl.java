@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.DatabaseUtil;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.repo.db.MainDatabaseUtil;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

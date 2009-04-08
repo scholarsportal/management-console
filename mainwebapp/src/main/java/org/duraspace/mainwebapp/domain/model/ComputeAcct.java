@@ -8,10 +8,10 @@ import java.util.Properties;
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.ApplicationConfig;
 import org.duraspace.common.util.ExceptionUtil;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
-import org.duraspace.serviceprovider.mgmt.InstanceDescription;
-import org.duraspace.serviceprovider.mgmt.ServiceProvider;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
+import org.duraspace.computeprovider.mgmt.InstanceDescription;
+import org.duraspace.computeprovider.mgmt.ComputeProvider;
 
 public class ComputeAcct {
 
@@ -206,7 +206,7 @@ public class ComputeAcct {
         this.xmlProps = xmlProps;
     }
 
-    private ServiceProvider getServiceProvider() throws Exception {
+    private ComputeProvider getServiceProvider() throws Exception {
         return ComputeProviderFactory.getComputeProvider(computeProviderType);
     }
 

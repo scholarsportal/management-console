@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
 
 import static org.junit.Assert.assertTrue;
 

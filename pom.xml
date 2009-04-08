@@ -50,8 +50,8 @@
 
   <modules>
       <module>common</module>
-      <module>serviceprovider</module>
-      <module>ec2serviceprovider</module>
+      <module>computeprovider</module>
+      <module>ec2computeprovider</module>
       <module>storageprovider</module>
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>

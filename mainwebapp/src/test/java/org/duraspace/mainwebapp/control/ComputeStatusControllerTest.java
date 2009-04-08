@@ -11,14 +11,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.computeprovider.domain.ComputeProviderType;
+import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.mainwebapp.domain.cmd.ComputeAcctWrapper;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.duraspace.mainwebapp.mgmt.ComputeAcctManagerImpl;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
-import org.duraspace.serviceprovider.mgmt.ComputeProviderFactory;
 import org.easymock.EasyMock;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

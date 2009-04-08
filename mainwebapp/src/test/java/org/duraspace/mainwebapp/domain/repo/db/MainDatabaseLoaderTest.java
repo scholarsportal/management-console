@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.DatabaseUtil;
+import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.domain.repo.AddressRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.AuthorityRepositoryDBImpl;
@@ -17,7 +18,6 @@ import org.duraspace.mainwebapp.domain.repo.DuraSpaceAcctRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.StorageAcctRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.StorageProviderRepositoryDBImpl;
 import org.duraspace.mainwebapp.domain.repo.UserRepositoryDBImpl;
-import org.duraspace.serviceprovider.domain.ComputeProviderType;
 
 import static org.junit.Assert.assertEquals;
 
