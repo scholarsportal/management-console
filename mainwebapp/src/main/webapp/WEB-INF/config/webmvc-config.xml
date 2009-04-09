@@ -125,7 +125,7 @@
   <bean id="computeProviderFactory" class="org.duraspace.computeprovider.mgmt.ComputeProviderFactory">
     <property name="idToClassMap">
       <map>
-        <entry key="amazon-ec2" value="org.duraspace.ec2computeprovider.mgmt.EC2ComputeProvider" />
+        <entry key="amazon-ec2" value="org.duraspace.ec2typicacomputeprovider.mgmt.EC2ComputeProvider" />
         <entry key="local" value="org.duraspace.computeprovider.mgmt.mock.LocalComputeProviderImpl" />
       </map>
     </property>

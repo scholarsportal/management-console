@@ -51,7 +51,8 @@
   <modules>
       <module>common</module>
       <module>computeprovider</module>
-      <module>ec2computeprovider</module>
+<!--      <module>ec2computeprovider</module>-->
+      <module>ec2typicacomputeprovider</module>
       <module>storageprovider</module>
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
