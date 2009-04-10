@@ -8,6 +8,13 @@ echo ""
 scriptdir=`dirname "$0"`
 . "$scriptdir"/common.sh
 
+echo "================================"
+echo "Installing UnHosted Dependencies"
+echo "================================"
+echo ""
+cd $BUILD_HOME 
+resources/scripts/installLibs.sh
+
 echo "============"
 echo "Compiling..."
 echo "============"
