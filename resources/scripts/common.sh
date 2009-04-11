@@ -7,7 +7,7 @@
 scriptdir=`dirname "$0"`
 . "$scriptdir"/env.sh
 
-#CATALINA_HOME=??
+CATALINA_HOME=~/duraspace-home/tomcat
 
 #-------------------------------------------
 # Echo global settings and export as needed
@@ -21,7 +21,7 @@ echo "BUILD_HOME    = $BUILD_HOME"
 echo ""
 
 export M2_HOME
-#export CATALINA_HOME
+export CATALINA_HOME
 
 #-------------------------------------------------
 # Echo common script options and export as needed

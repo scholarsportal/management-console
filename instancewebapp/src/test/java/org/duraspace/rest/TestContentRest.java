@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duraspace.config.InstanceWebAppConfig;
 import org.duraspace.storage.StorageProvider;
 
 import junit.framework.TestCase;
@@ -21,21 +22,26 @@ public class TestContentRest
         extends TestCase {
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
-    private static String baseUrl = "http://localhost:8080/instancewebapp";
+    private static String host = "http://localhost";
+    private static String webapp = "instancewebapp";
+    private static String baseUrl;
     private static final String CONTENT = "<content />";
 
     private final String nameTag = StorageProvider.METADATA_CONTENT_NAME;
     private final String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
-    private String sizeTag = StorageProvider.METADATA_CONTENT_SIZE;
-    private String checksumTag = StorageProvider.METADATA_CONTENT_CHECKSUM;
-    private String modifiedTag = StorageProvider.METADATA_CONTENT_MODIFIED;
+    private final String sizeTag = StorageProvider.METADATA_CONTENT_SIZE;
+    private final String checksumTag = StorageProvider.METADATA_CONTENT_CHECKSUM;
+    private final String modifiedTag = StorageProvider.METADATA_CONTENT_MODIFIED;
 
     @Override
     @Before
     protected void setUp() throws Exception {
+        String port = InstanceWebAppConfig.getPort();
+        baseUrl = host + ":" + port + "/" + webapp;
+
         // Initialize the Instance
         String url = baseUrl + "/initialize";
-        String formParams = "host=localhost&port=8080";
+        String formParams = "host=localhost&port="+port;
         HttpResponse response = restHelper.post(url, formParams, true);
         assertTrue(response.getStatusCode() == 200);
 

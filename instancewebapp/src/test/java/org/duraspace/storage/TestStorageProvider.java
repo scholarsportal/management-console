@@ -1,7 +1,9 @@
 package org.duraspace.storage;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.config.InstanceWebAppConfig;
 import org.duraspace.s3storage.S3StorageProvider;
 import org.duraspace.storage.StorageAccount.AccountType;
 import org.duraspace.util.StorageProviderUtil;
@@ -19,7 +21,13 @@ public class TestStorageProvider
         extends TestCase {
 
     private static String mainHost = "localhost";
-    private static int mainPort = 8080;
+    private static int mainPort;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        mainPort = Integer.parseInt(InstanceWebAppConfig.getPort());
+    }
 
     @Test
     public void testStorageCustomer() throws Exception {
