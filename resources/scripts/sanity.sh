@@ -60,7 +60,7 @@ $M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=~/du
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "ERROR: Unit test(s) failed; see above"
+  echo "ERROR: Integration test(s) failed; see above"
   exit 1
 fi
 
