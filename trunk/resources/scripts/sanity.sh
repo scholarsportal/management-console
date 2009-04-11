@@ -15,6 +15,18 @@ echo ""
 cd $BUILD_HOME 
 resources/scripts/installLibs.sh
 
+echo "=================="
+echo "Starting Tomcat..."
+echo "=================="
+echo ""
+if [ -z $CATALINA_HOME ]; then
+  echo "ERROR: Need to set CATALINA_HOME"
+  exit 1
+fi
+
+$CATALINA_HOME/bin/startup.sh
+
+
 echo "============"
 echo "Compiling..."
 echo "============"
@@ -32,13 +44,32 @@ echo ""
 echo "====================="
 echo "Running unit tests..."
 echo "====================="
-$M2_HOME/bin/mvn package
+$M2_HOME/bin/mvn package -Ddatabase.home.default=~/duraspace-home/derby/duraspaceDB
 
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Unit test(s) failed; see above"
   exit 1
 fi
+
+echo ""
+echo "============================"
+echo "Running integration tests..."
+echo "============================"
+$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=~/duraspace-home/derby/duraspaceDB
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Unit test(s) failed; see above"
+  exit 1
+fi
+
+echo "======================="
+echo "Shutting Down Tomcat..."
+echo "======================="
+echo ""
+$CATALINA_HOME/bin/shutdown.sh
+
 
 echo ""
 echo "===================================="

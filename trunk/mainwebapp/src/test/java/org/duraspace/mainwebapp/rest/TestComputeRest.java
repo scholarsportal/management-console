@@ -1,15 +1,18 @@
+
 package org.duraspace.mainwebapp.rest;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.rest.RestTestHelper.HttpResponse;
 
 import junit.framework.TestCase;
 
 /**
- * Runtime test of service REST API. The orgwebapp
- * web application must be deployed and available at the
- * baseUrl location in order for these tests to pass.
+ * Runtime test of service REST API. The orgwebapp web application must be
+ * deployed and available at the baseUrl location in order for these tests to
+ * pass.
  *
  * @author Bill Branan
  */
@@ -17,7 +20,19 @@ public class TestComputeRest
         extends TestCase {
 
     private static RestTestHelper restHelper = new RestTestHelper();
-    private static String baseUrl = "http://localhost:8080/mainwebapp";
+
+    private static String host = "http://localhost";
+
+    private static String webapp = "mainwebapp";
+
+    private static String baseUrl;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        String port = MainWebAppConfig.getPort();
+        baseUrl = host + ":" + port + "/" + webapp;
+    }
 
     @Test
     public void testGetServices() throws Exception {
@@ -34,7 +49,8 @@ public class TestComputeRest
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue("<serviceSubscriptions />".equals(response.getResponseBody()));
+        assertTrue("<serviceSubscriptions />"
+                .equals(response.getResponseBody()));
     }
 
     @Test
@@ -43,7 +59,8 @@ public class TestComputeRest
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue("<serviceConfiguration />".equals(response.getResponseBody()));
+        assertTrue("<serviceConfiguration />"
+                .equals(response.getResponseBody()));
     }
 
     @Test

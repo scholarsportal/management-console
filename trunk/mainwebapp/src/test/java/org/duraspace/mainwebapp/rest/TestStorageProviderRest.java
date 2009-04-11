@@ -1,8 +1,10 @@
 
 package org.duraspace.mainwebapp.rest;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.rest.RestTestHelper.HttpResponse;
 
 import junit.framework.TestCase;
@@ -19,7 +21,18 @@ public class TestStorageProviderRest
 
     private static RestTestHelper restHelper = new RestTestHelper();
 
-    private static String baseUrl = "http://localhost:8080/mainwebapp";
+    private static String host = "http://localhost";
+
+    private static String webapp = "mainwebapp";
+
+    private static String baseUrl;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        String port = MainWebAppConfig.getPort();
+        baseUrl = host + ":" + port + "/" + webapp;
+    }
 
     @Test
     public void testGetStorageProviders() throws Exception {
@@ -36,7 +49,8 @@ public class TestStorageProviderRest
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue(response.getResponseBody().indexOf("</storageProviderAccounts>") > 0);
+        assertTrue(response.getResponseBody()
+                .indexOf("</storageProviderAccounts>") > 0);
     }
 
     @Test

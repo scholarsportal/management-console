@@ -1,14 +1,15 @@
 package org.duraspace.rest;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duraspace.config.InstanceWebAppConfig;
 import org.duraspace.storage.StorageProvider;
+
+import junit.framework.TestCase;
 
 /**
  * Runtime test of space REST API. The instancewebapp
@@ -21,17 +22,22 @@ public class TestSpaceRest
         extends TestCase {
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
-    private static String baseUrl = "http://localhost:8080/instancewebapp";
+    private static String host = "http://localhost";
+    private static String webapp = "instancewebapp";
+    private static String baseUrl;
 
-    private String nameTag = StorageProvider.METADATA_SPACE_NAME;
-    private String accessTag = StorageProvider.METADATA_SPACE_ACCESS;
+    private final String nameTag = StorageProvider.METADATA_SPACE_NAME;
+    private final String accessTag = StorageProvider.METADATA_SPACE_ACCESS;
 
     @Override
     @Before
     protected void setUp() throws Exception {
+        String port = InstanceWebAppConfig.getPort();
+        baseUrl = host + ":" + port + "/" + webapp;
+
         // Initialize the Instance
         String url = baseUrl + "/initialize";
-        String formParams = "host=localhost&port=8080";
+        String formParams = "host=localhost&port="+port;
         HttpResponse response = restHelper.post(url, formParams, true);
         assertTrue(response.getStatusCode() == 200);
 
