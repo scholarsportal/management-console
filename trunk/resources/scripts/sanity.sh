@@ -44,7 +44,7 @@ echo ""
 echo "====================="
 echo "Running unit tests..."
 echo "====================="
-$M2_HOME/bin/mvn package -Ddatabase.home.default=~/duraspace-home/derby/duraspaceDB
+$M2_HOME/bin/mvn package -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB
 
 if [ $? -ne 0 ]; then
   echo ""
@@ -56,7 +56,7 @@ echo ""
 echo "============================"
 echo "Running integration tests..."
 echo "============================"
-$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=~/duraspace-home/derby/duraspaceDB
+$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB
 
 if [ $? -ne 0 ]; then
   echo ""
