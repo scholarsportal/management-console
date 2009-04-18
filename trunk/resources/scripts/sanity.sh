@@ -49,6 +49,7 @@ $M2_HOME/bin/mvn package -Ddatabase.home.default=/home/bamboo/duraspace-home/der
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Unit test(s) failed; see above"
+  $CATALINA_HOME/bin/shutdown.sh
   exit 1
 fi
 
@@ -61,6 +62,7 @@ $M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=/hom
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Integration test(s) failed; see above"
+  $CATALINA_HOME/bin/shutdown.sh
   exit 1
 fi
 
