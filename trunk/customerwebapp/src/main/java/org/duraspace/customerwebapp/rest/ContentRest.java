@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.duraspace.common.web.RestResourceException;
 import org.duraspace.customerwebapp.rest.RestUtil.RequestContent;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;

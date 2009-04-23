@@ -18,8 +18,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;

@@ -1,9 +1,11 @@
-package org.duraspace.storage;
+package org.duraspace.storage.provider;
 
 import java.io.InputStream;
 
 import java.util.List;
 import java.util.Properties;
+
+import org.duraspace.storage.domain.StorageException;
 
 /**
  * A Storage Provider provides services which allow content to be

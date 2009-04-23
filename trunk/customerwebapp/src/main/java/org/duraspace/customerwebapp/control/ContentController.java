@@ -8,8 +8,8 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.customerwebapp.domain.ContentItem;
 import org.duraspace.customerwebapp.domain.ContentMetadata;
-import org.duraspace.customerwebapp.util.StorageProviderUtil;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.customerwebapp.util.StorageProviderFactory;
+import org.duraspace.storage.provider.StorageProvider;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -50,7 +50,7 @@ public class ContentController extends SimpleFormController {
         }
 
         StorageProvider storage =
-            StorageProviderUtil.getStorageProvider(accountId);
+            StorageProviderFactory.getStorageProvider(accountId);
 
         Properties contentProps =
             storage.getContentMetadata(spaceId, contentId);

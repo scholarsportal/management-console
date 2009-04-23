@@ -1,4 +1,4 @@
-package org.duraspace.storage;
+package org.duraspace.storage.domain;
 
 
 /**

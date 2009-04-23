@@ -12,8 +12,8 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
-import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProvider.AccessType;
+import org.duraspace.storage.provider.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider.AccessType;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

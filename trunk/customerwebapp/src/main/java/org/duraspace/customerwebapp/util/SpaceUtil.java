@@ -11,8 +11,8 @@ import java.util.Properties;
 
 import org.duraspace.customerwebapp.domain.Space;
 import org.duraspace.customerwebapp.domain.SpaceMetadata;
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
 
 /**
  * Provides utility methods for spaces.
@@ -24,7 +24,7 @@ public class SpaceUtil {
     public static List<Space> getSpacesList(String accountId)
     throws StorageException{
         StorageProvider storage =
-            StorageProviderUtil.getStorageProvider(accountId);
+            StorageProviderFactory.getStorageProvider(accountId);
 
         List<String> spaceIds = storage.getSpaces();
 

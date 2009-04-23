@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.customerwebapp.config.CustomerWebAppConfig;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider;
 
 import junit.framework.TestCase;
 

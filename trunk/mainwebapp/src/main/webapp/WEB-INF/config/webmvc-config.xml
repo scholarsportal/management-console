@@ -137,6 +137,7 @@
     <property name="storageProviderRepository" ref="storageProviderRepo" />
   </bean>
   
+    
   <!-- Enables plain Controllers -->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 

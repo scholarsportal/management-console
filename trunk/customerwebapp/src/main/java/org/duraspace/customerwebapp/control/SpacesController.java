@@ -9,10 +9,10 @@ import org.apache.log4j.Logger;
 
 import org.duraspace.customerwebapp.domain.Space;
 import org.duraspace.customerwebapp.util.SpaceUtil;
-import org.duraspace.customerwebapp.util.StorageProviderUtil;
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProvider.AccessType;
+import org.duraspace.customerwebapp.util.StorageProviderFactory;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider.AccessType;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -46,7 +46,7 @@ public class SpacesController extends SimpleFormController {
 
         StorageProvider storage = null;
         try {
-            storage = StorageProviderUtil.getStorageProvider(accountId);
+            storage = StorageProviderFactory.getStorageProvider(accountId);
         } catch(StorageException se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());

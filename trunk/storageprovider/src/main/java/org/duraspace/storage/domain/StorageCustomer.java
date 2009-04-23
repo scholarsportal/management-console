@@ -1,4 +1,4 @@
-package org.duraspace.storage;
+package org.duraspace.storage.domain;
 
 import java.net.URL;
 
@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.util.EncryptionUtil;
-import org.duraspace.storage.StorageAccount.AccountType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -54,17 +53,17 @@ public class StorageCustomer {
                 String password = encryptUtil.decrypt(encPassword);
 
                 StorageAccount storageAccount = null;
-                AccountType storageAccountType = null;
+                StorageProviderType storageAccountType = null;
                 if(type.equals("AMAZON_S3")) {
-                    storageAccountType = AccountType.S3;
+                    storageAccountType = StorageProviderType.AMAZON_S3;
                 } else if(type.equals("MS_AZURE")) {
-                    storageAccountType = AccountType.Azure;
+                    storageAccountType = StorageProviderType.MICROSOFT_AZURE;
                 } else if(type.equals("SUN")) {
-                    storageAccountType = AccountType.Sun;
+                    storageAccountType = StorageProviderType.SUN;
                 } else if(type.equals("RACKSPACE")) {
-                    storageAccountType = AccountType.Rackspace;
+                    storageAccountType = StorageProviderType.RACKSPACE;
                 } else if(type.equals("EMC")) {
-                    storageAccountType = AccountType.EMC;
+                    storageAccountType = StorageProviderType.EMC;
                 }
 
                 if(storageAccountType != null) {
