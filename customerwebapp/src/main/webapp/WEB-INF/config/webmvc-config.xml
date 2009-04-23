@@ -43,7 +43,7 @@
   <bean id="contentController" class="org.duraspace.customerwebapp.control.ContentController">
     <property name="successView" value="content" />  
   </bean>
-
+  
   <!-- View Resolvers - select the JSP to display results -->
   <bean id="duraViewResolver"
     class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -61,6 +61,13 @@
     </property>
     <property name="order" value="2" />
   </bean>
+  
+  <!-- Domain Beans -->
+  <bean id="storageProviderFactory" class="org.duraspace.customerwebapp.util.StorageProviderFactory">
+    <property name="statelessProvider" ref="statelessStoragePvdr"/>
+  </bean>
+  
+  <bean id="statelessStoragePvdr" class="org.duraspace.storage.provider.StatelessStorageProviderImpl"/>
 
   <!-- Enables plain Controllers -->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />

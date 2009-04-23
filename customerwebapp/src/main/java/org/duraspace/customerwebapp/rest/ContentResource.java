@@ -8,10 +8,10 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.web.RestResourceException;
-import org.duraspace.customerwebapp.util.StorageProviderUtil;
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProvider.AccessType;
+import org.duraspace.customerwebapp.util.StorageProviderFactory;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider.AccessType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -39,7 +39,7 @@ public class ContentResource {
     throws RestResourceException {
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -74,7 +74,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -119,7 +119,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             Properties metadata = storage.getContentMetadata(spaceID, contentID);
 
@@ -158,7 +158,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             storage.addContent(spaceID,
                                contentID,
@@ -189,7 +189,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             storage.deleteContent(spaceID, contentID);
         } catch (StorageException e) {

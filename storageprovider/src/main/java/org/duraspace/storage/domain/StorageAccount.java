@@ -1,4 +1,6 @@
-package org.duraspace.storage;
+package org.duraspace.storage.domain;
+
+
 
 /**
  * Contains the information necessary to access a storage
@@ -8,17 +10,15 @@ package org.duraspace.storage;
  */
 public class StorageAccount {
 
-    public enum AccountType {S3, Azure, Sun, Rackspace, EMC};
-
     private String id = null;
     private String username = null;
     private String password = null;
-    private AccountType type = null;
+    private StorageProviderType type = null;
 
     public StorageAccount(String id,
                           String username,
                           String password,
-                          AccountType type) {
+                          StorageProviderType type) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -70,14 +70,14 @@ public class StorageAccount {
     /**
      * @return the type
      */
-    public AccountType getType() {
+    public StorageProviderType getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(AccountType type) {
+    public void setType(StorageProviderType type) {
         this.type = type;
     }
 

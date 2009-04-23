@@ -7,10 +7,10 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.web.RestResourceException;
-import org.duraspace.customerwebapp.util.StorageProviderUtil;
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageProvider.AccessType;
+import org.duraspace.customerwebapp.util.StorageProviderFactory;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
+import org.duraspace.storage.provider.StorageProvider.AccessType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -37,7 +37,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             List<String> spaces = storage.getSpaces();
             for(String spaceID : spaces) {
@@ -101,7 +101,7 @@ public class SpaceResource {
         spaceElem.addContent(propsElem);
 
         StorageProvider storage =
-            StorageProviderUtil.getStorageProvider(accountID);
+            StorageProviderFactory.getStorageProvider(accountID);
 
         Properties metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
@@ -134,7 +134,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -178,7 +178,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
             storage.createSpace(spaceID);
             updateSpaceProperties(accountID, spaceID, spaceName, spaceAccess);
         } catch (StorageException e) {
@@ -206,7 +206,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
 
             // Set space properties if a new value was provided
             if(spaceName != null && !spaceName.equals("")) {
@@ -259,7 +259,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderUtil.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider(accountID);
             storage.deleteSpace(spaceID);
         } catch (StorageException e) {
             String error = "Error attempting to delete space '" +

@@ -4,12 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.customerwebapp.config.CustomerWebAppConfig;
-import org.duraspace.customerwebapp.util.StorageProviderUtil;
-import org.duraspace.s3storage.S3StorageProvider;
-import org.duraspace.storage.StorageAccount;
-import org.duraspace.storage.StorageCustomer;
-import org.duraspace.storage.StorageProvider;
-import org.duraspace.storage.StorageAccount.AccountType;
+import org.duraspace.customerwebapp.util.StorageProviderFactory;
+import org.duraspace.storage.domain.StorageAccount;
+import org.duraspace.storage.domain.StorageCustomer;
+import org.duraspace.storage.domain.StorageProviderType;
+import org.duraspace.storage.provider.BrokeredStorageProvider;
+import org.duraspace.storage.provider.StorageProvider;
 
 import junit.framework.TestCase;
 
@@ -45,17 +45,17 @@ public class TestStorageProvider
         assertNotNull(primary);
         assertNotNull(primary.getUsername());
         assertNotNull(primary.getPassword());
-        assertEquals(primary.getType(), AccountType.S3);
+        assertEquals(primary.getType(), StorageProviderType.AMAZON_S3);
     }
 
     @Test
     public void testStorageProviderUtility() throws Exception {
-        StorageProviderUtil.initialize(mainHost, mainPort);
+        StorageProviderFactory.initialize(mainHost, mainPort);
         StorageProvider storage =
-            StorageProviderUtil.getStorageProvider("1");
+            StorageProviderFactory.getStorageProvider("1");
 
         assertNotNull(storage);
-        assertTrue(storage instanceof S3StorageProvider);
+        assertTrue(storage instanceof BrokeredStorageProvider);
     }
 
  }

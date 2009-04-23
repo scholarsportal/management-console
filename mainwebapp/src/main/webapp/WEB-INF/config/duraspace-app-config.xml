@@ -16,5 +16,6 @@
   <import resource="webflow-config.xml" />
   <!--  <import resource="security-config.xml" />-->
   <import resource="restapi-config.xml" />
+  <import resource="aop-config.xml" />
 
 </beans>

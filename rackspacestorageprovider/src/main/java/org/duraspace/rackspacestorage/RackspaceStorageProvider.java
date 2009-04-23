@@ -24,8 +24,8 @@ import com.mosso.client.cloudfiles.FilesObjectMetaData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.duraspace.storage.StorageException;
-import org.duraspace.storage.StorageProvider;
+import org.duraspace.storage.domain.StorageException;
+import org.duraspace.storage.provider.StorageProvider;
 
 
 /**
@@ -483,8 +483,8 @@ public class RackspaceStorageProvider implements StorageProvider {
      *
      * From Cloud Files Docs:
      * The only restrictions on Container names is that they cannot
-     * contain a forward slash, “/” character or a question mark,
-     * “?” character and they must be less than 64 characters in
+     * contain a forward slash, ï¿½/ï¿½ character or a question mark,
+     * ï¿½?ï¿½ character and they must be less than 64 characters in
      * length (after URL encoding).
      *
      * @param spaceId
