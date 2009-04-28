@@ -6,24 +6,16 @@
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   
   <!-- AOP - Advice -->
-     
-  <bean id="ingestAdvice" class="org.duraspace.storage.aop.IngestAdvice">
+  <bean id="ingestAdvice" class="org.duraspace.customerwebapp.aop.IngestAdvice" >
+    <property name="jmsTemplate" ref="jmsTemplate" />
+    <property name="destination" ref="ingestDestination" />
   </bean>
   
   <bean id="ingestAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
     <property name="advice" ref="ingestAdvice"/>
     <property name="pattern" value=".*StatelessStorageProvider.addContent"/>
   </bean>
-  <!-- 
-  comment below
-  <bean id="addContentController" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <property name="target" ref="storageProvider"/>
-    <property name="interceptorNames" value="ingestAdvisor"/>
-    <property name="proxyInterfaces" value="org.springframework.web.servlet.mvc.Controller"/>
-  </bean> 
-  comment above
-  -->
-
+ 
   <!-- Enables Auto-AOP Proxy Creation -->
   <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
   

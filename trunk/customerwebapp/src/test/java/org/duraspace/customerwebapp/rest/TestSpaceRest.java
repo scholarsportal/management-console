@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
-import org.duraspace.customerwebapp.config.CustomerWebAppConfig;
 import org.duraspace.storage.provider.StorageProvider;
 
 import junit.framework.TestCase;
@@ -21,11 +20,7 @@ import junit.framework.TestCase;
 public class TestSpaceRest
         extends TestCase {
 
-    private static String configFileName = "test-customerwebapp.properties";
-
     private static RestHttpHelper restHelper = new RestHttpHelper();
-    private static String host = "http://localhost";
-    private static String webapp = "customerwebapp";
     private static String baseUrl;
 
     private final String nameTag = StorageProvider.METADATA_SPACE_NAME;
@@ -34,18 +29,14 @@ public class TestSpaceRest
     @Override
     @Before
     protected void setUp() throws Exception {
-        CustomerWebAppConfig.setConfigFileName(configFileName);
-        String port = CustomerWebAppConfig.getPort();
-        baseUrl = host + ":" + port + "/" + webapp;
+        baseUrl = RestTestHelper.getBaseUrl();
 
         // Initialize the Instance
-        String url = baseUrl + "/initialize";
-        String formParams = "host=localhost&port="+port;
-        HttpResponse response = restHelper.post(url, formParams, true);
+        HttpResponse response = RestTestHelper.initialize();
         assertTrue(response.getStatusCode() == 200);
 
         // Add space1
-        response = RestTestHelper.addSpace(baseUrl, "1", "space1");
+        response = RestTestHelper.addSpace("1", "space1");
         assertTrue(response.getStatusCode() == 201);
     }
 
@@ -53,7 +44,7 @@ public class TestSpaceRest
     @After
     protected void tearDown() throws Exception {
         HttpResponse response =
-            RestTestHelper.deleteSpace(baseUrl, "1", "space1");
+            RestTestHelper.deleteSpace("1", "space1");
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
