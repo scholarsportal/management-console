@@ -18,7 +18,7 @@
   </listener>
 
   <servlet>
-    <servlet-name>instancewebapp</servlet-name>
+    <servlet-name>customerwebapp</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
@@ -47,7 +47,7 @@
   </servlet-mapping>
  
   <servlet-mapping>
-    <servlet-name>instancewebapp</servlet-name>
+    <servlet-name>customerwebapp</servlet-name>
     <url-pattern>*.htm</url-pattern>
   </servlet-mapping>
 
