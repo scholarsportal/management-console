@@ -1,0 +1,51 @@
+
+package org.duraspace.customerwebapp.aop;
+
+/**
+ * This class is the bean that is published-to/consumed-from the ingest topic.
+ *
+ * @author Andrew Woods
+ */
+public class IngestMessage {
+
+    private String spaceId;
+
+    private String contentId;
+
+    private String contentMimeType;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("IngestMessage[");
+        sb.append("spaceId:'" + spaceId + "'");
+        sb.append("|contentId:'" + contentId + "'");
+        sb.append("|mime:'" + contentMimeType + "'");
+        sb.append("]\n");
+        return sb.toString();
+    }
+
+    public String getSpaceId() {
+        return spaceId;
+    }
+
+    public void setSpaceId(String spaceId) {
+        this.spaceId = spaceId;
+    }
+
+    public String getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(String contentId) {
+        this.contentId = contentId;
+    }
+
+    public String getContentMimeType() {
+        return contentMimeType;
+    }
+
+    public void setContentMimeType(String contentMimeType) {
+        this.contentMimeType = contentMimeType;
+    }
+
+}
