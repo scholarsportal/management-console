@@ -31,23 +31,7 @@ public class IngestAdvice
                                Object targetObj) throws Throwable {
 
         if (log.isDebugEnabled()) {
-            String pre0 = "--------------------------";
-            String pre1 = pre0 + "--";
-            String pre2 = pre1 + "--";
-
-            log.debug(pre0 + "advice: publish to ingest topic");
-            if (targetObj != null && targetObj.getClass() != null) {
-                log.debug(pre1 + "object: " + targetObj.getClass().getName());
-            }
-            if (method != null) {
-                log.debug(pre1 + "method: " + method.getName());
-            }
-            if (methodArgs != null) {
-                for (Object obj : methodArgs) {
-                    log.debug(pre2 + "method-arg: ");
-                    log.debug(obj.toString());
-                }
-            }
+            doLogging(returnObj, method, methodArgs, targetObj);
         }
 
         publishIngestEvent(createIngestMessage(methodArgs));
@@ -83,6 +67,29 @@ public class IngestAdvice
     private String getSpaceId(Object[] methodArgs) {
         log.debug("Returning 'spaceId' at index: " + SPACE_ID_INDEX);
         return (String) methodArgs[SPACE_ID_INDEX];
+    }
+
+    private void doLogging(Object returnObj,
+                           Method method,
+                           Object[] methodArgs,
+                           Object targetObj) {
+        String pre0 = "--------------------------";
+        String pre1 = pre0 + "--";
+        String pre2 = pre1 + "--";
+
+        log.debug(pre0 + "advice: publish to ingest topic");
+        if (targetObj != null && targetObj.getClass() != null) {
+            log.debug(pre1 + "object: " + targetObj.getClass().getName());
+        }
+        if (method != null) {
+            log.debug(pre1 + "method: " + method.getName());
+        }
+        if (methodArgs != null) {
+            for (Object obj : methodArgs) {
+                log.debug(pre2 + "method-arg: ");
+                log.debug(obj.toString());
+            }
+        }
     }
 
     public JmsTemplate getJmsTemplate() {

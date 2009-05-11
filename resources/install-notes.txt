@@ -10,7 +10,11 @@ To use the tomcat-maven plugin to (re)deploy the webapp, add the user to 'tomcat
 
 
 ::Maven::
-To use the tomcat plugin, also add the 'server' to your maven 'settings.xml':
+There are several maven configuration items that need to be set based on the local machines settings. 
+These items are set in $M2_HOME/conf/settings.xml.
+There is an example of a complete settings.xml file at resources/settings.xml that can be used as is (with the elements populated with local values).
+
+To use the tomcat plugin, also add the 'server' to your maven 'settings.xml' (see resources/settings.xml):
 
 <server>
   <id>tomcat-server</id>
@@ -18,15 +22,7 @@ To use the tomcat plugin, also add the 'server' to your maven 'settings.xml':
   <password>password</password>
 </server>
 
-Until we have an internal maven repository to host third-party jars that do not exist in an m2 repository, run the following command(s) from ./trunk:
-
-mvn install:install-file -Dfile=resources/libs/amazon-ec2-2008-12-01-java-library.jar -DgroupId=com.amazonaws -DartifactId=ec2 -Dversion=2008-12-01 -Dpackaging=jar
-
-mvn install:install-file -Dfile=resources/libs/amazon-ec2-2008-12-01-java-library-src.jar -DgroupId=com.amazonaws -DartifactId=ec2-src -Dversion=2008-12-01 -Dpackaging=jar
-
-mvn install:install-file -Dfile=resources/libs/rackspace-java-cloudfiles-1.3.0.jar -DgroupId=com.mosso -DartifactId=cloudfiles -Dversion=1.3.0 -Dpackaging=jar
-
-mvn install:install-file -Dfile=resources/libs/rackspace-java-cloudfiles-1.3.0-src.jar -DgroupId=com.mosso -DartifactId=cloudfiles-src -Dversion=1.3.0 -Dpackaging=jar
+Until we have an internal maven repository to host third-party jars that do not exist in an m2 repository, run the resources/scripts/installLibs.sh from ./trunk.
 
 ::Eclipse::
 To make your .classpath resolve, from trunk run:
@@ -54,4 +50,27 @@ To ensure that the classpath is setup properly, it is probably easiest to run th
 >This sets a variable defining the database resource in the context.xml. 
 >Finally, tomcat needs to have access to the derby jdbc driver.
  So put a copy of the derbyxxx.jar that is found in the mainwebapp/WEB-INF/lib under CATALINA_HOME/lib.
+
+::Unit Test Database::
+Several storage provider unit tests need to connect to the actual storage providers with real credentials.
+These credentials should be stored in a local database that is accessed by the unit tests.
+To create the unit-test-database, run the following script: resources/scripts/unitDBUtil.sh (or run UnitTestDatabaseLoaderCLI.java from eclipse).
+Once the database has been created, the unit tests being run through maven need to know where the database is located, 
+ and what the boot-password is (since it is an encrypted database).
+Add the <profile> with <id>always</id> found in 'resources/settings.xml' to your settings.xml.
+
+<profile>
+  <id>always</id>
+  <properties>
+    <unit.database.home.default>[location-of-unit-test-db]</unit.database.home.default>
+    <unit.database.password.default>[boot-password]</unit.database.password.default>
+  </properties>
+</profile>
+
+Also add the <activeProfiles> element found in 'resources/settings.xml' to your settings.xml.
+
+<activeProfiles>
+  <activeProfile>always</activeProfile>
+</activeProfiles>
+
 
