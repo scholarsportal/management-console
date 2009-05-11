@@ -43,13 +43,24 @@ public abstract class DatabaseUtil {
 
     private final String baseDir;
 
+    public static String NOT_ENCRYPTED = "NOT_ENCRYPTED";
+
     public DatabaseUtil(Credential cred, String baseDir) {
+        this(cred, baseDir, NOT_ENCRYPTED);
+    }
+
+    public DatabaseUtil(Credential cred, String baseDir, String bootPassword) {
         this.baseDir = baseDir;
 
         dataSource = new EmbeddedDataSource();
         dataSource.setUser(cred.getUsername());
         dataSource.setPassword(cred.getPassword());
         dataSource.setDatabaseName(baseDir);
+        if (bootPassword != NOT_ENCRYPTED) {
+            String connAtts =
+                    "dataEncryption=true;bootPassword=" + bootPassword;
+            dataSource.setConnectionAttributes(connAtts);
+        }
         jdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 

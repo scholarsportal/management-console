@@ -15,7 +15,7 @@ http://localhost:8080/instancewebapp
 mvn clean install -Ddatabase.home.default=<path.of.database.home>
 
 ::clover::
-If you plan on using clover, the following element needs to be added to your maven 'settings.xml':
+If you plan on using clover, the following element needs to be added to your maven 'settings.xml' (see resources/settings.xml):
 
   <profiles>
     <profile>

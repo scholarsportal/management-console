@@ -71,7 +71,7 @@ public interface ComputeProvider {
      */
     public boolean isWebappRunning(Credential credential,
                                    String instanceId,
-                                   String xmlPropss) throws Exception;
+                                   String xmlProps) throws Exception;
 
     /**
      * This method returns true if the webapp of provided instance is currently
@@ -86,7 +86,7 @@ public interface ComputeProvider {
      */
     public boolean isInstanceBooting(Credential credential,
                                      String instanceId,
-                                     String xmlPropss) throws Exception;
+                                     String xmlProps) throws Exception;
 
     /**
      * This method returns the URL of the instancewebapp on the instance with
