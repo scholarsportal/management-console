@@ -1,5 +1,9 @@
 package org.duraspace.duradav.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  * The location of a file or directory.
  * <p>
@@ -16,6 +20,8 @@ package org.duraspace.duradav.core;
  */
 public abstract class Path {
 
+    protected final Logger log = LoggerFactory.getLogger(Path.class);
+
     public static final CollectionPath ROOT = new CollectionPath("/");
 
     private final String string;
@@ -31,6 +37,8 @@ public abstract class Path {
     }
 
     private void validate() {
+        log.debug("validating path: '" + string + "'");
+
         if (string.length() == 0) {
             throw new IllegalArgumentException("Path cannot be empty");
         }
