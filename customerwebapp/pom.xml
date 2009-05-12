@@ -42,12 +42,6 @@
       <version>1.0.0</version>
     </dependency>    
     
-<!--    <dependency>-->
-<!--      <groupId>commons-logging</groupId>-->
-<!--      <artifactId>commons-logging</artifactId>-->
-<!--      <version>1.0</version>-->
-<!--    </dependency>-->
-    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -177,21 +171,5 @@
     </dependency>
     
   </dependencies>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
-
-  </build>
 
 </project>

@@ -38,3 +38,12 @@ $mvn clover2:instrument clover2:aggregate clover2:clover -P profile-clover
 A report will be generated in the following directory:
 ./target/site/clover/
 
+::logging::
+In order for log4j to know the base directory in which to write logs, 
+ 'duraspace.home' should be defined in your maven 'settings.xml' (see resources/settings.xml):
+  
+  <properties>
+    <duraspace.home>[location-of-writable-duraspace-directory]</duraspace.home>
+    ...
+
+

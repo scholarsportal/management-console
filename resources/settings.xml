@@ -26,6 +26,7 @@
     <profile>
       <id>always</id>
       <properties>
+        <duraspace.home>[location-of-writable-duraspace-directory]</duraspace.home>
         <unit.database.home.default>[location-of-unit-test-db]</unit.database.home.default>
         <unit.database.password.default>[boot-password]</unit.database.password.default>
       </properties>
