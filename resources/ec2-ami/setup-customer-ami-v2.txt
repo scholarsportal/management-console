@@ -1,0 +1,52 @@
+Base-AMI: ami-ec48af85
+
+
+####################
+## building image ##
+####################
+
+Note: This set-up starts from an instance of the mainwebapp ami.
+      All configuration is a modification to what was already done for mainwebapp.
+
+####
+:: Initial Utility Setup ::
+####
+:start base mainwebapp-ec2 instance from elasticfox, etc...
+:#ssh -i xxx-keypair.pem -l root URL
+
+
+####
+:: init.d setup ::
+####
+:#rm /etc/init.d/ebs
+:paste init.d-customerwebapp as /etc/init.d/duraspace
+
+
+####
+:: verification ::
+####
+:run through mvn commands in /etc/init.d/duraspace
+
+:locally, connect to [ec2-instance-url]:8080/customerwebapp
+
+:remove all artifact files before creating bundle.
+:#cd $CATALINA_HOME/webapps
+:#rm -rf mainwebapp* customerwebapp* duradavwebapp*
+
+:#rm -rf /home/tomcat/logs
+
+:#cd /opt/duraspace
+:#mvn clean
+
+####
+:: bundle ::
+####
+:package-image
+:#cd /home/root
+:#ec2-bundle-vol -k pk-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem -c cert-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem -u 184789323014
+:#cd /tmp
+:#cp image.manifest.xml ubuntu8.10-32bit-customer-bootstrap-ebs-v0.1.manifest.xml
+:#ec2-upload-bundle -b duracloud.images -m ubuntu8.10-32bit-customer-bootstrap-ebs-v0.1.manifest.xml -a 0YMHVZZZ5GP0P7VFJV82 -s gAyPmUW6AYIPWRuOMHSOLjmxEbLdEGvXQGjpIP3g
+:<from local machine> #ec2-register duracloud.images/ubuntu8.10-32bit-customer-bootstrap-ebs-v0.1.manifest.xml
+
+
