@@ -15,3 +15,7 @@ M2_HOME=/usr/local/maven
 
 # Where is the source to be tested?
 BUILD_HOME=$HOME/agent-home/xml-data/build-dir/DURASPACE-SAN
+
+# Where is tomcat?
+CATALINA_HOME=$HOME/duraspace-home/tomcat
+
