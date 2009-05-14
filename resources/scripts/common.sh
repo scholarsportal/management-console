@@ -7,8 +7,6 @@
 scriptdir=`dirname "$0"`
 . "$scriptdir"/env.sh
 
-CATALINA_HOME=~/duraspace-home/tomcat
-
 #-------------------------------------------
 # Echo global settings and export as needed
 #-------------------------------------------
@@ -18,6 +16,7 @@ echo "JAVA5_HOME    = $JAVA5_HOME"
 echo "JAVA6_HOME    = $JAVA6_HOME"
 echo "M2_HOME       = $M2_HOME"
 echo "BUILD_HOME    = $BUILD_HOME"
+echo "CATALINA_HOME = $CATALINA_HOME"
 echo ""
 
 export M2_HOME

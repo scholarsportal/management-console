@@ -72,11 +72,10 @@
                 <value>dev</value>
             </property>
         </activation>
+
         <properties>
             <tomcat.port>${tomcat.port.default}</tomcat.port>
             <database.home>${database.home.default}</database.home>
-            <log.dir>duraspace.log</log.dir>
-            <profile>dev</profile>
         </properties>
 
         <build>
@@ -114,10 +113,10 @@
                   <value>bootstrap</value>
               </property>
           </activation>
+
           <properties>
             <tomcat.port>${tomcat.port.default}</tomcat.port>
             <database.home>${database.home.default}</database.home>
-            <log.dir>duraspace.log</log.dir>
           </properties>
           
           <build>
@@ -137,6 +136,12 @@
 
       <profile>
         <id>profile-clover</id>
+      
+        <properties>
+          <tomcat.port>${tomcat.port.default}</tomcat.port>
+          <database.home>${database.home.default}</database.home>
+        </properties>
+        
         <build>
           <plugins>
             <plugin>
@@ -151,6 +156,7 @@
                 <generateHtml>true</generateHtml>
                 <generateHistorical>true</generateHistorical>
                 <historyDir>${user.home}/.clover/history/${project.artifact}</historyDir>
+                <includesTestSourceRoots>false</includesTestSourceRoots>
               </configuration>
             </plugin>
           </plugins>

@@ -37,6 +37,7 @@ $M2_HOME/bin/mvn clean compile
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: Failed to compile; see above"
+  $CATALINA_HOME/bin/shutdown.sh
   exit 1
 fi
 
