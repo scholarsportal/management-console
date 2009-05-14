@@ -156,7 +156,6 @@
                 <generateHtml>true</generateHtml>
                 <generateHistorical>true</generateHistorical>
                 <historyDir>${user.home}/.clover/history/${project.artifact}</historyDir>
-                <includesTestSourceRoots>false</includesTestSourceRoots>
               </configuration>
             </plugin>
           </plugins>
@@ -171,6 +170,7 @@
       <database.home.default>/opt/derby/duraspaceDB</database.home.default>
       <unitTests>**/*Test.class</unitTests>
       <integrationTests>**/Test*.class</integrationTests>
+      <instrumentedTests>**/*Test*__*.class</instrumentedTests>
   </properties>
 
   <distributionManagement>
@@ -304,6 +304,7 @@
           </systemProperties>
           <excludes>
             <exclude>${integrationTests}</exclude>
+            <exclude>${instrumentedTests}</exclude>
           </excludes>
           <includes>
             <include>${unitTests}</include>
@@ -321,6 +322,7 @@
               </systemProperties>
               <excludes>
                 <exclude>${unitTests}</exclude>
+                <exclude>${instrumentedTests}</exclude>
               </excludes>
               <includes>
                 <include>${integrationTests}</include>
