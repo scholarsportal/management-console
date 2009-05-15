@@ -5,7 +5,7 @@ echo "Starting on-commit tests...."
 echo "****************************"
 echo ""
 
-JAVA=java5
+JAVA=java6
 
 scriptdir=`dirname "$0"`
 . "$scriptdir"/sanity.sh ${JAVA}
