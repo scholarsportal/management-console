@@ -12,9 +12,6 @@ import org.junit.Test;
 
 import org.springframework.jms.support.converter.MessageConverter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 public class TestIngestMessageConverter
         extends MessagingTestSupport {
 
