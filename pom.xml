@@ -57,7 +57,7 @@
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
 <!--      <module>emcstorageprovider</module>-->
-      <module>sunstorageprovider</module>
+<!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
       <module>customerwebapp</module> 
       <module>duradavwebapp</module> 

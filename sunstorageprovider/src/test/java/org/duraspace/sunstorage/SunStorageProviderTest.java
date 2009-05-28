@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import junit.framework.Assert;
 
@@ -46,7 +47,7 @@ public class SunStorageProviderTest {
 
     private String accessKey;
 
-    private static final String SPACE_ID = "duracloud-test-bucket";
+    private static String SPACE_ID = null;
     private static final String CONTENT_ID = "duracloud-test-content";
     private static final String SPACE_META_NAME = StorageProvider.METADATA_SPACE_NAME;
     private static final String SPACE_META_VALUE = "Testing Space";
@@ -54,6 +55,8 @@ public class SunStorageProviderTest {
     private static final String CONTENT_META_VALUE = "Testing Content";
     private static final String CONTENT_MIME_NAME = StorageProvider.METADATA_CONTENT_MIMETYPE;
     private static final String CONTENT_MIME_VALUE = "text/plain";
+    private static final String CONTENT_SUBJECT_NAME = "content-subject";
+    private static final String CONTENT_SUBJECT_VALUE = "Storage System Testing";
     private static final String CONTENT_DATA = "Test Content";
 
     @Before
@@ -68,6 +71,9 @@ public class SunStorageProviderTest {
 
         accessKey = username;
         sunProvider = new SunStorageProvider(username, password);
+
+        String random = String.valueOf(new Random().nextInt(99999));
+        SPACE_ID = "duracloud-test-bucket." + random;
 
         // test createSpace()
         log.debug("Test createSpace()");
@@ -187,6 +193,7 @@ public class SunStorageProviderTest {
             sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(contentMetadata);
         contentMetadata.put(CONTENT_META_NAME, CONTENT_META_VALUE);
+        contentMetadata.put(CONTENT_SUBJECT_NAME, CONTENT_SUBJECT_VALUE);
         sunProvider.setContentMetadata(SPACE_ID, CONTENT_ID, contentMetadata);
 
         // test getContentMetadata()
@@ -196,6 +203,7 @@ public class SunStorageProviderTest {
         assertNotNull(cMetadata);
         assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
         assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(CONTENT_SUBJECT_VALUE, cMetadata.get(CONTENT_SUBJECT_NAME));
 
         // test deleteContent()
         log.debug("Test deleteContent()");

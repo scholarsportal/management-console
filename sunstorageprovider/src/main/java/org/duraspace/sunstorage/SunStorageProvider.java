@@ -60,7 +60,7 @@ public class SunStorageProvider implements StorageProvider {
     public List<String> getSpaces()
     throws StorageException {
         try {
-            Bucket[] buckets = sunService.getAllBuckets().getBuckets();
+            Bucket[] buckets = sunService.getAllBuckets();
             List<String> spaces = new ArrayList<String>();
             for(Bucket bucket : buckets) {
                 String bucketName = bucket.getName();
@@ -92,7 +92,7 @@ public class SunStorageProvider implements StorageProvider {
     throws StorageException {
         String bucketName = getBucketName(spaceId);
         try {
-            ObjectInfo[] objects = sunService.getBucket(bucketName).getObjectsInfo();
+            ObjectInfo[] objects = sunService.getBucket(bucketName);
 
             List<String> contentItems = new ArrayList<String>();
             for(ObjectInfo object : objects) {
@@ -283,7 +283,7 @@ public class SunStorageProvider implements StorageProvider {
         String bucketName = getBucketName(spaceId);
         InputStream content = null;
         try {
-            content = sunService.getObject(bucketName, contentId).getObject().
+            content = sunService.getObject(bucketName, contentId).
                       getDataInputStream();
         } catch(Exception e) {
             content = null;
@@ -323,10 +323,11 @@ public class SunStorageProvider implements StorageProvider {
                                    String contentId,
                                    Properties contentMetadata)
     throws StorageException {
-        // Don't create a metadata file for metadata files
+        // Don't create a metadata file for metadata files.
         // If storing metadata along with content is ever
-        // implemented in Sun Cloud this check can go away.
-        if(contentId.endsWith(CONTENT_METADATA_SUFFIX)) {
+        // implemented in Sun Cloud part of this check can go away.
+        if(contentId.endsWith(SPACE_METADATA_SUFFIX) ||
+           contentId.endsWith(CONTENT_METADATA_SUFFIX)) {
             return;
         }
 
@@ -339,6 +340,10 @@ public class SunStorageProvider implements StorageProvider {
         contentMetadata.remove(ObjectInfo.METADATA_HEADER_ETAG);
         contentMetadata.remove(ObjectInfo.METADATA_HEADER_LAST_MODIFIED_DATE);
         contentMetadata.remove(ObjectInfo.METADATA_HEADER_CONTENT_LENGTH);
+
+        // TODO: Set Content-Type to mimetype once content metadata is
+        // editable in sun cloud.
+        contentMetadata.remove(ObjectInfo.METADATA_HEADER_CONTENT_TYPE);
 
         // If name does not already have a value, set it to contentId
         if(!contentMetadata.containsKey(METADATA_CONTENT_NAME)) {
@@ -373,8 +378,7 @@ public class SunStorageProvider implements StorageProvider {
         // Get the content item headers
         ObjectInfo objectInfo = null;
         try {
-            objectInfo = sunService.getObjectHeader(bucketName, contentId).
-                         getObject().getObjectInfo();
+            objectInfo = sunService.getObjectHeader(bucketName, contentId);
         } catch(Exception e) {
             String err = "Could not retrieve headers for content " +
                          contentId + " from Sun bucket " + bucketName +
@@ -508,7 +512,7 @@ public class SunStorageProvider implements StorageProvider {
     }
 
     /**
-     * Determines if an S3 bucket is a DuraSpace space
+     * Determines if a Sun bucket is a DuraSpace space
      *
      * @param bucketName
      * @return
