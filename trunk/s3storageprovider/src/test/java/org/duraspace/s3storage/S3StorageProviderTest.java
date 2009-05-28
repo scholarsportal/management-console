@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -45,6 +46,16 @@ public class S3StorageProviderTest {
 
     private String accessKeyId;
 
+    private static String SPACE_ID = null;
+    private static final String CONTENT_ID = "duracloud-test-content";
+    private static final String SPACE_META_NAME = StorageProvider.METADATA_SPACE_NAME;
+    private static final String SPACE_META_VALUE = "Testing Space";
+    private static final String CONTENT_META_NAME = StorageProvider.METADATA_CONTENT_NAME;
+    private static final String CONTENT_META_VALUE = "Testing Content";
+    private static final String CONTENT_MIME_NAME = StorageProvider.METADATA_CONTENT_MIMETYPE;
+    private static final String CONTENT_MIME_VALUE = "text/plain";
+    private static final String CONTENT_DATA = "Test Content";
+
     @Before
     public void setUp() throws Exception {
         Credential s3Credential = getCredential();
@@ -57,6 +68,9 @@ public class S3StorageProviderTest {
 
         accessKeyId = username;
         s3Provider = new S3StorageProvider(username, password);
+
+        String random = String.valueOf(new Random().nextInt(99999));
+        SPACE_ID = "duracloud-test-bucket." + random;
     }
 
     @After
@@ -72,41 +86,33 @@ public class S3StorageProviderTest {
 
     @Test
     public void testS3StorageProvider() throws Exception {
-        String spaceId = "duraspace-test-bucket";
-        String contentId = "duraspace-test-content";
-        String spaceMetadataName = StorageProvider.METADATA_SPACE_NAME;
-        String spaceMetadataValue = "Testing Space";
-        String contentMetadataName = StorageProvider.METADATA_CONTENT_NAME;
-        String contentMetadataValue = "Testing Content";
-        String contentData = "Test Content";
-
         // test createSpace()
         log.debug("Test createSpace()");
-        s3Provider.createSpace(spaceId);
+        s3Provider.createSpace(SPACE_ID);
 
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
         Properties spaceMetadata = new Properties();
-        spaceMetadata.put(spaceMetadataName, spaceMetadataValue);
-        s3Provider.setSpaceMetadata(spaceId, spaceMetadata);
+        spaceMetadata.put(SPACE_META_NAME, SPACE_META_VALUE);
+        s3Provider.setSpaceMetadata(SPACE_ID, spaceMetadata);
 
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
-        Properties sMetadata = s3Provider.getSpaceMetadata(spaceId);
-        assertTrue(sMetadata.containsKey(spaceMetadataName));
-        assertEquals(spaceMetadataValue, sMetadata.get(spaceMetadataName));
+        Properties sMetadata = s3Provider.getSpaceMetadata(SPACE_ID);
+        assertTrue(sMetadata.containsKey(SPACE_META_NAME));
+        assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
 
         // test getSpaces()
         log.debug("Test getSpaces()");
         List<String> spaces = s3Provider.getSpaces();
         assertNotNull(spaces);
-        assertTrue(spaces.contains(spaceId)); // This will only work when spaceId fits
-        // the S3 bucket naming conventions
+        assertTrue(spaces.contains(SPACE_ID)); // This will only work when SPACE_ID fits
+                                               // the S3 bucket naming conventions
 
         // Check space access
         log.debug("Check space access");
         String bucketName =
-                ((S3StorageProvider) s3Provider).getBucketName(spaceId);
+                ((S3StorageProvider) s3Provider).getBucketName(SPACE_ID);
         String spaceUrl = "http://" + bucketName + ".s3.amazonaws.com";
         RestHttpHelper restHelper = new RestHttpHelper();
         HttpResponse spaceResponse = restHelper.get(spaceUrl);
@@ -115,11 +121,11 @@ public class S3StorageProviderTest {
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(OPEN)");
-        s3Provider.setSpaceAccess(spaceId, AccessType.OPEN);
+        s3Provider.setSpaceAccess(SPACE_ID, AccessType.OPEN);
 
         // test getSpaceAccess()
         log.debug("Test getSpaceAccess()");
-        AccessType access = s3Provider.getSpaceAccess(spaceId);
+        AccessType access = s3Provider.getSpaceAccess(SPACE_ID);
         assertEquals(access, AccessType.OPEN);
 
         // Check space access
@@ -129,23 +135,23 @@ public class S3StorageProviderTest {
 
         // test addContent()
         log.debug("Test addContent()");
-        byte[] content = contentData.getBytes();
+        byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
-        s3Provider.addContent(spaceId,
-                              contentId,
-                              "text/plain",
+        s3Provider.addContent(SPACE_ID,
+                              CONTENT_ID,
+                              CONTENT_MIME_VALUE,
                               contentSize,
                               contentStream);
 
         // Check content access
         log.debug("Check content access");
-        spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
+        spaceResponse = restHelper.get(spaceUrl + "/" + CONTENT_ID);
         assertEquals(200, spaceResponse.getStatusCode());
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(CLOSED)");
-        s3Provider.setSpaceAccess(spaceId, AccessType.CLOSED);
+        s3Provider.setSpaceAccess(SPACE_ID, AccessType.CLOSED);
 
         // Check space access
         log.debug("Check space access");
@@ -154,56 +160,57 @@ public class S3StorageProviderTest {
 
         // Check content access
         log.debug("Check content access");
-        spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
+        spaceResponse = restHelper.get(spaceUrl + "/" + CONTENT_ID);
         assertEquals(403, spaceResponse.getStatusCode());
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
-        List<String> spaceContents = s3Provider.getSpaceContents(spaceId);
+        List<String> spaceContents = s3Provider.getSpaceContents(SPACE_ID);
         assertNotNull(spaceContents);
-        assertTrue(spaceContents.contains(contentId));
-        assertFalse(spaceContents.contains(accessKeyId + "." + spaceId
+        assertTrue(spaceContents.contains(CONTENT_ID));
+        assertFalse(spaceContents.contains(accessKeyId + "." + SPACE_ID
                 + "-space-metadata"));
 
         // test getContent()
         log.debug("Test getContent()");
-        InputStream is = s3Provider.getContent(spaceId, contentId);
+        InputStream is = s3Provider.getContent(SPACE_ID, CONTENT_ID);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String contentLine = reader.readLine();
-        assertTrue(contentLine.equals(contentData));
+        assertTrue(contentLine.equals(CONTENT_DATA));
 
         // test invalid content
         log.debug("Test getContent() with invalid content ID");
         log.debug("-- Begin expected error log -- ");
-        is = s3Provider.getContent(spaceId, "non-existant-content");
+        is = s3Provider.getContent(SPACE_ID, "non-existant-content");
         assertTrue(is == null);
         log.debug("-- End expected error log --");
 
         // test setContentMetadata()
         log.debug("Test setContentMetadata()");
         Properties contentMetadata = new Properties();
-        contentMetadata.put(contentMetadataName, contentMetadataValue);
-        s3Provider.setContentMetadata(spaceId, contentId, contentMetadata);
+        contentMetadata.put(CONTENT_META_NAME, CONTENT_META_VALUE);
+        s3Provider.setContentMetadata(SPACE_ID, CONTENT_ID, contentMetadata);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
         Properties cMetadata =
-                s3Provider.getContentMetadata(spaceId, contentId);
+                s3Provider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
-        assertEquals(contentMetadataValue, cMetadata.get(contentMetadataName));
-        assertEquals("text/plain", cMetadata.get("Content-Type"));
+        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get("Content-Type"));
 
         // test deleteContent()
         log.debug("Test deleteContent()");
-        s3Provider.deleteContent(spaceId, contentId);
-        spaceContents = s3Provider.getSpaceContents(spaceId);
-        assertFalse(spaceContents.contains(contentId));
+        s3Provider.deleteContent(SPACE_ID, CONTENT_ID);
+        spaceContents = s3Provider.getSpaceContents(SPACE_ID);
+        assertFalse(spaceContents.contains(CONTENT_ID));
 
         // test deleteSpace()
         log.debug("Test deleteSpace()");
-        s3Provider.deleteSpace(spaceId);
+        s3Provider.deleteSpace(SPACE_ID);
         spaces = s3Provider.getSpaces();
-        assertFalse(spaces.contains(spaceId));
+        assertFalse(spaces.contains(SPACE_ID));
     }
 
 }
