@@ -3,7 +3,8 @@ package org.duraspace.storage.domain;
 
 public enum StorageProviderType {
     AMAZON_S3("amazon-s3"), MICROSOFT_AZURE("ms-azure"), SUN("sun"),
-    EMC("emc"), RACKSPACE("rackspace"), UNKNOWN("unknown");
+    EMC("emc"), EMC_SECONDARY("emc-secondary"), RACKSPACE("rackspace"),
+    UNKNOWN("unknown");
 
     private final String text;
 

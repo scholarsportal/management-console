@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class EMCApiTest {
+public class EMCApiTestNotRun {
 
     private String username;
 
@@ -521,7 +521,6 @@ public class EMCApiTest {
         MetadataTag listableTag = null;
         for (MetadataTag md : tags) {
             String name = md.getName();
-            boolean is = md.isListable();
 
             if (userMdName.equals(name)) {
                 listableTag = md;
@@ -555,15 +554,20 @@ public class EMCApiTest {
         // Clean any previously existing objects.
         deleteObjectsWithTags(mdNameSpace, mdNameContent);
 
-        Metadata metadataSpaceA = new Metadata(mdNameSpace, "spaceId:0", true);
-        Metadata metadataSpaceB = new Metadata(mdNameSpace, "spaceId:1", false);
-        Metadata metadataSpaceC = new Metadata(mdNameSpace, "spaceId:2", true);
+        final boolean isListable = true;
+
+        Metadata metadataSpaceA =
+                new Metadata(mdNameSpace, "spaceId:0", isListable);
+        Metadata metadataSpaceB =
+                new Metadata(mdNameSpace, "spaceId:1", !isListable);
+        Metadata metadataSpaceC =
+                new Metadata(mdNameSpace, "spaceId:2", isListable);
         Metadata metadataContentA =
-                new Metadata(mdNameContent, "content:0", false);
+                new Metadata(mdNameContent, "content:0", !isListable);
         Metadata metadataContentB =
-                new Metadata(mdNameContent, "content:1", false);
+                new Metadata(mdNameContent, "content:1", !isListable);
         Metadata metadataContentC =
-                new Metadata(mdNameContent, "content:2", false);
+                new Metadata(mdNameContent, "content:2", !isListable);
 
         MetadataList metadataListA = new MetadataList();
         metadataListA.addMetadata(metadataSpaceA);
