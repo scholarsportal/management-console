@@ -11,17 +11,11 @@ public class DuraSpaceAcct {
 
     private String accountName;
 
-    private boolean isLoaded; // flag noting if second-level fields populated.
-
     private int billingInfoId;
 
     private List<User> users;
 
     private String computeAcctId; // One compute-account per customer-account.
-
-    private List<Integer> storageAcctIds;
-
-    private List<Integer> serviceIds;
 
     // TODO: remove me
     private Credential duraspaceCredential;

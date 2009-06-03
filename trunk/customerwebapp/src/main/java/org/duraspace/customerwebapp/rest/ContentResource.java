@@ -2,8 +2,8 @@ package org.duraspace.customerwebapp.rest;
 
 import java.io.InputStream;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -81,12 +81,13 @@ public class ContentResource {
                 // TODO: Check user permissions
             }
 
-            Properties metadata = storage.getContentMetadata(spaceID, contentID);
+            Map<String, String> metadata =
+                storage.getContentMetadata(spaceID, contentID);
             if(metadata != null) {
-                Enumeration<?> metadataNames = metadata.propertyNames();
-                while(metadataNames.hasMoreElements()) {
-                    String metadataName = (String)metadataNames.nextElement();
-                    String metadataValue = metadata.getProperty(metadataName);
+                Iterator<String> metadataNames = metadata.keySet().iterator();
+                while(metadataNames.hasNext()) {
+                    String metadataName = (String)metadataNames.next();
+                    String metadataValue = metadata.get(metadataName);
                     Element metadataElem = new Element(metadataName);
                     metadataElem.setText(metadataValue);
                     propsElem.addContent(metadataElem);
@@ -121,7 +122,7 @@ public class ContentResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(accountID);
 
-            Properties metadata = storage.getContentMetadata(spaceID, contentID);
+            Map<String, String> metadata = storage.getContentMetadata(spaceID, contentID);
 
             // Set content name if a new value was provided
             if(contentName != null && !contentName.equals("")) {

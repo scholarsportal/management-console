@@ -14,6 +14,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
+import static org.duraspace.storage.util.StorageProviderUtil.getList;
+
 public class ContentsController extends SimpleFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
@@ -51,7 +53,7 @@ public class ContentsController extends SimpleFormController {
         space.setMetadata(SpaceUtil.getSpaceMetadata(storage, spaceId));
 
         // Get the list of items in the space
-        List<String> contents = storage.getSpaceContents(spaceId);
+        List<String> contents = getList(storage.getSpaceContents(spaceId));
         space.setContents(contents);
 
         ModelAndView mav = new ModelAndView(getSuccessView());

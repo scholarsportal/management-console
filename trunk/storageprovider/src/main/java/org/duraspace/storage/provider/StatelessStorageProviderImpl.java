@@ -3,8 +3,8 @@ package org.duraspace.storage.provider;
 
 import java.io.InputStream;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
@@ -67,7 +67,7 @@ public class StatelessStorageProviderImpl
     /**
      * {@inheritDoc}
      */
-    public Properties getContentMetadata(StorageProvider targetProvider,
+    public Map<String, String> getContentMetadata(StorageProvider targetProvider,
                                          String spaceId,
                                          String contentId)
             throws StorageException {
@@ -85,7 +85,7 @@ public class StatelessStorageProviderImpl
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaceContents(StorageProvider targetProvider,
+    public Iterator<String> getSpaceContents(StorageProvider targetProvider,
                                          String spaceId)
             throws StorageException {
         return targetProvider.getSpaceContents(spaceId);
@@ -94,7 +94,7 @@ public class StatelessStorageProviderImpl
     /**
      * {@inheritDoc}
      */
-    public Properties getSpaceMetadata(StorageProvider targetProvider,
+    public Map<String, String> getSpaceMetadata(StorageProvider targetProvider,
                                        String spaceId) throws StorageException {
         return targetProvider.getSpaceMetadata(spaceId);
     }
@@ -102,7 +102,7 @@ public class StatelessStorageProviderImpl
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaces(StorageProvider targetProvider)
+    public Iterator<String> getSpaces(StorageProvider targetProvider)
             throws StorageException {
         return targetProvider.getSpaces();
     }
@@ -113,7 +113,7 @@ public class StatelessStorageProviderImpl
     public void setContentMetadata(StorageProvider targetProvider,
                                    String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
             throws StorageException {
         targetProvider.setContentMetadata(spaceId, contentId, contentMetadata);
 
@@ -134,7 +134,7 @@ public class StatelessStorageProviderImpl
      */
     public void setSpaceMetadata(StorageProvider targetProvider,
                                  String spaceId,
-                                 Properties spaceMetadata)
+                                 Map<String, String> spaceMetadata)
             throws StorageException {
         targetProvider.setSpaceMetadata(spaceId, spaceMetadata);
 

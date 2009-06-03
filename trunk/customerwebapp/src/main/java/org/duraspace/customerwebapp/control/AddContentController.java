@@ -1,7 +1,7 @@
 package org.duraspace.customerwebapp.control;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -14,6 +14,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import static org.duraspace.storage.util.StorageProviderUtil.getList;
 
 public class AddContentController extends SimpleFormController {
 
@@ -69,9 +71,9 @@ public class AddContentController extends SimpleFormController {
                                file.getSize(),
                                file.getInputStream());
 
-            Properties contentProps = storage.getContentMetadata(spaceId, contentId);
-            contentProps.setProperty(StorageProvider.METADATA_CONTENT_NAME, contentName);
-            storage.setContentMetadata(spaceId, contentId, contentProps);
+            Map<String, String> contentMetadata = storage.getContentMetadata(spaceId, contentId);
+            contentMetadata.put(StorageProvider.METADATA_CONTENT_NAME, contentName);
+            storage.setContentMetadata(spaceId, contentId, contentMetadata);
         }
 
         // Create a Space for the view
@@ -83,7 +85,7 @@ public class AddContentController extends SimpleFormController {
         space.setMetadata(SpaceUtil.getSpaceMetadata(storage, spaceId));
 
         // Get the list of items in the space
-        List<String> contents = storage.getSpaceContents(spaceId);
+        List<String> contents = getList(storage.getSpaceContents(spaceId));
         space.setContents(contents);
 
         ModelAndView mav = new ModelAndView(getSuccessView());

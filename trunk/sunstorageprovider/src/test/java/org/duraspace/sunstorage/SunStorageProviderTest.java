@@ -6,8 +6,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import junit.framework.Assert;
@@ -32,6 +33,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+import static org.duraspace.storage.util.StorageProviderUtil.contains;
+
 /**
  * Tests the Sun Storage Provider. This test uses a local
  * database to retrieve the necessary Sun Cloud credentials.
@@ -43,9 +46,7 @@ public class SunStorageProviderTest {
     protected static final Logger log =
             Logger.getLogger(SunStorageProviderTest.class);
 
-    private StorageProvider sunProvider;
-
-    private String accessKey;
+    private SunStorageProvider sunProvider;
 
     private static String SPACE_ID = null;
     private static final String CONTENT_ID = "duracloud-test-content";
@@ -69,7 +70,6 @@ public class SunStorageProviderTest {
         Assert.assertNotNull(username);
         Assert.assertNotNull(password);
 
-        accessKey = username;
         sunProvider = new SunStorageProvider(username, password);
 
         String random = String.valueOf(new Random().nextInt(99999));
@@ -85,11 +85,10 @@ public class SunStorageProviderTest {
         // test deleteSpace()
         log.debug("Test deleteSpace()");
         sunProvider.deleteSpace(SPACE_ID);
-        List<String> spaces = sunProvider.getSpaces();
-        assertFalse(spaces.contains(SPACE_ID));
+        Iterator<String> spaces = sunProvider.getSpaces();
+        assertFalse(contains(spaces, SPACE_ID));
 
         sunProvider = null;
-        accessKey = null;
     }
 
     private Credential getCredential() throws Exception {
@@ -101,13 +100,13 @@ public class SunStorageProviderTest {
     public void testSpaceMetadata() throws Exception {
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
-        Properties spaceMetadata = new Properties();
+        Map<String, String> spaceMetadata = new HashMap<String, String>();
         spaceMetadata.put(SPACE_META_NAME, SPACE_META_VALUE);
         sunProvider.setSpaceMetadata(SPACE_ID, spaceMetadata);
 
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
-        Properties sMetadata = sunProvider.getSpaceMetadata(SPACE_ID);
+        Map<String, String> sMetadata = sunProvider.getSpaceMetadata(SPACE_ID);
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
     }
@@ -116,9 +115,9 @@ public class SunStorageProviderTest {
     public void testGetSpaces() throws Exception {
         // test getSpaces()
         log.debug("Test getSpaces()");
-        List<String> spaces = sunProvider.getSpaces();
+        Iterator<String> spaces = sunProvider.getSpaces();
         assertNotNull(spaces);
-        assertTrue(spaces.contains(SPACE_ID)); // This will only work when SPACE_ID fits
+        assertTrue(contains(spaces, SPACE_ID)); // This will only work when SPACE_ID fits
                                                // the S3 bucket naming conventions
     }
 
@@ -126,7 +125,7 @@ public class SunStorageProviderTest {
     public void testSpaceAccess() throws Exception {
         // Check space access
         log.debug("Check space access");
-        String bucketName = ((SunStorageProvider) sunProvider).getBucketName(SPACE_ID);
+        String bucketName = sunProvider.getBucketName(SPACE_ID);
         String spaceUrl = "http://" + bucketName + ".object.storage.network.com";
         RestHttpHelper restHelper = new RestHttpHelper();
         HttpResponse spaceResponse = restHelper.get(spaceUrl);
@@ -162,15 +161,28 @@ public class SunStorageProviderTest {
                                contentSize,
                                contentStream);
 
+        // test getContentMetadata()
+        log.debug("Test getContentMetadata()");
+        Map<String, String> cMetadata =
+                sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
+        assertNotNull(cMetadata);
+        assertEquals(CONTENT_ID, cMetadata.get(CONTENT_META_NAME));
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+
         // TODO: Test access control when it becomes available
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
-        List<String> spaceContents = sunProvider.getSpaceContents(SPACE_ID);
+        Iterator<String> spaceContents = sunProvider.getSpaceContents(SPACE_ID);
         assertNotNull(spaceContents);
-        assertTrue(spaceContents.contains(CONTENT_ID));
-        String spaceMetaFile = accessKey + "." + SPACE_ID + "-space-metadata";
-        assertFalse(spaceContents.contains(spaceMetaFile));
+        assertTrue(contains(spaceContents, CONTENT_ID));
+
+        // Ensure that space metadata is not included in contents list
+        //String spaceMetaSuffix = RackspaceStorageProvider.SPACE_METADATA_SUFFIX;
+        spaceContents = sunProvider.getSpaceContents(SPACE_ID);
+        String bucketName = sunProvider.getBucketName(SPACE_ID);
+        String spaceMetaSuffix = SunStorageProvider.SPACE_METADATA_SUFFIX;
+        assertFalse(contains(spaceContents, bucketName + spaceMetaSuffix));
 
         // test getContent()
         log.debug("Test getContent()");
@@ -189,27 +201,26 @@ public class SunStorageProviderTest {
 
         // test setContentMetadata()
         log.debug("Test setContentMetadata()");
-        Properties contentMetadata =
-            sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
-        assertNotNull(contentMetadata);
+        Map<String, String> contentMetadata = new HashMap<String, String>();
         contentMetadata.put(CONTENT_META_NAME, CONTENT_META_VALUE);
         contentMetadata.put(CONTENT_SUBJECT_NAME, CONTENT_SUBJECT_VALUE);
         sunProvider.setContentMetadata(SPACE_ID, CONTENT_ID, contentMetadata);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
-        Properties cMetadata =
-                sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
+        cMetadata = sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
         assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
-        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
         assertEquals(CONTENT_SUBJECT_VALUE, cMetadata.get(CONTENT_SUBJECT_NAME));
+        // Mime type was not included when setting content metadata
+        // so it should have been reset to a default value
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
 
         // test deleteContent()
         log.debug("Test deleteContent()");
         sunProvider.deleteContent(SPACE_ID, CONTENT_ID);
         spaceContents = sunProvider.getSpaceContents(SPACE_ID);
-        assertFalse(spaceContents.contains(CONTENT_ID));
+        assertFalse(contains(spaceContents, CONTENT_ID));
     }
 
 }

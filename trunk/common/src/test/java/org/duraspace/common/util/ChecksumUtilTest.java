@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import org.duraspace.common.util.ChecksumUtil.Algorithm;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -67,13 +66,6 @@ public class ChecksumUtilTest {
         assertNotNull(sha256);
         assertNotNull(sha384);
         assertNotNull(sha512);
-
-        assertEquals(md2.length(), 14);
-        assertEquals(md5.length(), 14);
-        assertEquals(sha1.length(), 19);
-        assertEquals(sha256.length(), 30);
-        assertEquals(sha384.length(), 46);
-        assertEquals(sha512.length(), 61);
 
         boolean diff0 =
                 (md2 != md5 && md2 != sha1 && md2 != sha256 && md2 != sha384 && md2 != sha512);

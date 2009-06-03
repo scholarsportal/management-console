@@ -1,6 +1,6 @@
 package org.duraspace.customerwebapp.control;
 
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,7 +52,7 @@ public class ContentController extends SimpleFormController {
         StorageProvider storage =
             StorageProviderFactory.getStorageProvider(accountId);
 
-        Properties contentProps =
+        Map<String, String> contentMetadata =
             storage.getContentMetadata(spaceId, contentId);
 
         String action = contentItem.getAction();
@@ -60,25 +60,25 @@ public class ContentController extends SimpleFormController {
             String newName = contentItem.getContentName();
             String newMime = contentItem.getContentMimetype();
             if(newName != null && newMime != null) {
-                contentProps.
-                  setProperty(StorageProvider.METADATA_CONTENT_NAME, newName);
-                contentProps.
-                  setProperty(StorageProvider.METADATA_CONTENT_MIMETYPE, newMime);
-                storage.setContentMetadata(spaceId, contentId, contentProps);
+                contentMetadata.
+                  put(StorageProvider.METADATA_CONTENT_NAME, newName);
+                contentMetadata.
+                  put(StorageProvider.METADATA_CONTENT_MIMETYPE, newMime);
+                storage.setContentMetadata(spaceId, contentId, contentMetadata);
             }
         }
 
         ContentMetadata metadata = new ContentMetadata();
         metadata.setName(
-            contentProps.getProperty(StorageProvider.METADATA_CONTENT_NAME));
+            contentMetadata.get(StorageProvider.METADATA_CONTENT_NAME));
         metadata.setMimetype(
-            contentProps.getProperty(StorageProvider.METADATA_CONTENT_MIMETYPE));
+            contentMetadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
         metadata.setSize(
-            contentProps.getProperty(StorageProvider.METADATA_CONTENT_SIZE));
+            contentMetadata.get(StorageProvider.METADATA_CONTENT_SIZE));
         metadata.setChecksum(
-            contentProps.getProperty(StorageProvider.METADATA_CONTENT_CHECKSUM));
+            contentMetadata.get(StorageProvider.METADATA_CONTENT_CHECKSUM));
         metadata.setModified(
-            contentProps.getProperty(StorageProvider.METADATA_CONTENT_MODIFIED));
+            contentMetadata.get(StorageProvider.METADATA_CONTENT_MODIFIED));
         contentItem.setMetadata(metadata);
 
         ModelAndView mav = new ModelAndView(getSuccessView());
