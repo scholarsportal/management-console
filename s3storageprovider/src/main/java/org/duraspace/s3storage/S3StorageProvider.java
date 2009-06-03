@@ -1,18 +1,14 @@
 package org.duraspace.s3storage;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -31,6 +27,9 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
+import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+
 /**
  * Provides content storage backed by Amazon's Simple Storage Service.
  *
@@ -39,7 +38,6 @@ import org.jets3t.service.security.AWSCredentials;
 public class S3StorageProvider implements StorageProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
-    private static final String SPACE_METADATA_SUFFIX = "-space-metadata";
 
     private String accessKeyId = null;
     private S3Service s3Service = null;
@@ -62,7 +60,7 @@ public class S3StorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaces()
+    public Iterator<String> getSpaces()
     throws StorageException {
         try {
             S3Bucket[] buckets = s3Service.listAllBuckets();
@@ -74,7 +72,7 @@ public class S3StorageProvider implements StorageProvider {
                     spaces.add(getSpaceId(bucketName));
                 }
             }
-            return spaces;
+            return spaces.iterator();
         } catch(S3ServiceException e) {
             String err = "Could not retrieve list of S3 buckets due to error: " +
                          e.getMessage();
@@ -85,13 +83,13 @@ public class S3StorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
     throws StorageException {
         String bucketName = getBucketName(spaceId);
         String bucketMetadata = bucketName+SPACE_METADATA_SUFFIX;
         List<String> spaceContents = getCompleteSpaceContents(spaceId);
         spaceContents.remove(bucketMetadata);
-        return spaceContents;
+        return spaceContents.iterator();
     }
 
     private List<String> getCompleteSpaceContents(String spaceId)
@@ -124,11 +122,11 @@ public class S3StorageProvider implements StorageProvider {
             S3Bucket bucket = s3Service.createBucket(bucketName);
 
             // Add space metadata
-            Properties spaceProps = new Properties();
+            Map<String, String> spaceMetadata = new HashMap<String, String>();
             Date created = bucket.getCreationDate();
-            spaceProps.put(METADATA_SPACE_CREATED, created.toString());
-            spaceProps.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
-            setSpaceMetadata(spaceId, spaceProps);
+            spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+            spaceMetadata.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
+            setSpaceMetadata(spaceId, spaceMetadata);
         } catch(S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName +
                          " due to error: " + e.getMessage();
@@ -159,69 +157,44 @@ public class S3StorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Properties getSpaceMetadata(String spaceId)
+    public Map<String, String> getSpaceMetadata(String spaceId)
     throws StorageException {
         // Space metadata is stored as a content item
         String bucketName = getBucketName(spaceId);
         InputStream is = getContent(spaceId, bucketName+SPACE_METADATA_SUFFIX);
-
-        Properties spaceProps = new Properties();
-        if(is != null) {
-            try {
-                spaceProps.loadFromXML(is);
-                is.close();
-            } catch(Exception e) {
-                String err = "Could not read metadata for space " + spaceId +
-                             " due to error: " + e.getMessage();
-                throw new StorageException(err, e);
-            }
-        }
+        Map<String, String> spaceMetadata = loadMetadata(is);
 
         try {
-            if(!spaceProps.containsKey(METADATA_SPACE_CREATED)) {
+            if(!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
                 S3Bucket bucket = s3Service.getBucket(bucketName);
                 Date created = bucket.getCreationDate();
                 if(created != null) {
-                    spaceProps.put(METADATA_SPACE_CREATED, created.toString());
+                    spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
                 }
             }
 
-            List<String> spaceContents = getSpaceContents(spaceId);
-            spaceProps.put(METADATA_SPACE_COUNT, String.valueOf(spaceContents.size()));
+            int count = getCompleteSpaceContents(spaceId).size();
+            spaceMetadata.put(METADATA_SPACE_COUNT, String.valueOf(count));
 
             AccessType access = getSpaceAccess(spaceId);
-            spaceProps.put(METADATA_SPACE_ACCESS, access.toString());
+            spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
         } catch(S3ServiceException e) {
             String err = "Could not retrieve metadata from S3 bucket " + bucketName +
                          " due to error: " + e.getMessage();
             log.warn(err, e);
         }
 
-        return spaceProps;
+        return spaceMetadata;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Properties spaceMetadata)
+                                 Map<String, String> spaceMetadata)
     throws StorageException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-        // Pull out any computed values
-        spaceMetadata.remove(METADATA_SPACE_COUNT);
-        spaceMetadata.remove(METADATA_SPACE_ACCESS);
-
-        try {
-            spaceMetadata.storeToXML(os, "Metadata for " + spaceId);
-        } catch (IOException e) {
-            String err = "Could not set metadata for space " + spaceId +
-                         " due to error: " + e.getMessage();
-            throw new StorageException(err);
-        }
-
         String bucketName = getBucketName(spaceId);
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        ByteArrayInputStream is = storeMetadata(spaceMetadata);
         addContent(spaceId,
                    bucketName+SPACE_METADATA_SUFFIX,
                    "text/xml",
@@ -323,9 +296,11 @@ public class S3StorageProvider implements StorageProvider {
             throw new StorageException(err, e);
         }
 
-
         // Set default content metadata values
-        setContentMetadata(spaceId, contentId, new Properties());
+        Map<String, String> contentMetadata = new HashMap<String, String>();
+        contentMetadata.put(METADATA_CONTENT_NAME, contentId);
+        contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
+        setContentMetadata(spaceId, contentId, contentMetadata);
     }
 
     /**
@@ -373,26 +348,15 @@ public class S3StorageProvider implements StorageProvider {
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
     throws StorageException {
-        // Convert from Properties to a Map
-        HashMap<String, String> metadataMap = new HashMap<String, String>();
-        Enumeration<?> metadataKeys = contentMetadata.propertyNames();
-        while(metadataKeys.hasMoreElements()) {
-            String key = (String)metadataKeys.nextElement();
-            String value = contentMetadata.getProperty(key);
-            if(value != null) {
-                metadataMap.put(key, value);
-            }
-        }
-
         // Remove calculated properties
-        metadataMap.remove(METADATA_CONTENT_CHECKSUM);
-        metadataMap.remove(METADATA_CONTENT_MODIFIED);
-        metadataMap.remove(METADATA_CONTENT_SIZE);
+        contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
+        contentMetadata.remove(METADATA_CONTENT_MODIFIED);
+        contentMetadata.remove(METADATA_CONTENT_SIZE);
 
         // Remove mimetype to set later
-        String mimeType = metadataMap.remove(METADATA_CONTENT_MIMETYPE);
+        String mimeType = contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
 
         // Get the object and replace its metadata
         String bucketName = getBucketName(spaceId);
@@ -400,7 +364,7 @@ public class S3StorageProvider implements StorageProvider {
             S3Bucket bucket = new S3Bucket(bucketName);
             S3Object contentItem = s3Service.getObjectDetails(bucket, contentId);
             contentItem.setAcl(s3Service.getObjectAcl(bucket, contentId));
-            contentItem.addAllMetadata(metadataMap);
+            contentItem.replaceAllMetadata(contentMetadata);
 
             // Set name to contentId if it is not set already
             if(!contentItem.containsMetadata(METADATA_CONTENT_NAME)) {
@@ -425,8 +389,8 @@ public class S3StorageProvider implements StorageProvider {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Properties getContentMetadata(String spaceId,
-                                         String contentId)
+    public Map<String, String> getContentMetadata(String spaceId,
+                                                  String contentId)
     throws StorageException {
         String bucketName = getBucketName(spaceId);
 
@@ -448,48 +412,46 @@ public class S3StorageProvider implements StorageProvider {
             throw new StorageException(err);
         }
 
+        // Load the metadata Map
+        Map<String, String> contentMetadata = new HashMap<String, String>();
+        Map contentItemMetadata = contentItem.getMetadataMap();
+        Iterator metaIterator = contentItemMetadata.keySet().iterator();
+        while(metaIterator.hasNext()) {
+            String metaName = metaIterator.next().toString();
+            String metaValue = contentItemMetadata.get(metaName).toString();
+            contentMetadata.put(metaName, metaValue);
+        }
+
         // Set MIMETYPE
-        Object contentType = contentItem.getMetadata("Content-Type");
+        String contentType = contentMetadata.get("Content-Type");
         if(contentType != null) {
-            contentItem.addMetadata(METADATA_CONTENT_MIMETYPE,
-                                    contentType.toString());
+            contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentType);
         }
 
         // Set SIZE
-        Object contentLength = contentItem.getMetadata("Content-Length");
+        String contentLength = contentMetadata.get("Content-Length");
         if(contentLength != null) {
-            contentItem.addMetadata(METADATA_CONTENT_SIZE,
-                                    contentLength.toString());
+            contentMetadata.put(METADATA_CONTENT_SIZE, contentLength);
         }
 
         // Set CHECKSUM
-        Object checksumObj = contentItem.getMetadata("ETag");
-        if(checksumObj != null) {
-            String checksum = checksumObj.toString();
+        String checksum = contentMetadata.get("ETag");
+        if(checksum != null) {
             if(checksum.indexOf("\"") == 0 &&
                checksum.lastIndexOf("\"") == checksum.length()-1) {
                 // Remove wrapping quotes
                 checksum = checksum.substring(1, checksum.length()-1);
             }
-            contentItem.addMetadata(METADATA_CONTENT_CHECKSUM, checksum);
+            contentMetadata.put(METADATA_CONTENT_CHECKSUM, checksum);
         }
 
         // Set MODIFIED
-        Object modified = contentItem.getMetadata("Last-Modified");
+        String modified = contentMetadata.get("Last-Modified");
         if(modified != null) {
-            contentItem.addMetadata(METADATA_CONTENT_MODIFIED,
-                                    modified.toString());
+            contentMetadata.put(METADATA_CONTENT_MODIFIED, modified);
         }
 
-        // Convert from Map to Properties
-        Map<String, String> metadataMap = contentItem.getMetadataMap();
-        Properties metadata = new Properties();
-        Iterator<String> metadataKeys = metadataMap.keySet().iterator();
-        while(metadataKeys.hasNext()) {
-            String key = metadataKeys.next();
-            metadata.put(key, metadataMap.get(key));
-        }
-        return metadata;
+        return contentMetadata;
     }
 
     /**

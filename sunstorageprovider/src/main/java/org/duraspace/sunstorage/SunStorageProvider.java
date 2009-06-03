@@ -2,17 +2,16 @@ package org.duraspace.sunstorage;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.sun.cloud.api.object.client.ObjectClient;
 import com.sun.cloud.api.object.exceptions.ClientException;
@@ -26,6 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
+import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+
 /**
  * Provides content storage backed by the Sun Cloud Storage Service.
  *
@@ -34,8 +36,6 @@ import org.duraspace.storage.provider.StorageProvider;
 public class SunStorageProvider implements StorageProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
-    private static final String SPACE_METADATA_SUFFIX = "-space-metadata";
-    private static final String CONTENT_METADATA_SUFFIX = "-content-metadata";
     private static final String SUN_CLOUD_URI = "http://object.storage.network.com";
 
     private String accessKey = null;
@@ -57,7 +57,7 @@ public class SunStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaces()
+    public Iterator<String> getSpaces()
     throws StorageException {
         try {
             Bucket[] buckets = sunService.getAllBuckets();
@@ -68,7 +68,7 @@ public class SunStorageProvider implements StorageProvider {
                     spaces.add(getSpaceId(bucketName));
                 }
             }
-            return spaces;
+            return spaces.iterator();
         } catch(Exception e) {
             String err = "Could not retrieve list of Sun buckets due to error: " +
             e.getMessage();
@@ -79,13 +79,13 @@ public class SunStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
     throws StorageException {
         String bucketName = getBucketName(spaceId);
         String bucketMetadata = bucketName+SPACE_METADATA_SUFFIX;
         List<String> spaceContents = getCompleteSpaceContents(spaceId);
         spaceContents.remove(bucketMetadata);
-        return spaceContents;
+        return spaceContents.iterator();
     }
 
     private List<String> getCompleteSpaceContents(String spaceId)
@@ -116,11 +116,11 @@ public class SunStorageProvider implements StorageProvider {
             sunService.putBucket(bucketName);
 
             // Add space metadata
-            Properties spaceProps = new Properties();
+            Map<String, String> spaceMetadata = new HashMap<String, String>();
             Date created = new Date(System.currentTimeMillis());
-            spaceProps.put(METADATA_SPACE_CREATED, created.toString());
-            spaceProps.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
-            setSpaceMetadata(spaceId, spaceProps);
+            spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+            spaceMetadata.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
+            setSpaceMetadata(spaceId, spaceMetadata);
         } catch(Exception e) {
             String err = "Could not create Sun bucket with name " + bucketName +
                          " due to error: " + e.getMessage();
@@ -146,55 +146,30 @@ public class SunStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Properties getSpaceMetadata(String spaceId)
+    public Map<String, String> getSpaceMetadata(String spaceId)
     throws StorageException {
         // Space metadata is stored as a content item
         String bucketName = getBucketName(spaceId);
         InputStream is = getContent(spaceId, bucketName+SPACE_METADATA_SUFFIX);
+        Map<String, String> spaceMetadata = loadMetadata(is);
 
-        Properties spaceProps = new Properties();
-        if(is != null) {
-            try {
-                spaceProps.loadFromXML(is);
-                is.close();
-            } catch(Exception e) {
-                String err = "Could not read metadata for space " + spaceId +
-                             " due to error: " + e.getMessage();
-                throw new StorageException(err, e);
-            }
-        }
-
-        List<String> spaceContents = getSpaceContents(spaceId);
-        spaceProps.put(METADATA_SPACE_COUNT, String.valueOf(spaceContents.size()));
+        List<String> spaceContents = getCompleteSpaceContents(spaceId);
+        spaceMetadata.put(METADATA_SPACE_COUNT, String.valueOf(spaceContents.size()));
 
         AccessType access = getSpaceAccess(spaceId);
-        spaceProps.put(METADATA_SPACE_ACCESS, access.toString());
+        spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
 
-        return spaceProps;
+        return spaceMetadata;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Properties spaceMetadata)
+                                 Map<String, String> spaceMetadata)
     throws StorageException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-        // Pull out any computed values
-        spaceMetadata.remove(METADATA_SPACE_COUNT);
-        spaceMetadata.remove(METADATA_SPACE_ACCESS);
-
-        try {
-            spaceMetadata.storeToXML(os, "Metadata for " + spaceId);
-        } catch (IOException e) {
-            String err = "Could not set metadata for space " + spaceId +
-                         " due to error: " + e.getMessage();
-            throw new StorageException(err);
-        }
-
         String bucketName = getBucketName(spaceId);
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        ByteArrayInputStream is = storeMetadata(spaceMetadata);
         addContent(spaceId,
                    bucketName+SPACE_METADATA_SUFFIX,
                    "text/xml",
@@ -269,7 +244,7 @@ public class SunStorageProvider implements StorageProvider {
         tempFile.delete();
 
         // Set default content metadata values
-        Properties metadata = new Properties();
+        Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         setContentMetadata(spaceId, contentId, metadata);
     }
@@ -321,7 +296,7 @@ public class SunStorageProvider implements StorageProvider {
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
     throws StorageException {
         // Don't create a metadata file for metadata files.
         // If storing metadata along with content is ever
@@ -330,8 +305,6 @@ public class SunStorageProvider implements StorageProvider {
            contentId.endsWith(CONTENT_METADATA_SUFFIX)) {
             return;
         }
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
 
         // Pull out values known by the storage system
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
@@ -350,16 +323,7 @@ public class SunStorageProvider implements StorageProvider {
             contentMetadata.put(METADATA_CONTENT_NAME, contentId);
         }
 
-        // Store the content metadata as another content item
-        try {
-            contentMetadata.storeToXML(os, "Metadata for " + contentId);
-        } catch (IOException e) {
-            String err = "Could not set metadata for content " + contentId +
-                         " due to error: " + e.getMessage();
-            throw new StorageException(err);
-        }
-
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        ByteArrayInputStream is = storeMetadata(contentMetadata);
         addContent(spaceId,
                    contentId+CONTENT_METADATA_SUFFIX,
                    "text/xml",
@@ -370,8 +334,8 @@ public class SunStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Properties getContentMetadata(String spaceId,
-                                         String contentId)
+    public Map<String, String> getContentMetadata(String spaceId,
+                                                  String contentId)
     throws StorageException {
         String bucketName = getBucketName(spaceId);
 
@@ -386,83 +350,73 @@ public class SunStorageProvider implements StorageProvider {
             throw new StorageException(err, e);
         }
 
-        // Get the custom metadata file which is stored as a content item
-        InputStream is = getContent(spaceId, contentId+CONTENT_METADATA_SUFFIX);
-        Properties contentProps = new Properties();
-        if(is != null) {
-            try {
-                contentProps.loadFromXML(is);
-                is.close();
-            } catch(Exception e) {
-                String err = "Could not read metadata for content " + contentId +
-                             " due to error: " + e.getMessage();
-                throw new StorageException(err, e);
-            }
-        }
-
-        Properties combinedProps = new Properties();
+        Map<String, String> combinedMetadata = new HashMap<String, String>();
 
         // Add the content item header metdata
 
         String contentEncoding = objectInfo.getContentEncoding();
         if(contentEncoding != null && !contentEncoding.equals("")) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_CONTENT_ENCODING,
-                              contentEncoding);
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_CONTENT_ENCODING,
+                                 contentEncoding);
         }
 
         String contentLanguage = objectInfo.getContentLanguage();
         if(contentLanguage != null && !contentLanguage.equals("")) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_CONTENT_LANGUAGE,
-                              contentLanguage);
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_CONTENT_LANGUAGE,
+                                 contentLanguage);
         }
 
         long contentLength = objectInfo.getContentLength();
         if(contentLength > 0) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_CONTENT_LENGTH,
-                              contentLength);
-            combinedProps.put(METADATA_CONTENT_SIZE, contentLength);
+            String length = String.valueOf(contentLength);
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_CONTENT_LENGTH, length);
+            combinedMetadata.put(METADATA_CONTENT_SIZE, length);
         }
 
         String contentType = objectInfo.getContentType();
         if(contentType != null && !contentType.equals("")) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_CONTENT_TYPE,
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_CONTENT_TYPE,
                               contentType);
-            combinedProps.put(METADATA_CONTENT_MIMETYPE, contentType);
+            combinedMetadata.put(METADATA_CONTENT_MIMETYPE, contentType);
         }
 
         String contentETag = objectInfo.getETag();
         if(contentETag != null && !contentETag.equals("")) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_ETAG, contentETag);
-            combinedProps.put(METADATA_CONTENT_CHECKSUM, contentETag);
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_ETAG, contentETag);
+            combinedMetadata.put(METADATA_CONTENT_CHECKSUM, contentETag);
         }
 
         Date contentLastModified = objectInfo.getLastModifiedDate();
         if(contentLastModified != null) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_LAST_MODIFIED_DATE,
-                              contentLastModified.toString());
-            combinedProps.put(METADATA_CONTENT_MODIFIED,
-                              contentLastModified.toString());
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_LAST_MODIFIED_DATE,
+                                 contentLastModified.toString());
+            combinedMetadata.put(METADATA_CONTENT_MODIFIED,
+                                 contentLastModified.toString());
         }
 
         Owner contentOwner = objectInfo.getOwner();
         if(contentOwner != null) {
-            combinedProps.put(ObjectInfo.METADATA_HEADER_OWNER,
-                              contentOwner.getDisplayName());
+            combinedMetadata.put(ObjectInfo.METADATA_HEADER_OWNER,
+                                 contentOwner.getDisplayName());
         }
 
+        // Get the custom metadata file which is stored as a content item
+        InputStream is = getContent(spaceId, contentId+CONTENT_METADATA_SUFFIX);
+        Map<String, String> contentMetadata = loadMetadata(is);
+
         // Add any custom metadata values, overwrite any duplicates
-        if(contentProps.isEmpty()) {
-            combinedProps.put(METADATA_CONTENT_NAME, contentId);
+        if(contentMetadata.isEmpty()) {
+            contentMetadata.put(METADATA_CONTENT_NAME, contentId);
         } else {
-            Enumeration<?> propNames = contentProps.propertyNames();
-            while(propNames.hasMoreElements()) {
-                String propName = (String)propNames.nextElement();
-                String propValue = (String)contentProps.get(propName);
-                combinedProps.put(propName, propValue);
+            Iterator<String> names = contentMetadata.keySet().iterator();
+            while(names.hasNext()) {
+                String name = names.next();
+                String value = contentMetadata.get(name);
+                combinedMetadata.put(name, value);
             }
         }
 
-        return combinedProps;
+        return combinedMetadata;
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.duraspace.customerwebapp.control;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -80,8 +80,8 @@ public class SpacesController extends SimpleFormController {
                     }
                     String name = space.getName();
                     if(name != null) {
-                        Properties spaceProperties = storage.getSpaceMetadata(spaceId);
-                        spaceProperties.setProperty(StorageProvider.METADATA_SPACE_NAME, name);
+                        Map<String, String> spaceProperties = storage.getSpaceMetadata(spaceId);
+                        spaceProperties.put(StorageProvider.METADATA_SPACE_NAME, name);
                         storage.setSpaceMetadata(spaceId, spaceProperties);
                     }
                 }
@@ -104,10 +104,10 @@ public class SpacesController extends SimpleFormController {
             // Update Space Name
             } else if(action.equals("update-name")) {
                 String newName = space.getName();
-                Properties spaceProperties = storage.getSpaceMetadata(spaceId);
-                String oldName = spaceProperties.getProperty(StorageProvider.METADATA_SPACE_NAME);
+                Map<String, String> spaceProperties = storage.getSpaceMetadata(spaceId);
+                String oldName = spaceProperties.get(StorageProvider.METADATA_SPACE_NAME);
                 if(newName != null && !newName.equals(oldName)) {
-                  spaceProperties.setProperty(StorageProvider.METADATA_SPACE_NAME, newName);
+                  spaceProperties.put(StorageProvider.METADATA_SPACE_NAME, newName);
                   storage.setSpaceMetadata(spaceId, spaceProperties);
                 }
             }

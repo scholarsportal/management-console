@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.emc.esu.api.EsuApi;
 import com.emc.esu.api.Identifier;
@@ -27,12 +29,14 @@ import org.duraspace.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duraspace.storage.provider.StorageProvider;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
 
-import static org.junit.Assert.fail;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+
+import static org.duraspace.storage.util.StorageProviderUtil.contains;
+import static org.duraspace.storage.util.StorageProviderUtil.count;
+import static org.junit.Assert.fail;
 
 public class EMCStorageProviderTest {
 
@@ -105,26 +109,28 @@ public class EMCStorageProviderTest {
 
     @Test
     public void testGetSpaces() throws StorageException {
-        List<String> spaces = emcProvider.getSpaces();
+        Iterator<String> spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
 
-        assertEquals(0, spaces.size());
+        assertEquals(0, count(spaces));
 
         emcProvider.createSpace(spaceId0);
         emcProvider.createSpace(spaceId1);
 
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
+        assertTrue(contains(spaces, spaceId0));
 
-        assertTrue(spaces.contains(spaceId0));
-        assertTrue(spaces.contains(spaceId1));
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertTrue(contains(spaces, spaceId1));
     }
 
     @Test
     public void testGetSpaceContents() throws StorageException {
-        List<String> spaceContents = emcProvider.getSpaceContents(spaceId0);
+        Iterator<String> spaceContents = emcProvider.getSpaceContents(spaceId0);
         assertNotNull(spaceContents);
-        assertEquals(0, spaceContents.size());
+        assertEquals(0, count(spaceContents));
 
         emcProvider.createSpace(spaceId0);
 
@@ -138,10 +144,15 @@ public class EMCStorageProviderTest {
 
         spaceContents = emcProvider.getSpaceContents(spaceId0);
         assertNotNull(spaceContents);
+        assertEquals(2, count(spaceContents));
 
-        assertEquals(2, spaceContents.size());
-        assertTrue(spaceContents.contains(contentId0));
-        assertTrue(spaceContents.contains(contentId1));
+        spaceContents = emcProvider.getSpaceContents(spaceId0);
+        assertNotNull(spaceContents);
+        assertTrue(contains(spaceContents, contentId0));
+
+        spaceContents = emcProvider.getSpaceContents(spaceId0);
+        assertNotNull(spaceContents);
+        assertTrue(contains(spaceContents, contentId1));
 
     }
 
@@ -178,10 +189,11 @@ public class EMCStorageProviderTest {
             throws StorageException {
         boolean found = false;
         try {
-            List<String> spaces = emcProvider.getSpaces();
+            Iterator<String> spaces = emcProvider.getSpaces();
             assertNotNull(spaces);
 
-            for (String s : spaces) {
+            while(spaces.hasNext()) {
+                String s = spaces.next();
                 if (space.equals(s)) {
                     found = true;
                 }
@@ -192,15 +204,13 @@ public class EMCStorageProviderTest {
     }
 
     private void verifySpaceMetadata(String space) throws StorageException {
-        Properties props = emcProvider.getSpaceMetadata(space);
-        assertNotNull(props);
+        Map<String, String> metadata = emcProvider.getSpaceMetadata(space);
+        assertNotNull(metadata);
 
-        String created =
-                (String) props.get(EMCStorageProvider.METADATA_SPACE_CREATED);
+        String created = metadata.get(EMCStorageProvider.METADATA_SPACE_CREATED);
         assertNotNull(created);
 
-        String name =
-                (String) props.get(EMCStorageProvider.METADATA_SPACE_NAME);
+        String name = metadata.get(EMCStorageProvider.METADATA_SPACE_NAME);
         assertNotNull(name);
         assertEquals(name, space);
     }
@@ -214,42 +224,51 @@ public class EMCStorageProviderTest {
         } catch (Exception e) {
         }
 
-        List<String> spaces = emcProvider.getSpaces();
+        Iterator<String> spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-        assertEquals(0, spaces.size());
+        assertEquals(0, count(spaces));
 
         // Add some spaces.
         emcProvider.createSpace(spaceId1);
         emcProvider.createSpace(spaceId2);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
+        assertEquals(2, count(spaces));
 
-        assertEquals(2, spaces.size());
-        assertTrue(spaces.contains(spaceId1));
-        assertTrue(spaces.contains(spaceId2));
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertTrue(contains(spaces, spaceId1));
+
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertTrue(contains(spaces, spaceId2));
 
         // Now check deletions.
         // ...first.
         emcProvider.deleteSpace(spaceId2);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
+        assertEquals(1, count(spaces));
 
-        assertEquals(1, spaces.size());
-        assertTrue(spaces.contains(spaceId1));
-        assertFalse(spaces.contains(spaceId2));
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertTrue(contains(spaces, spaceId1));
+
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertFalse(contains(spaces, spaceId2));
 
         // ...second.
         emcProvider.deleteSpace(spaceId1);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-
-        assertEquals(0, spaces.size());
+        assertEquals(0, count(spaces));
 
     }
 
     @Test
     public void testGetSpaceMetadata() throws StorageException {
-        Properties spaceMd = null;
+        Map<String, String> spaceMd = null;
         try {
             spaceMd = emcProvider.getSpaceMetadata(spaceId);
             fail("Exception expected.");
@@ -276,7 +295,7 @@ public class EMCStorageProviderTest {
     @Test
     public void testSetSpaceMetadata() throws StorageException {
         try {
-            emcProvider.setSpaceMetadata(spaceId2, new Properties());
+            emcProvider.setSpaceMetadata(spaceId2, new HashMap<String, String>());
             fail("Exception expected.");
         } catch (Exception e) {
         }
@@ -290,14 +309,14 @@ public class EMCStorageProviderTest {
         final String val1 = "val1";
         final String val2 = "val2";
 
-        Properties spaceMd = emcProvider.getSpaceMetadata(spaceId2);
+        Map<String, String> spaceMd = emcProvider.getSpaceMetadata(spaceId2);
         assertNotNull(spaceMd);
 
         final int numProps = spaceMd.size();
         assertTrue(numProps > 0);
 
         // Add some props.
-        Properties newMd = new Properties();
+        Map<String, String> newMd = new HashMap<String, String>();
         newMd.put(key0, val0);
         newMd.put(key2, val2);
         emcProvider.setSpaceMetadata(spaceId2, newMd);
@@ -314,7 +333,7 @@ public class EMCStorageProviderTest {
         assertEquals(val2, spaceMd.get(key2));
 
         // Add some different props.
-        Properties newerMd = new Properties();
+        Map<String, String> newerMd = new HashMap<String, String>();
         newerMd.put(key1, val1);
         newerMd.put(key2, val2);
         emcProvider.setSpaceMetadata(spaceId2, newerMd);
@@ -347,7 +366,7 @@ public class EMCStorageProviderTest {
         assertEquals(AccessType.CLOSED, access);
 
         // ...also check Access in user metadata.
-        Properties spaceMd = emcProvider.getSpaceMetadata(spaceId0);
+        Map<String, String> spaceMd = emcProvider.getSpaceMetadata(spaceId0);
         assertNotNull(spaceMd);
         String prop =
                 (String) spaceMd.get(StorageProvider.METADATA_SPACE_ACCESS);
@@ -482,7 +501,7 @@ public class EMCStorageProviderTest {
         }
 
         emcProvider.createSpace(spaceId);
-        List<String> spaceContents = emcProvider.getSpaceContents(spaceId);
+        Iterator<String> spaceContents = emcProvider.getSpaceContents(spaceId);
         verifyContentListing(spaceContents);
 
         try {
@@ -515,18 +534,27 @@ public class EMCStorageProviderTest {
 
     }
 
-    private void verifyContentListing(List<String> listing, String... entries) {
+    private void verifyContentListing(Iterator<String> listing, String... entries) {
         assertNotNull(listing);
-        assertEquals(entries.length, listing.size());
-        for (String entry : entries) {
-            assertTrue(listing.contains(entry));
+        int count = 0;
+        while(listing.hasNext()) {
+            ++count;
+            String listingItem = listing.next();
+            boolean entryMatch = false;
+            for (String entry : entries) {
+                if(listingItem.equals(entry)) {
+                    entryMatch = true;
+                }
+            }
+            assertTrue(entryMatch);
         }
+        assertEquals(entries.length, count);
     }
 
     @Test
     public void testSetContentMetadata() throws StorageException {
 
-        Properties contentMetadata = new Properties();
+        Map<String, String> contentMetadata = new HashMap<String, String>();
         final String key0 = "key0";
         final String key1 = "key1";
         final String val0 = "val0";
@@ -544,42 +572,44 @@ public class EMCStorageProviderTest {
         addContent(spaceId2, contentId, mimeText, "hello".getBytes());
 
         // Check initial state of metadata.
-        Properties initialProps =
+        Map<String, String> initialMeta =
                 emcProvider.getContentMetadata(spaceId2, contentId);
-        assertNotNull(initialProps);
+        assertNotNull(initialMeta);
 
-        int initialSize = initialProps.size();
+        int initialSize = initialMeta.size();
         assertTrue(initialSize > 0);
 
         // Set and check.
         emcProvider.setContentMetadata(spaceId2, contentId, contentMetadata);
-        Properties props = emcProvider.getContentMetadata(spaceId2, contentId);
-        assertNotNull(props);
-        assertEquals(initialSize + 1, props.size());
-        assertTrue(props.containsKey(key0));
-        assertEquals(val0, props.get(key0));
+        Map<String, String> metadata =
+            emcProvider.getContentMetadata(spaceId2, contentId);
+        assertNotNull(metadata);
+        assertEquals(initialSize + 1, metadata.size());
+        assertTrue(metadata.containsKey(key0));
+        assertEquals(val0, metadata.get(key0));
 
         final String newVal = "newVal0";
         contentMetadata.put(key0, newVal);
         contentMetadata.put(key1, val1);
 
         emcProvider.setContentMetadata(spaceId2, contentId, contentMetadata);
-        props = emcProvider.getContentMetadata(spaceId2, contentId);
-        assertNotNull(props);
-        assertEquals(initialSize + 2, props.size());
-        assertTrue(props.containsKey(key0));
-        assertEquals(newVal, props.get(key0));
+        metadata = emcProvider.getContentMetadata(spaceId2, contentId);
+        assertNotNull(metadata);
+        assertEquals(initialSize + 2, metadata.size());
+        assertTrue(metadata.containsKey(key0));
+        assertEquals(newVal, metadata.get(key0));
 
-        assertTrue(props.containsKey(key1));
-        assertEquals(val1, props.get(key1));
+        assertTrue(metadata.containsKey(key1));
+        assertEquals(val1, metadata.get(key1));
 
         // Clear properties.
-        emcProvider.setContentMetadata(spaceId2, contentId, new Properties());
-        props = emcProvider.getContentMetadata(spaceId2, contentId);
-        assertNotNull(props);
-        assertEquals(initialSize, props.size());
-        assertFalse(props.containsKey(key0));
-        assertFalse(props.containsKey(key1));
+        emcProvider.setContentMetadata(spaceId2, contentId,
+                                       new HashMap<String, String>());
+        metadata = emcProvider.getContentMetadata(spaceId2, contentId);
+        assertNotNull(metadata);
+        assertEquals(initialSize, metadata.size());
+        assertFalse(metadata.containsKey(key0));
+        assertFalse(metadata.containsKey(key1));
     }
 
     @Test
@@ -596,31 +626,32 @@ public class EMCStorageProviderTest {
 
         addContent(spaceId0, contentId0, mimeText, data);
 
-        Properties props = emcProvider.getContentMetadata(spaceId0, contentId0);
-        assertNotNull(props);
-        assertTrue(props.containsKey(mimeKey));
-        assertTrue(props.containsKey(sizeKey));
-        assertTrue(props.containsKey(modifiedKey));
-        assertTrue(props.containsKey(cksumKey));
+        Map<String, String> metadata = emcProvider.getContentMetadata(spaceId0, contentId0);
+        assertNotNull(metadata);
+        assertTrue(metadata.containsKey(mimeKey));
+        assertTrue(metadata.containsKey(sizeKey));
+        assertTrue(metadata.containsKey(modifiedKey));
+        assertTrue(metadata.containsKey(cksumKey));
 
-        assertEquals(mimeText, props.get(mimeKey));
-        assertEquals(data.length, Integer.parseInt((String) props.get(sizeKey)));
-        assertNotNull(props.get(modifiedKey));
-        assertEquals(digest, props.get(cksumKey));
+        assertEquals(mimeText, metadata.get(mimeKey));
+        assertEquals(data.length, Integer.parseInt((String) metadata.get(sizeKey)));
+        assertNotNull(metadata.get(modifiedKey));
+        assertEquals(digest, metadata.get(cksumKey));
 
         // Set and check again.
-        emcProvider.setContentMetadata(spaceId0, contentId0, new Properties());
-        props = emcProvider.getContentMetadata(spaceId0, contentId0);
-        assertNotNull(props);
-        assertTrue(props.containsKey(mimeKey));
-        assertTrue(props.containsKey(sizeKey));
-        assertTrue(props.containsKey(modifiedKey));
-        assertTrue(props.containsKey(cksumKey));
+        emcProvider.setContentMetadata(spaceId0, contentId0,
+                                       new HashMap<String, String>());
+        metadata = emcProvider.getContentMetadata(spaceId0, contentId0);
+        assertNotNull(metadata);
+        assertTrue(metadata.containsKey(mimeKey));
+        assertTrue(metadata.containsKey(sizeKey));
+        assertTrue(metadata.containsKey(modifiedKey));
+        assertTrue(metadata.containsKey(cksumKey));
 
-        assertEquals(mimeText, props.get(mimeKey));
-        assertEquals(data.length, Integer.parseInt((String) props.get(sizeKey)));
-        assertNotNull(props.get(modifiedKey));
-        assertEquals(digest, props.get(cksumKey));
+        assertEquals(mimeText, metadata.get(mimeKey));
+        assertEquals(data.length, Integer.parseInt((String) metadata.get(sizeKey)));
+        assertNotNull(metadata.get(modifiedKey));
+        assertEquals(digest, metadata.get(cksumKey));
     }
 
     @Test

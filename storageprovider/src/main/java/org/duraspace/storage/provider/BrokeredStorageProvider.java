@@ -3,8 +3,8 @@ package org.duraspace.storage.provider;
 
 import java.io.InputStream;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.duraspace.storage.domain.StorageException;
 
@@ -57,7 +57,7 @@ public class BrokeredStorageProvider
         return dispatchProvider.getContent(targetProvider, spaceId, contentId);
     }
 
-    public Properties getContentMetadata(String spaceId, String contentId)
+    public Map<String, String> getContentMetadata(String spaceId, String contentId)
             throws StorageException {
         return dispatchProvider.getContentMetadata(targetProvider,
                                                    spaceId,
@@ -68,23 +68,23 @@ public class BrokeredStorageProvider
         return dispatchProvider.getSpaceAccess(targetProvider, spaceId);
     }
 
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
             throws StorageException {
         return dispatchProvider.getSpaceContents(targetProvider, spaceId);
     }
 
-    public Properties getSpaceMetadata(String spaceId) throws StorageException {
+    public Map<String, String> getSpaceMetadata(String spaceId) throws StorageException {
         return dispatchProvider.getSpaceMetadata(targetProvider, spaceId);
 
     }
 
-    public List<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() throws StorageException {
         return dispatchProvider.getSpaces(targetProvider);
     }
 
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
             throws StorageException {
         dispatchProvider.setContentMetadata(targetProvider,
                                             spaceId,
@@ -97,7 +97,7 @@ public class BrokeredStorageProvider
         dispatchProvider.setSpaceAccess(targetProvider, spaceId, access);
     }
 
-    public void setSpaceMetadata(String spaceId, Properties spaceMetadata)
+    public void setSpaceMetadata(String spaceId, Map<String, String> spaceMetadata)
             throws StorageException {
         dispatchProvider.setSpaceMetadata(targetProvider,
                                           spaceId,

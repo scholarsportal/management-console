@@ -6,9 +6,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.emc.esu.api.Acl;
 import com.emc.esu.api.DownloadHelper;
@@ -34,6 +35,8 @@ import org.duraspace.common.util.ChecksumUtil;
 import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
+
+import static org.duraspace.storage.util.StorageProviderUtil.contains;
 
 /**
  * Provides content storage backed by EMC's Storage Utility.
@@ -65,7 +68,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() throws StorageException {
         List<String> spaces = new ArrayList<String>();
         for (Identifier objId : getSpaceObjects()) {
             spaces.add(getSpaceNameForSpaceObject(objId));
@@ -77,7 +80,7 @@ public class EMCStorageProvider
                 log.debug("\t-> " + space);
             }
         }
-        return spaces;
+        return spaces.iterator();
     }
 
     private List<Identifier> getSpaceObjects() throws StorageException {
@@ -109,7 +112,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
             throws StorageException {
 
         List<String> contentNames = new ArrayList<String>();
@@ -117,7 +120,7 @@ public class EMCStorageProvider
             contentNames.add(getContentNameForContentObject(objId));
         }
 
-        return contentNames;
+        return contentNames.iterator();
     }
 
     private List<Identifier> getCompleteSpaceContents(String spaceId)
@@ -160,12 +163,12 @@ public class EMCStorageProvider
     }
 
     private void throwIfSpaceExists(String spaceId) throws StorageException {
-        List<String> spaces = null;
+        Iterator<String> spaces = null;
         try {
             spaces = getSpaces();
         } catch (Exception e) {
         }
-        if (spaces != null && spaces.contains(spaceId)) {
+        if (spaces != null && contains(spaces, spaceId)) {
             throw new StorageException("Space already exists: " + spaceId);
         }
     }
@@ -253,21 +256,21 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Properties getSpaceMetadata(String spaceId) throws StorageException {
-
+    public Map<String, String> getSpaceMetadata(String spaceId)
+            throws StorageException {
         ObjectId rootObjId = (ObjectId) getRootId(spaceId);
 
         // Get existing user metadata.
-        Properties spaceProps = getExistingUserMetadata(rootObjId);
+        Map<String, String> spaceMetadata = getExistingUserMetadata(rootObjId);
 
         // Over-write managed metadata.
-        spaceProps.put(METADATA_SPACE_CREATED, getCreationDate(rootObjId));
-        spaceProps.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
-        spaceProps.put(METADATA_SPACE_NAME, spaceId);
-        spaceProps.put(METADATA_SPACE_ACCESS, doGetSpaceAccess(rootObjId)
-                .toString());
+        spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(rootObjId));
+        spaceMetadata.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
+        spaceMetadata.put(METADATA_SPACE_NAME, spaceId);
+        spaceMetadata.put(METADATA_SPACE_ACCESS,
+                          doGetSpaceAccess(rootObjId).toString());
 
-        return spaceProps;
+        return spaceMetadata;
     }
 
     private String getCreationDate(Identifier id) {
@@ -298,8 +301,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public void setSpaceMetadata(String spaceId, Properties spaceMetadata)
+    public void setSpaceMetadata(String spaceId, Map<String, String> spaceMetadata)
             throws StorageException {
         Identifier rootObjId = getRootId(spaceId);
 
@@ -311,10 +313,10 @@ public class EMCStorageProvider
 
         // Start adding arg user metadata.
         final boolean isIndexed = false;
-        Enumeration keys = spaceMetadata.keys();
-        while (keys != null && keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            String val = spaceMetadata.getProperty(key);
+        Iterator<String> keys = spaceMetadata.keySet().iterator();
+        while (keys != null && keys.hasNext()) {
+            String key = keys.next();
+            String val = spaceMetadata.get(key);
             metadatas.addMetadata(new Metadata(key, val, isIndexed));
         }
 
@@ -553,10 +555,9 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
             throws StorageException {
         ObjectId objId = getContentObjId(spaceId, contentId);
 
@@ -569,10 +570,10 @@ public class EMCStorageProvider
 
         // Start adding arg user metadata.
         final boolean isIndexed = false;
-        Enumeration keys = contentMetadata.keys();
-        while (keys != null && keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            String val = contentMetadata.getProperty(key);
+        Iterator<String> keys = contentMetadata.keySet().iterator();
+        while (keys != null && keys.hasNext()) {
+            String key = keys.next();
+            String val = contentMetadata.get(key);
             metadatas.addMetadata(new Metadata(key, val, isIndexed));
         }
 
@@ -606,7 +607,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Properties getContentMetadata(String spaceId, String contentId)
+    public Map<String, String> getContentMetadata(String spaceId, String contentId)
             throws StorageException {
         ObjectId objId = getContentObjId(spaceId, contentId);
 
@@ -619,13 +620,13 @@ public class EMCStorageProvider
             }
         }
 
-        Properties props = getExistingUserMetadata(objId);
-        props.putAll(generateManagedContentMetadata(objId));
-        return props;
+        Map<String, String> metadata = getExistingUserMetadata(objId);
+        metadata.putAll(generateManagedContentMetadata(objId));
+        return metadata;
     }
 
-    private Properties getExistingUserMetadata(ObjectId objId) {
-        Properties props = new Properties();
+    private Map<String, String> getExistingUserMetadata(ObjectId objId) {
+        Map<String, String> metadata = new HashMap<String, String>();
         MetadataList metadatas = null;
         try {
             metadatas = emcService.getUserMetadata(objId, null);
@@ -635,13 +636,13 @@ public class EMCStorageProvider
 
         if (metadatas != null) {
             for (Metadata md : metadatas) {
-                props.put(md.getName(), md.getValue());
+                metadata.put(md.getName(), md.getValue());
             }
         }
-        return props;
+        return metadata;
     }
 
-    private Properties generateManagedContentMetadata(ObjectId objId) {
+    private Map<String, String> generateManagedContentMetadata(ObjectId objId) {
         MetadataList sysMd = null;
         try {
             sysMd = emcService.getSystemMetadata(objId, null);
@@ -667,17 +668,17 @@ public class EMCStorageProvider
         ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
         String cksum = cksumUtil.generateChecksum(doGetContent(objId));
 
-        Properties props = new Properties();
+        Map<String, String> metadata = new HashMap<String, String>();
         if (StringUtils.isNotBlank(size)) {
-            props.put(METADATA_CONTENT_SIZE, size);
+            metadata.put(METADATA_CONTENT_SIZE, size);
         }
         if (StringUtils.isNotBlank(cksum)) {
-            props.put(METADATA_CONTENT_CHECKSUM, cksum);
+            metadata.put(METADATA_CONTENT_CHECKSUM, cksum);
         }
         if (StringUtils.isNotBlank(modifiedDate)) {
-            props.put(METADATA_CONTENT_MODIFIED, modifiedDate);
+            metadata.put(METADATA_CONTENT_MODIFIED, modifiedDate);
         }
-        return props;
+        return metadata;
     }
 
     private MetadataTag currentSpaceTag(String spaceId) {

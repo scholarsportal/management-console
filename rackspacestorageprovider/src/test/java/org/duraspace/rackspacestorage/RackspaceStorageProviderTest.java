@@ -6,12 +6,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import com.mosso.client.cloudfiles.FilesCDNContainer;
 import com.mosso.client.cloudfiles.FilesClient;
+
+import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 
@@ -27,12 +30,12 @@ import org.duraspace.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duraspace.storage.provider.StorageProvider;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
 
-import junit.framework.Assert;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+
+import static org.duraspace.storage.util.StorageProviderUtil.contains;
 
 /**
  * Tests the Rackspace Storage Provider. This test is run via the command line
@@ -96,22 +99,22 @@ public class RackspaceStorageProviderTest {
 
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
-        Properties spaceMetadata = new Properties();
+        Map<String, String> spaceMetadata = new HashMap<String, String>();
         spaceMetadata.put(SPACE_META_NAME, SPACE_META_VALUE);
         rackspaceProvider.setSpaceMetadata(SPACE_ID, spaceMetadata);
 
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
-        Properties sMetadata = rackspaceProvider.getSpaceMetadata(SPACE_ID);
+        Map<String, String> sMetadata = rackspaceProvider.getSpaceMetadata(SPACE_ID);
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
 
         // test getSpaces()
         log.debug("Test getSpaces()");
-        List<String> spaces = rackspaceProvider.getSpaces();
+        Iterator<String> spaces = rackspaceProvider.getSpaces();
         assertNotNull(spaces);
-        assertTrue(spaces.contains(SPACE_ID)); // This will only work when SPACE_ID fits
-        // the Rackspace container naming conventions
+        assertTrue(contains(spaces, SPACE_ID)); // This will only work when SPACE_ID fits
+                                                // the Rackspace container naming conventions
 
         // Check space access - should be closed
         // TODO: Uncomment after Rackspace SDK bug is fixed
@@ -145,6 +148,16 @@ public class RackspaceStorageProviderTest {
                                      contentSize,
                                      contentStream);
 
+        // test getContentMetadata()
+        log.debug("Test getContentMetadata()");
+        Map<String, String> cMetadata =
+                rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
+        assertNotNull(cMetadata);
+        // TODO: Determine how to handle metadata name case change (content-name becomes Content-Name)
+        //        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
+        assertEquals(CONTENT_ID, cMetadata.get("Content-Name"));
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+
         // Check content access
         log.debug("Check content access");
         String spaceUrl = cdnContainer.getCdnURL();
@@ -162,13 +175,15 @@ public class RackspaceStorageProviderTest {
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
-        List<String> spaceContents =
+        Iterator<String> spaceContents =
                 rackspaceProvider.getSpaceContents(SPACE_ID);
         assertNotNull(spaceContents);
-        assertTrue(spaceContents.contains(CONTENT_ID));
+        assertTrue(contains(spaceContents, CONTENT_ID));
+        // Ensure that space metadata is not included in contents list
+        spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID);
         String containerName = rackspaceProvider.getContainerName(SPACE_ID);
         String spaceMetaSuffix = RackspaceStorageProvider.SPACE_METADATA_SUFFIX;
-        assertFalse(spaceContents.contains(containerName + spaceMetaSuffix));
+        assertFalse(contains(spaceContents, containerName + spaceMetaSuffix));
 
         // test getContent()
         log.debug("Test getContent()");
@@ -184,7 +199,7 @@ public class RackspaceStorageProviderTest {
 
         // test setContentMetadata()
         log.debug("Test setContentMetadata()");
-        Properties contentMetadata = new Properties();
+        Map<String, String> contentMetadata = new HashMap<String, String>();
         contentMetadata.put(CONTENT_META_NAME, CONTENT_META_VALUE);
         rackspaceProvider.setContentMetadata(SPACE_ID,
                                              CONTENT_ID,
@@ -192,24 +207,26 @@ public class RackspaceStorageProviderTest {
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
-        Properties cMetadata =
-                rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
+        cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
         // TODO: Determine how to handle metadata name case change (content-name becomes Content-Name)
         //        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
-        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(CONTENT_META_VALUE, cMetadata.get("Content-Name"));
+        // Mime type was not included when setting content metadata
+        // so it should have been reset to a default value
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
 
         // test deleteContent()
         log.debug("Test deleteContent()");
         rackspaceProvider.deleteContent(SPACE_ID, CONTENT_ID);
         spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID);
-        assertFalse(spaceContents.contains(CONTENT_ID));
+        assertFalse(contains(spaceContents, CONTENT_ID));
 
         // test deleteSpace()
         log.debug("Test deleteSpace()");
         rackspaceProvider.deleteSpace(SPACE_ID);
         spaces = rackspaceProvider.getSpaces();
-        assertFalse(spaces.contains(SPACE_ID));
+        assertFalse(contains(spaces, SPACE_ID));
     }
 
 }

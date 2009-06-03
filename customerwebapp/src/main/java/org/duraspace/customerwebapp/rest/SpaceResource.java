@@ -1,8 +1,8 @@
 package org.duraspace.customerwebapp.rest;
 
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -39,8 +39,9 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(accountID);
 
-            List<String> spaces = storage.getSpaces();
-            for(String spaceID : spaces) {
+            Iterator<String> spaces = storage.getSpaces();
+            while(spaces.hasNext()) {
+                String spaceID = spaces.next();
                 try {
                     Element spaceElem = getSpaceXML(accountID, spaceID);
                     spacesElem.addContent(spaceElem);
@@ -103,12 +104,12 @@ public class SpaceResource {
         StorageProvider storage =
             StorageProviderFactory.getStorageProvider(accountID);
 
-        Properties metadata = storage.getSpaceMetadata(spaceID);
+        Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
-            Enumeration<?> metadataNames = metadata.propertyNames();
-            while(metadataNames.hasMoreElements()) {
-                String metadataName = (String)metadataNames.nextElement();
-                String metadataValue = metadata.getProperty(metadataName);
+            Iterator<String> metadataNames = metadata.keySet().iterator();
+            while(metadataNames.hasNext()) {
+                String metadataName = (String)metadataNames.next();
+                String metadataValue = metadata.get(metadataName);
                 Element metadataElem = new Element(metadataName);
                 metadataElem.setText(metadataValue);
                 propsElem.addContent(metadataElem);
@@ -141,9 +142,10 @@ public class SpaceResource {
                 // TODO: Check user permissions
             }
 
-            List<String> contents = storage.getSpaceContents(spaceID);
+            Iterator<String> contents = storage.getSpaceContents(spaceID);
             if(contents != null) {
-                for(String contentItem : contents) {
+                while(contents.hasNext()) {
+                    String contentItem = contents.next();
                     Element contentElem = new Element("item");
                     contentElem.setText(contentItem);
                     content.addContent(contentElem);
@@ -210,9 +212,9 @@ public class SpaceResource {
 
             // Set space properties if a new value was provided
             if(spaceName != null && !spaceName.equals("")) {
-                Properties spaceProps = storage.getSpaceMetadata(spaceID);
+                Map<String, String> spaceProps = storage.getSpaceMetadata(spaceID);
                 if(spaceProps == null) {
-                    spaceProps = new Properties();
+                    spaceProps = new HashMap<String, String>();
                 }
                 spaceProps.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
                 storage.setSpaceMetadata(spaceID, spaceProps);

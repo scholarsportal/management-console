@@ -4,8 +4,9 @@ package org.duraspace.storage.provider;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -13,9 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.storage.domain.StorageException;
-import org.duraspace.storage.provider.BrokeredStorageProvider;
-import org.duraspace.storage.provider.StatelessStorageProvider;
-import org.duraspace.storage.provider.StatelessStorageProviderImpl;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
 import org.duraspace.storage.provider.mock.MockStorageProvider;
 
@@ -41,9 +39,9 @@ public class BrokeredStorageProviderTest {
 
     private final AccessType access = AccessType.OPEN;
 
-    private final Properties spaceMetadata = new Properties();
+    private final Map<String, String> spaceMetadata = new HashMap<String, String>();
 
-    private final Properties contentMetadata = new Properties();
+    private final Map<String, String> contentMetadata = new HashMap<String, String>();
 
     @Before
     public void setUp() throws Exception {
@@ -129,11 +127,11 @@ public class BrokeredStorageProviderTest {
         directProvider.setContentMetadata(spaceId, contentId, contentMetadata);
         broker.setContentMetadata(spaceId, contentId, contentMetadata);
 
-        Properties props0 =
+        Map<String, String> meta0 =
                 directProvider.getContentMetadata(spaceId, contentId);
-        Properties props1 = broker.getContentMetadata(spaceId, contentId);
+        Map<String, String> meta1 = broker.getContentMetadata(spaceId, contentId);
 
-        verify(props0, props1);
+        verify(meta0, meta1);
     }
 
     @Test
@@ -151,10 +149,10 @@ public class BrokeredStorageProviderTest {
     public void getSpaceContents() throws StorageException {
         directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, content);
         broker.addContent(spaceId, contentId, contentMimeType, contentSize, content);
-        List<String> spaceContents0 = directProvider.getSpaceContents(spaceId);
-        List<String> spaceContents1 = broker.getSpaceContents(spaceId);
+        Iterator<String> spaceContents0 = directProvider.getSpaceContents(spaceId);
+        Iterator<String> spaceContents1 = broker.getSpaceContents(spaceId);
 
-        verify(spaceContents0, spaceContents1);
+        verifyIteratorContents(spaceContents0, spaceContents1);
     }
 
     @Test
@@ -162,10 +160,10 @@ public class BrokeredStorageProviderTest {
         directProvider.setSpaceMetadata(spaceId, spaceMetadata);
         broker.setSpaceMetadata(spaceId, spaceMetadata);
 
-        Properties props0 = directProvider.getSpaceMetadata(spaceId);
-        Properties props1 = broker.getSpaceMetadata(spaceId);
+        Map<String, String> meta0 = directProvider.getSpaceMetadata(spaceId);
+        Map<String, String> meta1 = broker.getSpaceMetadata(spaceId);
 
-        verify(props0, props1);
+        verify(meta0, meta1);
     }
 
     @Test
@@ -173,10 +171,10 @@ public class BrokeredStorageProviderTest {
         directProvider.createSpace(spaceId);
         broker.createSpace(spaceId);
 
-        List<String> spaces0 = directProvider.getSpaces();
-        List<String> spaces1 = broker.getSpaces();
+        Iterator<String> spaces0 = directProvider.getSpaces();
+        Iterator<String> spaces1 = broker.getSpaces();
 
-        verify(spaces0, spaces1);
+        verifyIteratorContents(spaces0, spaces1);
     }
 
     @Test
@@ -238,6 +236,15 @@ public class BrokeredStorageProviderTest {
         Assert.assertNotNull(directProvider.getSpaceMetadata());
         Assert.assertEquals(directProvider.getSpaceMetadata(), targetProvider
                 .getSpaceMetadata());
+    }
+
+    private void verifyIteratorContents(Iterator<String> iter0, Iterator<String> iter1) {
+        Assert.assertNotNull(iter0);
+        Assert.assertNotNull(iter1);
+        while(iter0.hasNext()) {
+            Assert.assertEquals(iter0.next(), iter1.next());
+        }
+        Assert.assertFalse(iter1.hasNext());
     }
 
     private void verify(Object obj0, Object obj1) {

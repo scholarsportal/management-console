@@ -1,18 +1,14 @@
 package org.duraspace.rackspacestorage;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import com.mosso.client.cloudfiles.FilesCDNContainer;
 import com.mosso.client.cloudfiles.FilesClient;
@@ -27,6 +23,9 @@ import org.apache.commons.logging.LogFactory;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
+import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+
 
 /**
  * Provides content storage backed by Rackspace's Cloud Files service.
@@ -36,7 +35,6 @@ import org.duraspace.storage.provider.StorageProvider;
 public class RackspaceStorageProvider implements StorageProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
-    protected static final String SPACE_METADATA_SUFFIX = "-space-metadata";
 
     private FilesClient filesClient = null;
 
@@ -57,7 +55,7 @@ public class RackspaceStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaces()
+    public Iterator<String> getSpaces()
     throws StorageException {
         try {
             List<FilesContainer> containers = filesClient.listContainers();
@@ -67,7 +65,7 @@ public class RackspaceStorageProvider implements StorageProvider {
                 String containerName = container.getName();
                 spaces.add(containerName);
             }
-            return spaces;
+            return spaces.iterator();
         } catch(Exception e) {
             String err = "Could not retrieve list of Rackspace containers due to error: " +
                          e.getMessage();
@@ -78,13 +76,13 @@ public class RackspaceStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
     throws StorageException {
         String containerName = getContainerName(spaceId);
         String spaceMetadata = containerName+SPACE_METADATA_SUFFIX;
         List<String> spaceContents = getCompleteSpaceContents(spaceId);
         spaceContents.remove(spaceMetadata);
-        return spaceContents;
+        return spaceContents.iterator();
     }
 
     private List<String> getCompleteSpaceContents(String spaceId)
@@ -115,11 +113,11 @@ public class RackspaceStorageProvider implements StorageProvider {
                 filesClient.createContainer(containerName);
 
                 // Add space metadata
-                Properties spaceProps = new Properties();
+                Map<String, String> spaceMetadata = new HashMap<String, String>();
                 Date created = new Date(System.currentTimeMillis());
-                spaceProps.put(METADATA_SPACE_CREATED, created.toString());
-                spaceProps.put(METADATA_SPACE_NAME, containerName);
-                setSpaceMetadata(containerName, spaceProps);
+                spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+                spaceMetadata.put(METADATA_SPACE_NAME, containerName);
+                setSpaceMetadata(containerName, spaceMetadata);
             }
         } catch(Exception e) {
             String err = "Could not create Rackspace container with name " +
@@ -153,68 +151,43 @@ public class RackspaceStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Properties getSpaceMetadata(String spaceId)
+    public Map<String, String> getSpaceMetadata(String spaceId)
     throws StorageException {
         // Space metadata is stored as a content item
         String containerName = getContainerName(spaceId);
         InputStream is = getContent(spaceId,
                                     containerName+SPACE_METADATA_SUFFIX);
-
-        Properties spaceProps = new Properties();
-        if(is != null) {
-            try {
-                spaceProps.loadFromXML(is);
-                is.close();
-            } catch(Exception e) {
-                String err = "Could not read metadata for space " + spaceId +
-                             " due to error: " + e.getMessage();
-                throw new StorageException(err, e);
-            }
-        }
+        Map<String, String> spaceMetadata = loadMetadata(is);
 
         try {
             FilesContainerInfo containerInfo =
                 filesClient.getContainerInfo(containerName);
 
-            spaceProps.put(METADATA_SPACE_COUNT,
+            spaceMetadata.put(METADATA_SPACE_COUNT,
                            String.valueOf(containerInfo.getObjectCount()));
 
-            spaceProps.put(METADATA_SPACE_SIZE,
+            spaceMetadata.put(METADATA_SPACE_SIZE,
                            String.valueOf(containerInfo.getTotalSize()));
 
             AccessType access = getSpaceAccess(spaceId);
-            spaceProps.put(METADATA_SPACE_ACCESS, access.toString());
+            spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
         } catch(Exception e) {
             String err = "Could not retrieve metadata from S3 bucket " +
                          containerName + " due to error: " + e.getMessage();
             log.warn(err, e);
         }
 
-        return spaceProps;
+        return spaceMetadata;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Properties spaceMetadata)
+                                 Map<String, String> spaceMetadata)
     throws StorageException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-        // Pull out any computed values
-        spaceMetadata.remove(METADATA_SPACE_COUNT);
-        spaceMetadata.remove(METADATA_SPACE_ACCESS);
-
-        try {
-            spaceMetadata.storeToXML(os, "Metadata for " + spaceId);
-        } catch (IOException e) {
-            String err = "Could not set metadata for space " + spaceId +
-                         " due to error: " + e.getMessage();
-            throw new StorageException(err);
-        }
-
         String containerName = getContainerName(spaceId);
-        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        ByteArrayInputStream is = storeMetadata(spaceMetadata);
         addContent(spaceId,
                    containerName+SPACE_METADATA_SUFFIX,
                    "text/xml",
@@ -347,67 +320,43 @@ public class RackspaceStorageProvider implements StorageProvider {
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
     throws StorageException {
+        // Remove calculated properties
+        contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
+        contentMetadata.remove(METADATA_CONTENT_MODIFIED);
+        contentMetadata.remove(METADATA_CONTENT_SIZE);
+
         String containerName = getContainerName(spaceId);
 
-        FilesObjectMetaData metadata = null;
-        Map<String, String> metamap = null;
-        try {
-            metadata = filesClient.getObjectMetaData(containerName, contentId);
-            metamap = metadata.getMetaData();
-        } catch(Exception e) {
-            String err = "Could not retrieve metadata for content " +
-                         contentId + " from Rackspace container " +
-                         containerName + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
-        }
-
-        if(metamap == null) {
-            metamap = new HashMap<String, String>();
-        }
-
-        // Add Properties into metadata Map
-        Enumeration<?> metadataKeys = contentMetadata.propertyNames();
-        while(metadataKeys.hasMoreElements()) {
-            String key = (String)metadataKeys.nextElement();
-            String value = contentMetadata.getProperty(key);
-            if(key != null &&
-               !key.equals(METADATA_CONTENT_CHECKSUM) &&
-               !key.equals(METADATA_CONTENT_MODIFIED) &&
-               !key.equals(METADATA_CONTENT_SIZE) &&
-               //!key.equals(METADATA_CONTENT_MIMETYPE) &&
-               value != null) {
-                metamap.put(key, value);
-            }
-        }
-
         // Set name to contentId if it is not set already
-        if(!metamap.containsKey(METADATA_CONTENT_NAME)) {
-            metamap.put(METADATA_CONTENT_NAME, contentId);
+        if(!contentMetadata.containsKey(METADATA_CONTENT_NAME)) {
+            contentMetadata.put(METADATA_CONTENT_NAME, contentId);
         }
 
-        // Set mimetype
-        // TODO: Determine how to update Rackspace object mimetype
-//        String newMimeType =
-//            contentMetadata.getProperty(METADATA_CONTENT_MIMETYPE);
-//        if(newMimeType != null && !newMimeType.equals("")) {
-//            metamap.put("Content-Type", newMimeType);
-//        }
+        // Set a default mime type value if one is not set
+        if(!contentMetadata.containsKey(METADATA_CONTENT_MIMETYPE)) {
+            contentMetadata.put(METADATA_CONTENT_MIMETYPE,
+                                DEFAULT_MIMETYPE);
+        }
+        // TODO: Determine how to update Rackspace-specific object mimetype
 
         // Get the object and replace its metadata
         try {
-            // TODO: This doesn't actually push the object metadata to the object
-            metadata.setMetaData(metamap);
+            // TODO: Determine how to update object metadata directly.
+            // This doesn't actually push the object metadata to the store.
+//             FilesObjectMetaData objMetadata =
+//                 filesClient.getObjectMetaData(containerName, contentId);
+//             objMetadata.setMetaData(contentMetadata);
 
             // In the meantime, replace the object. This is terribly inefficient
             // and will only work for small files. Remove ASAP.
             byte[] content = filesClient.getObject(containerName, contentId);
             filesClient.storeObject(containerName,
                                     content,
-                                    metadata.getMimeType(),
+                                    contentMetadata.get(METADATA_CONTENT_MIMETYPE),
                                     contentId,
-                                    metamap);
+                                    contentMetadata);
         } catch(Exception e) {
             String err = "Could not update metadata for content " +
                          contentId + " in Rackspace container " +
@@ -419,7 +368,7 @@ public class RackspaceStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Properties getContentMetadata(String spaceId,
+    public Map<String, String> getContentMetadata(String spaceId,
                                          String contentId)
     throws StorageException {
         String containerName = getContainerName(spaceId);
@@ -427,7 +376,6 @@ public class RackspaceStorageProvider implements StorageProvider {
         FilesObjectMetaData metadata = null;
         try {
             metadata = filesClient.getObjectMetaData(containerName, contentId);
-
         } catch(Exception e) {
             String err = "Could not retrieve metadata for content " +
                          contentId + " from Rackspace container " +
@@ -441,40 +389,33 @@ public class RackspaceStorageProvider implements StorageProvider {
             throw new StorageException(err);
         }
 
-        // Convert from Map to Properties
         Map<String, String> metadataMap = metadata.getMetaData();
-        Properties metaProps = new Properties();
-        Iterator<String> metadataKeys = metadataMap.keySet().iterator();
-        while(metadataKeys.hasNext()) {
-            String key = metadataKeys.next();
-            metaProps.put(key, metadataMap.get(key));
-        }
 
-        // Set MIMETYPE
-        String mimetype = metadata.getMimeType();
-        if(mimetype != null) {
-            metaProps.put(METADATA_CONTENT_MIMETYPE, mimetype);
+        // Set expected metadata values
+        // MIMETYPE
+        if(!metadataMap.containsKey(METADATA_CONTENT_MIMETYPE)) {
+            String mimetype = metadata.getMimeType();
+            if(mimetype != null) {
+                metadataMap.put(METADATA_CONTENT_MIMETYPE, mimetype);
+            }
         }
-
-        // Set SIZE
+        // SIZE
         String contentLength = metadata.getContentLength();
         if(contentLength != null) {
-            metaProps.put(METADATA_CONTENT_SIZE, contentLength);
+            metadataMap.put(METADATA_CONTENT_SIZE, contentLength);
         }
-
-        // Set CHECKSUM
+        // CHECKSUM
         String checksum = metadata.getETag();
         if(checksum != null) {
-            metaProps.put(METADATA_CONTENT_CHECKSUM, checksum);
+            metadataMap.put(METADATA_CONTENT_CHECKSUM, checksum);
         }
-
-        // Set MODIFIED
+        // MODIFIED DATE
         String modified = metadata.getLastModified();
         if(modified != null) {
-            metaProps.put(METADATA_CONTENT_MODIFIED, modified);
+            metadataMap.put(METADATA_CONTENT_MODIFIED, modified);
         }
 
-        return metaProps;
+        return metadataMap;
     }
 
     /**
@@ -483,8 +424,8 @@ public class RackspaceStorageProvider implements StorageProvider {
      *
      * From Cloud Files Docs:
      * The only restrictions on Container names is that they cannot
-     * contain a forward slash, �/� character or a question mark,
-     * �?� character and they must be less than 64 characters in
+     * contain a forward slash (/) character or a question mark
+     * (?) character and they must be less than 64 characters in
      * length (after URL encoding).
      *
      * @param spaceId

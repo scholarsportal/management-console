@@ -4,8 +4,9 @@ package org.duraspace.storage.provider.mock;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
@@ -23,15 +24,15 @@ public class MockStorageProvider
 
     private InputStream content;
 
-    private Properties contentMetadata;
+    private Map<String, String> contentMetadata;
 
     private AccessType access;
 
-    private List<String> spaceContents;
+    private Iterator<String> spaceContents;
 
-    private Properties spaceMetadata;
+    private Map<String, String> spaceMetadata;
 
-    private List<String> spaces;
+    private Iterator<String> spaces;
 
     public void addContent(String spaceId,
                            String contentId,
@@ -43,14 +44,16 @@ public class MockStorageProvider
         this.contentMimeType = contentMimeType;
         this.contentSize = contentSize;
         this.content = content;
-        spaceContents = new ArrayList<String>();
-        spaceContents.add(content.toString());
+        List<String> contentsList = new ArrayList<String>();
+        contentsList.add(content.toString());
+        spaceContents = contentsList.iterator();
     }
 
     public void createSpace(String spaceId) throws StorageException {
         this.spaceId = spaceId;
-        spaces = new ArrayList<String>();
-        spaces.add(spaceId);
+        List<String> spacesList = new ArrayList<String>();
+        spacesList.add(spaceId);
+        spaces = spacesList.iterator();
     }
 
     public void deleteContent(String spaceId, String contentId)
@@ -68,7 +71,7 @@ public class MockStorageProvider
         return content;
     }
 
-    public Properties getContentMetadata(String spaceId, String contentId)
+    public Map<String, String> getContentMetadata(String spaceId, String contentId)
             throws StorageException {
         return contentMetadata;
     }
@@ -77,22 +80,23 @@ public class MockStorageProvider
         return access;
     }
 
-    public List<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId)
             throws StorageException {
         return spaceContents;
     }
 
-    public Properties getSpaceMetadata(String spaceId) throws StorageException {
+    public Map<String, String> getSpaceMetadata(String spaceId)
+    throws StorageException {
         return spaceMetadata;
     }
 
-    public List<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() throws StorageException {
         return spaces;
     }
 
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Properties contentMetadata)
+                                   Map<String, String> contentMetadata)
             throws StorageException {
         this.spaceId = spaceId;
         this.contentId = contentId;
@@ -105,7 +109,8 @@ public class MockStorageProvider
         this.access = access;
     }
 
-    public void setSpaceMetadata(String spaceId, Properties spaceMetadata)
+    public void setSpaceMetadata(String spaceId,
+                                 Map<String, String> spaceMetadata)
             throws StorageException {
         this.spaceId = spaceId;
         this.spaceMetadata = spaceMetadata;
@@ -151,11 +156,11 @@ public class MockStorageProvider
         this.content = content;
     }
 
-    public Properties getContentMetadata() {
+    public Map<String, String> getContentMetadata() {
         return contentMetadata;
     }
 
-    public void setContentMetadata(Properties contentMetadata) {
+    public void setContentMetadata(Map<String, String> contentMetadata) {
         this.contentMetadata = contentMetadata;
     }
 
@@ -167,19 +172,19 @@ public class MockStorageProvider
         this.access = access;
     }
 
-    public Properties getSpaceMetadata() {
+    public Map<String, String> getSpaceMetadata() {
         return spaceMetadata;
     }
 
-    public void setSpaceMetadata(Properties spaceMetadata) {
+    public void setSpaceMetadata(Map<String, String> spaceMetadata) {
         this.spaceMetadata = spaceMetadata;
     }
 
-    public void setSpaces(List<String> spaces) {
+    public void setSpaces(Iterator<String> spaces) {
         this.spaces = spaces;
     }
 
-    public List<String> getSpaceContents() {
+    public Iterator<String> getSpaceContents() {
         return spaceContents;
     }
 
