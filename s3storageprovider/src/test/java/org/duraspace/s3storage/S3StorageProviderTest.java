@@ -32,6 +32,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.contains;
 
 /**
@@ -136,11 +137,12 @@ public class S3StorageProviderTest {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
-        s3Provider.addContent(SPACE_ID,
-                              CONTENT_ID,
-                              CONTENT_MIME_VALUE,
-                              contentSize,
-                              contentStream);
+        String checksum = s3Provider.addContent(SPACE_ID,
+                                                CONTENT_ID,
+                                                CONTENT_MIME_VALUE,
+                                                contentSize,
+                                                contentStream);
+        compareChecksum(s3Provider, SPACE_ID, CONTENT_ID, checksum);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");

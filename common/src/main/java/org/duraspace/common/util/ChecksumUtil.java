@@ -4,6 +4,7 @@ package org.duraspace.common.util;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,13 +31,12 @@ public class ChecksumUtil {
      * @return string representation of the generated checksum.
      */
     public String generateChecksum(InputStream inStream) {
-
         byte[] buf = new byte[4096];
         int numRead = 0;
         while ((numRead = readFromStream(inStream, buf)) != -1) {
             digest.update(buf, 0, numRead);
         }
-        return new String(digest.digest());
+        return checksumBytesToString(digest.digest());
     }
 
     private int readFromStream(InputStream inStream, byte[] buf) {
@@ -48,6 +48,59 @@ public class ChecksumUtil {
             throw new RuntimeException(e);
         }
         return numRead;
+    }
+
+    /**
+     * Wraps an InputStream with a DigestInputStream in order to compute
+     * a checksum as the stream is being read.
+     *
+     * @param inStream The stream to wrap
+     * @param algorithm The algorithm used to compute the digest
+     * @return The original stream wrapped as a DigestInputStream
+     */
+    public static DigestInputStream wrapStream(InputStream inStream,
+                                               Algorithm algorithm) {
+        MessageDigest streamDigest = null;
+        try {
+            streamDigest = MessageDigest.getInstance(algorithm.toString());
+        } catch (NoSuchAlgorithmException e) {
+            String error = "Could not create a MessageDigest because the " +
+            		       "required algorithm " + algorithm.toString() +
+            		       " is not supported.";
+            throw new RuntimeException(error);
+        }
+
+        DigestInputStream wrappedContent =
+            new DigestInputStream(inStream, streamDigest);
+        return wrappedContent;
+    }
+
+    /**
+     * Determines the checksum value of a DigestInputStream's underlying
+     * stream after the stream has been read.
+     *
+     * @param digestStream
+     * @return The checksum value of the stream's contents
+     */
+    public static String getChecksum(DigestInputStream digestStream) {
+        MessageDigest digest = digestStream.getMessageDigest();
+        return checksumBytesToString(digest.digest());
+    }
+
+    /**
+     * Converts a message digest byte array into a String based
+     * on the hex values appearing in the array.
+     */
+    private static String checksumBytesToString(byte[] digestBytes) {
+        StringBuffer hexString = new StringBuffer();
+        for (int i=0; i<digestBytes.length; i++) {
+            String hex=Integer.toHexString(0xff & digestBytes[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     /**

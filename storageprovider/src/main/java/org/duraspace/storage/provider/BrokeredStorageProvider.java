@@ -21,19 +21,18 @@ public class BrokeredStorageProvider
         this.targetProvider = targetProvider;
     }
 
-    public void addContent(String spaceId,
+    public String addContent(String spaceId,
                            String contentId,
                            String contentMimeType,
                            long contentSize,
                            InputStream content) throws StorageException {
 
-        dispatchProvider.addContent(targetProvider,
-                                    spaceId,
-                                    contentId,
-                                    contentMimeType,
-                                    contentSize,
-                                    content);
-
+        return dispatchProvider.addContent(targetProvider,
+                                           spaceId,
+                                           contentId,
+                                           contentMimeType,
+                                           contentSize,
+                                           content);
     }
 
     public void createSpace(String spaceId) throws StorageException {

@@ -3,12 +3,15 @@ package org.duraspace.storage.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.duraspace.common.util.ChecksumUtil;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
@@ -78,6 +81,72 @@ public class StorageProviderUtil {
 
         ByteArrayInputStream is = new ByteArrayInputStream(metadata);
         return is;
+    }
+
+    /**
+     * Wraps an InputStream with a DigestInputStream in order to compute
+     * a checksum as the stream is being read.
+     *
+     * @param inStream The stream to wrap
+     * @return The original stream wrapped as a DigestInputStream
+     */
+    public static DigestInputStream wrapStream(InputStream inStream) {
+        return ChecksumUtil.wrapStream(inStream, ChecksumUtil.Algorithm.MD5);
+    }
+
+    /**
+     * Checks if the content which was stored in a StorageProvider
+     * is the same as the content which was sent.
+     *
+     * @param provider The StorageProvider where the content was stored
+     * @param spaceId The Space in which the content was stored
+     * @param contentId The Id of the content
+     * @param wrappedContent The wrapped stream used to add the content
+     * @return the checksum value
+     * @throws StorageException
+     */
+    public static String compareChecksum(StorageProvider provider,
+                                         String spaceId,
+                                         String contentId,
+                                         DigestInputStream wrappedContent)
+    throws StorageException {
+        String streamChecksum = ChecksumUtil.getChecksum(wrappedContent);
+        try {
+            compareChecksum(provider, spaceId, contentId, streamChecksum);
+        } catch (StorageException se) {
+            String err = "Content " + contentId + " was added to space " + spaceId +
+                         " but the checksum computed enroute does not match the " +
+                         "checksum computed by the storage provider. This content " +
+                         "should be checked for validity.";
+            throw new StorageException(err, se);
+        }
+        return streamChecksum;
+    }
+
+    /**
+     * Determines if the checksum for a particular piece of content
+     * stored in a StorageProvider matches the expected checksum value.
+     *
+     * @param provider The StorageProvider where the content was stored
+     * @param spaceId The Space in which the content was stored
+     * @param contentId The Id of the content
+     * @param checksum The content checksum
+     * @throws StorageException
+     */
+    public static void compareChecksum(StorageProvider provider,
+                                       String spaceId,
+                                       String contentId,
+                                       String checksum)
+    throws StorageException {
+        String providerChecksum =
+            provider.getContentMetadata(spaceId, contentId).
+            get(StorageProvider.METADATA_CONTENT_CHECKSUM);
+        if(!providerChecksum.equals(checksum)) {
+            String err = "Provided checksum " + checksum +
+                         " does not match content checksum " +
+                         providerChecksum;
+            throw new StorageException(err);
+        }
     }
 
     /**

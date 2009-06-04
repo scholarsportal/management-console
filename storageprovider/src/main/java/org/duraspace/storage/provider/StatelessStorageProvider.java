@@ -11,12 +11,12 @@ import org.duraspace.storage.provider.StorageProvider.AccessType;
 
 public interface StatelessStorageProvider {
 
-    public abstract void addContent(StorageProvider targetProvider,
-                                    String spaceId,
-                                    String contentId,
-                                    String contentMimeType,
-                                    long contentSize,
-                                    InputStream content)
+    public abstract String addContent(StorageProvider targetProvider,
+                                      String spaceId,
+                                      String contentId,
+                                      String contentMimeType,
+                                      long contentSize,
+                                      InputStream content)
             throws StorageException;
 
     public abstract void createSpace(StorageProvider targetProvider, String spaceId)

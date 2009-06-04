@@ -34,11 +34,11 @@ public class MockStorageProvider
 
     private Iterator<String> spaces;
 
-    public void addContent(String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content) throws StorageException {
+    public String addContent(String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content) throws StorageException {
         this.spaceId = spaceId;
         this.contentId = contentId;
         this.contentMimeType = contentMimeType;
@@ -47,6 +47,7 @@ public class MockStorageProvider
         List<String> contentsList = new ArrayList<String>();
         contentsList.add(content.toString());
         spaceContents = contentsList.iterator();
+        return new String();
     }
 
     public void createSpace(String spaceId) throws StorageException {

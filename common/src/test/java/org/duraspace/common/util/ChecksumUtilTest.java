@@ -4,6 +4,8 @@ package org.duraspace.common.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.duraspace.common.util.ChecksumUtil.Algorithm;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class ChecksumUtilTest {
 
@@ -84,12 +87,27 @@ public class ChecksumUtilTest {
         assertTrue(diff2);
         assertTrue(diff3);
         assertTrue(diff4);
-
     }
 
     private InputStream getStream(String data) {
         stream = new ByteArrayInputStream(data.getBytes());
         return stream;
+    }
+
+    @Test
+    public void testWrapStreamGetChecksum() throws Exception {
+        ChecksumUtil util = new ChecksumUtil(Algorithm.MD5);
+        String md5 = util.generateChecksum(getStream(content));
+
+        DigestInputStream wrappedStream =
+            ChecksumUtil.wrapStream(getStream(content), Algorithm.MD5);
+
+        while(wrappedStream.read() > -1) {
+            // Just read through the bytes
+        }
+
+        String checksum = ChecksumUtil.getChecksum(wrappedStream);
+        assertEquals(md5, checksum);
     }
 
 }
