@@ -3,6 +3,8 @@ package org.duraspace.rackspacestorage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,8 +25,10 @@ import org.apache.commons.logging.LogFactory;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 
 
 /**
@@ -252,12 +256,13 @@ public class RackspaceStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public void addContent(String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content)
+    public String addContent(String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content)
     throws StorageException {
+        String checksum;
         String containerName = getContainerName(spaceId);
         try {
             Map<String, String> metadata = new HashMap<String, String>();
@@ -265,11 +270,17 @@ public class RackspaceStorageProvider implements StorageProvider {
             metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
             // TODO: Determine how to set Rackspace object mimetype.
 
+            // Wrap the content to be able to compute a checksum during transfer
+            DigestInputStream wrappedContent = wrapStream(content);
+
             filesClient.storeStreamedObject(containerName,
-                                            content,
+                                            wrappedContent,
                                             contentMimeType,
                                             contentId,
                                             metadata);
+
+            // Compare checksum
+            checksum = compareChecksum(this, spaceId, contentId, wrappedContent);
         } catch(Exception e) {
             String err = "Could not add content " + contentId + " with type " +
                          contentMimeType + " and size " + contentSize +
@@ -277,6 +288,7 @@ public class RackspaceStorageProvider implements StorageProvider {
                          " due to error: " + e.getMessage();
             throw new StorageException(err, e);
         }
+        return checksum;
     }
 
     /**

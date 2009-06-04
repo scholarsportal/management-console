@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,7 +38,9 @@ import org.duraspace.common.util.ExceptionUtil;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.contains;
+import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 
 /**
  * Provides content storage backed by EMC's Storage Utility.
@@ -432,11 +436,11 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void addContent(String spaceId,
-                           String contentId,
-                           String mimeType,
-                           long contentSize,
-                           InputStream content) throws StorageException {
+    public String addContent(String spaceId,
+                             String contentId,
+                             String mimeType,
+                             long contentSize,
+                             InputStream content) throws StorageException {
         log.debug("Adding Content: [" + spaceId + ":" + contentId + "], size:"
                 + contentSize + "-bytes");
 
@@ -456,14 +460,20 @@ public class EMCStorageProvider
         } catch (Exception e) {
         }
 
+        // Wrap the content to be able to compute a checksum during transfer
+        DigestInputStream wrappedContent = wrapStream(content);
+
         // Add new object.
         if (objId == null) {
-            helper.createObject(content, acl, metadataList, closeStream);
+            helper.createObject(wrappedContent, acl, metadataList, closeStream);
         }
         // Update existing object.
         else {
-            helper.updateObject(objId, content, acl, metadataList, closeStream);
+            helper.updateObject(objId, wrappedContent, acl, metadataList, closeStream);
         }
+
+        // Compare checksum
+        return compareChecksum(this, spaceId, contentId, wrappedContent);
     }
 
     private MetadataList createRequiredContentMetadata(String spaceId,

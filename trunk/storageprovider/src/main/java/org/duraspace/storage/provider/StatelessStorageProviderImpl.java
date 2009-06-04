@@ -15,17 +15,17 @@ public class StatelessStorageProviderImpl
     /**
      * {@inheritDoc}
      */
-    public void addContent(StorageProvider targetProvider,
-                           String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content) throws StorageException {
-        targetProvider.addContent(spaceId,
-                                  contentId,
-                                  contentMimeType,
-                                  contentSize,
-                                  content);
+    public String addContent(StorageProvider targetProvider,
+                             String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content) throws StorageException {
+        return targetProvider.addContent(spaceId,
+                                         contentId,
+                                         contentMimeType,
+                                         contentSize,
+                                         content);
     }
 
     /**

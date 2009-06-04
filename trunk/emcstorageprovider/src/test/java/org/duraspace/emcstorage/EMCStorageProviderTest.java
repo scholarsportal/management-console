@@ -34,6 +34,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.contains;
 import static org.duraspace.storage.util.StorageProviderUtil.count;
 import static org.junit.Assert.fail;
@@ -161,11 +162,12 @@ public class EMCStorageProviderTest {
                             String mime,
                             byte[] data) throws StorageException {
         ByteArrayInputStream contentStream = new ByteArrayInputStream(data);
-        emcProvider.addContent(spaceKey,
-                               contentKey,
-                               mime,
-                               data.length,
-                               contentStream);
+        String checksum = emcProvider.addContent(spaceKey,
+                                                 contentKey,
+                                                 mime,
+                                                 data.length,
+                                                 contentStream);
+        compareChecksum(emcProvider, spaceKey, contentKey, checksum);
     }
 
     @Test

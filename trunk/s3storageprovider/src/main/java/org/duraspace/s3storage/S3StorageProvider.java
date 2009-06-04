@@ -3,6 +3,8 @@ package org.duraspace.s3storage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,8 +29,10 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 
 /**
  * Provides content storage backed by Amazon's Simple Storage Service.
@@ -269,26 +273,35 @@ public class S3StorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public void addContent(String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content)
+    public String addContent(String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content)
     throws StorageException {
+        // Wrap the content to be able to compute a checksum during transfer
+        DigestInputStream wrappedContent = wrapStream(content);
+
         S3Object contentItem = new S3Object(contentId);
         contentItem.setContentType(contentMimeType);
-        contentItem.setDataInputStream(content);
+        contentItem.setDataInputStream(wrappedContent);
 
         if(contentSize > 0) {
             contentItem.setContentLength(contentSize);
         }
 
+        String checksum;
         String bucketName = getBucketName(spaceId);
         try {
             // Set access control to mirror the bucket
             AccessControlList bucketAcl = s3Service.getBucketAcl(bucketName);
             contentItem.setAcl(bucketAcl);
+
+            // Add the object
             s3Service.putObject(bucketName, contentItem);
+
+            // Compare checksum
+            checksum = compareChecksum(this, spaceId, contentId, wrappedContent);
         } catch(S3ServiceException e) {
             String err = "Could not add content " + contentId + " with type " +
                          contentMimeType + " and size " + contentSize + " to S3 bucket "
@@ -301,6 +314,8 @@ public class S3StorageProvider implements StorageProvider {
         contentMetadata.put(METADATA_CONTENT_NAME, contentId);
         contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         setContentMetadata(spaceId, contentId, contentMetadata);
+
+        return checksum;
     }
 
     /**

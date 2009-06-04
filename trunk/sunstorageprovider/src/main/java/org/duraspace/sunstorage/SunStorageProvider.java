@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import java.security.DigestInputStream;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +27,10 @@ import org.apache.commons.logging.LogFactory;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duraspace.storage.util.StorageProviderUtil.storeMetadata;
+import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 
 /**
  * Provides content storage backed by the Sun Cloud Storage Service.
@@ -206,23 +210,26 @@ public class SunStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public void addContent(String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content)
+    public String addContent(String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content)
     throws StorageException {
+        // Wrap the content to be able to compute a checksum during transfer
+        DigestInputStream wrappedContent = wrapStream(content);
+
         File tempFile = null;
         try {
             tempFile = File.createTempFile("duracloud-", "-temp");
             BufferedOutputStream tempOut =
                 new BufferedOutputStream(new FileOutputStream(tempFile));
             int cByte = -1;
-            while((cByte = content.read()) >= 0) {
+            while((cByte = wrappedContent.read()) >= 0) {
                 tempOut.write(cByte);
             }
             tempOut.close();
-            content.close();
+            wrappedContent.close();
         } catch(Exception e) {
             String err = "Error writing content to temporary storage: " +
                          e.getMessage();
@@ -243,10 +250,16 @@ public class SunStorageProvider implements StorageProvider {
 
         tempFile.delete();
 
+        // Compare checksum
+        String checksum =
+            compareChecksum(this, spaceId, contentId, wrappedContent);
+
         // Set default content metadata values
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         setContentMetadata(spaceId, contentId, metadata);
+
+        return checksum;
     }
 
     /**

@@ -126,18 +126,22 @@ public interface StorageProvider {
     throws StorageException;
 
     /**
-     * Adds content to a space.
+     * Adds content to a space. Computes the checksum of the
+     * provided content and checks this against the checksum
+     * of the uploaded content to protect against loss or
+     * corruption during transfer.
      *
      * @param spaceId
      * @param contentId
      * @param content
+     * @return The checksum of the provided content
      * @throws StorageException
      */
-    public void addContent(String spaceId,
-                           String contentId,
-                           String contentMimeType,
-                           long contentSize,
-                           InputStream content)
+    public String addContent(String spaceId,
+                             String contentId,
+                             String contentMimeType,
+                             long contentSize,
+                             InputStream content)
     throws StorageException;
 
     /**

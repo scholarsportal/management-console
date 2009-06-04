@@ -35,6 +35,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duraspace.storage.util.StorageProviderUtil.contains;
 
 /**
@@ -142,11 +143,12 @@ public class RackspaceStorageProviderTest {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
-        rackspaceProvider.addContent(SPACE_ID,
-                                     CONTENT_ID,
-                                     CONTENT_MIME_VALUE,
-                                     contentSize,
-                                     contentStream);
+        String checksum = rackspaceProvider.addContent(SPACE_ID,
+                                                       CONTENT_ID,
+                                                       CONTENT_MIME_VALUE,
+                                                       contentSize,
+                                                       contentStream);
+        compareChecksum(rackspaceProvider, SPACE_ID, CONTENT_ID, checksum);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
