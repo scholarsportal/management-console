@@ -97,6 +97,7 @@ public class MainDatabaseLoaderFactory {
         computeAcctManager
                 .setComputeProviderRepository(computeProviderRepository);
         computeAcctManager.setCredentialManager(credentialManager);
+        computeAcctManager.setDuraSpaceAcctManager(duraSpaceAcctManager);
 
         storageAcctManager.setStorageAcctRepository(storageAcctRepository);
         storageAcctManager

@@ -1,10 +1,10 @@
 package org.duraspace.customerwebapp.rest;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.duraspace.customerwebapp.rest.RestUtil.RequestContent;
 import org.duraspace.customerwebapp.util.StorageProviderFactory;
 
 /**
@@ -12,27 +12,26 @@ import org.duraspace.customerwebapp.util.StorageProviderFactory;
  *
  * @author Bill Branan
  */
-@Path("/")
+@Path("/initialize")
 public class InstanceRest extends BaseRest {
 
     /**
-     * Initializes the instance
+     * Initializes the instance. Expects as POST data
+     * an XML file which includes credentials for all
+     * available storage providers accounts.
      *
-     * @param host - the host on which the main DuraSpace webapp is running
-     * @param port - the port on which the main DuraSpace webapp is available
-     * @return
+     * @return 200 on success
      */
-    @Path("/initialize")
     @POST
-    public Response initializeInstance(@FormParam("host")
-                                       String host,
-                                       @FormParam("port")
-                                       int port){
+    public Response initializeInstance(){
+        RequestContent content = null;
         try {
-            StorageProviderFactory.initialize(host, port);
-            String responseText = "Instance initialized";
+            RestUtil restUtil = new RestUtil();
+            content = restUtil.getRequestContent(request, headers);
+            StorageProviderFactory.initialize(content.getContentStream());
+            String responseText = "Initialization Successful";
             return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }

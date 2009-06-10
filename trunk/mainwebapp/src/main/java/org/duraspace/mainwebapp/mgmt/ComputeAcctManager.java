@@ -46,11 +46,6 @@ public interface ComputeAcctManager {
      * This method passes parameters to the compute instance needed for proper
      * functioning.
      *
-     * <pre>
-     * These parameters include the host and port of the main-duraspace
-     * web application.
-     * </pre>
-     *
      * @param computeAcctId
      * @return ComputeAcct that was initialized
      */

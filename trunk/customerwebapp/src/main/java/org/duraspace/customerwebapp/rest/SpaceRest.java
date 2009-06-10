@@ -21,20 +21,19 @@ import org.duraspace.common.web.RestResourceException;
  *
  * @author Bill Branan
  */
-@Path("/space")
+@Path("/")
 public class SpaceRest extends BaseRest {
 
     /**
      * @see SpaceResource.getSpaces()
      * @return 200 response with XML listing of spaces
      */
-    @Path("/{accountID}")
+    @Path("/spaces")
     @GET
     @Produces(XML)
-    public Response getSpaces(@PathParam("accountID")
-                              String accountID) {
+    public Response getSpaces() {
         try {
-            String xml = SpaceResource.getSpaces(accountID);
+            String xml = SpaceResource.getSpaces();
             return Response.ok(xml, TEXT_XML).build();
         } catch(RestResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
@@ -46,12 +45,10 @@ public class SpaceRest extends BaseRest {
      * @see SpaceResource.getSpaceContents(String, String);
      * @return 200 response with XML listing of space properties or content
      */
-    @Path("/{accountID}/{spaceID}")
+    @Path("/{spaceID}")
     @GET
     @Produces(XML)
-    public Response getSpace(@PathParam("accountID")
-                             String accountID,
-                             @PathParam("spaceID")
+    public Response getSpace(@PathParam("spaceID")
                              String spaceID,
                              @QueryParam("properties")
                              @DefaultValue("false")
@@ -59,9 +56,9 @@ public class SpaceRest extends BaseRest {
         try {
             String xml = null;
             if(properties) {
-                xml = SpaceResource.getSpaceProperties(accountID, spaceID);
+                xml = SpaceResource.getSpaceProperties(spaceID);
             } else {
-                xml = SpaceResource.getSpaceContents(accountID, spaceID);
+                xml = SpaceResource.getSpaceContents(spaceID);
             }
             return Response.ok(xml, TEXT_XML).build();
         } catch(RestResourceException e) {
@@ -73,11 +70,9 @@ public class SpaceRest extends BaseRest {
      * @see SpaceResource.addSpace(String, String, String, String)
      * @return 201 response with request URI
      */
-    @Path("/{accountID}/{spaceID}")
+    @Path("/{spaceID}")
     @PUT
-    public Response addSpace(@PathParam("accountID")
-                             String accountID,
-                             @PathParam("spaceID")
+    public Response addSpace(@PathParam("spaceID")
                              String spaceID,
                              @FormParam("spaceName")
                              String spaceName,
@@ -85,7 +80,7 @@ public class SpaceRest extends BaseRest {
                              @DefaultValue("CLOSED")
                              String spaceAccess){
         try {
-            SpaceResource.addSpace(accountID, spaceID, spaceName, spaceAccess);
+            SpaceResource.addSpace(spaceID, spaceName, spaceAccess);
             URI location = uriInfo.getRequestUri();
             return Response.created(location).build();
         } catch(RestResourceException e) {
@@ -97,11 +92,9 @@ public class SpaceRest extends BaseRest {
      * @see SpaceResource.updateSpaceProperties(String, String, String, String);
      * @return 200 response with XML listing of space properties
      */
-    @Path("/{accountID}/{spaceID}")
+    @Path("/{spaceID}")
     @POST
-    public Response updateSpaceProperties(@PathParam("accountID")
-                                          String accountID,
-                                          @PathParam("spaceID")
+    public Response updateSpaceProperties(@PathParam("spaceID")
                                           String spaceID,
                                           @FormParam("spaceName")
                                           String spaceName,
@@ -109,7 +102,7 @@ public class SpaceRest extends BaseRest {
                                           @DefaultValue("CLOSED")
                                           String spaceAccess){
         try {
-            SpaceResource.updateSpaceProperties(accountID, spaceID, spaceName, spaceAccess);
+            SpaceResource.updateSpaceProperties(spaceID, spaceName, spaceAccess);
             String responseText = "Space " + spaceID + " updated successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(RestResourceException e) {
@@ -121,18 +114,17 @@ public class SpaceRest extends BaseRest {
      * @see SpaceResource.deleteSpace(String, String);
      * @return 200 response indicating space deleted successfully
      */
-    @Path("/{accountID}/{spaceID}")
+    @Path("/{spaceID}")
     @DELETE
-    public Response deleteSpace(@PathParam("accountID")
-                                String accountID,
-                                @PathParam("spaceID")
+    public Response deleteSpace(@PathParam("spaceID")
                                 String spaceID){
         try {
-            SpaceResource.deleteSpace(accountID, spaceID);
+            SpaceResource.deleteSpace(spaceID);
             String responseText = "Space " + spaceID + " deleted successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(RestResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
+
 }

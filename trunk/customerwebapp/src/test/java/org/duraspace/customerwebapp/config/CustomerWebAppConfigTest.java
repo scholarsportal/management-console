@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 
 public class CustomerWebAppConfigTest {
 
@@ -22,6 +23,7 @@ public class CustomerWebAppConfigTest {
 
         String port = CustomerWebAppConfig.getPort();
         assertNotNull(port);
+        assertFalse(port.equals("${tomcat.port}"));
 
     }
 }

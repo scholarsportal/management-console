@@ -38,15 +38,10 @@ public class SpacesController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         Space space = (Space) command;
-        String accountId = space.getAccountId();
-
-        if(accountId == null || accountId.equals("")) {
-            throw new IllegalArgumentException("Account ID must be provided.");
-        }
 
         StorageProvider storage = null;
         try {
-            storage = StorageProviderFactory.getStorageProvider(accountId);
+            storage = StorageProviderFactory.getStorageProvider();
         } catch(StorageException se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
@@ -113,10 +108,9 @@ public class SpacesController extends SimpleFormController {
             }
         }
 
-        List<Space> spaces = SpaceUtil.getSpacesList(accountId);
+        List<Space> spaces = SpaceUtil.getSpacesList();
 
         ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject("accountId", accountId);
         mav.addObject("spaces", spaces);
 
         if(error != null) {

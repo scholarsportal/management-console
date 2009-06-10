@@ -31,19 +31,19 @@ public class SpaceResource {
      *
      * @return XML listing of spaces
      */
-    public static String getSpaces(String accountID)
+    public static String getSpaces()
     throws RestResourceException {
         Element spacesElem = new Element("spaces");
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             Iterator<String> spaces = storage.getSpaces();
             while(spaces.hasNext()) {
                 String spaceID = spaces.next();
                 try {
-                    Element spaceElem = getSpaceXML(accountID, spaceID);
+                    Element spaceElem = getSpaceXML(spaceID);
                     spacesElem.addContent(spaceElem);
                 } catch(StorageException e) {
                     // This bucket may not be part of DuraSpace, log the
@@ -67,17 +67,15 @@ public class SpaceResource {
     /**
      * Gets the properties of a space.
      *
-     * @param accountID
      * @param spaceID
      * @return XML listing of space properties
      */
-    public static String getSpaceProperties(String accountID,
-                                            String spaceID)
+    public static String getSpaceProperties(String spaceID)
     throws RestResourceException {
         Element spaceElem;
 
         try {
-            spaceElem = getSpaceXML(accountID, spaceID);
+            spaceElem = getSpaceXML(spaceID);
         } catch (StorageException e) {
             String error = "Error attempting to build space XML for '" +
                            spaceID + "': " + e.getMessage();
@@ -93,8 +91,7 @@ public class SpaceResource {
     /**
      * Builds space properties XML tree
      */
-    private static Element getSpaceXML(String accountID,
-                                       String spaceID)
+    private static Element getSpaceXML(String spaceID)
     throws StorageException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
@@ -102,7 +99,7 @@ public class SpaceResource {
         spaceElem.addContent(propsElem);
 
         StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountID);
+            StorageProviderFactory.getStorageProvider();
 
         Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
@@ -121,12 +118,10 @@ public class SpaceResource {
     /**
      * Gets a listing of the contents of a space.
      *
-     * @param accountID
      * @param spaceID
      * @return XML listing of space contents
      */
-    public static String getSpaceContents(String accountID,
-                                          String spaceID)
+    public static String getSpaceContents(String spaceID)
     throws RestResourceException {
         Element root = new Element("space");
         root.setAttribute("id", spaceID);
@@ -135,7 +130,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -166,13 +161,11 @@ public class SpaceResource {
     /**
      * Adds a space.
      *
-     * @param accountID
      * @param spaceID
      * @param spaceName
      * @param spaceAccess
      */
-    public static void addSpace(String accountID,
-                                String spaceID,
+    public static void addSpace(String spaceID,
                                 String spaceName,
                                 String spaceAccess)
     throws RestResourceException {
@@ -180,9 +173,9 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
             storage.createSpace(spaceID);
-            updateSpaceProperties(accountID, spaceID, spaceName, spaceAccess);
+            updateSpaceProperties(spaceID, spaceName, spaceAccess);
         } catch (StorageException e) {
             String error = "Error attempting to add space '" +
                            spaceID + "': " + e.getMessage();
@@ -194,13 +187,11 @@ public class SpaceResource {
     /**
      * Updates the properties of a space.
      *
-     * @param accountID
      * @param spaceID
      * @param spaceName
      * @param spaceAccess
      */
-    public static void updateSpaceProperties(String accountID,
-                                             String spaceID,
+    public static void updateSpaceProperties(String spaceID,
                                              String spaceName,
                                              String spaceAccess)
     throws RestResourceException {
@@ -208,7 +199,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             // Set space properties if a new value was provided
             if(spaceName != null && !spaceName.equals("")) {
@@ -251,17 +242,15 @@ public class SpaceResource {
     /**
      * Deletes a space, removing all included content.
      *
-     * @param accountID
      * @param spaceID
      */
-    public static void deleteSpace(String accountID,
-                                      String spaceID)
+    public static void deleteSpace(String spaceID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
             storage.deleteSpace(spaceID);
         } catch (StorageException e) {
             String error = "Error attempting to delete space '" +

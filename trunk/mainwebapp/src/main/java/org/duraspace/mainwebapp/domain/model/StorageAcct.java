@@ -1,15 +1,6 @@
 
 package org.duraspace.mainwebapp.domain.model;
 
-import java.io.Writer;
-
-import java.util.Set;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 import org.duraspace.common.model.Credential;
 import org.duraspace.storage.domain.StorageProviderType;
 
@@ -36,26 +27,6 @@ public class StorageAcct {
 
     public boolean hasId() {
         return id > 0;
-    }
-
-    public String toXml() {
-        return getXStream().toXML(this);
-    }
-
-    private XStream getXStream() {
-        XStream xstream = new XStream(new DomDriver() {
-
-            @Override
-            public HierarchicalStreamWriter createWriter(Writer out) {
-                return new CompactWriter(out);
-            }
-        });
-        xstream.alias("storageAcct", StorageAcct.class);
-        xstream.alias("storageAccts", Set.class);
-        xstream.omitField(Credential.class, "id");
-        xstream.useAttributeFor("ownerId", String.class);
-        xstream.useAttributeFor("isPrimary", int.class);
-        return xstream;
     }
 
     public boolean hasStorageProviderId() {

@@ -32,18 +32,12 @@ public class AddContentController extends SimpleFormController {
     throws Exception {
         ContentItem content = (ContentItem) command;
 
-        String accountId = content.getAccountId();
-        if(accountId == null || accountId.equals("")) {
-            throw new IllegalArgumentException("Account ID must be provided.");
-        }
-
         String spaceId = content.getSpaceId();
         if(spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
 
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountId);
+        StorageProvider storage = StorageProviderFactory.getStorageProvider();
 
         String error = null;
         MultipartFile file = content.getFile();
@@ -78,7 +72,6 @@ public class AddContentController extends SimpleFormController {
 
         // Create a Space for the view
         Space space = new Space();
-        space.setAccountId(accountId);
         space.setSpaceId(spaceId);
 
         // Get the metadata of the space

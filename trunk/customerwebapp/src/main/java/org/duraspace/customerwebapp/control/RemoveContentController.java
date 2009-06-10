@@ -29,13 +29,9 @@ public class RemoveContentController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         ContentItem content = (ContentItem) command;
-        String accountId = content.getAccountId();
         String spaceId = content.getSpaceId();
         String contentId = content.getContentId();
 
-        if(accountId == null || accountId.equals("")) {
-            throw new IllegalArgumentException("Account ID must be provided.");
-        }
         if(spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
@@ -43,14 +39,12 @@ public class RemoveContentController extends SimpleFormController {
             throw new IllegalArgumentException("Content ID must be provided.");
         }
 
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountId);
+        StorageProvider storage = StorageProviderFactory.getStorageProvider();
 
         storage.deleteContent(spaceId, contentId);
 
         // Create a Space for the view
         Space space = new Space();
-        space.setAccountId(accountId);
         space.setSpaceId(spaceId);
 
         // Get the metadata of the space

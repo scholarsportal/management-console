@@ -1,10 +1,13 @@
 
 package org.duraspace.mainwebapp.mgmt;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,16 +17,15 @@ import org.duraspace.common.model.Credential;
 import org.duraspace.computeprovider.domain.ComputeProviderType;
 import org.duraspace.computeprovider.mgmt.ComputeProviderFactory;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
+import org.duraspace.mainwebapp.domain.model.StorageAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.easymock.EasyMock;
 
-import junit.framework.Assert;
+import static junit.framework.Assert.fail;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import static junit.framework.Assert.fail;
 
 public class ComputeAcctManagerImplTest {
 
@@ -53,6 +55,12 @@ public class ComputeAcctManagerImplTest {
 
     private final String password = "password";
 
+    private final int storageAcctId = 111;
+
+    private final StorageAcct storageAcct = new StorageAcct();
+
+    private final List<StorageAcct> storageAccts = new ArrayList<StorageAcct>();
+
     @Before
     public void setUp() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
@@ -77,6 +85,15 @@ public class ComputeAcctManagerImplTest {
         credential.setUsername(username);
         credential.setPassword(password);
 
+        storageAcct.setId(storageAcctId);
+        storageAccts.add(storageAcct);
+
+        DuraSpaceAcctManager duraAcctMgr =
+                EasyMock.createMock(DuraSpaceAcctManager.class);
+        EasyMock.expect(duraAcctMgr.findStorageAccounts(duraAcctId))
+                .andReturn(storageAccts);
+        EasyMock.replay(duraAcctMgr);
+        mgr.setDuraSpaceAcctManager(duraAcctMgr);
     }
 
     @After
@@ -106,6 +123,16 @@ public class ComputeAcctManagerImplTest {
                 .andReturn(1);
         EasyMock.replay(credentialMgr);
         EasyMock.replay(computeAcctRepo);
+    }
+
+    @Test
+    public void testGetStorageAccounts() throws Exception {
+        String xml = mgr.getStorageAccounts(duraAcctId);
+        assertNotNull(xml);
+        assertTrue(xml.indexOf("<storageProviderAccounts>") >= 0);
+        assertTrue(xml.indexOf("<storageAcct") >= 0);
+        String idElement = "<id>" + storageAcctId + "</id>";
+        assertTrue(xml.indexOf(idElement) >= 0);
     }
 
     @Test
