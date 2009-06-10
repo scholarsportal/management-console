@@ -38,7 +38,6 @@
     <h4>Update Properties</h4>
     <form action="content.htm" method="post">
       <input type="hidden" name="action" value="update" />
-      <input type="hidden" name="accountId" value="<c:out value="${content.accountId}"/>" />
       <input type="hidden" name="spaceId" value="<c:out value="${content.spaceId}"/>" />
       <input type="hidden" name="contentId" value="<c:out value="${content.contentId}"/>" />
       <p>

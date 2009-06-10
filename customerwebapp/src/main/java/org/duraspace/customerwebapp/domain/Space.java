@@ -10,7 +10,6 @@ public class Space implements Serializable {
     private static final long serialVersionUID = 3008516494814826947L;
 
     private String action;
-    private String accountId;
     private String spaceId;
     private String name;
     private String access;
@@ -23,14 +22,6 @@ public class Space implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     public String getSpaceId() {

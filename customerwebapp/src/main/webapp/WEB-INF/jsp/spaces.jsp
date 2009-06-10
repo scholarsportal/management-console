@@ -40,20 +40,17 @@
           </tr>
         </table>
         <form action="contents.htm" method="get">
-          <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>" />
         </form>
         <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="update-name" />
-          <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type="text" name="name" value="<c:out value="${space.metadata.name}"/>" />
           <input type='submit' value="Update Name" />
         </form>
         <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="update-access" />
-          <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <c:choose>
             <c:when test="${space.metadata.access == 'OPEN'}">
@@ -68,7 +65,6 @@
         </form>
         <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="delete" />
-          <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
           <input type='submit' value="Delete <c:out value="${space.metadata.name}"/>" />
         </form>
@@ -80,7 +76,6 @@
       <h2>Add Space</h2>
       <form action="spaces.htm" method="post">
         <input type="hidden" name="action" value="add" />
-        <input type="hidden" name="accountId" value="<c:out value="${accountId}"/>" />
         <p>
           <label for="spaceId">Space ID</label>
           <input type="text" id="spaceId" name="spaceId" />

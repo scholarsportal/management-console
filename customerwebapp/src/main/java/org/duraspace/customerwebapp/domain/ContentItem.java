@@ -10,7 +10,6 @@ public class ContentItem implements Serializable {
     private static final long serialVersionUID = -5835779644282347055L;
 
     private String action;
-    private String accountId;
     private String spaceId;
     private String contentId;
     private String contentName;
@@ -24,14 +23,6 @@ public class ContentItem implements Serializable {
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     public String getSpaceId() {

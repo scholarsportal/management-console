@@ -1,21 +1,28 @@
 
 package org.duraspace.mainwebapp.mgmt;
 
+import java.io.Writer;
+
 import java.net.HttpURLConnection;
 
 import java.util.List;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 import org.apache.log4j.Logger;
 
 import org.duraspace.common.model.Credential;
+import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.common.util.ExceptionUtil;
-import org.duraspace.common.web.NetworkUtil;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.computeprovider.domain.ComputeProviderType;
-import org.duraspace.mainwebapp.config.MainWebAppConfig;
 import org.duraspace.mainwebapp.domain.model.ComputeAcct;
 import org.duraspace.mainwebapp.domain.model.ComputeProvider;
+import org.duraspace.mainwebapp.domain.model.StorageAcct;
 import org.duraspace.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duraspace.mainwebapp.domain.repo.ComputeProviderRepository;
 
@@ -29,6 +36,8 @@ public class ComputeAcctManagerImpl
     private ComputeProviderRepository computeProviderRepository;
 
     private CredentialManager credentialManager;
+
+    private DuraSpaceAcctManager duraSpaceAcctManager;
 
     /**
      * {@inheritDoc}
@@ -144,12 +153,13 @@ public class ComputeAcctManagerImpl
         ComputeAcct acct = null;
         try {
             acct = findComputeAccountAndLoadCredential(computeAcctId);
-
             String baseUrl = getBaseInitializeURL(acct);
-            String params = getLocalHostAndPortParams();
 
-            requestInitialization(baseUrl, params);
+            int duraAcctId = getComputeAcctRepository().
+                findComputeAcctById(computeAcctId).getDuraAcctId();
+            String initData = getStorageAccounts(duraAcctId);
 
+            requestInitialization(baseUrl, initData);
         } catch (Exception e) {
             log.error("Unable to initialize computeApp: " + computeAcctId);
             log.error(ExceptionUtil.getStackTraceAsString(e));
@@ -167,18 +177,41 @@ public class ComputeAcctManagerImpl
     }
 
     /**
-     * @return param string of form: 'host=<host-ip>&port=<port-num>'
-     * @throws Exception
+     * Provides an XML listing of all storage provider account subscriptions
+     * for a given DuraCloud account.
      */
-    private String getLocalHostAndPortParams() throws Exception {
-        String port = MainWebAppConfig.getPort();
+    protected String getStorageAccounts(int duraAcctId)
+            throws Exception {
+        List<StorageAcct> accts =
+            duraSpaceAcctManager.findStorageAccounts(duraAcctId);
 
-        StringBuilder formParams = new StringBuilder("host=");
-        formParams.append(NetworkUtil.getCurrentEnvironmentNetworkIp());
-        formParams.append("&port=");
-        formParams.append(port);
+        EncryptionUtil encryptUtil = new EncryptionUtil();
+        for(StorageAcct acct : accts) {
+            Credential credential = acct.getStorageProviderCredential();
+            if(credential != null) {
+                String encUsername = encryptUtil.encrypt(credential.getUsername());
+                String encPassword = encryptUtil.encrypt(credential.getPassword());
+                credential.setUsername(encUsername);
+                credential.setPassword(encPassword);
+            }
+        }
 
-        return formParams.toString();
+        return getXStream().toXML(accts);
+    }
+
+    private XStream getXStream() {
+        XStream xstream = new XStream(new DomDriver() {
+            @Override
+            public HierarchicalStreamWriter createWriter(Writer out) {
+                return new CompactWriter(out);
+            }
+        });
+        xstream.alias("storageProviderAccounts", List.class);
+        xstream.alias("storageAcct", StorageAcct.class);
+        xstream.omitField(Credential.class, "id");
+        xstream.useAttributeFor("ownerId", String.class);
+        xstream.useAttributeFor("isPrimary", int.class);
+        return xstream;
     }
 
     private void requestInitialization(String baseUrl, String params)
@@ -190,7 +223,7 @@ public class ComputeAcctManagerImpl
         if (response != null
                 && HttpURLConnection.HTTP_OK == response.getStatusCode()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Error initializing instancewebapp: ");
+            msg.append("Error initializing customerwebapp: ");
             msg.append(baseUrl);
             msg.append(params);
             log.error(msg.toString());
@@ -277,6 +310,14 @@ public class ComputeAcctManagerImpl
 
     public void setCredentialManager(CredentialManager credentialManager) {
         this.credentialManager = credentialManager;
+    }
+
+    public DuraSpaceAcctManager getDuraSpaceAcctManager() {
+        return duraSpaceAcctManager;
+    }
+
+    public void setDuraSpaceAcctManager(DuraSpaceAcctManager duraSpaceAcctManager) {
+        this.duraSpaceAcctManager = duraSpaceAcctManager;
     }
 
 }

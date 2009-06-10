@@ -27,18 +27,15 @@ import org.jdom.input.SAXBuilder;
  *
  * @author Bill Branan
  */
-@Path("/content")
+@Path("/{spaceID}/{contentID}")
 public class ContentRest extends BaseRest {
 
     /**
      * @see ContentResource.getContent()
      * @return 200 response with content stream or content properties
      */
-    @Path("/{accountID}/{spaceID}/{contentID}")
     @GET
-    public Response getContent(@PathParam("accountID")
-                               String accountID,
-                               @PathParam("spaceID")
+    public Response getContent(@PathParam("spaceID")
                                String spaceID,
                                @PathParam("contentID")
                                String contentID,
@@ -47,13 +44,13 @@ public class ContentRest extends BaseRest {
                                boolean properties) {
         try {
             String cProperties =
-                ContentResource.getContentProperties(accountID, spaceID, contentID);
+                ContentResource.getContentProperties(spaceID, contentID);
             if(properties) {
                 return Response.ok(cProperties, XML).build();
             } else {
                 String mimetype = getMimeType(cProperties);
                 InputStream content =
-                    ContentResource.getContent(accountID, spaceID, contentID);
+                    ContentResource.getContent(spaceID, contentID);
                 return Response.ok(content, mimetype).build();
             }
         } catch(RestResourceException e) {
@@ -65,11 +62,8 @@ public class ContentRest extends BaseRest {
      * @see ContentResource.updateContentProperties()
      * @return 200 response indicating content properties updated successfully
      */
-    @Path("/{accountID}/{spaceID}/{contentID}")
     @POST
-    public Response updateContentProperties(@PathParam("accountID")
-                                            String accountID,
-                                            @PathParam("spaceID")
+    public Response updateContentProperties(@PathParam("spaceID")
                                             String spaceID,
                                             @PathParam("contentID")
                                             String contentID,
@@ -78,8 +72,7 @@ public class ContentRest extends BaseRest {
                                             @FormParam("contentMimeType")
                                             String contentMimeType) {
         try {
-            ContentResource.updateContentProperties(accountID,
-                                                    spaceID,
+            ContentResource.updateContentProperties(spaceID,
                                                     contentID,
                                                     contentName,
                                                     contentMimeType);
@@ -94,11 +87,8 @@ public class ContentRest extends BaseRest {
      * @see ContentResource.addContent()
      * @return 201 response indicating content added successfully
      */
-    @Path("/{accountID}/{spaceID}/{contentID}")
     @PUT
-    public Response addContent(@PathParam("accountID")
-                               String accountID,
-                               @PathParam("spaceID")
+    public Response addContent(@PathParam("spaceID")
                                String spaceID,
                                @PathParam("contentID")
                                String contentID) {
@@ -112,14 +102,12 @@ public class ContentRest extends BaseRest {
 
         if(content != null) {
             try {
-                ContentResource.addContent(accountID,
-                                           spaceID,
+                ContentResource.addContent(spaceID,
                                            contentID,
                                            content.getContentStream(),
                                            content.getMimeType(),
                                            content.getSize());
-                ContentResource.updateContentProperties(accountID,
-                                                        spaceID,
+                ContentResource.updateContentProperties(spaceID,
                                                         contentID,
                                                         contentID,
                                                         content.getMimeType());
@@ -138,16 +126,13 @@ public class ContentRest extends BaseRest {
      * @see ContentResource.removeContent()
      * @return 200 response indicating content removed successfully
      */
-    @Path("/{accountID}/{spaceID}/{contentID}")
     @DELETE
-    public Response deleteContent(@PathParam("accountID")
-                                  String accountID,
-                                  @PathParam("spaceID")
+    public Response deleteContent(@PathParam("spaceID")
                                   String spaceID,
                                   @PathParam("contentID")
                                   String contentID) {
         try {
-            ContentResource.deleteContent(accountID, spaceID, contentID);
+            ContentResource.deleteContent(spaceID, contentID);
             String responseText = "Content " + contentID + " deleted successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(RestResourceException e) {
@@ -177,5 +162,4 @@ public class ContentRest extends BaseRest {
         }
         return mimetype;
     }
-
 }

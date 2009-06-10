@@ -36,18 +36,13 @@ public class ContentsController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         Space space = (Space) command;
-        String accountId = space.getAccountId();
         String spaceId = space.getSpaceId();
 
-        if(accountId == null || accountId.equals("")) {
-            throw new IllegalArgumentException("Account ID must be provided.");
-        }
         if(spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
 
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountId);
+        StorageProvider storage = StorageProviderFactory.getStorageProvider();
 
         // Get the metadata of the space
         space.setMetadata(SpaceUtil.getSpaceMetadata(storage, spaceId));

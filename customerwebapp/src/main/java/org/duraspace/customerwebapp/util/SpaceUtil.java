@@ -21,10 +21,9 @@ import org.duraspace.storage.provider.StorageProvider;
  */
 public class SpaceUtil {
 
-    public static List<Space> getSpacesList(String accountId)
+    public static List<Space> getSpacesList()
     throws StorageException{
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountId);
+        StorageProvider storage = StorageProviderFactory.getStorageProvider();
 
         Iterator<String> spaceIds = storage.getSpaces();
 
@@ -33,7 +32,6 @@ public class SpaceUtil {
             while(spaceIds.hasNext()) {
                 String spaceId = spaceIds.next();
                 Space space = new Space();
-                space.setAccountId(accountId);
                 space.setSpaceId(spaceId);
                 space.setMetadata(getSpaceMetadata(storage, spaceId));
                 spaces.add(space);

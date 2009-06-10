@@ -1,5 +1,6 @@
 package org.duraspace.customerwebapp.control;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +36,9 @@ public class ContentController extends SimpleFormController {
                                     BindException errors)
     throws Exception {
         ContentItem contentItem = (ContentItem) command;
-        String accountId = contentItem.getAccountId();
         String spaceId = contentItem.getSpaceId();
         String contentId = contentItem.getContentId();
 
-        if(accountId == null || accountId.equals("")) {
-            throw new IllegalArgumentException("Account ID must be provided.");
-        }
         if(spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
@@ -49,17 +46,15 @@ public class ContentController extends SimpleFormController {
             throw new IllegalArgumentException("Content ID must be provided.");
         }
 
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider(accountId);
+        StorageProvider storage = StorageProviderFactory.getStorageProvider();
 
-        Map<String, String> contentMetadata =
-            storage.getContentMetadata(spaceId, contentId);
-
+        Map<String, String> contentMetadata = null;
         String action = contentItem.getAction();
         if(action != null && action.equals("update")) {
             String newName = contentItem.getContentName();
             String newMime = contentItem.getContentMimetype();
             if(newName != null && newMime != null) {
+                contentMetadata = new HashMap<String, String>();
                 contentMetadata.
                   put(StorageProvider.METADATA_CONTENT_NAME, newName);
                 contentMetadata.
@@ -68,6 +63,7 @@ public class ContentController extends SimpleFormController {
             }
         }
 
+        contentMetadata = storage.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = new ContentMetadata();
         metadata.setName(
             contentMetadata.get(StorageProvider.METADATA_CONTENT_NAME));

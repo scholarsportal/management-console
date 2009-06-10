@@ -60,7 +60,7 @@ public class TestIngestAdvice
         Assert.assertTrue("status: " + statusCode, statusCode == 200);
 
         // Add space1
-        response = RestTestHelper.addSpace("1", "space1");
+        response = RestTestHelper.addSpace("space1");
         statusCode = response.getStatusCode();
         Assert.assertTrue("status: " + statusCode, statusCode == 201);
 
@@ -80,7 +80,7 @@ public class TestIngestAdvice
         destination = null;
 
         // Delete space1
-        HttpResponse response = RestTestHelper.deleteSpace("1", "space1");
+        HttpResponse response = RestTestHelper.deleteSpace("space1");
         Assert.assertTrue(response.getStatusCode() == 200);
     }
 
@@ -117,9 +117,9 @@ public class TestIngestAdvice
     }
 
     private void publishIngestEvent(boolean successful) throws Exception {
-        String suffix = "/content/1/space1/contentGOOD";
+        String suffix = "/space1/contentGOOD";
         if (!successful) {
-            suffix = "/contentx/1x/space1x/contentBAD";
+            suffix = "/space1x/contentBAD";
         }
 
         String url = RestTestHelper.getBaseUrl() + suffix;

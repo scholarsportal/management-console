@@ -17,10 +17,10 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-mock/2.0.8/spring-mock-2.0.8.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/2.5.6/spring-aop-2.5.6.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/springframework/spring-jms/2.5.6/spring-jms-2.5.6.jar"/>
-    <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/apache/activemq/activemq-all/5.2.0/activemq-all-5.2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/2.5.6/spring-aop-2.5.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-jms/2.5.6/spring-jms-2.5.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/activemq/activemq-all/5.2.0/activemq-all-5.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
@@ -35,5 +35,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rackspacestorageprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/emcstorageprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/sunstorageprovider"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -28,18 +28,16 @@ public class ContentResource {
     /**
      * Retrieves content from a space.
      *
-     * @param accountID
      * @param spaceID
      * @param contentID
      * @return InputStream which can be used to read content.
      */
-    public static InputStream getContent(String accountID,
-                                         String spaceID,
+    public static InputStream getContent(String spaceID,
                                          String contentID)
     throws RestResourceException {
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -58,13 +56,11 @@ public class ContentResource {
     /**
      * Retrieves the properties of a piece of content.
      *
-     * @param accountID
      * @param spaceID
      * @param contentID
      * @return XML listing of content properties
      */
-    public static String getContentProperties(String accountID,
-                                              String spaceID,
+    public static String getContentProperties(String spaceID,
                                               String contentID)
     throws RestResourceException {
         Element contentElem = new Element("content");
@@ -74,7 +70,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -110,8 +106,7 @@ public class ContentResource {
      *
      * @return success
      */
-    public static void updateContentProperties(String accountID,
-                                               String spaceID,
+    public static void updateContentProperties(String spaceID,
                                                String contentID,
                                                String contentName,
                                                String contentMimeType)
@@ -120,7 +115,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             Map<String, String> metadata = storage.getContentMetadata(spaceID, contentID);
 
@@ -148,8 +143,7 @@ public class ContentResource {
      *
      * @return success
      */
-    public static void addContent(String accountID,
-                                  String spaceID,
+    public static void addContent(String spaceID,
                                   String contentID,
                                   InputStream content,
                                   String contentMimeType,
@@ -159,7 +153,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             storage.addContent(spaceID,
                                contentID,
@@ -177,20 +171,18 @@ public class ContentResource {
     /**
      * Removes a piece of content.
      *
-     * @param accountID
      * @param spaceID
      * @param contentID
      * @return success
      */
-    public static void deleteContent(String accountID,
-                                     String spaceID,
+    public static void deleteContent(String spaceID,
                                      String contentID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(accountID);
+                StorageProviderFactory.getStorageProvider();
 
             storage.deleteContent(spaceID, contentID);
         } catch (StorageException e) {
