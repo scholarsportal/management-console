@@ -320,6 +320,14 @@
             </goals>
             <configuration>
               <systemProperties>
+                <property>
+                  <name>unit.database.home</name>
+                  <value>${unit.database.home.default}</value>
+                </property>
+                <property>
+                  <name>unit.database.password</name>
+                  <value>${unit.database.password.default}</value>
+                </property>              
               </systemProperties>
               <excludes>
                 <exclude>${unitTests}</exclude>

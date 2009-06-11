@@ -15,7 +15,6 @@ import org.duraspace.storage.domain.StorageProviderType;
 import org.duraspace.storage.provider.BrokeredStorageProvider;
 import org.duraspace.storage.provider.StatelessStorageProvider;
 import org.duraspace.storage.provider.StorageProvider;
-import org.duraspace.sunstorage.SunStorageProvider;
 
 /**
  * Performs storage provider services
@@ -99,7 +98,8 @@ public class StorageProviderFactory {
         } else if (type.equals(StorageProviderType.MICROSOFT_AZURE)) {
             // TODO: Create Azure storage provider
         } else if (type.equals(StorageProviderType.SUN)) {
-            storageProvider = new SunStorageProvider(username, password);
+            // TODO: Enable this when Sun provider is working
+            // storageProvider = new SunStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.RACKSPACE)) {
             storageProvider = new RackspaceStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.EMC)) {

@@ -26,6 +26,7 @@ public class RestTestHelper {
     private static String host = "http://localhost";
 
     private static String port;
+    private static final String defaultPort = "8080";
 
     private static String webapp = "customerwebapp";
 
@@ -59,6 +60,13 @@ public class RestTestHelper {
         if (port == null) {
             port = CustomerWebAppConfig.getPort();
         }
+
+        try { // Ensure the port is a valid port value
+            Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            port = defaultPort;
+        }
+
         return port;
     }
 
