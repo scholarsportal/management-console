@@ -36,7 +36,7 @@ public class ComputeProviderFactory {
         Exception exception = null;
 
         String className = getClassNameFromId(providerType);
-        log.info("class for id: '" + providerType + "' : '" + className + "'");
+        log.debug("class for id: '" + providerType + "' : '" + className + "'");
 
         Class<?> clazz = getClass(className, exception);
         if (clazz != null) {

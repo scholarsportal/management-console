@@ -5,6 +5,9 @@ import java.io.InputStream;
 
 import java.security.DigestInputStream;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +45,8 @@ import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 public class S3StorageProvider implements StorageProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
+    private static final DateFormat iso8601DateFormat =
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String accessKeyId = null;
     private S3Service s3Service = null;
@@ -433,7 +438,13 @@ public class S3StorageProvider implements StorageProvider {
         Iterator metaIterator = contentItemMetadata.keySet().iterator();
         while(metaIterator.hasNext()) {
             String metaName = metaIterator.next().toString();
-            String metaValue = contentItemMetadata.get(metaName).toString();
+            Object metaValueObj = contentItemMetadata.get(metaName);
+            String metaValue;
+            if(metaValueObj instanceof Date) {
+              metaValue = iso8601DateFormat.format(metaValueObj);
+            } else {
+              metaValue = metaValueObj.toString();
+            }
             contentMetadata.put(metaName, metaValue);
         }
 

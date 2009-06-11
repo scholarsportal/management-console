@@ -162,7 +162,7 @@ public class ComputeAcctManagerImpl
             requestInitialization(baseUrl, initData);
         } catch (Exception e) {
             log.error("Unable to initialize computeApp: " + computeAcctId);
-            log.error(ExceptionUtil.getStackTraceAsString(e));
+            log.debug(ExceptionUtil.getStackTraceAsString(e));
         }
         return acct;
     }
@@ -239,7 +239,7 @@ public class ComputeAcctManagerImpl
             log.info("spaces request url: " + url);
         } catch (Exception e) {
             log.error("Error getting spaces computeApp: " + computeAcctId);
-            log.error(ExceptionUtil.getStackTraceAsString(e));
+            log.debug(ExceptionUtil.getStackTraceAsString(e));
         }
         return url;
     }
