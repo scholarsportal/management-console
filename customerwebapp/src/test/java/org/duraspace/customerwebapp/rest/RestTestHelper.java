@@ -30,9 +30,13 @@ public class RestTestHelper {
 
     private static String webapp = "customerwebapp";
 
+    private static String accountXml = null;
+
     public static HttpResponse initialize() throws Exception {
         String url = getBaseUrl() + "/initialize";
-        String accountXml = buildTestAccountXml();
+        if(accountXml == null) {
+            accountXml = buildTestAccountXml();
+        }
         return restHelper.post(url, accountXml, true);
     }
 
