@@ -401,10 +401,11 @@ public class SunStorageProvider implements StorageProvider {
 
         Date contentLastModified = objectInfo.getLastModifiedDate();
         if(contentLastModified != null) {
+            String lastModified = RFC822_DATE_FORMAT.format(contentLastModified);
             combinedMetadata.put(ObjectInfo.METADATA_HEADER_LAST_MODIFIED_DATE,
-                                 contentLastModified.toString());
+                                 lastModified);
             combinedMetadata.put(METADATA_CONTENT_MODIFIED,
-                                 contentLastModified.toString());
+                                 lastModified);
         }
 
         Owner contentOwner = objectInfo.getOwner();

@@ -60,6 +60,7 @@ public class SunStorageProviderTest {
     private static final String CONTENT_SUBJECT_NAME = "content-subject";
     private static final String CONTENT_SUBJECT_VALUE = "Storage System Testing";
     private static final String CONTENT_DATA = "Test Content";
+    private static final String CONTENT_MOD_NAME = StorageProvider.METADATA_CONTENT_MODIFIED;
 
     @Before
     public void setUp() throws Exception {
@@ -217,6 +218,9 @@ public class SunStorageProviderTest {
         // Mime type was not included when setting content metadata
         // so it should have been reset to a default value
         assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
+        // Make sure date is in RFC-822 format
+        String lastModified = cMetadata.get(CONTENT_MOD_NAME);
+        StorageProvider.RFC822_DATE_FORMAT.parse(lastModified);
 
         // test deleteContent()
         log.debug("Test deleteContent()");
