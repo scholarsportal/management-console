@@ -26,6 +26,7 @@ import org.duraspace.storage.domain.StorageProviderType;
 import org.duraspace.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duraspace.storage.provider.StorageProvider;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
+import org.jets3t.service.model.S3Object;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -57,6 +58,7 @@ public class S3StorageProviderTest {
     private static final String CONTENT_MIME_NAME = StorageProvider.METADATA_CONTENT_MIMETYPE;
     private static final String CONTENT_MIME_VALUE = "text/plain";
     private static final String CONTENT_DATA = "Test Content";
+    private static final String CONTENT_MOD_NAME = StorageProvider.METADATA_CONTENT_MODIFIED;
 
     @Before
     public void setUp() throws Exception {
@@ -151,7 +153,11 @@ public class S3StorageProviderTest {
         assertNotNull(cMetadata);
         assertEquals(CONTENT_ID, cMetadata.get(CONTENT_META_NAME));
         assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
-        assertEquals(CONTENT_MIME_VALUE, cMetadata.get("Content-Type"));
+        assertEquals(CONTENT_MIME_VALUE,
+                     cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
+        // Make sure date is in RFC-822 format
+        String lastModified = cMetadata.get(CONTENT_MOD_NAME);
+        StorageProvider.RFC822_DATE_FORMAT.parse(lastModified);
 
         // Check content access
         log.debug("Check content access");

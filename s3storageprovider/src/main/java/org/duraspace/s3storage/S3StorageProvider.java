@@ -45,8 +45,6 @@ import static org.duraspace.storage.util.StorageProviderUtil.wrapStream;
 public class S3StorageProvider implements StorageProvider {
 
     private final Log log = LogFactory.getLog(this.getClass());
-    private static final DateFormat iso8601DateFormat =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private String accessKeyId = null;
     private S3Service s3Service = null;
@@ -374,6 +372,10 @@ public class S3StorageProvider implements StorageProvider {
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
         contentMetadata.remove(METADATA_CONTENT_MODIFIED);
         contentMetadata.remove(METADATA_CONTENT_SIZE);
+        contentMetadata.remove(S3Object.METADATA_HEADER_CONTENT_LENGTH);
+        contentMetadata.remove(S3Object.METADATA_HEADER_LAST_MODIFIED_DATE);
+        contentMetadata.remove(S3Object.METADATA_HEADER_DATE);
+        contentMetadata.remove(S3Object.METADATA_HEADER_ETAG);
 
         // Remove mimetype to set later
         String mimeType = contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
@@ -393,7 +395,8 @@ public class S3StorageProvider implements StorageProvider {
 
             // Update Content-Type to the new mime type
             if(mimeType != null && mimeType != "") {
-                contentItem.addMetadata("Content-Type", mimeType);
+                contentItem.addMetadata(S3Object.METADATA_HEADER_CONTENT_TYPE,
+                                        mimeType);
             }
 
             s3Service.updateObjectMetadata(bucketName, contentItem);
@@ -441,7 +444,7 @@ public class S3StorageProvider implements StorageProvider {
             Object metaValueObj = contentItemMetadata.get(metaName);
             String metaValue;
             if(metaValueObj instanceof Date) {
-              metaValue = iso8601DateFormat.format(metaValueObj);
+              metaValue = RFC822_DATE_FORMAT.format(metaValueObj);
             } else {
               metaValue = metaValueObj.toString();
             }
@@ -449,19 +452,22 @@ public class S3StorageProvider implements StorageProvider {
         }
 
         // Set MIMETYPE
-        String contentType = contentMetadata.get("Content-Type");
+        String contentType =
+            contentMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE);
         if(contentType != null) {
             contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentType);
         }
 
         // Set SIZE
-        String contentLength = contentMetadata.get("Content-Length");
+        String contentLength =
+            contentMetadata.get(S3Object.METADATA_HEADER_CONTENT_LENGTH);
         if(contentLength != null) {
             contentMetadata.put(METADATA_CONTENT_SIZE, contentLength);
         }
 
         // Set CHECKSUM
-        String checksum = contentMetadata.get("ETag");
+        String checksum =
+            contentMetadata.get(S3Object.METADATA_HEADER_ETAG);
         if(checksum != null) {
             if(checksum.indexOf("\"") == 0 &&
                checksum.lastIndexOf("\"") == checksum.length()-1) {
@@ -472,7 +478,8 @@ public class S3StorageProvider implements StorageProvider {
         }
 
         // Set MODIFIED
-        String modified = contentMetadata.get("Last-Modified");
+        String modified =
+            contentMetadata.get(S3Object.METADATA_HEADER_LAST_MODIFIED_DATE);
         if(modified != null) {
             contentMetadata.put(METADATA_CONTENT_MODIFIED, modified);
         }

@@ -2,6 +2,9 @@ package org.duraspace.storage.provider;
 
 import java.io.InputStream;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,6 +40,8 @@ public interface StorageProvider {
 
     /* Other constants */
     public static final String DEFAULT_MIMETYPE = "application/octet-stream";
+    public static final DateFormat RFC822_DATE_FORMAT =
+        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
      * Provides a listing of all spaces owned by a customer.
