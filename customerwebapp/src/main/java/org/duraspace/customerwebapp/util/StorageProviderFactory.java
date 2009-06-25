@@ -9,7 +9,7 @@ import org.duraspace.emcstorage.EMCStorageProvider;
 import org.duraspace.rackspacestorage.RackspaceStorageProvider;
 import org.duraspace.s3storage.S3StorageProvider;
 import org.duraspace.storage.domain.StorageAccount;
-import org.duraspace.storage.domain.StorageCustomer;
+import org.duraspace.storage.domain.StorageAccountManager;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.domain.StorageProviderType;
 import org.duraspace.storage.provider.BrokeredStorageProvider;
@@ -25,7 +25,7 @@ public class StorageProviderFactory {
 
     private static StatelessStorageProvider statelessProvider;
 
-    private static StorageCustomer storageCustomer;
+    private static StorageAccountManager storageAccountManager;
 
     /**
      * Initializes the StorageProviderUtility with account information
@@ -39,16 +39,31 @@ public class StorageProviderFactory {
             throw new IllegalArgumentException("XML containing account information");
         }
 
-        storageCustomer = new StorageCustomer(accountXml);
+        storageAccountManager = new StorageAccountManager(accountXml);
     }
 
     /**
      * Retrieves the ids for all available storage provider accounts
      *
      * @return
+     * @throws StorageException
      */
-    public static Iterator<String> getStorageProviderAccountIds() {
-        return storageCustomer.getStorageAccountIds();
+    public static Iterator<String> getStorageProviderAccountIds()
+            throws StorageException {
+        checkInitialized();
+        return storageAccountManager.getStorageAccountIds();
+    }
+
+    /**
+     * Retrieves the id for the primary storage provider account
+     *
+     * @return
+     * @throws StorageException
+     */
+    public static String getPrimaryStorageProviderAccountId()
+            throws StorageException {
+        checkInitialized();
+        return storageAccountManager.getPrimaryStorageAccountId();
     }
 
     /**
@@ -64,9 +79,9 @@ public class StorageProviderFactory {
     }
 
     /**
-     * Retrieves a particular storage provider for a given customer. If the a
-     * storage account cannot be retrieved based on the given accountId, the
-     * primary storage provider account is used.
+     * Retrieves a particular storage provider based on the storage account ID.
+     * If a storage account cannot be retrieved, the primary storage provider
+     * account is used.
      *
      * @param account
      * @param accountId - the ID of the storage provider account
@@ -75,18 +90,11 @@ public class StorageProviderFactory {
      */
     public static StorageProvider getStorageProvider(String storageAccountId)
             throws StorageException {
-        if (storageCustomer == null) {
-            String error =
-                    "The Storage Provider Utility must be initilized with an " +
-                    "XML file containing storage account information before it " +
-                    "can fulfill any requests.";
-            throw new StorageException(error);
-        }
-
+        checkInitialized();
         StorageAccount account =
-            storageCustomer.getStorageAccount(storageAccountId);
+            storageAccountManager.getStorageAccount(storageAccountId);
         if (account == null) {
-            account = storageCustomer.getPrimaryStorageAccount();
+            account = storageAccountManager.getPrimaryStorageAccount();
         }
         String username = account.getUsername();
         String password = account.getPassword();
@@ -109,12 +117,43 @@ public class StorageProviderFactory {
         return new BrokeredStorageProvider(statelessProvider, storageProvider);
     }
 
+    /**
+     * Returns the type of the storage provider with the given account ID. If
+     * no storage provider is available with that ID, the UNKNOWN type is returned.
+     *
+     * @param storageAccountId
+     * @return
+     * @throws StorageException
+     */
+    public static StorageProviderType getStorageProviderType(String storageAccountId)
+            throws StorageException {
+        checkInitialized();
+        StorageAccount account =
+            storageAccountManager.getStorageAccount(storageAccountId);
+        if(account != null) {
+            return account.getType();
+        } else {
+            return StorageProviderType.UNKNOWN;
+        }
+    }
+
     public StatelessStorageProvider getStatelessProvider() {
         return statelessProvider;
     }
 
     public static void setStatelessProvider(StatelessStorageProvider statelessProvider) {
         StorageProviderFactory.statelessProvider = statelessProvider;
+    }
+
+    private static void checkInitialized()
+    throws StorageException {
+        if (storageAccountManager == null) {
+            String error =
+                    "The Storage Provider Utility must be initilized with an " +
+                    "XML file containing storage account information before it " +
+                    "can fulfill any requests.";
+            throw new StorageException(error);
+        }
     }
 
 }

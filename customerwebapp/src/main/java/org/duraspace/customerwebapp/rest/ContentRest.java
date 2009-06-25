@@ -41,16 +41,18 @@ public class ContentRest extends BaseRest {
                                String contentID,
                                @QueryParam("properties")
                                @DefaultValue("false")
-                               boolean properties) {
+                               boolean properties,
+                               @QueryParam("storeID")
+                               String storeID) {
         try {
             String cProperties =
-                ContentResource.getContentProperties(spaceID, contentID);
+                ContentResource.getContentProperties(spaceID, contentID, storeID);
             if(properties) {
                 return Response.ok(cProperties, XML).build();
             } else {
                 String mimetype = getMimeType(cProperties);
                 InputStream content =
-                    ContentResource.getContent(spaceID, contentID);
+                    ContentResource.getContent(spaceID, contentID, storeID);
                 return Response.ok(content, mimetype).build();
             }
         } catch(RestResourceException e) {
@@ -70,12 +72,15 @@ public class ContentRest extends BaseRest {
                                             @FormParam("contentName")
                                             String contentName,
                                             @FormParam("contentMimeType")
-                                            String contentMimeType) {
+                                            String contentMimeType,
+                                            @QueryParam("storeID")
+                                            String storeID) {
         try {
             ContentResource.updateContentProperties(spaceID,
                                                     contentID,
                                                     contentName,
-                                                    contentMimeType);
+                                                    contentMimeType,
+                                                    storeID);
             String responseText = "Content " + contentID + " updated successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(RestResourceException e) {
@@ -91,7 +96,9 @@ public class ContentRest extends BaseRest {
     public Response addContent(@PathParam("spaceID")
                                String spaceID,
                                @PathParam("contentID")
-                               String contentID) {
+                               String contentID,
+                               @QueryParam("storeID")
+                               String storeID) {
         RequestContent content = null;
         try {
             RestUtil restUtil = new RestUtil();
@@ -106,11 +113,8 @@ public class ContentRest extends BaseRest {
                                            contentID,
                                            content.getContentStream(),
                                            content.getMimeType(),
-                                           content.getSize());
-                ContentResource.updateContentProperties(spaceID,
-                                                        contentID,
-                                                        contentID,
-                                                        content.getMimeType());
+                                           content.getSize(),
+                                           storeID);
                 URI location = uriInfo.getRequestUri();
                 return Response.created(location).build();
             } catch(RestResourceException e) {
@@ -130,9 +134,11 @@ public class ContentRest extends BaseRest {
     public Response deleteContent(@PathParam("spaceID")
                                   String spaceID,
                                   @PathParam("contentID")
-                                  String contentID) {
+                                  String contentID,
+                                  @QueryParam("storeID")
+                                  String storeID) {
         try {
-            ContentResource.deleteContent(spaceID, contentID);
+            ContentResource.deleteContent(spaceID, contentID, storeID);
             String responseText = "Content " + contentID + " deleted successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
         } catch(RestResourceException e) {

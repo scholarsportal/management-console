@@ -173,7 +173,7 @@ public class ComputeAcctManagerImpl
             throw new Exception("baseUrl is null.");
         }
 
-        return baseUrl + "/initialize";
+        return baseUrl + "/stores";
     }
 
     /**

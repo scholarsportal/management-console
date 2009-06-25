@@ -3,18 +3,18 @@ package org.duraspace.customerwebapp.storage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.customerwebapp.util.StorageProviderFactory;
 import org.duraspace.storage.domain.StorageAccount;
-import org.duraspace.storage.domain.StorageCustomer;
+import org.duraspace.storage.domain.StorageAccountManager;
 import org.duraspace.storage.domain.StorageProviderType;
 import org.duraspace.storage.provider.BrokeredStorageProvider;
 import org.duraspace.storage.provider.StorageProvider;
+
+import junit.framework.TestCase;
 
 /**
  * Runtime test of Storage Provider classes.
@@ -47,12 +47,12 @@ public class TestStorageProvider
     }
 
     @Test
-    public void testStorageCustomer() throws Exception {
+    public void testStorageAccountManager() throws Exception {
         InputStream is = new ByteArrayInputStream(accountXml.getBytes());
-        StorageCustomer customer = new StorageCustomer(is);
-        assertNotNull(customer);
+        StorageAccountManager acctManager = new StorageAccountManager(is);
+        assertNotNull(acctManager);
 
-        StorageAccount primary = customer.getPrimaryStorageAccount();
+        StorageAccount primary = acctManager.getPrimaryStorageAccount();
         assertNotNull(primary);
         assertNotNull(primary.getUsername());
         assertEquals("username", primary.getUsername());

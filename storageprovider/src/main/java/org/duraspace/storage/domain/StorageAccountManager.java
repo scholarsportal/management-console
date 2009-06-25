@@ -14,19 +14,34 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 /**
- * Provides a starting point for dealing with a customer's
- * content storage.
+ * Manages storage provider accounts.
  *
  * @author Bill Branan
  */
-public class StorageCustomer {
+public class StorageAccountManager {
 
     protected final Logger log = Logger.getLogger(getClass());
 
     private String primaryStorageProviderId = null;
     private HashMap<String, StorageAccount> storageAccounts = null;
 
-    public StorageCustomer(InputStream accountXml)
+    public StorageAccountManager(InputStream accountXml)
+    throws StorageException {
+        this(accountXml, false);
+    }
+
+    /**
+     * Parses xml to construct a listing of available storage accounts.
+     * The ignoreCredentials flag is available to allow parsing of account
+     * xml which does not include credential information, such as the
+     * xml produced by the GET /stores REST method.
+     *
+     * @param accountXml
+     * @param ignoreCredentials
+     * @throws StorageException
+     */
+    public StorageAccountManager(InputStream accountXml,
+                                 boolean ignoreCredentials)
     throws StorageException {
         storageAccounts = new HashMap<String, StorageAccount>();
 
@@ -41,29 +56,27 @@ public class StorageCustomer {
 
                 String storageAccountId = account.getChildText("id");
                 String type = account.getChildText("storageProviderType");
+                String username = null;
+                String password = null;
+                if(!ignoreCredentials) {
                 Element credentials = account.getChild("storageProviderCredential");
-                String encUsername = credentials.getChildText("username");
-                String encPassword = credentials.getChildText("password");
+                    if(credentials != null) {
+                        String encUsername = credentials.getChildText("username");
+                        String encPassword = credentials.getChildText("password");
 
-                EncryptionUtil encryptUtil = new EncryptionUtil();
-                String username = encryptUtil.decrypt(encUsername);
-                String password = encryptUtil.decrypt(encPassword);
-
-                StorageAccount storageAccount = null;
-                StorageProviderType storageAccountType = null;
-                if(type.equals("AMAZON_S3")) {
-                    storageAccountType = StorageProviderType.AMAZON_S3;
-                } else if(type.equals("MS_AZURE")) {
-                    storageAccountType = StorageProviderType.MICROSOFT_AZURE;
-                } else if(type.equals("SUN")) {
-                    storageAccountType = StorageProviderType.SUN;
-                } else if(type.equals("RACKSPACE")) {
-                    storageAccountType = StorageProviderType.RACKSPACE;
-                } else if(type.equals("EMC")) {
-                    storageAccountType = StorageProviderType.EMC;
+                        EncryptionUtil encryptUtil = new EncryptionUtil();
+                        username = encryptUtil.decrypt(encUsername);
+                        password = encryptUtil.decrypt(encPassword);
+                    }
                 }
 
-                if(storageAccountType != null) {
+                StorageProviderType storageAccountType =
+                    StorageProviderType.fromString(type);
+                StorageAccount storageAccount = null;
+                if(storageAccountId != null &&
+                   storageAccountType != null &&
+                   !storageAccountType.equals(StorageProviderType.UNKNOWN) &&
+                   (ignoreCredentials || (username != null && password != null))) {
                     storageAccount = new StorageAccount(storageAccountId,
                                                         username,
                                                         password,
@@ -73,11 +86,15 @@ public class StorageCustomer {
                 else {
                     log.warn("While creating storage account list, skipping storage " +
                     		 "account with storageAccountId '" + storageAccountId +
-                             "' due to an unsupported type '" + type + "'");
+                             "' due to either a missing storageAccountId, " +
+                             "an unsupported type '" + type + "', " +
+                             "or a missing username or password");
                 }
 
             String primary = account.getAttributeValue("isPrimary");
-            if(primary != null && primary.equalsIgnoreCase("1")) {
+            if(primary != null) {
+                if(primary.equalsIgnoreCase("1") ||
+                   primary.equalsIgnoreCase("true"))
                     primaryStorageProviderId = storageAccountId;
                 }
             }
@@ -99,6 +116,10 @@ public class StorageCustomer {
             log.error(error);
             throw new StorageException(error, e);
         }
+    }
+
+    public String getPrimaryStorageAccountId() {
+        return primaryStorageProviderId;
     }
 
     public StorageAccount getPrimaryStorageAccount() {

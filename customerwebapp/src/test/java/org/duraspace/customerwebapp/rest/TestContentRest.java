@@ -1,6 +1,8 @@
 
 package org.duraspace.customerwebapp.rest;
 
+import java.util.Random;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +14,7 @@ import org.duraspace.storage.provider.StorageProvider;
 import junit.framework.TestCase;
 
 /**
- * Runtime test of content REST API. The instancewebapp web application must be
+ * Runtime test of content REST API. The customerwebapp web application must be
  * deployed and available at the baseUrl location in order for these tests to
  * pass.
  *
@@ -39,6 +41,13 @@ public class TestContentRest
     private final String modifiedTag =
             StorageProvider.METADATA_CONTENT_MODIFIED;
 
+    private static String spaceId;
+
+    static {
+        String random = String.valueOf(new Random().nextInt(99999));
+        spaceId = "space" + random;
+    }
+
     @Override
     @Before
     protected void setUp() throws Exception {
@@ -49,13 +58,13 @@ public class TestContentRest
         int statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 200);
 
-        // Add space1
-        response = RestTestHelper.addSpace("space1");
+        // Add space
+        response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
 
-        // Add content1 to space1
-        String url = baseUrl + "/space1/content1";
+        // Add content1 to space
+        String url = baseUrl + "/" + spaceId + "/content1";
         response = restHelper.put(url, CONTENT, false);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
@@ -64,8 +73,8 @@ public class TestContentRest
     @Override
     @After
     protected void tearDown() throws Exception {
-        // Delete content1 from space1
-        String url = baseUrl + "/space1/content1";
+        // Delete content1 from space
+        String url = baseUrl + "/" + spaceId + "/content1";
         HttpResponse response = restHelper.delete(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -74,14 +83,14 @@ public class TestContentRest
         assertTrue(responseText.contains("content1"));
         assertTrue(responseText.contains("deleted"));
 
-        // Delete space1
-        response = RestTestHelper.deleteSpace("space1");
+        // Delete space
+        response = RestTestHelper.deleteSpace(spaceId);
         assertTrue(response.getStatusCode() == 200);
     }
 
     @Test
     public void testGetContent() throws Exception {
-        String url = baseUrl + "/space1/content1";
+        String url = baseUrl + "/" + spaceId + "/content1";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -92,7 +101,7 @@ public class TestContentRest
 
     @Test
     public void testGetContentProperties() throws Exception {
-        String url = baseUrl + "/space1/content1?properties=true";
+        String url = baseUrl + "/" + spaceId + "/content1?properties=true";
         HttpResponse response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -108,7 +117,7 @@ public class TestContentRest
 
     @Test
     public void testUpdateContentProperties() throws Exception {
-        String url = baseUrl + "/space1/content1";
+        String url = baseUrl + "/" + spaceId + "/content1";
         String formParams =
                 "contentName=Test+Content&contentMimeType=text/plain";
         HttpResponse response = restHelper.post(url, formParams, true);
@@ -120,7 +129,7 @@ public class TestContentRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/space1/content1?properties=true";
+        url = baseUrl + "/" + spaceId + "/content1?properties=true";
         response = restHelper.get(url);
 
         assertTrue(response.getStatusCode() == 200);
@@ -131,4 +140,5 @@ public class TestContentRest
         assertTrue(propsXML.contains("<" + mimeTag + ">text/plain</" + mimeTag
                 + ">"));
     }
+
 }
