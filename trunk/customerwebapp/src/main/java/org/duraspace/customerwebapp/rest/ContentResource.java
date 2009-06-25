@@ -33,11 +33,12 @@ public class ContentResource {
      * @return InputStream which can be used to read content.
      */
     public static InputStream getContent(String spaceID,
-                                         String contentID)
+                                         String contentID,
+                                         String storeID)
     throws RestResourceException {
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -61,7 +62,8 @@ public class ContentResource {
      * @return XML listing of content properties
      */
     public static String getContentProperties(String spaceID,
-                                              String contentID)
+                                              String contentID,
+                                              String storeID)
     throws RestResourceException {
         Element contentElem = new Element("content");
         contentElem.setAttribute("id", spaceID);
@@ -70,7 +72,7 @@ public class ContentResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -109,13 +111,14 @@ public class ContentResource {
     public static void updateContentProperties(String spaceID,
                                                String contentID,
                                                String contentName,
-                                               String contentMimeType)
+                                               String contentMimeType,
+                                               String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             Map<String, String> metadata = storage.getContentMetadata(spaceID, contentID);
 
@@ -147,13 +150,14 @@ public class ContentResource {
                                   String contentID,
                                   InputStream content,
                                   String contentMimeType,
-                                  int contentSize)
+                                  int contentSize,
+                                  String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             storage.addContent(spaceID,
                                contentID,
@@ -176,13 +180,14 @@ public class ContentResource {
      * @return success
      */
     public static void deleteContent(String spaceID,
-                                     String contentID)
+                                     String contentID,
+                                     String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             storage.deleteContent(spaceID, contentID);
         } catch (StorageException e) {

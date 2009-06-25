@@ -33,7 +33,7 @@ public class RestTestHelper {
     private static String accountXml = null;
 
     public static HttpResponse initialize() throws Exception {
-        String url = getBaseUrl() + "/initialize";
+        String url = getBaseUrl() + "/stores";
         if(accountXml == null) {
             accountXml = buildTestAccountXml();
         }
@@ -47,9 +47,22 @@ public class RestTestHelper {
         return restHelper.put(url, formParams, true);
     }
 
+    public static HttpResponse addSpace(String spaceID, String storeID)
+            throws Exception {
+        String url = getBaseUrl() + "/" + spaceID + "?storeID=" + storeID;
+        String formParams = "spaceName=Testing+Space&spaceAccess=OPEN";
+        return restHelper.put(url, formParams, true);
+    }
+
     public static HttpResponse deleteSpace(String spaceID)
             throws Exception {
         String url = getBaseUrl() + "/" + spaceID;
+        return restHelper.delete(url);
+    }
+
+    public static HttpResponse deleteSpace(String spaceID, String storeID)
+            throws Exception {
+        String url = getBaseUrl() + "/" + spaceID + "?storeID=" + storeID;
         return restHelper.delete(url);
     }
 

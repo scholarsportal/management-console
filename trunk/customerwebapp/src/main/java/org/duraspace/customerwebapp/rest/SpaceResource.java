@@ -31,19 +31,19 @@ public class SpaceResource {
      *
      * @return XML listing of spaces
      */
-    public static String getSpaces()
+    public static String getSpaces(String storeID)
     throws RestResourceException {
         Element spacesElem = new Element("spaces");
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             Iterator<String> spaces = storage.getSpaces();
             while(spaces.hasNext()) {
                 String spaceID = spaces.next();
                 try {
-                    Element spaceElem = getSpaceXML(spaceID);
+                    Element spaceElem = getSpaceXML(storage, spaceID);
                     spacesElem.addContent(spaceElem);
                 } catch(StorageException e) {
                     // This bucket may not be part of DuraSpace, log the
@@ -70,12 +70,14 @@ public class SpaceResource {
      * @param spaceID
      * @return XML listing of space properties
      */
-    public static String getSpaceProperties(String spaceID)
+    public static String getSpaceProperties(String spaceID, String storeID)
     throws RestResourceException {
         Element spaceElem;
 
         try {
-            spaceElem = getSpaceXML(spaceID);
+            StorageProvider storage =
+                StorageProviderFactory.getStorageProvider(storeID);
+            spaceElem = getSpaceXML(storage, spaceID);
         } catch (StorageException e) {
             String error = "Error attempting to build space XML for '" +
                            spaceID + "': " + e.getMessage();
@@ -91,15 +93,12 @@ public class SpaceResource {
     /**
      * Builds space properties XML tree
      */
-    private static Element getSpaceXML(String spaceID)
+    private static Element getSpaceXML(StorageProvider storage, String spaceID)
     throws StorageException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
         Element propsElem = new Element("properties");
         spaceElem.addContent(propsElem);
-
-        StorageProvider storage =
-            StorageProviderFactory.getStorageProvider();
 
         Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
@@ -121,7 +120,7 @@ public class SpaceResource {
      * @param spaceID
      * @return XML listing of space contents
      */
-    public static String getSpaceContents(String spaceID)
+    public static String getSpaceContents(String spaceID, String storeID)
     throws RestResourceException {
         Element root = new Element("space");
         root.setAttribute("id", spaceID);
@@ -130,7 +129,7 @@ public class SpaceResource {
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             AccessType access = storage.getSpaceAccess(spaceID);
             if(access.equals(AccessType.CLOSED)) {
@@ -167,15 +166,16 @@ public class SpaceResource {
      */
     public static void addSpace(String spaceID,
                                 String spaceName,
-                                String spaceAccess)
+                                String spaceAccess,
+                                String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
             storage.createSpace(spaceID);
-            updateSpaceProperties(spaceID, spaceName, spaceAccess);
+            updateSpaceProperties(spaceID, spaceName, spaceAccess, storeID);
         } catch (StorageException e) {
             String error = "Error attempting to add space '" +
                            spaceID + "': " + e.getMessage();
@@ -193,13 +193,14 @@ public class SpaceResource {
      */
     public static void updateSpaceProperties(String spaceID,
                                              String spaceName,
-                                             String spaceAccess)
+                                             String spaceAccess,
+                                             String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
 
             // Set space properties if a new value was provided
             if(spaceName != null && !spaceName.equals("")) {
@@ -244,13 +245,13 @@ public class SpaceResource {
      *
      * @param spaceID
      */
-    public static void deleteSpace(String spaceID)
+    public static void deleteSpace(String spaceID, String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
-                StorageProviderFactory.getStorageProvider();
+                StorageProviderFactory.getStorageProvider(storeID);
             storage.deleteSpace(spaceID);
         } catch (StorageException e) {
             String error = "Error attempting to delete space '" +

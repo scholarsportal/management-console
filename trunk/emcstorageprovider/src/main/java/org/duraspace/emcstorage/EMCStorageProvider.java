@@ -309,6 +309,9 @@ public class EMCStorageProvider
             throws StorageException {
         Identifier rootObjId = getRootId(spaceId);
 
+        // Do not overwrite space root tag
+        spaceMetadata.remove(SPACE_ROOT_TAG_NAME);
+
         // Remove volatile metadata.
         clearDisposableRootMetadata(rootObjId);
 

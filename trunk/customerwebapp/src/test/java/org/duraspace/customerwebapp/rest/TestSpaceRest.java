@@ -1,5 +1,7 @@
 package org.duraspace.customerwebapp.rest;
 
+import java.util.Random;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,13 @@ public class TestSpaceRest
     private final String nameTag = StorageProvider.METADATA_SPACE_NAME;
     private final String accessTag = StorageProvider.METADATA_SPACE_ACCESS;
 
+    private static String spaceId;
+
+    static {
+        String random = String.valueOf(new Random().nextInt(99999));
+        spaceId = "space" + random;
+    }
+
     @Override
     @Before
     protected void setUp() throws Exception {
@@ -35,8 +44,9 @@ public class TestSpaceRest
         HttpResponse response = RestTestHelper.initialize();
         assertTrue(response.getStatusCode() == 200);
 
-        // Add space1
-        response = RestTestHelper.addSpace("space1");
+        // Add space
+
+        response = RestTestHelper.addSpace(spaceId);
         assertTrue(response.getStatusCode() == 201);
     }
 
@@ -44,12 +54,12 @@ public class TestSpaceRest
     @After
     protected void tearDown() throws Exception {
         HttpResponse response =
-            RestTestHelper.deleteSpace("space1");
+            RestTestHelper.deleteSpace(spaceId);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
-        assertTrue(responseText.contains("space1"));
+        assertTrue(responseText.contains(spaceId));
         assertTrue(responseText.contains("deleted"));
     }
 
@@ -65,7 +75,7 @@ public class TestSpaceRest
 
     @Test
     public void testGetSpaceProperties() throws Exception {
-        String url = baseUrl + "/space1?properties=true";
+        String url = baseUrl + "/" + spaceId + "?properties=true";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
@@ -76,7 +86,7 @@ public class TestSpaceRest
 
     @Test
     public void testGetSpaceContents() throws Exception {
-        String url = baseUrl + "/space1";
+        String url = baseUrl + "/" + spaceId;
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
@@ -86,18 +96,18 @@ public class TestSpaceRest
 
     @Test
     public void testUpdateSpaceProperties() throws Exception {
-        String url = baseUrl + "/space1";
+        String url = baseUrl + "/" + spaceId;
         String formParams = "spaceName=Test2&spaceAccess=closed";
         HttpResponse response = restHelper.post(url, formParams, true);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
-        assertTrue(responseText.contains("space1"));
+        assertTrue(responseText.contains(spaceId));
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/space1?properties=true";
+        url = baseUrl + "/" + spaceId + "?properties=true";
         response = restHelper.get(url);
         responseText = response.getResponseBody();
 
