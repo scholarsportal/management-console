@@ -1,7 +1,11 @@
 
 package org.duraspace.customerwebapp.rest;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+import javax.ws.rs.core.HttpHeaders;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +13,6 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
-import org.duraspace.storage.provider.StorageProvider;
 
 import junit.framework.TestCase;
 
@@ -29,17 +32,7 @@ public class TestContentRest
 
     private static final String CONTENT = "<content />";
 
-    private final String nameTag = StorageProvider.METADATA_CONTENT_NAME;
-
-    private final String mimeTag = StorageProvider.METADATA_CONTENT_MIMETYPE;
-
-    private final String sizeTag = StorageProvider.METADATA_CONTENT_SIZE;
-
-    private final String checksumTag =
-            StorageProvider.METADATA_CONTENT_CHECKSUM;
-
-    private final String modifiedTag =
-            StorageProvider.METADATA_CONTENT_MODIFIED;
+    private final String nameHeader = BaseRest.CONTENT_NAME_HEADER;
 
     private static String spaceId;
 
@@ -65,7 +58,10 @@ public class TestContentRest
 
         // Add content1 to space
         String url = baseUrl + "/" + spaceId + "/content1";
-        response = restHelper.put(url, CONTENT, false);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put(RestTestHelper.METADATA_NAME,
+                    RestTestHelper.METADATA_VALUE);
+        response = restHelper.put(url, CONTENT, false, headers);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
     }
@@ -97,30 +93,57 @@ public class TestContentRest
         String content = response.getResponseBody();
         assertNotNull(content);
         assertTrue(CONTENT.equals(content));
+
+        String contentType =
+            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
+        assertNotNull(contentType);
+        assertTrue(contentType.contains("text/xml"));
     }
 
     @Test
-    public void testGetContentProperties() throws Exception {
-        String url = baseUrl + "/" + spaceId + "/content1?properties=true";
-        HttpResponse response = restHelper.get(url);
-
-        assertTrue(response.getStatusCode() == 200);
-        String propsXML = response.getResponseBody();
-        assertNotNull(propsXML);
-        assertTrue(propsXML.contains("<" + nameTag + ">content1</" + nameTag
-                + ">"));
-        assertTrue(propsXML.contains("<" + mimeTag + ">text/xml"));
-        assertTrue(propsXML.contains("<" + sizeTag + ">"));
-        assertTrue(propsXML.contains("<" + checksumTag + ">"));
-        assertTrue(propsXML.contains("<" + modifiedTag + ">"));
-    }
-
-    @Test
-    public void testUpdateContentProperties() throws Exception {
+    public void testGetContentMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId + "/content1";
-        String formParams =
-                "contentName=Test+Content&contentMimeType=text/plain";
-        HttpResponse response = restHelper.post(url, formParams, true);
+        HttpResponse response = restHelper.head(url);
+        assertTrue(response.getStatusCode() == 200);
+
+        testMetadata(response, nameHeader, "content1");
+        testMetadata(response, "Content-Length", "11");
+
+        String contentType =
+            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
+        assertNotNull(contentType);
+        assertTrue(contentType.contains("text/xml"));
+
+        String contentChecksum =
+            response.getResponseHeader("Content-MD5").getValue();
+        assertNotNull(contentChecksum);
+
+        String contentETag =
+            response.getResponseHeader(HttpHeaders.ETAG).getValue();
+        assertNotNull(contentETag);
+        assertEquals(contentChecksum, contentETag);
+
+        String contentModified =
+            response.getResponseHeader("Last-Modified").getValue();
+        assertNotNull(contentModified);
+
+        testMetadata(response,
+                     RestTestHelper.METADATA_NAME,
+                     RestTestHelper.METADATA_VALUE);
+    }
+
+    @Test
+    public void testUpdateContentMetadata() throws Exception {
+        String url = baseUrl + "/" + spaceId + "/content1";
+        Map<String, String> headers = new HashMap<String, String>();
+        String newContentName = "Test Content";
+        headers.put(nameHeader, newContentName);
+        String newContentMime = "text/plain";
+        headers.put(HttpHeaders.CONTENT_TYPE, newContentMime);
+        String newMetaName = BaseRest.HEADER_PREFIX + "new-metadata";
+        String newMetaValue = "New Metadata Value";
+        headers.put(newMetaName, newMetaValue);
+        HttpResponse response = restHelper.post(url, null, true, headers);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
@@ -129,16 +152,21 @@ public class TestContentRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/" + spaceId + "/content1?properties=true";
-        response = restHelper.get(url);
+        url = baseUrl + "/" + spaceId + "/content1";
+        response = restHelper.head(url);
 
         assertTrue(response.getStatusCode() == 200);
-        String propsXML = response.getResponseBody();
-        assertNotNull(propsXML);
-        assertTrue(propsXML.contains("<" + nameTag + ">Test Content</"
-                + nameTag + ">"));
-        assertTrue(propsXML.contains("<" + mimeTag + ">text/plain</" + mimeTag
-                + ">"));
+
+        testMetadata(response, nameHeader, newContentName);
+        testMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
+        testMetadata(response, newMetaName, newMetaValue);
+    }
+
+    private void testMetadata(HttpResponse response, String name, String value)
+            throws Exception {
+        String metadata = response.getResponseHeader(name).getValue();
+        assertNotNull(metadata);
+        assertEquals(metadata, value);
     }
 
 }

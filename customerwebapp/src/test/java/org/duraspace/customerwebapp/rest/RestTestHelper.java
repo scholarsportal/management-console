@@ -1,6 +1,9 @@
 
 package org.duraspace.customerwebapp.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.common.web.RestHttpHelper;
@@ -32,26 +35,42 @@ public class RestTestHelper {
 
     private static String accountXml = null;
 
+    public static final String METADATA_NAME =
+        BaseRest.HEADER_PREFIX + "test-metadata";
+
+    public static final String METADATA_VALUE = "Test Metadata";
+
+    public static final String SPACE_NAME = "Testing Space";
+
+    public static final String SPACE_ACCESS = "OPEN";
+
     public static HttpResponse initialize() throws Exception {
         String url = getBaseUrl() + "/stores";
         if(accountXml == null) {
             accountXml = buildTestAccountXml();
         }
-        return restHelper.post(url, accountXml, true);
+        return restHelper.post(url, accountXml, true, null);
     }
 
     public static HttpResponse addSpace(String spaceID)
             throws Exception {
         String url = getBaseUrl() + "/" + spaceID;
-        String formParams = "spaceName=Testing+Space&spaceAccess=OPEN";
-        return restHelper.put(url, formParams, true);
+        return addSpaceWithHeaders(url);
     }
 
     public static HttpResponse addSpace(String spaceID, String storeID)
             throws Exception {
         String url = getBaseUrl() + "/" + spaceID + "?storeID=" + storeID;
-        String formParams = "spaceName=Testing+Space&spaceAccess=OPEN";
-        return restHelper.put(url, formParams, true);
+        return addSpaceWithHeaders(url);
+    }
+
+    private static HttpResponse addSpaceWithHeaders(String url)
+            throws Exception {
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put(BaseRest.SPACE_NAME_HEADER, SPACE_NAME);
+        headers.put(BaseRest.SPACE_ACCESS_HEADER, SPACE_ACCESS);
+        headers.put(METADATA_NAME, METADATA_VALUE);
+        return restHelper.put(url, null, true, headers);
     }
 
     public static HttpResponse deleteSpace(String spaceID)

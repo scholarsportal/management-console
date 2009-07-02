@@ -215,8 +215,10 @@ public class S3StorageProviderTest {
         assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
         // Mime type was not included when setting content metadata
         // so it should have been reset to a default value
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get("Content-Type"));
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
 
         // test deleteContent()
         log.debug("Test deleteContent()");

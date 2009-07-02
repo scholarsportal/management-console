@@ -111,7 +111,8 @@ public class StorageProviderFactory {
         } else if (type.equals(StorageProviderType.RACKSPACE)) {
             storageProvider = new RackspaceStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.EMC)) {
-            storageProvider = new EMCStorageProvider(username, password);
+            // TODO: Enable this when EMC provider is working
+            // storageProvider = new EMCStorageProvider(username, password);
         }
 
         return new BrokeredStorageProvider(statelessProvider, storageProvider);

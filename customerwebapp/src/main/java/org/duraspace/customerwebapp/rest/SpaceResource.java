@@ -65,39 +65,13 @@ public class SpaceResource {
     }
 
     /**
-     * Gets the properties of a space.
-     *
-     * @param spaceID
-     * @return XML listing of space properties
-     */
-    public static String getSpaceProperties(String spaceID, String storeID)
-    throws RestResourceException {
-        Element spaceElem;
-
-        try {
-            StorageProvider storage =
-                StorageProviderFactory.getStorageProvider(storeID);
-            spaceElem = getSpaceXML(storage, spaceID);
-        } catch (StorageException e) {
-            String error = "Error attempting to build space XML for '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
-        }
-
-        Document doc = new Document(spaceElem);
-        XMLOutputter xmlConverter = new XMLOutputter();
-        return xmlConverter.outputString(doc);
-    }
-
-    /**
-     * Builds space properties XML tree
+     * Builds space metadata XML tree
      */
     private static Element getSpaceXML(StorageProvider storage, String spaceID)
     throws StorageException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
-        Element propsElem = new Element("properties");
+        Element propsElem = new Element("metadata");
         spaceElem.addContent(propsElem);
 
         Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
@@ -112,6 +86,26 @@ public class SpaceResource {
             }
         }
         return spaceElem;
+    }
+
+    /**
+     * Gets the metadata of a space.
+     *
+     * @param spaceID
+     * @return Map of space metadata
+     */
+    public static Map<String, String> getSpaceMetadata(String spaceID, String storeID)
+    throws RestResourceException {
+        try {
+            StorageProvider storage =
+                StorageProviderFactory.getStorageProvider(storeID);
+            return storage.getSpaceMetadata(spaceID);
+        } catch (StorageException e) {
+            String error = "Error attempting to retrieve space metadata for '" +
+                           spaceID + "': " + e.getMessage();
+            log.error(error, e);
+            throw new RestResourceException(error);
+        }
     }
 
     /**
@@ -167,6 +161,7 @@ public class SpaceResource {
     public static void addSpace(String spaceID,
                                 String spaceName,
                                 String spaceAccess,
+                                Map<String, String> userMetadata,
                                 String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
@@ -175,7 +170,11 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
             storage.createSpace(spaceID);
-            updateSpaceProperties(spaceID, spaceName, spaceAccess, storeID);
+            updateSpaceMetadata(spaceID,
+                                spaceName,
+                                spaceAccess,
+                                userMetadata,
+                                storeID);
         } catch (StorageException e) {
             String error = "Error attempting to add space '" +
                            spaceID + "': " + e.getMessage();
@@ -185,34 +184,52 @@ public class SpaceResource {
     }
 
     /**
-     * Updates the properties of a space.
+     * Updates the metadata of a space.
      *
      * @param spaceID
      * @param spaceName
      * @param spaceAccess
      */
-    public static void updateSpaceProperties(String spaceID,
-                                             String spaceName,
-                                             String spaceAccess,
-                                             String storeID)
+    public static void updateSpaceMetadata(String spaceID,
+                                           String spaceName,
+                                           String spaceAccess,
+                                           Map<String, String> userMetadata,
+                                           String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
-
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            // Set space properties if a new value was provided
+            Map<String, String> spaceMeta = storage.getSpaceMetadata(spaceID);
+            if(spaceMeta == null) {
+                spaceMeta = new HashMap<String, String>();
+            }
+            boolean metadataUpdated = false;
+
+            // Update space name
             if(spaceName != null && !spaceName.equals("")) {
-                Map<String, String> spaceProps = storage.getSpaceMetadata(spaceID);
-                if(spaceProps == null) {
-                    spaceProps = new HashMap<String, String>();
-                }
-                spaceProps.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
-                storage.setSpaceMetadata(spaceID, spaceProps);
+                spaceMeta.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
+                metadataUpdated = true;
             }
 
-            // Set space access if a new value was provided
+            // Update user metadata
+            if(userMetadata != null && userMetadata.size() > 0) {
+                Iterator<String> userMetaNames = userMetadata.keySet().iterator();
+                while(userMetaNames.hasNext()) {
+                    String userMetaName = userMetaNames.next();
+                    String userMetaValue = userMetadata.get(userMetaName);
+                    spaceMeta.put(userMetaName, userMetaValue);
+                }
+                metadataUpdated = true;
+            }
+
+            // Commit updates to space metadata
+            if(metadataUpdated) {
+                storage.setSpaceMetadata(spaceID, spaceMeta);
+            }
+
+            // Set space access if necessary
             if(spaceAccess != null) {
                 AccessType access = storage.getSpaceAccess(spaceID);
                 AccessType newAccessType = null;
@@ -233,7 +250,7 @@ public class SpaceResource {
                 }
             }
         } catch (StorageException e) {
-            String error = "Error attempting to update space properties for '" +
+            String error = "Error attempting to update space metadata for '" +
                            spaceID + "': " + e.getMessage();
             log.error(error, e);
             throw new RestResourceException(error);

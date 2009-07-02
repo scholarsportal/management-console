@@ -2,6 +2,7 @@ package org.duraspace.customerwebapp.rest;
 
 import java.io.InputStream;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,9 +13,6 @@ import org.duraspace.customerwebapp.util.StorageProviderFactory;
 import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.provider.StorageProvider;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
 
 /**
  * Provides interaction with content
@@ -55,21 +53,16 @@ public class ContentResource {
     }
 
     /**
-     * Retrieves the properties of a piece of content.
+     * Retrieves the metadata of a piece of content.
      *
      * @param spaceID
      * @param contentID
-     * @return XML listing of content properties
+     * @return Map of content metadata
      */
-    public static String getContentProperties(String spaceID,
-                                              String contentID,
-                                              String storeID)
+    public static Map<String, String> getContentMetadata(String spaceID,
+                                                         String contentID,
+                                                         String storeID)
     throws RestResourceException {
-        Element contentElem = new Element("content");
-        contentElem.setAttribute("id", spaceID);
-        Element propsElem = new Element("properties");
-        contentElem.addContent(propsElem);
-
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
@@ -79,62 +72,67 @@ public class ContentResource {
                 // TODO: Check user permissions
             }
 
-            Map<String, String> metadata =
-                storage.getContentMetadata(spaceID, contentID);
-            if(metadata != null) {
-                Iterator<String> metadataNames = metadata.keySet().iterator();
-                while(metadataNames.hasNext()) {
-                    String metadataName = (String)metadataNames.next();
-                    String metadataValue = metadata.get(metadataName);
-                    Element metadataElem = new Element(metadataName);
-                    metadataElem.setText(metadataValue);
-                    propsElem.addContent(metadataElem);
-                }
-            }
+            return storage.getContentMetadata(spaceID, contentID);
         } catch (StorageException e) {
-            String error = "Error attempting to get properties for content '" +
+            String error = "Error attempting to get metadata for content '" +
                            contentID + "' in '" + spaceID + "': " + e.getMessage();
             log.error(error, e);
             throw new RestResourceException(error);
         }
-
-        Document doc = new Document(contentElem);
-        XMLOutputter xmlConverter = new XMLOutputter();
-        return xmlConverter.outputString(doc);
     }
 
     /**
-     * Updates the properties of a piece of content.
+     * Updates the metadata of a piece of content.
      *
      * @return success
      */
-    public static void updateContentProperties(String spaceID,
-                                               String contentID,
-                                               String contentName,
-                                               String contentMimeType,
-                                               String storeID)
+    public static void updateContentMetadata(String spaceID,
+                                             String contentID,
+                                             String contentName,
+                                             String contentMimeType,
+                                             Map<String, String> userMetadata,
+                                             String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
-
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            Map<String, String> metadata = storage.getContentMetadata(spaceID, contentID);
+            Map<String, String> metadata =
+                storage.getContentMetadata(spaceID, contentID);
+            if(metadata == null) {
+                metadata = new HashMap<String, String>();
+            }
+            boolean metadataUpdated = false;
 
-            // Set content name if a new value was provided
+            // Update content name if a new value was provided
             if(contentName != null && !contentName.equals("")) {
                 metadata.put(StorageProvider.METADATA_CONTENT_NAME, contentName);
+                metadataUpdated = true;
             }
 
-            // Set content mime type if a new value was provided
+            // Update content mime type if a new value was provided
             if(contentMimeType != null && !contentMimeType.equals("")) {
                 metadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE, contentMimeType);
+                metadataUpdated = true;
             }
 
-            storage.setContentMetadata(spaceID, contentID, metadata);
+            // Update user metadata
+            if(userMetadata != null && userMetadata.size() > 0) {
+                Iterator<String> userMetaNames = userMetadata.keySet().iterator();
+                while(userMetaNames.hasNext()) {
+                    String userMetaName = userMetaNames.next();
+                    String userMetaValue = userMetadata.get(userMetaName);
+                    metadata.put(userMetaName, userMetaValue);
+                }
+                metadataUpdated = true;
+            }
+
+            if(metadataUpdated) {
+                storage.setContentMetadata(spaceID, contentID, metadata);
+            }
         } catch (StorageException e) {
-            String error = "Error attempting to update properties for content '" +
+            String error = "Error attempting to update metadata for content '" +
                            contentID + "' in '" + spaceID + "': " + e.getMessage();
             log.error(error, e);
             throw new RestResourceException(error);

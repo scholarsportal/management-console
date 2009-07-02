@@ -1,5 +1,7 @@
 package org.duraspace.customerwebapp.rest;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.After;
@@ -8,12 +10,11 @@ import org.junit.Test;
 
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
-import org.duraspace.storage.provider.StorageProvider;
 
 import junit.framework.TestCase;
 
 /**
- * Runtime test of space REST API. The instancewebapp
+ * Runtime test of space REST API. The customerwebapp
  * web application must be deployed and available at the
  * baseUrl location in order for these tests to pass.
  *
@@ -24,9 +25,6 @@ public class TestSpaceRest
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
     private static String baseUrl;
-
-    private final String nameTag = StorageProvider.METADATA_SPACE_NAME;
-    private final String accessTag = StorageProvider.METADATA_SPACE_ACCESS;
 
     private static String spaceId;
 
@@ -45,7 +43,6 @@ public class TestSpaceRest
         assertTrue(response.getStatusCode() == 200);
 
         // Add space
-
         response = RestTestHelper.addSpace(spaceId);
         assertTrue(response.getStatusCode() == 201);
     }
@@ -74,14 +71,20 @@ public class TestSpaceRest
     }
 
     @Test
-    public void testGetSpaceProperties() throws Exception {
-        String url = baseUrl + "/" + spaceId + "?properties=true";
-        HttpResponse response = restHelper.get(url);
-        String responseText = response.getResponseBody();
-
+    public void testGetSpaceMetadata() throws Exception {
+        String url = baseUrl + "/" + spaceId;
+        HttpResponse response = restHelper.head(url);
         assertTrue(response.getStatusCode() == 200);
-        assertTrue(responseText.contains("<"+nameTag+">Testing Space</"+nameTag+">"));
-        assertTrue(responseText.contains("<"+accessTag+">OPEN</"+accessTag+">"));
+
+        testMetadata(response,
+                     BaseRest.SPACE_NAME_HEADER,
+                     RestTestHelper.SPACE_NAME);
+        testMetadata(response,
+                     BaseRest.SPACE_ACCESS_HEADER,
+                     RestTestHelper.SPACE_ACCESS);
+        testMetadata(response,
+                     RestTestHelper.METADATA_NAME,
+                     RestTestHelper.METADATA_VALUE);
     }
 
     @Test
@@ -95,10 +98,16 @@ public class TestSpaceRest
     }
 
     @Test
-    public void testUpdateSpaceProperties() throws Exception {
+    public void testUpdateSpaceMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId;
-        String formParams = "spaceName=Test2&spaceAccess=closed";
-        HttpResponse response = restHelper.post(url, formParams, true);
+        Map<String, String> headers = new HashMap<String, String>();
+        String newSpaceName = "Updated Space Name";
+        headers.put(BaseRest.SPACE_NAME_HEADER, newSpaceName);
+        String newSpaceAccess = "CLOSED";
+        headers.put(BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
+        String newSpaceMetadata = "Updated Space Metadata";
+        headers.put(RestTestHelper.METADATA_NAME, newSpaceMetadata);
+        HttpResponse response = restHelper.post(url, null, true, headers);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();
@@ -107,13 +116,19 @@ public class TestSpaceRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/" + spaceId + "?properties=true";
-        response = restHelper.get(url);
-        responseText = response.getResponseBody();
+        url = baseUrl + "/" + spaceId;
+        response = restHelper.head(url);
 
-        assertTrue(response.getStatusCode() == 200);
-        assertTrue(responseText.contains("<"+nameTag+">Test2</"+nameTag+">"));
-        assertTrue(responseText.contains("<"+accessTag+">CLOSED</"+accessTag+">"));
+        testMetadata(response, BaseRest.SPACE_NAME_HEADER, newSpaceName);
+        testMetadata(response, BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
+        testMetadata(response, RestTestHelper.METADATA_NAME, newSpaceMetadata);
+    }
+
+    private void testMetadata(HttpResponse response, String name, String value)
+            throws Exception {
+        String metadata = response.getResponseHeader(name).getValue();
+        assertNotNull(metadata);
+        assertEquals(metadata, value);
     }
 
  }
