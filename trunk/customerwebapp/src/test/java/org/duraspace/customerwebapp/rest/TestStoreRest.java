@@ -90,6 +90,8 @@ public class TestStoreRest
             StorageProviderType type =
                 manager.getStorageAccount(acctId).getType();
             if(!type.equals(StorageProviderType.EMC_SECONDARY) &&
+               // TODO: Enable this when EMC provider is working
+               !type.equals(StorageProviderType.EMC) &&
                // TODO: Enable this when Sun provider is working
                !type.equals(StorageProviderType.SUN)) {
                 log.info("Testing storage account with id " +
@@ -119,7 +121,7 @@ public class TestStoreRest
 
         // Add content1 to space1
         String url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
-        response = restHelper.put(url, CONTENT, false);
+        response = restHelper.put(url, CONTENT, false, null);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
 

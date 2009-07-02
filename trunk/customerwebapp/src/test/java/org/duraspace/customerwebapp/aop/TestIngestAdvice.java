@@ -123,7 +123,7 @@ public class TestIngestAdvice
         }
 
         String url = RestTestHelper.getBaseUrl() + suffix;
-        restHelper.put(url, CONTENT, false);
+        restHelper.put(url, CONTENT, false, null);
     }
 
     private void verifyEventHeard(boolean successful) throws Exception {
