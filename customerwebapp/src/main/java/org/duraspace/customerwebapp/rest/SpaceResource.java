@@ -71,8 +71,6 @@ public class SpaceResource {
     throws StorageException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
-        Element propsElem = new Element("metadata");
-        spaceElem.addContent(propsElem);
 
         Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
         if(metadata != null) {
@@ -82,7 +80,7 @@ public class SpaceResource {
                 String metadataValue = metadata.get(metadataName);
                 Element metadataElem = new Element(metadataName);
                 metadataElem.setText(metadataValue);
-                propsElem.addContent(metadataElem);
+                spaceElem.addContent(metadataElem);
             }
         }
         return spaceElem;
@@ -116,10 +114,8 @@ public class SpaceResource {
      */
     public static String getSpaceContents(String spaceID, String storeID)
     throws RestResourceException {
-        Element root = new Element("space");
-        root.setAttribute("id", spaceID);
-        Element content = new Element("content");
-        root.addContent(content);
+        Element spaceElem = new Element("space");
+        spaceElem.setAttribute("id", spaceID);
 
         try {
             StorageProvider storage =
@@ -136,7 +132,7 @@ public class SpaceResource {
                     String contentItem = contents.next();
                     Element contentElem = new Element("item");
                     contentElem.setText(contentItem);
-                    content.addContent(contentElem);
+                    spaceElem.addContent(contentElem);
                 }
             }
         } catch (StorageException e) {
@@ -146,7 +142,7 @@ public class SpaceResource {
             throw new RestResourceException(error);
         }
 
-        Document doc = new Document(root);
+        Document doc = new Document(spaceElem);
         XMLOutputter xmlConverter = new XMLOutputter();
         return xmlConverter.outputString(doc);
     }

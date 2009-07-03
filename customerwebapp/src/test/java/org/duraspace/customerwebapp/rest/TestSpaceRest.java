@@ -94,7 +94,7 @@ public class TestSpaceRest
         String responseText = response.getResponseBody();
 
         assertTrue(response.getStatusCode() == 200);
-        assertTrue(responseText.contains("<content />"));
+        assertTrue(responseText.contains("<space"));
     }
 
     @Test

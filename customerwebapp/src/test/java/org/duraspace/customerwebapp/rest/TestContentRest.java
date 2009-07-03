@@ -107,7 +107,7 @@ public class TestContentRest
         assertTrue(response.getStatusCode() == 200);
 
         testMetadata(response, nameHeader, "content1");
-        testMetadata(response, "Content-Length", "11");
+        testMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
         String contentType =
             response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
@@ -124,7 +124,7 @@ public class TestContentRest
         assertEquals(contentChecksum, contentETag);
 
         String contentModified =
-            response.getResponseHeader("Last-Modified").getValue();
+            response.getResponseHeader(HttpHeaders.LAST_MODIFIED).getValue();
         assertNotNull(contentModified);
 
         testMetadata(response,
