@@ -170,7 +170,7 @@ public class RackspaceStorageProvider implements StorageProvider {
             spaceMetadata.put(METADATA_SPACE_COUNT,
                            String.valueOf(containerInfo.getObjectCount()));
 
-            spaceMetadata.put(METADATA_SPACE_SIZE,
+            spaceMetadata.put("space-total-size",
                            String.valueOf(containerInfo.getTotalSize()));
 
             AccessType access = getSpaceAccess(spaceId);

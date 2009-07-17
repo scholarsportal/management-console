@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import java.net.URI;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -213,15 +214,19 @@ public class ContentRest extends BaseRest {
 
         if(content != null) {
             try {
-                ContentResource.addContent(spaceID,
-                                           contentID,
-                                           content.getContentStream(),
-                                           content.getMimeType(),
-                                           content.getSize(),
-                                           storeID);
+                String checksum =
+                    ContentResource.addContent(spaceID,
+                                               contentID,
+                                               content.getContentStream(),
+                                               content.getMimeType(),
+                                               content.getSize(),
+                                               storeID);
                 updateContentMetadata(spaceID, contentID, storeID);
                 URI location = uriInfo.getRequestUri();
-                return Response.created(location).build();
+                Map<String, String> metadata = new HashMap<String, String>();
+                metadata.put(StorageProvider.METADATA_CONTENT_CHECKSUM, checksum);
+                return addContentMetadataToResponse(Response.created(location),
+                                                    metadata);
             } catch(RestResourceException e) {
                 return Response.serverError().entity(e.getMessage()).build();
             }

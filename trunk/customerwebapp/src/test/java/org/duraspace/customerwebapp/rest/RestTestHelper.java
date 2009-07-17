@@ -4,13 +4,10 @@ package org.duraspace.customerwebapp.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.duraspace.common.model.Credential;
-import org.duraspace.common.util.EncryptionUtil;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
 import org.duraspace.customerwebapp.config.CustomerWebAppConfig;
-import org.duraspace.storage.domain.StorageProviderType;
-import org.duraspace.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duraspace.storage.util.test.StorageAccountTestUtil;
 
 /**
  * @author Bill Branan
@@ -47,9 +44,9 @@ public class RestTestHelper {
     public static HttpResponse initialize() throws Exception {
         String url = getBaseUrl() + "/stores";
         if(accountXml == null) {
-            accountXml = buildTestAccountXml();
+            accountXml = StorageAccountTestUtil.buildTestAccountXml();
         }
-        return restHelper.post(url, accountXml, true, null);
+        return restHelper.post(url, accountXml, null);
     }
 
     public static HttpResponse addSpace(String spaceID)
@@ -70,7 +67,7 @@ public class RestTestHelper {
         headers.put(BaseRest.SPACE_NAME_HEADER, SPACE_NAME);
         headers.put(BaseRest.SPACE_ACCESS_HEADER, SPACE_ACCESS);
         headers.put(METADATA_NAME, METADATA_VALUE);
-        return restHelper.put(url, null, true, headers);
+        return restHelper.put(url, null, headers);
     }
 
     public static HttpResponse deleteSpace(String spaceID)
@@ -104,47 +101,6 @@ public class RestTestHelper {
         }
 
         return port;
-    }
-
-    private static String buildTestAccountXml() throws Exception {
-        StringBuilder xml = new StringBuilder();
-        xml.append("<storageProviderAccounts>");
-
-        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        int acctId = 0;
-        for(StorageProviderType type : StorageProviderType.values()) {
-            Credential cred = null;
-            try {
-                 cred = dbUtil.findCredentialForProvider(type);
-            } catch (Exception e) {
-                // No credentials available for provider type - skip
-                continue;
-            }
-            if(cred != null) {
-                ++acctId;
-                EncryptionUtil encryptUtil = new EncryptionUtil();
-                String encUsername = encryptUtil.encrypt(cred.getUsername());
-                String encPassword = encryptUtil.encrypt(cred.getPassword());
-
-                xml.append("<storageAcct ownerId='0'");
-                if(type.equals(StorageProviderType.AMAZON_S3)) {
-                    xml.append(" isPrimary='1'");
-                }
-                xml.append(">");
-                xml.append("<id>"+acctId+"</id>");
-                xml.append("<storageProviderType>");
-                xml.append(type.name());
-                xml.append("</storageProviderType>");
-                xml.append("<storageProviderCredential>");
-                xml.append("<username>"+encUsername+"</username>");
-                xml.append("<password>"+encPassword+"</password>");
-                xml.append("</storageProviderCredential>");
-                xml.append("</storageAcct>");
-            }
-        }
-
-        xml.append("</storageProviderAccounts>");
-        return xml.toString();
     }
 
 }

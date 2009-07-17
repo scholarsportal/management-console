@@ -107,7 +107,7 @@ public class TestSpaceRest
         headers.put(BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         String newSpaceMetadata = "Updated Space Metadata";
         headers.put(RestTestHelper.METADATA_NAME, newSpaceMetadata);
-        HttpResponse response = restHelper.post(url, null, true, headers);
+        HttpResponse response = restHelper.post(url, null, headers);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();

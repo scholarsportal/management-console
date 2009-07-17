@@ -121,7 +121,7 @@ public class TestStoreRest
 
         // Add content1 to space1
         String url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
-        response = restHelper.put(url, CONTENT, false, null);
+        response = restHelper.put(url, CONTENT, null);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
 

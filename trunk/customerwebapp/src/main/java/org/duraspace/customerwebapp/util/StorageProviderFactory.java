@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import java.util.Iterator;
 
-import org.duraspace.emcstorage.EMCStorageProvider;
 import org.duraspace.rackspacestorage.RackspaceStorageProvider;
 import org.duraspace.s3storage.S3StorageProvider;
 import org.duraspace.storage.domain.StorageAccount;

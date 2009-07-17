@@ -229,9 +229,9 @@ public class SpaceResource {
             if(spaceAccess != null) {
                 AccessType access = storage.getSpaceAccess(spaceID);
                 AccessType newAccessType = null;
-                if(spaceAccess.toUpperCase().equals("CLOSED")) {
+                if(spaceAccess.toUpperCase().equals(AccessType.CLOSED.name())) {
                     newAccessType = AccessType.CLOSED;
-                } else if(spaceAccess.toUpperCase().equals("OPEN")) {
+                } else if(spaceAccess.toUpperCase().equals(AccessType.OPEN.name())) {
                     newAccessType = AccessType.OPEN;
                 }
 

@@ -21,4 +21,9 @@ public class IOUtil {
         return writer.toString();
     }
 
+    public static InputStream writeStringToStream(String string)
+    throws IOException {
+        return IOUtils.toInputStream(string, "UTF-8");
+    }
+
 }
