@@ -20,9 +20,11 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+
+import org.duraspace.common.util.IOUtil;
 
 /**
  * Provides helper methods for REST tests
@@ -33,47 +35,129 @@ public class RestHttpHelper {
 
     private enum Method {GET, POST, PUT, HEAD, DELETE};
 
+    private static final String XML_MIMETYPE = "text/xml";
+    private static final String NO_MIMETYPE = "none";
+
     public HttpResponse get(String url) throws Exception {
-        return executeRequest(url, Method.GET, null, false, null);
+        return executeRequest(url, Method.GET, null, null, null);
     }
 
     public HttpResponse head(String url) throws Exception {
-        return executeRequest(url, Method.HEAD, null, false, null);
+        return executeRequest(url, Method.HEAD, null, null, null);
     }
 
     public HttpResponse delete(String url) throws Exception {
-        return executeRequest(url, Method.DELETE, null, false, null);
+        return executeRequest(url, Method.DELETE, null, null, null);
     }
 
     public HttpResponse post(String url,
                              String requestContent,
-                             boolean formData,
                              Map<String, String> headers) throws Exception {
-        return executeRequest(url, Method.POST, requestContent, formData, headers);
+        String mimeType = XML_MIMETYPE;
+        if (requestContent == null) {
+            mimeType = NO_MIMETYPE;
+        }
+        return executeRequest(url,
+                              Method.POST,
+                              requestContent,
+                              mimeType,
+                              headers);
+    }
+
+    public HttpResponse post(String url,
+                             String requestContent,
+                             String mimeType,
+                             Map<String, String> headers) throws Exception {
+        return executeRequest(url,
+                              Method.POST,
+                              requestContent,
+                              mimeType,
+                              headers);
+    }
+
+    public HttpResponse post(String url,
+                             InputStream requestContent,
+                             String contentSize,
+                             String mimeType,
+                             Map<String, String> headers) throws Exception {
+        return executeRequest(url,
+                              Method.POST,
+                              requestContent,
+                              contentSize,
+                              mimeType,
+                              headers);
     }
 
     public HttpResponse put(String url,
                             String requestContent,
-                            boolean formData,
                             Map<String, String> headers) throws Exception {
-        return executeRequest(url, Method.PUT, requestContent, formData, headers);
+        String mimeType = XML_MIMETYPE;
+        if (requestContent == null) {
+            mimeType = NO_MIMETYPE;
+        }
+        return executeRequest(url,
+                              Method.PUT,
+                              requestContent,
+                              mimeType,
+                              headers);
+    }
+
+    public HttpResponse put(String url,
+                            String requestContent,
+                            String mimeType,
+                            Map<String, String> headers) throws Exception {
+        return executeRequest(url,
+                              Method.PUT,
+                              requestContent,
+                              mimeType,
+                              headers);
+    }
+
+    public HttpResponse put(String url,
+                            InputStream requestContent,
+                            String contentSize,
+                            String mimeType,
+                            Map<String, String> headers) throws Exception {
+        return executeRequest(url,
+                              Method.PUT,
+                              requestContent,
+                              contentSize,
+                              mimeType,
+                              headers);
     }
 
     private HttpResponse executeRequest(String url,
                                         Method method,
                                         String requestContent,
-                                        boolean formData,
+                                        String mimeType,
+                                        Map<String, String> headers)
+            throws Exception {
+        InputStream streamContent = null;
+        String contentLength = null;
+        if (requestContent != null) {
+            streamContent = IOUtil.writeStringToStream(requestContent);
+            contentLength = String.valueOf(requestContent.length());
+        }
+
+        return executeRequest(url,
+                              method,
+                              streamContent,
+                              contentLength,
+                              mimeType,
+                              headers);
+    }
+
+    private HttpResponse executeRequest(String url,
+                                        Method method,
+                                        InputStream requestContent,
+                                        String contentLength,
+                                        String mimeType,
                                         Map<String, String> headers) throws Exception {
         if (url == null || url.length() == 0) {
             throw new IllegalArgumentException("URL must be a non-empty value");
         }
 
         HttpMethod httpMethod = null;
-        String mimeType = "text/xml";
-        if(formData) {
-            mimeType = "application/x-www-form-urlencoded";
-        }
-
         if(method.equals(Method.GET)) {
             httpMethod = new GetMethod(url);
         }else if(method.equals(Method.HEAD)) {
@@ -84,8 +168,7 @@ public class RestHttpHelper {
             EntityEnclosingMethod postMethod = new PostMethod(url);
             if (requestContent != null) {
                 postMethod.setRequestEntity(
-                    new StringRequestEntity(requestContent, mimeType, "utf-8"));
-                String contentLength = String.valueOf(requestContent.length());
+                    new InputStreamRequestEntity(requestContent, mimeType));
                 postMethod.setRequestHeader("Content-Length", contentLength);
             }
             httpMethod = postMethod;
@@ -93,7 +176,8 @@ public class RestHttpHelper {
             EntityEnclosingMethod putMethod = new PutMethod(url);
             if (requestContent != null) {
                 putMethod.setRequestEntity(
-                    new StringRequestEntity(requestContent, mimeType, "utf-8"));
+                    new InputStreamRequestEntity(requestContent, mimeType));
+                putMethod.setRequestHeader("Content-Length", contentLength);
             }
             httpMethod = putMethod;
         }
@@ -121,7 +205,7 @@ public class RestHttpHelper {
     public class HttpResponse {
 
         private final int statusCode;
-        private final String responseBody;
+        private final InputStream responseStream;
         private final Header[] responseHeaders;
         private final Header[] responseFooters;
 
@@ -129,8 +213,18 @@ public class RestHttpHelper {
             statusCode = method.getStatusCode();
             responseHeaders = method.getResponseHeaders();
             responseFooters = method.getResponseFooters();
+            responseStream = method.getResponseBodyAsStream();
+        }
 
-            InputStream responseStream = method.getResponseBodyAsStream();
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public InputStream getResponseStream() {
+            return responseStream;
+        }
+
+        public String getResponseBody() throws IOException {
             if(responseStream != null) {
                 BufferedReader reader = new BufferedReader(
                     new InputStreamReader(responseStream));
@@ -139,19 +233,12 @@ public class RestHttpHelper {
                 while((line = reader.readLine()) != null) {
                     builder.append(line);
                 }
-                responseBody = builder.toString();
+                responseStream.close();
+                return builder.toString();
             } else {
                 // No response body will be available for HEAD requests
-                responseBody = null;
+                return null;
             }
-        }
-
-        public int getStatusCode() {
-            return statusCode;
-        }
-
-        public String getResponseBody() {
-            return responseBody;
         }
 
         public Header[] getResponseHeaders() {

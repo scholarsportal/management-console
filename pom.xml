@@ -60,7 +60,8 @@
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
       <module>customerwebapp</module> 
-      <module>duradavwebapp</module> 
+      <module>duradavwebapp</module>
+      <module>javaclient</module>
   </modules>
 
   <profiles>

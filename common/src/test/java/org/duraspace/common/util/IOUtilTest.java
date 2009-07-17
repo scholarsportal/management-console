@@ -37,4 +37,13 @@ public class IOUtilTest {
         assertTrue(testValue.equals(readValue));
     }
 
+    @Test
+    public void testWriteStringToStream() throws Exception {
+        String testValue = "This is a testing string";
+        InputStream testStream = IOUtil.writeStringToStream(testValue);
+        byte[] bytes = new byte[testValue.getBytes().length];
+        testStream.read(bytes);
+        String readValue = new String(bytes, "UTF-8");
+        assertTrue(testValue.equals(readValue));
+    }
 }

@@ -142,14 +142,14 @@ public class ContentResource {
     /**
      * Adds content to a space.
      *
-     * @return success
+     * @return the checksum of the content as computed by the storage provider
      */
-    public static void addContent(String spaceID,
-                                  String contentID,
-                                  InputStream content,
-                                  String contentMimeType,
-                                  int contentSize,
-                                  String storeID)
+    public static String addContent(String spaceID,
+                                    String contentID,
+                                    InputStream content,
+                                    String contentMimeType,
+                                    int contentSize,
+                                    String storeID)
     throws RestResourceException {
         // TODO: Check user permissions
 
@@ -157,11 +157,11 @@ public class ContentResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            storage.addContent(spaceID,
-                               contentID,
-                               contentMimeType,
-                               contentSize,
-                               content);
+            return storage.addContent(spaceID,
+                                      contentID,
+                                      contentMimeType,
+                                      contentSize,
+                                      content);
         } catch (StorageException e) {
             String error = "Error attempting to add content '" + contentID +
                            "' in '" + spaceID + "': " + e.getMessage();

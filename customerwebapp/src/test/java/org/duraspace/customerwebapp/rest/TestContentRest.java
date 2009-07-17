@@ -61,7 +61,7 @@ public class TestContentRest
         Map<String, String> headers = new HashMap<String, String>();
         headers.put(RestTestHelper.METADATA_NAME,
                     RestTestHelper.METADATA_VALUE);
-        response = restHelper.put(url, CONTENT, false, headers);
+        response = restHelper.put(url, CONTENT, headers);
         statusCode = response.getStatusCode();
         assertTrue("status: " + statusCode, statusCode == 201);
     }
@@ -143,7 +143,7 @@ public class TestContentRest
         String newMetaName = BaseRest.HEADER_PREFIX + "new-metadata";
         String newMetaValue = "New Metadata Value";
         headers.put(newMetaName, newMetaValue);
-        HttpResponse response = restHelper.post(url, null, true, headers);
+        HttpResponse response = restHelper.post(url, null, headers);
 
         assertTrue(response.getStatusCode() == 200);
         String responseText = response.getResponseBody();

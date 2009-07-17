@@ -25,7 +25,6 @@ public interface StorageProvider {
     public static final String METADATA_SPACE_COUNT = "space-count";
     public static final String METADATA_SPACE_NAME = "space-name";
     public static final String METADATA_SPACE_ACCESS = "space-access";
-    public static final String METADATA_SPACE_SIZE = "space-size";
 
     /* Names for content metadata properties */
     public static final String METADATA_CONTENT_NAME = "content-name";
@@ -180,9 +179,10 @@ public interface StorageProvider {
      * or removed.
      *
      * Some of the values which cannot be updated or removed:
-     * content-checksum
-     * content-modified
-     * content-size
+     * Content-Type
+     * Content-MD5
+     * ETag
+     * Last-Modified
      *
      * @param spaceId
      * @param contentId
