@@ -75,7 +75,7 @@ public class TestContentStore
 
     private static String getPort() throws Exception {
         if(port == null) {
-            port = System.getProperty("tomcat.port");
+            port = System.getProperty("tomcat.port.default");
             if(port == null) {
                 port = defaultPort;
             }
