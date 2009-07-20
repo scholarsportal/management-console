@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Export-Package: org.duracloud.service.replication
+Built-By: Bill
+Tool: Bnd-0.0.238
+Bundle-Name: Replication Service Bundle
+Created-By: Apache Maven Bundle Plugin
+Bundle-Vendor: DuraSpace
+Build-Jdk: 1.6.0_13
+Bundle-Version: 1.0.0
+Bnd-LastModified: 1248120919015
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Import-Package: org.duracloud.service.replication
+Bundle-SymbolicName: org.duracloud.replicationservice
+Bundle-DocURL: http://www.duraspace.org
+Originally-Created-By: Apache Maven Bundle Plugin
+
