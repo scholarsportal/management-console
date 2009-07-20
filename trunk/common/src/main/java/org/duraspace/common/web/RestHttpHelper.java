@@ -23,6 +23,9 @@ import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
 
 import org.duraspace.common.util.IOUtil;
 
@@ -33,46 +36,99 @@ import org.duraspace.common.util.IOUtil;
  */
 public class RestHttpHelper {
 
-    private enum Method {GET, POST, PUT, HEAD, DELETE};
-
     private static final String XML_MIMETYPE = "text/xml";
-    private static final String NO_MIMETYPE = "none";
+
+    private enum Method {
+        GET() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                return new GetMethod(url);
+            }
+        },
+        POST() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                EntityEnclosingMethod postMethod = new PostMethod(url);
+                if (re != null) {
+                    String length = String.valueOf(re.getContentLength());
+                    postMethod.setRequestHeader("Content-Length", length);
+                    postMethod.setRequestEntity(re);
+                }
+                return postMethod;
+            }
+        },
+        PUT() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                EntityEnclosingMethod putMethod = new PutMethod(url);
+                if (re != null) {
+                    putMethod.setRequestEntity(re);
+                }
+                return putMethod;
+            }
+        },
+        MULTPART() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                EntityEnclosingMethod postMethod = new PostMethod(url);
+                if (re != null) {
+                    String length = String.valueOf(re.getContentLength());
+                    postMethod.setRequestHeader("Content-Length", length);
+                    postMethod.setRequestEntity(re);
+                }
+                return postMethod;
+            }
+        },
+        HEAD() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                return new HeadMethod(url);
+            }
+        },
+        DELETE() {
+
+            @Override
+            public HttpMethod getMethod(String url, RequestEntity re) {
+                return new DeleteMethod(url);
+            }
+        };
+
+        abstract public HttpMethod getMethod(String url, RequestEntity re);
+    };
 
     public HttpResponse get(String url) throws Exception {
-        return executeRequest(url, Method.GET, null, null, null);
+        return executeRequest(url, Method.GET, null, null);
     }
 
     public HttpResponse head(String url) throws Exception {
-        return executeRequest(url, Method.HEAD, null, null, null);
+        return executeRequest(url, Method.HEAD, null, null);
     }
 
     public HttpResponse delete(String url) throws Exception {
-        return executeRequest(url, Method.DELETE, null, null, null);
+        return executeRequest(url, Method.DELETE, null, null);
     }
 
     public HttpResponse post(String url,
                              String requestContent,
                              Map<String, String> headers) throws Exception {
-        String mimeType = XML_MIMETYPE;
-        if (requestContent == null) {
-            mimeType = NO_MIMETYPE;
-        }
-        return executeRequest(url,
-                              Method.POST,
-                              requestContent,
-                              mimeType,
-                              headers);
+        String mimeType = null;
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent, mimeType);
+        return executeRequest(url, Method.POST, requestEntity, headers);
     }
 
     public HttpResponse post(String url,
                              String requestContent,
                              String mimeType,
                              Map<String, String> headers) throws Exception {
-        return executeRequest(url,
-                              Method.POST,
-                              requestContent,
-                              mimeType,
-                              headers);
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent, mimeType);
+        return executeRequest(url, Method.POST, requestEntity, headers);
     }
 
     public HttpResponse post(String url,
@@ -80,37 +136,30 @@ public class RestHttpHelper {
                              String contentSize,
                              String mimeType,
                              Map<String, String> headers) throws Exception {
-        return executeRequest(url,
-                              Method.POST,
-                              requestContent,
-                              contentSize,
-                              mimeType,
-                              headers);
+        long contentLength = Long.parseLong(contentSize);
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent,
+                                              contentLength,
+                                              mimeType);
+        return executeRequest(url, Method.POST, requestEntity, headers);
     }
 
     public HttpResponse put(String url,
                             String requestContent,
                             Map<String, String> headers) throws Exception {
-        String mimeType = XML_MIMETYPE;
-        if (requestContent == null) {
-            mimeType = NO_MIMETYPE;
-        }
-        return executeRequest(url,
-                              Method.PUT,
-                              requestContent,
-                              mimeType,
-                              headers);
+        String mimeType = null;
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent, mimeType);
+        return executeRequest(url, Method.PUT, requestEntity, headers);
     }
 
     public HttpResponse put(String url,
                             String requestContent,
                             String mimeType,
                             Map<String, String> headers) throws Exception {
-        return executeRequest(url,
-                              Method.PUT,
-                              requestContent,
-                              mimeType,
-                              headers);
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent, mimeType);
+        return executeRequest(url, Method.PUT, requestEntity, headers);
     }
 
     public HttpResponse put(String url,
@@ -118,71 +167,73 @@ public class RestHttpHelper {
                             String contentSize,
                             String mimeType,
                             Map<String, String> headers) throws Exception {
-        return executeRequest(url,
-                              Method.PUT,
-                              requestContent,
-                              contentSize,
-                              mimeType,
-                              headers);
+        long contentLength = Long.parseLong(contentSize);
+        RequestEntity requestEntity =
+                buildInputStreamRequestEntity(requestContent,
+                                              contentLength,
+                                              mimeType);
+        return executeRequest(url, Method.PUT, requestEntity, headers);
     }
 
-    private HttpResponse executeRequest(String url,
-                                        Method method,
-                                        String requestContent,
-                                        String mimeType,
-                                        Map<String, String> headers)
+    public HttpResponse multipartPost(String url, Part[] parts)
             throws Exception {
-        InputStream streamContent = null;
-        String contentLength = null;
-        if (requestContent != null) {
-            streamContent = IOUtil.writeStringToStream(requestContent);
-            contentLength = String.valueOf(requestContent.length());
+        Map<String, String> headers = null;
+        RequestEntity re = buildMultipartRequestEntity(url, parts);
+        return executeRequest(url, Method.MULTPART, re, headers);
+    }
+
+    private InputStreamRequestEntity buildInputStreamRequestEntity(String requestContent,
+                                                                   String argMimeType)
+            throws Exception {
+        if (requestContent == null) {
+            return null;
+        }
+        InputStream streamContent = IOUtil.writeStringToStream(requestContent);
+        long contentLength = requestContent.length();
+        return buildInputStreamRequestEntity(streamContent,
+                                             contentLength,
+                                             argMimeType);
+
+    }
+
+    private InputStreamRequestEntity buildInputStreamRequestEntity(InputStream streamContent,
+                                                                   long contentLength,
+                                                                   String argMimeType)
+            throws Exception {
+        if (streamContent == null) {
+            return null;
+        }
+        String mimeType = (argMimeType == null ? XML_MIMETYPE : argMimeType);
+        return new InputStreamRequestEntity(streamContent,
+                                            contentLength,
+                                            mimeType);
+
+    }
+
+    private RequestEntity buildMultipartRequestEntity(String url, Part[] parts) {
+        if (url == null || url.length() == 0) {
+            throw new IllegalArgumentException("URL must be a non-empty value");
+        }
+        if (parts == null || parts.length == 0) {
+            return null;
         }
 
-        return executeRequest(url,
-                              method,
-                              streamContent,
-                              contentLength,
-                              mimeType,
-                              headers);
+        PostMethod postMethod = new PostMethod(url);
+        return new MultipartRequestEntity(parts, postMethod.getParams());
     }
 
     private HttpResponse executeRequest(String url,
                                         Method method,
-                                        InputStream requestContent,
-                                        String contentLength,
-                                        String mimeType,
-                                        Map<String, String> headers) throws Exception {
+                                        RequestEntity requestEntity,
+                                        Map<String, String> headers)
+            throws Exception {
         if (url == null || url.length() == 0) {
             throw new IllegalArgumentException("URL must be a non-empty value");
         }
 
-        HttpMethod httpMethod = null;
-        if(method.equals(Method.GET)) {
-            httpMethod = new GetMethod(url);
-        }else if(method.equals(Method.HEAD)) {
-            httpMethod = new HeadMethod(url);
-        }else if(method.equals(Method.DELETE)) {
-            httpMethod = new DeleteMethod(url);
-        }else if(method.equals(Method.POST)) {
-            EntityEnclosingMethod postMethod = new PostMethod(url);
-            if (requestContent != null) {
-                postMethod.setRequestEntity(
-                    new InputStreamRequestEntity(requestContent, mimeType));
-                postMethod.setRequestHeader("Content-Length", contentLength);
-            }
-            httpMethod = postMethod;
-        } else if(method.equals(Method.PUT)) {
-            EntityEnclosingMethod putMethod = new PutMethod(url);
-            if (requestContent != null) {
-                putMethod.setRequestEntity(
-                    new InputStreamRequestEntity(requestContent, mimeType));
-                putMethod.setRequestHeader("Content-Length", contentLength);
-            }
-            httpMethod = putMethod;
-        }
+        HttpMethod httpMethod = method.getMethod(url, requestEntity);
 
-        if(headers != null && headers.size() > 0) {
+        if (headers != null && headers.size() > 0) {
             addHeaders(httpMethod, headers);
         }
 
@@ -193,10 +244,10 @@ public class RestHttpHelper {
 
     private void addHeaders(HttpMethod httpMethod, Map<String, String> headers) {
         Iterator<String> headerIt = headers.keySet().iterator();
-        while(headerIt.hasNext()) {
+        while (headerIt.hasNext()) {
             String headerName = headerIt.next();
             String headerValue = headers.get(headerName);
-            if(headerName != null && headerValue != null) {
+            if (headerName != null && headerValue != null) {
                 httpMethod.addRequestHeader(headerName, headerValue);
             }
         }
@@ -205,11 +256,15 @@ public class RestHttpHelper {
     public class HttpResponse {
 
         private final int statusCode;
+
         private final InputStream responseStream;
+
         private final Header[] responseHeaders;
+
         private final Header[] responseFooters;
 
-        HttpResponse(HttpMethod method) throws IOException {
+        HttpResponse(HttpMethod method)
+                throws IOException {
             statusCode = method.getStatusCode();
             responseHeaders = method.getResponseHeaders();
             responseFooters = method.getResponseFooters();
@@ -225,12 +280,12 @@ public class RestHttpHelper {
         }
 
         public String getResponseBody() throws IOException {
-            if(responseStream != null) {
-                BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(responseStream));
+            if (responseStream != null) {
+                BufferedReader reader =
+                        new BufferedReader(new InputStreamReader(responseStream));
                 StringBuilder builder = new StringBuilder();
                 String line = null;
-                while((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     builder.append(line);
                 }
                 responseStream.close();
