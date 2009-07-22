@@ -11,6 +11,8 @@
     interface="org.duracloud.service.replication.ServiceInterface">
     </osgi:service>
   -->
+    <osgi:service id="osgiService" ref="service" interface="org.duracloud.computeservice.ComputeService" />
+ 
   
   <!-- OSGi services which are used by this bundle are defined here. -->
   

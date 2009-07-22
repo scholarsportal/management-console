@@ -3,10 +3,10 @@ package org.duracloud.computeservice;
 
 public interface ComputeService {
 
-    public void start();
+    public void start() throws Exception;
 
-    public void stop();
+    public void stop() throws Exception;
 
-    public String describe();
+    public String describe() throws Exception;
 
 }
