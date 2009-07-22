@@ -16,6 +16,7 @@
 
   <modules>
     <module>computeservice</module>
+    <module>replicationservice</module>
   </modules>
 
   
