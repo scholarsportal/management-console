@@ -47,12 +47,13 @@
       <artifactId>sunstorageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>
--->    
+
     <dependency>
       <groupId>org.duraspace</groupId>
       <artifactId>emcstorageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>    
+-->    
     
     <dependency>
       <groupId>javax.servlet</groupId>

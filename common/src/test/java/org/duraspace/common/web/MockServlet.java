@@ -20,7 +20,7 @@ public class MockServlet
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException,
             IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
+        processRequest(request, response);
     }
 
     @Override
