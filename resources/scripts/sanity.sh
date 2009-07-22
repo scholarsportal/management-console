@@ -46,7 +46,7 @@ echo ""
 echo "==================================="
 echo "Running unit & integration tests..."
 echo "==================================="
-$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB
+$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB -Dlog.level.default=DEBUG
 
 if [ $? -ne 0 ]; then
   echo ""
