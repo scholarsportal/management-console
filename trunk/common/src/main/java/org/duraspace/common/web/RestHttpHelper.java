@@ -27,6 +27,8 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 
+import org.apache.log4j.Logger;
+
 import org.duraspace.common.util.IOUtil;
 
 /**
@@ -35,6 +37,8 @@ import org.duraspace.common.util.IOUtil;
  * @author Bill Branan
  */
 public class RestHttpHelper {
+
+    protected final Logger log = Logger.getLogger(getClass());
 
     private static final String XML_MIMETYPE = "text/xml";
 
@@ -231,6 +235,10 @@ public class RestHttpHelper {
             throw new IllegalArgumentException("URL must be a non-empty value");
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug(loggingText(url, method, requestEntity, headers));
+        }
+
         HttpMethod httpMethod = method.getMethod(url, requestEntity);
 
         if (headers != null && headers.size() > 0) {
@@ -312,5 +320,25 @@ public class RestHttpHelper {
             }
             return null;
         }
+    }
+
+    private String loggingText(String url,
+                               Method method,
+                               RequestEntity requestEntity,
+                               Map<String, String> headers) {
+        StringBuilder sb = new StringBuilder("URL: '" + url + "'\n");
+        if (method != null) {
+            sb.append("METHOD: '" + method.name() + "'\n");
+        }
+        if (requestEntity != null) {
+            sb.append("CONTENT-TYPE: '" + requestEntity.getContentType() + "'\n");
+        }
+        if (headers != null && headers.size() > 0) {
+            sb.append("HEADERS: \n");
+            for (String key : headers.keySet()) {
+                sb.append("  [" + key + "|" + headers.get(key) + "]\n");
+            }
+        }
+        return sb.toString();
     }
 }
