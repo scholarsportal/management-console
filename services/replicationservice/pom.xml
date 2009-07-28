@@ -1,116 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.duracloud</groupId>
-  <artifactId>replicationservice</artifactId>
-  <packaging>bundle</packaging>
-  <name>Replication Service Bundle</name>
-  <version>1.0.0</version>
-  <url>http://localhost:8080/${artifactId}</url>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <artifactId>duraspace</artifactId>
-    <groupId>org.duraspace</groupId>
+    <relativePath>../poms/compiled/</relativePath>
+    <groupId>org.duracloud.services.build</groupId>
+    <artifactId>compiled-bundle-settings</artifactId>
     <version>1.0.0</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <properties>
-    <slf4j.version>1.5.0</slf4j.version>
-    <spring.maven.artifact.version>2.5.5</spring.maven.artifact.version>
-    <spring.osgi.version>1.1.0</spring.osgi.version>
-    <equinox.ver>3.2.2</equinox.ver>
+    <bundle.symbolicName>org.duracloud.services.replicationservice</bundle.symbolicName>
+    <bundle.namespace>org.duracloud.services</bundle.namespace>
+    <spring.maven.artifact.version>2.5.4</spring.maven.artifact.version>
   </properties>
 
-  <dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.duracloud.services</groupId>
+  <artifactId>replicationservice</artifactId>
+  <version>1.0.0</version>
 
-    <!-- internal projects -->
+  <name>${bundle.symbolicName}</name>
+
+  <packaging>bundle</packaging>
+
+  <dependencies>
+      <!-- internal projects -->
     <dependency>
       <groupId>org.duraspace</groupId>
       <artifactId>javaclient</artifactId>
       <version>1.0.0</version>
     </dependency>
-
     <dependency>
-      <groupId>org.duracloud</groupId>
+      <groupId>org.duracloud.services</groupId>
       <artifactId>computeservice</artifactId>
       <version>1.0.0</version>
     </dependency>
-
-   <!-- spring -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.maven.artifact.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.maven.artifact.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.maven.artifact.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>com.springsource.slf4j.api</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>provided</scope>
+      <version>1.5.0</version>
+    </dependency>    
+  
+    <!--
+     | uncomment to add all imported (non-local) bundles to your compilation classpath
+    <dependency>
+      <type>pom</type>
+      <groupId>${parent.groupId}</groupId>
+      <artifactId>provision</artifactId>
+      <optional>true</optional>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi_R4_core</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.log4j</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.log4j</groupId>
-          <artifactId>com.springsource.org.apache.log4j</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi_R4_compendium</artifactId>
+      <optional>true</optional>
     </dependency>
-
-    <!-- test scoped dependencies -->
     <dependency>
-      <groupId>org.junit</groupId>
-      <artifactId>com.springsource.junit</artifactId>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
@@ -119,152 +72,28 @@
       <artifactId>spring-test</artifactId>
       <version>${spring.maven.artifact.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-test</artifactId>
-      <version>${spring.osgi.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-annotation</artifactId>
-      <version>${spring.osgi.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.aopalliance</groupId>
-      <artifactId>com.springsource.org.aopalliance</artifactId>
-      <version>1.0.0</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.maven.artifact.version}</version>
       <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
-
-    <!-- Equinox OSGi platform -->
     <dependency>
-      <groupId>org.eclipse.osgi</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
-      <version>${equinox.ver}</version>
-      <type>jar</type>
-      <!--
-        Uncomment the following line if you want it to be available only in test
-      -->
-      <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.maven.artifact.version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
-
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>log4j.osgi</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
-      <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.maven.artifact.version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
-
   </dependencies>
-
-  <!-- for packaging as an OSGi bundle, we use the maven-bundle-plugin -->
-  <!--
-    see http://felix.apache.org/site/maven-bundle-plugin-bnd.html for more info
-  -->
-  <build>
-    <resources>
-      <!-- standard Maven folder -->
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <!-- plus root folder -->
-      <resource>
-        <directory>.</directory>
-        <includes>
-          <include>plugin.xml</include>
-        </includes>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <version>1.4.0</version>
-        <configuration>
-          <manifestLocation>src/main/resources/META-INF</manifestLocation>
-          <instructions>
-            <Export-Package>org.duracloud.service.*</Export-Package>
-            <Import-Package>*</Import-Package>
-            <Include-Resource>src/main/resources</Include-Resource>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <!-- ================================================ -->
-  <!--            Repository Configuration              -->
-  <!-- ================================================ -->
-
-  <repositories>
-    <repository>
-      <id>i21-s3-osgi-repo</id>
-      <name>i21 osgi artifacts repo</name>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>http://maven.springframework.org/osgi</url>
-    </repository>
-
-    <repository>
-      <id>i21-s3-maven-repo</id>
-      <name>i21 S3 milestone repo</name>
-      <url>http://maven.springframework.org/milestone</url>
-    </repository>
-
-    <repository>
-      <id>com.springsource.repository.bundles.external</id>
-      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-      <url>http://repository.springsource.com/maven/bundles/external</url>
-    </repository>
-
-    <repository>
-      <id>eclipse-repository</id>
-      <name>Eclipse Repository</name>
-      <url>http://repo1.maven.org/eclipse/</url>
-    </repository>
-    <repository>
-      <id>spring-ext</id>
-      <name>Spring External Dependencies Repository</name>
-      <url>
-				https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/
-			</url>
-    </repository>
-
-    <!--
-      Spring-DM snapshot repository - disabled by default <repository>
-      <snapshots><enabled>true</enabled></snapshots>
-      <id>springframework.org</id> <name>Springframework Maven SNAPSHOT
-      Repository</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
-      </repository>
-    -->
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>maven-repo</id>
-      <name>maven repo</name>
-      <url>http://repo1.maven.org/maven2/</url>
-    </pluginRepository>
-
-  </pluginRepositories>
 
 </project>
