@@ -46,4 +46,13 @@ In order for log4j to know the base directory in which to write logs,
     <duraspace.home>[location-of-writable-duraspace-directory]</duraspace.home>
     ...
 
+::services::
+Services (projects in the /services directory) were built using PAX Construct, 
+see http://www.ops4j.org/projects/pax/construct/ for more info on using these tools.
+These projects are built as usual by using "mvn clean install". In order to deploy
+them into an OSGi container, use "mvn clean install pax:provision", which will
+install all of the services into the default OSGi container (Apache Felix). Include
+the "-Dframework=equinox" option to start the Equinox container instead. Quotes 
+surrounding the framework option are necessary on Windows platforms:
 
+mvn clean install pax:provision "-Dframework=equinox"

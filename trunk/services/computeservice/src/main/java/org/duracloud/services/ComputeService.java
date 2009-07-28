@@ -1,5 +1,5 @@
 
-package org.duracloud.computeservice;
+package org.duracloud.services;
 
 public interface ComputeService {
 

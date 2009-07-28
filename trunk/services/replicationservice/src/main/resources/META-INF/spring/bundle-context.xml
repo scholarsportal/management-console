@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+  xmlns:osgi="http://www.springframework.org/schema/osgi" xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  	                  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+                      http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+ 
+  <!-- OSGi services which are available to external bundles. -->
+  <osgi:service id="osgiService" ref="replicationService" 
+    interface="org.duracloud.services.ComputeService" />
 
-  <!-- Spring beans which are used by the bundle are defined here. -->
-  <bean name="service" class="org.duracloud.service.replication.ReplicationService"
-    init-method="start" destroy-method="stop" />
+  <!-- OSGi services which are used by this bundle. -->
+
+  <!-- Configuration properties available through the OSGi Configuration Admin -->
+  <!--
+  <osgix:cm-properties id="replication.cfg" persistent-id="replicationService">
+    <prop key="host">localhost</prop>
+    <prop key="port">8080</prop>
+    <prop key="context">customerwebapp</prop>
+  </osgix:cm-properties>
+  -->
+  
+  <!-- Spring beans which are used by this bundle. -->
+  <bean name="replicationService" class="org.duracloud.services.replication.ReplicationService"
+	  init-method="start" destroy-method="stop">
+	  <!--
+	  <osgix:managed-properties persistent-id="replicationService"
+      update-strategy="container-managed" />
+     -->
+    <property name="host" value="localhost"/>
+    <property name="port" value="8080"/>     
+    <property name="context" value="customerwebapp"/>
+  </bean>
 
 </beans>
