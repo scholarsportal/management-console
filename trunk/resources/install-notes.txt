@@ -73,4 +73,15 @@ Also add the <activeProfiles> element found in 'resources/conf/settings.xml' to 
   <activeProfile>always</activeProfile>
 </activeProfiles>
 
+::Services::
+Services (projects in the /services directory) were built using PAX Construct, see http://www.ops4j.org/projects/pax/construct/ 
+for more info on using these tools. These projects are built as usual by using "mvn clean install". In order to deploy them 
+into an OSGi container, use: 
 
+mvn clean install pax:provision                      (Equinox)
+mvn clean install pax:provision "-Dframework=felix"  (Felix)   (quotes necessary only on Windows)
+
+OR (to deploy without building)
+
+pax-provision           (Equinox)
+pax-provision -f felix  (Felix)
