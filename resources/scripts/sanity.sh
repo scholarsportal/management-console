@@ -26,27 +26,11 @@ fi
 
 $CATALINA_HOME/bin/startup.sh
 
-
-echo "============"
-echo "Compiling..."
-echo "============"
-echo ""
-cd $BUILD_HOME
-$M2_HOME/bin/mvn clean compile
-
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "ERROR: Failed to compile; see above"
-  $CATALINA_HOME/bin/shutdown.sh
-  exit 1
-fi
-
-
 echo ""
 echo "==================================="
-echo "Running unit & integration tests..."
+echo "Compiling & running unit & integration tests..."
 echo "==================================="
-$M2_HOME/bin/mvn install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB -Dlog.level.default=DEBUG
+$M2_HOME/bin/mvn clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB -Dlog.level.default=DEBUG
 
 if [ $? -ne 0 ]; then
   echo ""
