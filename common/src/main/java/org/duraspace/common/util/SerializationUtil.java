@@ -1,5 +1,6 @@
 package org.duraspace.common.util;
 
+import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
@@ -21,5 +22,16 @@ public class SerializationUtil {
     public static Map<String, String> deserializeMap(String map) {
         XStream xstream = new XStream(new DomDriver());
         return (Map<String, String>)xstream.fromXML(map);
+    }
+
+    public static String serializeList(List<?> list) {
+        XStream xstream = new XStream(new DomDriver());
+        return xstream.toXML(list);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Object> deserializeList(String list) {
+        XStream xstream = new XStream(new DomDriver());
+        return (List<Object>)xstream.fromXML(list);
     }
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"                               
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:osgi="http://www.springframework.org/schema/osgi"                               
+   xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd                      
+       http://www.springframework.org/schema/osgi  
+       http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+  <bean
+    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="list">listController</prop>
+        <prop key="install">installController</prop>
+        <prop key="uninstall">uninstallController</prop>
+        <prop key="start">startController</prop>
+        <prop key="stop">stopController</prop>
+        <prop key="configure">configureController</prop>
+        <prop key="showConfig">showConfigController</prop>
+      </props>
+    </property>
+    <property name="order" value="1" />
+  </bean>
+  
+  <!-- Controllers -->
+  <bean id="listController" class="org.duracloud.servicesadmin.control.ListController">
+    <property name="serviceLister" ref="srvLister" />
+    <property name="serializer" ref="xmlSrvSerializer" />
+  </bean>
+  
+  <bean id="installController" class="org.duracloud.servicesadmin.control.InstallController" >
+    <property name="serviceInstaller" ref="srvInstaller" />
+  </bean>
+  
+  <bean id="uninstallController" class="org.duracloud.servicesadmin.control.UninstallController" >
+    <property name="serviceUninstaller" ref="srvUninstaller" />
+  </bean>
+  
+  <bean id="startController" class="org.duracloud.servicesadmin.control.StartController" >
+    <property name="serviceStarter" ref="srvStarter" />
+  </bean>
+  
+  <bean id="stopController" class="org.duracloud.servicesadmin.control.StopController" >
+    <property name="serviceStopper" ref="srvStopper" />
+  </bean>
+  
+  <bean id="configureController" class="org.duracloud.servicesadmin.control.ConfigureController"/>
+  <bean id="showConfigController" class="org.duracloud.servicesadmin.control.ShowConfigController"/>
+
+
+  <!-- Properties config -->
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
+    <property name="location" value="osgi-config.properties" />
+  </bean>
+
+  <bean id="bundleHome" class="java.lang.String" >
+    <constructor-arg value="${bundle.home}/"/>
+  </bean>
+  
+  <!-- 
+    Service Beans:
+      Eventually they will all be defined as 'osgi:reference'
+   -->  
+  <bean id="xmlSrvSerializer" class="org.duracloud.servicesadmin.util.XMLServiceSerializerImpl"/>
+  
+  <bean id="srvInstaller" class="org.duracloud.servicesutil.util.ServiceInstallerImpl" >
+    <property name="bundleHome" ref="bundleHome" />
+  </bean>
+  
+  <bean id="srvUninstaller" class="org.duracloud.servicesutil.util.ServiceUninstallerImpl" >
+    <property name="bundleHome" ref="bundleHome" />
+  </bean>
+  
+  <bean id="srvStarter" class="org.duracloud.servicesutil.util.NoopServiceStarterImpl" />
+
+  <bean id="srvStopper" class="org.duracloud.servicesutil.util.NoopServiceStopperImpl" />
+    
+    
+  <!-- OSGi below -->
+  <osgi:reference id="srvLister" interface="org.duracloud.servicesutil.util.ServiceLister" />
+    
+</beans>

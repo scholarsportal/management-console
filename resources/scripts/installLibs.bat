@@ -9,3 +9,5 @@ call mvn install:install-file -Dfile=../libs/rackspace-java-cloudfiles-1.3.0-src
 call mvn install:install-file -Dfile=../libs/emcesu-0.1.jar -DgroupId=com.emc -DartifactId=emcesu -Dversion=0.1 -Dpackaging=jar
 call mvn install:install-file -Dfile=../libs/sun-object-client-0.2.jar -DgroupId=com.sun.cloud.api -DartifactId=object-client -Dversion=0.2 -Dpackaging=jar
 call mvn install:install-file -Dfile=../libs/sun-object-client-0.2-src.jar -DgroupId=com.sun.cloud.api -DartifactId=object-client-src -Dversion=0.2 -Dpackaging=jar
+call mvn install:install-file -Dfile=resources/libs/com.springsource.org.apache.derby-10.5.1000001.764942-duracloud.jar -DgroupId=org.apache.derby -DartifactId=com.springsource.org.apache.derby -Dversion=10.5.1000001.764942-duracloud -Dpackaging=jar
+
