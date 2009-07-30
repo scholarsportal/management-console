@@ -1,6 +1,8 @@
 package org.duraspace.common.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -42,6 +44,21 @@ public class SerializationUtilTest {
             SerializationUtil.deserializeMap(serialized);
 
         assertTrue(testMap.equals(resultMap));
+    }
+
+    public void testSerializeList() throws Exception
+    {
+        List<String> testList = new ArrayList<String>();
+        testList.add("testName");
+        testList.add("foo");
+        testList.add("dura");
+
+        String serialized =
+            SerializationUtil.serializeList(testList);
+        List<Object> resultList =
+            SerializationUtil.deserializeList(serialized);
+
+        assertTrue(testList.equals(resultList));
     }
 
 }

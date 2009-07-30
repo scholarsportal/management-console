@@ -89,6 +89,7 @@
               <artifactId>tomcat-maven-plugin</artifactId>
               <executions>
                 <execution>
+                  <id>tomcat-deploy</id>
                   <phase>pre-integration-test</phase>
                   <goals>
                     <goal>deploy-only</goal>
@@ -219,6 +220,17 @@
         <url>http://download.java.net/maven/1</url>
         <layout>legacy</layout>
       </repository>
+      <repository>
+        <id>com.springsource.repository.bundles.release</id>
+        <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+        <url>http://repository.springsource.com/maven/bundles/release</url>
+      </repository>
+      <repository>
+        <id>com.springsource.repository.bundles.external</id>
+        <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+        <url>http://repository.springsource.com/maven/bundles/external</url>
+      </repository>
+
   </repositories>
 
   <pluginRepositories>
@@ -344,6 +356,31 @@
           </execution>
         </executions>        
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+
+        <executions> 
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+        </configuration>
+      </plugin>
+
 
     </plugins>
   </build>

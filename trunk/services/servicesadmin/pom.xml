@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.duracloud.services</groupId>
+  <artifactId>servicesadmin</artifactId>
+  <version>1.0.0</version>
+  <name>DuraCloud Administrative Services WebApp Bundle</name>
+  <url>http://duracloud.org</url>
+  <packaging>war</packaging>
+
+  <parent>
+    <artifactId>services</artifactId>
+    <groupId>org.duracloud</groupId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <properties>
+    <spring.osgi.version>1.2.0</spring.osgi.version>
+    <equinox.ver>3.2.1</equinox.ver>
+  </properties>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+       <artifactId>maven-war-plugin</artifactId>
+       <executions>
+         <execution>
+         <phase>package</phase>
+           <goals>
+             <goal>war</goal>
+           </goals>
+         </execution>
+       </executions>
+       <configuration>
+         <warSourceExcludes>WEB-INF/lib/*</warSourceExcludes>
+         <archive>
+         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+         </archive>
+       </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <debug>true</debug>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>      
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+
+        <configuration>
+          <instructions>
+            <Bundle-Classpath>.;WEB-INF/classes</Bundle-Classpath>
+          </instructions>
+          <supportedProjectTypes> 
+            <supportedProjectType>jar</supportedProjectType> 
+            <supportedProjectType>bundle</supportedProjectType> 
+            <supportedProjectType>war</supportedProjectType> 
+          </supportedProjectTypes> 
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>tomcat-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>tomcat-deploy</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+  
+ 
+  <profiles>
+
+    <profile>
+      <id>dependencies</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>libs</outputDirectory>
+                  <excludeTransitive>false</excludeTransitive>
+                  <stripVersion>false</stripVersion>
+                  <!--
+                  <excludeArtifactIds>org.eclipse.osgi</excludeArtifactIds>
+                  -->
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>    
+  </profiles>
+
+  <dependencies>
+  
+    <!-- internal projects -->
+    <dependency>
+      <groupId>org.duraspace</groupId>
+      <artifactId>common</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.duracloud.services</groupId>
+      <artifactId>computeservice</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>org.duracloud.services</groupId>
+      <artifactId>servicesutil</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <!-- Spring MVC -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>2.5.6</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>2.5.6</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- test scoped dependencies -->
+    <dependency>
+      <groupId>org.junit</groupId>
+      <artifactId>com.springsource.junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.test</artifactId>
+      <version>2.5.6.A</version>
+      <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-test</artifactId>
+      <version>${spring.osgi.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-annotation</artifactId>
+      <version>${spring.osgi.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-extender</artifactId>
+      <version>${spring.osgi.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-io</artifactId>
+      <version>${spring.osgi.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Equinox OSGi platform -->
+    <dependency>
+      <groupId>org.eclipse.osgi</groupId>
+      <artifactId>org.eclipse.osgi</artifactId>
+      <version>${equinox.ver}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.objectweb.asm</groupId>
+      <artifactId>com.springsource.org.objectweb.asm</artifactId>
+      <version>2.2.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>com.springsource.javax.servlet</artifactId>
+      <version>2.5.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>  
+      <groupId>org.apache.commons</groupId>  
+      <artifactId>com.springsource.org.apache.commons.io</artifactId>  
+      <version>1.4.0</version> 
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.core</artifactId>
+      <version>2.5.6.A</version>
+      <scope>provided</scope>      
+    </dependency>
+
+    <!--
+      web artifacts
+     -->
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>catalina.osgi</artifactId>
+      <version>5.5.23-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>  
+
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>catalina.start.osgi</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>           
+
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web-extender</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.web</artifactId>
+      <version>2.5.6.A</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.web.servlet</artifactId>
+      <version>2.5.6.A</version>
+      <scope>compile</scope>
+    </dependency>
+
+     <!-- for FileUpload -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>  
+      <artifactId>com.springsource.org.apache.commons.fileupload</artifactId>  
+      <version>1.2.0</version> 
+    </dependency>
+    
+    <dependency>  
+      <groupId>org.apache.commons</groupId>  
+      <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>  
+      <version>3.1.0</version> 
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.commons</groupId>  
+      <artifactId>com.springsource.org.apache.commons.codec</artifactId>  
+      <version>1.3.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.6</version>
+    </dependency> 
+
+  </dependencies>
+  
+</project>
