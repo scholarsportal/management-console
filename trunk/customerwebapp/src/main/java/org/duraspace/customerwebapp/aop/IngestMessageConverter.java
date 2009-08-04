@@ -30,10 +30,11 @@ public class IngestMessageConverter
             throw new MessageConversionException(err);
         }
 
+        MapMessage mapMsg = (MapMessage)msg;
         IngestMessage ingestMsg = new IngestMessage();
-        ingestMsg.setContentId(msg.getStringProperty(CONTENT_ID));
-        ingestMsg.setContentMimeType(msg.getStringProperty(MIMETYPE));
-        ingestMsg.setSpaceId(msg.getStringProperty(SPACE_ID));
+        ingestMsg.setContentId(mapMsg.getString(CONTENT_ID));
+        ingestMsg.setContentMimeType(mapMsg.getString(MIMETYPE));
+        ingestMsg.setSpaceId(mapMsg.getString(SPACE_ID));
         return ingestMsg;
     }
 
@@ -47,9 +48,9 @@ public class IngestMessageConverter
         IngestMessage ingestMsg = (IngestMessage) obj;
 
         MapMessage msg = session.createMapMessage();
-        msg.setStringProperty(CONTENT_ID, ingestMsg.getContentId());
-        msg.setStringProperty(MIMETYPE, ingestMsg.getContentMimeType());
-        msg.setStringProperty(SPACE_ID, ingestMsg.getSpaceId());
+        msg.setString(CONTENT_ID, ingestMsg.getContentId());
+        msg.setString(MIMETYPE, ingestMsg.getContentMimeType());
+        msg.setString(SPACE_ID, ingestMsg.getSpaceId());
         return msg;
     }
 
