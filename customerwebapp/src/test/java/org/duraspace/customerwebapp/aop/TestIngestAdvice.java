@@ -1,6 +1,8 @@
 
 package org.duraspace.customerwebapp.aop;
 
+import java.util.Random;
+
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.Message;
@@ -46,6 +48,13 @@ public class TestIngestAdvice
 
     private static final String CONTENT = "<junk/>";
 
+    private static String spaceId;
+
+    static {
+        String random = String.valueOf(new Random().nextInt(99999));
+        spaceId = "space" + random;
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -59,8 +68,8 @@ public class TestIngestAdvice
         int statusCode = response.getStatusCode();
         Assert.assertTrue("status: " + statusCode, statusCode == 200);
 
-        // Add space1
-        response = RestTestHelper.addSpace("space1");
+        // Add space
+        response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
         Assert.assertTrue("status: " + statusCode, statusCode == 201);
 
@@ -79,8 +88,8 @@ public class TestIngestAdvice
         }
         destination = null;
 
-        // Delete space1
-        HttpResponse response = RestTestHelper.deleteSpace("space1");
+        // Delete space
+        HttpResponse response = RestTestHelper.deleteSpace(spaceId);
         Assert.assertTrue(response.getStatusCode() == 200);
     }
 
@@ -117,9 +126,9 @@ public class TestIngestAdvice
     }
 
     private void publishIngestEvent(boolean successful) throws Exception {
-        String suffix = "/space1/contentGOOD";
+        String suffix = "/" + spaceId + "/contentGOOD";
         if (!successful) {
-            suffix = "/space1x/contentBAD";
+            suffix = "/" + spaceId + "-invalid-space-id/contentBAD";
         }
 
         String url = RestTestHelper.getBaseUrl() + suffix;
