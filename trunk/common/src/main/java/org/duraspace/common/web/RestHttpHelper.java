@@ -236,7 +236,7 @@ public class RestHttpHelper {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(loggingText(url, method, requestEntity, headers));
+            log.debug(loggingRequestText(url, method, requestEntity, headers));
         }
 
         HttpMethod httpMethod = method.getMethod(url, requestEntity);
@@ -247,7 +247,13 @@ public class RestHttpHelper {
 
         HttpClient client = new HttpClient();
         client.executeMethod(httpMethod);
-        return new HttpResponse(httpMethod);
+        HttpResponse response = new HttpResponse(httpMethod);
+
+        if (log.isDebugEnabled()) {
+            log.debug(loggingResponseText(response));
+        }
+
+        return response;
     }
 
     private void addHeaders(HttpMethod httpMethod, Map<String, String> headers) {
@@ -322,10 +328,10 @@ public class RestHttpHelper {
         }
     }
 
-    private String loggingText(String url,
-                               Method method,
-                               RequestEntity requestEntity,
-                               Map<String, String> headers) {
+    private String loggingRequestText(String url,
+                                      Method method,
+                                      RequestEntity requestEntity,
+                                      Map<String, String> headers) {
         StringBuilder sb = new StringBuilder("URL: '" + url + "'\n");
         if (method != null) {
             sb.append("METHOD: '" + method.name() + "'\n");
@@ -337,6 +343,26 @@ public class RestHttpHelper {
             sb.append("HEADERS: \n");
             for (String key : headers.keySet()) {
                 sb.append("  [" + key + "|" + headers.get(key) + "]\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    private String loggingResponseText(HttpResponse response) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RESPONSE CODE: '" + response.getStatusCode() + "'\n");
+        Header[] headers = response.getResponseHeaders();
+        if (headers != null && headers.length > 0) {
+            sb.append("RESPONSE HEADERS: \n");
+            for (Header header : headers) {
+                sb.append("  [" + header.getName() + "|" + header.getValue() + "]\n");
+            }
+        }
+        Header[] footers = response.getResponseFooters();
+        if (footers != null && footers.length > 0) {
+            sb.append("RESPONSE FOOTERS: \n");
+            for (Header footer : footers) {
+                sb.append("  [" + footer.getName() + "|" + footer.getValue() + "]\n");
             }
         }
         return sb.toString();
