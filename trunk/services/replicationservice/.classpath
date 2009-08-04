@@ -15,19 +15,18 @@
 	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/1.4/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/derby/derby/10.4.2.0/derby-10.4.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/duraspace/javaclient/1.0.0/javaclient-1.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar" sourcepath="M2_REPO/org/jdom/jdom/1.1/jdom-1.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.2/junit-3.8.2.jar" sourcepath="M2_REPO/junit/junit/3.8.2/junit-3.8.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar" sourcepath="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/osgi/osgi_R4_compendium/1.0/osgi_R4_compendium-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/osgi/osgi_R4_core/1.0/osgi_R4_core-1.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.4/spring-beans-2.5.4.jar" sourcepath="M2_REPO/org/springframework/spring-beans/2.5.4/spring-beans-2.5.4-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.5.4/spring-context-2.5.4.jar" sourcepath="M2_REPO/org/springframework/spring-context/2.5.4/spring-context-2.5.4-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.4/spring-core-2.5.4.jar" sourcepath="M2_REPO/org/springframework/spring-core/2.5.4/spring-core-2.5.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.5.6/spring-context-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring-context/2.5.6/spring-context-2.5.6-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.6/spring-core-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring-core/2.5.6/spring-core-2.5.6-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-dao/2.0.8/spring-dao-2.0.8.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-jdbc/2.5.6/spring-jdbc-2.5.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/2.5.4/spring-test-2.5.4.jar" sourcepath="M2_REPO/org/springframework/spring-test/2.5.4/spring-test-2.5.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/2.5.6/spring-test-2.5.6.jar" sourcepath="M2_REPO/org/springframework/spring-test/2.5.6/spring-test-2.5.6-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-tx/2.5.6/spring-tx-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/duraspace/storageprovider/1.0.0/storageprovider-1.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar"/>
