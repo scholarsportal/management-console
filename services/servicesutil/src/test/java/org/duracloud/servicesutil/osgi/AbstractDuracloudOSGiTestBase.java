@@ -28,7 +28,23 @@ public class AbstractDuracloudOSGiTestBase
 
                 "org.apache.derby, com.springsource.org.apache.derby, 10.5.1000001.764942-duracloud",
                 "org.springframework, org.springframework.jdbc, 2.5.6.A",
-                "org.springframework, org.springframework.transaction, 2.5.6.A"};
+                "org.springframework, org.springframework.transaction, 2.5.6.A",
+                                
+                "org.springframework, spring-core, 2.5.6",
+                "org.springframework, spring-beans, 2.5.6",
+                "org.springframework, spring-context, 2.5.6",
+                "org.springframework, spring-tx, 2.5.6",
+                "org.springframework, spring-jms, 2.5.6",
+                              
+                "javax.jms, com.springsource.javax.jms, 1.1.0",
+                "org.apache.activemq, com.springsource.org.apache.activemq, 5.2.0",
+                "org.apache.geronimo.specs, com.springsource.javax.management.j2ee, 1.0.1",
+                "javax.ejb, com.springsource.javax.ejb, 3.0.0",
+                "javax.xml.rpc, com.springsource.javax.xml.rpc, 1.1.0",
+                "javax.xml.soap, com.springsource.javax.xml.soap, 1.3.0",
+                "javax.activation, com.springsource.javax.activation, 1.1.1",
+                "org.apache.commons, com.springsource.org.apache.commons.logging, 1.1.1",
+                "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3"};
     };
 
     @Override

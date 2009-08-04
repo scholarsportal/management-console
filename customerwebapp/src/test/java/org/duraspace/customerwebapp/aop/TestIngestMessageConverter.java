@@ -3,7 +3,6 @@ package org.duraspace.customerwebapp.aop;
 
 import javax.jms.Connection;
 import javax.jms.MapMessage;
-import javax.jms.Message;
 import javax.jms.Session;
 
 import org.junit.After;
@@ -21,7 +20,7 @@ public class TestIngestMessageConverter
 
     private MessageConverter converter;
 
-    private Message mapMsg;
+    private MapMessage mapMsg;
 
     private IngestMessage ingestMsg;
 
@@ -38,9 +37,9 @@ public class TestIngestMessageConverter
 
         converter = new IngestMessageConverter();
         mapMsg = session.createMapMessage();
-        mapMsg.setStringProperty(IngestMessageConverter.CONTENT_ID, CONTENT_ID);
-        mapMsg.setStringProperty(IngestMessageConverter.MIMETYPE, MIMETYPE);
-        mapMsg.setStringProperty(IngestMessageConverter.SPACE_ID, SPACE_ID);
+        mapMsg.setString(IngestMessageConverter.CONTENT_ID, CONTENT_ID);
+        mapMsg.setString(IngestMessageConverter.MIMETYPE, MIMETYPE);
+        mapMsg.setString(IngestMessageConverter.SPACE_ID, SPACE_ID);
 
         ingestMsg = new IngestMessage();
         ingestMsg.setContentId(CONTENT_ID);
@@ -76,12 +75,9 @@ public class TestIngestMessageConverter
     public void testToMessage() throws Exception {
         MapMessage msg = (MapMessage) converter.toMessage(ingestMsg, session);
         assertNotNull(msg);
-        assertEquals(CONTENT_ID, msg
-                .getStringProperty(IngestMessageConverter.CONTENT_ID));
-        assertEquals(MIMETYPE, msg
-                .getStringProperty(IngestMessageConverter.MIMETYPE));
-        assertEquals(SPACE_ID, msg
-                .getStringProperty(IngestMessageConverter.SPACE_ID));
+        assertEquals(CONTENT_ID, msg.getString(IngestMessageConverter.CONTENT_ID));
+        assertEquals(MIMETYPE, msg.getString(IngestMessageConverter.MIMETYPE));
+        assertEquals(SPACE_ID, msg.getString(IngestMessageConverter.SPACE_ID));
     }
 
 }

@@ -11,7 +11,7 @@
   <properties>
     <bundle.symbolicName>org.duracloud.services.replicationservice</bundle.symbolicName>
     <bundle.namespace>org.duracloud.services</bundle.namespace>
-    <spring.maven.artifact.version>2.5.4</spring.maven.artifact.version>
+    <spring.maven.artifact.version>2.5.6</spring.maven.artifact.version>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
@@ -40,6 +40,16 @@
       <groupId>org.slf4j</groupId>
       <artifactId>com.springsource.slf4j.api</artifactId>
       <version>1.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jms</groupId>
+      <artifactId>com.springsource.javax.jms</artifactId>
+      <version>1.1.0</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>com.springsource.org.apache.activemq</artifactId>
+      <version>5.2.0</version>
     </dependency>    
   
     <!--
@@ -94,6 +104,11 @@
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jms</artifactId>
+      <version>${spring.maven.artifact.version}</version>
+    </dependency>    
   </dependencies>
 
 </project>

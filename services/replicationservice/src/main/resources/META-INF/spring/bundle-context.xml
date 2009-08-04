@@ -29,9 +29,16 @@
 	  <osgix:managed-properties persistent-id="replicationService"
       update-strategy="container-managed" />
      -->
-    <property name="host" value="localhost"/>
-    <property name="port" value="8080"/>     
-    <property name="context" value="customerwebapp"/>
+    <constructor-arg value="localhost"/>             <!-- host -->
+    <constructor-arg value="8080"/>                  <!-- port -->
+    <constructor-arg value="customerwebapp"/>        <!-- context -->
+    <constructor-arg value="tcp://localhost:61617"/> <!-- broker URL -->
+    <constructor-arg value="1"/>                     <!-- from StoreID -->
+    <constructor-arg value="5"/>                     <!-- to StoreID -->
+    <constructor-arg value="2"/>                     <!-- replication type -->
+    <!-- <property name="jmsContainer" ref="jmsContainer" />  -->
+    <property name="connectionFactory" ref="connFactory" />
+    <property name="destination" ref="ingestDestination" />
   </bean>
 
 </beans>
