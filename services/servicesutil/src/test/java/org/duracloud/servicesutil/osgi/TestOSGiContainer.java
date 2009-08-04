@@ -35,8 +35,8 @@ public class TestOSGiContainer
             sb.append(": " + name + ": " + state);
             sb.append(", \n");
             if (bundle.getSymbolicName().contains("TestOSGiContainer")) {
-                Dictionary headers = bundle.getHeaders();
-                Enumeration keys = headers.keys();
+                Dictionary<?, ?> headers = bundle.getHeaders();
+                Enumeration<?> keys = headers.keys();
                 while (keys.hasMoreElements()) {
                     Object key = keys.nextElement();
                     sb.append("\t\tTest-Manifest-Entry : [" + key + "|"
