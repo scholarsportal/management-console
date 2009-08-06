@@ -82,7 +82,7 @@ public class StoreRest extends BaseRest {
         Document storesDocument = new Document(accounts);
         XMLOutputter outputter = new XMLOutputter();
         String storesXml = outputter.outputString(storesDocument);
-        return Response.ok(storesXml, TEXT_PLAIN).build();
+        return Response.ok(storesXml, TEXT_XML).build();
     }
 
 }

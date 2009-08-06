@@ -44,7 +44,12 @@ public class AbstractDuracloudOSGiTestBase
                 "javax.xml.soap, com.springsource.javax.xml.soap, 1.3.0",
                 "javax.activation, com.springsource.javax.activation, 1.1.1",
                 "org.apache.commons, com.springsource.org.apache.commons.logging, 1.1.1",
-                "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3"};
+                "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3",
+                
+                "org.duraspace, storageprovider, 1.0.0",
+                "org.duraspace, javaclient, 1.0.0",
+                "org.jdom, com.springsource.org.jdom, 1.0.0",
+                "commons-lang, commons-lang, 2.4"};
     };
 
     @Override

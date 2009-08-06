@@ -56,11 +56,12 @@ public class ReplicationService
 
     public void start() throws Exception {
         log.info("Starting Replication Service");
-        String baseURL = getBaseURL();
 
         System.out.println("**********");
         System.out.println("Starting replication service");
-        System.out.println("baseURL: " + baseURL);
+        System.out.println("host: " + host);
+        System.out.println("port: " + port);
+        System.out.println("context: " + context);
         System.out.println("brokerURL: " + brokerURL);
         System.out.println("fromStoreID: " + fromStoreID);
         System.out.println("toStoreID: " + toStoreID);
@@ -74,10 +75,11 @@ public class ReplicationService
         jmsContainer.start();
         jmsContainer.initialize();
 
-        replicator = new Replicator(baseURL, fromStoreID, toStoreID);
+        replicator = new Replicator(host, port, context, fromStoreID, toStoreID);
 
         System.out.println("Listener container started: " + jmsContainer.isRunning());
         System.out.println("**********");
+        log.info("Replication Service Listener Started");
     }
 
     public void stop() throws Exception {
@@ -87,10 +89,6 @@ public class ReplicationService
 
     public String describe() throws Exception {
         return "Service: " + getClass().getName();
-    }
-
-    private String getBaseURL() {
-        return "http://" + host + ":" + port + "/" + context;
     }
 
     public ActiveMQConnectionFactory getConnectionFactory() {
@@ -110,9 +108,15 @@ public class ReplicationService
     }
 
     public void onMessage(Message message) {
+        if(log.isDebugEnabled()) {
+            log.debug("Message recieved in Replication Service: " + message);
+        }
+
+        //TODO: Remove once logging works --
         System.out.println("--------- Message ---------");
         System.out.println(message);
         System.out.println("---------------------------");
+        //TODO: -- Remove once logging works
 
         if(message instanceof MapMessage) {
             handleMapMessage((MapMessage)message);
@@ -121,7 +125,7 @@ public class ReplicationService
         } else {
           String error = "Message received which cannot be processed: " + message;
           log.warn(error);
-          System.out.println(error);
+          System.out.println(error); //TODO: Remove once logging works
         }
     }
 
@@ -145,7 +149,7 @@ public class ReplicationService
             System.out.println("spaceID:" + spaceID);
             System.out.println("contentID:" + contentID);
 
-            replicator.replicate(spaceID, contentID);
+            //replicator.replicate(spaceID, contentID);
         } catch(JMSException je) {
             String error = "Error occured processing map message: " + je.getMessage();
             log.error(error);
