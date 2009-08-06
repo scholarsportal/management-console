@@ -114,6 +114,13 @@ public class TestContentStore
                 assertEquals(store.getStorageProviderType(),
                              primaryStore.getStorageProviderType());
             }
+
+            ContentStore storeById =
+                storeManager.getContentStore(store.getStoreId());
+            assertNotNull(storeById);
+            assertEquals(store.getStoreId(), storeById.getStoreId());
+            assertEquals(store.getStorageProviderType(),
+                         storeById.getStorageProviderType());
         }
         assertTrue(primaryInList);
     }

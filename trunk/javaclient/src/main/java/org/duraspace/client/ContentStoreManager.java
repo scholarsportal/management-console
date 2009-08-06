@@ -63,6 +63,14 @@ public class ContentStoreManager {
         return contentStores;
     }
 
+    public ContentStore getContentStore(String storeID) throws StorageException {
+        StorageAccountManager acctManager = getStorageAccounts();
+        StorageAccount acct = acctManager.getStorageAccount(storeID);
+        ContentStore contentStore =
+            new ContentStore(baseURL, acct.getType(), acct.getId());
+        return contentStore;
+    }
+
     public ContentStore getPrimaryContentStore() throws StorageException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
