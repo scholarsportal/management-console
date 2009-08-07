@@ -19,6 +19,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 public class ReplicationService
         implements ComputeService, MessageListener {
 
+    protected static final String STORE_ID = "storeId";
     protected static final String SPACE_ID = "spaceId";
     protected static final String CONTENT_ID = "contentId";
 
@@ -29,8 +30,8 @@ public class ReplicationService
     private String port;
     private String context;
     private String brokerURL;
-    private String fromStoreID;
-    private String toStoreID;
+    private String fromStoreId;
+    private String toStoreId;
     private String replicationType;
 
     private AbstractMessageListenerContainer jmsContainer;
@@ -42,40 +43,42 @@ public class ReplicationService
                               String port,
                               String context,
                               String brokerURL,
-                              String fromStoreID,
-                              String toStoreID,
+                              String fromStoreId,
+                              String toStoreId,
                               String replicationType) {
         this.host = host;
         this.port = port;
         this.context = context;
         this.brokerURL = brokerURL;
-        this.fromStoreID = fromStoreID;
-        this.toStoreID = toStoreID;
+        this.fromStoreId = fromStoreId;
+        this.toStoreId = toStoreId;
         this.replicationType = replicationType;
     }
 
     public void start() throws Exception {
         log.info("Starting Replication Service");
 
+        //TODO: Convert to log msg
         System.out.println("**********");
         System.out.println("Starting replication service");
         System.out.println("host: " + host);
         System.out.println("port: " + port);
         System.out.println("context: " + context);
         System.out.println("brokerURL: " + brokerURL);
-        System.out.println("fromStoreID: " + fromStoreID);
-        System.out.println("toStoreID: " + toStoreID);
+        System.out.println("fromStoreId: " + fromStoreId);
+        System.out.println("toStoreId: " + toStoreId);
         System.out.println("replicationType: " + replicationType);
 
         jmsContainer = new DefaultMessageListenerContainer();
         connectionFactory.setBrokerURL(brokerURL);
         jmsContainer.setConnectionFactory(connectionFactory);
         jmsContainer.setDestination(destination);
+        jmsContainer.setMessageSelector(STORE_ID + " = '" + fromStoreId + "'");
         jmsContainer.setMessageListener(this);
         jmsContainer.start();
         jmsContainer.initialize();
 
-        replicator = new Replicator(host, port, context, fromStoreID, toStoreID);
+        replicator = new Replicator(host, port, context, fromStoreId, toStoreId);
 
         System.out.println("Listener container started: " + jmsContainer.isRunning());
         System.out.println("**********");
@@ -111,12 +114,7 @@ public class ReplicationService
         if(log.isDebugEnabled()) {
             log.debug("Message recieved in Replication Service: " + message);
         }
-
-        //TODO: Remove once logging works --
-        System.out.println("--------- Message ---------");
-        System.out.println(message);
-        System.out.println("---------------------------");
-        //TODO: -- Remove once logging works
+        System.out.println("Message Received: " + message); //TODO: Remove once logging works
 
         if(message instanceof MapMessage) {
             handleMapMessage((MapMessage)message);
@@ -132,7 +130,8 @@ public class ReplicationService
     private void handleTextMessage(TextMessage message) {
         try {
             String msgText = message.getText();
-            System.out.println("Text message received: " + msgText);
+            log.warn("Text message received in replication service: " + msgText);
+            System.out.println("Text message received: " + msgText); //TODO: Remove once logging works
         } catch(JMSException je) {
             String error = "Error occured processing text message: " + je.getMessage();
             log.error(error);
@@ -142,14 +141,9 @@ public class ReplicationService
 
     private void handleMapMessage(MapMessage message) {
         try {
-            String spaceID = message.getString(SPACE_ID);
-            String contentID = message.getString(CONTENT_ID);
-
-            System.out.println("Processing Ingest of content");
-            System.out.println("spaceID:" + spaceID);
-            System.out.println("contentID:" + contentID);
-
-            //replicator.replicate(spaceID, contentID);
+            String spaceId = message.getString(SPACE_ID);
+            String contentId = message.getString(CONTENT_ID);
+            replicator.replicateContent(spaceId, contentId);
         } catch(JMSException je) {
             String error = "Error occured processing map message: " + je.getMessage();
             log.error(error);

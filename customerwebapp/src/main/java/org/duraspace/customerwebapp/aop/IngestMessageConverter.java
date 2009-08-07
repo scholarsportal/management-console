@@ -16,6 +16,8 @@ public class IngestMessageConverter
 
     protected final Logger log = Logger.getLogger(getClass());
 
+    protected static final String STORE_ID = "storeId";
+
     protected static final String CONTENT_ID = "contentId";
 
     protected static final String MIMETYPE = "mimetype";
@@ -32,6 +34,7 @@ public class IngestMessageConverter
 
         MapMessage mapMsg = (MapMessage)msg;
         IngestMessage ingestMsg = new IngestMessage();
+        ingestMsg.setStoreId(mapMsg.getStringProperty(STORE_ID));
         ingestMsg.setContentId(mapMsg.getString(CONTENT_ID));
         ingestMsg.setContentMimeType(mapMsg.getString(MIMETYPE));
         ingestMsg.setSpaceId(mapMsg.getString(SPACE_ID));
@@ -48,6 +51,7 @@ public class IngestMessageConverter
         IngestMessage ingestMsg = (IngestMessage) obj;
 
         MapMessage msg = session.createMapMessage();
+        msg.setStringProperty(STORE_ID, ingestMsg.getStoreId());
         msg.setString(CONTENT_ID, ingestMsg.getContentId());
         msg.setString(MIMETYPE, ingestMsg.getContentMimeType());
         msg.setString(SPACE_ID, ingestMsg.getSpaceId());

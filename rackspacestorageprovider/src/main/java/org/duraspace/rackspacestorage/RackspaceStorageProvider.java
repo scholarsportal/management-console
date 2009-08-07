@@ -93,6 +93,7 @@ public class RackspaceStorageProvider implements StorageProvider {
     throws StorageException {
         String containerName = getContainerName(spaceId);
         try {
+            checkContainerExists(spaceId);
             List<FilesObject> objects = filesClient.listObjects(containerName);
             List<String> contentItems = new ArrayList<String>();
             for(FilesObject object : objects) {
@@ -103,6 +104,22 @@ public class RackspaceStorageProvider implements StorageProvider {
             String err = "Could not get contents of Rackspace container " +
                          containerName + " due to error: " + e.getMessage();
             throw new StorageException(err, e);
+        }
+    }
+
+    /**
+     * Checks if a space (container) exists, throws a StorageException if false.
+     * Call before attempting to get information from a space (container)
+     */
+    private void checkContainerExists(String spaceId) throws StorageException{
+        String containerName = getContainerName(spaceId);
+        try {
+            if(!filesClient.containerExists(containerName)) {
+                throw new StorageException("Rackspace container " + containerName +
+                                           " does not exist");
+            }
+        } catch(Exception e) {
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -176,7 +193,7 @@ public class RackspaceStorageProvider implements StorageProvider {
             AccessType access = getSpaceAccess(spaceId);
             spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
         } catch(Exception e) {
-            String err = "Could not retrieve metadata from S3 bucket " +
+            String err = "Could not retrieve metadata from Rackspace container " +
                          containerName + " due to error: " + e.getMessage();
             log.warn(err, e);
         }
@@ -204,6 +221,7 @@ public class RackspaceStorageProvider implements StorageProvider {
      */
     public AccessType getSpaceAccess(String spaceId)
     throws StorageException {
+        checkContainerExists(spaceId);
         String containerName = getContainerName(spaceId);
         AccessType spaceAccess = AccessType.CLOSED;
 
@@ -265,6 +283,7 @@ public class RackspaceStorageProvider implements StorageProvider {
         String checksum;
         String containerName = getContainerName(spaceId);
         try {
+            checkContainerExists(spaceId);
             Map<String, String> metadata = new HashMap<String, String>();
             metadata.put(METADATA_CONTENT_NAME, contentId);
             metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
@@ -300,6 +319,7 @@ public class RackspaceStorageProvider implements StorageProvider {
         String containerName = getContainerName(spaceId);
         InputStream content = null;
         try {
+            checkContainerExists(spaceId);
             content = filesClient.getObjectAsStream(containerName, contentId);
         } catch(Exception e) {
             String err = "Could not retrieve content " + contentId +
@@ -318,6 +338,7 @@ public class RackspaceStorageProvider implements StorageProvider {
     throws StorageException {
         String containerName = getContainerName(spaceId);
         try {
+            checkContainerExists(spaceId);
             filesClient.deleteObject(containerName, contentId);
         } catch(Exception e) {
             String err = "Could not delete content " + contentId +
@@ -334,6 +355,8 @@ public class RackspaceStorageProvider implements StorageProvider {
                                    String contentId,
                                    Map<String, String> contentMetadata)
     throws StorageException {
+        checkContainerExists(spaceId);
+
         // Remove calculated properties
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
         contentMetadata.remove(METADATA_CONTENT_MODIFIED);
@@ -383,6 +406,7 @@ public class RackspaceStorageProvider implements StorageProvider {
     public Map<String, String> getContentMetadata(String spaceId,
                                          String contentId)
     throws StorageException {
+        checkContainerExists(spaceId);
         String containerName = getContainerName(spaceId);
 
         FilesObjectMetaData metadata = null;

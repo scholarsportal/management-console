@@ -8,6 +8,7 @@ import java.util.Map;
 import org.duraspace.client.ContentStore;
 import org.duraspace.client.ContentStoreManager;
 import org.duraspace.domain.Content;
+import org.duraspace.domain.Space;
 import org.duraspace.storage.domain.StorageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,37 +29,70 @@ public class Replicator {
     public Replicator(String host,
                       String port,
                       String context,
-                      String fromStoreID,
-                      String toStoreID) {
+                      String fromStoreId,
+                      String toStoreId) {
         ContentStoreManager storeManager =
             new ContentStoreManager(host, port, context);
 
         try {
-            fromStore = storeManager.getContentStore(fromStoreID);
-            toStore = storeManager.getContentStore(toStoreID);
+            fromStore = storeManager.getContentStore(fromStoreId);
+            toStore = storeManager.getContentStore(toStoreId);
         } catch(StorageException se) {
             String error = "Unable to create connections to content " +
             		       "stores for replication " + se.getMessage();
-            System.out.println(error); //TODO: Remove once logging works
             log.error(error);
+            System.out.println(error); //TODO: Remove once logging works
         }
     }
 
-    public void replicate(String spaceID, String contentID) {
+    public void replicateSpace(String spaceId) {
         if(log.isDebugEnabled()) {
-            log.debug("Performing Replication for " + spaceID + "/" + contentID);
+            log.debug("Performing Replication for " + spaceId +
+                      " from " + fromStore.getStorageProviderType().name() +
+                      " to " + toStore.getStorageProviderType().name());
         }
 
-        //TODO: Remove --
-        System.out.println("Performing Replication...");
-        System.out.println("Replicating content item from " +
-                           fromStore.getStorageProviderType().name());
-        System.out.println("Replicating content item to " +
-                           toStore.getStorageProviderType().name());
-        //TODO: -- Remove
+        //TODO: Remove once logging works --
+        System.out.println("Performing Replication for " + spaceId +
+                           " from " + fromStore.getStorageProviderType().name() +
+                           " to " + toStore.getStorageProviderType().name());
+        //TODO: -- Remove once logging works
 
         try {
-            Content content = fromStore.getContent(spaceID, contentID);
+            Space space = fromStore.getSpace(spaceId);
+            toStore.createSpace(spaceId, space.getMetadata());
+        } catch (StorageException se) {
+            String error = "Unable to replicate space " + spaceId +
+                           " due to error: " + se.getMessage();
+            log.error(error, se);
+            System.out.println(error); //TODO: Remove once logging works
+        }
+    }
+
+    public void replicateContent(String spaceId, String contentId) {
+        if(log.isDebugEnabled()) {
+            log.debug("Performing Replication for " + spaceId + "/" + contentId +
+                      " from " + fromStore.getStorageProviderType().name() +
+                      " to " + toStore.getStorageProviderType().name());
+        }
+
+        //TODO: Remove once logging works --
+        System.out.println("Performing Replication for " + spaceId + "/" + contentId +
+                           " from " + fromStore.getStorageProviderType().name() +
+                           " to " + toStore.getStorageProviderType().name());
+        //TODO: -- Remove once logging works
+
+        try {
+            Space toSpace = toStore.getSpace(spaceId);
+            System.out.println("toSpace: " + toSpace); //TODO: Remove
+        } catch(StorageException se) {
+            System.out.println("Space " + spaceId + " does not exist at " +
+                               toStore.getStorageProviderType().name()); //TODO: Remove
+            replicateSpace(spaceId);
+        }
+
+        try {
+            Content content = fromStore.getContent(spaceId, contentId);
             InputStream contentStream = content.getStream();
             if(contentStream != null) {
                 Map<String, String> metadata = content.getMetadata();
@@ -81,8 +115,8 @@ public class Replicator {
                     }
                 }
 
-                toStore.addContent(spaceID,
-                                   contentID,
+                toStore.addContent(spaceId,
+                                   contentId,
                                    contentStream,
                                    contentSize,
                                    mimeType,
@@ -92,13 +126,16 @@ public class Replicator {
                                            "from the store was null.");
             }
         } catch(StorageException se) {
-            String error = "Unable to replicate content " + contentID + " in space " +
-                           spaceID + " due to error: " + se.getMessage();
+            String error = "Unable to replicate content " + contentId + " in space " +
+                           spaceId + " due to error: " + se.getMessage();
             log.error(error, se);
             System.out.println(error); //TODO: Remove once logging works
         }
 
-        System.out.println("Replication Complete"); //TODO: Remove
+        if(log.isDebugEnabled()) {
+            log.debug("Replication Completed");
+        }
+        System.out.println("Replication Completed"); //TODO: Remove once logging works
     }
 
 }

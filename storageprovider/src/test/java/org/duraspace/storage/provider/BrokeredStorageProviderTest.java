@@ -50,7 +50,7 @@ public class BrokeredStorageProviderTest {
         directProvider = new MockStorageProvider();
         dispatchProvider = new StatelessStorageProviderImpl();
 
-        broker = new BrokeredStorageProvider(dispatchProvider, targetProvider);
+        broker = new BrokeredStorageProvider(dispatchProvider, targetProvider, "0");
 
         content = new ByteArrayInputStream("".getBytes());
     }
