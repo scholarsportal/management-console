@@ -24,6 +24,8 @@ public class TestIngestMessageConverter
 
     private IngestMessage ingestMsg;
 
+    private final String STORE_ID = "testStoreId";
+
     private final String SPACE_ID = "testSpaceId";
 
     private final String MIMETYPE = "testMimeType";
@@ -37,11 +39,13 @@ public class TestIngestMessageConverter
 
         converter = new IngestMessageConverter();
         mapMsg = session.createMapMessage();
+        mapMsg.setStringProperty(IngestMessageConverter.STORE_ID, STORE_ID);
         mapMsg.setString(IngestMessageConverter.CONTENT_ID, CONTENT_ID);
         mapMsg.setString(IngestMessageConverter.MIMETYPE, MIMETYPE);
         mapMsg.setString(IngestMessageConverter.SPACE_ID, SPACE_ID);
 
         ingestMsg = new IngestMessage();
+        ingestMsg.setStoreId(STORE_ID);
         ingestMsg.setContentId(CONTENT_ID);
         ingestMsg.setContentMimeType(MIMETYPE);
         ingestMsg.setSpaceId(SPACE_ID);
@@ -66,6 +70,7 @@ public class TestIngestMessageConverter
     public void testFromMessage() throws Exception {
         IngestMessage msg = (IngestMessage) converter.fromMessage(mapMsg);
         assertNotNull(msg);
+        assertEquals(STORE_ID, msg.getStoreId());
         assertEquals(CONTENT_ID, msg.getContentId());
         assertEquals(MIMETYPE, msg.getContentMimeType());
         assertEquals(SPACE_ID, msg.getSpaceId());
@@ -75,6 +80,7 @@ public class TestIngestMessageConverter
     public void testToMessage() throws Exception {
         MapMessage msg = (MapMessage) converter.toMessage(ingestMsg, session);
         assertNotNull(msg);
+        assertEquals(STORE_ID, msg.getStringProperty(IngestMessageConverter.STORE_ID));
         assertEquals(CONTENT_ID, msg.getString(IngestMessageConverter.CONTENT_ID));
         assertEquals(MIMETYPE, msg.getString(IngestMessageConverter.MIMETYPE));
         assertEquals(SPACE_ID, msg.getString(IngestMessageConverter.SPACE_ID));

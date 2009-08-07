@@ -8,6 +8,8 @@ package org.duraspace.customerwebapp.aop;
  */
 public class IngestMessage {
 
+    private String storeId;
+
     private String spaceId;
 
     private String contentId;
@@ -17,11 +19,20 @@ public class IngestMessage {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("IngestMessage[");
-        sb.append("spaceId:'" + spaceId + "'");
+        sb.append("storeId:'" + storeId + "'");
+        sb.append("|spaceId:'" + spaceId + "'");
         sb.append("|contentId:'" + contentId + "'");
         sb.append("|mime:'" + contentMimeType + "'");
         sb.append("]\n");
         return sb.toString();
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public String getSpaceId() {

@@ -94,6 +94,7 @@ public class StorageProviderFactory {
             storageAccountManager.getStorageAccount(storageAccountId);
         if (account == null) {
             account = storageAccountManager.getPrimaryStorageAccount();
+            storageAccountId = storageAccountManager.getPrimaryStorageAccountId();
         }
         String username = account.getUsername();
         String password = account.getPassword();
@@ -114,7 +115,9 @@ public class StorageProviderFactory {
             // storageProvider = new EMCStorageProvider(username, password);
         }
 
-        return new BrokeredStorageProvider(statelessProvider, storageProvider);
+        return new BrokeredStorageProvider(statelessProvider,
+                                           storageProvider,
+                                           storageAccountId);
     }
 
     /**

@@ -14,8 +14,6 @@ import java.util.Random;
 import com.mosso.client.cloudfiles.FilesCDNContainer;
 import com.mosso.client.cloudfiles.FilesClient;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 
 import org.junit.After;
@@ -25,18 +23,22 @@ import org.junit.Test;
 import org.duraspace.common.model.Credential;
 import org.duraspace.common.web.RestHttpHelper;
 import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duraspace.storage.domain.StorageException;
 import org.duraspace.storage.domain.StorageProviderType;
 import org.duraspace.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duraspace.storage.provider.StorageProvider;
 import org.duraspace.storage.provider.StorageProvider.AccessType;
 
+import junit.framework.Assert;
+
+import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
+import static org.duraspace.storage.util.StorageProviderUtil.contains;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-
-import static org.duraspace.storage.util.StorageProviderUtil.compareChecksum;
-import static org.duraspace.storage.util.StorageProviderUtil.contains;
+import static junit.framework.Assert.fail;
 
 /**
  * Tests the Rackspace Storage Provider. This test is run via the command line
@@ -116,6 +118,23 @@ public class RackspaceStorageProviderTest {
         assertNotNull(spaces);
         assertTrue(contains(spaces, SPACE_ID)); // This will only work when SPACE_ID fits
                                                 // the Rackspace container naming conventions
+
+        // test invalid space
+        log.debug("Test getSpaceAccess() with invalid spaceId");
+        try {
+            rackspaceProvider.getSpaceAccess(SPACE_ID+"-invalid");
+            fail("getSpaceAccess() should throw an exception with an invalid spaceId");
+        } catch(StorageException expected) {
+            assertNotNull(expected);
+        }
+
+        log.debug("Test getSpaceContents() with invalid spaceId");
+        try {
+            rackspaceProvider.getSpaceContents(SPACE_ID+"-invalid");
+            fail("getSpaceContents() should throw an exception with an invalid spaceId");
+        } catch(StorageException expected) {
+            assertNotNull(expected);
+        }
 
         // Check space access - should be closed
         // TODO: Uncomment after Rackspace SDK bug is fixed

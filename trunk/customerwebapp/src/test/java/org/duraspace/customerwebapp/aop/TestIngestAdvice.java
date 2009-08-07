@@ -106,8 +106,30 @@ public class TestIngestAdvice
     }
 
     private void doTestIngestEvent(boolean successful) throws Exception {
-        createEventListener();
+        createEventListener(null);
         publishIngestEvent(successful);
+        verifyEventHeard(successful);
+    }
+
+    @Test
+    public void testIngestEventSelectorFail() throws Exception {
+        boolean successful = false;
+        String selector = IngestMessageConverter.STORE_ID + " = 'invalidStoreId'";
+        doTestIngestSelectorEvent(selector, successful);
+    }
+
+    @Test
+    public void testIngestEventSelectorPass() throws Exception {
+        boolean successful = true;
+        // Store ID 1 is the ID for the default storage provider (Amazon S3)
+        String selector = IngestMessageConverter.STORE_ID + " = '1'";
+        doTestIngestSelectorEvent(selector, successful);
+    }
+
+    private void doTestIngestSelectorEvent(String selector,
+                                           boolean successful) throws Exception {
+        createEventListener(selector);
+        publishIngestEvent(true);
         verifyEventHeard(successful);
     }
 
@@ -118,9 +140,9 @@ public class TestIngestAdvice
         received = true;
     }
 
-    private void createEventListener() throws Exception {
+    private void createEventListener(String selector) throws Exception {
         javax.jms.MessageConsumer consumer =
-                session.createConsumer(destination);
+                session.createConsumer(destination, selector);
         consumer.setMessageListener(this);
         conn.start();
     }
