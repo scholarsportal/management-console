@@ -5,30 +5,21 @@
       http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- Spring beans which are used by the bundle are defined here. -->
-  <bean id="srvLister" class="org.duracloud.servicesutil.util.ServiceListerImpl">
+  <bean id="srvLister" class="org.duracloud.servicesutil.util.internal.ServiceListerImpl">
     <property name="duraServices" ref="duraServices" />
   </bean>
-
-
-<!-- 
-  <bean id="xmlSrvSerializer" class="org.duracloud.servicesutil.util.XMLServiceSerializerImpl"/>
   
-  <bean id="srvInstaller" class="org.duracloud.servicesutil.util.ServiceInstallerImpl" >
+  <bean id="srvInstaller" class="org.duracloud.servicesutil.util.internal.ServiceInstallerImpl" >
     <property name="bundleHome" ref="bundleHome" />
   </bean>
   
-  <bean id="srvUninstaller" class="org.duracloud.servicesutil.util.ServiceUninstallerImpl" >
+  <bean id="srvUninstaller" class="org.duracloud.servicesutil.util.internal.ServiceUninstallerImpl" >
     <property name="bundleHome" ref="bundleHome" />
   </bean>
-  
-  <bean id="bundleHome" class="java.lang.String" >
-    <constructor-arg value="${bundle.home}"/>
-  </bean>
-  
-  <bean id="srvStarter" class="org.duracloud.servicesutil.util.NoopServiceStarterImpl" />
 
-  <bean id="srvStopper" class="org.duracloud.servicesutil.util.NoopServiceStopperImpl" />
- -->
+  <bean id="srvStarter" class="org.duracloud.servicesutil.util.internal.NoopServiceStarterImpl" />
+
+  <bean id="srvStopper" class="org.duracloud.servicesutil.util.internal.NoopServiceStopperImpl" />
     
   <bean id="uploadclient" class="org.duracloud.servicesutil.client.ServiceUploadClient" >
     <property name="rester" ref="restHelper" />
@@ -36,5 +27,15 @@
   
   <bean id="restHelper" class="org.duraspace.common.web.RestHttpHelper" />
   
+
+  <!-- Properties config -->
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
+    <property name="location" value="osgi-config.properties" />
+  </bean>
+
+  <bean id="bundleHome" class="java.lang.String" >
+    <constructor-arg value="${bundle.home}/"/>
+  </bean>
+
  
 </beans> 

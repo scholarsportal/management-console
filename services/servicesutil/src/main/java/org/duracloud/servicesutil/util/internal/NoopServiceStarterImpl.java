@@ -1,6 +1,7 @@
 
-package org.duracloud.servicesutil.util;
+package org.duracloud.servicesutil.util.internal;
 
+import org.duracloud.servicesutil.util.ServiceStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

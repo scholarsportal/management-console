@@ -5,6 +5,9 @@ public class ComputeServiceBean {
 
     private String serviceName;
 
+    public ComputeServiceBean() {
+    }
+
     public ComputeServiceBean(String name) {
         serviceName = name;
     }

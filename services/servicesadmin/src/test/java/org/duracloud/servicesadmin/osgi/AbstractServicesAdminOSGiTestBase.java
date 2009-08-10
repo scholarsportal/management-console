@@ -1,5 +1,7 @@
 
-package org.duracloud.servicesadmin;
+package org.duracloud.servicesadmin.osgi;
+
+import java.util.jar.Manifest;
 
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -19,6 +21,11 @@ public class AbstractServicesAdminOSGiTestBase
                 "org.duracloud.services, servicesutil, 1.0.0",
                 "org.duracloud.services, computeservice, 1.0.0",
                 "org.duracloud.services, replicationservice, 1.0.0",
+                "org.duraspace, javaclient, 1.0.0",
+                "org.duraspace, storageprovider, 1.0.0",
+
+                "commons-lang, commons-lang, 2.4",
+                "org.jdom, com.springsource.org.jdom, 1.0.0",
 
                 "org.apache.commons, com.springsource.org.apache.commons.fileupload, 1.2.0",
                 "javax.servlet, com.springsource.javax.servlet, 2.5.0",
@@ -44,13 +51,13 @@ public class AbstractServicesAdminOSGiTestBase
                 "org.springframework, org.springframework.jdbc, 2.5.6.A",
                 "org.springframework, org.springframework.transaction, 2.5.6.A",
                 "org.junit, com.springsource.junit, 3.8.2",
-                
+
                 "org.springframework, spring-core, 2.5.6",
                 "org.springframework, spring-beans, 2.5.6",
                 "org.springframework, spring-context, 2.5.6",
                 "org.springframework, spring-tx, 2.5.6",
                 "org.springframework, spring-jms, 2.5.6",
-                
+
                 "javax.jms, com.springsource.javax.jms, 1.1.0",
                 "org.apache.activemq, com.springsource.org.apache.activemq, 5.2.0",
                 "org.apache.geronimo.specs, com.springsource.javax.management.j2ee, 1.0.1",
@@ -60,11 +67,8 @@ public class AbstractServicesAdminOSGiTestBase
                 "javax.activation, com.springsource.javax.activation, 1.1.1",
                 "org.apache.commons, com.springsource.org.apache.commons.logging, 1.1.1",
                 "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3",
-                
-                "org.duraspace, storageprovider, 1.0.0",
-                "org.duraspace, javaclient, 1.0.0",
-                "org.jdom, com.springsource.org.jdom, 1.0.0",
-                "commons-lang, commons-lang, 2.4"};
+
+                "org.apache.felix, org.apache.felix.fileinstall, 1.2.0"};
     };
 
     public void testInspectBundles() throws Exception {
@@ -80,4 +84,8 @@ public class AbstractServicesAdminOSGiTestBase
         log.debug(sb.toString());
     }
 
+    @Override
+    protected Manifest getManifest() {
+        return super.createDefaultManifest();
+    }
 }

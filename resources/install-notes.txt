@@ -85,3 +85,9 @@ OR (to deploy without building)
 
 pax-provision           (Equinox)
 pax-provision -f felix  (Felix)
+
+In order to persist services deployed into the services-framework, please make sure the following directory exists:
+ ${duraspace.home}/osgi-bundles
+
+..where ${duraspace.home} is already defined in settings.xml
+

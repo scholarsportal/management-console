@@ -19,12 +19,14 @@ public class StopController
 
     private ServiceStopper serviceStopper;
 
+    private HttpRequestHelper requestHelper;
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
                                                  HttpServletResponse response)
             throws Exception {
 
-        String serviceId = HttpRequestHelper.getServiceIdParameter(request);
+        String serviceId = getRequestHelper().getServiceIdParameter(request);
         getServiceStopper().stop(serviceId);
 
         ServletOutputStream out = response.getOutputStream();
@@ -39,6 +41,14 @@ public class StopController
 
     public void setServiceStopper(ServiceStopper serviceStopper) {
         this.serviceStopper = serviceStopper;
+    }
+
+    public HttpRequestHelper getRequestHelper() {
+        return requestHelper;
+    }
+
+    public void setRequestHelper(HttpRequestHelper requestHelper) {
+        this.requestHelper = requestHelper;
     }
 
 }
