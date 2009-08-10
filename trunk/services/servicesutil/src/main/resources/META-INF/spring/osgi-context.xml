@@ -13,6 +13,14 @@
   -->
   <osgi:service id="osgiListerService" ref="srvLister" interface="org.duracloud.servicesutil.util.ServiceLister" />
 
+  <osgi:service id="osgiInstallerService" ref="srvInstaller" interface="org.duracloud.servicesutil.util.ServiceInstaller" />
+
+  <osgi:service id="osgiUninstallerService" ref="srvUninstaller" interface="org.duracloud.servicesutil.util.ServiceUninstaller" />
+
+  <osgi:service id="osgiStarterService" ref="srvStarter" interface="org.duracloud.servicesutil.util.ServiceStarter" />
+
+  <osgi:service id="osgiStopperService" ref="srvStopper" interface="org.duracloud.servicesutil.util.ServiceStopper" />
+
   <!-- 
     OSGi services which are used by this bundle are defined here. 
   -->

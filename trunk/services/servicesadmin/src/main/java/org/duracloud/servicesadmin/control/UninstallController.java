@@ -19,6 +19,8 @@ public class UninstallController
 
     private ServiceUninstaller serviceUninstaller;
 
+    private HttpRequestHelper requestHelper;
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
                                                  HttpServletResponse response)
@@ -28,7 +30,7 @@ public class UninstallController
         out.println("in uninstall-controller");
         out.close();
 
-        String serviceId = HttpRequestHelper.getServiceIdParameter(request);
+        String serviceId = getRequestHelper().getServiceIdParameter(request);
         this.getServiceUninstaller().uninstall(serviceId);
 
         return null;
@@ -40,6 +42,14 @@ public class UninstallController
 
     public void setServiceUninstaller(ServiceUninstaller serviceUninstaller) {
         this.serviceUninstaller = serviceUninstaller;
+    }
+
+    public HttpRequestHelper getRequestHelper() {
+        return requestHelper;
+    }
+
+    public void setRequestHelper(HttpRequestHelper requestHelper) {
+        this.requestHelper = requestHelper;
     }
 
 }

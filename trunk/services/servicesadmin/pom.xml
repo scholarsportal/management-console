@@ -71,6 +71,49 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>integrationtest</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>felix.fileinstall.dir</name>
+                  <value>${duraspace.home}/osgi-bundles</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.duracloud.services</groupId>
+                  <artifactId>helloservice</artifactId>
+                  <version>1.0.0</version>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>src/test/resources</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
 
   </build>
@@ -150,6 +193,14 @@
       <version>1.0.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.duracloud.services</groupId>
+      <artifactId>helloservice</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
+
     <!-- Spring MVC -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -177,12 +228,12 @@
       <artifactId>org.springframework.test</artifactId>
       <version>2.5.6.A</version>
       <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
-          </exclusion>
-        </exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.osgi</groupId>
@@ -209,6 +260,19 @@
       <artifactId>spring-osgi-io</artifactId>
       <version>${spring.osgi.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.fileinstall</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
 
     <!-- Equinox OSGi platform -->

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.duracloud.services</groupId>
+  <artifactId>helloservice</artifactId>
+  <version>1.0.0</version>
+  <name>DuraCloud Hello Service Bundle</name>
+  <packaging>bundle</packaging>
+
+  <parent>
+    <artifactId>services</artifactId>
+    <groupId>org.duracloud</groupId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <dependencies>
+
+    <!-- internal projects -->
+    <dependency>
+      <groupId>org.duracloud.services</groupId>
+      <artifactId>computeservice</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+  </dependencies>
+  
+</project>
+

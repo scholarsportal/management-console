@@ -9,4 +9,6 @@ public interface ServiceInstaller {
     public abstract void install(String name, InputStream bundle)
             throws IOException;
 
+    public abstract String getBundleHome();
+
 }

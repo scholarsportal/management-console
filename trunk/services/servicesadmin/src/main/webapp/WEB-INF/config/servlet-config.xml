@@ -35,49 +35,38 @@
   
   <bean id="uninstallController" class="org.duracloud.servicesadmin.control.UninstallController" >
     <property name="serviceUninstaller" ref="srvUninstaller" />
+    <property name="supportedMethods" value="POST" />
+    <property name="requestHelper" ref="httpRequestHelper" />
   </bean>
   
   <bean id="startController" class="org.duracloud.servicesadmin.control.StartController" >
     <property name="serviceStarter" ref="srvStarter" />
+    <property name="requestHelper" ref="httpRequestHelper" />
   </bean>
   
   <bean id="stopController" class="org.duracloud.servicesadmin.control.StopController" >
     <property name="serviceStopper" ref="srvStopper" />
+    <property name="requestHelper" ref="httpRequestHelper" />
   </bean>
   
   <bean id="configureController" class="org.duracloud.servicesadmin.control.ConfigureController"/>
   <bean id="showConfigController" class="org.duracloud.servicesadmin.control.ShowConfigController"/>
 
-
-  <!-- Properties config -->
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
-    <property name="location" value="osgi-config.properties" />
-  </bean>
-
-  <bean id="bundleHome" class="java.lang.String" >
-    <constructor-arg value="${bundle.home}/"/>
-  </bean>
+  <bean id="httpRequestHelper" class="org.duracloud.servicesadmin.util.HttpRequestHelper" />
+  
   
   <!-- 
     Service Beans:
       Eventually they will all be defined as 'osgi:reference'
    -->  
-  <bean id="xmlSrvSerializer" class="org.duracloud.servicesadmin.util.XMLServiceSerializerImpl"/>
+  <bean id="xmlSrvSerializer" class="org.duracloud.servicesutil.util.XMLServiceSerializerImpl"/>
   
-  <bean id="srvInstaller" class="org.duracloud.servicesutil.util.ServiceInstallerImpl" >
-    <property name="bundleHome" ref="bundleHome" />
-  </bean>
-  
-  <bean id="srvUninstaller" class="org.duracloud.servicesutil.util.ServiceUninstallerImpl" >
-    <property name="bundleHome" ref="bundleHome" />
-  </bean>
-  
-  <bean id="srvStarter" class="org.duracloud.servicesutil.util.NoopServiceStarterImpl" />
-
-  <bean id="srvStopper" class="org.duracloud.servicesutil.util.NoopServiceStopperImpl" />
-    
     
   <!-- OSGi below -->
-  <osgi:reference id="srvLister" interface="org.duracloud.servicesutil.util.ServiceLister" />
+  <osgi:reference id="srvLister" interface="org.duracloud.servicesutil.util.ServiceLister" />  
+  <osgi:reference id="srvInstaller" interface="org.duracloud.servicesutil.util.ServiceInstaller" />
+  <osgi:reference id="srvUninstaller" interface="org.duracloud.servicesutil.util.ServiceUninstaller" />
+  <osgi:reference id="srvStarter" interface="org.duracloud.servicesutil.util.ServiceStarter" />
+  <osgi:reference id="srvStopper" interface="org.duracloud.servicesutil.util.ServiceStopper" />
     
 </beans>

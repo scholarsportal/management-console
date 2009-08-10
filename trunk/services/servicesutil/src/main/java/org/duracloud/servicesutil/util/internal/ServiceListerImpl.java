@@ -1,9 +1,10 @@
 
-package org.duracloud.servicesutil.util;
+package org.duracloud.servicesutil.util.internal;
 
 import java.util.List;
 
 import org.duracloud.services.ComputeService;
+import org.duracloud.servicesutil.util.ServiceLister;
 
 public class ServiceListerImpl
         implements ServiceLister {

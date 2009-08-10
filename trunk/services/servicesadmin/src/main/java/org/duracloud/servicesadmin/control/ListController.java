@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.duracloud.services.ComputeService;
-import org.duracloud.servicesadmin.util.ServiceSerializer;
 import org.duracloud.servicesutil.util.ServiceLister;
+import org.duracloud.servicesutil.util.ServiceSerializer;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -24,8 +24,6 @@ public class ListController
             throws Exception {
 
         ServletOutputStream out = response.getOutputStream();
-        out.println("in list-controller");
-
         java.util.List<ComputeService> services =
                 getServiceLister().getDuraServices();
         out.println(getSerializer().serialize(services));

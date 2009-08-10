@@ -1,7 +1,6 @@
 
 package org.duracloud.servicesadmin.util;
 
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -25,9 +24,6 @@ public class ServiceDependencyHackImporter {
 
         SimpleUrlHandlerMapping hack3 = new SimpleUrlHandlerMapping();
         hack3.toString();
-
-        PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-        ppc.toString();
 
     }
 

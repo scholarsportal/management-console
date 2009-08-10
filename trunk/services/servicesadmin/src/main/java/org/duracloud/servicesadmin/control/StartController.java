@@ -19,12 +19,14 @@ public class StartController
 
     private ServiceStarter serviceStarter;
 
+    private HttpRequestHelper requestHelper;
+
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
                                                  HttpServletResponse response)
             throws Exception {
 
-        String serviceId = HttpRequestHelper.getServiceIdParameter(request);
+        String serviceId = getRequestHelper().getServiceIdParameter(request);
         getServiceStarter().start(serviceId);
 
         ServletOutputStream out = response.getOutputStream();
@@ -39,6 +41,14 @@ public class StartController
 
     public void setServiceStarter(ServiceStarter serviceStarter) {
         this.serviceStarter = serviceStarter;
+    }
+
+    public HttpRequestHelper getRequestHelper() {
+        return requestHelper;
+    }
+
+    public void setRequestHelper(HttpRequestHelper requestHelper) {
+        this.requestHelper = requestHelper;
     }
 
 }
