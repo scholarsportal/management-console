@@ -5,6 +5,7 @@
       http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- Spring beans which are used by the bundle are defined here. -->
-  <bean id="srvHello" class="org.duracloud.services.hello.impl.HelloServiceImpl" />
+  <bean id="srvHello" class="org.duracloud.services.hello.impl.HelloServiceImpl" 
+   init-method="start" destroy-method="stop"/>
    
 </beans> 
