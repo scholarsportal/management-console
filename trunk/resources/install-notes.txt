@@ -75,8 +75,8 @@ Also add the <activeProfiles> element found in 'resources/conf/settings.xml' to 
 
 ::Services::
 Services (projects in the /services directory) were built using PAX Construct, see http://www.ops4j.org/projects/pax/construct/ 
-for more info on using these tools. These projects are built as usual by using "mvn clean install". In order to deploy them 
-into an OSGi container, use: 
+for more info on using these tools. These projects are built as usual by using "mvn clean install". In order to deploy them all
+into an OSGi container at once, from the services directory use: 
 
 mvn clean install pax:provision                      (Equinox)
 mvn clean install pax:provision "-Dframework=felix"  (Felix)   (quotes necessary only on Windows)
@@ -85,6 +85,15 @@ OR (to deploy without building)
 
 pax-provision           (Equinox)
 pax-provision -f felix  (Felix)
+
+In order to deploy them independently, from the directory of the specific service use:
+
+run-deps.(sh|bat)
+mvn clean install -f pom-run.xml pax:provision
+
+The run-deps script creates pom-run.xml by importing the OSGi bundle dependencies necessary to run the service. 
+The run-deps script depends on pax-construct, which is available for download here: 
+http://wiki.ops4j.org/display/paxconstruct/Pax+Construct
 
 In order to persist services deployed into the services-framework, please make sure the following directory exists:
  ${duraspace.home}/osgi-bundles

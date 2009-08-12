@@ -7,9 +7,11 @@ public class HelloServiceImpl
         implements ComputeService {
 
     public void start() throws Exception {
+        System.out.println("HelloService is Starting");
     }
 
     public void stop() throws Exception {
+        System.out.println("HelloService is Stoping");
     }
 
     public String describe() throws Exception {
