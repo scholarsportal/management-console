@@ -6,7 +6,7 @@
 
   
   <var name="wrapper" 
-       class="org.duraspace.mainwebapp.domain.cmd.flow.DuraAcctCreateWrapper" 
+       class="org.duracloud.mainwebapp.domain.cmd.flow.DuraAcctCreateWrapper" 
        scope="flow" />
 
   <start-state idref="inputDuraAcctInfo"/>

@@ -82,7 +82,7 @@ Base-AMI: ami-ec48af85
 ####
 :paste init.d-tomcat as /etc/init.d/tomcat
 :paste init.d-ebs as /etc/init.d/ebs
-:paste init.d-mainwebapp as /etc/init.d/duraspace
+:paste init.d-mainwebapp as /etc/init.d/duracloud
 :change permissions on each of three above with chmod +x
 
 ----
@@ -91,7 +91,7 @@ Base-AMI: ami-ec48af85
 :#sysv-rc-conf -p
 :set as follows:
 service    1  2    3    4    5    0    6   S
-duraspace [][S80][S80][S80][S80][   ][   ][]
+duracloud [][S80][S80][S80][S80][   ][   ][]
 ebs       [][S71][S71][S71][S71][K90][D90][]
 tomcat    [][S75][S75][S75][S75][   ][   ][]
 
@@ -103,8 +103,8 @@ tomcat    [][S75][S75][S75][S75][   ][   ][]
 :cp pk-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem to /home/root/
 :cp cert-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem to /home/root/
 
-:#mkdir /opt/duraspace
-:cp ec2-pom.xml as /opt/duraspace/pom.xml (note no modules defined in pom)
+:#mkdir /opt/duracloud
+:cp ec2-pom.xml as /opt/duracloud/pom.xml (note no modules defined in pom)
 
 
 ####
@@ -112,7 +112,7 @@ tomcat    [][S75][S75][S75][S75][   ][   ][]
 ####
 :#svn co https://www.fedora-commons.org/svn/duraspace/trunk junk
 :select (p)ermanent
-:run through mvn commands in /etc/init.d/duraspace
+:run through mvn commands in /etc/init.d/duracloud
 :need to mount database (see /etc/init.d/ebs)
 
 :locally, connect to [ec2-instance-url]:8080/mainwebapp
@@ -127,7 +127,7 @@ tomcat    [][S75][S75][S75][S75][   ][   ][]
 
 :#rm -rf /home/tomcat/logs
 
-:#cd /opt/duraspace
+:#cd /opt/duracloud
 :#mvn clean
 
 

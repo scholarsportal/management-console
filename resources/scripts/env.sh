@@ -14,8 +14,8 @@ JAVA6_HOME=/usr/local/jdk1.6.0_11
 M2_HOME=/usr/local/maven
 
 # Where is the source to be tested?
-BUILD_HOME=$HOME/agent-home/xml-data/build-dir/DURASPACE-SAN
+BUILD_HOME=$HOME/agent-home/xml-data/build-dir/DURACLOUD-SAN
 
 # Where is tomcat?
-CATALINA_HOME=$HOME/duraspace-home/tomcat
+CATALINA_HOME=$HOME/duracloud-home/tomcat
 

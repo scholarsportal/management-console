@@ -21,7 +21,7 @@ public class AbstractDuracloudOSGiTestBase
                 "org.apache.commons, com.springsource.org.apache.commons.httpclient, 3.1.0",
                 "org.apache.commons, com.springsource.org.apache.commons.codec, 1.3.0",
 
-                "org.duraspace, common, 1.0.0",
+                "org.duracloud, common, 1.0.0",
                 "com.thoughtworks.xstream, com.springsource.com.thoughtworks.xstream, 1.3.0",
                 "javax.xml.stream, com.springsource.javax.xml.stream, 1.0.1",
                 "org.xmlpull, com.springsource.org.xmlpull, 1.1.3.4-O",
@@ -46,8 +46,8 @@ public class AbstractDuracloudOSGiTestBase
                 "org.apache.commons, com.springsource.org.apache.commons.logging, 1.1.1",
                 "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3",
                 
-                "org.duraspace, storageprovider, 1.0.0",
-                "org.duraspace, javaclient, 1.0.0",
+                "org.duracloud, storageprovider, 1.0.0",
+                "org.duracloud, javaclient, 1.0.0",
                 "org.jdom, com.springsource.org.jdom, 1.0.0",
                 "commons-lang, commons-lang, 2.4"};
     };

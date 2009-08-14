@@ -7,7 +7,7 @@
 
   <servlet>
     <servlet-name>WebdavServlet</servlet-name>
-    <servlet-class>org.duraspace.duradav.servlet.WebdavServlet</servlet-class>
+    <servlet-class>org.duracloud.duradav.servlet.WebdavServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

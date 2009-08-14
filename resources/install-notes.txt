@@ -39,7 +39,7 @@ mvn dependency:sources
 ::Database::
 The mainwebapp requires account information stored in an underlying database.
 Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
->Run the following java-app: org.duraspace.mainwebapp.domain.repo.db.MainDatabaseUtil <location-of-new-DB>
+>Run the following java-app: org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil <location-of-new-DB>
 
 To ensure that the classpath is setup properly, it is probably easiest to run this from within eclipse.
 
@@ -96,7 +96,7 @@ The run-deps script depends on pax-construct, which is available for download he
 http://wiki.ops4j.org/display/paxconstruct/Pax+Construct
 
 In order to persist services deployed into the services-framework, please make sure the following directory exists:
- ${duraspace.home}/osgi-bundles
+ ${duracloud.home}/osgi-bundles
 
-..where ${duraspace.home} is already defined in settings.xml
+..where ${duracloud.home} is already defined in settings.xml
 

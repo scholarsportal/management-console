@@ -8,7 +8,7 @@ call pax-import-bundle -g org.springframework.osgi -a spring-osgi-web -v 1.2.0 -
 call pax-import-bundle -g org.springframework.osgi -a spring-osgi-web-extender -v 1.2.0 -DimportTransitive
 
 REM - DuraCloud -
-call pax-import-bundle -g org.duraspace -a common -v 1.0.0 -- -DimportTransitive -DwidenScope
+call pax-import-bundle -g org.duracloud -a common -v 1.0.0 -- -DimportTransitive -DwidenScope
 
 REM - Other -
 call pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope

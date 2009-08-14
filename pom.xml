@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.duraspace</groupId>
-  <artifactId>duraspace</artifactId>
+  <groupId>org.duracloud</groupId>
+  <artifactId>duracloud</artifactId>
   <packaging>pom</packaging>
   <version>1.0.0</version>
-  <name>DuraSpace</name>
-  <url>http://duraspace.org</url>
+  <name>DuraCloud</name>
+  <url>http://duracloud.org</url>
 
   <prerequisites>
       <maven>2.0.9</maven>
@@ -172,7 +172,7 @@
 
   <properties>
       <tomcat.port.default>8080</tomcat.port.default>
-      <database.home.default>/opt/derby/duraspaceDB</database.home.default>
+      <database.home.default>/opt/derby/duracloudDB</database.home.default>
       <unitTests>**/*Test.class</unitTests>
       <integrationTests>**/Test*.class</integrationTests>
       <instrumentedTests>**/*Test*__*.class</instrumentedTests>
@@ -182,9 +182,9 @@
   <distributionManagement>
     <!--
     <repository>
-      <id>duraspace</id>
-      <name>DuraSpace Local Repo</name>
-      <url>http://duraspace.org/???/libs-releases</url>
+      <id>duracloud</id>
+      <name>DuraCloud Local Repo</name>
+      <url>http://duracloud.org/???/libs-releases</url>
     </repository>
     -->
   </distributionManagement>
@@ -195,9 +195,9 @@
           <snapshots>
               <enabled>false</enabled>
           </snapshots>
-          <id>duraspace</id>
-          <name>DuraSpace Local Repository</name>
-          <url>http://duraspace.org/???/repo</url>
+          <id>duracloud</id>
+          <name>DuraCloud Local Repository</name>
+          <url>http://duracloud.org/???/repo</url>
       </repository>
       -->
       <repository>
@@ -239,9 +239,9 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-      <id>duraspace</id>
-      <name>DuraSpace Local Repository</name>
-      <url>http://duraspace.org/???/repo</url>
+      <id>duracloud</id>
+      <name>DuraCloud Local Repository</name>
+      <url>http://duracloud.org/???/repo</url>
     </pluginRepository>
     -->
   </pluginRepositories>

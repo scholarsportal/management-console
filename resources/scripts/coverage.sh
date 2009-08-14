@@ -24,7 +24,7 @@ echo ""
 echo "================="
 echo "Running Clover..."
 echo "================="
-$M2_HOME/bin/mvn clover2:instrument clover2:aggregate clover2:clover -P profile-clover -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB
+$M2_HOME/bin/mvn clover2:instrument clover2:aggregate clover2:clover -P profile-clover -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duracloud-home/derby/duracloudDB
 
 if [ $? -ne 0 ]; then
   echo ""

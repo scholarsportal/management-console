@@ -11,8 +11,8 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.duracloud.servicesutil.beans.ComputeServiceBean;
 import org.duracloud.servicesutil.util.ServiceSerializer;
 import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
-import org.duraspace.common.web.RestHttpHelper;
-import org.duraspace.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

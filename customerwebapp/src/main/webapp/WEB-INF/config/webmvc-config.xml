@@ -24,23 +24,23 @@
   </bean>
 
   <!-- Request Controllers - processes request -->
-  <bean id="spacesController" class="org.duraspace.customerwebapp.control.SpacesController">
+  <bean id="spacesController" class="org.duracloud.customerwebapp.control.SpacesController">
     <property name="successView" value="spaces" />
   </bean>
 
-  <bean id="contentsController" class="org.duraspace.customerwebapp.control.ContentsController">
+  <bean id="contentsController" class="org.duracloud.customerwebapp.control.ContentsController">
     <property name="successView" value="contents" />
   </bean>
   
-  <bean id="removeContentController" class="org.duraspace.customerwebapp.control.RemoveContentController">
+  <bean id="removeContentController" class="org.duracloud.customerwebapp.control.RemoveContentController">
     <property name="successView" value="contents" />
   </bean>
   
-  <bean id="addContentController" class="org.duraspace.customerwebapp.control.AddContentController">
+  <bean id="addContentController" class="org.duracloud.customerwebapp.control.AddContentController">
     <property name="successView" value="contents" />
   </bean>    
 
-  <bean id="contentController" class="org.duraspace.customerwebapp.control.ContentController">
+  <bean id="contentController" class="org.duracloud.customerwebapp.control.ContentController">
     <property name="successView" value="content" />  
   </bean>
   
@@ -53,7 +53,7 @@
     <property name="suffix" value=".jsp"></property>
   </bean>
 
-  <bean id="exceptionResolver" class="org.duraspace.customerwebapp.common.SimpleExceptionResolver">
+  <bean id="exceptionResolver" class="org.duracloud.customerwebapp.common.SimpleExceptionResolver">
     <property name="exceptionMappings">
       <props>
         <prop key="java.lang.Exception">error</prop>
@@ -63,11 +63,11 @@
   </bean>
   
   <!-- Domain Beans -->
-  <bean id="storageProviderFactory" class="org.duraspace.customerwebapp.util.StorageProviderFactory">
+  <bean id="storageProviderFactory" class="org.duracloud.customerwebapp.util.StorageProviderFactory">
     <property name="statelessProvider" ref="statelessStoragePvdr"/>
   </bean>
   
-  <bean id="statelessStoragePvdr" class="org.duraspace.storage.provider.StatelessStorageProviderImpl"/>
+  <bean id="statelessStoragePvdr" class="org.duracloud.storage.provider.StatelessStorageProviderImpl"/>
 
   <!-- Enables plain Controllers -->
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />

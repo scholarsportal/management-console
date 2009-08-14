@@ -82,7 +82,7 @@
               <systemProperties>
                 <property>
                   <name>felix.fileinstall.dir</name>
-                  <value>${duraspace.home}/osgi-bundles</value>
+                  <value>${duracloud.home}/osgi-bundles</value>
                 </property>
               </systemProperties>
             </configuration>
@@ -176,7 +176,7 @@
   
     <!-- internal projects -->
     <dependency>
-      <groupId>org.duraspace</groupId>
+      <groupId>org.duracloud</groupId>
       <artifactId>common</artifactId>
       <version>1.0.0</version>
     </dependency>

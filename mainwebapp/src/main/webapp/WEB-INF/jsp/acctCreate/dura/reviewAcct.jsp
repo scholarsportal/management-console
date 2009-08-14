@@ -22,14 +22,14 @@ td.italic {
 
 <table>
 	<tr>
-		<td>DuraSpace account name:</td>
+		<td>DuraCloud account name:</td>
 		<td class="italic"><input type="text" readonly
 			value="${wrapper.duraAcctName}" /></td>
 	</tr>
 	<tr />
 	<tr />
 	<tr>
-		<td>DuraSpace account username:</td>
+		<td>DuraCloud account username:</td>
 		<td><input type="text" readonly id="username"
 			value="${wrapper.duraCred.username}" /></td>
 	</tr>

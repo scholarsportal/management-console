@@ -21,8 +21,8 @@ public class AbstractServicesAdminOSGiTestBase
                 "org.duracloud.services, servicesutil, 1.0.0",
                 "org.duracloud.services, computeservice, 1.0.0",
                 "org.duracloud.services, replicationservice, 1.0.0",
-                "org.duraspace, javaclient, 1.0.0",
-                "org.duraspace, storageprovider, 1.0.0",
+                "org.duracloud, javaclient, 1.0.0",
+                "org.duracloud, storageprovider, 1.0.0",
 
                 "commons-lang, commons-lang, 2.4",
                 "org.jdom, com.springsource.org.jdom, 1.0.0",
@@ -42,7 +42,7 @@ public class AbstractServicesAdminOSGiTestBase
                 "org.springframework.osgi, catalina.start.osgi, 1.0.0",
                 "org.duracloud.services, tomcatconfig, 1.0.0",
 
-                "org.duraspace, common, 1.0.0",
+                "org.duracloud, common, 1.0.0",
                 "com.thoughtworks.xstream, com.springsource.com.thoughtworks.xstream, 1.3.0",
                 "javax.xml.stream, com.springsource.javax.xml.stream, 1.0.1",
                 "org.xmlpull, com.springsource.org.xmlpull, 1.1.3.4-O",

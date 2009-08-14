@@ -1,15 +1,14 @@
-
 package org.duracloud.services.replication;
 
 import java.io.InputStream;
 
 import java.util.Map;
 
-import org.duraspace.client.ContentStore;
-import org.duraspace.client.ContentStoreManager;
-import org.duraspace.domain.Content;
-import org.duraspace.domain.Space;
-import org.duraspace.storage.domain.StorageException;
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreManager;
+import org.duracloud.domain.Content;
+import org.duracloud.domain.Space;
+import org.duracloud.storage.domain.StorageException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

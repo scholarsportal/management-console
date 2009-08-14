@@ -1,4 +1,3 @@
-
 package org.duracloud.services.replication;
 
 import javax.jms.Destination;

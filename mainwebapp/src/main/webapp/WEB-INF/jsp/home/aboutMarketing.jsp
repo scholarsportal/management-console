@@ -3,11 +3,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>About DuraSpace</title>
+<title>About DuraCloud</title>
 </head>
 <body>
 
-	<h5>...about DuraSpace.</h5>
+	<h5>...about DuraCloud.</h5>
 
 </body>
 </html>

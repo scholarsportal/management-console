@@ -20,14 +20,14 @@
     <flow:location path="/WEB-INF/config/flows/**/*-flow.xml" />
   </flow:registry>
   
-  <bean id="duraAcctInputController" class="org.duraspace.mainwebapp.control.DuraAcctInputController">
+  <bean id="duraAcctInputController" class="org.duracloud.mainwebapp.control.DuraAcctInputController">
     <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr"/>
     <property name="credentialManager" ref="credentialMgr"/>
   </bean>
     
-  <bean id="userInfoInputController" class="org.duraspace.mainwebapp.control.UserInfoInputController"/>
+  <bean id="userInfoInputController" class="org.duracloud.mainwebapp.control.UserInfoInputController"/>
     
-  <bean id="saveDuraAcctController" class="org.duraspace.mainwebapp.control.SaveDuraAcctController">
+  <bean id="saveDuraAcctController" class="org.duracloud.mainwebapp.control.SaveDuraAcctController">
     <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
   </bean>
 

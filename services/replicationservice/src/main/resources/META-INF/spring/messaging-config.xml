@@ -10,7 +10,7 @@
   </bean>
    
   <bean id="ingestDestination" class="org.apache.activemq.command.ActiveMQTopic">
-    <constructor-arg value="org.duraspace.topic.ingest" />
+    <constructor-arg value="org.duracloud.topic.ingest" />
   </bean>
   
   <!-- 

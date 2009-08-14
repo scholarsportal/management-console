@@ -8,7 +8,7 @@
   <!-- The master configuration file for this Spring web application -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/config/duraspace-app-config.xml</param-value>
+    <param-value>/WEB-INF/config/duracloud-app-config.xml</param-value>
   </context-param>
 
   <!-- Loads the Spring web application context -->

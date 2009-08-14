@@ -1,4 +1,4 @@
-<org.duraspace.ec2serviceprovider.mgmt.EC2ServiceProviderProperties>
+<org.duracloud.ec2serviceprovider.mgmt.EC2ServiceProviderProperties>
   <provider>amazon-ec2</provider>
   <signatureMethod>HmacSHA1</signatureMethod>
   <keyname>awoods-keypair</keyname>
@@ -9,4 +9,4 @@
   <webappProtocol>http</webappProtocol>
   <webappPort>8080</webappPort>
   <webappName>/instancewebapp</webappName>
-</org.duraspace.ec2serviceprovider.mgmt.EC2ServiceProviderProperties>
+</org.duracloud.ec2serviceprovider.mgmt.EC2ServiceProviderProperties>

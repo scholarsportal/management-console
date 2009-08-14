@@ -26,12 +26,12 @@
   <dependencies>
       <!-- internal projects -->
     <dependency>
-      <groupId>org.duraspace</groupId>
+      <groupId>org.duracloud</groupId>
       <artifactId>storageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>org.duraspace</groupId>
+      <groupId>org.duracloud</groupId>
       <artifactId>javaclient</artifactId>
       <version>1.0.0</version>
     </dependency>

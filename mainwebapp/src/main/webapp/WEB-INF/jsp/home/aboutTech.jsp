@@ -7,7 +7,7 @@
 </head>
 <body>
 
-	<h5>...technical under-pinnings of DuraSpace</h5>
+	<h5>...technical under-pinnings of DuraCloud</h5>
 
 
 </body>
