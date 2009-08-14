@@ -110,7 +110,7 @@ tomcat    [][S75][S75][S75][S75][   ][   ][]
 ####
 :: verification ::
 ####
-:#svn co https://www.fedora-commons.org/svn/duraspace/trunk junk
+:#svn co https://www.fedora-commons.org/svn/duracloud/trunk junk
 :select (p)ermanent
 :run through mvn commands in /etc/init.d/duracloud
 :need to mount database (see /etc/init.d/ebs)
