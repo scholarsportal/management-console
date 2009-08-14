@@ -40,8 +40,7 @@ mvn dependency:sources
 The mainwebapp requires account information stored in an underlying database.
 Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
 >Run the following java-app: org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil <location-of-new-DB>
-
-To ensure that the classpath is setup properly, it is probably easiest to run this from within eclipse.
+To ensure that the classpath is setup properly, either run this from within eclipse or use the script: resources/scripts/mainDBUtil.sh.
 
 >Now the mainwebapp needs to know where this newly created database is.
  Spring injects the dataSource which it receives with a jndi lookup from the container.
