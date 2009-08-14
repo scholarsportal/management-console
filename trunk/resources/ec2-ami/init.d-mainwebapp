@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# duraspace    
+# duracloud    
 #
 # chkconfig: 
 # description: Startup of mainwebapp, assuming tomcat is already running.     
@@ -12,16 +12,16 @@ case "$1" in
  start)
         if [ 1 ];
           then
-            echo $"Starting DuraSpace.org"
-            cd /opt/duraspace
+            echo $"Starting DuraCloud.org"
+            cd /opt/duracloud
             /bin/su tomcat -c "mvn -P profile-bootstrap scm:bootstrap"
-            cd /opt/duraspace/target/checkout
+            cd /opt/duracloud/target/checkout
             /bin/su tomcat -c "./resources/scripts/installLibs.sh"
-            /bin/su tomcat -c "mvn install -Dmaven.test.skip=true -Ddatabase.home.default=/mnt/db/duraspaceDB"
-            cd /opt/duraspace/target/checkout/customerwebapp
+            /bin/su tomcat -c "mvn install -Dmaven.test.skip=true -Ddatabase.home.default=/mnt/db/duracloudDB"
+            cd /opt/duracloud/target/checkout/customerwebapp
             /bin/su tomcat -c "mvn tomcat:undeploy -Dmaven.tomcat.server=tomcat-server"
 
-            cd /opt/duraspace/target/checkout/duradavwebapp
+            cd /opt/duracloud/target/checkout/duradavwebapp
             /bin/su tomcat -c "mvn tomcat:undeploy -Dmaven.tomcat.server=tomcat-server"
             
         fi

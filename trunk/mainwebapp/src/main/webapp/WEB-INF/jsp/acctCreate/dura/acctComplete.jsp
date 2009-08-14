@@ -9,7 +9,7 @@
 
 <form method="post" action="home.htm">
 
-<h2>DuraSpace Account Successfully Created.</h2>
+<h2>DuraCloud Account Successfully Created.</h2>
 <br />
 <p>Congratulations, your account <b><c:out
 	value="${wrapper.duraAcctName}" /></b> has been created.</p>

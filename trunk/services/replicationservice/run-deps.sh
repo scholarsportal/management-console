@@ -6,8 +6,8 @@ pax-import-bundle -g org.springframework.osgi -a spring-osgi-extender -v 1.2.0
 pax-import-bundle -g org.springframework.osgi -a spring-osgi-io -v 1.2.0
 
 # - DuraCloud -
-pax-import-bundle -g org.duraspace -a storageprovider -v 1.0.0 -- -DimportTransitive -DwidenScope
-pax-import-bundle -g org.duraspace -a javaclient -v 1.0.0 -- -DimportTransitive -DwidenScope
+pax-import-bundle -g org.duracloud -a storageprovider -v 1.0.0 -- -DimportTransitive -DwidenScope
+pax-import-bundle -g org.duracloud -a javaclient -v 1.0.0 -- -DimportTransitive -DwidenScope
 
 # - Other -
 pax-import-bundle -g org.apache.activemq -a com.springsource.org.apache.activemq -v 5.2.0 -- -DimportTransitive -DwidenScope

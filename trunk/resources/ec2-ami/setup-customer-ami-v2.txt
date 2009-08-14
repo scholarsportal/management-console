@@ -19,13 +19,13 @@ Note: This set-up starts from an instance of the mainwebapp ami.
 :: init.d setup ::
 ####
 :#rm /etc/init.d/ebs
-:paste init.d-customerwebapp as /etc/init.d/duraspace
+:paste init.d-customerwebapp as /etc/init.d/duracloud
 
 
 ####
 :: verification ::
 ####
-:run through mvn commands in /etc/init.d/duraspace
+:run through mvn commands in /etc/init.d/duracloud
 
 :locally, connect to [ec2-instance-url]:8080/customerwebapp
 
@@ -35,7 +35,7 @@ Note: This set-up starts from an instance of the mainwebapp ami.
 
 :#rm -rf /home/tomcat/logs
 
-:#cd /opt/duraspace
+:#cd /opt/duracloud
 :#mvn clean
 
 ####

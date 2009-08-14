@@ -25,7 +25,7 @@
     <property name="rester" ref="restHelper" />
   </bean>
   
-  <bean id="restHelper" class="org.duraspace.common.web.RestHttpHelper" />
+  <bean id="restHelper" class="org.duracloud.common.web.RestHttpHelper" />
   
 
   <!-- Properties config -->

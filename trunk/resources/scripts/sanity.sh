@@ -30,7 +30,7 @@ echo ""
 echo "==================================="
 echo "Compiling & running unit & integration tests..."
 echo "==================================="
-$M2_HOME/bin/mvn clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duraspace-home/derby/duraspaceDB -Dlog.level.default=DEBUG
+$M2_HOME/bin/mvn clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duracloud-home/derby/duracloudDB -Dlog.level.default=DEBUG
 
 if [ $? -ne 0 ]; then
   echo ""

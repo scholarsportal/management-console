@@ -13,7 +13,7 @@
 <h2>Step 1 of 3: Create Account</h2>
 <br />
 <br />
-<p>Please provide a name for your DuraSpace account:</p>
+<p>Please provide a name for your DuraCloud account:</p>
 <input type="text" name="acctName" /><br />
 <br />
 <br />

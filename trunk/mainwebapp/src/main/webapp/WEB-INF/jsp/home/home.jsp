@@ -4,10 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>Duraspace - home</title>
+<title>DuraCloud - home</title>
 </head>
 <body>
-<h1>Welcome to DuraSpace</h1>
+<h1>Welcome to DuraCloud</h1>
 
 <table>
 	<tr>
@@ -16,7 +16,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td><a href="aboutMarketing.htm">About DuraSpace</a></td>
+		<td><a href="aboutMarketing.htm">About DuraCloud</a></td>
 	</tr>
 	<tr>
 		<td><a href="aboutTech.htm">About - Technical</a></td>

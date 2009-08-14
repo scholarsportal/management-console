@@ -6,7 +6,7 @@
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   
   <!-- AOP - Advice -->
-  <bean id="ingestAdvice" class="org.duraspace.customerwebapp.aop.IngestAdvice" >
+  <bean id="ingestAdvice" class="org.duracloud.customerwebapp.aop.IngestAdvice" >
     <property name="jmsTemplate" ref="jmsTemplate" />
     <property name="destination" ref="ingestDestination" />
   </bean>

@@ -7,7 +7,7 @@
  
   <!-- AOP - Advice -->
   
-  <bean id="loggingAdvice" class="org.duraspace.computeprovider.aop.LoggingAdvice">
+  <bean id="loggingAdvice" class="org.duracloud.computeprovider.aop.LoggingAdvice">
   </bean>
   
   <bean id="loggingAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
@@ -18,7 +18,7 @@
   <bean id="userMgr" class="org.springframework.aop.framework.ProxyFactoryBean">
     <property name="target" ref="userMgrTarget"/>
     <property name="interceptorNames" value="loggingAdvisor"/>
-    <property name="proxyInterfaces" value="org.duraspace.mainwebapp.mgmt.UserManager"/>
+    <property name="proxyInterfaces" value="org.duracloud.mainwebapp.mgmt.UserManager"/>
   </bean>
   --> 
   

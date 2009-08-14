@@ -36,7 +36,7 @@
   </bean>
 
 
-  <bean id="exceptionResolver" class="org.duraspace.mainwebapp.control.DuraHandlerExceptionResolver">
+  <bean id="exceptionResolver" class="org.duracloud.mainwebapp.control.DuraHandlerExceptionResolver">
     <property name="exceptionMappings">
       <props>
         <prop key="java.lang.Exception">error</prop>
@@ -45,37 +45,37 @@
     <property name="order" value="2" />
   </bean>
 
-  <bean id="homeController" class="org.duraspace.mainwebapp.control.SubDirController">
+  <bean id="homeController" class="org.duracloud.mainwebapp.control.SubDirController">
     <property name="prefix" value="/home/" />
   </bean>
 
-  <bean id="loginController" class="org.duraspace.mainwebapp.control.LoginController">
-    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+  <bean id="loginController" class="org.duracloud.mainwebapp.control.LoginController">
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
     <property name="formView" value="/acctUpdate/login" />
     <property name="successView" value="/acctUpdate/acctStatus" />
   </bean>
   
-<!--  <bean id="acctStatusController" class="org.duraspace.mainwebapp.control.AcctStatusController" >-->
-<!--    <property name="duraAcctManager" ref="duraSpaceAcctMgr" />-->
+<!--  <bean id="acctStatusController" class="org.duracloud.mainwebapp.control.AcctStatusController" >-->
+<!--    <property name="duraAcctManager" ref="duraCloudAcctMgr" />-->
 <!--  </bean>-->
 
-  <bean id="computeStatusController" class="org.duraspace.mainwebapp.control.ComputeStatusController" >
+  <bean id="computeStatusController" class="org.duracloud.mainwebapp.control.ComputeStatusController" >
     <property name="computeManager" ref="computeAcctMgr" />
   </bean>
 
-  <bean id="storageStatusController" class="org.duraspace.mainwebapp.control.StorageStatusController" >
+  <bean id="storageStatusController" class="org.duracloud.mainwebapp.control.StorageStatusController" >
     <property name="storageManager" ref="storageAcctMgr" />
   </bean>
   
-  <bean id="computeCreateController" class="org.duraspace.mainwebapp.control.ComputeCreateController" >
-    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+  <bean id="computeCreateController" class="org.duracloud.mainwebapp.control.ComputeCreateController" >
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
     <property name="computeAcctManager" ref="computeAcctMgr" />
     <property name="formView" value="/acctCreate/provider/inputComputeAcctInfo" />
     <property name="successView" value="/acctUpdate/acctStatus" />
   </bean>
   
-  <bean id="storageCreateController" class="org.duraspace.mainwebapp.control.StorageCreateController" >
-    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+  <bean id="storageCreateController" class="org.duracloud.mainwebapp.control.StorageCreateController" >
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
     <property name="storageAcctManager" ref="storageAcctMgr" />
     <property name="formView" value="/acctCreate/provider/inputStorageAcctInfo" />
     <property name="successView" value="/acctUpdate/acctStatus" />
@@ -92,47 +92,47 @@
 
   <!-- domain beans --> 
   
-  <bean id="credentialMgr" class="org.duraspace.mainwebapp.mgmt.CredentialManagerImpl">
+  <bean id="credentialMgr" class="org.duracloud.mainwebapp.mgmt.CredentialManagerImpl">
     <property name="credentialRepository" ref="credentialRepo" />
     <property name="authorityRepository" ref="authorityRepo" />
   </bean>
  
-  <bean id="computeAcctMgr" class="org.duraspace.mainwebapp.mgmt.ComputeAcctManagerImpl">
+  <bean id="computeAcctMgr" class="org.duracloud.mainwebapp.mgmt.ComputeAcctManagerImpl">
     <property name="computeAcctRepository" ref="computeAcctRepo" />
     <property name="computeProviderRepository" ref="computeProviderRepo" />
     <property name="credentialManager" ref="credentialMgr" />
   </bean>
     
-  <bean id="storageAcctMgr" class="org.duraspace.mainwebapp.mgmt.StorageAcctManagerImpl">
+  <bean id="storageAcctMgr" class="org.duracloud.mainwebapp.mgmt.StorageAcctManagerImpl">
     <property name="storageAcctRepository" ref="storageAcctRepo" />
     <property name="storageProviderRepository" ref="storageProviderRepo" /> 
     <property name="credentialManager" ref="credentialMgr" />
   </bean>
   
-  <bean id="duraSpaceAcctMgr" class="org.duraspace.mainwebapp.mgmt.DuraSpaceAcctManagerImpl">
+  <bean id="duraCloudAcctMgr" class="org.duracloud.mainwebapp.mgmt.DuraCloudAcctManagerImpl">
     <property name="computeAcctManager" ref="computeAcctMgr" />
     <property name="storageAcctManager" ref="storageAcctMgr" />
-    <property name="duraSpaceAcctRepository" ref="duraSpaceAcctRepo" />
+    <property name="duraCloudAcctRepository" ref="duraCloudAcctRepo" />
     <property name="userManager" ref="userMgr" />
   </bean>
   
-  <bean id="userMgr" class="org.duraspace.mainwebapp.mgmt.UserManagerImpl">
+  <bean id="userMgr" class="org.duracloud.mainwebapp.mgmt.UserManagerImpl">
     <property name="userRepository" ref="userRepo" />
     <property name="addressRepository" ref="addressRepo" />
     <property name="credentialManager" ref="credentialMgr" />
   </bean>
   
-  <bean id="computeProviderFactory" class="org.duraspace.computeprovider.mgmt.ComputeProviderFactory">
+  <bean id="computeProviderFactory" class="org.duracloud.computeprovider.mgmt.ComputeProviderFactory">
     <property name="idToClassMap">
       <map>
-        <entry key="amazon-ec2" value="org.duraspace.ec2typicacomputeprovider.mgmt.EC2ComputeProvider" />
-        <entry key="local" value="org.duraspace.computeprovider.mgmt.mock.LocalComputeProviderImpl" />
+        <entry key="amazon-ec2" value="org.duracloud.ec2typicacomputeprovider.mgmt.EC2ComputeProvider" />
+        <entry key="local" value="org.duracloud.computeprovider.mgmt.mock.LocalComputeProviderImpl" />
       </map>
     </property>
   </bean>
   
-  <bean id="dbLoader" class="org.duraspace.mainwebapp.domain.repo.db.MainDatabaseLoader">
-    <property name="duraSpaceAcctManager" ref="duraSpaceAcctMgr" />
+  <bean id="dbLoader" class="org.duracloud.mainwebapp.domain.repo.db.MainDatabaseLoader">
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
     <property name="computeProviderRepository" ref="computeProviderRepo" />
     <property name="storageProviderRepository" ref="storageProviderRepo" />
   </bean>
