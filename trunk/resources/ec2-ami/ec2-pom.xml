@@ -224,7 +224,7 @@
   </pluginRepositories>
 
   <scm>
-    <connection>scm:svn:https://www.fedora-commons.org/svn/duraspace/trunk</connection>
+    <connection>scm:svn:https://www.fedora-commons.org/svn/duracloud/trunk</connection>
   </scm>
 
 
