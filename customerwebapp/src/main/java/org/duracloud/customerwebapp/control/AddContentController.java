@@ -1,7 +1,6 @@
 package org.duracloud.customerwebapp.control;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -49,11 +48,6 @@ public class AddContentController extends SimpleFormController {
                 contentId = file.getOriginalFilename();
             }
 
-            String contentName = content.getContentName();
-            if(contentName == null || contentName.equals("")){
-                contentName = file.getOriginalFilename();
-            }
-
             String contentMime = content.getContentMimetype();
             if(contentMime == null || contentMime.equals("")) {
                 contentMime = file.getContentType();
@@ -64,10 +58,6 @@ public class AddContentController extends SimpleFormController {
                                contentMime,
                                file.getSize(),
                                file.getInputStream());
-
-            Map<String, String> contentMetadata = storage.getContentMetadata(spaceId, contentId);
-            contentMetadata.put(StorageProvider.METADATA_CONTENT_NAME, contentName);
-            storage.setContentMetadata(spaceId, contentId, contentMetadata);
         }
 
         // Create a Space for the view

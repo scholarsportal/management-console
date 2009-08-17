@@ -50,16 +50,15 @@ public class SunStorageProviderTest {
 
     private static String SPACE_ID = null;
     private static final String CONTENT_ID = "duracloud-test-content";
-    private static final String SPACE_META_NAME = StorageProvider.METADATA_SPACE_NAME;
+    private static final String SPACE_META_NAME = "custom-space-metadata";
     private static final String SPACE_META_VALUE = "Testing Space";
-    private static final String CONTENT_META_NAME = StorageProvider.METADATA_CONTENT_NAME;
+    private static final String CONTENT_META_NAME = "custom-content-metadata";
     private static final String CONTENT_META_VALUE = "Testing Content";
     private static final String CONTENT_MIME_NAME = StorageProvider.METADATA_CONTENT_MIMETYPE;
     private static final String CONTENT_MIME_VALUE = "text/plain";
     private static final String CONTENT_SUBJECT_NAME = "content-subject";
     private static final String CONTENT_SUBJECT_VALUE = "Storage System Testing";
     private static final String CONTENT_DATA = "Test Content";
-    private static final String CONTENT_MOD_NAME = StorageProvider.METADATA_CONTENT_MODIFIED;
 
     @Before
     public void setUp() throws Exception {
@@ -108,6 +107,14 @@ public class SunStorageProviderTest {
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
         Map<String, String> sMetadata = sunProvider.getSpaceMetadata(SPACE_ID);
+
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_COUNT));
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS));
+
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
     }
@@ -168,8 +175,10 @@ public class SunStorageProviderTest {
         Map<String, String> cMetadata =
                 sunProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
-        assertEquals(CONTENT_ID, cMetadata.get(CONTENT_META_NAME));
         assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_MODIFIED));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_SIZE));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_CHECKSUM));
 
         // TODO: Test access control when it becomes available
 
@@ -218,7 +227,7 @@ public class SunStorageProviderTest {
         // so it should have been reset to a default value
         assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
         // Make sure date is in RFC-822 format
-        String lastModified = cMetadata.get(CONTENT_MOD_NAME);
+        String lastModified = cMetadata.get(StorageProvider.METADATA_CONTENT_MODIFIED);
         StorageProvider.RFC822_DATE_FORMAT.parse(lastModified);
 
         // test deleteContent()

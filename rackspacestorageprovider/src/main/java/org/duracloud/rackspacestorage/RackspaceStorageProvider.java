@@ -137,7 +137,6 @@ public class RackspaceStorageProvider implements StorageProvider {
                 Map<String, String> spaceMetadata = new HashMap<String, String>();
                 Date created = new Date(System.currentTimeMillis());
                 spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
-                spaceMetadata.put(METADATA_SPACE_NAME, containerName);
                 setSpaceMetadata(containerName, spaceMetadata);
             }
         } catch(Exception e) {
@@ -285,7 +284,6 @@ public class RackspaceStorageProvider implements StorageProvider {
         try {
             checkContainerExists(spaceId);
             Map<String, String> metadata = new HashMap<String, String>();
-            metadata.put(METADATA_CONTENT_NAME, contentId);
             metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
             // TODO: Determine how to set Rackspace object mimetype.
 
@@ -363,11 +361,6 @@ public class RackspaceStorageProvider implements StorageProvider {
         contentMetadata.remove(METADATA_CONTENT_SIZE);
 
         String containerName = getContainerName(spaceId);
-
-        // Set name to contentId if it is not set already
-        if(!contentMetadata.containsKey(METADATA_CONTENT_NAME)) {
-            contentMetadata.put(METADATA_CONTENT_NAME, contentId);
-        }
 
         // Set a default mime type value if one is not set
         if(!contentMetadata.containsKey(METADATA_CONTENT_MIMETYPE)) {

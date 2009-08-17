@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="style/main.css" />
-    <title>DuraSpace Space Listing</title>
+    <title>DuraCloud Space Listing</title>
   </head>
   
   <body>
@@ -23,10 +23,6 @@
             <th><c:out value="${space.spaceId}" /></th>
           </tr>
           <tr>
-            <td>Name</td>
-            <td><c:out value="${space.metadata.name}" /></td>
-          </tr>
-          <tr>
             <td>Access Setting</td>
             <td><c:out value="${space.metadata.access}" /></td>
           </tr>
@@ -41,13 +37,7 @@
         </table>
         <form action="contents.htm" method="get">
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <input type='submit' value="List contents of <c:out value="${space.metadata.name}"/>" />
-        </form>
-        <form action="spaces.htm" method="post">
-          <input type="hidden" name="action" value="update-name" />
-          <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <input type="text" name="name" value="<c:out value="${space.metadata.name}"/>" />
-          <input type='submit' value="Update Name" />
+          <input type='submit' value="List contents of <c:out value="${space.spaceId}"/>" />
         </form>
         <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="update-access" />
@@ -66,7 +56,7 @@
         <form action="spaces.htm" method="post">
           <input type="hidden" name="action" value="delete" />
           <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <input type='submit' value="Delete <c:out value="${space.metadata.name}"/>" />
+          <input type='submit' value="Delete <c:out value="${space.spaceId}"/>" />
         </form>
       </div>
     </c:forEach>
@@ -79,10 +69,6 @@
         <p>
           <label for="spaceId">Space ID</label>
           <input type="text" id="spaceId" name="spaceId" />
-        </p>
-        <p>
-          <label for="name">Space Name</label>          
-          <input type="text" id="name" name="name" />
         </p>
         <p>
           <label for="access">Space Access</label> 

@@ -1,7 +1,6 @@
 package org.duracloud.customerwebapp.control;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -73,12 +72,6 @@ public class SpacesController extends SimpleFormController {
                             storage.setSpaceAccess(spaceId, AccessType.CLOSED);
                         }
                     }
-                    String name = space.getName();
-                    if(name != null) {
-                        Map<String, String> spaceProperties = storage.getSpaceMetadata(spaceId);
-                        spaceProperties.put(StorageProvider.METADATA_SPACE_NAME, name);
-                        storage.setSpaceMetadata(spaceId, spaceProperties);
-                    }
                 }
             // Delete Space
             } else if(action.equals("delete")) {
@@ -95,15 +88,6 @@ public class SpacesController extends SimpleFormController {
                               oldAccess.equals(AccessType.CLOSED)) {
                         storage.setSpaceAccess(spaceId, AccessType.OPEN);
                     }
-                }
-            // Update Space Name
-            } else if(action.equals("update-name")) {
-                String newName = space.getName();
-                Map<String, String> spaceProperties = storage.getSpaceMetadata(spaceId);
-                String oldName = spaceProperties.get(StorageProvider.METADATA_SPACE_NAME);
-                if(newName != null && !newName.equals(oldName)) {
-                  spaceProperties.put(StorageProvider.METADATA_SPACE_NAME, newName);
-                  storage.setSpaceMetadata(spaceId, spaceProperties);
                 }
             }
         }

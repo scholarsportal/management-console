@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>org.duracloud.services.replicationservice [1.0.0]</name>
+  <name>replicationservice</name>
   <comment>Generated using Pax-Construct</comment>
   <projects/>
   <buildSpec>

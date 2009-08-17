@@ -31,8 +31,6 @@ public class TestContentRest
 
     private static final String CONTENT = "<content />";
 
-    private final String nameHeader = BaseRest.CONTENT_NAME_HEADER;
-
     private static String spaceId;
 
     static {
@@ -105,7 +103,6 @@ public class TestContentRest
         HttpResponse response = restHelper.head(url);
         assertTrue(response.getStatusCode() == 200);
 
-        testMetadata(response, nameHeader, "content1");
         testMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
         String contentType =
@@ -135,8 +132,6 @@ public class TestContentRest
     public void testUpdateContentMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId + "/content1";
         Map<String, String> headers = new HashMap<String, String>();
-        String newContentName = "Test Content";
-        headers.put(nameHeader, newContentName);
         String newContentMime = "text/plain";
         headers.put(HttpHeaders.CONTENT_TYPE, newContentMime);
         String newMetaName = BaseRest.HEADER_PREFIX + "new-metadata";
@@ -156,7 +151,6 @@ public class TestContentRest
 
         assertTrue(response.getStatusCode() == 200);
 
-        testMetadata(response, nameHeader, newContentName);
         testMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
         testMetadata(response, newMetaName, newMetaValue);
     }

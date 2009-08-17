@@ -56,9 +56,9 @@ public class RackspaceStorageProviderTest {
 
     private static String SPACE_ID = null;
     private static final String CONTENT_ID = "duracloud-test-content";
-    private static final String SPACE_META_NAME = StorageProvider.METADATA_SPACE_NAME;
+    private static final String SPACE_META_NAME = "custom-space-metadata";
     private static final String SPACE_META_VALUE = "Testing Space";
-    private static final String CONTENT_META_NAME = StorageProvider.METADATA_CONTENT_NAME;
+    private static final String CONTENT_META_NAME = "custom-content-metadata";
     private static final String CONTENT_META_VALUE = "Testing Content";
     private static final String CONTENT_MIME_NAME = StorageProvider.METADATA_CONTENT_MIMETYPE;
     private static final String CONTENT_MIME_VALUE = "text/plain";
@@ -108,6 +108,15 @@ public class RackspaceStorageProviderTest {
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
         Map<String, String> sMetadata = rackspaceProvider.getSpaceMetadata(SPACE_ID);
+
+        // TODO: Determine if there is a way to get Last-Modified from Rackspace container
+        //assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_COUNT));
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
+        //assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS));
+
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
 
@@ -173,10 +182,10 @@ public class RackspaceStorageProviderTest {
         Map<String, String> cMetadata =
                 rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
-        // TODO: Determine how to handle metadata name case change (content-name becomes Content-Name)
-        //        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
-        assertEquals(CONTENT_ID, cMetadata.get("Content-Name"));
         assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_MODIFIED));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_SIZE));
+        assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_CHECKSUM));
 
         // Check content access
         log.debug("Check content access");
@@ -229,9 +238,9 @@ public class RackspaceStorageProviderTest {
         log.debug("Test getContentMetadata()");
         cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
-        // TODO: Determine how to handle metadata name case change (content-name becomes Content-Name)
-        //        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
-        assertEquals(CONTENT_META_VALUE, cMetadata.get("Content-Name"));
+        // TODO: Determine how to handle metadata name case change (metadata-name becomes Metadata-Name)
+        //assertEquals(CONTENT_META_VALUE, CONTENT_META_NAME);
+
         // Mime type was not included when setting content metadata
         // so it should have been reset to a default value
         assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));

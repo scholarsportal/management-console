@@ -140,8 +140,6 @@ public class EMCStorageProvider
     private String getContentNameForContentObject(Identifier objId)
             throws StorageException {
         MetadataTags tags = new MetadataTags();
-        tags.addTag(contentNameTag());
-
         String name = null;
         try {
             // There should only be one 'content-name-tag'.
@@ -197,10 +195,6 @@ public class EMCStorageProvider
     private MetadataList createRequiredRootMetadata(String spaceId) {
         MetadataList metadataList = new MetadataList();
         metadataList.addMetadata(new Metadata(SPACE_ROOT_TAG_NAME,
-                                              spaceId,
-                                              true));
-
-        metadataList.addMetadata(new Metadata(METADATA_SPACE_NAME,
                                               spaceId,
                                               true));
         return metadataList;
@@ -269,7 +263,6 @@ public class EMCStorageProvider
         // Over-write managed metadata.
         spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(rootObjId));
         spaceMetadata.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
-        spaceMetadata.put(METADATA_SPACE_NAME, spaceId);
         spaceMetadata.put(METADATA_SPACE_ACCESS,
                           doGetSpaceAccess(rootObjId).toString());
 
@@ -348,8 +341,7 @@ public class EMCStorageProvider
         MetadataTags tags = new MetadataTags();
         for (MetadataTag tag : existingTags) {
             String tagName = tag.getName();
-            if (!tagName.equals(SPACE_ROOT_TAG_NAME)
-                    && !tagName.equals(METADATA_SPACE_NAME)) {
+            if (!tagName.equals(SPACE_ROOT_TAG_NAME)) {
                 tags.addTag(tag);
             }
         }
@@ -489,13 +481,6 @@ public class EMCStorageProvider
         boolean isIndexed = true;
         MetadataList metadataList = new MetadataList();
         metadataList.addMetadata(new Metadata(spaceId, contentId, isIndexed));
-
-        metadataList.addMetadata(new Metadata(METADATA_CONTENT_NAME,
-                                              contentId,
-                                              isIndexed));
-        metadataList.addMetadata(new Metadata(METADATA_SPACE_NAME,
-                                              spaceId,
-                                              isIndexed));
 
         if (mimeType != null) {
             metadataList.addMetadata(new Metadata(METADATA_CONTENT_MIMETYPE,
@@ -699,10 +684,6 @@ public class EMCStorageProvider
 
     private MetadataTag spaceRootTag() {
         return new MetadataTag(SPACE_ROOT_TAG_NAME, true);
-    }
-
-    private MetadataTag contentNameTag() {
-        return new MetadataTag(METADATA_CONTENT_NAME, true);
     }
 
     private void doThrow(String msg, Exception e) throws StorageException {

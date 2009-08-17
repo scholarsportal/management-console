@@ -7,19 +7,10 @@ package org.duracloud.customerwebapp.domain;
  */
 public class ContentMetadata {
 
-    private String name;
     private String mimetype;
     private String size;
     private String checksum;
     private String modified;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getMimetype() {
         return mimetype;

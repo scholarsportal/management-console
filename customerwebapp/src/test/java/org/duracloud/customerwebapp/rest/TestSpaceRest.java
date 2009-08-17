@@ -77,9 +77,6 @@ public class TestSpaceRest
         assertTrue(response.getStatusCode() == 200);
 
         testMetadata(response,
-                     BaseRest.SPACE_NAME_HEADER,
-                     RestTestHelper.SPACE_NAME);
-        testMetadata(response,
                      BaseRest.SPACE_ACCESS_HEADER,
                      RestTestHelper.SPACE_ACCESS);
         testMetadata(response,
@@ -101,8 +98,6 @@ public class TestSpaceRest
     public void testUpdateSpaceMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId;
         Map<String, String> headers = new HashMap<String, String>();
-        String newSpaceName = "Updated Space Name";
-        headers.put(BaseRest.SPACE_NAME_HEADER, newSpaceName);
         String newSpaceAccess = "CLOSED";
         headers.put(BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         String newSpaceMetadata = "Updated Space Metadata";
@@ -119,7 +114,6 @@ public class TestSpaceRest
         url = baseUrl + "/" + spaceId;
         response = restHelper.head(url);
 
-        testMetadata(response, BaseRest.SPACE_NAME_HEADER, newSpaceName);
         testMetadata(response, BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         testMetadata(response, RestTestHelper.METADATA_NAME, newSpaceMetadata);
     }

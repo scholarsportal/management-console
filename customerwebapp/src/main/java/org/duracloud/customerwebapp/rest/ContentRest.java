@@ -90,18 +90,18 @@ public class ContentRest extends BaseRest {
     private Response addContentMetadataToResponse(ResponseBuilder response,
                                                   Map<String, String> metadata) {
         if(metadata != null) {
+            // Flags that, when set to true, indicate that the
+            // authoritative value for this data has already
+            // been set and should not be overwritten
+            boolean contentTypeSet = false;
+            boolean contentSizeSet = false;
+            boolean contentChecksumSet = false;
+            boolean contentModifiedSet = false;
+
             Iterator<String> metadataNames = metadata.keySet().iterator();
             while(metadataNames.hasNext()) {
                 String metadataName = (String)metadataNames.next();
                 String metadataValue = metadata.get(metadataName);
-
-                // Flags that, when set to true, indicate that the
-                // authoritative value for this data has already
-                // been set and should not be overwritten
-                boolean contentTypeSet = false;
-                boolean contentSizeSet = false;
-                boolean contentChecksumSet = false;
-                boolean contentModifiedSet = false;
 
                 if(metadataName.equals(StorageProvider.METADATA_CONTENT_MIMETYPE)) {
                     response.header(HttpHeaders.CONTENT_TYPE, metadataValue);
@@ -164,11 +164,6 @@ public class ContentRest extends BaseRest {
         try {
             MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
 
-            String contentName = null;
-            if(rHeaders.containsKey(CONTENT_NAME_HEADER)) {
-                contentName = rHeaders.getFirst(CONTENT_NAME_HEADER);
-            }
-
             String contentMimeType = null;
             if(rHeaders.containsKey(CONTENT_MIMETYPE_HEADER)) {
                 contentMimeType = rHeaders.getFirst(CONTENT_MIMETYPE_HEADER);
@@ -177,12 +172,9 @@ public class ContentRest extends BaseRest {
                 contentMimeType = rHeaders.getFirst(HttpHeaders.CONTENT_TYPE);
             }
 
-            Map<String, String> userMetadata =
-                getUserMetadata(CONTENT_NAME_HEADER, CONTENT_MIMETYPE_HEADER);
-
+            Map<String, String> userMetadata = getUserMetadata(CONTENT_MIMETYPE_HEADER);
             ContentResource.updateContentMetadata(spaceID,
                                                   contentID,
-                                                  contentName,
                                                   contentMimeType,
                                                   userMetadata,
                                                   storeID);
