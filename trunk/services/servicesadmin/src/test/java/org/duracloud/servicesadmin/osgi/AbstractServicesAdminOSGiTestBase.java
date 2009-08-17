@@ -68,6 +68,7 @@ public class AbstractServicesAdminOSGiTestBase
                 "org.apache.commons, com.springsource.org.apache.commons.logging, 1.1.1",
                 "org.apache.xmlcommons, com.springsource.org.apache.xmlcommons, 1.3.3",
 
+                "org.apache.felix, org.apache.felix.configadmin, 1.0.10",
                 "org.apache.felix, org.apache.felix.fileinstall, 1.2.0"};
     };
 

@@ -7,34 +7,36 @@ import java.util.List;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.beans.ComputeServiceBean;
 import org.duracloud.servicesutil.client.ServiceUploadClient;
-import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.ServiceSerializer;
 import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestServiceLifecycleFlow
-        extends AbstractServicesAdminOSGiTestBase {
+import junit.framework.Assert;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
+public class ServiceInstallUninstallFlowTester {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private ServiceInstaller installer;
+    private final BundleContext bundleContext;
+
+    //    private ServiceInstaller installer;
 
     private ServiceUploadClient client;
 
     private ServiceSerializer serializer;
 
-    private final String SERVICE_INSTALLER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceInstaller";
-
-    private final String TEST_SERVICE_INTERFACE =
-            "org.duracloud.services.ComputeService";
+    //    private final ComputeService hello;
 
     private final static String TEST_SERVICE = "HelloService";
 
@@ -43,23 +45,25 @@ public class TestServiceLifecycleFlow
 
     private final String BASE_URL = "http://localhost:8089/servicesadmin-1.0.0";
 
-    @Override
-    protected void onSetUp() {
-        try {
-            deleteTestBundle(getBundleHome());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ServiceInstallUninstallFlowTester(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
-    @Override
-    protected void onTearDown() {
-        try {
-            deleteTestBundle(getBundleHome());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    //    protected void setUp() {
+    //        try {
+    //            deleteTestBundle(getBundleHome());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+    //
+    //    protected void tearDown() {
+    //        try {
+    //            deleteTestBundle(getBundleHome());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
 
     public void testNewServiceFlow() throws Exception {
         // Allow tomcat to come up.
@@ -90,20 +94,18 @@ public class TestServiceLifecycleFlow
         verifyTestServiceIsInstalled(false);
     }
 
-    private void installTestBundle() throws Exception {
+    protected void installTestBundle() throws Exception {
         HttpResponse response =
-                getClient().postServiceBundle(getInstallURL(),
-                                              getTestBundleFile());
-        assertNotNull(response);
+                getClient().postServiceBundle(getTestBundleFile());
+        Assert.assertNotNull(response);
 
         int statusCode = response.getStatusCode();
-        assertEquals(HttpURLConnection.HTTP_OK, statusCode);
+        Assert.assertEquals(HttpURLConnection.HTTP_OK, statusCode);
     }
 
     private void uninstallTestBundle() throws Exception {
         HttpResponse response =
-                getClient().deleteServiceBundle(getUninstallURL(),
-                                                TEST_BUNDLE_FILE_NAME);
+                getClient().deleteServiceBundle(TEST_BUNDLE_FILE_NAME);
         assertNotNull(response);
 
         int statusCode = response.getStatusCode();
@@ -111,7 +113,7 @@ public class TestServiceLifecycleFlow
     }
 
     private void verifyTestServiceIsListed(boolean exists) throws Exception {
-        HttpResponse response = getClient().getServiceListing(getListURL());
+        HttpResponse response = getClient().getServiceListing();
         assertNotNull(response);
 
         int statusCode = response.getStatusCode();
@@ -138,7 +140,7 @@ public class TestServiceLifecycleFlow
         ComputeService hello = null;
         try {
             hello =
-                    (ComputeService) getService(TEST_SERVICE_INTERFACE,
+                    (ComputeService) getService(ComputeService.class.getName(),
                                                 "(duraKey=helloVal)");
         } catch (Exception e) {
         }
@@ -151,25 +153,26 @@ public class TestServiceLifecycleFlow
         }
     }
 
-    private String getBundleHome() throws Exception {
-        String home = getInstaller().getBundleHome();
-        assertNotNull(home);
-        log.debug("serviceadmin bundle-home: '" + home + "'");
-        return home;
-    }
-
-    private ServiceInstaller getInstaller() throws Exception {
-        if (installer == null) {
-            installer =
-                    (ServiceInstaller) getService(SERVICE_INSTALLER_INTERFACE);
-        }
-        assertNotNull(installer);
-        return installer;
-    }
-
-    private Object getService(String serviceInterface) throws Exception {
-        return getService(serviceInterface, null);
-    }
+    //    private String getBundleHome() throws Exception {
+    //        String home = getInstaller().getBundleHome();
+    //        assertNotNull(home);
+    //        log.debug("serviceadmin bundle-home: '" + home + "'");
+    //        return home;
+    //    }
+    //
+    //    private ServiceInstaller getInstaller() throws Exception {
+    //        if (installer == null) {
+    //            installer =
+    //                    (ServiceInstaller) getService(ServiceInstaller.class
+    //                            .getName());
+    //        }
+    //        assertNotNull(installer);
+    //        return installer;
+    //    }
+    //
+    //    private Object getService(String serviceInterface) throws Exception {
+    //        return getService(serviceInterface, null);
+    //    }
 
     private Object getService(String serviceInterface, String filter)
             throws Exception {
@@ -191,32 +194,21 @@ public class TestServiceLifecycleFlow
 
     private File getTestBundleFile() {
         File bundle = new File("src/test/resources/" + TEST_BUNDLE_FILE_NAME);
-        assertTrue(bundle.exists());
+        Assert.assertTrue(bundle.exists());
 
         return bundle;
     }
 
-    private void deleteTestBundle(String home) {
-        File file = new File(home + File.separator + TEST_BUNDLE_FILE_NAME);
-        file.delete();
-    }
-
-    private String getInstallURL() {
-        return this.BASE_URL + "/services/install";
-    }
-
-    private String getUninstallURL() {
-        return this.BASE_URL + "/services/uninstall";
-    }
-
-    private String getListURL() {
-        return this.BASE_URL + "/services/list";
-    }
+    //    private void deleteTestBundle(String home) {
+    //        File file = new File(home + File.separator + TEST_BUNDLE_FILE_NAME);
+    //        file.delete();
+    //    }
 
     private ServiceUploadClient getClient() {
         if (client == null) {
             client = new ServiceUploadClient();
             client.setRester(new RestHttpHelper());
+            client.setBaseURL(BASE_URL);
         }
         return client;
     }

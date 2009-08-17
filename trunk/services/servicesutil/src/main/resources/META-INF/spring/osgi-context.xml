@@ -16,6 +16,8 @@
   <osgi:service id="osgiInstallerService" ref="srvInstaller" interface="org.duracloud.servicesutil.util.ServiceInstaller" />
 
   <osgi:service id="osgiUninstallerService" ref="srvUninstaller" interface="org.duracloud.servicesutil.util.ServiceUninstaller" />
+  
+  <osgi:service id="osgiDuraConfigAdminService" ref="duraConfigAdmin" interface="org.duracloud.servicesutil.util.DuraConfigAdmin" />
 
   <osgi:service id="osgiStarterService" ref="srvStarter" interface="org.duracloud.servicesutil.util.ServiceStarter" />
 
@@ -25,5 +27,7 @@
     OSGi services which are used by this bundle are defined here. 
   -->
   <osgi:list id="duraServices" interface="org.duracloud.services.ComputeService" />
+  
+  <osgi:reference id="osgiConfigAdminSrv" interface="org.osgi.service.cm.ConfigurationAdmin" />
    
 </beans>
