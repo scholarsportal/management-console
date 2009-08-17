@@ -155,7 +155,6 @@ public class SpaceResource {
      * @param spaceAccess
      */
     public static void addSpace(String spaceID,
-                                String spaceName,
                                 String spaceAccess,
                                 Map<String, String> userMetadata,
                                 String storeID)
@@ -167,7 +166,6 @@ public class SpaceResource {
                 StorageProviderFactory.getStorageProvider(storeID);
             storage.createSpace(spaceID);
             updateSpaceMetadata(spaceID,
-                                spaceName,
                                 spaceAccess,
                                 userMetadata,
                                 storeID);
@@ -187,7 +185,6 @@ public class SpaceResource {
      * @param spaceAccess
      */
     public static void updateSpaceMetadata(String spaceID,
-                                           String spaceName,
                                            String spaceAccess,
                                            Map<String, String> userMetadata,
                                            String storeID)
@@ -202,12 +199,6 @@ public class SpaceResource {
                 spaceMeta = new HashMap<String, String>();
             }
             boolean metadataUpdated = false;
-
-            // Update space name
-            if(spaceName != null && !spaceName.equals("")) {
-                spaceMeta.put(StorageProvider.METADATA_SPACE_NAME, spaceName);
-                metadataUpdated = true;
-            }
 
             // Update user metadata
             if(userMetadata != null && userMetadata.size() > 0) {

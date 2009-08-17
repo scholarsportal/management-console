@@ -10,7 +10,6 @@ public class Space implements Serializable {
 
     private String action;
     private String spaceId;
-    private String name;
     private String access;
     private SpaceMetadata metadata;
     private List<String> contents;
@@ -29,14 +28,6 @@ public class Space implements Serializable {
 
     public void setSpaceId(String spaceId) {
         this.spaceId = spaceId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getAccess() {

@@ -11,7 +11,6 @@ public class ContentItem implements Serializable {
     private String action;
     private String spaceId;
     private String contentId;
-    private String contentName;
     private String contentMimetype;
     private ContentMetadata metadata;
     private MultipartFile file;
@@ -38,14 +37,6 @@ public class ContentItem implements Serializable {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
-    }
-
-    public String getContentName() {
-        return contentName;
-    }
-
-    public void setContentName(String contentName) {
-        this.contentName = contentName;
     }
 
     public String getContentMimetype() {

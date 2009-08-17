@@ -44,8 +44,6 @@ public class SpaceUtil {
     throws StorageException{
         Map<String, String> spaceProps = storage.getSpaceMetadata(spaceId);
         SpaceMetadata spaceMetadata = new SpaceMetadata();
-        spaceMetadata.setName(
-            spaceProps.get(StorageProvider.METADATA_SPACE_NAME));
         spaceMetadata.setCreated(
             spaceProps.get(StorageProvider.METADATA_SPACE_CREATED));
         spaceMetadata.setCount(

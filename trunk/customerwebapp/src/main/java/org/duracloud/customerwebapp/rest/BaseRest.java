@@ -39,12 +39,8 @@ public abstract class BaseRest {
     public static final String DEFAULT_MIME = "application/octet-stream";
 
     public static final String HEADER_PREFIX = "x-dura-meta-";
-    public static final String SPACE_NAME_HEADER =
-        HEADER_PREFIX + StorageProvider.METADATA_SPACE_NAME;
     public static final String SPACE_ACCESS_HEADER =
         HEADER_PREFIX + StorageProvider.METADATA_SPACE_ACCESS;
-    public static final String CONTENT_NAME_HEADER =
-        HEADER_PREFIX + StorageProvider.METADATA_CONTENT_NAME;
     public static final String CONTENT_MIMETYPE_HEADER =
         HEADER_PREFIX + StorageProvider.METADATA_CONTENT_MIMETYPE;
 

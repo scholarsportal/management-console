@@ -118,21 +118,13 @@ public class SpaceRest extends BaseRest {
         try {
             MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
 
-            String spaceName = spaceID;
-            if(rHeaders.containsKey(SPACE_NAME_HEADER)) {
-                spaceName = rHeaders.getFirst(SPACE_NAME_HEADER);
-            }
-
             String spaceAccess = "CLOSED";
             if(rHeaders.containsKey(SPACE_ACCESS_HEADER)) {
                 spaceAccess = rHeaders.getFirst(SPACE_ACCESS_HEADER);
             }
 
-            Map<String, String> userMetadata =
-                getUserMetadata(SPACE_NAME_HEADER, SPACE_ACCESS_HEADER);
-
+            Map<String, String> userMetadata = getUserMetadata(SPACE_ACCESS_HEADER);
             SpaceResource.addSpace(spaceID,
-                                   spaceName,
                                    spaceAccess,
                                    userMetadata,
                                    storeID);
@@ -156,14 +148,11 @@ public class SpaceRest extends BaseRest {
         try {
             MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
 
-            String spaceName = rHeaders.getFirst(SPACE_NAME_HEADER);
             String spaceAccess = rHeaders.getFirst(SPACE_ACCESS_HEADER);
 
-            Map<String, String> userMetadata =
-                getUserMetadata(SPACE_NAME_HEADER, SPACE_ACCESS_HEADER);
+            Map<String, String> userMetadata = getUserMetadata(SPACE_ACCESS_HEADER);
 
             SpaceResource.updateSpaceMetadata(spaceID,
-                                              spaceName,
                                               spaceAccess,
                                               userMetadata,
                                               storeID);

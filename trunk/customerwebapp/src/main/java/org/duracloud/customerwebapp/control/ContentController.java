@@ -51,12 +51,9 @@ public class ContentController extends SimpleFormController {
         Map<String, String> contentMetadata = null;
         String action = contentItem.getAction();
         if(action != null && action.equals("update")) {
-            String newName = contentItem.getContentName();
             String newMime = contentItem.getContentMimetype();
-            if(newName != null && newMime != null) {
+            if(newMime != null) {
                 contentMetadata = new HashMap<String, String>();
-                contentMetadata.
-                  put(StorageProvider.METADATA_CONTENT_NAME, newName);
                 contentMetadata.
                   put(StorageProvider.METADATA_CONTENT_MIMETYPE, newMime);
                 storage.setContentMetadata(spaceId, contentId, contentMetadata);
@@ -65,8 +62,6 @@ public class ContentController extends SimpleFormController {
 
         contentMetadata = storage.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = new ContentMetadata();
-        metadata.setName(
-            contentMetadata.get(StorageProvider.METADATA_CONTENT_NAME));
         metadata.setMimetype(
             contentMetadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
         metadata.setSize(

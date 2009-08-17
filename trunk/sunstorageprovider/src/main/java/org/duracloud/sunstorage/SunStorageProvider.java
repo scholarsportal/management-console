@@ -123,7 +123,6 @@ public class SunStorageProvider implements StorageProvider {
             Map<String, String> spaceMetadata = new HashMap<String, String>();
             Date created = new Date(System.currentTimeMillis());
             spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
-            spaceMetadata.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
             setSpaceMetadata(spaceId, spaceMetadata);
         } catch(Exception e) {
             String err = "Could not create Sun bucket with name " + bucketName +
@@ -331,11 +330,6 @@ public class SunStorageProvider implements StorageProvider {
         // editable in sun cloud.
         contentMetadata.remove(ObjectInfo.METADATA_HEADER_CONTENT_TYPE);
 
-        // If name does not already have a value, set it to contentId
-        if(!contentMetadata.containsKey(METADATA_CONTENT_NAME)) {
-            contentMetadata.put(METADATA_CONTENT_NAME, contentId);
-        }
-
         ByteArrayInputStream is = storeMetadata(contentMetadata);
         addContent(spaceId,
                    contentId+CONTENT_METADATA_SUFFIX,
@@ -419,9 +413,7 @@ public class SunStorageProvider implements StorageProvider {
         Map<String, String> contentMetadata = loadMetadata(is);
 
         // Add any custom metadata values, overwrite any duplicates
-        if(contentMetadata.isEmpty()) {
-            contentMetadata.put(METADATA_CONTENT_NAME, contentId);
-        } else {
+        if(!contentMetadata.isEmpty()) {
             Iterator<String> names = contentMetadata.keySet().iterator();
             while(names.hasNext()) {
                 String name = names.next();

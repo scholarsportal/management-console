@@ -7,18 +7,9 @@ package org.duracloud.customerwebapp.domain;
  */
 public class SpaceMetadata {
 
-    private String name;
     private String access;
     private String created;
     private String count;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getAccess() {
         return access;

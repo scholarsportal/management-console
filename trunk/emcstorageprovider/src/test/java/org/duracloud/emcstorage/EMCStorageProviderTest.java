@@ -210,10 +210,6 @@ public class EMCStorageProviderTest {
 
         String created = metadata.get(EMCStorageProvider.METADATA_SPACE_CREATED);
         assertNotNull(created);
-
-        String name = metadata.get(EMCStorageProvider.METADATA_SPACE_NAME);
-        assertNotNull(name);
-        assertEquals(name, space);
     }
 
     @Test
@@ -283,14 +279,10 @@ public class EMCStorageProviderTest {
         assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_CREATED));
         assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_COUNT));
         assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
-        assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_NAME));
 
         assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_CREATED));
         assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_COUNT));
         assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_ACCESS));
-        assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_NAME));
-
-        assertEquals(spaceMd.get(StorageProvider.METADATA_SPACE_NAME), spaceId);
     }
 
     @Test

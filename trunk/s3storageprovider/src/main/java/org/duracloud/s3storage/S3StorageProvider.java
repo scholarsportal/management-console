@@ -129,7 +129,6 @@ public class S3StorageProvider implements StorageProvider {
             Map<String, String> spaceMetadata = new HashMap<String, String>();
             Date created = bucket.getCreationDate();
             spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
-            spaceMetadata.put(METADATA_SPACE_NAME, getSpaceId(bucketName));
             setSpaceMetadata(spaceId, spaceMetadata);
         } catch(S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName +
@@ -311,7 +310,6 @@ public class S3StorageProvider implements StorageProvider {
 
         // Set default content metadata values
         Map<String, String> contentMetadata = new HashMap<String, String>();
-        contentMetadata.put(METADATA_CONTENT_NAME, contentId);
         contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         setContentMetadata(spaceId, contentId, contentMetadata);
 
@@ -384,11 +382,6 @@ public class S3StorageProvider implements StorageProvider {
             S3Object contentItem = s3Service.getObjectDetails(bucket, contentId);
             contentItem.setAcl(s3Service.getObjectAcl(bucket, contentId));
             contentItem.replaceAllMetadata(contentMetadata);
-
-            // Set name to contentId if it is not set already
-            if(!contentItem.containsMetadata(METADATA_CONTENT_NAME)) {
-                contentItem.addMetadata(METADATA_CONTENT_NAME, contentId);
-            }
 
             // Update Content-Type to the new mime type
             if(mimeType != null && mimeType != "") {

@@ -23,11 +23,9 @@ public interface StorageProvider {
     /* Names for space metadata properties */
     public static final String METADATA_SPACE_CREATED = "space-created";
     public static final String METADATA_SPACE_COUNT = "space-count";
-    public static final String METADATA_SPACE_NAME = "space-name";
     public static final String METADATA_SPACE_ACCESS = "space-access";
 
     /* Names for content metadata properties */
-    public static final String METADATA_CONTENT_NAME = "content-name";
     public static final String METADATA_CONTENT_MIMETYPE = "content-mimetype";
     public static final String METADATA_CONTENT_SIZE = "content-size";
     public static final String METADATA_CONTENT_CHECKSUM = "content-checksum";

@@ -36,8 +36,6 @@ public class RestTestHelper {
 
     public static final String METADATA_VALUE = "Test Metadata";
 
-    public static final String SPACE_NAME = "Testing Space";
-
     public static final String SPACE_ACCESS = "OPEN";
 
     public static HttpResponse initialize() throws Exception {
@@ -63,7 +61,6 @@ public class RestTestHelper {
     private static HttpResponse addSpaceWithHeaders(String url)
             throws Exception {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put(BaseRest.SPACE_NAME_HEADER, SPACE_NAME);
         headers.put(BaseRest.SPACE_ACCESS_HEADER, SPACE_ACCESS);
         headers.put(METADATA_NAME, METADATA_VALUE);
         return restHelper.put(url, null, headers);

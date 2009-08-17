@@ -88,7 +88,6 @@ public class ContentResource {
      */
     public static void updateContentMetadata(String spaceID,
                                              String contentID,
-                                             String contentName,
                                              String contentMimeType,
                                              Map<String, String> userMetadata,
                                              String storeID)
@@ -104,12 +103,6 @@ public class ContentResource {
                 metadata = new HashMap<String, String>();
             }
             boolean metadataUpdated = false;
-
-            // Update content name if a new value was provided
-            if(contentName != null && !contentName.equals("")) {
-                metadata.put(StorageProvider.METADATA_CONTENT_NAME, contentName);
-                metadataUpdated = true;
-            }
 
             // Update content mime type if a new value was provided
             if(contentMimeType != null && !contentMimeType.equals("")) {

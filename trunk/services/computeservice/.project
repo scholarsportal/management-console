@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>org.duracloud.services.computeservice [1.0.0]</name>
+  <name>computeservice</name>
   <comment>Generated using Pax-Construct</comment>
   <projects/>
   <buildSpec>

@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="style/main.css" />
-    <title>Contents of <c:out value="${space.metadata.name}"/></title>
+    <title>Contents of <c:out value="${space.spaceId}"/></title>
   </head>
   <body>
     <form action="spaces.htm" method="get">                
@@ -16,7 +16,7 @@
     </c:if>
 
     <div id="contents">
-      <h2><c:out value="${space.metadata.name}"/></h2>
+      <h2><c:out value="${space.spaceId}"/></h2>
       <h4><c:out value="${space.metadata.count}"/> Items</h4>
       <table id="content_list">
         <c:forEach items="${space.contents}" var="content" varStatus="status">
@@ -58,10 +58,6 @@
         <p>
           <label for="contentId">Content ID</label>
           <input type="text" id="contentId" name="contentId" />
-        </p>
-        <p>
-          <label for="contentName">Content Name</label>
-          <input type="text" id="contentName" name="contentName" />
         </p>
         <p>
           <label for="contentMimetype">Content MIME Type</label>
