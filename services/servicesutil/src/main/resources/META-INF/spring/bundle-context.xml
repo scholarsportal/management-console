@@ -16,13 +16,18 @@
   <bean id="srvUninstaller" class="org.duracloud.servicesutil.util.internal.ServiceUninstallerImpl" >
     <property name="bundleHome" ref="bundleHome" />
   </bean>
-
+  
+  <bean id="duraConfigAdmin" class="org.duracloud.servicesutil.util.internal.DuraConfigAdminImpl" >
+    <property name="osgiConfigAdmin" ref="osgiConfigAdminSrv" />
+  </bean>
+  
   <bean id="srvStarter" class="org.duracloud.servicesutil.util.internal.NoopServiceStarterImpl" />
 
   <bean id="srvStopper" class="org.duracloud.servicesutil.util.internal.NoopServiceStopperImpl" />
     
   <bean id="uploadclient" class="org.duracloud.servicesutil.client.ServiceUploadClient" >
     <property name="rester" ref="restHelper" />
+    <property name="baseURL" value="http://localhost:8089/servicesadmin-1.0.0" />
   </bean>
   
   <bean id="restHelper" class="org.duracloud.common.web.RestHttpHelper" />

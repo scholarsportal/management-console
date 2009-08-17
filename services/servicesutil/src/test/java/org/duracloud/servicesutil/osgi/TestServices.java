@@ -2,6 +2,7 @@
 package org.duracloud.servicesutil.osgi;
 
 import org.duracloud.services.ComputeService;
+import org.duracloud.servicesutil.util.DuraConfigAdmin;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.ServiceLister;
 import org.duracloud.servicesutil.util.ServiceStarter;
@@ -18,21 +19,6 @@ public class TestServices
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final String SERVICE_INSTALLER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceInstaller";
-
-    private final String SERVICE_UNINSTALLER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceUninstaller";
-
-    private final String SERVICE_LISTER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceLister";
-
-    private final String SERVICE_STARTER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceStarter";
-
-    private final String SERVICE_STOPPER_INTERFACE =
-            "org.duracloud.servicesutil.util.ServiceStopper";
-
     private ServiceInstaller installer;
 
     private ServiceUninstaller uninstaller;
@@ -43,8 +29,13 @@ public class TestServices
 
     private ServiceStopper stopper;
 
-    @SuppressWarnings("unused")
-    private ComputeService addedToForceManifestTypeImport;
+    private DuraConfigAdmin configAdmin;
+
+    private ComputeService helloService;
+
+    public TestServices() {
+        super.setDependencyCheck(false);
+    }
 
     public void testServiceInstaller() throws Exception {
         log.debug("testing ServiceInstaller");
@@ -78,14 +69,31 @@ public class TestServices
         log.debug("testing ServiceStopper");
     }
 
-    protected Object getService(String serviceInterface) {
-        ServiceReference ref =
-                bundleContext.getServiceReference(serviceInterface);
+    public void testConfigAdmin() throws Exception {
+        log.debug("testing ConfigurationAdmin");
 
-        Assert.assertNotNull("service not found: " + serviceInterface, ref);
-        log.debug(getPropsText(ref));
+        ConfigAdminTester tester =
+                new ConfigAdminTester(getConfigAdmin(), getHelloService());
+        tester.testConfigAdmin();
+    }
 
-        return bundleContext.getService(ref);
+    protected Object getService(String serviceInterface) throws Exception {
+        return getService(serviceInterface, null);
+    }
+
+    private Object getService(String serviceInterface, String filter)
+            throws Exception {
+        ServiceReference[] refs =
+                bundleContext.getServiceReferences(serviceInterface, filter);
+
+        if (refs == null || refs.length == 0) {
+            String msg = "Unable to find service: " + serviceInterface;
+            log.warn(msg);
+            throw new Exception(msg);
+        }
+        Assert.assertNotNull("service not found: " + serviceInterface, refs[0]);
+        log.debug(getPropsText(refs[0]));
+        return bundleContext.getService(refs[0]);
     }
 
     private String getPropsText(ServiceReference ref) {
@@ -97,46 +105,77 @@ public class TestServices
         return sb.toString();
     }
 
-    public ServiceInstaller getInstaller() {
+    public ServiceInstaller getInstaller() throws Exception {
         if (installer == null) {
             installer =
-                    (ServiceInstaller) getService(SERVICE_INSTALLER_INTERFACE);
+                    (ServiceInstaller) getService(ServiceInstaller.class
+                            .getName());
         }
         assertNotNull(installer);
         return installer;
     }
 
-    public ServiceUninstaller getUninstaller() {
+    public ServiceUninstaller getUninstaller() throws Exception {
         if (uninstaller == null) {
             uninstaller =
-                    (ServiceUninstaller) getService(SERVICE_UNINSTALLER_INTERFACE);
+                    (ServiceUninstaller) getService(ServiceUninstaller.class
+                            .getName());
         }
         assertNotNull(uninstaller);
         return uninstaller;
     }
 
-    public ServiceLister getLister() {
+    public ServiceLister getLister() throws Exception {
         if (lister == null) {
-            lister = (ServiceLister) getService(SERVICE_LISTER_INTERFACE);
+            lister = (ServiceLister) getService(ServiceLister.class.getName());
         }
         assertNotNull(lister);
         return lister;
     }
 
-    public ServiceStarter getStarter() {
+    public ServiceStarter getStarter() throws Exception {
         if (starter == null) {
-            starter = (ServiceStarter) getService(SERVICE_STARTER_INTERFACE);
+            starter =
+                    (ServiceStarter) getService(ServiceStarter.class.getName());
         }
         assertNotNull(starter);
         return starter;
     }
 
-    public ServiceStopper getStoppper() {
+    public ServiceStopper getStoppper() throws Exception {
         if (stopper == null) {
-            stopper = (ServiceStopper) getService(SERVICE_STOPPER_INTERFACE);
+            stopper =
+                    (ServiceStopper) getService(ServiceStopper.class.getName());
         }
         assertNotNull(stopper);
         return stopper;
+    }
+
+    public DuraConfigAdmin getConfigAdmin() throws Exception {
+        if (configAdmin == null) {
+            configAdmin =
+                    (DuraConfigAdmin) getService(DuraConfigAdmin.class
+                            .getName());
+        }
+        assertNotNull(configAdmin);
+        return configAdmin;
+    }
+
+    public void setConfigAdmin(DuraConfigAdmin configAdmin) {
+        this.configAdmin = configAdmin;
+    }
+
+    public ComputeService getHelloService() throws Exception {
+        if (helloService == null) {
+            helloService =
+                    (ComputeService) getService(ComputeService.class.getName(),
+                                                "(duraKey=helloVal)");
+        }
+        return helloService;
+    }
+
+    public void setHelloService(ComputeService helloService) {
+        this.helloService = helloService;
     }
 
 }
