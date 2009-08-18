@@ -2,8 +2,8 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <artifactId>duraspace</artifactId>
-    <groupId>org.duraspace</groupId>
+    <artifactId>duracloud</artifactId>
+    <groupId>org.duracloud</groupId>
     <version>1.0.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
