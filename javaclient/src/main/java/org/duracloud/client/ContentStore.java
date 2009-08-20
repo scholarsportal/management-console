@@ -15,7 +15,6 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.storage.domain.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
 import org.jdom.Document;
@@ -73,12 +72,16 @@ public class ContentStore {
         this.storeId = storeId;
     }
 
+    public String getBaseURL() {
+        return baseURL;
+    }
+
     public String getStoreId() {
         return storeId;
     }
 
-    public StorageProviderType getStorageProviderType() {
-        return type;
+    public String getStorageProviderType() {
+        return type.name();
     }
 
     private String buildURL(String relativeURL) {
@@ -102,9 +105,9 @@ public class ContentStore {
      * not a listing of content.
      *
      * @return Iterator listing spaceIds
-     * @throws StorageException
+     * @throws ContentStoreException
      */
-    public List<Space> getSpaces() throws StorageException {
+    public List<Space> getSpaces() throws ContentStoreException {
         String url = buildURL("/spaces");
         try {
             HttpResponse response = restHelper.get(url);
@@ -133,11 +136,11 @@ public class ContentStore {
                 }
                 return spaces;
             } else {
-                throw new StorageException("Response body is empty");
+                throw new ContentStoreException("Response body is empty");
             }
         } catch (Exception e) {
-            throw new StorageException("Could not get spaces due to: "
-                    + e.getMessage(), e);
+            throw new ContentStoreException("Could not get spaces due to: " +
+                                            e.getMessage(), e);
         }
     }
 
@@ -146,9 +149,9 @@ public class ContentStore {
      * a space and the metadata associated with the space.
      *
      * @return Space
-     * @throws StorageException
+     * @throws ContentStoreException
      */
-    public Space getSpace(String spaceId) throws StorageException {
+    public Space getSpace(String spaceId) throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.get(url);
@@ -171,13 +174,13 @@ public class ContentStore {
                     space.addContentId(contentElem.getTextTrim());
                 }
             } else {
-                throw new StorageException("Response body is empty");
+                throw new ContentStoreException("Response body is empty");
             }
 
             return space;
         } catch (Exception e) {
-            throw new StorageException("Could not get space " + spaceId
-                    + " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not get space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -189,18 +192,18 @@ public class ContentStore {
      * call to getSpaces() may not include a space with exactly this same name.
      *
      * @param spaceId
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public void createSpace(String spaceId, Map<String, String> spaceMetadata)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response =
                 restHelper.put(url, null, convertMetadataToHeaders(spaceMetadata));
             checkResponse(response, 201);
         } catch (Exception e) {
-            throw new StorageException("Could not create space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not create space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -208,16 +211,16 @@ public class ContentStore {
      * Deletes a space.
      *
      * @param spaceId
-     * @throws StorageException
+     * @throws ContentStoreException
      */
-    public void deleteSpace(String spaceId) throws StorageException {
+    public void deleteSpace(String spaceId) throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.delete(url);
             checkResponse(response, 200);
         } catch (Exception e) {
-            throw new StorageException("Could not delete space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not delete space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -226,10 +229,10 @@ public class ContentStore {
      *
      * @param spaceId
      * @return Map of space metadata or null if no metadata exists
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public Map<String, String> getSpaceMetadata(String spaceId)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.head(url);
@@ -237,8 +240,8 @@ public class ContentStore {
             Map<String, String> metadata = extractMetadataFromHeaders(response);
             return metadata;
         } catch (Exception e) {
-            throw new StorageException("Could not get space metadata for space " +
-                                       spaceId + " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not get space metadata for space " +
+                                            spaceId + " due to: " + e.getMessage(), e);
         }
     }
 
@@ -248,19 +251,19 @@ public class ContentStore {
      *
      * @param spaceId
      * @param spaceMetadata
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         Map<String, String> headers = convertMetadataToHeaders(spaceMetadata);
         try {
             HttpResponse response = restHelper.post(url, null, headers);
             checkResponse(response, 200);
         } catch (Exception e) {
-            throw new StorageException("Could not create space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not create space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -271,9 +274,9 @@ public class ContentStore {
      *
      * @param spaceId
      * @return
-     * @throws StorageException
+     * @throws ContentStoreException
      */
-    public AccessType getSpaceAccess(String spaceId) throws StorageException {
+    public AccessType getSpaceAccess(String spaceId) throws ContentStoreException {
         Map<String, String> spaceMetadata = getSpaceMetadata(spaceId);
         if(spaceMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS)) {
             String spaceAccess =
@@ -285,12 +288,12 @@ public class ContentStore {
             } else {
                 String error = "Could not determine access type for space " +
                     spaceId + ". Value of access metadata is " + spaceAccess;
-                throw new StorageException(error);
+                throw new ContentStoreException(error);
             }
         } else {
-            throw new StorageException("Could not determine access type for space " +
-                                       spaceId +
-                                       ". No access type metadata is available.");
+            throw new ContentStoreException("Could not determine access type for space " +
+                                            spaceId +
+                                            ". No access type metadata is available.");
         }
     }
 
@@ -299,10 +302,10 @@ public class ContentStore {
      *
      * @param spaceId
      * @param access
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)
-            throws StorageException {
+            throws ContentStoreException {
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(StorageProvider.METADATA_SPACE_ACCESS, spaceAccess.name());
         setSpaceMetadata(spaceId, metadata);
@@ -320,7 +323,7 @@ public class ContentStore {
      * @param contentSize
      * @param contentMetadata
      * @return
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public String addContent(String spaceId,
                              String contentId,
@@ -328,7 +331,7 @@ public class ContentStore {
                              long contentSize,
                              String contentMimeType,
                              Map<String, String> contentMetadata)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
@@ -345,9 +348,9 @@ public class ContentStore {
             }
             return checksum.getValue();
         } catch (Exception e) {
-            throw new StorageException("Could not add content " + contentId +
-                                       " in space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not add content " + contentId +
+                                            " in space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -357,10 +360,10 @@ public class ContentStore {
      * @param spaceId
      * @param contentId
      * @return the content stream or null if the content does not exist
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public Content getContent(String spaceId, String contentId)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
@@ -373,9 +376,9 @@ public class ContentStore {
                           extractNonMetadataHeaders(response)));
             return content;
         } catch (Exception e) {
-            throw new StorageException("Could not get content " + contentId +
-                                       " from space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not get content " + contentId +
+                                            " from space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -384,18 +387,18 @@ public class ContentStore {
      *
      * @param spaceId
      * @param contentId
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public void deleteContent(String spaceId, String contentId)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.delete(url);
             checkResponse(response, 200);
         } catch (Exception e) {
-            throw new StorageException("Could not delete content " + contentId +
-                                       " from space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not delete content " + contentId +
+                                            " from space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -409,12 +412,12 @@ public class ContentStore {
      * @param spaceId
      * @param contentId
      * @param contentMetadata
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
                                    Map<String, String> contentMetadata)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
@@ -424,9 +427,9 @@ public class ContentStore {
                                                     headers);
             checkResponse(response, 200);
         } catch (Exception e) {
-            throw new StorageException("Could not udpate content metadata for " +
-                                       contentId + " in space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not udpate content metadata for " +
+                                            contentId + " in space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
@@ -437,11 +440,11 @@ public class ContentStore {
      * @param spaceId
      * @param contentId
      * @return
-     * @throws StorageException
+     * @throws ContentStoreException
      */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId)
-            throws StorageException {
+            throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
@@ -449,23 +452,23 @@ public class ContentStore {
             return mergeMaps(extractMetadataFromHeaders(response),
                              extractNonMetadataHeaders(response));
         } catch (Exception e) {
-            throw new StorageException("Could not get metadata for content " +
-                                       contentId + " from space " + spaceId +
-                                       " due to: " + e.getMessage(), e);
+            throw new ContentStoreException("Could not get metadata for content " +
+                                            contentId + " from space " + spaceId +
+                                            " due to: " + e.getMessage(), e);
         }
     }
 
     private void checkResponse(HttpResponse response, int expectedCode)
-            throws StorageException {
+            throws ContentStoreException {
         String error = "Could not complete request due to error: ";
         if (response == null) {
-            throw new StorageException(error + "Response content was null.");
+            throw new ContentStoreException(error + "Response content was null.");
         }
         if (response.getStatusCode() != expectedCode) {
-            throw new StorageException(error + "Response code was " +
-                                       response.getStatusCode()
-                                       + ", expected value was " +
-                                       expectedCode);
+            throw new ContentStoreException(error + "Response code was " +
+                                            response.getStatusCode() +
+                                            ", expected value was " +
+                                            expectedCode);
         }
     }
 

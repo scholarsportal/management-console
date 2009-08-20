@@ -1,4 +1,4 @@
-package org.duracloud.customerwebapp.domain;
+package org.duracloud.duradmin.domain;
 
 /**
  * Stores space metadata.

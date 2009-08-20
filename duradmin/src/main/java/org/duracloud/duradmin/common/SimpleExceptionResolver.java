@@ -1,4 +1,4 @@
-package org.duracloud.customerwebapp.common;
+package org.duracloud.duradmin.common;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

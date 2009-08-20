@@ -46,7 +46,7 @@ public class ContentStoreManager {
         }
     }
 
-    public Map<String, ContentStore> getContentStores() throws StorageException {
+    public Map<String, ContentStore> getContentStores() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         Map<String, StorageAccount> accounts = acctManager.getStorageAccounts();
         Map<String, ContentStore> contentStores =
@@ -62,7 +62,7 @@ public class ContentStoreManager {
         return contentStores;
     }
 
-    public ContentStore getContentStore(String storeID) throws StorageException {
+    public ContentStore getContentStore(String storeID) throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
         ContentStore contentStore =
@@ -70,7 +70,7 @@ public class ContentStoreManager {
         return contentStore;
     }
 
-    public ContentStore getPrimaryContentStore() throws StorageException {
+    public ContentStore getPrimaryContentStore() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
         ContentStore contentStore =
@@ -78,7 +78,7 @@ public class ContentStoreManager {
         return contentStore;
     }
 
-    private StorageAccountManager getStorageAccounts() throws StorageException {
+    private StorageAccountManager getStorageAccounts() throws ContentStoreException {
         String url = baseURL + "/stores";
         HttpResponse response;
         String error = "Error retrieving content stores. ";
@@ -98,7 +98,7 @@ public class ContentStoreManager {
                                            ", expected value was 200.");
             }
         } catch (Exception e) {
-            throw new StorageException(error + e.getMessage(), e);
+            throw new ContentStoreException(error + e.getMessage(), e);
         }
     }
 }

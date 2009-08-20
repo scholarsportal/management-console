@@ -117,7 +117,7 @@ public class StorageProviderUtil {
             String err = "Content " + contentId + " was added to space " + spaceId +
                          " but the checksum computed enroute does not match the " +
                          "checksum computed by the storage provider. This content " +
-                         "should be checked for validity.";
+                         "should be checked for validity:" + se.getMessage();
             throw new StorageException(err, se);
         }
         return streamChecksum;
@@ -142,8 +142,8 @@ public class StorageProviderUtil {
             provider.getContentMetadata(spaceId, contentId).
             get(StorageProvider.METADATA_CONTENT_CHECKSUM);
         if(!providerChecksum.equals(checksum)) {
-            String err = "Provided checksum " + checksum +
-                         " does not match content checksum " +
+            String err = "Checksum " + checksum + " does not match " +
+            		     "content checksum from storage provider " +
                          providerChecksum;
             throw new StorageException(err);
         }
