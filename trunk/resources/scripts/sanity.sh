@@ -13,7 +13,7 @@ echo "Installing UnHosted Dependencies"
 echo "================================"
 echo ""
 cd $BUILD_HOME 
-resources/scripts/installLibs.sh
+. resources/scripts/installLibs.sh
 
 echo "=================="
 echo "Starting Tomcat..."
