@@ -19,3 +19,6 @@ BUILD_HOME=$HOME/agent-home/xml-data/build-dir/DURACLOUD-SAN
 # Where is tomcat?
 CATALINA_HOME=$HOME/duracloud-home/tomcat
 
+# Where is the maven settings.xml?
+SETTINGS_XML=$HOME/duracloud-home/maven/conf/settings.xml
+

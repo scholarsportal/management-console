@@ -17,10 +17,14 @@ echo "JAVA6_HOME    = $JAVA6_HOME"
 echo "M2_HOME       = $M2_HOME"
 echo "BUILD_HOME    = $BUILD_HOME"
 echo "CATALINA_HOME = $CATALINA_HOME"
+echo "SETTINGS_XML  = $SETTINGS_XML"
 echo ""
 
-export M2_HOME
+MVN="$M2_HOME/bin/mvn -s $SETTINGS_XML"
+
+export MVN
 export CATALINA_HOME
+export SETTINGS_XML
 
 #-------------------------------------------------
 # Echo common script options and export as needed
