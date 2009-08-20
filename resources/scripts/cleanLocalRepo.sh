@@ -7,7 +7,10 @@ sed_env_cmd="s/DURACLOUD-SAN/DURACLOUD-NIT/"
 sed -i.backup -e $sed_env_cmd $scriptdir/env.sh
 
 
-. "$scriptdir"/common.sh
+#-----------------------------------------------------------------------
+# Load environment-specific settings, particularly settings.xml location
+#-----------------------------------------------------------------------
+. "$scriptdir"/env.sh
 
 
 sed_cmd="s/.*<localRepository>\(.*\)<\/localRepository>.*/\1/p"
