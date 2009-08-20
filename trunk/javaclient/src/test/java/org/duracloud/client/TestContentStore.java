@@ -41,7 +41,7 @@ public class TestContentStore
 
     private static final String defaultPort = "8080";
 
-    private static String context = "customerwebapp";
+    private static String context = "durastore";
 
     private static String accountXml = null;
 

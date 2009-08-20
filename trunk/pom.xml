@@ -59,7 +59,7 @@
 <!--      <module>emcstorageprovider</module>-->
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
-      <module>customerwebapp</module> 
+      <module>durastore</module> 
       <module>duradavwebapp</module>
       <module>javaclient</module>
 	  <module>duradmin</module>

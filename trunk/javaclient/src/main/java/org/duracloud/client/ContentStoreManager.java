@@ -20,7 +20,7 @@ import org.duracloud.storage.domain.StorageException;
  */
 public class ContentStoreManager {
 
-    private static final String DEFAULT_CONTEXT = "customerwebapp";
+    private static final String DEFAULT_CONTEXT = "durastore";
 
     private String baseURL = null;
 
