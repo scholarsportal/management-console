@@ -15,9 +15,9 @@ if [ -z "$BUILD_HOME" ]; then
   exit
 fi
 
-export CUSTOMER_LIB=${BUILD_HOME}/customerwebapp/target/customerwebapp-1.0.0/WEB-INF/lib
+export CUSTOMER_LIB=${BUILD_HOME}/durastore/target/durastore-1.0.0/WEB-INF/lib
 
-# Set classpath to jars normally found in customerwebapp war
+# Set classpath to jars normally found in durastore war
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/aopalliance-1.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/asm-3.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/cglib-2.2.jar
@@ -56,7 +56,7 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/storageprovider-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/xbean-spring-3.5.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-lang-2.4.jar
 
-export CLASSPATH=$CLASSPATH:$BUILD_HOME/customerwebapp/target/classes
+export CLASSPATH=$CLASSPATH:$BUILD_HOME/durastore/target/classes
 
 # Just have this call here to ease the logical next action (without args it prints usage)
 java -Dunit.database.home=${UNIT_DATABASE_HOME} -Dunit.database.password=${UNIT_DATABASE_PASSWORD} org.duracloud.storage.domain.test.db.UnitTestDatabaseLoaderCLI 

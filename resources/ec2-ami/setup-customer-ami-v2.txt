@@ -19,7 +19,7 @@ Note: This set-up starts from an instance of the mainwebapp ami.
 :: init.d setup ::
 ####
 :#rm /etc/init.d/ebs
-:paste init.d-customerwebapp as /etc/init.d/duracloud
+:paste init.d-durastore as /etc/init.d/duracloud
 
 
 ####
@@ -27,11 +27,11 @@ Note: This set-up starts from an instance of the mainwebapp ami.
 ####
 :run through mvn commands in /etc/init.d/duracloud
 
-:locally, connect to [ec2-instance-url]:8080/customerwebapp
+:locally, connect to [ec2-instance-url]:8080/durastore
 
 :remove all artifact files before creating bundle.
 :#cd $CATALINA_HOME/webapps
-:#rm -rf mainwebapp* customerwebapp* duradavwebapp*
+:#rm -rf mainwebapp* durastore* duradavwebapp*
 
 :#rm -rf /home/tomcat/logs
 

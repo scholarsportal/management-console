@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  
+  <!-- AOP - Advice -->
+  <bean id="ingestAdvice" class="org.duracloud.durastore.aop.IngestAdvice" >
+    <property name="jmsTemplate" ref="jmsTemplate" />
+    <property name="destination" ref="ingestDestination" />
+  </bean>
+  
+  <bean id="ingestAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice" ref="ingestAdvice"/>
+    <property name="pattern" value=".*StatelessStorageProvider.addContent"/>
+  </bean>
+ 
+  <!-- Enables Auto-AOP Proxy Creation -->
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+  
+</beans>

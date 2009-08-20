@@ -18,7 +18,7 @@
   <osgix:cm-properties id="replication.cfg" persistent-id="replicationService">
     <prop key="host">localhost</prop>
     <prop key="port">8080</prop>
-    <prop key="context">customerwebapp</prop>
+    <prop key="context">durastore</prop>
   </osgix:cm-properties>
   -->
   
@@ -31,7 +31,7 @@
      -->
     <constructor-arg value="localhost"/>             <!-- host -->
     <constructor-arg value="8080"/>                  <!-- port -->
-    <constructor-arg value="customerwebapp"/>        <!-- context -->
+    <constructor-arg value="durastore"/>             <!-- context -->
     <constructor-arg value="tcp://localhost:61617"/> <!-- broker URL -->
     <constructor-arg value="1"/>                     <!-- from StoreID -->
     <constructor-arg value="5"/>                     <!-- to StoreID -->

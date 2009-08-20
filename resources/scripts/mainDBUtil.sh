@@ -22,7 +22,7 @@ fi
 
 export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-1.0.0/WEB-INF/lib
 
-# Set classpath to jars normally found in customerwebapp war
+# Set classpath to jars normally found in mainwebapp war
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/aopalliance-1.0.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/asm-3.1.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-1.0.0.jar

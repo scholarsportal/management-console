@@ -1,9 +1,5 @@
 package org.duracloud.duradmin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +11,7 @@ import org.duracloud.duradmin.config.DuradminConfig;
 import junit.framework.TestCase;
 
 /**
- * Runtime test of Duradmin. The customerwebapp
+ * Runtime test of Duradmin. The durastore
  * web application must be deployed and available
  * in order for these tests to pass.
  *
@@ -26,6 +22,11 @@ public class TestDuradmin
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
     private static String baseUrl;
+
+    private static String configFileName = "test-duradmin.properties";
+    static {
+        DuradminConfig.setConfigFileName(configFileName);
+    }
 
     @Override
     @Before

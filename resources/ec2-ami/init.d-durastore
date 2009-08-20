@@ -3,7 +3,7 @@
 # duracloud    
 #
 # chkconfig: 
-# description: Startup of mainwebapp, assuming tomcat is already running.     
+# description: Startup of durastore, assuming tomcat is already running.     
 
 
 RETVAL=$?
@@ -17,8 +17,8 @@ case "$1" in
             /bin/su tomcat -c "mvn -P profile-bootstrap scm:bootstrap"
             cd /opt/duracloud/target/checkout
             /bin/su tomcat -c "./resources/scripts/installLibs.sh"
-            /bin/su tomcat -c "mvn install -Dmaven.test.skip=true -Ddatabase.home.default=/mnt/db/duracloudDB"
-            cd /opt/duracloud/target/checkout/durastore
+            /bin/su tomcat -c "mvn install -Dmaven.test.skip=true"
+            cd /opt/duracloud/target/checkout/mainwebapp
             /bin/su tomcat -c "mvn tomcat:undeploy -Dmaven.tomcat.server=tomcat-server"
 
             cd /opt/duracloud/target/checkout/duradavwebapp

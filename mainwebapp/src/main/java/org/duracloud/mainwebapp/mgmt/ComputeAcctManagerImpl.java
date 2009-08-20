@@ -221,7 +221,7 @@ public class ComputeAcctManagerImpl
         if (response != null
                 && HttpURLConnection.HTTP_OK == response.getStatusCode()) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Error initializing customerwebapp: ");
+            msg.append("Error initializing durastore: ");
             msg.append(baseUrl);
             msg.append(params);
             log.error(msg.toString());

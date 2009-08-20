@@ -57,7 +57,8 @@
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
       <module>mainwebapp</module>
-      <module>customerwebapp</module> 
+      <module>durastore</module>
+	  <module>duradmin</module>
       <module>duradavwebapp</module> 
   </modules>
 -->
