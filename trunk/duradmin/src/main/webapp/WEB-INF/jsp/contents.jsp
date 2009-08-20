@@ -35,7 +35,7 @@
               </form>
             </td>          
             <td>
-              <form action="<c:out value="${space.spaceId}/${content}"/>">
+              <form action="<c:out value="${baseURL}/${space.spaceId}/${content}"/>">
                 <input type='submit' value="Download Content"/>
               </form>
             </td>

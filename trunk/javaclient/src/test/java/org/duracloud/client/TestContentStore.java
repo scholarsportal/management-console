@@ -20,7 +20,6 @@ import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.storage.domain.StorageException;
 import org.duracloud.storage.util.test.StorageAccountTestUtil;
 
 import junit.framework.TestCase;
@@ -89,7 +88,7 @@ public class TestContentStore
         // Make sure the space is deleted
         try {
             store.deleteSpace(spaceId);
-        } catch(StorageException se) {
+        } catch(ContentStoreException cse) {
             // Ignore, the space was likely already removed
         }
     }
@@ -194,8 +193,8 @@ public class TestContentStore
         try {
             store.getSpace(spaceId);
             fail("Exception should be thrown attempting to retrieve deleted space");
-        } catch(StorageException se) {
-            assertNotNull(se.getMessage());
+        } catch(ContentStoreException cse) {
+            assertNotNull(cse.getMessage());
         }
     }
 
@@ -263,8 +262,8 @@ public class TestContentStore
         try {
             store.getContent(spaceId, contentId);
             fail("Exception should be thrown attempting to retrieve deleted content");
-        } catch(StorageException se) {
-            assertNotNull(se.getMessage());
+        } catch(ContentStoreException cse) {
+            assertNotNull(cse.getMessage());
         }
         store.deleteSpace(spaceId);
     }

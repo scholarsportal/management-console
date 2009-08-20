@@ -62,6 +62,7 @@
       <module>customerwebapp</module> 
       <module>duradavwebapp</module>
       <module>javaclient</module>
+	  <module>duradmin</module>
       <module>services</module>
   </modules>
 

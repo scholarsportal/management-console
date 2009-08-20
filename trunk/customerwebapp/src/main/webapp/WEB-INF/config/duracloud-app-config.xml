@@ -11,12 +11,15 @@
     Imports the configurations of the different infrastructure systems
     of the application
   -->
-  <import resource="webmvc-config.xml" />
-  <!-- <import resource="webflow-config.xml" /> -->
-  <!--  <import resource="data-access-config.xml" />-->
-  <!--  <import resource="security-config.xml" />-->
   <import resource="restapi-config.xml" />
   <import resource="aop-config.xml" />
   <import resource="messaging-config.xml" />
+  
+  <!-- Domain Beans -->
+  <bean id="storageProviderFactory" class="org.duracloud.customerwebapp.util.StorageProviderFactory">
+    <property name="statelessProvider" ref="statelessStoragePvdr"/>
+  </bean>
+  
+  <bean id="statelessStoragePvdr" class="org.duracloud.storage.provider.StatelessStorageProviderImpl"/>
 
 </beans>

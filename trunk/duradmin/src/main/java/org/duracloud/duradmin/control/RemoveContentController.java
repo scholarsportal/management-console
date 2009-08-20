@@ -1,21 +1,15 @@
-package org.duracloud.customerwebapp.control;
-
-import java.util.List;
+package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
 
-import org.duracloud.customerwebapp.domain.ContentItem;
-import org.duracloud.customerwebapp.domain.Space;
-import org.duracloud.customerwebapp.util.SpaceUtil;
-import org.duracloud.customerwebapp.util.StorageProviderFactory;
-import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.client.ContentStore;
+import org.duracloud.duradmin.domain.ContentItem;
+import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
-import static org.duracloud.storage.util.StorageProviderUtil.getList;
-
-public class RemoveContentController extends SimpleFormController {
+public class RemoveContentController extends BaseController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
@@ -39,20 +33,21 @@ public class RemoveContentController extends SimpleFormController {
             throw new IllegalArgumentException("Content ID must be provided.");
         }
 
-        StorageProvider storage = StorageProviderFactory.getStorageProvider();
+        ContentStore store = null;
+        try {
+            store = getContentStore();
+        } catch(Exception se) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("error", se.getMessage());
+            return mav;
+        }
 
-        storage.deleteContent(spaceId, contentId);
+        store.deleteContent(spaceId, contentId);
 
         // Create a Space for the view
         Space space = new Space();
         space.setSpaceId(spaceId);
-
-        // Get the metadata of the space
-        space.setMetadata(SpaceUtil.getSpaceMetadata(storage, spaceId));
-
-        // Get the list of items in the space
-        List<String> contents = getList(storage.getSpaceContents(spaceId));
-        space.setContents(contents);
+        SpaceUtil.populateSpace(space, store.getSpace(spaceId));
 
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("space", space);
