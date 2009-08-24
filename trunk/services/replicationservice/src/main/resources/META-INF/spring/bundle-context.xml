@@ -12,30 +12,19 @@
     interface="org.duracloud.services.ComputeService" />
 
   <!-- OSGi services which are used by this bundle. -->
-
-  <!-- Configuration properties available through the OSGi Configuration Admin -->
-  <!--
-  <osgix:cm-properties id="replication.cfg" persistent-id="replicationService">
-    <prop key="host">localhost</prop>
-    <prop key="port">8080</prop>
-    <prop key="context">durastore</prop>
-  </osgix:cm-properties>
-  -->
   
   <!-- Spring beans which are used by this bundle. -->
   <bean name="replicationService" class="org.duracloud.services.replication.ReplicationService"
-	  init-method="start" destroy-method="stop">
-	  <!--
-	  <osgix:managed-properties persistent-id="replicationService"
-      update-strategy="container-managed" />
-     -->
-    <constructor-arg value="localhost"/>             <!-- host -->
-    <constructor-arg value="8080"/>                  <!-- port -->
-    <constructor-arg value="durastore"/>             <!-- context -->
-    <constructor-arg value="tcp://localhost:61617"/> <!-- broker URL -->
-    <constructor-arg value="1"/>                     <!-- from StoreID -->
-    <constructor-arg value="5"/>                     <!-- to StoreID -->
-    <constructor-arg value="2"/>                     <!-- replication type -->
+	   destroy-method="stop">
+<!--    init-method="start" destroy-method="stop">-->
+    <osgix:managed-properties persistent-id="org.duracloud.services.replicationservice.config" update-strategy="container-managed"/>
+	  <property name="host" value="localhost"/>  
+    <property name="port" value="8080"/>       
+    <property name="context" value="durastore"/>
+    <property name="brokerURL" value="tcp://localhost:61617"/> 
+    <property name="fromStoreId" value="1"/>                   
+    <property name="toStoreId" value="5"/>                     
+    <property name="replicationType" value="2"/>               
     <!-- <property name="jmsContainer" ref="jmsContainer" />  -->
     <property name="connectionFactory" ref="connFactory" />
     <property name="destination" ref="ingestDestination" />
