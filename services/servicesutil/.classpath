@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="var" path="M2_REPO/org/duracloud/services/computeservice/1.0.0/computeservice-1.0.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/duracloud/services/replicationservice/1.0.0/replicationservice-1.0.0.jar"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>

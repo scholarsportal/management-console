@@ -55,6 +55,30 @@
           -->
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>maven-paxexam-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-config</id>
+            <goals>
+              <goal>generate-config</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+
+          <options>
+            <platform>equinox</platform>
+            <profiles></profiles>
+          </options>
+          <settings>
+          </settings>
+
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -96,5 +120,37 @@
     </repository>
 
   </repositories>
+
+  <dependencies>
+
+    <!-- Pax Exam -->
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-default</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>  
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
 
 </project>

@@ -95,14 +95,6 @@
       <scope>provided</scope>
     </dependency>
 
-
-    <dependency>
-      <groupId>org.duracloud.services</groupId>
-      <artifactId>replicationservice</artifactId>
-      <version>1.0.0</version>
-      <scope>test</scope>
-    </dependency>
- 
     <!-- Spring MVC -->
     <dependency>
       <groupId>org.springframework</groupId>
