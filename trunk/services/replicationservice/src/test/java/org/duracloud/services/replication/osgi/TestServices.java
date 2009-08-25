@@ -17,6 +17,8 @@ public class TestServices
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private final int MAX_TRIES = 10;
+
     @Test
     public void testDynamicConfig() throws Exception {
         log.debug("testing Dynamic Configuration of Replication Service");
@@ -37,10 +39,12 @@ public class TestServices
         ServiceReference[] refs =
                 bundleContext.getServiceReferences(serviceInterface, filter);
 
-        if (refs == null || refs.length == 0) {
-            String msg = "Unable to find service: " + serviceInterface;
-            log.warn(msg);
-            throw new Exception(msg);
+        int count = 0;
+        while ((refs == null || refs.length == 0) && count < MAX_TRIES) {
+            count++;
+            log.debug("Trying to find service: '" + serviceInterface + "'");
+            Thread.sleep(1000);
+            refs = bundleContext.getServiceReferences(serviceInterface, filter);
         }
         Assert.assertNotNull("service not found: " + serviceInterface, refs[0]);
         log.debug(getPropsText(refs[0]));
