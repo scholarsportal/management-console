@@ -1,3 +1,4 @@
+
 package org.duracloud.emcstorage;
 
 import java.io.ByteArrayInputStream;
@@ -120,7 +121,7 @@ public class EMCStorageProvider
 
         List<String> contentNames = new ArrayList<String>();
         for (Identifier objId : getCompleteSpaceContents(spaceId)) {
-            contentNames.add(getContentNameForContentObject(objId));
+            contentNames.add(getContentNameForContentObject(objId, spaceId));
         }
 
         return contentNames.iterator();
@@ -137,17 +138,25 @@ public class EMCStorageProvider
         return entries;
     }
 
-    private String getContentNameForContentObject(Identifier objId)
+    private String getContentNameForContentObject(Identifier objId,
+                                                  String spaceId)
             throws StorageException {
         MetadataTags tags = new MetadataTags();
         String name = null;
         try {
-            // There should only be one 'content-name-tag'.
             MetadataList userMetadata = emcService.getUserMetadata(objId, tags);
-            name = userMetadata.iterator().next().getValue();
+            Iterator<Metadata> itr = userMetadata.iterator();
+            while (itr.hasNext()) {
+                Metadata md = itr.next();
+                if (spaceId.equals(md.getName())) {
+                    name = md.getValue();
+                }
+            }
         } catch (Exception e) {
             doThrow("Unable to find contentNameTag for obj: " + objId, e);
         }
+
+        log.debug("content name found for objId: " + name + ", for: " + objId);
         return name;
     }
 
@@ -189,6 +198,7 @@ public class EMCStorageProvider
         } catch (EsuException e) {
             doThrow("Could not create EMC space with spaceId " + spaceId, e);
         }
+
         return id;
     }
 
@@ -263,8 +273,8 @@ public class EMCStorageProvider
         // Over-write managed metadata.
         spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(rootObjId));
         spaceMetadata.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
-        spaceMetadata.put(METADATA_SPACE_ACCESS,
-                          doGetSpaceAccess(rootObjId).toString());
+        spaceMetadata.put(METADATA_SPACE_ACCESS, doGetSpaceAccess(rootObjId)
+                .toString());
 
         return spaceMetadata;
     }
@@ -297,7 +307,8 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void setSpaceMetadata(String spaceId, Map<String, String> spaceMetadata)
+    public void setSpaceMetadata(String spaceId,
+                                 Map<String, String> spaceMetadata)
             throws StorageException {
         Identifier rootObjId = getRootId(spaceId);
 
@@ -463,7 +474,11 @@ public class EMCStorageProvider
         }
         // Update existing object.
         else {
-            helper.updateObject(objId, wrappedContent, acl, metadataList, closeStream);
+            helper.updateObject(objId,
+                                wrappedContent,
+                                acl,
+                                metadataList,
+                                closeStream);
         }
 
         // Compare checksum
@@ -497,7 +512,8 @@ public class EMCStorageProvider
 
         ObjectId contentObjId = null;
         for (Identifier objId : getCompleteSpaceContents(spaceId)) {
-            if (contentId.equals(getContentNameForContentObject(objId))) {
+            if (contentId
+                    .equals(getContentNameForContentObject(objId, spaceId))) {
                 contentObjId = (ObjectId) objId;
             }
         }
@@ -604,7 +620,8 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Map<String, String> getContentMetadata(String spaceId, String contentId)
+    public Map<String, String> getContentMetadata(String spaceId,
+                                                  String contentId)
             throws StorageException {
         ObjectId objId = getContentObjId(spaceId, contentId);
 
