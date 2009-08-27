@@ -21,6 +21,8 @@ public class TestServices
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private final int MAX_TRIES = 10;
+
     private ServiceInstaller installer;
 
     private ServiceUninstaller uninstaller;
@@ -91,10 +93,14 @@ public class TestServices
                 getBundleContext().getServiceReferences(serviceInterface,
                                                         filter);
 
-        if (refs == null || refs.length == 0) {
-            String msg = "Unable to find service: " + serviceInterface;
-            log.warn(msg);
-            throw new Exception(msg);
+        int count = 0;
+        while ((refs == null || refs.length == 0) && count < MAX_TRIES) {
+            count++;
+            log.debug("Trying to find service: '" + serviceInterface + "'");
+            Thread.sleep(1000);
+            refs =
+                    getBundleContext().getServiceReferences(serviceInterface,
+                                                            filter);
         }
         Assert.assertNotNull("service not found: " + serviceInterface, refs[0]);
         log.debug(getPropsText(refs[0]));
