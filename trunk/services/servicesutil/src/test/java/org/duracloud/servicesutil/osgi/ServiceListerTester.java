@@ -13,7 +13,7 @@ public class ServiceListerTester {
 
     private final ServiceLister lister;
 
-    private final static String REPLICATION_SERVICE = "ReplicationService";
+    private final static String TEST_COMPUTE_SERVICE = "HelloService";
 
     public ServiceListerTester(ServiceLister lister) {
         this.lister = lister;
@@ -29,16 +29,16 @@ public class ServiceListerTester {
 
     private void verifyComputeServicesFound(List<ComputeService> computeServices)
             throws Exception {
-        boolean replicationServiceFound = false;
+        boolean testComputeServiceFound = false;
         for (ComputeService duraService : computeServices) {
             String serviceDesc = duraService.describe();
 
-            if (!replicationServiceFound) {
-                replicationServiceFound =
-                        serviceFound(serviceDesc, REPLICATION_SERVICE);
+            if (!testComputeServiceFound) {
+                testComputeServiceFound =
+                        serviceFound(serviceDesc, TEST_COMPUTE_SERVICE);
             }
         }
-        assertTrue(replicationServiceFound);
+        assertTrue(testComputeServiceFound);
     }
 
     private boolean serviceFound(String serviceName, String targetName) {

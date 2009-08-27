@@ -4,13 +4,13 @@ package org.duracloud.servicesutil.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.beans.ComputeServiceBean;
 
-import junit.framework.TestCase;
-
-public class XMLServiceSerializerImplTest
-        extends TestCase {
+public class XMLServiceSerializerImplTest {
 
     private XMLServiceSerializerImpl serializer;
 
@@ -20,6 +20,7 @@ public class XMLServiceSerializerImplTest
 
     private final String serviceName2 = "org.test.service2";
 
+    @Test
     public void testSerializeDeserializeList() throws Exception {
         serializer = new XMLServiceSerializerImpl();
 
@@ -29,14 +30,14 @@ public class XMLServiceSerializerImplTest
         services.add(new MockComputeService(serviceName2));
 
         String serialized = serializer.serialize(services);
-        assertNotNull(serialized);
+        Assert.assertNotNull(serialized);
 
-        assertTrue(serialized.contains(serviceName0));
-        assertTrue(serialized.contains(serviceName1));
-        assertTrue(serialized.contains(serviceName2));
+        Assert.assertTrue(serialized.contains(serviceName0));
+        Assert.assertTrue(serialized.contains(serviceName1));
+        Assert.assertTrue(serialized.contains(serviceName2));
 
         List<ComputeServiceBean> beans = serializer.deserializeList(serialized);
-        assertNotNull(beans);
+        Assert.assertNotNull(beans);
 
         boolean foundService0 = false;
         boolean foundService1 = false;
@@ -51,23 +52,24 @@ public class XMLServiceSerializerImplTest
             }
         }
 
-        assertTrue(foundService0);
-        assertTrue(foundService1);
-        assertTrue(foundService2);
+        Assert.assertTrue(foundService0);
+        Assert.assertTrue(foundService1);
+        Assert.assertTrue(foundService2);
     }
 
+    @Test
     public void testSerializeDeserializeBean() throws Exception {
         serializer = new XMLServiceSerializerImpl();
 
         ComputeServiceBean service = new ComputeServiceBean(serviceName0);
 
         String xml = serializer.serialize(service);
-        assertNotNull(xml);
-        assertTrue(xml.contains(serviceName0));
+        Assert.assertNotNull(xml);
+        Assert.assertTrue(xml.contains(serviceName0));
 
         ComputeServiceBean bean = serializer.deserializeBean(xml);
-        assertNotNull(bean);
-        assertEquals(serviceName0, bean.getServiceName());
+        Assert.assertNotNull(bean);
+        Assert.assertEquals(serviceName0, bean.getServiceName());
 
     }
 

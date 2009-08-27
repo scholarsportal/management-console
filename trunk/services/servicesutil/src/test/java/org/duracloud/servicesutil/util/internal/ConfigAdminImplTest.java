@@ -8,15 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.easymock.EasyMock;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class ConfigAdminImplTest
-        extends TestCase {
+public class ConfigAdminImplTest {
 
     @SuppressWarnings("unchecked")
     private Dictionary dictionary;
@@ -25,17 +27,15 @@ public class ConfigAdminImplTest
 
     private final String PID = "dummyConfigPID";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         dictionary = new Properties();
         configAdmin = new DuraConfigAdminImpl();
         configAdmin.setOsgiConfigAdmin(createMockConfigurationAdmin());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
     private ConfigurationAdmin createMockConfigurationAdmin()
@@ -56,6 +56,7 @@ public class ConfigAdminImplTest
         return ca;
     }
 
+    @Test
     public void testUpdateConfiguration() throws Exception {
         Map<String, String> props = configAdmin.getConfiguration(PID);
         verifySize(props, 0);
@@ -115,6 +116,7 @@ public class ConfigAdminImplTest
         verifyFirstFoundInSecond(newPropsV2, props, true);
     }
 
+    @Test
     public void testRemoveConfigurationElements() throws Exception {
         Map<String, String> props = configAdmin.getConfiguration(PID);
         verifySize(props, 0);
