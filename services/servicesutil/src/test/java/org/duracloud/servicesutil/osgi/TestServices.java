@@ -1,6 +1,8 @@
 
 package org.duracloud.servicesutil.osgi;
 
+import org.junit.Test;
+
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
 import org.duracloud.servicesutil.util.ServiceInstaller;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 
 public class TestServices
-        extends AbstractDuracloudOSGiTestBase {
+        extends AbstractDuracloudOSGiTestBasePax {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -33,10 +35,7 @@ public class TestServices
 
     private ComputeService helloService;
 
-    public TestServices() {
-        super.setDependencyCheck(false);
-    }
-
+    @Test
     public void testServiceInstaller() throws Exception {
         log.debug("testing ServiceInstaller");
 
@@ -45,6 +44,7 @@ public class TestServices
         tester.testServiceInstaller();
     }
 
+    @Test
     public void testServiceUninstaller() throws Exception {
         log.debug("testing ServiceUninstaller");
 
@@ -54,6 +54,7 @@ public class TestServices
         tester.testServiceUninstaller();
     }
 
+    @Test
     public void testServiceLister() throws Exception {
         log.debug("testing ServiceLister");
 
@@ -61,14 +62,17 @@ public class TestServices
         tester.testServiceLister();
     }
 
+    @Test
     public void testServiceStarter() {
         log.debug("testing ServiceStarter");
     }
 
+    @Test
     public void testServiceStopper() {
         log.debug("testing ServiceStopper");
     }
 
+    @Test
     public void testConfigAdmin() throws Exception {
         log.debug("testing ConfigurationAdmin");
 
@@ -84,7 +88,8 @@ public class TestServices
     private Object getService(String serviceInterface, String filter)
             throws Exception {
         ServiceReference[] refs =
-                bundleContext.getServiceReferences(serviceInterface, filter);
+                getBundleContext().getServiceReferences(serviceInterface,
+                                                        filter);
 
         if (refs == null || refs.length == 0) {
             String msg = "Unable to find service: " + serviceInterface;
@@ -93,7 +98,7 @@ public class TestServices
         }
         Assert.assertNotNull("service not found: " + serviceInterface, refs[0]);
         log.debug(getPropsText(refs[0]));
-        return bundleContext.getService(refs[0]);
+        return getBundleContext().getService(refs[0]);
     }
 
     private String getPropsText(ServiceReference ref) {
@@ -111,7 +116,7 @@ public class TestServices
                     (ServiceInstaller) getService(ServiceInstaller.class
                             .getName());
         }
-        assertNotNull(installer);
+        Assert.assertNotNull(installer);
         return installer;
     }
 
@@ -121,7 +126,7 @@ public class TestServices
                     (ServiceUninstaller) getService(ServiceUninstaller.class
                             .getName());
         }
-        assertNotNull(uninstaller);
+        Assert.assertNotNull(uninstaller);
         return uninstaller;
     }
 
@@ -129,7 +134,7 @@ public class TestServices
         if (lister == null) {
             lister = (ServiceLister) getService(ServiceLister.class.getName());
         }
-        assertNotNull(lister);
+        Assert.assertNotNull(lister);
         return lister;
     }
 
@@ -138,7 +143,7 @@ public class TestServices
             starter =
                     (ServiceStarter) getService(ServiceStarter.class.getName());
         }
-        assertNotNull(starter);
+        Assert.assertNotNull(starter);
         return starter;
     }
 
@@ -147,7 +152,7 @@ public class TestServices
             stopper =
                     (ServiceStopper) getService(ServiceStopper.class.getName());
         }
-        assertNotNull(stopper);
+        Assert.assertNotNull(stopper);
         return stopper;
     }
 
@@ -157,7 +162,7 @@ public class TestServices
                     (DuraConfigAdmin) getService(DuraConfigAdmin.class
                             .getName());
         }
-        assertNotNull(configAdmin);
+        Assert.assertNotNull(configAdmin);
         return configAdmin;
     }
 

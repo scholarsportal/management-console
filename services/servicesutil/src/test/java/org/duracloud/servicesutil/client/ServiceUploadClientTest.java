@@ -4,6 +4,10 @@ package org.duracloud.servicesutil.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -11,29 +15,25 @@ import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
 import org.easymock.EasyMock;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
-public class ServiceUploadClientTest
-        extends TestCase {
+public class ServiceUploadClientTest {
 
     private ServiceUploadClient client;
 
     private final String configId = "configId-test";
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         client = new ServiceUploadClient();
         client.setBaseURL("http://junk.com");
         client.setSerializer(new XMLServiceSerializerImpl());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
     public void testPostServiceBundle() {
@@ -48,6 +48,7 @@ public class ServiceUploadClientTest
         //        fail("Not yet implemented");
     }
 
+    @Test
     public void testGetServiceConfig() throws Exception {
         // SetUp
         Map<String, String> testConfig = new HashMap<String, String>();

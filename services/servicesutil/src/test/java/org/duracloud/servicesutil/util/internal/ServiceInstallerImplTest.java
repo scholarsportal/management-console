@@ -16,13 +16,15 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.duracloud.servicesutil.error.ServiceException;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class ServiceInstallerImplTest
-        extends TestCase {
+public class ServiceInstallerImplTest {
 
     private ServiceInstallerImpl installer;
 
@@ -51,9 +53,8 @@ public class ServiceInstallerImplTest
 
     private InputStream bagZip;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         String tmpHome = createBundleHome();
 
         installer = new ServiceInstallerImpl();
@@ -101,9 +102,8 @@ public class ServiceInstallerImplTest
         zipOutput.closeEntry();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         FileUtils.deleteDirectory(new File(installer.getBundleHome()));
 
         if (bagTxt != null) {
@@ -117,6 +117,7 @@ public class ServiceInstallerImplTest
         }
     }
 
+    @Test
     public void testInit() throws Exception {
         File attic = new File(installer.getBundleHome() + ATTIC);
         Assert.assertTrue(!attic.exists());
@@ -125,6 +126,7 @@ public class ServiceInstallerImplTest
         Assert.assertTrue(attic.exists());
     }
 
+    @Test
     public void testTxtInstall() throws Exception {
         try {
             installer.install(nameTxt, bagTxt);
@@ -135,6 +137,7 @@ public class ServiceInstallerImplTest
         verifyExists(false, new File(installer.getBundleHome() + nameTxt));
     }
 
+    @Test
     public void testZipInstall() throws Exception {
         installer.install(nameZip, bagZip);
 
@@ -149,6 +152,7 @@ public class ServiceInstallerImplTest
         verifyExists(false, noBundle);
     }
 
+    @Test
     public void testJarInstall() throws Exception {
         installer.install(nameJar, bagJar);
 
