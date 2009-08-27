@@ -19,7 +19,7 @@ public class ServiceInstallTestBase {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected final static String TEST_BUNDLE_FILE_NAME = "junk-bundle.txt";
+    protected final static String TEST_BUNDLE_FILE_NAME = "junk-bundle.jar";
 
     protected final static String BUNDLE_TEXT =
             "normally-bundle-is-a-jar-not-text";
