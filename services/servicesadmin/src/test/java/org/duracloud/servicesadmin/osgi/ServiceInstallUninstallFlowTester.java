@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.beans.ComputeServiceBean;
@@ -15,7 +14,6 @@ import org.duracloud.servicesutil.client.ServiceUploadClient;
 import org.duracloud.servicesutil.util.ServiceSerializer;
 import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,40 +28,24 @@ public class ServiceInstallUninstallFlowTester {
 
     private final BundleContext bundleContext;
 
-    //    private ServiceInstaller installer;
+    private final File testBundle;
 
-    private ServiceUploadClient client;
+    private final ServiceUploadClient client;
 
     private ServiceSerializer serializer;
 
-    //    private final ComputeService hello;
+    public ServiceInstallUninstallFlowTester(BundleContext bundleContext,
+                                             File testBundle,
+                                             ServiceUploadClient client) {
+        Assert.assertNotNull(bundleContext);
+        Assert.assertNotNull(testBundle);
+        Assert.assertTrue(testBundle.exists());
+        Assert.assertNotNull(client);
 
-    private final static String TEST_SERVICE = "HelloService";
-
-    private final static String TEST_BUNDLE_FILE_NAME =
-            "helloservice-1.0.0.jar";
-
-    private final String BASE_URL = "http://localhost:8089/servicesadmin-1.0.0";
-
-    public ServiceInstallUninstallFlowTester(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+        this.testBundle = testBundle;
+        this.client = client;
     }
-
-    //    protected void setUp() {
-    //        try {
-    //            deleteTestBundle(getBundleHome());
-    //        } catch (Exception e) {
-    //            e.printStackTrace();
-    //        }
-    //    }
-    //
-    //    protected void tearDown() {
-    //        try {
-    //            deleteTestBundle(getBundleHome());
-    //        } catch (Exception e) {
-    //            e.printStackTrace();
-    //        }
-    //    }
 
     public void testNewServiceFlow() throws Exception {
         // Allow tomcat to come up.
@@ -78,6 +60,11 @@ public class ServiceInstallUninstallFlowTester {
 
         // Allow test-service to come up.
         Thread.sleep(5000);
+
+        if (log.isDebugEnabled()) {
+            log.debug(AbstractServicesAdminOSGiTestBasePax
+                    .inspectBundlesText(bundleContext));
+        }
 
         // check new service exists and available in container
         verifyTestServiceIsListed(true);
@@ -105,7 +92,7 @@ public class ServiceInstallUninstallFlowTester {
 
     private void uninstallTestBundle() throws Exception {
         HttpResponse response =
-                getClient().deleteServiceBundle(TEST_BUNDLE_FILE_NAME);
+                getClient().deleteServiceBundle(testBundle.getName());
         assertNotNull(response);
 
         int statusCode = response.getStatusCode();
@@ -123,97 +110,44 @@ public class ServiceInstallUninstallFlowTester {
         assertNotNull(body);
 
         List<ComputeServiceBean> beans = getSerializer().deserializeList(body);
-        boolean helloServiceFound = false;
+        boolean testServiceFound = false;
         for (ComputeServiceBean bean : beans) {
             String serviceDesc = bean.getServiceName();
             log.debug("dura-service: " + serviceDesc);
 
-            if (!helloServiceFound) {
-                helloServiceFound = serviceFound(serviceDesc, TEST_SERVICE);
+            if (!testServiceFound) {
+                testServiceFound =
+                        TestServiceAdminWepApp.testServiceFound(serviceDesc);
             }
         }
-        assertEquals(exists, helloServiceFound);
+        assertEquals(exists, testServiceFound);
 
     }
 
     private void verifyTestServiceIsInstalled(boolean exists) throws Exception {
-        ComputeService hello = null;
+        ComputeService testService = null;
         try {
-            hello =
-                    (ComputeService) getService(ComputeService.class.getName(),
-                                                "(duraKey=helloVal)");
+            testService = TestServiceAdminWepApp.getTestService(bundleContext);
         } catch (Exception e) {
         }
 
-        boolean found = (null != hello);
+        boolean found = (null != testService);
         assertEquals(exists, found);
 
         if (exists) {
-            assertNotNull(hello.describe());
+            assertNotNull(testService.describe());
         }
-    }
-
-    //    private String getBundleHome() throws Exception {
-    //        String home = getInstaller().getBundleHome();
-    //        assertNotNull(home);
-    //        log.debug("serviceadmin bundle-home: '" + home + "'");
-    //        return home;
-    //    }
-    //
-    //    private ServiceInstaller getInstaller() throws Exception {
-    //        if (installer == null) {
-    //            installer =
-    //                    (ServiceInstaller) getService(ServiceInstaller.class
-    //                            .getName());
-    //        }
-    //        assertNotNull(installer);
-    //        return installer;
-    //    }
-    //
-    //    private Object getService(String serviceInterface) throws Exception {
-    //        return getService(serviceInterface, null);
-    //    }
-
-    private Object getService(String serviceInterface, String filter)
-            throws Exception {
-        ServiceReference[] refs =
-                bundleContext.getServiceReferences(serviceInterface, filter);
-
-        if (refs == null || refs.length == 0) {
-            String msg = "Unable to find service: " + serviceInterface;
-            log.warn(msg);
-            throw new Exception(msg);
-        }
-
-        return bundleContext.getService(refs[0]);
-    }
-
-    private boolean serviceFound(String serviceName, String targetName) {
-        return serviceName.contains(targetName);
     }
 
     private File getTestBundleFile() {
-        File bundle = new File("src/test/resources/" + TEST_BUNDLE_FILE_NAME);
-        Assert.assertTrue(bundle.exists());
-
-        return bundle;
+        return testBundle;
     }
 
-    //    private void deleteTestBundle(String home) {
-    //        File file = new File(home + File.separator + TEST_BUNDLE_FILE_NAME);
-    //        file.delete();
-    //    }
-
     private ServiceUploadClient getClient() {
-        if (client == null) {
-            client = new ServiceUploadClient();
-            client.setRester(new RestHttpHelper());
-            client.setBaseURL(BASE_URL);
-        }
         return client;
     }
 
-    public ServiceSerializer getSerializer() {
+    private ServiceSerializer getSerializer() {
         if (serializer == null) {
             serializer = new XMLServiceSerializerImpl();
         }

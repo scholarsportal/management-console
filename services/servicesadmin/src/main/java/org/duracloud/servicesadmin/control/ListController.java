@@ -22,7 +22,6 @@ public class ListController
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
                                                  HttpServletResponse response)
             throws Exception {
-
         ServletOutputStream out = response.getOutputStream();
         java.util.List<ComputeService> services =
                 getServiceLister().getDuraServices();

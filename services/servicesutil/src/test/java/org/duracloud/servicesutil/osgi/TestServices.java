@@ -21,6 +21,9 @@ public class TestServices
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private static final String HELLOSERVICE_FILTER =
+            "(duraService=helloservice)";
+
     private final int MAX_TRIES = 10;
 
     private ServiceInstaller installer;
@@ -180,7 +183,7 @@ public class TestServices
         if (helloService == null) {
             helloService =
                     (ComputeService) getService(ComputeService.class.getName(),
-                                                "(duraKey=helloVal)");
+                                                HELLOSERVICE_FILTER);
         }
         return helloService;
     }
