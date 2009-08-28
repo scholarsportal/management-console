@@ -3,11 +3,16 @@ package org.duracloud.servicesadmin.osgi;
 
 import java.io.File;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.ComputeService;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
 import org.duracloud.servicesutil.client.ServiceUploadClient;
+import org.duracloud.servicesutil.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceInstaller;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,71 +20,82 @@ import org.slf4j.LoggerFactory;
 import junit.framework.Assert;
 
 public class TestServiceAdminWepApp
-        extends AbstractServicesAdminOSGiTestBase {
+        extends AbstractServicesAdminOSGiTestBasePax {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger log =
+            LoggerFactory.getLogger(TestServiceAdminWepApp.class);
+
+    private final static int MAX_TRIES = 10;
+
+    // Port:8089 is defined in the 'tomcatconfig' project
+    private final static String BASE_URL =
+            "http://localhost:8089/org.duracloud.services.admin_1.0.0";
+
+    private final static String TEST_BUNDLE_FILE_NAME =
+            "replicationservice-1.0.0.jar";
+
+    private final static String TEST_SERVICE_FILTER =
+            "(duraService=replication)";
+
+    private final static String TEST_SERVICE_NAME = "ReplicationService";
 
     private ServiceInstaller installer;
 
-    @SuppressWarnings("unused")
-    private ServiceUploadClient clientForManifest;
+    private ServiceUploadClient client;
 
-    private RestHttpHelper helperForManifest;
-
-    private ComputeServiceBean beanForManifest;
-
-    private ComputeService hello;
-
-    private final static String TEST_BUNDLE_FILE_NAME =
-            "helloservice-1.0.0.jar";
-
-    @Override
-    protected void onSetUp() {
-        try {
-            deleteTestBundle(getBundleHome());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Before
+    public void setUp() throws Exception {
+        deleteInstalledBundle();
     }
 
-    @Override
-    protected void onTearDown() {
-        try {
-            deleteTestBundle(getBundleHome());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @After
+    public void tearDown() throws Exception {
+        deleteInstalledBundle();
     }
 
-    private void deleteTestBundle(String home) {
-        File file = new File(home + File.separator + TEST_BUNDLE_FILE_NAME);
-        file.delete();
+    private void deleteInstalledBundle() throws Exception {
+        new File(getBundleHome() + TEST_BUNDLE_FILE_NAME).delete();
     }
 
+    @Test
     public void testServiceInstallUninstallFlow() throws Exception {
         ServiceInstallUninstallFlowTester tester =
-                new ServiceInstallUninstallFlowTester(bundleContext);
+                new ServiceInstallUninstallFlowTester(getBundleContext(),
+                                                      getTestBundleFromResourceDir(),
+                                                      getClient());
         tester.testNewServiceFlow();
     }
 
+    @Test
     public void testServiceConfiguration() throws Exception {
-        // Make sure helloService has been installed.
-        new ServiceInstallUninstallFlowTester(bundleContext)
-                .installTestBundle();
-
-        // Allow test-service to come up.
-        Thread.sleep(5000);
-
         ServiceConfigurationTester tester =
-                new ServiceConfigurationTester(getHelloService());
+                new ServiceConfigurationTester(getClient());
         tester.testServiceConfiguration();
+    }
+
+    private File getTestBundleFromResourceDir() throws Exception {
+        String baseDir = System.getProperty(BASE_DIR_PROP);
+        Assert.assertNotNull(baseDir);
+
+        String resourceDir = baseDir + File.separator + "src/test/resources/";
+
+        return new File(resourceDir + TEST_BUNDLE_FILE_NAME);
     }
 
     private String getBundleHome() throws Exception {
         String home = getInstaller().getBundleHome();
         Assert.assertNotNull(home);
         log.debug("serviceadmin bundle-home: '" + home + "'");
-        return home;
+        return home + File.separator;
+    }
+
+    private ServiceUploadClient getClient() {
+        if (client == null) {
+            client = new ServiceUploadClient();
+            client.setRester(new RestHttpHelper());
+            client.setBaseURL(BASE_URL);
+        }
+        return client;
     }
 
     private ServiceInstaller getInstaller() throws Exception {
@@ -88,33 +104,45 @@ public class TestServiceAdminWepApp
                     (ServiceInstaller) getService(ServiceInstaller.class
                             .getName());
         }
-        assertNotNull(installer);
+        Assert.assertNotNull(installer);
         return installer;
     }
 
-    private ComputeService getHelloService() throws Exception {
-        ComputeService hello =
-                (ComputeService) getService(ComputeService.class.getName());
-        //                                            "(duraKey=helloVal)");
-        assertNotNull(hello);
-        return hello;
-    }
-
     private Object getService(String serviceInterface) throws Exception {
-        return getService(serviceInterface, null);
+        return getService(serviceInterface, null, getBundleContext());
     }
 
-    private Object getService(String serviceInterface, String filter)
-            throws Exception {
-        ServiceReference[] refs =
-                bundleContext.getServiceReferences(serviceInterface, filter);
+    private static Object getService(String serviceInterface,
+                                     String filter,
+                                     BundleContext ctxt) throws Exception {
+        Assert.assertNotNull(ctxt);
 
-        if (refs == null || refs.length == 0) {
-            String msg = "Unable to find service: " + serviceInterface;
-            log.warn(msg);
-            throw new Exception(msg);
+        ServiceReference[] refs =
+                ctxt.getServiceReferences(serviceInterface, filter);
+
+        int count = 0;
+        while ((refs == null || refs.length == 0) && count < MAX_TRIES) {
+            count++;
+            log.debug("Trying to find service: '" + serviceInterface + "'");
+            Thread.sleep(1000);
+            refs = ctxt.getServiceReferences(serviceInterface, filter);
         }
 
-        return bundleContext.getService(refs[0]);
+        if (refs == null || refs.length == 0) {
+            throw new ServiceException("service not found: " + serviceInterface);
+        }
+        log.debug(getPropsText(refs[0]));
+        return ctxt.getService(refs[0]);
+    }
+
+    protected static ComputeService getTestService(BundleContext ctxt)
+            throws Exception {
+        return (ComputeService) getService(ComputeService.class.getName(),
+                                           TEST_SERVICE_FILTER,
+                                           ctxt);
+    }
+
+    protected static boolean testServiceFound(String serviceName) {
+        return serviceName.contains(TEST_SERVICE_NAME);
     }
 }

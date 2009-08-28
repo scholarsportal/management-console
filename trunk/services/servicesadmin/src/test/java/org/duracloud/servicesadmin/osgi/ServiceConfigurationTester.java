@@ -4,17 +4,13 @@ package org.duracloud.servicesadmin.osgi;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.client.ServiceUploadClient;
 
 import junit.framework.Assert;
 
 public class ServiceConfigurationTester {
 
-    private final ComputeService service;
-
-    private ServiceUploadClient client;
+    private final ServiceUploadClient client;
 
     private Map<String, String> configOrig;
 
@@ -24,12 +20,10 @@ public class ServiceConfigurationTester {
 
     private final String servicePidKey = "service.pid";
 
-    private static String BASE_URL =
-            "http://localhost:8089/servicesadmin-1.0.0";
+    public ServiceConfigurationTester(ServiceUploadClient client) {
+        Assert.assertNotNull(client);
+        this.client = client;
 
-    public ServiceConfigurationTester(ComputeService service) {
-        Assert.assertNotNull(service);
-        this.service = service;
         setUp();
     }
 
@@ -46,14 +40,23 @@ public class ServiceConfigurationTester {
     }
 
     public void testServiceConfiguration() throws Exception {
+        // Allow tomcat to come up.
+        Thread.sleep(5000);
+
         // Post and verify original-config.
         getClient().postServiceConfig(configId, configOrig);
+
+        // Allow config to propagate.
+        Thread.sleep(100);
 
         Map<String, String> props = getClient().getServiceConfig(configId);
         verifyConfiguration(configOrig, props);
 
         // Post and verify updated-config.
         getClient().postServiceConfig(configId, configNew);
+
+        // Allow config to propagate.
+        Thread.sleep(100);
 
         props = getClient().getServiceConfig(configId);
         verifyConfiguration(configNew, props);
@@ -64,6 +67,7 @@ public class ServiceConfigurationTester {
                                      Map<String, String> configFound) {
         Assert.assertNotNull(configFound);
 
+        // The 'servicePidKey' is automatically inserted by the OSGi framework.
         String pid = configFound.get(servicePidKey);
         Assert.assertNotNull(pid);
         Assert.assertEquals(configId, pid);
@@ -78,11 +82,6 @@ public class ServiceConfigurationTester {
     }
 
     private ServiceUploadClient getClient() {
-        if (client == null) {
-            client = new ServiceUploadClient();
-            client.setRester(new RestHttpHelper());
-            client.setBaseURL(BASE_URL);
-        }
         return client;
     }
 }
