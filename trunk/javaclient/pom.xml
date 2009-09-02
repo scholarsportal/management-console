@@ -43,6 +43,21 @@
       <artifactId>commons-httpclient</artifactId>
       <version>3.1</version>
     </dependency>    
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>com.springsource.org.apache.derby</artifactId>
+      <version>10.5.1000001.764942-duracloud</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>  
+      <artifactId>com.springsource.org.apache.commons.io</artifactId>  
+      <version>1.4.0</version>
+      <scope>test</scope>
+    </dependency>
+
      
   </dependencies>
 </project>

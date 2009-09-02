@@ -89,7 +89,7 @@ public class TestIngestAdvice
 
         // Delete space
         HttpResponse response = RestTestHelper.deleteSpace(spaceId);
-        Assert.assertTrue(response.getStatusCode() == 200);
+        Assert.assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
