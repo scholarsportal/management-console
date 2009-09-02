@@ -45,14 +45,14 @@ public class TestDuradmin
     public void testSpaces() throws Exception {
         String url = baseUrl + "/spaces.htm";
         HttpResponse response = restHelper.get(url);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
 
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
 
         url = baseUrl + "/spaces.htm";
         response = restHelper.get(url);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
 
         String forwardedResponseText = response.getResponseBody();
         assertNotNull(forwardedResponseText);

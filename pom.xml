@@ -49,6 +49,7 @@
   </organization>
 
   <modules>
+      <module>mavenplugins</module>
       <module>common</module>
       <module>computeprovider</module>
 <!--      <module>ec2computeprovider</module>-->
@@ -56,13 +57,13 @@
       <module>storageprovider</module>
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
-      <module>emcstorageprovider</module>
+<!--      <module>emcstorageprovider</module>-->
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
       <module>durastore</module> 
       <module>duradavwebapp</module>
       <module>javaclient</module>
-	  <module>duradmin</module>
+      <module>duradmin</module>
       <module>services</module>
   </modules>
 
