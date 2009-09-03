@@ -6,8 +6,6 @@
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
   <!-- REST API resources -->
-  <bean id="storeRest" class="org.duracloud.durastore.rest.StoreRest" />
-  <bean id="spaceRest" class="org.duracloud.durastore.rest.SpaceRest" />
-  <bean id="contentRest" class="org.duracloud.durastore.rest.ContentRest" />
+  <bean id="serviceRest" class="org.duracloud.duraservice.rest.ServiceRest" />
 
 </beans>

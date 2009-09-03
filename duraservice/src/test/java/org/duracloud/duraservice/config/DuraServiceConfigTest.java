@@ -1,4 +1,4 @@
-package org.duracloud.durastore.config;
+package org.duracloud.duraservice.config;
 
 import org.junit.After;
 import org.junit.Before;
@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 
-public class DuraStoreConfigTest {
+public class DuraServiceConfigTest {
 
     @Before
     public void setUp() throws Exception {
@@ -18,11 +18,14 @@ public class DuraStoreConfigTest {
     }
 
     @Test
-    public void testProps() throws Exception {
+    public void testGetProps() throws Exception {
 
-        String port = DuraStoreConfig.getPort();
+        String port = DuraServiceConfig.getPort();
         assertNotNull(port);
         assertFalse(port.equals("${tomcat.port}"));
+
+        String servicesAdminURL = DuraServiceConfig.getServicesAdminUrl();
+        assertNotNull(servicesAdminURL);
 
     }
 }

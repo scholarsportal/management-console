@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * Tests the Serialization Utilities.
@@ -32,7 +34,7 @@ public class SerializationUtilTest {
     }
 
     @Test
-    public void testSerializeDeserialize() throws Exception {
+    public void testSerializeDeserializeMap() throws Exception {
         Map<String, String> testMap = new HashMap<String, String>();
         testMap.put("testName", "testValue");
         testMap.put("foo", "bar");
@@ -44,9 +46,33 @@ public class SerializationUtilTest {
             SerializationUtil.deserializeMap(serialized);
 
         assertTrue(testMap.equals(resultMap));
+
+        // Test empty/null values
+        String serNull = SerializationUtil.serializeMap(null);
+        String serEmpty =
+            SerializationUtil.serializeMap(new HashMap<String, String>());
+        assertNotNull(serNull);
+        assertNotNull(serEmpty);
+        assertEquals(serNull, serEmpty);
+
+        resultMap = SerializationUtil.deserializeMap(serNull);
+        assertNotNull(resultMap);
+        assertEquals(0, resultMap.size());
+
+        resultMap = SerializationUtil.deserializeMap(serEmpty);
+        assertNotNull(resultMap);
+        assertEquals(0, resultMap.size());
+
+        resultMap = SerializationUtil.deserializeMap("");
+        assertNotNull(resultMap);
+        assertEquals(0, resultMap.size());
+
+        resultMap = SerializationUtil.deserializeMap(null);
+        assertNotNull(resultMap);
+        assertEquals(0, resultMap.size());
     }
 
-    public void testSerializeList() throws Exception
+    public void testSerializeDeserializeList() throws Exception
     {
         List<String> testList = new ArrayList<String>();
         testList.add("testName");
@@ -59,6 +85,30 @@ public class SerializationUtilTest {
             SerializationUtil.deserializeList(serialized);
 
         assertTrue(testList.equals(resultList));
+
+        // Test empty/null values
+        String serNull = SerializationUtil.serializeList(null);
+        String serEmpty =
+            SerializationUtil.serializeList(new ArrayList<String>());
+        assertNotNull(serNull);
+        assertNotNull(serEmpty);
+        assertEquals(serNull, serEmpty);
+
+        resultList = SerializationUtil.deserializeList(serNull);
+        assertNotNull(resultList);
+        assertEquals(0, resultList.size());
+
+        resultList = SerializationUtil.deserializeList(serEmpty);
+        assertNotNull(resultList);
+        assertEquals(0, resultList.size());
+
+        resultList = SerializationUtil.deserializeList("");
+        assertNotNull(resultList);
+        assertEquals(0, resultList.size());
+
+        resultList = SerializationUtil.deserializeList(null);
+        assertNotNull(resultList);
+        assertEquals(0, resultList.size());
     }
 
 }
