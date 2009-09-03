@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>javaclient</artifactId>
+      <artifactId>storeclient</artifactId>
       <version>1.0.0</version>
       <scope>provided</scope>
     </dependency>

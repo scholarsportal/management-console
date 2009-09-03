@@ -3,10 +3,10 @@
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud</groupId>
-  <artifactId>javaclient</artifactId>
+  <artifactId>storeclient</artifactId>
   <packaging>bundle</packaging>
   <version>1.0.0</version>
-  <name>JavaClient</name>
+  <name>StoreClient</name>
 
   <parent>
     <artifactId>duracloud</artifactId>

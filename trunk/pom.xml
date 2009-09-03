@@ -62,7 +62,7 @@
       <module>mainwebapp</module>
       <module>durastore</module> 
       <module>duradavwebapp</module>
-      <module>javaclient</module>
+      <module>storeclient</module>
       <module>duradmin</module>
       <module>services</module>
 	  <module>duraservice</module>

@@ -19,6 +19,6 @@
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/javaclient"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/storeclient"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
