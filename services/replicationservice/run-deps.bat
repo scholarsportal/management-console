@@ -7,7 +7,7 @@ call pax-import-bundle -g org.springframework.osgi -a spring-osgi-io -v 1.2.0
 
 REM - DuraCloud -
 call pax-import-bundle -g org.duracloud -a storageprovider -v 1.0.0 -- -DimportTransitive -DwidenScope
-call pax-import-bundle -g org.duracloud -a javaclient -v 1.0.0 -- -DimportTransitive -DwidenScope
+call pax-import-bundle -g org.duracloud -a storeclient -v 1.0.0 -- -DimportTransitive -DwidenScope
 
 REM - Other -
 call pax-import-bundle -g org.apache.activemq -a com.springsource.org.apache.activemq -v 5.2.0 -- -DimportTransitive -DwidenScope
