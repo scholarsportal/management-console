@@ -277,12 +277,22 @@ public class RestHttpHelper {
 
         private final Header[] responseFooters;
 
-        HttpResponse(HttpMethod method)
+        public HttpResponse(int statusCode,
+                     Header[] responseHeaders,
+                     Header[] responseFooters,
+                     InputStream responseStream) {
+            this.statusCode = statusCode;
+            this.responseHeaders = responseHeaders;
+            this.responseFooters = responseFooters;
+            this.responseStream = responseStream;
+        }
+
+        public HttpResponse(HttpMethod method)
                 throws IOException {
-            statusCode = method.getStatusCode();
-            responseHeaders = method.getResponseHeaders();
-            responseFooters = method.getResponseFooters();
-            responseStream = method.getResponseBodyAsStream();
+            this(method.getStatusCode(),
+                 method.getResponseHeaders(),
+                 method.getResponseFooters(),
+                 method.getResponseBodyAsStream());
         }
 
         public int getStatusCode() {

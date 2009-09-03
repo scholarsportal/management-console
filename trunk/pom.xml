@@ -65,6 +65,7 @@
       <module>javaclient</module>
       <module>duradmin</module>
       <module>services</module>
+	  <module>duraservice</module>
   </modules>
 
   <profiles>

@@ -2,6 +2,7 @@
 package org.duracloud.servicesutil.client;
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.util.Map;
 
@@ -26,6 +27,16 @@ public class ServiceUploadClient {
     private ServiceSerializer serializer;
 
     private String baseURL;
+
+    public HttpResponse postServiceBundle(InputStream stream) throws Exception {
+        log.debug("INPUTSTREAM: " + stream);
+
+        return getRester().post(getInstallURL(),
+                                stream,
+                                String.valueOf(stream.available()),
+                                "application/java-archive",
+                                null);
+    }
 
     public HttpResponse postServiceBundle(File file) throws Exception {
         log.debug("FILE: " + file);

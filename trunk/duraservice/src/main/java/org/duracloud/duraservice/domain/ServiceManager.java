@@ -1,0 +1,324 @@
+package org.duracloud.duraservice.domain;
+
+import java.io.InputStream;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.httpclient.util.HttpURLConnection;
+
+import org.apache.log4j.Logger;
+
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
+import org.duracloud.client.ContentStoreManager;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.computeprovider.domain.ComputeProviderType;
+import org.duracloud.domain.Space;
+import org.duracloud.duraservice.config.DuraServiceConfig;
+import org.duracloud.servicesutil.client.ServiceUploadClient;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+
+/**
+ * Performs management functions over services.
+ *
+ * @author Bill Branan
+ */
+public class ServiceManager {
+
+    private static final Logger log = Logger.getLogger(ServiceManager.class);
+
+    private static final String LOCAL_HOST = "localhost";
+
+    private String localServicesAdminBaseURL;
+
+    // List of all service IDs
+    private List<String> services = null;
+
+    // Maps serviceIds to deployment location (instance host names)
+    private Map<String, String> deployedServices = null;
+
+    // Provides access to service packages
+    private ContentStore store = null;
+
+    // ServiceStore in which services packages reside
+    private ServiceStore serviceStore = null;
+
+    // ServiceCompute used to run service compute instances
+    private ServiceCompute serviceCompute = null;
+
+    // Maps servicesAdmin instance host names to client
+    private Map<String, ServiceUploadClient> servicesAdmins = null;
+
+    public ServiceManager() {
+        deployedServices = new HashMap<String, String>();
+        servicesAdmins = new HashMap<String, ServiceUploadClient>();
+    }
+
+    public void configure(InputStream configXml) {
+        parseManagerConfigXml(configXml);
+
+        try {
+            initializeServicesList(serviceStore);
+        } catch (ContentStoreException cse) {
+            String error = "Could not build services list due " +
+            		       "to exception: " + cse.getMessage();
+            log.error(error);
+            throw new RuntimeException(error, cse);
+        }
+
+        try {
+            localServicesAdminBaseURL = DuraServiceConfig.getServicesAdminUrl();
+            addServicesAdmin(LOCAL_HOST);
+        } catch (Exception e) {
+            String error = "Could not retrieve local servicesAdmin " +
+            		       "URL due to error: " + e.getMessage();
+            log.error(error);
+            throw new RuntimeException(error, e);
+        }
+    }
+
+    private void checkConfigured() {
+        if(serviceStore == null) {
+            throw new RuntimeException("The Service Manager must be initialized " +
+            		                   "prior to performing any other activities.");
+        }
+    }
+
+    private void parseManagerConfigXml(InputStream xml) {
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(xml);
+            Element servicesConfig = doc.getRootElement();
+
+            Element serviceStorage = servicesConfig.getChild("serviceStorage");
+            serviceStore = new ServiceStore();
+            serviceStore.setHost(serviceStorage.getChildText("host"));
+            serviceStore.setPort(serviceStorage.getChildText("port"));
+            serviceStore.setContext(serviceStorage.getChildText("context"));
+            serviceStore.setSpaceId(serviceStorage.getChildText("spaceId"));
+
+            Element serviceComputeProvider = servicesConfig.getChild("serviceCompute");
+            serviceCompute = new ServiceCompute();
+            String computeProviderType = serviceComputeProvider.getChildText("type");
+            serviceCompute.setType(ComputeProviderType.fromString(computeProviderType));
+            serviceCompute.setImageId(serviceComputeProvider.getChildText("imageId"));
+            Element computeCredential =
+                serviceComputeProvider.getChild("computeProviderCredential");
+            serviceCompute.setUsername(computeCredential.getChildText("username"));
+            serviceCompute.setPassword(computeCredential.getChildText("password"));
+        } catch (Exception e) {
+            String error = "Error encountered attempting to parse DuraService " +
+            		       "configuration xml " + e.getMessage();
+            log.error(error);
+            throw new RuntimeException(error, e);
+        }
+    }
+
+    /**
+     * Reviews the list of content available in the DuraCloud
+     * service storage location and builds a service registry.
+     */
+    protected void initializeServicesList(ServiceStore serviceStore)
+    throws ContentStoreException {
+        ContentStoreManager storeManager =
+            new ContentStoreManager(serviceStore.getHost(),
+                                    serviceStore.getPort(),
+                                    serviceStore.getContext());
+        setContentStore(storeManager.getPrimaryContentStore());
+
+        Space space = store.getSpace(serviceStore.getSpaceId());
+        setServicesList(space.getContentIds());
+    }
+
+    protected void setContentStore(ContentStore store) {
+        this.store = store;
+    }
+
+    protected void setServicesList(List<String> services) {
+        this.services = services;
+    }
+
+    public List<String> getAllServices() {
+        checkConfigured();
+        return services;
+    }
+
+    public List<String> getDeployedServices() {
+        checkConfigured();
+        Set<String> serviceIds = deployedServices.keySet();
+        List<String> deployedServiceIds = new ArrayList<String>();
+        for(String serviceId : serviceIds) {
+            deployedServiceIds.add(serviceId);
+        }
+        return deployedServiceIds;
+    }
+
+    public void deployService(String serviceId, String serviceHost)
+    throws ServiceException {
+        checkConfigured();
+
+        if(serviceHost == null || serviceHost.equals("")) {
+            serviceHost = LOCAL_HOST;
+        }
+
+        log.info("Deploying service " + serviceId + " to " + serviceHost);
+
+        try {
+            // Grab file from store
+            InputStream serviceStream =
+                store.getContent(serviceStore.getSpaceId(), serviceId).getStream();
+
+            // Push file to services admin
+            ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+            HttpResponse response = servicesAdmin.postServiceBundle(serviceStream);
+            if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
+                throw new ServiceException("Services Admin response code was " +
+                                           response.getStatusCode());
+            }
+        } catch(Exception e) {
+            String error = "Unable to deploy service " + serviceId +
+                           " to " + serviceHost + " due to error: " +
+                           e.getMessage();
+            log.error(error);
+            throw new ServiceException(error, e);
+        }
+
+        deployedServices.put(serviceId, serviceHost);
+    }
+
+    public void configureService(String serviceId, InputStream configXml)
+    throws ServiceException {
+        checkConfigured();
+        String serviceHost = deployedServices.get(serviceId);
+        if(serviceHost != null) {
+            log.info("Configuring service: " + serviceId + " from " + serviceHost);
+
+            Map<String, String> config;
+            if(configXml != null) {
+                config = parseServiceConfigXml(configXml);
+            } else {
+                String error = "Cannot configure service: " + serviceId +
+                               ". The config XML is null.";
+                log.error(error);
+                throw new ServiceException(error);
+            }
+
+            try {
+                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                servicesAdmin.postServiceConfig(serviceId, config);
+            } catch (Exception e) {
+                String error = "Unable to configure service " + serviceId +
+                               " at " + serviceHost + " due to error: " +
+                               e.getMessage();
+                log.error(error);
+                throw new ServiceException(error, e);
+            }
+        } else {
+            String error = "Cannot configure service: " + serviceId +
+                           ". It has not been deployed.";
+            log.error(error);
+            throw new ServiceException(error);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, String> parseServiceConfigXml(InputStream xml) {
+        Map<String, String> config = new HashMap<String, String>();
+
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(xml);
+            Element serviceConfig = doc.getRootElement();
+
+            List<Element> configItems =
+                serviceConfig.getChildren("configItem");
+            for(Element configItem : configItems) {
+                config.put(configItem.getChildText("name"),
+                           configItem.getChildText("value"));
+            }
+        } catch (Exception e) {
+            String error = "Error encountered attempting to parse service " +
+                           "configuration xml " + e.getMessage();
+            log.error(error);
+            throw new RuntimeException(error, e);
+        }
+
+        return config;
+    }
+
+    public void undeployService(String serviceId)
+    throws ServiceException {
+        checkConfigured();
+        String serviceHost = deployedServices.get(serviceId);
+        if(serviceHost != null) {
+            log.info("UnDeploying service: " + serviceId + " from " + serviceHost);
+
+            try {
+                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                HttpResponse response = servicesAdmin.deleteServiceBundle(serviceId);
+
+                if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
+                    throw new ServiceException("Services Admin response code was " +
+                                               response.getStatusCode());
+                }
+            } catch (Exception e) {
+                String error = "Unable to undeploy service " + serviceId +
+                               " from " + serviceHost + " due to error: " +
+                               e.getMessage();
+                log.error(error);
+                throw new ServiceException(error, e);
+            }
+
+            deployedServices.remove(serviceId);
+        } else {
+            String error = "Cannot undeploy service: " + serviceId +
+                           ". It has not been deployed.";
+            log.error(error);
+            throw new ServiceException(error);
+        }
+    }
+
+    protected ServiceUploadClient getServicesAdmin(String instanceHost)
+    throws ServiceException {
+        if(instanceHost != null && instanceHost != "") {
+            if(servicesAdmins.containsKey(instanceHost)) {
+                return servicesAdmins.get(instanceHost);
+            } else {
+                throw new ServiceException("There is no Service Instance on host " +
+                                           instanceHost + ".");
+            }
+        } else {
+            return servicesAdmins.get(LOCAL_HOST);
+        }
+    }
+
+    private void addServicesAdmin(String instanceHost) {
+        String baseUrl =
+            localServicesAdminBaseURL.replace(LOCAL_HOST, instanceHost);
+        ServiceUploadClient servicesAdmin = new ServiceUploadClient();
+        servicesAdmin.setBaseURL(baseUrl);
+        servicesAdmin.setRester(new RestHttpHelper());
+        servicesAdmins.put(instanceHost, servicesAdmin);
+    }
+
+    /**
+     * Starts up a new services compute instance.
+     *
+     * @return the hostName of the new instance
+     */
+    public String addServicesInstance() {
+        checkConfigured();
+        //TODO: Make call to start services instance through compute manager
+        //addServicesAdmin(hostName);
+        //return hostName;
+        return null;
+    }
+
+}

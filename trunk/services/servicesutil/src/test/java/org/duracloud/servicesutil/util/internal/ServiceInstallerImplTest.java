@@ -104,7 +104,7 @@ public class ServiceInstallerImplTest {
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(new File(installer.getBundleHome()));
+        FileUtils.deleteQuietly(new File(installer.getBundleHome()));
 
         if (bagTxt != null) {
             bagTxt.close();
@@ -120,8 +120,6 @@ public class ServiceInstallerImplTest {
     @Test
     public void testInit() throws Exception {
         File attic = new File(installer.getBundleHome() + ATTIC);
-        Assert.assertTrue(!attic.exists());
-
         installer.init();
         Assert.assertTrue(attic.exists());
     }

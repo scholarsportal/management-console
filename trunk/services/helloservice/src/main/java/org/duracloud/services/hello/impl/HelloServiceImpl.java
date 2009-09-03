@@ -27,6 +27,7 @@ public class HelloServiceImpl
                 + "'";
     }
 
+    @SuppressWarnings("unchecked")
     public void updated(Dictionary config) throws ConfigurationException {
         System.out.print("HelloService updating config: ");
         if (config != null) {

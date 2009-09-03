@@ -1,11 +1,15 @@
 package org.duracloud.computeprovider.domain;
 
 public enum ComputeProviderType {
-    AMAZON_EC2("amazon-ec2", "http://aws.amazon.com/ec2"), MICROSOFT_AZURE(
-            "ms-azure", "http://www.microsoft.com/azure"), SUN("sun",
-            "http://www.sun.com/cloud"),
-    LOCAL("local", "http://localhost:8080"), UNKNOWN("unknown",
-            "http://www.google.com");
+    AMAZON_EC2("amazon-ec2", "http://aws.amazon.com/ec2"),
+    MICROSOFT_AZURE("ms-azure", "http://www.microsoft.com/azure"),
+    RACKSPACE_CLOUDSERVERS("rackspace-cloudservers",
+                           "http://www.rackspacecloud.com/cloud_hosting_products/servers"),
+    EMC_ATMOS("emc-atmos",
+              "http://www.emc.com/products/category/subcategory/cloud-infrastructure.htm"),
+    SUN("sun", "http://www.sun.com/cloud"),
+    LOCAL("local", "http://localhost:8080"),
+    UNKNOWN("unknown", "http://www.google.com");
 
     private final String text;
 
@@ -18,7 +22,8 @@ public enum ComputeProviderType {
 
     public static ComputeProviderType fromString(String pt) {
         for (ComputeProviderType pType : values()) {
-            if (pType.text.equalsIgnoreCase(pt)) {
+            if (pType.text.equalsIgnoreCase(pt) ||
+                pType.name().equalsIgnoreCase(pt)) {
                 return pType;
             }
         }
