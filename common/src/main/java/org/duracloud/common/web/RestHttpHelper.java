@@ -6,6 +6,7 @@
 package org.duracloud.common.web;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,8 +25,10 @@ import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.PartSource;
 
 import org.apache.log4j.Logger;
 
@@ -177,6 +180,50 @@ public class RestHttpHelper {
                                               contentLength,
                                               mimeType);
         return executeRequest(url, Method.PUT, requestEntity, headers);
+    }
+
+    public HttpResponse multipartFilePost(String url, File file)
+            throws Exception {
+        Part[] parts = {new FilePart(file.getName(), file)};
+        return multipartPost(url, parts);
+    }
+
+    public HttpResponse multipartFileStreamPost(String url,
+                                                String fileName,
+                                                InputStream stream)
+            throws Exception {
+        Part[] parts = {new FilePart(fileName,
+                                     new StreamPart(fileName, stream))};
+        return multipartPost(url, parts);
+    }
+
+    private class StreamPart implements PartSource {
+
+        String fileName;
+        InputStream stream;
+
+        public StreamPart(String fileName, InputStream stream) {
+            this.fileName = fileName;
+            this.stream = stream;
+        }
+
+        public InputStream createInputStream() throws IOException {
+            return stream;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public long getLength() {
+            long length = 0;
+            try {
+                length = new Integer(stream.available()).longValue();
+            } catch(IOException ioe) {
+                length = 0;
+            }
+            return length;
+        }
     }
 
     public HttpResponse multipartPost(String url, Part[] parts)

@@ -177,7 +177,8 @@ public class ServiceManager {
 
             // Push file to services admin
             ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
-            HttpResponse response = servicesAdmin.postServiceBundle(serviceStream);
+            HttpResponse response =
+                servicesAdmin.postServiceBundle(serviceId, serviceStream);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                 throw new ServiceException("Services Admin response code was " +
                                            response.getStatusCode());
