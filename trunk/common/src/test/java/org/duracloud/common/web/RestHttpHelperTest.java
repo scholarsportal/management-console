@@ -1,6 +1,7 @@
 package org.duracloud.common.web;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.net.HttpURLConnection;
@@ -106,6 +107,27 @@ public class RestHttpHelperTest {
 
         HttpResponse response = helper.multipartPost(getUrl(), parts);
         verifyResponse(response);
+        file.delete();
+    }
+
+    @Test
+    public void testMultipartFilePost() throws Exception {
+        File file = createTmpFile();
+        HttpResponse response = helper.multipartFilePost(getUrl(), file);
+        verifyResponse(response);
+        file.delete();
+    }
+
+    @Test
+    public void testMultipartFileStreamPost() throws Exception {
+        File file = createTmpFile();
+        FileInputStream fileStream = new FileInputStream(file);
+        HttpResponse response =
+            helper.multipartFileStreamPost(getUrl(),
+                                           file.getName(),
+                                           fileStream);
+        verifyResponse(response);
+        file.delete();
     }
 
     private String getUrl() {

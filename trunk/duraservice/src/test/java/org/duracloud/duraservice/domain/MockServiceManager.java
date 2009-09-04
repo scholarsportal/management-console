@@ -1,6 +1,7 @@
 package org.duracloud.duraservice.domain;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 
 import java.util.Map;
@@ -72,14 +73,23 @@ public class MockServiceManager
             new RestHttpHelper().
             new HttpResponse(HttpURLConnection.HTTP_OK, null, null, null);
 
-        public HttpResponse postServiceBundle(InputStream stream) throws Exception {
+        @Override
+        public HttpResponse postServiceBundle(String fileName, InputStream stream)
+        throws Exception {
             return response;
         }
 
+        @Override
+        public HttpResponse postServiceBundle(File file) throws Exception {
+            return response;
+        }
+
+        @Override
         public HttpResponse deleteServiceBundle(String bundleId) throws Exception {
             return response;
         }
 
+        @Override
         public void postServiceConfig(String configId, Map<String, String> config)
         throws Exception {
 

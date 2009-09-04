@@ -28,22 +28,17 @@ public class ServiceUploadClient {
 
     private String baseURL;
 
-    public HttpResponse postServiceBundle(InputStream stream) throws Exception {
-        log.debug("INPUTSTREAM: " + stream);
-
-        return getRester().post(getInstallURL(),
-                                stream,
-                                String.valueOf(stream.available()),
-                                "application/java-archive",
-                                null);
+    public HttpResponse postServiceBundle(String fileName, InputStream stream)
+    throws Exception {
+        log.debug("FILENAME: " + fileName + "\nSTREAM: " + stream);
+        return getRester().multipartFileStreamPost(getInstallURL(),
+                                                   fileName,
+                                                   stream);
     }
 
     public HttpResponse postServiceBundle(File file) throws Exception {
         log.debug("FILE: " + file);
-
-        Part[] parts = {new FilePart(file.getName(), file)};
-
-        return getRester().multipartPost(getInstallURL(), parts);
+        return getRester().multipartFilePost(getInstallURL(), file);
     }
 
     public HttpResponse deleteServiceBundle(String bundleId) throws Exception {
