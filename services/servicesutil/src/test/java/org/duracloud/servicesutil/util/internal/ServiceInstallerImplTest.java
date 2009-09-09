@@ -20,7 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.servicesutil.error.ServiceException;
+import org.duracloud.services.common.error.ServiceException;
 
 import junit.framework.Assert;
 

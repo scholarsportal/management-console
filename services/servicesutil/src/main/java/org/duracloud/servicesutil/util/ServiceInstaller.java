@@ -3,7 +3,7 @@ package org.duracloud.servicesutil.util;
 
 import java.io.InputStream;
 
-import org.duracloud.servicesutil.error.ServiceException;
+import org.duracloud.services.common.error.ServiceException;
 
 public interface ServiceInstaller {
 
