@@ -14,7 +14,7 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import org.duracloud.servicesutil.error.ServiceException;
+import org.duracloud.services.common.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

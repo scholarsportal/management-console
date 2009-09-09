@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.ComputeService;
+import org.duracloud.services.common.error.ServiceException;
 import org.duracloud.servicesutil.client.ServiceUploadClient;
-import org.duracloud.servicesutil.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

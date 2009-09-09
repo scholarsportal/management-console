@@ -1,5 +1,5 @@
 
-package org.duracloud.servicesutil.error;
+package org.duracloud.services.common.error;
 
 public class ServiceException
         extends Exception {
@@ -37,10 +37,6 @@ public class ServiceException
 
     public int getCode() {
         return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
     }
 
 }
