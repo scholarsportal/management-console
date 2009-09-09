@@ -32,12 +32,12 @@ public class TestServiceAdminWepApp
             "http://localhost:8089/org.duracloud.services.admin_1.0.0";
 
     private final static String TEST_BUNDLE_FILE_NAME =
-            "replicationservice-1.0.0.jar";
+            "helloservice-1.0.0.jar";
 
     private final static String TEST_SERVICE_FILTER =
-            "(duraService=replication)";
+            "(duraService=helloservice)";
 
-    private final static String TEST_SERVICE_NAME = "ReplicationService";
+    private final static String TEST_SERVICE_NAME = "HelloService";
 
     private ServiceInstaller installer;
 
