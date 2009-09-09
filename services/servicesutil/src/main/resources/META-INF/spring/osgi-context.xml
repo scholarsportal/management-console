@@ -26,7 +26,7 @@
   <!-- 
     OSGi services which are used by this bundle are defined here. 
   -->
-  <osgi:list id="duraServices" interface="org.duracloud.services.ComputeService" />
+  <osgi:list id="duraServices" interface="org.duracloud.services.ComputeService" cardinality="0..N" />
   
   <osgi:reference id="osgiConfigAdminSrv" interface="org.osgi.service.cm.ConfigurationAdmin" />
    

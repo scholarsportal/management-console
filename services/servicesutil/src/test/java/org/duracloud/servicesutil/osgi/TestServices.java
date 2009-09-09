@@ -175,10 +175,6 @@ public class TestServices
         return configAdmin;
     }
 
-    public void setConfigAdmin(DuraConfigAdmin configAdmin) {
-        this.configAdmin = configAdmin;
-    }
-
     public ComputeService getHelloService() throws Exception {
         if (helloService == null) {
             helloService =
@@ -186,10 +182,6 @@ public class TestServices
                                                 HELLOSERVICE_FILTER);
         }
         return helloService;
-    }
-
-    public void setHelloService(ComputeService helloService) {
-        this.helloService = helloService;
     }
 
 }
