@@ -9,6 +9,7 @@ pax-import-bundle -g org.springframework.osgi -a spring-osgi-web-extender -v 1.2
 
 # - DuraCloud -
 pax-import-bundle -g org.duracloud -a common -v 1.0.0 -- -DimportTransitive -DwidenScope
+pax-import-bundle -g org.duracloud.services -a replicationservice -v 1.0.0 -- -DimportTransitive -DwidenScope
 
 # - Other -
 pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope

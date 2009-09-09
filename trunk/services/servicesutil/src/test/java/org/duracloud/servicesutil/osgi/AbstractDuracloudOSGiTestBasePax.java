@@ -34,7 +34,8 @@ public class AbstractDuracloudOSGiTestBasePax {
     public static Option[] configuration() {
 
         Option bundles =
-                provision(bundle("file:target/servicesutil-1.0.0.jar"));
+                provision(bundle("file:src/test/resources/helloservice-1.0.0.jar"),
+                          bundle("file:target/servicesutil-1.0.0.jar"));
 
         return options(bundles,
                        mavenConfiguration(),
