@@ -91,6 +91,13 @@ public class ServiceManagerTest
         assertTrue(services.contains(MockServiceManager.SERVICE_PACKAGE_1));
         assertFalse(services.contains(MockServiceManager.SERVICE_PACKAGE_2));
         assertFalse(services.contains(MockServiceManager.SERVICE_PACKAGE_3));
+
+        try {
+            serviceManager.deployService("invalid-service", null);
+            fail("Should throw an exception trying to deploy invalid service");
+        } catch (ServiceException expected) {
+            assertNotNull(expected);
+        }
     }
 
     @Test

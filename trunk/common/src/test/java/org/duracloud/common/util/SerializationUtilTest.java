@@ -81,7 +81,7 @@ public class SerializationUtilTest {
 
         String serialized =
             SerializationUtil.serializeList(testList);
-        List<Object> resultList =
+        List<String> resultList =
             SerializationUtil.deserializeList(serialized);
 
         assertTrue(testList.equals(resultList));
