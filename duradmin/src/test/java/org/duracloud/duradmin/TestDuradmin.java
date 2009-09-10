@@ -50,7 +50,7 @@ public class TestDuradmin
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
 
-        url = baseUrl + "/spaces.htm";
+        url = baseUrl;
         response = restHelper.get(url);
         assertEquals(200, response.getStatusCode());
 
