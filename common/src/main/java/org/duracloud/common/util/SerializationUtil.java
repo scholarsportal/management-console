@@ -63,18 +63,18 @@ public class SerializationUtil {
     }
 
     /**
-     * DeSerializes XML into a List. If the XML is either empty or
-     * null an empty List is returned.
+     * DeSerializes XML into a List of Strings. If the XML is either
+     * empty or null an empty List is returned.
      *
      * @param list
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static List<Object> deserializeList(String list) {
+    public static List<String> deserializeList(String list) {
         if(list == null || list.equals("")) {
-            return new ArrayList<Object>();
+            return new ArrayList<String>();
         }
         XStream xstream = new XStream(new DomDriver());
-        return (List<Object>)xstream.fromXML(list);
+        return (List<String>)xstream.fromXML(list);
     }
 }

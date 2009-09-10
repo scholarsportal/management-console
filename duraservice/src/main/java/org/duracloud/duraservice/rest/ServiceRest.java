@@ -3,6 +3,7 @@ package org.duracloud.duraservice.rest;
 import java.net.URI;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -108,11 +109,12 @@ public class ServiceRest extends BaseRest {
             response = Response.serverError();
             response.entity("Invalid Request. Allowed values for show are " +
             		        "'all', 'available', and 'deployed'.");
+            return response.build();
         }
 
         if(serviceList != null) {
             String xml = SerializationUtil.serializeList(serviceList);
-            return response.entity(xml).build();
+            response.entity(xml);
         } else {
             response = Response.serverError();
             response.entity("Unable to retrieve services list.");
@@ -130,10 +132,27 @@ public class ServiceRest extends BaseRest {
     @GET
     public Response getService(@PathParam("serviceId")
                                String serviceId) {
-        //TODO: Implement
-        String error = "The abiltiy to get service status is " +
-        		       "not yet implemented.";
-        return Response.status(501).entity(error).build();
+        ResponseBuilder response = Response.ok();
+        Map<String, String> serviceStatus = null;
+        try {
+            serviceStatus = ServiceResource.getService(serviceId);
+        } catch(ServiceException se) {
+            String error = "Could not get service " + serviceId +
+                           " due to error: " + se.getMessage();
+            response = Response.serverError();
+            response.entity(error);
+            return response.build();
+        }
+
+        if(serviceStatus != null) {
+            String xml = SerializationUtil.serializeMap(serviceStatus);
+            response.entity(xml);
+        } else {
+            response = Response.serverError();
+            response.entity("Unable to retrieve service.");
+        }
+
+        return response.build();
     }
 
     /**

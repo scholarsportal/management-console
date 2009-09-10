@@ -56,6 +56,20 @@ public class ServiceManager {
     // Maps servicesAdmin instance host names to client
     private Map<String, ServiceUploadClient> servicesAdmins = null;
 
+    public static final String SERVICE_STATUS = "service.status";
+
+    public static enum ServiceStatus {
+        AVAILABLE ("available"),
+        DEPLOYED ("deployed"),
+        UNKNOWN_SERVICE ("not-available");
+
+        public String status;
+
+        ServiceStatus(String status) {
+            this.status = status;
+        }
+    }
+
     public ServiceManager() {
         deployedServices = new HashMap<String, String>();
         servicesAdmins = new HashMap<String, ServiceUploadClient>();
@@ -168,6 +182,12 @@ public class ServiceManager {
             serviceHost = LOCAL_HOST;
         }
 
+        if(!services.contains(serviceId)) {
+            throw new ServiceException("Cannot deploy service " + serviceId +
+                                       ". No service with that ID is " +
+                                       "available for deployment.");
+        }
+
         log.info("Deploying service " + serviceId + " to " + serviceHost);
 
         try {
@@ -204,6 +224,7 @@ public class ServiceManager {
             Map<String, String> config;
             if(configXml != null) {
                 config = parseServiceConfigXml(configXml);
+                config.remove(SERVICE_STATUS);
             } else {
                 String error = "Cannot configure service: " + serviceId +
                                ". The config XML is null.";
@@ -254,6 +275,36 @@ public class ServiceManager {
         return config;
     }
 
+    public Map<String, String> getService(String serviceId)
+    throws ServiceException {
+        checkConfigured();
+        String serviceHost = deployedServices.get(serviceId);
+        if(serviceHost != null) {
+            log.info("Getting service: " + serviceId + " from " + serviceHost);
+
+            try {
+                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                Map<String, String> serviceConfig =
+                    servicesAdmin.getServiceConfig(serviceId);
+                serviceConfig.put(SERVICE_STATUS, ServiceStatus.DEPLOYED.status);
+                return serviceConfig;
+            } catch (Exception e) {
+                String error = "Unable to get config for service " + serviceId +
+                " from " + serviceHost + " due to error: " + e.getMessage();
+                log.error(error);
+                throw new ServiceException(error, e);
+            }
+        } else {
+            Map<String, String> serviceConfig = new HashMap<String, String>();
+            if(services.contains(serviceId)) {
+                serviceConfig.put(SERVICE_STATUS, ServiceStatus.AVAILABLE.status);
+            } else {
+                serviceConfig.put(SERVICE_STATUS, ServiceStatus.UNKNOWN_SERVICE.status);
+            }
+            return serviceConfig;
+        }
+    }
+
     public void undeployService(String serviceId)
     throws ServiceException {
         checkConfigured();
@@ -279,7 +330,7 @@ public class ServiceManager {
 
             deployedServices.remove(serviceId);
         } else {
-            String error = "Cannot undeploy service: " + serviceId +
+            String error = "Cannot undeploy service " + serviceId +
                            ". It has not been deployed.";
             log.error(error);
             throw new ServiceException(error);

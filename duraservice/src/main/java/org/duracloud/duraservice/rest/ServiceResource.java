@@ -2,7 +2,9 @@ package org.duracloud.duraservice.rest;
 
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.duracloud.duraservice.domain.ServiceException;
 import org.duracloud.duraservice.domain.ServiceManager;
@@ -29,14 +31,22 @@ public class ServiceResource {
     }
 
     public static List<String> getAvailableServices() {
-        List<String> availableServices = serviceManager.getAllServices();
+        List<String> allServices = serviceManager.getAllServices();
         List<String> deployedServices = serviceManager.getDeployedServices();
 
-        for(String depService : deployedServices) {
-            availableServices.remove(depService);
+        List<String> availableServices = new ArrayList<String>();
+        for(String service : allServices) {
+            if(!deployedServices.contains(service)) {
+                availableServices.add(service);
+            }
         }
 
         return availableServices;
+    }
+
+    public static Map<String, String> getService(String serviceId)
+    throws ServiceException {
+        return serviceManager.getService(serviceId);
     }
 
     public static void deployService(String serviceId, String serviceHost)
