@@ -202,7 +202,7 @@
       <groupId>org.apache.derby</groupId>  
       <artifactId>com.springsource.org.apache.derby</artifactId>  
       <version>10.5.1000001.764942-duracloud</version>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
