@@ -14,7 +14,7 @@
     <version>1.0.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  
+
   <dependencies>
   
     <!-- internal projects -->
@@ -47,13 +47,13 @@
       <artifactId>sunstorageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>
+-->    
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>emcstorageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>    
--->    
     
     <dependency>
       <groupId>javax.servlet</groupId>

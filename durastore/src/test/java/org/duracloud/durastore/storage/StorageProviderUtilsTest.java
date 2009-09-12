@@ -17,11 +17,11 @@ import org.duracloud.storage.provider.StorageProvider;
 import junit.framework.TestCase;
 
 /**
- * Runtime test of Storage Provider classes.
+ * Runtime test of Storage Provider utility classes.
  *
  * @author Bill Branan
  */
-public class TestStorageProvider
+public class StorageProviderUtilsTest
         extends TestCase {
 
     private static String accountXml;
@@ -72,4 +72,4 @@ public class TestStorageProvider
         assertTrue(storage instanceof BrokeredStorageProvider);
     }
 
- }
+}

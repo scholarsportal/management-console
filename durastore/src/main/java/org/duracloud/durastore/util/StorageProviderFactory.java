@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import java.util.Iterator;
 
+import org.duracloud.emcstorage.EMCStorageProvider;
 import org.duracloud.rackspacestorage.RackspaceStorageProvider;
 import org.duracloud.s3storage.S3StorageProvider;
 import org.duracloud.storage.domain.StorageAccount;
@@ -110,8 +111,7 @@ public class StorageProviderFactory {
         } else if (type.equals(StorageProviderType.RACKSPACE)) {
             storageProvider = new RackspaceStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.EMC)) {
-            // TODO: Enable this when EMC provider is working
-            // storageProvider = new EMCStorageProvider(username, password);
+            storageProvider = new EMCStorageProvider(username, password);
         }
 
         return new BrokeredStorageProvider(statelessProvider,
