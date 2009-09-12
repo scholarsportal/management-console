@@ -36,6 +36,6 @@
 	<classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rackspacestorageprovider"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/emcstorageprovider"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/sunstorageprovider"/>
+<!--	<classpathentry combineaccessrules="false" kind="src" path="/sunstorageprovider"/>-->
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

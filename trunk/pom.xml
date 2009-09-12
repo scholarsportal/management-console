@@ -57,7 +57,7 @@
       <module>storageprovider</module>
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
-<!--      <module>emcstorageprovider</module>-->
+      <module>emcstorageprovider</module>
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
       <module>durastore</module> 
@@ -313,6 +313,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <trimStackTrace>false</trimStackTrace>
           <systemProperties>
             <property>
               <name>unit.database.home</name>
@@ -339,6 +340,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
+              <trimStackTrace>false</trimStackTrace>
               <systemProperties>
                 <property>
                   <name>unit.database.home</name>
