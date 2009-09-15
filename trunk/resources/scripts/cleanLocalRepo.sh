@@ -25,7 +25,16 @@ fi
 echo "Cleaning localrepository..."
 rm -rf $localrepo/*
 
-echo "Proceeding with build..."
+echo "Performing sanity build..."
 . "$scriptdir"/on-commit.sh
 
+JAVA=java6
 
+echo "Performing coverage build..."
+. "$scriptdir"/coverage.sh ${JAVA}
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Coverage tests failed; see above"
+  exit 1
+fi

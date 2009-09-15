@@ -16,15 +16,6 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-
-. "$scriptdir"/coverage.sh ${JAVA}
-
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "ERROR: On-commit coverage failed; see above"
-  exit 1
-fi
-
 echo ""
 echo "***************************************"
 echo "Completed on-commit tests successfully!"
