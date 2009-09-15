@@ -14,7 +14,7 @@ echo ""
 
 cd $BUILD_HOME/services/servicesadmin
 $MVN clean install -f pom-run.xml -Dmaven.test.skip=true pax:provision > provision.log &
-sleep 30
+sleep 60
 
 echo ""
 echo "==================================="
