@@ -35,6 +35,7 @@
   <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam/1.0.0/pax-exam-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-container-default/1.0.0/pax-exam-container-default-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-junit/1.0.0/pax-exam-junit-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/felix/org.osgi.core/1.0.0/org.osgi.core-1.0.0.jar"/>
   
   <classpathentry combineaccessrules="false" kind="src" path="/storeclient"/>
   <classpathentry combineaccessrules="false" kind="src" path="/common"/>
