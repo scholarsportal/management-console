@@ -44,17 +44,6 @@
           </provision>
           <profiles>equinox.config</profiles>
         </configuration>
-        <executions>
-          <!--
-           | uncomment to auto-generate IDE files
-          <execution>
-            <id>ide-support</id>
-            <goals>
-              <goal>eclipse</goal>
-            </goals>
-          </execution>
-          -->
-        </executions>
       </plugin>
 
       <plugin>
@@ -70,14 +59,7 @@
           </execution>
         </executions>
         <configuration>
-
-          <options>
-            <platform>equinox</platform>
-            <profiles></profiles>
-          </options>
-
           <dependencyCollectionScope>transitive</dependencyCollectionScope>
-
         </configuration>
       </plugin>
 

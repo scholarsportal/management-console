@@ -4,6 +4,7 @@ package org.duracloud.servicesutil.osgi;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -13,7 +14,6 @@ import org.osgi.framework.BundleContext;
 import junit.framework.Assert;
 
 import static org.ops4j.pax.exam.CoreOptions.bundle;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
@@ -37,9 +37,13 @@ public class AbstractDuracloudOSGiTestBasePax {
                 provision(bundle("file:src/test/resources/helloservice-1.0.0.jar"),
                           bundle("file:target/servicesutil-1.0.0.jar"));
 
+        Option frameworks =
+                CoreOptions.frameworks(CoreOptions.equinox(), CoreOptions
+                        .knopflerfish(), CoreOptions.felix());
+
         return options(bundles,
                        mavenConfiguration(),
-                       equinox(),
+                       frameworks,
                        profile("spring.dm"));
     }
 

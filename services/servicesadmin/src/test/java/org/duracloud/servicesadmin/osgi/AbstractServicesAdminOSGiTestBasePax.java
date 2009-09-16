@@ -18,7 +18,6 @@ import junit.framework.Assert;
 
 import static java.lang.System.getProperty;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
@@ -45,13 +44,19 @@ public class AbstractServicesAdminOSGiTestBasePax {
 
         Option bundles = provision(CoreOptions.bundle(getServicesAdminWar()));
 
+        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox());
+        // Knopflerfish does not like the felix.configadmin bundle
+        // Felix does not like fragments
+        //                                                   CoreOptions.knopflerfish(),
+        //                                                   CoreOptions.felix());
+
         VMOption debugOptions =
                 vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5007");
 
         return options(systemProperties,
                        bundles,
                        mavenConfiguration(),
-                       equinox(),
+                       frameworks,
                        profile("spring.dm"));
 
     }
