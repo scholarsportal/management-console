@@ -37,10 +37,9 @@ import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ExceptionUtil;
 import org.duracloud.storage.domain.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.util.StorageProviderUtil;
 
-import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
-import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
 
 /**
  * Provides content storage backed by EMC's Storage Utility.
@@ -58,15 +57,20 @@ public class EMCStorageProvider
 
     private static final String EMC_CREATION_DATE_NAME = "ctime";
 
-    private static final String ESU_HOST = "accesspoint.emccis.com";
+    protected static final String ESU_HOST = "accesspoint.emccis.com";
 
-    private static final int ESU_PORT = 80;
+    protected static final int ESU_PORT = 80;
 
     private EsuApi emcService = null;
 
     public EMCStorageProvider(String uid, String sharedSecret)
             throws StorageException {
         emcService = new EsuRestApi(ESU_HOST, ESU_PORT, uid, sharedSecret);
+    }
+
+    public EMCStorageProvider(EsuApi esuApi)
+            throws StorageException {
+        emcService = esuApi;
     }
 
     /**
@@ -466,7 +470,8 @@ public class EMCStorageProvider
         }
 
         // Wrap the content to be able to compute a checksum during transfer
-        DigestInputStream wrappedContent = wrapStream(content);
+        DigestInputStream wrappedContent =
+                StorageProviderUtil.wrapStream(content);
 
         // Add new object.
         if (objId == null) {
@@ -482,7 +487,10 @@ public class EMCStorageProvider
         }
 
         // Compare checksum
-        return compareChecksum(this, spaceId, contentId, wrappedContent);
+        return StorageProviderUtil.compareChecksum(this,
+                                                   spaceId,
+                                                   contentId,
+                                                   wrappedContent);
     }
 
     private MetadataList createRequiredContentMetadata(String spaceId,
@@ -500,6 +508,10 @@ public class EMCStorageProvider
         if (mimeType != null) {
             metadataList.addMetadata(new Metadata(METADATA_CONTENT_MIMETYPE,
                                                   mimeType,
+                                                  isIndexed));
+        } else {
+            metadataList.addMetadata(new Metadata(METADATA_CONTENT_MIMETYPE,
+                                                  DEFAULT_MIMETYPE,
                                                   isIndexed));
         }
         return metadataList;
@@ -607,12 +619,11 @@ public class EMCStorageProvider
         }
     }
 
+    // TODO: maybe be able to remove this method.
     private MetadataTags getContentTagsToRemove(MetadataTags existingTags) {
         MetadataTags tags = new MetadataTags();
         for (MetadataTag tag : existingTags) {
-            if (!tag.getName().equals(METADATA_CONTENT_MIMETYPE)) {
-                tags.addTag(tag);
-            }
+            tags.addTag(tag);
         }
         return tags;
     }
@@ -636,7 +647,17 @@ public class EMCStorageProvider
 
         Map<String, String> metadata = getExistingUserMetadata(objId);
         metadata.putAll(generateManagedContentMetadata(objId));
-        return metadata;
+
+        // Normalize metadata keys to lowercase.
+        Map<String, String> resultMap = new HashMap<String, String>();
+        Iterator<String> keys = metadata.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String val = metadata.get(key);
+            resultMap.put(key.toLowerCase(), val);
+        }
+
+        return resultMap;
     }
 
     private Map<String, String> getExistingUserMetadata(ObjectId objId) {
