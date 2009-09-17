@@ -29,6 +29,12 @@
       <artifactId>storeclient</artifactId>
       <version>1.0.0</version>
     </dependency>  
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>serviceclient</artifactId>
+      <version>1.0.0</version>
+    </dependency> 
     
     <dependency>
       <groupId>javax.servlet</groupId>

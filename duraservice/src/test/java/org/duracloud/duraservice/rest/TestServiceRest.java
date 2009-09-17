@@ -48,6 +48,8 @@ public class TestServiceRest
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
 
+    private static String baseUrl;
+
     private static String servicesUrl;
 
     private ServiceSerializer serializer;
@@ -57,7 +59,7 @@ public class TestServiceRest
     @Override
     @Before
     protected void setUp() throws Exception {
-        String baseUrl = RestTestHelper.getBaseUrl();
+        baseUrl = RestTestHelper.getBaseUrl();
         servicesUrl = baseUrl + "/services";
 
         // Initialize DuraService
@@ -214,6 +216,20 @@ public class TestServiceRest
         assertEquals((deployedServicesListStart.size() + 1),
                      deployedServicesListEnd.size());
         assertTrue(deployedServicesListEnd.contains(testServiceId));
+    }
+
+    @Test
+    public void testGetServiceHosts() throws Exception {
+        String url = baseUrl + "/serviceHosts";
+        HttpResponse response = restHelper.get(url);
+        assertEquals(200, response.getStatusCode());
+        String content = response.getResponseBody();
+        assertNotNull(content);
+        List<String> serviceHosts =
+            SerializationUtil.deserializeList(content);
+        assertNotNull(serviceHosts);
+        assertTrue(serviceHosts.size() > 0);
+        assertTrue(serviceHosts.contains("localhost"));
     }
 
     private void deployService() throws Exception {

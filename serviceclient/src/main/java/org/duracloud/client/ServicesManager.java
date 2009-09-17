@@ -77,6 +77,10 @@ public class ServicesManager {
         return buildURL("/services/" + serviceId);
     }
 
+    private String buildServiceHostsURL() {
+        return buildURL("/serviceHosts");
+    }
+
     /**
      * Provides a listing of all services.
      *
@@ -245,6 +249,31 @@ public class ServicesManager {
             checkResponse(response, 200);
         } catch (Exception e) {
             throw new ServicesException("Could not undeploy service " + serviceId +
+                                        " due to: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Gets a list of service hosts. This is all of the compute instances
+     * which have been deployed to manage service activities.
+     *
+     * @throws ServicesException
+     */
+    public List<String> getServiceHosts() throws ServicesException {
+        String url = buildServiceHostsURL();
+        try {
+            HttpResponse response = restHelper.get(url);
+            checkResponse(response, 200);
+            String responseText = response.getResponseBody();
+            if (responseText != null) {
+                List<String> serviceHosts =
+                    SerializationUtil.deserializeList(responseText);
+                return serviceHosts;
+            } else {
+                throw new ServicesException("Response body is empty");
+            }
+        } catch (Exception e) {
+            throw new ServicesException("Could not get service hosts" +
                                         " due to: " + e.getMessage(), e);
         }
     }

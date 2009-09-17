@@ -18,6 +18,9 @@
         <prop key="/content.htm">contentController</prop>
         <prop key="/removeContent.htm">removeContentController</prop>
         <prop key="/addContent.htm">addContentController</prop>
+        <prop key="/services.htm">servicesController</prop>
+        <prop key="/deployService.htm">deployServiceController</prop>
+        <prop key="/unDeployService.htm">unDeployServiceController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -43,6 +46,18 @@
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController">
     <property name="successView" value="content" />  
   </bean>
+
+  <bean id="servicesController" class="org.duracloud.duradmin.control.ServicesController">
+    <property name="successView" value="services" />
+  </bean>
+  
+  <bean id="deployServiceController" class="org.duracloud.duradmin.control.DeployServiceController">
+    <property name="successView" value="services" />
+  </bean>
+  
+  <bean id="unDeployServiceController" class="org.duracloud.duradmin.control.UnDeployServiceController">
+    <property name="successView" value="services" />
+  </bean>  
   
   <!-- View Resolvers - select the JSP to display results -->
   <bean id="duraViewResolver"

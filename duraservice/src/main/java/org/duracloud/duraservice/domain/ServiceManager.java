@@ -57,6 +57,7 @@ public class ServiceManager {
     private Map<String, ServiceUploadClient> servicesAdmins = null;
 
     public static final String SERVICE_STATUS = "service.status";
+    public static final String SERVICE_HOST = "service.host";
 
     public static enum ServiceStatus {
         AVAILABLE ("available"),
@@ -287,6 +288,7 @@ public class ServiceManager {
                 Map<String, String> serviceConfig =
                     servicesAdmin.getServiceConfig(serviceId);
                 serviceConfig.put(SERVICE_STATUS, ServiceStatus.DEPLOYED.status);
+                serviceConfig.put(SERVICE_HOST, serviceHost);
                 return serviceConfig;
             } catch (Exception e) {
                 String error = "Unable to get config for service " + serviceId +
@@ -358,6 +360,14 @@ public class ServiceManager {
         servicesAdmin.setBaseURL(baseUrl);
         servicesAdmin.setRester(new RestHttpHelper());
         servicesAdmins.put(instanceHost, servicesAdmin);
+    }
+
+    public List<String> getServiceHosts() {
+        List<String> serviceHosts = new ArrayList<String>();
+        for(String adminHost : servicesAdmins.keySet()) {
+            serviceHosts.add(adminHost);
+        }
+        return serviceHosts;
     }
 
     /**
