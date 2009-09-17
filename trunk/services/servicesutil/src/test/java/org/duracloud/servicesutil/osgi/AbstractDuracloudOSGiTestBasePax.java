@@ -37,9 +37,10 @@ public class AbstractDuracloudOSGiTestBasePax {
                 provision(bundle("file:src/test/resources/helloservice-1.0.0.jar"),
                           bundle("file:target/servicesutil-1.0.0.jar"));
 
-        Option frameworks =
-                CoreOptions.frameworks(CoreOptions.equinox(), CoreOptions
-                        .knopflerfish(), CoreOptions.felix());
+        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
+        // Although the fish works locally, it hangs on Bamboo
+                                                   // CoreOptions.knopflerfish(),
+                                                   CoreOptions.felix());
 
         return options(bundles,
                        mavenConfiguration(),
