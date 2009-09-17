@@ -129,6 +129,14 @@ public class ServiceManagerTest
     }
 
     @Test
+    public void testGetServicesHosts() throws Exception {
+        List<String> serviceHosts = serviceManager.getServiceHosts();
+        assertNotNull(serviceHosts);
+        assertTrue(serviceHosts.size() > 0);
+        assertTrue(serviceHosts.contains("localhost"));
+    }
+
+    @Test
     public void testAddServicesInstance() throws Exception {
         serviceManager.addServicesInstance();
     }

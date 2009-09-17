@@ -3,6 +3,11 @@ table.space {
   border:1px solid;
 }
 
+div.service {
+  margin-right: 20px;   
+  margin-bottom: 20px;
+}
+
 div.space {
   float: left;
   margin-right: 20px;	

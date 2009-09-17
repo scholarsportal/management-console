@@ -64,6 +64,11 @@ public class ServiceResource {
         serviceManager.undeployService(serviceId);
     }
 
+    public static List<String> getServiceHosts()
+    throws ServiceException {
+        return serviceManager.getServiceHosts();
+    }
+
     public ServiceManager getServiceManager() {
         return serviceManager;
     }

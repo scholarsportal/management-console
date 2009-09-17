@@ -49,15 +49,6 @@ public class TestDuradmin
 
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
-
-        url = baseUrl;
-        response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-
-        String forwardedResponseText = response.getResponseBody();
-        assertNotNull(forwardedResponseText);
-
-        assertEquals(responseText, forwardedResponseText);
     }
 
  }

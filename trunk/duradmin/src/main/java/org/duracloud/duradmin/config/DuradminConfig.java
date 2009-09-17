@@ -20,7 +20,6 @@ public class DuradminConfig
 
     private static String hostKey = "host";
     private static String portKey = "port";
-    private static String contextKey = "context";
 
     private static Properties getProps() throws Exception {
         return getPropsFromResource(getConfigFileName());
@@ -32,10 +31,6 @@ public class DuradminConfig
 
     public static String getPort() throws Exception {
         return getProps().getProperty(portKey);
-    }
-
-    public static String getContext() throws Exception {
-        return getProps().getProperty(contextKey);
     }
 
     public static void setConfigFileName(String name) {

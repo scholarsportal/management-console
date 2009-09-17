@@ -237,4 +237,31 @@ public class ServiceRest extends BaseRest {
         return Response.ok().build();
     }
 
+    /**
+     * Gets a list of service hosts.
+     *
+     * @return
+     */
+    @Path("/serviceHosts")
+    @GET
+    public Response getServiceHosts() {
+        ResponseBuilder response = Response.ok();
+        try {
+            List<String> serviceHosts = ServiceResource.getServiceHosts();
+
+            if(serviceHosts != null) {
+                String xml = SerializationUtil.serializeList(serviceHosts);
+                response.entity(xml);
+            } else {
+                response = Response.serverError();
+                response.entity("Unable to retrieve services host list.");
+            }
+        } catch(ServiceException se) {
+            String error = "Could not get service hosts" +
+                           " due to error: " + se.getMessage();
+            return Response.serverError().entity(error).build();
+        }
+        return response.build();
+    }
+
 }
