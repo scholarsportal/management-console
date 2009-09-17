@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 
 import org.junit.After;
@@ -27,13 +25,15 @@ import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.jets3t.service.model.S3Object;
 
+import junit.framework.Assert;
+
+import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
+import static org.duracloud.storage.util.StorageProviderUtil.contains;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-
-import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
-import static org.duracloud.storage.util.StorageProviderUtil.contains;
 
 /**
  * Tests the S3 Storage Provider. This test is run via the command line in order

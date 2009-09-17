@@ -1,14 +1,12 @@
 
 package org.duracloud.durastore.storage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import java.util.Date;
-import java.util.Formatter;
-
+import org.duracloud.common.util.metrics.Metric;
+import org.duracloud.common.util.metrics.MetricsProbed;
+import org.duracloud.common.util.metrics.MetricsReport;
+import org.duracloud.common.util.metrics.MetricsTable;
 import org.duracloud.storage.domain.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 
@@ -24,71 +22,60 @@ import static org.junit.Assert.assertNotNull;
 public class StorageProvidersTestMetricsProxy
         implements StorageProvidersTestInterface {
 
+    private final String reportTitle = "StorageProvidersTest";
+
+    private final String reportFileName = "Storage-Providers-Metrics.txt";
+
     private final StorageProvidersTestInterface tester;
 
-    private final String metricsFileName = "Storage-Providers-Metrics.txt";
+    private final MetricsTable metricsTable;
 
-    private final BufferedWriter writer;
+    private Metric currentMetric;
 
-    private final Formatter formatter;
-
-    private final int LINE_WIDTH = 80;
-
-    private long startTime;
-
-    private String currentTest;
+    private StorageProvider currentProvider;
 
     public StorageProvidersTestMetricsProxy(StorageProvidersTestInterface tester)
             throws IOException {
         assertNotNull(tester);
         this.tester = tester;
 
-        writer = new BufferedWriter(new FileWriter(new File(metricsFileName)));
-        formatter = new Formatter(writer);
-        writeProlog();
+        metricsTable = new MetricsTable();
+        currentMetric = new Metric("", "");
+        currentProvider = null;
     }
 
-    private void writeProlog() throws IOException {
-        separator('=');
-        String text = "Test metrics for: StorageProvidersTest";
-        formatter.format("%s", text);
+    private void startMetric(String testMethod, StorageProvider provider) {
+        String providerName = provider.getClass().getName();
 
-        int width = this.LINE_WIDTH - text.length();
-        formatter.format("%1$" + width + "tc%n", new Date());
-        separator('=');
-    }
-
-    private void separator(char c) {
-        StringBuffer sep = new StringBuffer();
-        for (int i = 0; i < LINE_WIDTH; ++i) {
-            sep.append(c);
-        }
-        formatter.format("%s%n", sep);
-    }
-
-    private void startClock(String testMethod) {
-        if (!testMethod.equals(currentTest)) {
-            String text = "Running test: " + testMethod;
-            formatter.format("%n%n%s", text);
-
-            int width = this.LINE_WIDTH - text.length();
-            formatter.format("%1$" + width + "s%n", "elapsed secs");
-            separator('-');
+        if (isNewTestMethod(testMethod)) {
+            currentMetric = new Metric(testMethod, providerName);
+            metricsTable.addMetric(currentMetric);
+        } else {
+            currentMetric.addElement(providerName);
         }
 
-        currentTest = testMethod;
-        startTime = System.currentTimeMillis();
+        if (isNewProvider(provider) || isNewTestMethod(testMethod)) {
+            MetricsTable subTable = new MetricsTable();
+            this.metricsTable.addSubMetric(currentMetric, subTable);
+            MetricsProbed probed = (MetricsProbed) provider;
+            probed.setMetricsTable(subTable);
+
+            currentProvider = provider;
+        }
+
+        currentMetric.start(providerName);
     }
 
-    private void writeElapsed(StorageProvider provider) {
-        long endTime = System.currentTimeMillis();
-        float elapsed = (endTime - startTime) / 1000f;
+    private boolean isNewTestMethod(String testMethod) {
+        return !testMethod.equals(currentMetric.getHeader());
+    }
 
-        String text = provider.getClass().getName();
-        formatter.format("%1$s", text);
+    private boolean isNewProvider(StorageProvider provider) {
+        return provider != currentProvider;
+    }
 
-        int width = this.LINE_WIDTH - text.length();
-        formatter.format("%1$" + width + ".3f%n", elapsed);
+    private void stopMetric(StorageProvider provider) {
+        currentMetric.stop(provider.getClass().getName());
     }
 
     public void testAddAndGetContent(StorageProvider provider,
@@ -96,13 +83,13 @@ public class StorageProvidersTestMetricsProxy
                                      String contentId0,
                                      String contentId1,
                                      String contentId2) throws Exception {
-        startClock("testAddAndGetContent");
+        startMetric("testAddAndGetContent", provider);
         tester.testAddAndGetContent(provider,
                                     spaceId0,
                                     contentId0,
                                     contentId1,
                                     contentId2);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testAddAndGetContentOverwrite(StorageProvider provider,
@@ -110,85 +97,85 @@ public class StorageProvidersTestMetricsProxy
                                               String contentId0,
                                               String contentId1)
             throws Exception {
-        startClock("testAddAndGetContentOverwrite");
+        startMetric("testAddAndGetContentOverwrite", provider);
         tester.testAddAndGetContentOverwrite(provider,
                                              spaceId0,
                                              contentId0,
                                              contentId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testAddContentLarge(StorageProvider provider,
                                     String spaceId0,
                                     String contentId0,
                                     String contentId1) throws Exception {
-        startClock("testAddContentLarge");
+        startMetric("testAddContentLarge", provider);
         tester.testAddContentLarge(provider, spaceId0, contentId0, contentId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testCreateSpace(StorageProvider provider, String spaceId0)
             throws StorageException {
-        startClock("testCreateSpace");
+        startMetric("testCreateSpace", provider);
         tester.testCreateSpace(provider, spaceId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testDeleteContent(StorageProvider provider,
                                   String spaceId0,
                                   String contentId0,
                                   String contentId1) throws StorageException {
-        startClock("testDeleteContent");
+        startMetric("testDeleteContent", provider);
         tester.testDeleteContent(provider, spaceId0, contentId0, contentId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testDeleteSpace(StorageProvider provider,
                                 String spaceId0,
                                 String spaceId1) throws StorageException {
-        startClock("testDeleteSpace");
+        startMetric("testDeleteSpace", provider);
         tester.testDeleteSpace(provider, spaceId0, spaceId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testGetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String contentId0)
             throws StorageException {
-        startClock("testGetContentMetadata");
+        startMetric("testGetContentMetadata", provider);
         tester.testGetContentMetadata(provider, spaceId0, contentId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testGetSpaceAccess(StorageProvider provider, String spaceId0)
             throws StorageException {
-        startClock("testGetSpaceAccess");
+        startMetric("testGetSpaceAccess", provider);
         tester.testGetSpaceAccess(provider, spaceId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testGetSpaceContents(StorageProvider provider,
                                      String spaceId0,
                                      String contentId0,
                                      String contentId1) throws StorageException {
-        startClock("testGetSpaceContents");
+        startMetric("testGetSpaceContents", provider);
         tester.testGetSpaceContents(provider, spaceId0, contentId0, contentId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testGetSpaceMetadata(StorageProvider provider, String spaceId0)
             throws StorageException {
-        startClock("testGetSpaceMetadata");
+        startMetric("testGetSpaceMetadata", provider);
         tester.testGetSpaceMetadata(provider, spaceId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testGetSpaces(StorageProvider provider,
                               String spaceId0,
                               String spaceId1) throws StorageException {
-        startClock("testGetSpaces");
+        startMetric("testGetSpaces", provider);
         tester.testGetSpaces(provider, spaceId0, spaceId1);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testSetContentMetadata(StorageProvider provider,
@@ -196,20 +183,25 @@ public class StorageProvidersTestMetricsProxy
                                        String spaceId1,
                                        String contentId0)
             throws StorageException {
-        startClock("testSetContentMetadata");
+        startMetric("testSetContentMetadata", provider);
         tester.testSetContentMetadata(provider, spaceId0, spaceId1, contentId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void testSetSpaceMetadata(StorageProvider provider, String spaceId0)
             throws StorageException {
-        startClock("testSetSpaceMetadata");
+        startMetric("testSetSpaceMetadata", provider);
         tester.testSetSpaceMetadata(provider, spaceId0);
-        writeElapsed(provider);
+        stopMetric(provider);
     }
 
     public void close() {
-        formatter.flush();
-        formatter.close();
+        try {
+            MetricsReport report =
+                    new MetricsReport(reportTitle, reportFileName);
+            report.writeReport(metricsTable);
+        } catch (IOException e) {
+            System.err.println("Unable to create metrics report.");
+        }
     }
 }

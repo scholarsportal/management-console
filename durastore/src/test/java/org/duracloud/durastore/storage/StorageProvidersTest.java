@@ -15,9 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.duracloud.common.model.Credential;
-import org.duracloud.emcstorage.EMCStorageProvider;
-import org.duracloud.rackspacestorage.RackspaceStorageProvider;
-import org.duracloud.s3storage.S3StorageProvider;
+import org.duracloud.emcstorage.ProbedEMCStorageProvider;
+import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
+import org.duracloud.s3storage.ProbedS3StorageProvider;
 import org.duracloud.storage.domain.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
@@ -39,6 +39,9 @@ public class StorageProvidersTest {
     private final static StorageProvidersTestInterface tester =
             new StorageProvidersTestProxyPipe();
 
+    private final static StorageProvidersTestCore testCore =
+            new StorageProvidersTestCore();
+
     private final static List<StorageProvider> storageProviders =
             new ArrayList<StorageProvider>();
 
@@ -47,7 +50,7 @@ public class StorageProvidersTest {
     @BeforeClass
     public static void beforeClass() throws StorageException {
 
-        final int NUM_PROVIDERS = 3;
+        final int NUM_PROVIDERS = 2;
         for (StorageProviderType providerType : StorageProviderType.values()) {
             Credential credential = getCredential(providerType);
             if (credential != null) {
@@ -56,11 +59,11 @@ public class StorageProvidersTest {
 
                 StorageProvider provider = null;
                 if (StorageProviderType.AMAZON_S3.equals(providerType)) {
-                    provider = new S3StorageProvider(user, pass);
+                    provider = new ProbedS3StorageProvider(user, pass);
                 } else if (StorageProviderType.EMC.equals(providerType)) {
-                    provider = new EMCStorageProvider(user, pass);
+                    //                    provider = new ProbedEMCStorageProvider(user, pass);
                 } else if (StorageProviderType.RACKSPACE.equals(providerType)) {
-                    provider = new RackspaceStorageProvider(user, pass);
+                    provider = new ProbedRackspaceStorageProvider(user, pass);
                 } else {
                     StringBuffer sb = new StringBuffer("NOT TESTING ");
                     sb.append("storage-provider: '" + providerType + "'");
@@ -131,6 +134,7 @@ public class StorageProvidersTest {
 
     private void deleteSpace(StorageProvider provider, String spaceId) {
         try {
+            log.debug(provider.getClass().getName() + " delete: " + spaceId);
             provider.deleteSpace(spaceId);
         } catch (Exception e) {
         }
@@ -151,6 +155,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetSpaces() throws StorageException {
+        log.debug("testGetSpaces()");
         String spaceId0 = getNewSpaceId();
         String spaceId1 = getNewSpaceId();
         for (StorageProvider provider : storageProviders) {
@@ -160,6 +165,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetSpaceContents() throws StorageException {
+        log.debug("testGetSpaceContents()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
@@ -172,36 +178,30 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testCreateSpace() throws StorageException {
+        log.debug("testCreateSpace()");
         String spaceId0 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!S3StorageProvider.class.isInstance(provider)
-                    && !RackspaceStorageProvider.class.isInstance(provider)) {
-                tester.testCreateSpace(provider, spaceId0);
-            }
+            tester.testCreateSpace(provider, spaceId0);
         }
     }
 
-    // TODO: not all work
     @Test
     public void testDeleteSpace() throws StorageException {
+        log.debug("testDeleteSpace()");
         String spaceId0 = getNewSpaceId();
         String spaceId1 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!S3StorageProvider.class.isInstance(provider)
-                    && !RackspaceStorageProvider.class.isInstance(provider)
-                    && !EMCStorageProvider.class.isInstance(provider)) {
-                tester.testDeleteSpace(provider, spaceId0, spaceId1);
-            }
+            tester.testDeleteSpace(provider, spaceId0, spaceId1);
         }
     }
 
     @Test
     public void testGetSpaceMetadata() throws StorageException {
+        log.debug("testGetSpaceMetadata()");
         String spaceId0 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
@@ -212,11 +212,11 @@ public class StorageProvidersTest {
     // TODO: not all work
     @Test
     public void testSetSpaceMetadata() throws StorageException {
+        log.debug("testSetSpaceMetadata()");
         String spaceId0 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!EMCStorageProvider.class.isInstance(provider)
-                    && !RackspaceStorageProvider.class.isInstance(provider)) {
+            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
                 tester.testSetSpaceMetadata(provider, spaceId0);
             }
         }
@@ -224,6 +224,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetSpaceAccess() throws StorageException {
+        log.debug("testGetSpaceAccess()");
         String spaceId0 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
@@ -233,6 +234,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testAddAndGetContent() throws Exception {
+        log.debug("testAddAndGetContent()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
@@ -250,12 +252,13 @@ public class StorageProvidersTest {
     // TODO: not all work
     @Test
     public void testAddAndGetContentOverwrite() throws Exception {
+        log.debug("testAddAndGetContentOverwrite()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!EMCStorageProvider.class.isInstance(provider)) {
+            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
                 tester.testAddAndGetContentOverwrite(provider,
                                                      spaceId0,
                                                      contentId0,
@@ -266,6 +269,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testAddContentLarge() throws Exception {
+        log.debug("testAddContentLarge()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
@@ -281,14 +285,13 @@ public class StorageProvidersTest {
     // TODO: not all work
     @Test
     public void testDeleteContent() throws StorageException {
+        log.debug("testDeleteContent()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!S3StorageProvider.class.isInstance(provider)
-                    && !EMCStorageProvider.class.isInstance(provider)
-                    && !RackspaceStorageProvider.class.isInstance(provider)) {
+            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
                 tester.testDeleteContent(provider,
                                          spaceId0,
                                          contentId0,
@@ -297,37 +300,33 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testSetContentMetadata() throws StorageException {
+        log.debug("testSetContentMetadata()");
         String spaceId0 = getNewSpaceId();
         String spaceId1 = getNewSpaceId();
         String contentId0 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!RackspaceStorageProvider.class.isInstance(provider)) {
-                tester.testSetContentMetadata(provider,
-                                              spaceId0,
-                                              spaceId1,
-                                              contentId0);
-            }
+            tester.testSetContentMetadata(provider,
+                                          spaceId0,
+                                          spaceId1,
+                                          contentId0);
         }
     }
 
     // TODO: not all work
     @Test
     public void testGetContentMetadata() throws StorageException {
+        log.debug("testGetContentMetadata()");
         String spaceId0 = getNewSpaceId();
         String contentId0 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!S3StorageProvider.class.isInstance(provider)
-                    && !EMCStorageProvider.class.isInstance(provider)
-                    && !RackspaceStorageProvider.class.isInstance(provider)) {
+            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
                 tester.testGetContentMetadata(provider, spaceId0, contentId0);
             }
         }
-
     }
 
     // TODO: need to implement

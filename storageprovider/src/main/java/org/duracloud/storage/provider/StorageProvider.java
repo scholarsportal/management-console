@@ -40,6 +40,8 @@ public interface StorageProvider {
     public static final DateFormat RFC822_DATE_FORMAT =
         new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
+    public static final int HTTP_NOT_FOUND = 404;
+
     /**
      * Provides a listing of all spaces owned by a customer.
      *

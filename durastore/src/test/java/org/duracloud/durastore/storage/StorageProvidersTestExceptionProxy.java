@@ -22,6 +22,12 @@ public class StorageProvidersTestExceptionProxy
         this.tester = tester;
     }
 
+    /**
+     * This method is the real value-add of this class.
+     *
+     * @param provider
+     * @param e
+     */
     private void throwRuntime(StorageProvider provider, AssertionError e) {
         throw new RuntimeException(provider.getClass().getName(), e);
     }
