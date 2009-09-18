@@ -126,7 +126,7 @@
         <configuration>
           <framework>equinox</framework>
           <provision>
-            <param>mvn:org.springframework.osgi/spring-osgi-web-extender/1.2.0@4</param>
+            <param>mvn:org.springframework.osgi/spring-osgi-web-extender/1.2.0@6</param>
           </provision>
         </configuration>
       </plugin>
