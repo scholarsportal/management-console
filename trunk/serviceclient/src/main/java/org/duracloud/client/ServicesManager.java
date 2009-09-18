@@ -78,7 +78,7 @@ public class ServicesManager {
     }
 
     private String buildServiceHostsURL() {
-        return buildURL("/serviceHosts");
+        return buildURL("/servicehosts");
     }
 
     /**

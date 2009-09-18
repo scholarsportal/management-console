@@ -220,7 +220,7 @@ public class TestServiceRest
 
     @Test
     public void testGetServiceHosts() throws Exception {
-        String url = baseUrl + "/serviceHosts";
+        String url = baseUrl + "/servicehosts";
         HttpResponse response = restHelper.get(url);
         assertEquals(200, response.getStatusCode());
         String content = response.getResponseBody();
