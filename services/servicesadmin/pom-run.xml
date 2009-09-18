@@ -115,6 +115,17 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.ops4j</groupId>
+        <artifactId>maven-pax-plugin</artifactId>
+        <version>1.4</version>
+        <configuration>
+          <framework>equinox</framework>
+          <provision>
+            <param>mvn:org.springframework.osgi/spring-osgi-web-extender/1.2.0@4</param>
+          </provision>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

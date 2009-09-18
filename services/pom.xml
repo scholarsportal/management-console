@@ -36,13 +36,7 @@
         <artifactId>maven-pax-plugin</artifactId>
         <version>1.4</version>
         <configuration>
-          <!--
-           | some example Pax-Runner settings
-          -->
-          <provision>
-            <param>--platform=equinox</param>
-          </provision>
-          <profiles>equinox.config</profiles>
+          <framework>equinox</framework>
         </configuration>
       </plugin>
 
