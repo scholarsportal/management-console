@@ -65,8 +65,8 @@
       <module>storeclient</module>
       <module>duradmin</module>
       <module>services</module>
-<!--	  <module>duraservice</module>-->
-<!--	  <module>serviceclient</module>-->	  
+      <module>duraservice</module>
+      <module>serviceclient</module>	  
   </modules>
 
   <profiles>

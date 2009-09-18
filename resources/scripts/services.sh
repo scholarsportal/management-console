@@ -21,7 +21,7 @@ echo "==============================================================="
 echo "Compiling & running unit & integration tests for DuraService..."
 echo "==============================================================="
 cd $BUILD_HOME/duraservice
-$MVN clean install -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
 
 if [ $? -ne 0 ]; then
   echo ""
@@ -35,7 +35,7 @@ echo "=================================================================="
 echo "Compiling & running unit & integration tests for Service Client..."
 echo "=================================================================="
 cd $BUILD_HOME/serviceclient
-$MVN clean install -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
 
 if [ $? -ne 0 ]; then
   echo ""
