@@ -242,7 +242,7 @@ public class ServiceRest extends BaseRest {
      *
      * @return
      */
-    @Path("/serviceHosts")
+    @Path("/servicehosts")
     @GET
     public Response getServiceHosts() {
         ResponseBuilder response = Response.ok();
