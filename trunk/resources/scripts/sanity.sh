@@ -32,6 +32,13 @@ echo "Compiling & running unit & integration tests..."
 echo "==============================================="
 $MVN clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duracloud-home/derby/duracloudDB -Dlog.level.default=DEBUG
 
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Integration test(s) failed; see above"
+  $CATALINA_HOME/bin/shutdown.sh
+  exit 1
+fi
+
 echo "========================================"
 echo "Building service deployment projects ..."
 echo "========================================"
@@ -39,7 +46,7 @@ echo "========================================"
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "ERROR: Integration test(s) failed; see above"
+  echo "ERROR: Service deployment integration test(s) failed; see above"
   $CATALINA_HOME/bin/shutdown.sh
   exit 1
 fi
