@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp">
+		<put-attribute name="title" value="title"/>
+		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
+		<put-attribute name="menu" value="menu"/>
+		<put-attribute name="main-content" value="main-content"/>
+		<put-attribute name="footer" value="footer"/>
+	</definition>
+	
+	<definition name="home" extends="base">
+		<put-attribute name="title" value="Home"/>
+		<put-attribute name="main-content" value="/WEB-INF/jsp/home.jsp"/>
+	</definition>
+
+	<definition name="spaces" extends="base">
+		<put-attribute name="title" value="Spaces"/>
+		<put-attribute name="main-content" value="/WEB-INF/jsp/spaces.jsp"/>
+	</definition>
+
+	<definition name="contents" extends="base">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/contents.jsp"/>
+	</definition>
+	
+	<definition name="content" extends="base">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/content.jsp"/>
+	</definition>
+	
+	<definition name="services" extends="base">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/services.jsp"/>
+	</definition>
+
+	<definition name="error" extends="base">
+		<put-attribute name="title" value="Error"/>
+		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
+	</definition>
+
+</tiles-definitions>

@@ -1,13 +1,4 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" type="text/css" href="style/main.css" />
-  <title><c:out value="${content.contentId}"/></title>
-</head>
-<body>
-
     <table  border="solid">
         <tr>
           <th>ID</th>
@@ -45,6 +36,3 @@
         <input type='submit' value="Update Properties"/>
       </p>
     </form>    
-
-</body>
-</html>

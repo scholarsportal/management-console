@@ -1,7 +1,6 @@
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
-
 import java.util.Map;
 
 public class Service implements Serializable {

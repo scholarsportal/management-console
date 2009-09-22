@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;

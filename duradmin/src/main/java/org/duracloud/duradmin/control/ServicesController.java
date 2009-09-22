@@ -3,7 +3,6 @@ package org.duracloud.duradmin.control;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.Service;
 import org.duracloud.duradmin.util.ServicesUtil;
