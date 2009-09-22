@@ -1,12 +1,4 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="style/main.css" />
-    <title>Contents of <c:out value="${space.spaceId}"/></title>
-  </head>
-  <body>
     <form action="spaces.htm" method="get">                
       <input type='submit' value="<- Back to Spaces Listing"/>
     </form> 
@@ -72,8 +64,5 @@
         </p>
       </form>        
     </div>
-
     <iframe id='content_target' name='content_target'></iframe>
 
-  </body>
-</html>

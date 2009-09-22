@@ -1,7 +1,6 @@
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
-
 import java.util.List;
 
 public class Space implements Serializable {

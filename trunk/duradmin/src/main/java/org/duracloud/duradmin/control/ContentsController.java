@@ -1,7 +1,6 @@
 package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;

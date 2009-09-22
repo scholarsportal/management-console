@@ -1,3 +1,41 @@
+body{
+	padding:0;
+	margin:0;	
+}
+
+#header {
+	width:100%;
+	background-color:#FFFFAA;
+}
+
+
+
+#menu {
+	width:10em;
+	min-width:10em;
+	background-color:#FFAAAA;
+}
+
+#main-content {
+	background-color:#AAAAAA;
+}
+
+#menu, #main-content {
+	vertical-align:top;
+	padding:5px;		
+}
+
+#footer {
+	width:100%;
+	background-color:#AAFFAA;
+	float:left;
+}
+
+/*The default header style*/
+div.header {
+	background-color: #FFFFAA;
+	padding: 10px;
+}
 
 table.space {
   border:1px solid;

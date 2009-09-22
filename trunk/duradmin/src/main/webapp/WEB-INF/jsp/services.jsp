@@ -1,13 +1,4 @@
 <%@include file="/WEB-INF/jsp/include.jsp"%>
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" href="style/main.css" />
-    <title>DuraCloud Services Listing</title>
-  </head>
-  
-  <body>
     <c:if test="${not empty error}">
       <div id="error"><c:out value="${error}" /></div>
     </c:if>
@@ -91,6 +82,3 @@
       </div>
     </c:forEach>    
     </div>
-    
-  </body>
-</html>

@@ -1,7 +1,6 @@
 package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
-
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.Service;
 import org.springframework.validation.BindException;
