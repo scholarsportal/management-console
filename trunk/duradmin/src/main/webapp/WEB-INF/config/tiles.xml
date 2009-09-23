@@ -8,7 +8,7 @@
 		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
 		<put-attribute name="menu" value="menu"/>
 		<put-attribute name="main-content" value="main-content"/>
-		<put-attribute name="footer" value="footer"/>
+		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
 	</definition>
 	
 	<definition name="home" extends="base">

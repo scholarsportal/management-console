@@ -3,31 +3,53 @@ body{
 	margin:0;	
 }
 
+body, #footer{
+	/*slate gray*/
+	background-color:#B9D3EE;
+}
+
 #header {
 	width:100%;
-	background-color:#FFFFAA;
+	/*deep sky blue*/
+	background-color:#00B2EE;
+	color:#FFF;
+}
+
+#top-header{
+	padding:1em;
+}
+
+#main-menu {
+	width:100%;
+	background-color:#CAE1FF;
+}
+
+table.body{
+	min-height:40em;	
+	width:100%	
 }
 
 
 
-#menu {
+#menu-div {
 	width:10em;
 	min-width:10em;
-	background-color:#FFAAAA;
+	background-color:#F5DEB3;
 }
 
 #main-content {
-	background-color:#AAAAAA;
+	background-color:#FFFFEE;
 }
 
-#menu, #main-content {
+#menu-div, #main-content {
 	vertical-align:top;
-	padding:5px;		
+	padding:1em;		
 }
 
 #footer {
 	width:100%;
-	background-color:#AAFFAA;
+	padding:0.5em;
+	font-size:0.8em;
 	float:left;
 }
 
