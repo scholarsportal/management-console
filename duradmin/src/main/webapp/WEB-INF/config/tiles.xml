@@ -6,7 +6,7 @@
 	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp">
 		<put-attribute name="title" value="title"/>
 		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
-		<put-attribute name="menu" value="menu"/>
+		<put-attribute name="menu" value="Main Menu"/>
 		<put-attribute name="main-content" value="main-content"/>
 		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
 	</definition>
@@ -19,18 +19,23 @@
 	<definition name="spaces" extends="base">
 		<put-attribute name="title" value="Spaces"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/spaces.jsp"/>
+		<put-attribute name="menu" value="Spaces Menu"/>
 	</definition>
 
 	<definition name="contents" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/contents.jsp"/>
+		<put-attribute name="menu" value="Contents Menu"/>
 	</definition>
 	
 	<definition name="content" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/content.jsp"/>
+		<put-attribute name="menu" value="Content Menu"/>
+
 	</definition>
 	
 	<definition name="services" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/services.jsp"/>
+		<put-attribute name="menu" value="Services Menu"/>
 	</definition>
 
 	<definition name="error" extends="base">
