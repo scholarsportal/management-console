@@ -3,14 +3,15 @@
        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
-	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp">
+	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp" preparer="org.duracloud.duradmin.view.BaseViewPreparer">
 		<put-attribute name="title" value="title"/>
 		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
 		<put-attribute name="menu" value="Main Menu"/>
 		<put-attribute name="main-content" value="main-content"/>
 		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
+		<put-attribute name="mainTab" value="home" />
 	</definition>
-	
+		
 	<definition name="home" extends="base">
 		<put-attribute name="title" value="Home"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/home.jsp"/>
@@ -20,27 +21,32 @@
 		<put-attribute name="title" value="Spaces"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/spaces.jsp"/>
 		<put-attribute name="menu" value="Spaces Menu"/>
+		<put-attribute name="mainTab" value="spaces" />
 	</definition>
 
-	<definition name="contents" extends="base">
+	<definition name="contents" extends="spaces">
+		<put-attribute name="title" value="Contents"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/contents.jsp"/>
 		<put-attribute name="menu" value="Contents Menu"/>
 	</definition>
 	
-	<definition name="content" extends="base">
+	<definition name="content" extends="contents">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/content.jsp"/>
 		<put-attribute name="menu" value="Content Menu"/>
-
 	</definition>
 	
 	<definition name="services" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/services.jsp"/>
 		<put-attribute name="menu" value="Services Menu"/>
+		<put-attribute name="mainTab" value="services" />
 	</definition>
 
 	<definition name="error" extends="base">
 		<put-attribute name="title" value="Error"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
+		<put-attribute name="mainTab" value="" />
+		<put-attribute name="menu" value="No Menu: Error"/>
+		
 	</definition>
 
 </tiles-definitions>

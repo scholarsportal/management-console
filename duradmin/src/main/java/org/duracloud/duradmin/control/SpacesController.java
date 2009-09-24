@@ -8,6 +8,7 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.duracloud.duradmin.view.MainMenu;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
