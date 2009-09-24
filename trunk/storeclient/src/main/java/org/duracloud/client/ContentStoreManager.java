@@ -95,7 +95,8 @@ public class ContentStoreManager {
             } else {
                 throw new StorageException("Response code was "
                                            + response.getStatusCode() +
-                                           ", expected value was 200.");
+                                           ", expected value was 200." + 
+                                           "Response Body: " + response.getResponseBody());
             }
         } catch (Exception e) {
             throw new ContentStoreException(error + e.getMessage(), e);
