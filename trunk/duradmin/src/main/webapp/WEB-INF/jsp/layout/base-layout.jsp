@@ -4,17 +4,17 @@
     
 <%@ page session="false"%>
 <%@include file="/WEB-INF/jsp/include.jsp" %>
+
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet"  href="style/menu_style.css" type="text/css" />
 	<link rel="stylesheet"  href="style/main.css" type="text/css" />
     
-    <title><tiles:insertAttribute name="title"  />
-     </title>
+    <title>Duradmin :: <tiles:insertAttribute name="title"/></title>
   </head>
-  
   <body>
+	<tiles:importAttribute name="mainTab" scope="request" />
     <div id="header"><tiles:insertAttribute name="header"/></div>
     <table class="body" >
    		<tr>

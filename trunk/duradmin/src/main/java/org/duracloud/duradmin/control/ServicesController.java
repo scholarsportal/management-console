@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.Service;
 import org.duracloud.duradmin.util.ServicesUtil;
+import org.duracloud.duradmin.view.MainMenu;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -45,8 +46,8 @@ public class ServicesController extends BaseController {
         mav.addObject("deployedServices", depServiceList);
         mav.addObject("availableServices", avlServiceList);
         mav.addObject("serviceHosts", serviceHosts);
-
         return mav;
+
     }
 
 }
