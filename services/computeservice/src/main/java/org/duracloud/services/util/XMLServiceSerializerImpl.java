@@ -1,5 +1,5 @@
 
-package org.duracloud.servicesutil.util;
+package org.duracloud.services.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.duracloud.services.ComputeService;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
+import org.duracloud.services.beans.ComputeServiceBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

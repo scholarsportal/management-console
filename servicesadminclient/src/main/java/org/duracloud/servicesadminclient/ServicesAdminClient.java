@@ -1,24 +1,21 @@
 
-package org.duracloud.servicesutil.client;
+package org.duracloud.servicesadminclient;
 
 import java.io.File;
 import java.io.InputStream;
 
 import java.util.Map;
 
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.Part;
-
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
-import org.duracloud.servicesutil.util.ServiceSerializer;
-import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
+import org.duracloud.services.beans.ComputeServiceBean;
+import org.duracloud.services.util.ServiceSerializer;
+import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceUploadClient {
+public class ServicesAdminClient {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -29,7 +26,7 @@ public class ServiceUploadClient {
     private String baseURL;
 
     public HttpResponse postServiceBundle(String fileName, InputStream stream)
-    throws Exception {
+            throws Exception {
         log.debug("FILENAME: " + fileName + "\nSTREAM: " + stream);
         return getRester().multipartFileStreamPost(getInstallURL(),
                                                    fileName,

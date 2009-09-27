@@ -1,16 +1,16 @@
 
-package org.duracloud.servicesadmin.osgi;
+package org.duracloud.servicesadminclient.webapp;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.duracloud.servicesutil.client.ServiceUploadClient;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
 
 import junit.framework.Assert;
 
 public class ServiceConfigurationTester {
 
-    private final ServiceUploadClient client;
+    private final ServicesAdminClient client;
 
     private Map<String, String> configOrig;
 
@@ -20,7 +20,7 @@ public class ServiceConfigurationTester {
 
     private final String servicePidKey = "service.pid";
 
-    public ServiceConfigurationTester(ServiceUploadClient client) {
+    public ServiceConfigurationTester(ServicesAdminClient client) {
         Assert.assertNotNull(client);
         this.client = client;
 
@@ -81,7 +81,7 @@ public class ServiceConfigurationTester {
         }
     }
 
-    private ServiceUploadClient getClient() {
+    private ServicesAdminClient getClient() {
         return client;
     }
 }

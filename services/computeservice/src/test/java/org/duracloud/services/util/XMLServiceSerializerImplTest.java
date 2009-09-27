@@ -1,5 +1,5 @@
 
-package org.duracloud.servicesutil.util;
+package org.duracloud.services.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.duracloud.services.ComputeService;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
+import org.duracloud.services.beans.ComputeServiceBean;
 
 public class XMLServiceSerializerImplTest {
 
