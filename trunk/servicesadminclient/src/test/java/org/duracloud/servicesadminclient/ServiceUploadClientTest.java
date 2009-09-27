@@ -1,5 +1,5 @@
 
-package org.duracloud.servicesutil.client;
+package org.duracloud.servicesadminclient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
+import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.easymock.EasyMock;
 
 import junit.framework.Assert;
@@ -21,13 +21,13 @@ import static org.easymock.classextension.EasyMock.replay;
 
 public class ServiceUploadClientTest {
 
-    private ServiceUploadClient client;
+    private ServicesAdminClient client;
 
     private final String configId = "configId-test";
 
     @Before
     public void setUp() throws Exception {
-        client = new ServiceUploadClient();
+        client = new ServicesAdminClient();
         client.setBaseURL("http://junk.com");
         client.setSerializer(new XMLServiceSerializerImpl());
     }

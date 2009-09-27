@@ -20,7 +20,7 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Space;
 import org.duracloud.duraservice.config.DuraServiceConfig;
-import org.duracloud.servicesutil.client.ServiceUploadClient;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -54,7 +54,7 @@ public class ServiceManager {
     private ServiceCompute serviceCompute = null;
 
     // Maps servicesAdmin instance host names to client
-    private Map<String, ServiceUploadClient> servicesAdmins = null;
+    private Map<String, ServicesAdminClient> servicesAdmins = null;
 
     public static final String SERVICE_STATUS = "service.status";
     public static final String SERVICE_HOST = "service.host";
@@ -73,7 +73,7 @@ public class ServiceManager {
 
     public ServiceManager() {
         deployedServices = new HashMap<String, String>();
-        servicesAdmins = new HashMap<String, ServiceUploadClient>();
+        servicesAdmins = new HashMap<String, ServicesAdminClient>();
     }
 
     public void configure(InputStream configXml) {
@@ -197,7 +197,7 @@ public class ServiceManager {
                 store.getContent(serviceStore.getSpaceId(), serviceId).getStream();
 
             // Push file to services admin
-            ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+            ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
             HttpResponse response =
                 servicesAdmin.postServiceBundle(serviceId, serviceStream);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
@@ -234,7 +234,7 @@ public class ServiceManager {
             }
 
             try {
-                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
                 servicesAdmin.postServiceConfig(serviceId, config);
             } catch (Exception e) {
                 String error = "Unable to configure service " + serviceId +
@@ -284,7 +284,7 @@ public class ServiceManager {
             log.info("Getting service: " + serviceId + " from " + serviceHost);
 
             try {
-                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
                 Map<String, String> serviceConfig =
                     servicesAdmin.getServiceConfig(serviceId);
                 serviceConfig.put(SERVICE_STATUS, ServiceStatus.DEPLOYED.status);
@@ -315,7 +315,7 @@ public class ServiceManager {
             log.info("UnDeploying service: " + serviceId + " from " + serviceHost);
 
             try {
-                ServiceUploadClient servicesAdmin = getServicesAdmin(serviceHost);
+                ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
                 HttpResponse response = servicesAdmin.deleteServiceBundle(serviceId);
 
                 if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
@@ -339,7 +339,7 @@ public class ServiceManager {
         }
     }
 
-    protected ServiceUploadClient getServicesAdmin(String instanceHost)
+    protected ServicesAdminClient getServicesAdmin(String instanceHost)
     throws ServiceException {
         if(instanceHost != null && instanceHost != "") {
             if(servicesAdmins.containsKey(instanceHost)) {
@@ -356,7 +356,7 @@ public class ServiceManager {
     private void addServicesAdmin(String instanceHost) {
         String baseUrl =
             localServicesAdminBaseURL.replace(LOCAL_HOST, instanceHost);
-        ServiceUploadClient servicesAdmin = new ServiceUploadClient();
+        ServicesAdminClient servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(baseUrl);
         servicesAdmin.setRester(new RestHttpHelper());
         servicesAdmins.put(instanceHost, servicesAdmin);

@@ -1,5 +1,5 @@
 
-package org.duracloud.servicesutil.beans;
+package org.duracloud.services.beans;
 
 public class ComputeServiceBean {
 

@@ -90,6 +90,10 @@ In order to deploy them independently, from the directory of the specific servic
 run-deps.(sh|bat)
 mvn clean install -f pom-run.xml pax:provision
 
+Note: For 'services/servicesadmin', instead of running the pax:provision command above, run:
+ cd services/servicesadmin/runner
+ ./run.[sh|bat]
+
 The run-deps script creates pom-run.xml by importing the OSGi bundle dependencies necessary to run the service. 
 The run-deps script depends on pax-construct, which is available for download here: 
 http://wiki.ops4j.org/display/paxconstruct/Pax+Construct

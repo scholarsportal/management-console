@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/servicesutil"/>
+  <classpathentry kind="var" path="M2_REPO/org/duracloud/common/1.0.0/common-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/duracloud/services/servicesutil/1.0.0/servicesutil-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/duracloud/services/servicescommon/1.0.0/servicescommon-1.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/duracloud/services/computeservice/1.0.0/computeservice-1.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/duracloud/services/helloservice/1.0.0/helloservice-1.0.0.jar"/>

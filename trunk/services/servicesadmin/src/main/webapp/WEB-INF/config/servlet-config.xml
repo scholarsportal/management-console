@@ -63,7 +63,7 @@
     Service Beans:
       Eventually they will all be defined as 'osgi:reference'
    -->  
-  <bean id="xmlSrvSerializer" class="org.duracloud.servicesutil.util.XMLServiceSerializerImpl"/>
+  <bean id="xmlSrvSerializer" class="org.duracloud.services.util.XMLServiceSerializerImpl"/>
   
     
   <!-- OSGi below -->

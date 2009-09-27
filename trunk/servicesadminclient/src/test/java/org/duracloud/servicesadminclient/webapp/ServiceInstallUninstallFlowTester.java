@@ -1,5 +1,4 @@
-
-package org.duracloud.servicesadmin.osgi;
+package org.duracloud.servicesadminclient.webapp;
 
 import java.io.File;
 
@@ -8,12 +7,10 @@ import java.util.List;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.services.ComputeService;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
-import org.duracloud.servicesutil.client.ServiceUploadClient;
-import org.duracloud.servicesutil.util.ServiceSerializer;
-import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
-import org.osgi.framework.BundleContext;
+import org.duracloud.services.beans.ComputeServiceBean;
+import org.duracloud.services.util.ServiceSerializer;
+import org.duracloud.services.util.XMLServiceSerializerImpl;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,23 +23,18 @@ public class ServiceInstallUninstallFlowTester {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final BundleContext bundleContext;
-
     private final File testBundle;
 
-    private final ServiceUploadClient client;
+    private final ServicesAdminClient client;
 
     private ServiceSerializer serializer;
 
-    public ServiceInstallUninstallFlowTester(BundleContext bundleContext,
-                                             File testBundle,
-                                             ServiceUploadClient client) {
-        Assert.assertNotNull(bundleContext);
+    public ServiceInstallUninstallFlowTester(File testBundle,
+                                             ServicesAdminClient client) {
         Assert.assertNotNull(testBundle);
         Assert.assertTrue(testBundle.exists());
         Assert.assertNotNull(client);
 
-        this.bundleContext = bundleContext;
         this.testBundle = testBundle;
         this.client = client;
     }
@@ -53,7 +45,6 @@ public class ServiceInstallUninstallFlowTester {
 
         // check new service does not exist
         verifyTestServiceIsListed(false);
-        verifyTestServiceIsInstalled(false);
 
         // install service
         installTestBundle();
@@ -61,14 +52,8 @@ public class ServiceInstallUninstallFlowTester {
         // Allow test-service to come up.
         Thread.sleep(5000);
 
-        if (log.isDebugEnabled()) {
-            log.debug(AbstractServicesAdminOSGiTestBasePax
-                    .inspectBundlesText(bundleContext));
-        }
-
         // check new service exists and available in container
         verifyTestServiceIsListed(true);
-        verifyTestServiceIsInstalled(true);
 
         // uninstall service
         uninstallTestBundle();
@@ -78,7 +63,6 @@ public class ServiceInstallUninstallFlowTester {
 
         // check new service does not exist
         verifyTestServiceIsListed(false);
-        verifyTestServiceIsInstalled(false);
     }
 
     protected void installTestBundle() throws Exception {
@@ -124,26 +108,11 @@ public class ServiceInstallUninstallFlowTester {
 
     }
 
-    private void verifyTestServiceIsInstalled(boolean exists) throws Exception {
-        ComputeService testService = null;
-        try {
-            testService = TestServiceAdminWepApp.getTestService(bundleContext);
-        } catch (Exception e) {
-        }
-
-        boolean found = (null != testService);
-        assertEquals(exists, found);
-
-        if (exists) {
-            assertNotNull(testService.describe());
-        }
-    }
-
     private File getTestBundleFile() {
         return testBundle;
     }
 
-    private ServiceUploadClient getClient() {
+    private ServicesAdminClient getClient() {
         return client;
     }
 

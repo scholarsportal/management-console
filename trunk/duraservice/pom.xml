@@ -109,6 +109,12 @@
     </dependency>
    
     <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>servicesadminclient</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
@@ -191,8 +197,8 @@
       <artifactId>commons-io</artifactId>
       <version>1.4</version>
       <scope>runtime</scope>
-    </dependency>	
-	
+    </dependency>
+
   </dependencies>
 
 </project>

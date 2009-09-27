@@ -14,10 +14,10 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.duraservice.domain.ServiceManager;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
-import org.duracloud.servicesutil.client.ServiceUploadClient;
-import org.duracloud.servicesutil.util.ServiceSerializer;
-import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
+import org.duracloud.services.util.ServiceSerializer;
+import org.duracloud.services.util.XMLServiceSerializerImpl;
+import org.duracloud.services.beans.ComputeServiceBean;
 
 import junit.framework.TestCase;
 
@@ -32,7 +32,7 @@ public class TestServiceRest
         extends TestCase {
 
     private static String configFileName = "test-duraservice.properties";
-    private static ServiceUploadClient servicesAdmin;
+    private static ServicesAdminClient servicesAdmin;
     static {
         DuraServiceConfig.setConfigFileName(configFileName);
         String servicesAdminBaseURL;
@@ -41,7 +41,7 @@ public class TestServiceRest
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        servicesAdmin = new ServiceUploadClient();
+        servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(servicesAdminBaseURL);
         servicesAdmin.setRester(new RestHttpHelper());
     }

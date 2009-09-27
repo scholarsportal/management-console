@@ -12,8 +12,8 @@ echo "Starting Services Admin..."
 echo "=========================="
 echo ""
 
-cd $BUILD_HOME/services/servicesadmin
-$MVN clean install -f pom-run.xml -Dmaven.test.skip=true pax:provision > provision.log &
+cd $BUILD_HOME/services/servicesadmin/runner
+run.sh >& provision.log &
 sleep 60
 
 echo ""

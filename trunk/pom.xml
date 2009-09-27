@@ -67,6 +67,7 @@
       <module>services</module>
       <module>duraservice</module>
       <module>serviceclient</module>	  
+      <module>servicesadminclient</module>	  
   </modules>
 
   <profiles>

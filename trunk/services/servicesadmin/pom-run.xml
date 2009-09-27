@@ -71,51 +71,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>integrationtest</id>
-            <phase>integration-test</phase>
-            <configuration>
-              <systemProperties>
-                <property>
-                  <name>felix.fileinstall.dir</name>
-                  <value>${duracloud.home}/osgi-bundles</value>
-                </property>
-                <property>
-                  <name>base.dir</name>
-                  <value>${basedir}</value>
-                </property>
-              </systemProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.duracloud.services</groupId>
-                  <artifactId>helloservice</artifactId>
-                  <version>1.0.0</version>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>src/test/resources</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.ops4j</groupId>
         <artifactId>maven-pax-plugin</artifactId>
         <version>1.4</version>
@@ -123,6 +78,8 @@
           <framework>equinox</framework>
           <provision>
             <param>mvn:org.springframework.osgi/spring-osgi-web-extender/1.2.0@6</param>
+            <param>--executor=script</param>
+            <param>--vmOptions=-Dfelix.fileinstall.dir=${duracloud.home}/osgi-bundles</param>
           </provision>
         </configuration>
       </plugin>

@@ -14,7 +14,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.servicesutil.client.ServiceUploadClient;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
 
 
 /**
@@ -39,7 +39,7 @@ public class MockServiceManager
     }
 
     @Override
-    protected ServiceUploadClient getServicesAdmin(String instanceHost)
+    protected ServicesAdminClient getServicesAdmin(String instanceHost)
     throws ServiceException {
         return new MockServiceUploadClient();
     }
@@ -67,7 +67,7 @@ public class MockServiceManager
         }
     }
 
-    private class MockServiceUploadClient extends ServiceUploadClient {
+    private class MockServiceUploadClient extends ServicesAdminClient {
 
         RestHttpHelper.HttpResponse response =
             new RestHttpHelper().

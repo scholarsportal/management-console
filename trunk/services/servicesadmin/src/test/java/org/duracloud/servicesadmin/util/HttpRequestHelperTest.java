@@ -10,8 +10,8 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.duracloud.common.util.SerializationUtil;
-import org.duracloud.servicesutil.beans.ComputeServiceBean;
-import org.duracloud.servicesutil.util.XMLServiceSerializerImpl;
+import org.duracloud.services.beans.ComputeServiceBean;
+import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.easymock.EasyMock;
 
 import junit.framework.Assert;
