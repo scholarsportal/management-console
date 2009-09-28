@@ -1,25 +1,12 @@
 package org.duracloud.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.Header;
-
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
 
 /**
  * Provides access to a content store
