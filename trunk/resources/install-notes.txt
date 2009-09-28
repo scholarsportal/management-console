@@ -90,7 +90,8 @@ In order to deploy them independently, from the directory of the specific servic
 run-deps.(sh|bat)
 mvn clean install -f pom-run.xml pax:provision
 
-Note: For 'services/servicesadmin', instead of running the pax:provision command above, run:
+Note: For 'services/servicesadmin', after running the pax:provision command above, 
+to start the osgi containerrun:
  cd services/servicesadmin/runner
  ./run.[sh|bat]
 

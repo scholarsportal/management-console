@@ -12,9 +12,24 @@ echo "Starting Services Admin..."
 echo "=========================="
 echo ""
 
-cd $BUILD_HOME/services/servicesadmin/runner
-run.sh >& provision.log &
-sleep 60
+SERVICESADMIN_DIR=$BUILD_HOME/services/servicesadmin
+
+cd $SERVICESADMIN_DIR
+$MVN clean install -f pom-run.xml -Dmaven.test.skip=true pax:provision >& $SERVICESADMIN_DIR/provision.log 
+
+cd $SERVICESADMIN_DIR/runner
+./run.sh >> $SERVICESADMIN_DIR/provision.log &
+
+# Find child pid of PAX_PID (the PAX_PID will not kill the osgi-container)
+PAX_PID=$!
+PAX_GID=`ps -p $PAX_PID -o pgid=`
+
+sed_cmd="s/\(\d*\)\s.*/\1/p"
+CONTAINER_PID=`ps -e -o pid= -o pgid= -o comm= | grep java | grep $PAX_GID | sed -n -e $sed_cmd`
+echo PAX container pid: $CONTAINER_PID >> $SERVICESADMIN_DIR/provision.log
+
+sleep 20
+
 
 echo ""
 echo "==============================================================="
@@ -26,7 +41,7 @@ $MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: DuraService Integration test(s) failed; see above"
-  kill %1
+  kill $PAX_PID
   exit 1
 fi
 
@@ -40,7 +55,21 @@ $MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: ServiceClient Integration test(s) failed; see above"
-  kill %1
+  kill $PAX_PID
+  exit 1
+fi
+
+echo ""
+echo "========================================================================="
+echo "Compiling & running unit & integration tests for Services Admin Client..."
+echo "========================================================================="
+cd $BUILD_HOME/servicesadminclient
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: ServicesAdminClient Integration test(s) failed; see above"
+  kill $PAX_PID
   exit 1
 fi
 
@@ -48,7 +77,7 @@ echo "======================="
 echo "Shutting Down Services Admin..."
 echo "======================="
 echo ""
-kill %1
+kill $PAX_PID
 
 echo ""
 echo "===================================="

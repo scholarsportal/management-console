@@ -19,7 +19,7 @@ import junit.framework.Assert;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
-public class ServiceUploadClientTest {
+public class ServicesAdminClientTest {
 
     private ServicesAdminClient client;
 
