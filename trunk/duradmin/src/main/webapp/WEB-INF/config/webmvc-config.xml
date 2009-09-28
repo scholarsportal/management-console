@@ -82,21 +82,6 @@
     <property name="successView" value="services" />
   </bean>  
   
-  <!-- View Resolvers - select the JSP to display results -->
-  <!-- 
-  <bean id="duraViewResolver"
-    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="viewClass"
-      value="org.springframework.web.servlet.view.JstlView"></property>
-    <property name="viewClass"
-      value="org.springframework.web.servlet.view.tiles2.TilesView"></property>
-	<property name="prefix" value="/WEB-INF/jsp/"></property>
-    <property name="suffix" value=".jsp"></property>
-    
-  </bean>
- -->
-  
-
     <bean id="tilesConfigurer"
           class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
         <property name="definitions">
@@ -111,9 +96,6 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
     </bean>
 
-  
-  
-  
   <bean id="exceptionResolver" class="org.duracloud.duradmin.common.SimpleExceptionResolver">
     <property name="exceptionMappings">
       <props>

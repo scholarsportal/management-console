@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
@@ -44,11 +45,8 @@ public class MockServiceManager
         return new MockServiceUploadClient();
     }
 
-    private class MockContentStore extends ContentStore {
+    private class MockContentStore implements ContentStore {
 
-        public MockContentStore() {
-            super(null, null, null);
-        }
 
         @Override
         public Space getSpace(String spaceId) throws ContentStoreException {
@@ -65,6 +63,102 @@ public class MockServiceManager
             mockContent.setStream(new ByteArrayInputStream("servicePackage".getBytes()));
             return mockContent;
         }
+
+		@Override
+		public String addContent(String spaceId, String contentId,
+				InputStream content, long contentSize, String contentMimeType,
+				Map<String, String> contentMetadata)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void createSpace(String spaceId,
+				Map<String, String> spaceMetadata) throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deleteContent(String spaceId, String contentId)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deleteSpace(String spaceId) throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public String getBaseURL() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Map<String, String> getContentMetadata(String spaceId,
+				String contentId) throws ContentStoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AccessType getSpaceAccess(String spaceId)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Map<String, String> getSpaceMetadata(String spaceId)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Space> getSpaces() throws ContentStoreException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getStorageProviderType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getStoreId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setContentMetadata(String spaceId, String contentId,
+				Map<String, String> contentMetadata)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setSpaceAccess(String spaceId, AccessType spaceAccess)
+				throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setSpaceMetadata(String spaceId,
+				Map<String, String> spaceMetadata) throws ContentStoreException {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     private class MockServiceUploadClient extends ServicesAdminClient {

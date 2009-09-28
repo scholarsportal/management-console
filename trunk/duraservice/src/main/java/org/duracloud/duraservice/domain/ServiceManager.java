@@ -1,7 +1,6 @@
 package org.duracloud.duraservice.domain;
 
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;

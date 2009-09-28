@@ -1,19 +1,15 @@
 package org.duracloud.client;
 
 import java.io.InputStream;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
@@ -21,8 +17,9 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.storage.util.test.StorageAccountTestUtil;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Runtime test of DuraCloud java client.
@@ -131,7 +128,7 @@ public class TestContentStore
 
         // Create space
         Map<String, String> spaceMetadata = new HashMap<String, String>();
-        spaceMetadata.put(ContentStore.SPACE_ACCESS,
+        spaceMetadata.put(ContentStoreImpl.SPACE_ACCESS,
                           AccessType.OPEN.name());
         spaceMetadata.put(metaName, metaValue);
         store.createSpace(spaceId, spaceMetadata);
@@ -160,16 +157,16 @@ public class TestContentStore
         Map<String, String> responseMetadata = space.getMetadata();
         assertNotNull(responseMetadata);
         assertEquals(AccessType.OPEN.name(),
-                     responseMetadata.get(ContentStore.SPACE_ACCESS));
-        assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
-        assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
+                     responseMetadata.get(ContentStoreImpl.SPACE_ACCESS));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_COUNT));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(AccessType.OPEN, store.getSpaceAccess(spaceId));
 
         // Set space metadata
         metaValue = "Testing Metadata Value";
         spaceMetadata = new HashMap<String, String>();
-        spaceMetadata.put(ContentStore.SPACE_ACCESS,
+        spaceMetadata.put(ContentStoreImpl.SPACE_ACCESS,
                           AccessType.CLOSED.name());
         spaceMetadata.put(metaName, metaValue);
         store.setSpaceMetadata(spaceId, spaceMetadata);
@@ -178,9 +175,9 @@ public class TestContentStore
         responseMetadata = store.getSpaceMetadata(spaceId);
         assertNotNull(responseMetadata);
         assertEquals(AccessType.CLOSED.name(),
-                     responseMetadata.get(ContentStore.SPACE_ACCESS));
-        assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
-        assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
+                     responseMetadata.get(ContentStoreImpl.SPACE_ACCESS));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_COUNT));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(AccessType.CLOSED, store.getSpaceAccess(spaceId));
 
@@ -233,12 +230,12 @@ public class TestContentStore
         Map<String, String> responseMetadata = responseContent.getMetadata();
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(checksum,
-                     responseMetadata.get(ContentStore.CONTENT_CHECKSUM));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_CHECKSUM));
         assertEquals(contentMimeType,
-                     responseMetadata.get(ContentStore.CONTENT_MIMETYPE));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_MIMETYPE));
         assertEquals(String.valueOf(content.length()),
-                     responseMetadata.get(ContentStore.CONTENT_SIZE));
-        assertNotNull(responseMetadata.get(ContentStore.CONTENT_MODIFIED));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_SIZE));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.CONTENT_MODIFIED));
 
         // Set content metadata
         metaValue = "New Metadata Value";
@@ -250,12 +247,12 @@ public class TestContentStore
         responseMetadata = store.getContentMetadata(spaceId, contentId);
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(checksum,
-                     responseMetadata.get(ContentStore.CONTENT_CHECKSUM));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_CHECKSUM));
         assertEquals(contentMimeType,
-                     responseMetadata.get(ContentStore.CONTENT_MIMETYPE));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_MIMETYPE));
         assertEquals(String.valueOf(content.length()),
-                     responseMetadata.get(ContentStore.CONTENT_SIZE));
-        assertNotNull(responseMetadata.get(ContentStore.CONTENT_MODIFIED));
+                     responseMetadata.get(ContentStoreImpl.CONTENT_SIZE));
+        assertNotNull(responseMetadata.get(ContentStoreImpl.CONTENT_MODIFIED));
 
         // Delete content
         store.deleteContent(spaceId, contentId);
