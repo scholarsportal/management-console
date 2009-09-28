@@ -25,7 +25,7 @@ PAX_PID=$!
 PAX_GID=`ps -p $PAX_PID -o pgid=`
 
 sed_cmd="s/\(\d*\)\s.*/\1/p"
-CONTAINER_PID=`ps -e -o pid= -o pgid= -o comm= | grep "java.*felix.fileinstall" | grep $PAX_GID | sed -n -e $sed_cmd`
+CONTAINER_PID=`ps -e -o pid= -o pgid= -o comm= | grep java | grep felix.fileinstall.dir | grep $PAX_GID | sed -n -e $sed_cmd`
 echo PAX container pid: $CONTAINER_PID >> $SERVICESADMIN_DIR/provision.log
 
 sleep 20
@@ -78,6 +78,7 @@ echo "Shutting Down Services Admin..."
 echo "======================="
 echo ""
 kill $PAX_PID
+kill $CONTAINER_PID
 
 echo ""
 echo "===================================="
