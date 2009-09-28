@@ -29,5 +29,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/servicesutil"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/computeprovider"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/storageprovider"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servicesadminclient"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

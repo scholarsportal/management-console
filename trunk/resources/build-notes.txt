@@ -5,14 +5,24 @@ tomcat-6.0.18
 ::build, run unit tests::
 mvn clean package
 
-::build, run unit tests, deploy, run integration tests::
+::build, run unit tests, deploy, run integration tests (for most projects, integration tests for services projects are skipped)::
 mvn clean install
 
-http://localhost:8080/mainwebapp
-http://localhost:8080/instancewebapp
+::build, run unit tests, deploy, run integration tests for services projects (duraservice, serviceclient, servicesadminclient)::
+mvn clean install -P profile-servicetest
+
+::Initialize DuraStore and DuraService without running full test suite::
+mvn -Dtest=Init test
 
 ::useful commands::
 mvn clean install -Ddatabase.home.default=<path.of.database.home>
+
+::URLs to access various interfaces after deploy/init::
+
+http://localhost:8080/mainwebapp
+http://localhost:8080/duradmin
+http://localhost:8080/durastore
+http://localhost:8080/duraservice
 
 ::clover::
 If you plan on using clover, the following element needs to be added to your maven 'settings.xml' (see resources/conf/settings.xml):
