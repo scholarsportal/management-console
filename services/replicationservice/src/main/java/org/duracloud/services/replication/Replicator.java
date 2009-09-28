@@ -1,7 +1,6 @@
 package org.duracloud.services.replication;
 
 import java.io.InputStream;
-
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;

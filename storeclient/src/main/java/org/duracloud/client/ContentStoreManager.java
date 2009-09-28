@@ -2,7 +2,6 @@ package org.duracloud.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,8 +54,8 @@ public class ContentStoreManager {
         while (acctIDs.hasNext()) {
             String acctID = acctIDs.next();
             StorageAccount acct = accounts.get(acctID);
-            ContentStore contentStore =
-                new ContentStore(baseURL, acct.getType(), acct.getId());
+            ContentStoreImpl contentStore =
+                new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
             contentStores.put(acctID, contentStore);
         }
         return contentStores;
@@ -65,16 +64,16 @@ public class ContentStoreManager {
     public ContentStore getContentStore(String storeID) throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
-        ContentStore contentStore =
-            new ContentStore(baseURL, acct.getType(), acct.getId());
+        ContentStoreImpl contentStore =
+            new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
         return contentStore;
     }
 
     public ContentStore getPrimaryContentStore() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
-        ContentStore contentStore =
-            new ContentStore(baseURL, acct.getType(), acct.getId());
+        ContentStoreImpl contentStore =
+            new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
         return contentStore;
     }
 
