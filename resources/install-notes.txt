@@ -91,7 +91,7 @@ run-deps.(sh|bat)
 mvn clean install -f pom-run.xml pax:provision
 
 Note: For 'services/servicesadmin', after running the pax:provision command above, 
-to start the osgi containerrun:
+to start the osgi container run:
  cd services/servicesadmin/runner
  ./run.[sh|bat]
 
