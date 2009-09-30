@@ -54,7 +54,7 @@ public class ContentStoreManager {
         while (acctIDs.hasNext()) {
             String acctID = acctIDs.next();
             StorageAccount acct = accounts.get(acctID);
-            ContentStoreImpl contentStore =
+            ContentStore contentStore =
                 new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
             contentStores.put(acctID, contentStore);
         }
@@ -64,7 +64,7 @@ public class ContentStoreManager {
     public ContentStore getContentStore(String storeID) throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
-        ContentStoreImpl contentStore =
+        ContentStore contentStore =
             new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
         return contentStore;
     }
@@ -72,7 +72,7 @@ public class ContentStoreManager {
     public ContentStore getPrimaryContentStore() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
-        ContentStoreImpl contentStore =
+        ContentStore contentStore =
             new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
         return contentStore;
     }

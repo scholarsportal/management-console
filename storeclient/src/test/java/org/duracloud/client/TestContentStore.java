@@ -128,7 +128,7 @@ public class TestContentStore
 
         // Create space
         Map<String, String> spaceMetadata = new HashMap<String, String>();
-        spaceMetadata.put(ContentStoreImpl.SPACE_ACCESS,
+        spaceMetadata.put(ContentStore.SPACE_ACCESS,
                           AccessType.OPEN.name());
         spaceMetadata.put(metaName, metaValue);
         store.createSpace(spaceId, spaceMetadata);
@@ -157,16 +157,16 @@ public class TestContentStore
         Map<String, String> responseMetadata = space.getMetadata();
         assertNotNull(responseMetadata);
         assertEquals(AccessType.OPEN.name(),
-                     responseMetadata.get(ContentStoreImpl.SPACE_ACCESS));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_COUNT));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_CREATED));
+                     responseMetadata.get(ContentStore.SPACE_ACCESS));
+        assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
+        assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(AccessType.OPEN, store.getSpaceAccess(spaceId));
 
         // Set space metadata
         metaValue = "Testing Metadata Value";
         spaceMetadata = new HashMap<String, String>();
-        spaceMetadata.put(ContentStoreImpl.SPACE_ACCESS,
+        spaceMetadata.put(ContentStore.SPACE_ACCESS,
                           AccessType.CLOSED.name());
         spaceMetadata.put(metaName, metaValue);
         store.setSpaceMetadata(spaceId, spaceMetadata);
@@ -175,9 +175,9 @@ public class TestContentStore
         responseMetadata = store.getSpaceMetadata(spaceId);
         assertNotNull(responseMetadata);
         assertEquals(AccessType.CLOSED.name(),
-                     responseMetadata.get(ContentStoreImpl.SPACE_ACCESS));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_COUNT));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.SPACE_CREATED));
+                     responseMetadata.get(ContentStore.SPACE_ACCESS));
+        assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
+        assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(AccessType.CLOSED, store.getSpaceAccess(spaceId));
 
@@ -230,12 +230,12 @@ public class TestContentStore
         Map<String, String> responseMetadata = responseContent.getMetadata();
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(checksum,
-                     responseMetadata.get(ContentStoreImpl.CONTENT_CHECKSUM));
+                     responseMetadata.get(ContentStore.CONTENT_CHECKSUM));
         assertEquals(contentMimeType,
-                     responseMetadata.get(ContentStoreImpl.CONTENT_MIMETYPE));
+                     responseMetadata.get(ContentStore.CONTENT_MIMETYPE));
         assertEquals(String.valueOf(content.length()),
-                     responseMetadata.get(ContentStoreImpl.CONTENT_SIZE));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.CONTENT_MODIFIED));
+                     responseMetadata.get(ContentStore.CONTENT_SIZE));
+        assertNotNull(responseMetadata.get(ContentStore.CONTENT_MODIFIED));
 
         // Set content metadata
         metaValue = "New Metadata Value";
@@ -247,12 +247,12 @@ public class TestContentStore
         responseMetadata = store.getContentMetadata(spaceId, contentId);
         assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(checksum,
-                     responseMetadata.get(ContentStoreImpl.CONTENT_CHECKSUM));
+                     responseMetadata.get(ContentStore.CONTENT_CHECKSUM));
         assertEquals(contentMimeType,
-                     responseMetadata.get(ContentStoreImpl.CONTENT_MIMETYPE));
+                     responseMetadata.get(ContentStore.CONTENT_MIMETYPE));
         assertEquals(String.valueOf(content.length()),
-                     responseMetadata.get(ContentStoreImpl.CONTENT_SIZE));
-        assertNotNull(responseMetadata.get(ContentStoreImpl.CONTENT_MODIFIED));
+                     responseMetadata.get(ContentStore.CONTENT_SIZE));
+        assertNotNull(responseMetadata.get(ContentStore.CONTENT_MODIFIED));
 
         // Delete content
         store.deleteContent(spaceId, contentId);
