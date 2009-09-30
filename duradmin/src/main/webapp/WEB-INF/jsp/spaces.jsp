@@ -3,12 +3,40 @@
       <div id="error"><c:out value="${error}" /></div>
     </c:if>
     
-    <h2>Spaces</h2>
     
     <div class="spaces">
-    <c:forEach items="${spaces}" var="space">
+	<table class="standard" id="spacesTable">
+         <tr>
+           <th>ID</th>
+           <th>Created</th>
+           <th>Items</th>
+           <th>Access</th>
+           <th></th>
+         </tr>
+	<tbody>
+	<c:forEach items="${spaces}" var="space">
+		<tr id="${space.spaceId}">
+			<td>
+				<c:out value="${space.spaceId}" />				
+			</td>
+            <td><c:out value="${space.metadata.created}" /></td>
+            <td><c:out value="${space.metadata.count}" /></td>
+            <td><c:out value="${space.metadata.access}" /></td>
+		    <td id="actionColumn">
+		    
+		    </td>            
+		</tr>
+        
+
+    </c:forEach>
+    </tbody>
+	
+    </table>
+
+      <!-- 
+  
       <div class="space">
-        <table class="space">
+      	<table class="space">
           <tr>
             <th>ID</th>
             <th><c:out value="${space.spaceId}" /></th>
@@ -50,7 +78,8 @@
           <input type='submit' value="Delete <c:out value="${space.spaceId}"/>" />
         </form>
       </div>
-    </c:forEach>
+	 -->
+    
     </div>
     
     <div class="space_action">

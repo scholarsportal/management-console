@@ -14,6 +14,7 @@
   <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
+
   <!-- Map URLs to Controllers -->
   <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
@@ -46,11 +47,13 @@
   	</property>
   </bean>
 	 -->
+	 
 
   <!-- Request Controllers - processes request -->
   <bean id="homeController" class="org.duracloud.duradmin.control.HomeController"/>
 
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
     <property name="successView" value="spaces" />
   </bean>
 
@@ -83,7 +86,7 @@
   </bean>  
   
     <bean id="tilesConfigurer"
-          class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+          class="org.duracloud.duradmin.view.tiles2.TilesConfigurer">
         <property name="definitions">
             <list>
                 <value>/WEB-INF/config/tiles.xml</value>
