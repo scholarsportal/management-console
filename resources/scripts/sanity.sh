@@ -42,6 +42,7 @@ fi
 echo "========================================"
 echo "Building service deployment projects ..."
 echo "========================================"
+chmod +x "$scriptdir"/services.sh
 . "$scriptdir"/services.sh
 
 if [ $? -ne 0 ]; then
