@@ -37,6 +37,9 @@
         <version>1.4</version>
         <configuration>
           <framework>equinox</framework>
+          <provision>
+            <param>--executor=script</param>
+          </provision>
         </configuration>
       </plugin>
 

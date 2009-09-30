@@ -15,7 +15,8 @@ echo ""
 SERVICESADMIN_DIR=$BUILD_HOME/services/servicesadmin
 
 cd $SERVICESADMIN_DIR
-$MVN clean install -f pom-run.xml -Dmaven.test.skip=true pax:provision >& $SERVICESADMIN_DIR/provision.log 
+chmod +x run-deps.sh 
+./run-deps.sh >& $SERVICESADMIN_DIR/provision.log
 
 cd $SERVICESADMIN_DIR/runner
 ./run.sh >> $SERVICESADMIN_DIR/provision.log &
