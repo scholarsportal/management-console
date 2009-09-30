@@ -146,22 +146,30 @@
       <version>1.4.0</version>
       <scope>runtime</scope>
     </dependency>
-
-    
   </dependencies>
+  <profiles>
+  	<profile>
+ 		<id>profile-webdev</id>	
+  		 <activation>
+              <activeByDefault>false</activeByDefault>
+              <property>
+                  <name>profile</name>
+                  <value>webdev</value>
+              </property>
+          </activation>
+		<build>
+		    <plugins>
+		      <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-war-plugin</artifactId>
+		        <version>2.0</version>
+		        <configuration>
+		          <webappDirectory>${tomcat.deploy.dir}/${project.artifactId}</webappDirectory>
+		        </configuration>
+		      </plugin>
+		    </plugins>
+		</build> 		
+  	</profile>
+  </profiles>
   
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.0</version>
-        <configuration>
-          <webappDirectory>${tomcat.deploy.dir}/${project.artifactId}</webappDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-
 </project>
