@@ -94,10 +94,35 @@ div.space_action {
   border:0px solid #fff;
 }
 
-td {
-  padding:5px;
+table{
+  border-collapse: collapse;
 }
 
+
+td, th {
+  padding:0.5em; 
+}
+
+.standard th {
+	background-color:#B9D3EE;
+	text-align:left;
+}
+
+.standard > tbody > tr.oddRow {
+	background-color:#FFFFCC;	
+}
+
+.standard > tbody > tr.hover {
+	background-color: #00B2EE;	
+	opacity: 0.65;
+	
+}
+
+.actions{
+	visibility:hidden;
+	border:1px dotted green;	
+	padding:.25em;
+}
 #error {
   font-size: 1.2em;
   color: red;

@@ -12,6 +12,15 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public abstract class BaseController extends SimpleFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
+    
+	
+	private ContentStoreManager contentStoreManager;
+	
+
+    public ContentStore getContentStore() throws Exception{
+		return contentStoreManager.getPrimaryContentStore();
+	}
+
 
     @Override
     protected boolean isFormSubmission(HttpServletRequest request){
@@ -19,12 +28,13 @@ public abstract class BaseController extends SimpleFormController {
         return true;
     }
 
-    protected ContentStore getContentStore() throws Exception {
-        ContentStoreManager contentStoreManager =
-            new ContentStoreManager(DuradminConfig.getHost(),
-                                    DuradminConfig.getPort());
-        return contentStoreManager.getPrimaryContentStore();
-    }
+	public ContentStoreManager getContentStoreManager() {
+		return contentStoreManager;
+	}
+
+	public void setContentStoreManager(ContentStoreManager contentStoreManager) {
+		this.contentStoreManager = contentStoreManager;
+	}
 
     protected ServicesManager getServicesManager() throws Exception {
         ServicesManager servicesManager =

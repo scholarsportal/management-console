@@ -6,6 +6,7 @@ import java.util.Map;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class Replicator {
                       String fromStoreId,
                       String toStoreId) {
         ContentStoreManager storeManager =
-            new ContentStoreManager(host, port, context);
+            new ContentStoreManagerImpl(host, port, context);
 
         try {
             fromStore = storeManager.getContentStore(fromStoreId);

@@ -63,7 +63,7 @@ public class TestContentStore
         RestHttpHelper restHelper = new RestHttpHelper();
         restHelper.post(url, accountXml, null);
 
-        storeManager = new ContentStoreManager(host, getPort(), context);
+        storeManager = new ContentStoreManagerImpl(host, getPort(), context);
         assertNotNull(storeManager);
 
         store = storeManager.getPrimaryContentStore();

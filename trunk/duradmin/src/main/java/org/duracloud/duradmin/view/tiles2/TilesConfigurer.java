@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.web.servlet.view.tiles2;
+package org.duracloud.duradmin.view.tiles2;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -38,12 +38,15 @@ import org.apache.tiles.preparer.BasicPreparerFactory;
 import org.apache.tiles.servlet.context.ServletTilesApplicationContext;
 import org.apache.tiles.servlet.context.wildcard.WildcardServletTilesApplicationContextFactory;
 import org.apache.tiles.web.util.ServletContextAdapter;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.servlet.view.tiles2.SimpleSpringPreparerFactory;
+import org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory;
+import org.springframework.web.servlet.view.tiles2.SpringLocaleResolver;
+import org.springframework.web.servlet.view.tiles2.TilesView;
 
 /**
  * Helper class to configure Tiles2 for the Spring Framework. See

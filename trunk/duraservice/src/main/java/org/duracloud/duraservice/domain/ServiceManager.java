@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
@@ -140,7 +141,7 @@ public class ServiceManager {
     protected void initializeServicesList(ServiceStore serviceStore)
     throws ContentStoreException {
         ContentStoreManager storeManager =
-            new ContentStoreManager(serviceStore.getHost(),
+            new ContentStoreManagerImpl(serviceStore.getHost(),
                                     serviceStore.getPort(),
                                     serviceStore.getContext());
         setContentStore(storeManager.getPrimaryContentStore());
