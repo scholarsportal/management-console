@@ -1,19 +1,16 @@
 package org.duracloud.durastore.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
-import javax.ws.rs.core.HttpHeaders;
-
+import junit.framework.TestCase;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-
-import junit.framework.TestCase;
+import javax.ws.rs.core.HttpHeaders;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Runtime test of content REST API. The durastore web application must be
@@ -46,12 +43,12 @@ public class TestContentRest
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 200);
+        assertEquals(200, statusCode);
 
         // Add space
         response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 201);
+        assertEquals(201, statusCode);
 
         // Add content1 to space
         String url = baseUrl + "/" + spaceId + "/content1";
@@ -60,7 +57,7 @@ public class TestContentRest
                     RestTestHelper.METADATA_VALUE);
         response = restHelper.put(url, CONTENT, headers);
         statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 201);
+        assertEquals(201, statusCode);
     }
 
     @Override
@@ -70,7 +67,7 @@ public class TestContentRest
         String url = baseUrl + "/" + spaceId + "/content1";
         HttpResponse response = restHelper.delete(url);
 
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
@@ -78,7 +75,7 @@ public class TestContentRest
 
         // Delete space
         response = RestTestHelper.deleteSpace(spaceId);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test
@@ -86,10 +83,10 @@ public class TestContentRest
         String url = baseUrl + "/" + spaceId + "/content1";
         HttpResponse response = restHelper.get(url);
 
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
         String content = response.getResponseBody();
         assertNotNull(content);
-        assertTrue(CONTENT.equals(content));
+        assertEquals(CONTENT, content);
 
         String contentType =
             response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
@@ -101,7 +98,7 @@ public class TestContentRest
     public void testGetContentMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId + "/content1";
         HttpResponse response = restHelper.head(url);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
 
         testMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
@@ -139,7 +136,7 @@ public class TestContentRest
         headers.put(newMetaName, newMetaValue);
         HttpResponse response = restHelper.post(url, null, headers);
 
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
@@ -149,7 +146,7 @@ public class TestContentRest
         url = baseUrl + "/" + spaceId + "/content1";
         response = restHelper.head(url);
 
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
 
         testMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
         testMetadata(response, newMetaName, newMetaValue);

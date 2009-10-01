@@ -1,21 +1,19 @@
 package org.duracloud.durastore.aop;
 
-import java.util.Random;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.durastore.rest.RestTestHelper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.durastore.rest.RestTestHelper;
+import java.util.Random;
 
 /**
  * <pre>
@@ -65,12 +63,12 @@ public class TestIngestAdvice
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        Assert.assertTrue("status: " + statusCode, statusCode == 200);
+        Assert.assertEquals(200, statusCode);
 
         // Add space
         response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
-        Assert.assertTrue("status: " + statusCode, statusCode == 201);
+        Assert.assertEquals(201, statusCode);
 
     }
 

@@ -15,10 +15,10 @@ echo ""
 SERVICESADMIN_DIR=$BUILD_HOME/services/servicesadmin
 
 cd $SERVICESADMIN_DIR
-chmod +x run-deps.sh 
-./run-deps.sh >& $SERVICESADMIN_DIR/provision.log
+$MVN clean -f pom-run.xml pax:provision >& $SERVICESADMIN_DIR/provision.log
 
 cd $SERVICESADMIN_DIR/runner
+chmod +x run.sh
 ./run.sh >> $SERVICESADMIN_DIR/provision.log &
 
 # Find child pid of PAX_PID (the PAX_PID will not kill the osgi-container)

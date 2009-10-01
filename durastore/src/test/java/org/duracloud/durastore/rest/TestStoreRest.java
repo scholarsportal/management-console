@@ -1,24 +1,20 @@
 package org.duracloud.durastore.rest;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Random;
-
+import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Random;
 
 /**
  * Runtime test of store REST API. The durastore web application must be
@@ -56,12 +52,12 @@ public class TestStoreRest
         // Initialize the stores listing
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 200);
+        assertEquals(200, statusCode);
 
         // Retrieve the stores listing
         String url = baseUrl + "/stores";
         response = restHelper.get(url);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
         storesXML = response.getResponseBody();
         assertNotNull(storesXML);
         assertTrue(storesXML.contains("<storageProviderAccounts>"));
@@ -116,18 +112,18 @@ public class TestStoreRest
         // Add space1
         HttpResponse response = RestTestHelper.addSpace(spaceId, acctId);
         int statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 201);
+        assertEquals(201, statusCode);
 
         // Add content1 to space1
         String url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.put(url, CONTENT, null);
         statusCode = response.getStatusCode();
-        assertTrue("status: " + statusCode, statusCode == 201);
+        assertEquals(201, statusCode);
 
         // Delete content1 from space1
         url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.delete(url);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
@@ -135,6 +131,6 @@ public class TestStoreRest
 
         // Delete space1
         response = RestTestHelper.deleteSpace(spaceId, acctId);
-        assertTrue(response.getStatusCode() == 200);
+        assertEquals(200, response.getStatusCode());
     }
 }

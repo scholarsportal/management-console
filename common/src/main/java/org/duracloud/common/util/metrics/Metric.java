@@ -1,11 +1,11 @@
 
 package org.duracloud.common.util.metrics;
 
+import org.apache.log4j.Logger;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
-
-import org.apache.log4j.Logger;
 
 /**
  * This class holds timing metrics for a set of related events (MetricElements).
@@ -36,12 +36,10 @@ public class Metric {
 
         public void start() {
             startTime = System.currentTimeMillis();
-            log.debug(subHeader + ", start:" + startTime);
         }
 
         public void stop() {
             stopTime = System.currentTimeMillis();
-            log.debug(subHeader + ", stop :" + stopTime);
         }
 
         public float elapsedSecs() {
