@@ -1,43 +1,71 @@
-
 package org.duracloud.servicesutil.util.internal;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
+import java.util.Enumeration;
 
 import org.duracloud.servicesutil.util.ServiceUninstaller;
+import org.duracloud.services.common.error.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceUninstallerImpl
+/**
+ * @author Andrew Woods
+ */
+public class ServiceUninstallerImpl extends ServiceInstallBase
         implements ServiceUninstaller {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private String bundleHome;
 
-    /**
-     * {@inheritDoc}
-     */
-    public void uninstall(String serviceId) throws Exception {
+    public void uninstall(String name) throws Exception {
+        log.info("bundleHome: '" + getBundleHome() + "'");
+
+        if (isJar(name)) {
+            uninstallBundleFromHomeAndAttic(name);
+        } else if (isZip(name)) {
+            uninstallBagAndBundles(name);
+        } else {
+            throwServiceException("Unsupported filetype: '" + name + "'");
+        }
+    }
+
+    private void uninstallBundleFromHomeAndAttic(String name) throws ServiceException {
+        delete(getHome(), name);
+        delete(getAttic(), name);
+    }
+
+    private void uninstallBagAndBundles(String zipName) throws IOException, ServiceException {
+        ZipFile zip = new ZipFile(getFromAttic(zipName));
+        Enumeration entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            delete(getHome(), entry.getName());
+        }
+
+        delete(getAttic(), zipName);
+    }
+
+    private void delete(File dir, String name) throws ServiceException {
         boolean success = false;
-        File homeDir = new File(getBundleHome());
-        for (File file : homeDir.listFiles()) {
-            log.debug("found in bundle-home: '" + file.getName() + "'");
+        for (File file : dir.listFiles()) {
+            String fileName = file.getName();
+            log.debug("found in " + dir.getPath() + ": '" + fileName + "'");
 
-            if (file.getName().contains(serviceId)) {
-                log.debug("about to delete: " + file.getName());
+            if (fileName.contains(name)) {
+                log.debug("about to delete: " + fileName);
                 success = file.delete();
+                break;
             }
         }
 
         if (!success) {
-            String msg = "Unable to uninstall service: '" + serviceId + "'";
+            String msg = "Unable to uninstall service: '" + name + "'";
             log.error(msg);
-            throw new Exception(msg);
+            super.throwServiceException(msg);
         }
-    }
-
-    public String getBundleHome() {
-        return bundleHome;
     }
 
     public void setBundleHome(String bundleHome) {

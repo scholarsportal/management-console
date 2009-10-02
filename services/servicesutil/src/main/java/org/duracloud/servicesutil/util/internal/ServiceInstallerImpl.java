@@ -1,4 +1,3 @@
-
 package org.duracloud.servicesutil.util.internal;
 
 import java.io.File;
@@ -19,17 +18,13 @@ import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceInstallerImpl
+/**
+ * @author Andrew Woods
+ */
+public class ServiceInstallerImpl extends ServiceInstallBase
         implements ServiceInstaller {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
-    private String bundleHome;
-
-    /**
-     * Internal management directory.
-     */
-    private final String ATTIC = "attic" + File.separator;
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public void init() throws Exception {
         log.info("initializing SerivceInstallerImpl");
@@ -70,32 +65,14 @@ public class ServiceInstallerImpl
         }
     }
 
-    private boolean isJar(String name) throws ServiceException {
-        return getExtension(name).equalsIgnoreCase(".jar");
-    }
-
-    private boolean isZip(String name) throws ServiceException {
-        return getExtension(name).equalsIgnoreCase(".zip");
-    }
-
-    private String getExtension(String name) throws ServiceException {
-        if (name == null) {
-            throwServiceException("Filename is null.");
-        }
-
-        String ext = name.substring(name.lastIndexOf('.'));
-        if (ext == null) {
-            throwServiceException("File extension null: '" + name + "'");
-        }
-
-        return ext;
-    }
-
     private void storeBundle(String name, InputStream bundle) {
         FileOutputStream atticFile = null;
         try {
             atticFile = FileUtils.openOutputStream(getFromAttic(name));
             IOUtils.copy(bundle, atticFile);
+
+            log.debug("bundle name  : " + getFromAttic(name).getName());
+            log.debug("bundle length: " + getFromAttic(name).length());
 
         } catch (IOException e) {
             throwRuntimeException("storeBundle(): '" + name + "'", e);
@@ -116,27 +93,6 @@ public class ServiceInstallerImpl
 
         } catch (IOException e) {
             throwRuntimeException("installBundle(): '" + name + "'", e);
-        }
-    }
-
-    private void installBundleFromStream(String name, InputStream inStream) {
-        File installedBundleFile = new File(getBundleHome() + name);
-        OutputStream installedBundle = null;
-        try {
-            installedBundle = new FileOutputStream(installedBundleFile);
-            IOUtils.copy(inStream, installedBundle);
-
-        } catch (IOException e) {
-            throwRuntimeException("installBundleFromStream(): " + name, e);
-
-        } finally {
-            if (installedBundle != null) {
-                try {
-                    installedBundle.close();
-                    inStream.close();
-                } catch (IOException e) {
-                }
-            }
         }
     }
 
@@ -161,30 +117,30 @@ public class ServiceInstallerImpl
         }
     }
 
-    private File getFromAttic(String name) {
-        return new File(getAttic().getPath() + File.separator + name);
-    }
+    private void installBundleFromStream(String name, InputStream inStream) {
+        File installedBundleFile = new File(getBundleHome() + name);
+        OutputStream installedBundle = null;
+        try {
+            installedBundle = new FileOutputStream(installedBundleFile);
+            IOUtils.copy(inStream, installedBundle);
 
-    private File getAttic() {
-        return new File(getBundleHome() + ATTIC);
-    }
+        } catch (IOException e) {
+            throwRuntimeException("installBundleFromStream(): " + name, e);
 
-    private File getHome() {
-        return new File(getBundleHome());
-    }
-
-    private void throwServiceException(String msg) throws ServiceException {
-        log.error("Error: " + msg);
-        throw new ServiceException(msg);
+        } finally {
+            if (installedBundle != null) {
+                try {
+                    installedBundle.close();
+                    inStream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
     }
 
     private void throwRuntimeException(String msg, Throwable t) {
         log.error("Error: " + msg, t);
         throw new RuntimeException(msg, t);
-    }
-
-    public String getBundleHome() {
-        return bundleHome;
     }
 
     public void setBundleHome(String bundleHome) {

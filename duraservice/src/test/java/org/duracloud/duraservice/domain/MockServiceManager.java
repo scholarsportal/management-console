@@ -168,8 +168,9 @@ public class MockServiceManager
             new HttpResponse(HttpURLConnection.HTTP_OK, null, null, null);
 
         @Override
-        public HttpResponse postServiceBundle(String fileName, InputStream stream)
-        throws Exception {
+        public HttpResponse postServiceBundle(String fileName,
+                                              InputStream stream, long length)
+                throws Exception {
             return response;
         }
 
