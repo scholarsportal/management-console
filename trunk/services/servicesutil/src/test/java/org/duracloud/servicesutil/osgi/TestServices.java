@@ -1,7 +1,7 @@
-
 package org.duracloud.servicesutil.osgi;
 
 import org.junit.Test;
+import org.junit.Before;
 
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
@@ -39,6 +39,14 @@ public class TestServices
     private DuraConfigAdmin configAdmin;
 
     private ComputeService helloService;
+
+    @Before
+    public void setUp() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
+    }
 
     @Test
     public void testServiceInstaller() throws Exception {

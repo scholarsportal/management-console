@@ -17,6 +17,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Space;
+import org.duracloud.domain.Content;
 import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.jdom.Document;
@@ -191,13 +192,14 @@ public class ServiceManager {
 
         try {
             // Grab file from store
-            InputStream serviceStream =
-                store.getContent(serviceStore.getSpaceId(), serviceId).getStream();
+            Content content = store.getContent(serviceStore.getSpaceId(), serviceId);
+            InputStream serviceStream = content.getStream();
+            long length = getContentLength(content);
 
             // Push file to services admin
             ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
             HttpResponse response =
-                servicesAdmin.postServiceBundle(serviceId, serviceStream);
+                servicesAdmin.postServiceBundle(serviceId, serviceStream, length);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                 throw new ServiceException("Services Admin response code was " +
                                            response.getStatusCode());
@@ -211,6 +213,22 @@ public class ServiceManager {
         }
 
         deployedServices.put(serviceId, serviceHost);
+    }
+
+    private long getContentLength(Content content) {
+        Map<String, String> metadata = content.getMetadata();
+        String size = metadata.get(ContentStore.CONTENT_SIZE);
+
+        long length = 0;
+        if (size != null) {
+            try {
+                length = Long.parseLong(size);
+            } catch (NumberFormatException e) {
+                log.warn("Unable to determine size: " + size + ", " + content.getId());
+                length = 0;
+            }
+        }
+        return length;
     }
 
     public void configureService(String serviceId, InputStream configXml)

@@ -123,9 +123,10 @@ public class RestHttpHelperTest {
         File file = createTmpFile();
         FileInputStream fileStream = new FileInputStream(file);
         HttpResponse response =
-            helper.multipartFileStreamPost(getUrl(),
-                                           file.getName(),
-                                           fileStream);
+                helper.multipartFileStreamPost(getUrl(),
+                        file.getName(),
+                        fileStream,
+                        fileStream.available());
         verifyResponse(response);
         file.delete();
     }

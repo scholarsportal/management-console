@@ -1,4 +1,3 @@
-
 package org.duracloud.servicesadminclient;
 
 import java.io.File;
@@ -15,6 +14,9 @@ import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Andrew Woods
+ */
 public class ServicesAdminClient {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -25,12 +27,13 @@ public class ServicesAdminClient {
 
     private String baseURL;
 
-    public HttpResponse postServiceBundle(String fileName, InputStream stream)
+    public HttpResponse postServiceBundle(String fileName, InputStream stream,
+                                          long length)
             throws Exception {
         log.debug("FILENAME: " + fileName + "\nSTREAM: " + stream);
         return getRester().multipartFileStreamPost(getInstallURL(),
                                                    fileName,
-                                                   stream);
+                                                   stream, length);
     }
 
     public HttpResponse postServiceBundle(File file) throws Exception {

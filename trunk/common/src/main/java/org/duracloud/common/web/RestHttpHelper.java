@@ -190,21 +190,24 @@ public class RestHttpHelper {
 
     public HttpResponse multipartFileStreamPost(String url,
                                                 String fileName,
-                                                InputStream stream)
+                                                InputStream stream,
+                                                long length)
             throws Exception {
         Part[] parts = {new FilePart(fileName,
-                                     new StreamPart(fileName, stream))};
+                        new StreamPart(fileName, stream, length))};
         return multipartPost(url, parts);
     }
 
     private class StreamPart implements PartSource {
 
-        String fileName;
-        InputStream stream;
+        private String fileName;
+        private InputStream stream;
+        private long length;
 
-        public StreamPart(String fileName, InputStream stream) {
+        public StreamPart(String fileName, InputStream stream, long length) {
             this.fileName = fileName;
             this.stream = stream;
+            this.length = length;
         }
 
         public InputStream createInputStream() throws IOException {
@@ -215,13 +218,7 @@ public class RestHttpHelper {
             return fileName;
         }
 
-        public long getLength() {
-            long length = 0;
-            try {
-                length = new Integer(stream.available()).longValue();
-            } catch(IOException ioe) {
-                length = 0;
-            }
+        public long getLength() {          
             return length;
         }
     }
