@@ -1,16 +1,22 @@
+
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class Space implements Serializable {
+public class Space
+        implements Serializable {
 
     private static final long serialVersionUID = 3008516494814826947L;
 
     private String action;
+
     private String spaceId;
+
     private String access;
+
     private SpaceMetadata metadata;
+
     private List<String> contents;
 
     public String getAction() {

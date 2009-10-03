@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin;
 
 import junit.framework.TestCase;
@@ -10,16 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Runtime test of Duradmin. The durastore
- * web application must be deployed and available
- * in order for these tests to pass.
- *
+ * Runtime test of Duradmin. The durastore web application must be deployed and
+ * available in order for these tests to pass.
+ * 
  * @author Bill Branan
  */
 public class TestDuradmin
         extends TestCase {
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
+
     private static String baseUrl;
 
     private static String configFileName = "test-duradmin.properties";
@@ -50,4 +51,4 @@ public class TestDuradmin
         assertNotNull(responseText);
     }
 
- }
+}

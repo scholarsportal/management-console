@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
@@ -9,30 +10,30 @@ import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-public class AddContentController extends BaseController {
+public class AddContentController
+        extends BaseController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-	public AddContentController()	{
+    public AddContentController() {
         setCommandClass(ContentItem.class);
         setCommandName("content");
-	}
+    }
 
     @Override
-    protected ModelAndView onSubmit(Object command,
-                                    BindException errors)
-    throws Exception {
+    protected ModelAndView onSubmit(Object command, BindException errors)
+            throws Exception {
         ContentItem content = (ContentItem) command;
 
         String spaceId = content.getSpaceId();
-        if(spaceId == null || spaceId.equals("")) {
+        if (spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
 
         ContentStore store = null;
         try {
             store = getContentStore();
-        } catch(Exception se) {
+        } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
             return mav;
@@ -40,25 +41,21 @@ public class AddContentController extends BaseController {
 
         String error = null;
         MultipartFile file = content.getFile();
-        if(file == null || file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             error = "A file must be provided in order to add content.";
         } else {
             String contentId = content.getContentId();
-            if(contentId == null || contentId.equals("")){
+            if (contentId == null || contentId.equals("")) {
                 contentId = file.getOriginalFilename();
             }
 
             String contentMime = content.getContentMimetype();
-            if(contentMime == null || contentMime.equals("")) {
+            if (contentMime == null || contentMime.equals("")) {
                 contentMime = file.getContentType();
             }
 
-            store.addContent(spaceId,
-                             contentId,
-                             file.getInputStream(),
-                             file.getSize(),
-                             contentMime,
-                             null);
+            store.addContent(spaceId, contentId, file.getInputStream(), file
+                    .getSize(), contentMime, null);
         }
 
         // Create a Space for the view
@@ -69,7 +66,7 @@ public class AddContentController extends BaseController {
         ModelAndView mav = new ModelAndView(getSuccessView());
         mav.addObject("space", space);
 
-        if(error != null) {
+        if (error != null) {
             mav.addObject("error", error);
         }
 

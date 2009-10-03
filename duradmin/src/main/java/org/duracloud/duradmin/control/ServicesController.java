@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.control;
 
 import java.util.List;
@@ -10,20 +11,19 @@ import org.duracloud.duradmin.view.MainMenu;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class ServicesController extends BaseController {
+public class ServicesController
+        extends BaseController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-	public ServicesController()
-	{
+    public ServicesController() {
         setCommandClass(Service.class);
         setCommandName("service");
-	}
+    }
 
     @Override
-    protected ModelAndView onSubmit(Object command,
-                                    BindException errors)
-    throws Exception {
+    protected ModelAndView onSubmit(Object command, BindException errors)
+            throws Exception {
         return getServices();
     }
 

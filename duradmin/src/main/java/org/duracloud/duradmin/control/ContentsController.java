@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
@@ -7,30 +8,30 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class ContentsController extends BaseController {
+public class ContentsController
+        extends BaseController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-	public ContentsController()	{
-		setCommandClass(Space.class);
-		setCommandName("space");
-	}
+    public ContentsController() {
+        setCommandClass(Space.class);
+        setCommandName("space");
+    }
 
     @Override
-    protected ModelAndView onSubmit(Object command,
-                                    BindException errors)
-    throws Exception {
+    protected ModelAndView onSubmit(Object command, BindException errors)
+            throws Exception {
         Space space = (Space) command;
         String spaceId = space.getSpaceId();
 
-        if(spaceId == null || spaceId.equals("")) {
+        if (spaceId == null || spaceId.equals("")) {
             throw new IllegalArgumentException("Space ID must be provided.");
         }
 
         ContentStore store = null;
         try {
             store = getContentStore();
-        } catch(Exception se) {
+        } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
             return mav;

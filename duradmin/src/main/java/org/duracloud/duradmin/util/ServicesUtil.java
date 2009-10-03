@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.util;
 
 import java.util.ArrayList;
@@ -10,17 +11,17 @@ import org.duracloud.duradmin.domain.Service;
 
 /**
  * Utilities for handling services
- *
+ * 
  * @author Bill Branan
  */
 public class ServicesUtil {
 
     public static List<Service> getDeployedServices(ServicesManager servicesManager)
-    throws ServicesException {
+            throws ServicesException {
         List<String> deployedServices = servicesManager.getDeployedServices();
         List<Service> depServiceList = new ArrayList<Service>();
 
-        for(String serviceId : deployedServices) {
+        for (String serviceId : deployedServices) {
             Service service = new Service();
             service.setServiceId(serviceId);
             service.setConfig(servicesManager.getServiceConfig(serviceId));
@@ -32,11 +33,11 @@ public class ServicesUtil {
     }
 
     public static List<Service> getAvailableServices(ServicesManager servicesManager)
-    throws ServicesException {
+            throws ServicesException {
         List<String> availableServices = servicesManager.getAvailableServices();
         List<Service> avlServiceList = new ArrayList<Service>();
 
-        for(String serviceId : availableServices) {
+        for (String serviceId : availableServices) {
             Service service = new Service();
             service.setServiceId(serviceId);
             // TODO: Determine where to get configuration options for available services
@@ -48,7 +49,7 @@ public class ServicesUtil {
     }
 
     public static List<String> getServiceHosts(ServicesManager servicesManager)
-    throws ServicesException {
+            throws ServicesException {
         return servicesManager.getServiceHosts();
     }
 }
