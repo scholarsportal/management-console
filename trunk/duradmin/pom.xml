@@ -15,59 +15,58 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-	<repositories>
-		<repository>
-			<id>dojo</id>
-			<name>Dojo Maven2 Repository</name>
-			<url>http://download.dojotoolkit.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</repository>
-		  <repository>
-		    <id>dojoSnapshots</id>
-		    <name>Dojo Maven2 Snapshot Repository</name>
-		    <url>http://download.dojotoolkit.org/maven2-snapshot</url>
-		    <releases>
-		      <enabled>false</enabled>
-		    </releases>
-		    <snapshots>
-		      <enabled>true</enabled>
-		      <updatePolicy>always</updatePolicy>
-		      <checksumPolicy>warn</checksumPolicy>
-		    </snapshots>
-		    <layout>default</layout>
-		  </repository>		
-	</repositories>
-
-	<build>
-	    <plugins>     
-	      <plugin>
-	       <groupId>org.apache.maven.plugins</groupId>
-	       <artifactId>maven-war-plugin</artifactId>
-	       <configuration>          
-	         <overlays>
-	            <overlay></overlay>
-	            <overlay>
-	              <groupId>org.dojotoolkit</groupId>
-	              <artifactId>dojo-war</artifactId>
-	              <excludes>
-	                <exclude>META-INF/**</exclude>
-	              </excludes>
-	            </overlay>
-	         </overlays>
-	       </configuration>
-	      </plugin>
-	    </plugins>
-	  </build>
-	<dependencies>
+  <repositories>
+    <repository>
+      <id>dojo</id>
+      <name>Dojo Maven2 Repository</name>
+      <url>http://download.dojotoolkit.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+	    <checksumPolicy>fail</checksumPolicy>
+      </releases>
+      <snapshots>
+	    <enabled>false</enabled>
+      </snapshots>
+      <layout>default</layout>
+    </repository>
   
+    <repository>
+      <id>dojoSnapshots</id>
+      <name>Dojo Maven2 Snapshot Repository</name>
+      <url>http://download.dojotoolkit.org/maven2-snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <layout>default</layout>
+    </repository>		
+  </repositories>
+  <build>
+    <plugins>     
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-war-plugin</artifactId>
+	    <configuration>          
+	      <overlays>
+	        <overlay>
+	          <groupId>org.dojotoolkit</groupId>
+	          <artifactId>dojo-war</artifactId>
+	          <excludes>
+	            <exclude>META-INF/**</exclude>
+	          </excludes>
+	        </overlay>
+	      </overlays>
+	    </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
     <!-- internal projects -->
     <dependency>
       <groupId>org.duracloud</groupId>
@@ -118,18 +117,17 @@
 
 	<!-- tiles -->
 	<dependency>
-		<groupId>org.apache.tiles</groupId>
-		<artifactId>tiles-servlet</artifactId>
-		<version>2.1.3</version>
+	  <groupId>org.apache.tiles</groupId>
+	  <artifactId>tiles-servlet</artifactId>
+	  <version>2.1.3</version>
 	</dependency>
 
 	<dependency>
-		<groupId>org.apache.tiles</groupId>
-		<artifactId>tiles-jsp</artifactId>
-		<version>2.1.3</version>
+	  <groupId>org.apache.tiles</groupId>
+	  <artifactId>tiles-jsp</artifactId>
+	  <version>2.1.3</version>
 	</dependency>
-      
-
+    
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>servlet-api</artifactId>
@@ -164,14 +162,12 @@
     </dependency>
 
 	<!-- for validation  -->
-	
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
       <version>1.3.1</version>
     </dependency>
-	
-	
+
     <!-- for FileUpload -->
     <dependency>
       <groupId>commons-fileupload</groupId>
@@ -182,41 +178,41 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>  
       <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>  
-      <version>1.3.0</version>  
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>  
-      <groupId>org.xmlpull</groupId>  
-      <artifactId>com.springsource.org.xmlpull</artifactId>  
-      <version>1.1.4</version> 
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>com.springsource.org.apache.commons.io</artifactId>
-      <version>1.4.0</version>
-      <scope>runtime</scope>
-    </dependency>
+        <version>1.3.0</version>  
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>  
+        <groupId>org.xmlpull</groupId>  
+        <artifactId>com.springsource.org.xmlpull</artifactId>  
+        <version>1.1.4</version> 
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>com.springsource.org.apache.commons.io</artifactId>
+        <version>1.4.0</version>
+        <scope>runtime</scope>
+      </dependency>
 
-	<!-- dojo -->    
-    <dependency>
-      <groupId>org.dojotoolkit</groupId>
-      <artifactId>dojo-war</artifactId>
-      <version>1.3-SNAPSHOT</version>
-      <type>war</type>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
-  <profiles>
-  	<profile>
+  	  <!-- dojo -->    
+      <dependency>
+        <groupId>org.dojotoolkit</groupId>
+        <artifactId>dojo-war</artifactId>
+        <version>1.3-SNAPSHOT</version>
+        <type>war</type>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+    <profiles>
+      <profile>
  		<id>profile-webdev</id>	
-  		 <activation>
-              <activeByDefault>false</activeByDefault>
-              <property>
-                  <name>profile</name>
-                  <value>webdev</value>
-              </property>
-          </activation>
+        <activation>
+          <activeByDefault>false</activeByDefault>
+          <property>
+            <name>profile</name>
+            <value>webdev</value>
+          </property>
+        </activation>
 		<build>
 		    <plugins>
 		      <plugin>
@@ -231,5 +227,4 @@
 		</build> 		
   	</profile>
   </profiles>
-  
 </project>
