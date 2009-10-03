@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.config;
 
 import java.util.Properties;
@@ -7,18 +8,18 @@ import org.duracloud.common.util.ApplicationConfig;
 /**
  * This class provides configuration properties associated with the duracloud
  * duradmin.
- *
+ * 
  * @author awoods
  */
 public class DuradminConfig
         extends ApplicationConfig {
 
-    private static String DURADMIN_PROPERTIES_NAME =
-            "duradmin.properties";
+    private static String DURADMIN_PROPERTIES_NAME = "duradmin.properties";
 
     private static String configFileName;
 
     private static String hostKey = "host";
+
     private static String portKey = "port";
 
     private static Properties getProps() throws Exception {

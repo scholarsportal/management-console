@@ -1,15 +1,19 @@
+
 package org.duracloud.duradmin.domain;
 
 /**
  * Stores content metadata.
- *
+ * 
  * @author Bill Branan
  */
 public class ContentMetadata {
 
     private String mimetype;
+
     private String size;
+
     private String checksum;
+
     private String modified;
 
     public String getMimetype() {

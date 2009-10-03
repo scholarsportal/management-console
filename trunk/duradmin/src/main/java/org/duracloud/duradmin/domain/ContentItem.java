@@ -1,18 +1,25 @@
+
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class ContentItem implements Serializable {
+public class ContentItem
+        implements Serializable {
 
     private static final long serialVersionUID = -5835779644282347055L;
 
     private String action;
+
     private String spaceId;
+
     private String contentId;
+
     private String contentMimetype;
+
     private ContentMetadata metadata;
+
     private MultipartFile file;
 
     public String getAction() {

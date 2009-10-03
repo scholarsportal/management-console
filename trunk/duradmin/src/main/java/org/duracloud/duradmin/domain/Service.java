@@ -1,15 +1,20 @@
+
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
 import java.util.Map;
 
-public class Service implements Serializable {
+public class Service
+        implements Serializable {
 
     private static final long serialVersionUID = 5271039343141055224L;
 
     private String serviceId;
+
     private Map<String, String> config;
+
     private String status;
+
     private String serviceHost;
 
     public String getServiceId() {

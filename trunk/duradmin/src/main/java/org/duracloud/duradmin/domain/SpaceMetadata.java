@@ -1,14 +1,17 @@
+
 package org.duracloud.duradmin.domain;
 
 /**
  * Stores space metadata.
- *
+ * 
  * @author Bill Branan
  */
 public class SpaceMetadata {
 
     private String access;
+
     private String created;
+
     private String count;
 
     public String getAccess() {
