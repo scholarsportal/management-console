@@ -37,22 +37,14 @@ public class SpaceAddController
 
         String error = null;
         String spaceId = space.getSpaceId();
+       
         if (spaceId == null || spaceId.equals("")) {
-            // Allow add actions to display a nicer error
-            throw new IllegalArgumentException("Space ID must be provided.");
-        }
-        if (spaceId == null || spaceId.equals("")) {
-                error =
-                        "The Space ID must be non-empty in order to add a space.";
+                error = "The Space ID must be non-empty in order to add a space.";
         } else {
             store.createSpace(spaceId, null);
             String access = space.getAccess();
             if (access != null) {
-                if (access.equals("OPEN")) {
-                    store.setSpaceAccess(spaceId, AccessType.OPEN);
-                } else if (access.equals("CLOSED")) {
-                    store.setSpaceAccess(spaceId, AccessType.CLOSED);
-                }
+               store.setSpaceAccess(spaceId, AccessType.valueOf(access));
             }
         }
 
