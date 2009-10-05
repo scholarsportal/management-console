@@ -13,13 +13,13 @@
 
 	<!-- load the duradmin base -->
 	<script type="text/javascript" src="script/common/base.js"></script>
-	    
+	<link rel="stylesheet"  href="dijit/themes/tundra/tundra.css" type="text/css" />
 	<link rel="stylesheet"  href="style/menu_style.css" type="text/css" />
 	<link rel="stylesheet"  href="style/main.css" type="text/css" />
     
     <title>Duradmin :: <tiles:insertAttribute name="title"/></title>
   </head>
-  <body>
+  <body class="tundra">
 
 	<tiles:importAttribute name="mainTab" scope="request" />
     <div id="header"><tiles:insertAttribute name="header"/></div>

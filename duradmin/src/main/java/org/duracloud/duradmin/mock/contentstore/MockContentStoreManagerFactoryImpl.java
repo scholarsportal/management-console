@@ -18,14 +18,19 @@ import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
 public class MockContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {
 
+    private ContentStoreManager contentStoreManager;
     @Override
     public ContentStoreManager create() throws Exception {
-        return new MockContentStoreManager();
+        if(this.contentStoreManager == null){
+            this.contentStoreManager = new MockContentStoreManager();
+        }
+        return this.contentStoreManager;
     }
 
     private class MockContentStoreManager
             implements ContentStoreManager {
-
+        private ContentStore contentStore;
+        
         @Override
         public ContentStore getContentStore(String storeID)
                 throws ContentStoreException {
@@ -43,8 +48,10 @@ public class MockContentStoreManagerFactoryImpl
         @Override
         public ContentStore getPrimaryContentStore()
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
-            return new MockContentStore();
+            if(this.contentStore == null){
+                this.contentStore = new MockContentStore();
+            }
+            return this.contentStore;
         }
 
     }
@@ -57,7 +64,7 @@ public class MockContentStoreManagerFactoryImpl
         MockContentStore() {
             for (int i = 0; i < 10; i++) {
                 Space s = new Space();
-                s.setId("Space Number #" + i);
+                s.setId("space-number-" + i);
                 Map<String, String> metadata = new HashMap<String, String>();
                 metadata.put(ContentStore.SPACE_COUNT, String.valueOf(i % 4));
                 metadata.put(ContentStore.SPACE_CREATED, new Date().toString());
@@ -91,14 +98,12 @@ public class MockContentStoreManagerFactoryImpl
         @Override
         public void deleteContent(String spaceId, String contentId)
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
 
         }
 
         @Override
         public void deleteSpace(String spaceId) throws ContentStoreException {
-            // TODO Auto-generated method stub
-
+               spaceMap.remove(spaceId);
         }
 
         @Override

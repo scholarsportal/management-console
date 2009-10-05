@@ -10,18 +10,6 @@ dojo.addOnLoad(function(){
 
 
 dojo.addOnLoad(function(){
-	/*adds action div on spaces table*/
-	dojo.query("#spacesTable td[id=actionColumn]",document).forEach(
-	    function(cell) {
-	    	var rowId = cell.parentNode.id;
-	    	var cellDiv = dojo.create("div");
-	    	cellDiv.id = "actionDiv";
-	    	dojo.addClass(cellDiv,"actions");
-	    	dojo.html.set(cellDiv,"<a href='#"+rowId+"'>Delete</a>");
-	    	cell.appendChild(cellDiv);
-	    	console.log("row id = " + rowId);
-	    }
-	);	
 
 	/*adds mouse listeners on spaces table rows*/
 	dojo.query("#spacesTable > tbody > tr",document).forEach(
@@ -42,3 +30,10 @@ dojo.addOnLoad(function(){
 });
 
 
+function confirmDeleteOperation(){
+	var result = confirm('You are about to perform an irreversible delete operation\.\nClick \'OK\' if you are sure you wish to continue\.');
+	
+	if(!result) { 
+		return false; 
+	}
+}

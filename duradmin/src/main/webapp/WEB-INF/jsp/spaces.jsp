@@ -1,104 +1,41 @@
-<%@include file="/WEB-INF/jsp/include.jsp" %>
-    <c:if test="${not empty error}">
-      <div id="error"><c:out value="${error}" /></div>
-    </c:if>
-    
-    
-    <div class="spaces">
-	<table class="standard" id="spacesTable">
-         <tr>
-           <th>ID</th>
-           <th>Created</th>
-           <th>Items</th>
-           <th>Access</th>
-           <th></th>
-         </tr>
+<%@include file="/WEB-INF/jsp/include.jsp"%>
+<c:if test="${not empty error}">
+	<div id="error"><c:out value="${error}" /></div>
+</c:if>
+
+
+<div class="spaces">
+<table class="standard" id="spacesTable">
+	<tr>
+		<th>ID</th>
+		<th>Created</th>
+		<th>Items</th>
+		<th>Access</th>
+		<th></th>
+	</tr>
 	<tbody>
-	<c:forEach items="${spaces}" var="space">
-		<tr id="${space.spaceId}">
-			<td>
-				<c:out value="${space.spaceId}" />				
-			</td>
-            <td><c:out value="${space.metadata.created}" /></td>
-            <td><c:out value="${space.metadata.count}" /></td>
-            <td><c:out value="${space.metadata.access}" /></td>
-		    <td id="actionColumn">
-		    
-		    </td>            
-		</tr>
-        
+		<c:forEach items="${spaces}" var="space">
+			<tr id="${space.spaceId}">
+				<td><c:out value="${space.spaceId}" /></td>
+				<td><c:out value="${space.metadata.created}" /></td>
+				<td><c:out value="${space.metadata.count}" /></td>
+				<td><c:out value="${space.metadata.access}" /></td>
+				<td id="actionColumn">
+				<div id="actionDiv" class="actions">
+				<ul>
+					<li><a href="contents.htm?spaceId=${space.spaceId}">View</a> |
+					</li>
+					<li><a href="spaceDelete.action?spaceId=${space.spaceId}"
+						onclick="confirmDeleteOperation();">Delete</a></li>
+					</li>
+				</ul>
+				</div>
+				</td>
+			</tr>
 
-    </c:forEach>
-    </tbody>
-	
-    </table>
 
-      <!-- 
-  
-      <div class="space">
-      	<table class="space">
-          <tr>
-            <th>ID</th>
-            <th><c:out value="${space.spaceId}" /></th>
-          </tr>
-          <tr>
-            <td>Access Setting</td>
-            <td><c:out value="${space.metadata.access}" /></td>
-          </tr>
-          <tr>
-            <td>Created</td>
-            <td><c:out value="${space.metadata.created}" /></td>
-          </tr>
-          <tr>
-            <td>Content Items</td>
-            <td><c:out value="${space.metadata.count}" /></td>
-          </tr>
-        </table>
-        <form action="contents.htm" method="get">
-          <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <input type='submit' value="List contents of <c:out value="${space.spaceId}"/>" />
-        </form>
-        <form action="spaces.htm" method="post">
-          <input type="hidden" name="action" value="update-access" />
-          <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <c:choose>
-            <c:when test="${space.metadata.access == 'OPEN'}">
-              <input type="hidden" name="access" value="CLOSED" />
-              <input type='submit' value="Set access to Closed" />
-            </c:when>
-            <c:otherwise>
-              <input type="hidden" name="access" value="OPEN" />
-              <input type='submit' value="Set access to Open" />
-            </c:otherwise>
-          </c:choose>
-        </form>
-        <form action="spaces.htm" method="post">
-          <input type="hidden" name="action" value="delete" />
-          <input type="hidden" name="spaceId" value="<c:out value="${space.spaceId}"/>" />
-          <input type='submit' value="Delete <c:out value="${space.spaceId}"/>" />
-        </form>
-      </div>
-	 -->
-    
-    </div>
-    
-    <div class="space_action">
-      <h2>Add Space</h2>
-      <form action="spaces.htm" method="post">
-        <input type="hidden" name="action" value="add" />
-        <p>
-          <label for="spaceId">Space ID</label>
-          <input type="text" id="spaceId" name="spaceId" />
-        </p>
-        <p>
-          <label for="access">Space Access</label> 
-          <select id="access" name="access">
-            <option value="OPEN" selected>Open</option>
-            <option value="CLOSED">Closed</option>
-          </select>
-        </p>
-        <p>
-          <input type='submit' value="Add Space" />
-        </p>
-      </form>
-    </div>
+		</c:forEach>
+	</tbody>
+
+</table>
+</div>

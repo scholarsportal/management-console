@@ -21,6 +21,9 @@
       <props>
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
+        <prop key="/spaceDelete.action">spaceDeleteController</prop>
+        <prop key="/spaceAdd.action">spaceAddController</prop>
+
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
         <prop key="/removeContent.htm">removeContentController</prop>
@@ -57,19 +60,33 @@
     <property name="successView" value="spaces" />
   </bean>
 
+  <bean id="spaceDeleteController" class="org.duracloud.duradmin.control.SpaceDeleteController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
+    <property name="successView" value="spaces" />
+  </bean>
+
+  <bean id="spaceAddController" class="org.duracloud.duradmin.control.SpaceAddController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
+    <property name="successView" value="spaces" />
+  </bean>
+
   <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
     <property name="successView" value="contents" />
   </bean>
   
   <bean id="removeContentController" class="org.duracloud.duradmin.control.RemoveContentController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
     <property name="successView" value="contents" />
   </bean>
   
   <bean id="addContentController" class="org.duracloud.duradmin.control.AddContentController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
     <property name="successView" value="contents" />
   </bean>    
 
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
     <property name="successView" value="content" />  
   </bean>
 
