@@ -21,6 +21,9 @@ cd $SERVICESADMIN_DIR/runner
 chmod +x run.sh
 ./run.sh >> $SERVICESADMIN_DIR/provision.log &
 
+# Give a moment for osgi-container to come up
+sleep 20
+
 # Find child pid of PAX_PID (the PAX_PID will not kill the osgi-container)
 PAX_PID=$!
 PAX_GID=`ps -p $PAX_PID -o pgid=`
@@ -29,8 +32,6 @@ sed_cmd="s/\(\d*\)\s.*/\1/p"
 CONTAINER_PID=`ps -e -o pid= -o pgid= -o cmd= | grep java | grep felix.fileinstall.dir | sed -n -e $sed_cmd`
 echo "PAX container gid: $PAX_GID" >> $SERVICESADMIN_DIR/provision.log
 echo "PAX container pid: $CONTAINER_PID" >> $SERVICESADMIN_DIR/provision.log
-
-sleep 20
 
 
 echo ""
