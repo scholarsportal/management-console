@@ -1,6 +1,8 @@
 
 package org.duracloud.duradmin.control;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.Space;
@@ -8,25 +10,20 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class ContentsController
+public class SpaceDeleteController
         extends BaseController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    public ContentsController() {
+    public SpaceDeleteController() {
         setCommandClass(Space.class);
         setCommandName("space");
     }
-    
+
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
         Space space = (Space) command;
-        String spaceId = space.getSpaceId();
-
-        if (spaceId == null || spaceId.equals("")) {
-            throw new IllegalArgumentException("Space ID must be provided.");
-        }
 
         ContentStore store = null;
         try {
@@ -36,13 +33,13 @@ public class ContentsController
             mav.addObject("error", se.getMessage());
             return mav;
         }
-
-        SpaceUtil.populateSpace(space, store.getSpace(spaceId));
-
+        
+        store.deleteSpace(space.getSpaceId());
+        
+        List<Space> spaces = SpaceUtil.getSpacesList(store.getSpaces());
         ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject("baseURL", store.getBaseURL());
-        mav.addObject("space", space);
-
+        
+        mav.addObject("spaces", spaces);
         return mav;
     }
 

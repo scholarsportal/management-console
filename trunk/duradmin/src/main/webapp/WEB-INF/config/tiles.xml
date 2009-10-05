@@ -2,7 +2,9 @@
 <!DOCTYPE tiles-definitions PUBLIC
        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
 <tiles-definitions>
+	
 	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp" preparer="org.duracloud.duradmin.view.BaseViewPreparer">
 		<put-attribute name="title" value="title"/>
 		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
@@ -16,11 +18,11 @@
 		<put-attribute name="title" value="Home"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/home.jsp"/>
 	</definition>
-
+	
 	<definition name="spaces" extends="base">
 		<put-attribute name="title" value="Spaces"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/spaces.jsp"/>
-		<put-attribute name="menu" value="Spaces Menu"/>
+		<put-attribute name="menu" value="/WEB-INF/jsp/spacesMenu.jsp"/>
 		<put-attribute name="mainTab" value="spaces" />
 	</definition>
 
@@ -46,7 +48,6 @@
 		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
 		<put-attribute name="mainTab" value="" />
 		<put-attribute name="menu" value="No Menu: Error"/>
-		
 	</definition>
 
 </tiles-definitions>
