@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.duracloud.storage.provider.mock.MockStorageProvider;
 

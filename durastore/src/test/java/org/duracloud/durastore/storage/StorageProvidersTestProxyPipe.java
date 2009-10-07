@@ -3,7 +3,7 @@ package org.duracloud.durastore.storage;
 
 import java.io.IOException;
 
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 
 /**

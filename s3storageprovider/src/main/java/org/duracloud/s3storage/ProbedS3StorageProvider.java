@@ -2,7 +2,7 @@
 package org.duracloud.s3storage;
 
 import org.duracloud.common.util.metrics.MetricsProbed;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.ProbedStorageProvider;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.security.AWSCredentials;

@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ExceptionUtil;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.StorageProviderUtil;
 
@@ -63,20 +63,18 @@ public class EMCStorageProvider
 
     private EsuApi emcService = null;
 
-    public EMCStorageProvider(String uid, String sharedSecret)
-            throws StorageException {
+    public EMCStorageProvider(String uid, String sharedSecret) {
         emcService = new EsuRestApi(ESU_HOST, ESU_PORT, uid, sharedSecret);
     }
 
-    public EMCStorageProvider(EsuApi esuApi)
-            throws StorageException {
+    public EMCStorageProvider(EsuApi esuApi) {
         emcService = esuApi;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() {
         List<String> spaces = new ArrayList<String>();
         for (Identifier objId : getSpaceObjects()) {
             spaces.add(getSpaceNameForSpaceObject(objId));
@@ -91,7 +89,7 @@ public class EMCStorageProvider
         return spaces.iterator();
     }
 
-    private List<Identifier> getSpaceObjects() throws StorageException {
+    private List<Identifier> getSpaceObjects() {
         List<Identifier> objs = null;
         try {
             objs = emcService.listObjects(spaceRootTag());
@@ -101,14 +99,14 @@ public class EMCStorageProvider
         return objs;
     }
 
-    private String getSpaceNameForSpaceObject(Identifier objId)
-            throws StorageException {
+    private String getSpaceNameForSpaceObject(Identifier objId) {
         MetadataTags tags = new MetadataTags();
         tags.addTag(spaceRootTag());
 
         String id = null;
         try {
             // There should only be one element in the userMetadata.
+            // TODO: above assertion may not be valid.
             MetadataList userMetadata = emcService.getUserMetadata(objId, tags);
             id = userMetadata.iterator().next().getValue();
         } catch (Exception e) {
@@ -120,8 +118,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId)
-            throws StorageException {
+    public Iterator<String> getSpaceContents(String spaceId) {
 
         List<String> contentNames = new ArrayList<String>();
         for (Identifier objId : getCompleteSpaceContents(spaceId)) {
@@ -131,8 +128,7 @@ public class EMCStorageProvider
         return contentNames.iterator();
     }
 
-    private List<Identifier> getCompleteSpaceContents(String spaceId)
-            throws StorageException {
+    private List<Identifier> getCompleteSpaceContents(String spaceId) {
         List<Identifier> entries = null;
         try {
             entries = emcService.listObjects(currentSpaceTag(spaceId));
@@ -143,8 +139,7 @@ public class EMCStorageProvider
     }
 
     private String getContentNameForContentObject(Identifier objId,
-                                                  String spaceId)
-            throws StorageException {
+                                                  String spaceId) {
         MetadataTags tags = new MetadataTags();
         String name = null;
         try {
@@ -167,7 +162,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void createSpace(String spaceId) throws StorageException {
+    public void createSpace(String spaceId) {
         log.debug("Trying to create space for: " + spaceId);
 
         throwIfSpaceExists(spaceId);
@@ -176,7 +171,7 @@ public class EMCStorageProvider
         log.debug("\t...space created with id: " + objId);
     }
 
-    private void throwIfSpaceExists(String spaceId) throws StorageException {
+    private void throwIfSpaceExists(String spaceId) {
         Iterator<String> spaces = null;
         try {
             spaces = getSpaces();
@@ -187,8 +182,7 @@ public class EMCStorageProvider
         }
     }
 
-    private Identifier createSpaceObject(String spaceId)
-            throws StorageException {
+    private Identifier createSpaceObject(String spaceId) {
         Acl acl = null;
         byte[] data = null;
         String mimeType = null;
@@ -217,14 +211,14 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteSpace(String spaceId) throws StorageException {
+    public void deleteSpace(String spaceId) {
         log.debug("Deleting space: " + spaceId);
 
         deleteSpaceContents(spaceId);
         deleteObject(getRootId(spaceId));
     }
 
-    private void deleteSpaceContents(String spaceId) throws StorageException {
+    private void deleteSpaceContents(String spaceId) {
         List<Identifier> contentIds = new ArrayList<Identifier>();
         try {
             contentIds = getCompleteSpaceContents(spaceId);
@@ -237,7 +231,7 @@ public class EMCStorageProvider
         }
     }
 
-    private void deleteObject(Identifier objId) throws StorageException {
+    private void deleteObject(Identifier objId) {
         try {
             emcService.deleteObject(objId);
         } catch (Exception e) {
@@ -246,7 +240,7 @@ public class EMCStorageProvider
         log.debug("Deleted: " + objId);
     }
 
-    protected Identifier getRootId(String spaceId) throws StorageException {
+    protected Identifier getRootId(String spaceId) {
         Identifier rootId = null;
         for (Identifier objId : getSpaceObjects()) {
             if (spaceId.equals(getSpaceNameForSpaceObject(objId))) {
@@ -267,8 +261,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Map<String, String> getSpaceMetadata(String spaceId)
-            throws StorageException {
+    public Map<String, String> getSpaceMetadata(String spaceId) {
         ObjectId rootObjId = (ObjectId) getRootId(spaceId);
 
         // Get existing user metadata.
@@ -312,8 +305,7 @@ public class EMCStorageProvider
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Map<String, String> spaceMetadata)
-            throws StorageException {
+                                 Map<String, String> spaceMetadata) {
         Identifier rootObjId = getRootId(spaceId);
 
         // Do not overwrite space root tag
@@ -366,7 +358,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public AccessType getSpaceAccess(String spaceId) throws StorageException {
+    public AccessType getSpaceAccess(String spaceId) {
         return doGetSpaceAccess(getRootId(spaceId));
     }
 
@@ -396,8 +388,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void setSpaceAccess(String spaceId, AccessType access)
-            throws StorageException {
+    public void setSpaceAccess(String spaceId, AccessType access) {
         // Default is 'closed'.
         String permission = Permission.NONE;
         if (AccessType.OPEN.equals(access)) {
@@ -429,8 +420,7 @@ public class EMCStorageProvider
 
     }
 
-    private void setObjectAcl(Identifier objId, Acl newAcl)
-            throws StorageException {
+    private void setObjectAcl(Identifier objId, Acl newAcl) {
         try {
             emcService.setAcl(objId, newAcl);
         } catch (Exception e) {
@@ -449,7 +439,7 @@ public class EMCStorageProvider
                              String contentId,
                              String mimeType,
                              long contentSize,
-                             InputStream content) throws StorageException {
+                             InputStream content) {
         log.debug("Adding Content: [" + spaceId + ":" + contentId + "], size:"
                 + contentSize + "-bytes");
 
@@ -517,8 +507,7 @@ public class EMCStorageProvider
         return metadataList;
     }
 
-    protected ObjectId getContentObjId(String spaceId, String contentId)
-            throws StorageException {
+    protected ObjectId getContentObjId(String spaceId, String contentId) {
         // FIXME: should not have to loop through all content to find contentId.
         //        EsuApi.queryObjects(String xquery) ?
 
@@ -544,8 +533,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public InputStream getContent(String spaceId, String contentId)
-            throws StorageException {
+    public InputStream getContent(String spaceId, String contentId) {
         return doGetContent(getContentObjId(spaceId, contentId));
     }
 
@@ -567,8 +555,7 @@ public class EMCStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteContent(String spaceId, String contentId)
-            throws StorageException {
+    public void deleteContent(String spaceId, String contentId) {
         log.debug("Deleting content: " + spaceId + ", " + contentId);
         try {
             emcService.deleteObject(getContentObjId(spaceId, contentId));
@@ -582,8 +569,7 @@ public class EMCStorageProvider
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Map<String, String> contentMetadata)
-            throws StorageException {
+                                   Map<String, String> contentMetadata) {
         ObjectId objId = getContentObjId(spaceId, contentId);
 
         // Remove existing user metadata.
@@ -632,8 +618,7 @@ public class EMCStorageProvider
      * {@inheritDoc}
      */
     public Map<String, String> getContentMetadata(String spaceId,
-                                                  String contentId)
-            throws StorageException {
+                                                  String contentId) {
         ObjectId objId = getContentObjId(spaceId, contentId);
 
         if (log.isDebugEnabled()) {
@@ -724,7 +709,7 @@ public class EMCStorageProvider
         return new MetadataTag(SPACE_ROOT_TAG_NAME, true);
     }
 
-    private void doThrow(String msg, Exception e) throws StorageException {
+    private void doThrow(String msg, Exception e) {
         String err = msg + " : " + e.getMessage();
         log.error(err);
         log.debug(ExceptionUtil.getStackTraceAsString(e));

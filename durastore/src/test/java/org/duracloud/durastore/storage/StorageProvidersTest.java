@@ -18,7 +18,7 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.emcstorage.ProbedEMCStorageProvider;
 import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
 import org.duracloud.s3storage.ProbedS3StorageProvider;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.provider.StorageProvider;

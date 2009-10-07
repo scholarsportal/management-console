@@ -1,34 +1,31 @@
 
 package org.duracloud.durastore.storage;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
-
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ChecksumUtil.Algorithm;
 import org.duracloud.emcstorage.EMCStorageProvider;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.duracloud.storage.util.StorageProviderUtil;
-
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is the functional test code across a StorageProvider.

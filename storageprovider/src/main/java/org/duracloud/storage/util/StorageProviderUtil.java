@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 
 import static org.duracloud.common.util.IOUtil.readStringFromStream;
@@ -103,7 +103,7 @@ public class StorageProviderUtil {
      * @param contentId The Id of the content
      * @param wrappedContent The wrapped stream used to add the content
      * @return the checksum value
-     * @throws StorageException
+     * @throws org.duracloud.storage.error.StorageException
      */
     public static String compareChecksum(StorageProvider provider,
                                          String spaceId,

@@ -2,7 +2,7 @@
 package org.duracloud.rackspacestorage;
 
 import org.duracloud.common.util.metrics.MetricsProbed;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.ProbedStorageProvider;
 
 /**

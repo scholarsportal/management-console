@@ -7,7 +7,7 @@ import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsReport;
 import org.duracloud.common.util.metrics.MetricsTable;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 
 import static org.junit.Assert.assertNotNull;

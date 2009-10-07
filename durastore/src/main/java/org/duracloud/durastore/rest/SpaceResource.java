@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.duracloud.common.web.RestResourceException;
 import org.duracloud.durastore.util.StorageProviderFactory;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.jdom.Document;
