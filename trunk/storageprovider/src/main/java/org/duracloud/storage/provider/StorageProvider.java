@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.duracloud.storage.domain.StorageException;
-
 /**
  * A Storage Provider provides services which allow content to be
  * stored in and retrieved from spaces.
@@ -46,19 +44,15 @@ public interface StorageProvider {
      * Provides a listing of all spaces owned by a customer.
      *
      * @return Iterator listing spaceIds
-     * @throws StorageException
      */
-    public Iterator<String> getSpaces()
-    throws StorageException;
+    public Iterator<String> getSpaces();
 
     /**
      * Provides a listing of all of the content files within a space.
      *
      * @return Iterator listing contentIds
-     * @throws StorageException
      */
-    public Iterator<String> getSpaceContents(String spaceId)
-    throws StorageException;
+    public Iterator<String> getSpaceContents(String spaceId);
 
     /**
      * Creates a new space.
@@ -71,40 +65,32 @@ public interface StorageProvider {
      * may not include a space with exactly this same name.
      *
      * @param spaceId
-     * @throws StorageException
      */
-    public void createSpace(String spaceId)
-    throws StorageException;
+    public void createSpace(String spaceId);
 
     /**
      * Deletes a space.
      *
      * @param spaceId
-     * @throws StorageException
      */
-    public void deleteSpace(String spaceId)
-    throws StorageException;
+    public void deleteSpace(String spaceId);
 
     /**
      * Retrieves the metadata associated with a space.
      *
      * @param spaceId
      * @return Map of space metadata or null if no metadata exists
-     * @throws StorageException
      */
-    public Map<String, String> getSpaceMetadata(String spaceId)
-    throws StorageException;
+    public Map<String, String> getSpaceMetadata(String spaceId);
 
     /**
      * Sets the metadata associated with a space.
      *
      * @param spaceId
      * @param spaceMetadata
-     * @throws StorageException
      */
     public void setSpaceMetadata(String spaceId,
-                                 Map<String, String> spaceMetadata)
-    throws StorageException;
+                                 Map<String, String> spaceMetadata);
 
     /**
      * Gets the access setting of the space, either OPEN or CLOSED. An OPEN space is
@@ -113,21 +99,17 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @return
-     * @throws StorageException
      */
-    public AccessType getSpaceAccess(String spaceId)
-    throws StorageException;
+    public AccessType getSpaceAccess(String spaceId);
 
     /**
      * Sets the accessibility of a space to either OPEN or CLOSED.
      *
      * @param spaceId
      * @param access
-     * @throws StorageException
      */
     public void setSpaceAccess(String spaceId,
-                               AccessType access)
-    throws StorageException;
+                               AccessType access);
 
     /**
      * Adds content to a space. Computes the checksum of the
@@ -139,14 +121,12 @@ public interface StorageProvider {
      * @param contentId
      * @param content
      * @return The checksum of the provided content
-     * @throws StorageException
      */
     public String addContent(String spaceId,
                              String contentId,
                              String contentMimeType,
                              long contentSize,
-                             InputStream content)
-    throws StorageException;
+                             InputStream content);
 
     /**
      * Gets content from a space.
@@ -154,22 +134,18 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @return the content stream or null if the content does not exist
-     * @throws StorageException
      */
     public InputStream getContent(String spaceId,
-                                  String contentId)
-    throws StorageException;
+                                  String contentId);
 
     /**
      * Removes content from a space.
      *
      * @param spaceId
      * @param contentId
-     * @throws StorageException
      */
     public void deleteContent(String spaceId,
-                              String contentId)
-    throws StorageException;
+                              String contentId);
 
     /**
      * Sets the metadata associated with content. This effectively
@@ -187,12 +163,10 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @param contentMetadata
-     * @throws StorageException
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Map<String, String> contentMetadata)
-    throws StorageException;
+                                   Map<String, String> contentMetadata);
 
     /**
      * Retrieves the metadata associated with content. This includes
@@ -202,10 +176,8 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @return
-     * @throws StorageException
      */
     public Map<String, String> getContentMetadata(String spaceId,
-                                                  String contentId)
-    throws StorageException;
+                                                  String contentId);
 
 }

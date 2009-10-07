@@ -28,7 +28,7 @@ import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricException;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsTable;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 
 /**
  * This class wraps a Rackspace FilesClient implementation, collecting timing

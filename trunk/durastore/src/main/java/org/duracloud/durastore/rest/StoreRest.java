@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.duracloud.durastore.rest.RestUtil.RequestContent;
 import org.duracloud.durastore.util.StorageProviderFactory;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.jdom.Document;
 import org.jdom.Element;

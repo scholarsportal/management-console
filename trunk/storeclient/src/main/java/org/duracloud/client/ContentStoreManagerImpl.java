@@ -10,7 +10,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 
 /**
  * Provides facilities for connecting to a set of content stores

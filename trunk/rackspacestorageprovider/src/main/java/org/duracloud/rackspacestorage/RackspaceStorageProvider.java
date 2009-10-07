@@ -23,7 +23,7 @@ import com.mosso.client.cloudfiles.FilesObjectMetaData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
@@ -43,8 +43,7 @@ public class RackspaceStorageProvider
 
     private FilesClient filesClient = null;
 
-    public RackspaceStorageProvider(String username, String apiAccessKey)
-            throws StorageException {
+    public RackspaceStorageProvider(String username, String apiAccessKey) {
         try {
             filesClient = new FilesClient(username, apiAccessKey);
             if (!filesClient.login()) {
@@ -65,7 +64,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() {
         log.debug("getSpace()");
         try {
             List<FilesContainer> containers = filesClient.listContainers();
@@ -87,8 +86,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId)
-            throws StorageException {
+    public Iterator<String> getSpaceContents(String spaceId) {
         log.debug("getSpaceContents(" + spaceId + ")");
         String containerName = getContainerName(spaceId);
         String spaceMetadata = containerName + SPACE_METADATA_SUFFIX;
@@ -97,8 +95,7 @@ public class RackspaceStorageProvider
         return spaceContents.iterator();
     }
 
-    private List<String> getCompleteSpaceContents(String spaceId)
-            throws StorageException {
+    private List<String> getCompleteSpaceContents(String spaceId) {
         String containerName = getContainerName(spaceId);
         try {
             checkContainerExists(spaceId);
@@ -121,7 +118,7 @@ public class RackspaceStorageProvider
      * Checks if a space (container) exists, throws a StorageException if false.
      * Call before attempting to get information from a space (container)
      */
-    private void checkContainerExists(String spaceId) throws StorageException {
+    private void checkContainerExists(String spaceId) {
         String containerName = getContainerName(spaceId);
         try {
             if (!filesClient.containerExists(containerName)) {
@@ -136,7 +133,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void createSpace(String spaceId) throws StorageException {
+    public void createSpace(String spaceId) {
         log.debug("getCreateSpace(" + spaceId + ")");
         String containerName = getContainerName(spaceId);
         try {
@@ -162,7 +159,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteSpace(String spaceId) throws StorageException {
+    public void deleteSpace(String spaceId) {
         log.debug("deleteSpace(" + spaceId + ")");
         List<String> contents = getCompleteSpaceContents(spaceId);
         for (String contentItem : contents) {
@@ -186,8 +183,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Map<String, String> getSpaceMetadata(String spaceId)
-            throws StorageException {
+    public Map<String, String> getSpaceMetadata(String spaceId) {
         log.debug("getSpaceMetadata(" + spaceId + ")");
 
         // Space metadata is stored as a content item
@@ -223,8 +219,7 @@ public class RackspaceStorageProvider
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Map<String, String> spaceMetadata)
-            throws StorageException {
+                                 Map<String, String> spaceMetadata) {
         log.debug("setSpaceMetadata(" + spaceId + ")");
 
         if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
@@ -241,7 +236,7 @@ public class RackspaceStorageProvider
                    is);
     }
 
-    private String creationTimestamp(String spaceId) throws StorageException {
+    private String creationTimestamp(String spaceId) {
         Map<String, String> spaceMd = getSpaceMetadata(spaceId);
         String creationTime = spaceMd.get(METADATA_SPACE_CREATED);
 
@@ -259,7 +254,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public AccessType getSpaceAccess(String spaceId) throws StorageException {
+    public AccessType getSpaceAccess(String spaceId) {
         log.debug("getSpaceAccess(" + spaceId + ")");
 
         checkContainerExists(spaceId);
@@ -289,8 +284,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void setSpaceAccess(String spaceId, AccessType access)
-            throws StorageException {
+    public void setSpaceAccess(String spaceId, AccessType access) {
         log.debug("setSpaceAccess(" + spaceId + ", " + access + ")");
 
         String containerName = getContainerName(spaceId);
@@ -323,7 +317,7 @@ public class RackspaceStorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
-                             InputStream content) throws StorageException {
+                             InputStream content) {
         log.debug("addContent(" + spaceId + ", " + contentId + ", "
                 + contentMimeType + ", " + contentSize + ")");
 
@@ -361,8 +355,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public InputStream getContent(String spaceId, String contentId)
-            throws StorageException {
+    public InputStream getContent(String spaceId, String contentId) {
         log.debug("getContent(" + spaceId + ", " + contentId + ")");
 
         String containerName = getContainerName(spaceId);
@@ -383,8 +376,7 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteContent(String spaceId, String contentId)
-            throws StorageException {
+    public void deleteContent(String spaceId, String contentId) {
         log.debug("deleteContent(" + spaceId + ", " + contentId + ")");
 
         int statusCode = -1;
@@ -414,8 +406,7 @@ public class RackspaceStorageProvider
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Map<String, String> contentMetadata)
-            throws StorageException {
+                                   Map<String, String> contentMetadata) {
         log.debug("setContentMetadata(" + spaceId + ", " + contentId + ")");
 
         checkContainerExists(spaceId);
@@ -463,8 +454,7 @@ public class RackspaceStorageProvider
      * {@inheritDoc}
      */
     public Map<String, String> getContentMetadata(String spaceId,
-                                                  String contentId)
-            throws StorageException {
+                                                  String contentId) {
         log.debug("getContentMetadata(" + spaceId + ", " + contentId + ")");
 
         checkContainerExists(spaceId);

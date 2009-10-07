@@ -17,7 +17,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.duracloud.storage.domain.StorageException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -49,8 +49,7 @@ public class S3StorageProvider
 
     private S3Service s3Service = null;
 
-    public S3StorageProvider(String accessKey, String secretKey)
-            throws StorageException {
+    public S3StorageProvider(String accessKey, String secretKey) {
         accessKeyId = accessKey;
         AWSCredentials awsCredentials =
                 new AWSCredentials(accessKey, secretKey);
@@ -73,7 +72,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaces() throws StorageException {
+    public Iterator<String> getSpaces() {
         log.debug("getSpaces()");
         try {
             S3Bucket[] buckets = s3Service.listAllBuckets();
@@ -97,8 +96,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId)
-            throws StorageException {
+    public Iterator<String> getSpaceContents(String spaceId) {
         log.debug("getSpaceContents(" + spaceId + ")");
         String bucketName = getBucketName(spaceId);
         String bucketMetadata = bucketName + SPACE_METADATA_SUFFIX;
@@ -107,8 +105,7 @@ public class S3StorageProvider
         return spaceContents.iterator();
     }
 
-    private List<String> getCompleteSpaceContents(String spaceId)
-            throws StorageException {
+    private List<String> getCompleteSpaceContents(String spaceId) {
         String bucketName = getBucketName(spaceId);
         try {
             S3Bucket bucket = new S3Bucket(bucketName);
@@ -130,7 +127,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public void createSpace(String spaceId) throws StorageException {
+    public void createSpace(String spaceId) {
         if (spaceExists(spaceId)) {
             log.debug("createSpace(" + spaceId + ")");
             String msg = "Error: Space already exists: " + spaceId;
@@ -168,7 +165,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteSpace(String spaceId) throws StorageException {
+    public void deleteSpace(String spaceId) {
         log.debug("deleteSpace(" + spaceId + ")");
         List<String> contents = getCompleteSpaceContents(spaceId);
         for (String contentItem : contents) {
@@ -189,8 +186,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public Map<String, String> getSpaceMetadata(String spaceId)
-            throws StorageException {
+    public Map<String, String> getSpaceMetadata(String spaceId) {
         log.debug("getSpaceMetadata(" + spaceId + ")");
 
         // Space metadata is stored as a content item
@@ -228,8 +224,7 @@ public class S3StorageProvider
      * {@inheritDoc}
      */
     public void setSpaceMetadata(String spaceId,
-                                 Map<String, String> spaceMetadata)
-            throws StorageException {
+                                 Map<String, String> spaceMetadata) {
         log.debug("setSpaceMetadata(" + spaceId + ")");
 
         String bucketName = getBucketName(spaceId);
@@ -242,7 +237,7 @@ public class S3StorageProvider
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public AccessType getSpaceAccess(String spaceId) throws StorageException {
+    public AccessType getSpaceAccess(String spaceId) {
         log.debug("getSpaceAccess(" + spaceId + ")");
 
         String bucketName = getBucketName(spaceId);
@@ -272,8 +267,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public void setSpaceAccess(String spaceId, AccessType access)
-            throws StorageException {
+    public void setSpaceAccess(String spaceId, AccessType access) {
         log.debug("setSpaceAccess(" + spaceId + ")");
 
         String bucketName = getBucketName(spaceId);
@@ -316,7 +310,7 @@ public class S3StorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
-                             InputStream content) throws StorageException {
+                             InputStream content) {
         log.debug("addContent(" + spaceId + ", " + contentId + ", "
                 + contentMimeType + ", " + contentSize + ")");
 
@@ -364,8 +358,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public InputStream getContent(String spaceId, String contentId)
-            throws StorageException {
+    public InputStream getContent(String spaceId, String contentId) {
         log.debug("getContent(" + spaceId + ", " + contentId + ")");
         String bucketName = getBucketName(spaceId);
         S3Object contentItem = null;
@@ -388,8 +381,7 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public void deleteContent(String spaceId, String contentId)
-            throws StorageException {
+    public void deleteContent(String spaceId, String contentId) {
         log.debug("deleteContent(" + spaceId + ", " + contentId + ")");
 
         String bucketName = getBucketName(spaceId);
@@ -409,8 +401,7 @@ public class S3StorageProvider
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
-                                   Map<String, String> contentMetadata)
-            throws StorageException {
+                                   Map<String, String> contentMetadata) {
         log.debug("setContentMetadata(" + spaceId + ", " + contentId + ")");
 
         // Remove calculated properties
@@ -455,8 +446,7 @@ public class S3StorageProvider
      */
     @SuppressWarnings("unchecked")
     public Map<String, String> getContentMetadata(String spaceId,
-                                                  String contentId)
-            throws StorageException {
+                                                  String contentId) {
         log.debug("getContentMetadata(" + spaceId + ", " + contentId + ")");
 
         String bucketName = getBucketName(spaceId);
