@@ -6,10 +6,18 @@
 	</strong>
 	<spring:message code="application.tagline"/>
 </div>
+<div id="global-message-div">
+	<center>
+		<c:if test="${not empty flashMessage}">
+			<span class="message-${flashMessage.typeAsString}">${flashMessage.message}</span>
+		</c:if>
+	</center>
+</div>
 
 <tiles:importAttribute name="mainMenu" />
 
 <div id="main-menu">
+	
 	<ul id="menu">
 		<c:forEach items="${mainMenu}" var="mi">
 			<li>
@@ -19,5 +27,6 @@
 			</li>
 		</c:forEach>
 	</ul>
+	
 </div>
 

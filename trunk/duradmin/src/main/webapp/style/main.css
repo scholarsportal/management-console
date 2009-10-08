@@ -6,6 +6,11 @@ body{
 body, #footer{
 	/*slate gray*/
 	background-color:#B9D3EE;
+	font-family: sans-serif;
+}
+
+table{
+	width:100%;	
 }
 
 #header {
@@ -22,6 +27,7 @@ body, #footer{
 #main-menu {
 	width:100%;
 	background-color:#CAE1FF;
+	min-height:1em;
 }
 
 table.body{
@@ -31,24 +37,65 @@ table.body{
 
 
 
-#menu-div {
+td#menu-div {
 	width:10em;
 	min-width:10em;
 	background-color:#F5DEB3;
+	padding:0.5em;
 }
 
 #main-content {
 	background-color:#FFFFEE;
 }
 
-#menu-div, #main-content {
+#menu-div, td#main-content  {
 	vertical-align:top;
-	padding:1em;		
 }
+
+#main-content-header{
+	font-size:1.5em;
+		
+}
+
+#main-content-body, #main-content-header {
+	padding:0.5em;
+	
+}
+
+#global-message-div {
+	min-height:1.5em; 
+	
+	background-color:#1E90FF;
+	                 
+}
+
+#message-div {
+	min-height:1em; 
+	width:100%; 
+	background-color:#FFFF99; 
+}
+
+.message-info, .message-error{
+	padding:0.25em 0.5em;
+	font-size:0.8em;
+	font-weight:bold;
+	border-collapse: collapse;
+	border:1px solid #AAA;
+}
+
+.message-info{
+	background-color:#9ACD32;	
+	
+}
+
+.message-error{
+	background-color:#FA8072;	
+	
+}
+
 
 #footer {
 	width:100%;
-	padding:0.5em;
 	font-size:0.8em;
 	float:left;
 }
@@ -96,8 +143,8 @@ div.space_action {
 
 table{
   border-collapse: collapse;
-  width:100%;
 }
+
 
 
 td, th {
@@ -129,6 +176,37 @@ td, th {
 	text-align: left;	
 }
 
+table.basic-form {
+	border:1px solid #CCC;
+}
+
+div.basic-form-buttons{
+	padding-top:0.5em;
+	
+}
+
+.basic-form tr {
+	border-bottom: 1px solid #CCC;	
+}
+td.label {
+	width:15%;	
+	background-color:#DDD;
+}
+
+td.input {
+	width:40%;	
+	background-color:#EEE;
+	
+}
+
+td.field-help {
+	width:*;
+	background-color:#FFF;
+}
+
+.field-help {
+	font-size:0.8em;	
+}
 
 .actions ul{
 	list-style-type: none;	

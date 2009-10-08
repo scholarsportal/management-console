@@ -91,8 +91,18 @@ public class MockContentStoreManagerFactoryImpl
         public void createSpace(String spaceId,
                                 Map<String, String> spaceMetadata)
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
+            
+               Space space = new Space();
+               space.setId(spaceId);
+               if(spaceMetadata == null){
+                   spaceMetadata = new HashMap<String,String>();
+                   spaceMetadata.put(ContentStore.SPACE_COUNT, String.valueOf(0));
+                   spaceMetadata.put(ContentStore.SPACE_CREATED, new Date().toString());
+                   spaceMetadata.put(ContentStore.SPACE_ACCESS, AccessType.OPEN.name());
+               }
 
+               space.setMetadata(spaceMetadata);
+               spaceMap.put(spaceId, space);
         }
 
         @Override
@@ -135,8 +145,8 @@ public class MockContentStoreManagerFactoryImpl
         @Override
         public AccessType getSpaceAccess(String spaceId)
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
-            return null;
+            String access = spaceMap.get(spaceId).getMetadata().get(ContentStore.SPACE_ACCESS);
+            return AccessType.valueOf(access);
         }
 
         @Override

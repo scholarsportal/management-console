@@ -3,7 +3,6 @@
 	<div id="error"><c:out value="${error}" /></div>
 </c:if>
 
-
 <div class="spaces">
 <table class="standard" id="spacesTable">
 	<tr>
@@ -26,7 +25,7 @@
 					<li><a href="contents.htm?spaceId=${space.spaceId}">View</a> |
 					</li>
 					<li><a href="spaceDelete.action?spaceId=${space.spaceId}"
-						onclick="confirmDeleteOperation();">Delete</a></li>
+						onclick="return confirmDeleteOperation();">Delete</a></li>
 					</li>
 				</ul>
 				</div>

@@ -1,13 +1,17 @@
 
 package org.duracloud.duradmin.control;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.config.DuradminConfig;
+import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.SpaceUtil;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public abstract class BaseController
@@ -17,15 +21,10 @@ public abstract class BaseController
 
     private ContentStoreManager contentStoreManager;
 
-    public ContentStore getContentStore() throws Exception {
+    public ContentStore getContentStore() throws ContentStoreException {
         return contentStoreManager.getPrimaryContentStore();
     }
 
-    @Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        // Process both GET and POST requests as form submissions
-        return true;
-    }
 
     public ContentStoreManager getContentStoreManager() {
         return contentStoreManager;
@@ -34,6 +33,11 @@ public abstract class BaseController
     public void setContentStoreManager(ContentStoreManager contentStoreManager) {
         this.contentStoreManager = contentStoreManager;
     }
+    
+    protected List<Space> getSpaces() throws Exception {
+        List<Space> spaces = SpaceUtil.getSpacesList(getContentStore().getSpaces());
+        return spaces;
+    }
 
     protected ServicesManager getServicesManager() throws Exception {
         ServicesManager servicesManager =
@@ -41,4 +45,6 @@ public abstract class BaseController
                         .getPort());
         return servicesManager;
     }
+
+
 }

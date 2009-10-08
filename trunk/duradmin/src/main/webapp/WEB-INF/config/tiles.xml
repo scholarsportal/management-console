@@ -6,30 +6,31 @@
 <tiles-definitions>
 	
 	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp" preparer="org.duracloud.duradmin.view.BaseViewPreparer">
-		<put-attribute name="title" value="title"/>
 		<put-attribute name="header" value="/WEB-INF/jsp/layout/base-header.jsp"/>
-		<put-attribute name="menu" value="Main Menu"/>
+		<put-attribute name="menu" value=""/>
 		<put-attribute name="main-content" value="main-content"/>
 		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
 		<put-attribute name="mainTab" value="home" />
 	</definition>
 		
 	<definition name="home" extends="base">
-		<put-attribute name="title" value="Home"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/home.jsp"/>
 	</definition>
 	
 	<definition name="spaces" extends="base">
-		<put-attribute name="title" value="Spaces"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/spaces.jsp"/>
 		<put-attribute name="menu" value="/WEB-INF/jsp/spacesMenu.jsp"/>
 		<put-attribute name="mainTab" value="spaces" />
 	</definition>
 
-	<definition name="contents" extends="spaces">
-		<put-attribute name="title" value="Contents"/>
+	<definition name="add.space" extends="spaces">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/addSpace.jsp"/>
+		<put-attribute name="menu" value=""/>
+	</definition>
+
+	<definition name="contents" extends="spaces" >
 		<put-attribute name="main-content" value="/WEB-INF/jsp/contents.jsp"/>
-		<put-attribute name="menu" value="Contents Menu"/>
+		<put-attribute name="menu" value=""/>
 	</definition>
 	
 	<definition name="content" extends="contents">
@@ -44,7 +45,6 @@
 	</definition>
 
 	<definition name="error" extends="base">
-		<put-attribute name="title" value="Error"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
 		<put-attribute name="mainTab" value="" />
 		<put-attribute name="menu" value="No Menu: Error"/>

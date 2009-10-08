@@ -1,14 +1,5 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-    <form action="spaces.htm" method="get">                
-      <input type='submit' value="<- Back to Spaces Listing"/>
-    </form> 
-
-    <c:if test="${not empty error}">
-      <div id="error"><c:out value="${error}" /></div>
-    </c:if>
-
     <div id="contents">
-      <h2><c:out value="${space.spaceId}"/></h2>
       <h4><c:out value="${space.metadata.count}"/> Items</h4>
       <table id="content_list">
         <c:forEach items="${space.contents}" var="content" varStatus="status">
