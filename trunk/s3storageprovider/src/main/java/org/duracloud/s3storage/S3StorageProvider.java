@@ -405,7 +405,7 @@ public class S3StorageProvider
                     + " and size " + contentItem.getContentLength()
                     + " to S3 bucket " + bucketName + " due to error: "
                     + e.getMessage();
-            throw new StorageException(err, e, RETRY);
+            throw new StorageException(err, e, NO_RETRY);
         }
     }
 

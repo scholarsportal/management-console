@@ -1,35 +1,27 @@
 
 package org.duracloud.rackspacestorage;
 
+import com.mosso.client.cloudfiles.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.duracloud.storage.error.StorageException;
+import static org.duracloud.storage.error.StorageException.*;
+import org.duracloud.storage.provider.StorageProvider;
+import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
+import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
+import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
+import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
+import java.io.IOException;
 import java.security.DigestInputStream;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.mosso.client.cloudfiles.FilesCDNContainer;
-import com.mosso.client.cloudfiles.FilesClient;
-import com.mosso.client.cloudfiles.FilesContainer;
-import com.mosso.client.cloudfiles.FilesContainerInfo;
-import com.mosso.client.cloudfiles.FilesObject;
-import com.mosso.client.cloudfiles.FilesObjectMetaData;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.provider.StorageProvider;
-
-import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
-import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
-import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
-import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
 
 /**
  * Provides content storage backed by Rackspace's Cloud Files service.
@@ -50,10 +42,9 @@ public class RackspaceStorageProvider
                 throw new Exception("Login to Rackspace failed");
             }
         } catch (Exception e) {
-            String err =
-                    "Could not create connection to Rackspace due to error: "
-                            + e.getMessage();
-            throw new StorageException(err, e);
+            String err = "Could not connect to Rackspace due to error: "
+                    + e.getMessage();
+            throw new StorageException(err, e, RETRY);
         }
     }
 
@@ -66,20 +57,29 @@ public class RackspaceStorageProvider
      */
     public Iterator<String> getSpaces() {
         log.debug("getSpace()");
-        try {
-            List<FilesContainer> containers = filesClient.listContainers();
 
-            List<String> spaces = new ArrayList<String>();
-            for (FilesContainer container : containers) {
-                String containerName = container.getName();
-                spaces.add(containerName);
-            }
-            return spaces.iterator();
-        } catch (Exception e) {
-            String err =
-                    "Could not retrieve list of Rackspace containers due to error: "
-                            + e.getMessage();
-            throw new StorageException(err, e);
+        List<FilesContainer> containers = listContainers();
+        List<String> spaces = new ArrayList<String>();
+        for (FilesContainer container : containers) {
+            String containerName = container.getName();
+            spaces.add(containerName);
+        }
+        return spaces.iterator();
+    }
+
+    private List<FilesContainer> listContainers() {
+        StringBuilder err = new StringBuilder("Could not retrieve list of " +
+                "Rackspace containers due to error: ");
+        try {
+            return filesClient.listContainers();
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -88,6 +88,9 @@ public class RackspaceStorageProvider
      */
     public Iterator<String> getSpaceContents(String spaceId) {
         log.debug("getSpaceContents(" + spaceId + ")");
+
+        throwIfSpaceNotExist(spaceId);
+
         String containerName = getContainerName(spaceId);
         String spaceMetadata = containerName + SPACE_METADATA_SUFFIX;
         List<String> spaceContents = getCompleteSpaceContents(spaceId);
@@ -97,37 +100,53 @@ public class RackspaceStorageProvider
 
     private List<String> getCompleteSpaceContents(String spaceId) {
         String containerName = getContainerName(spaceId);
+
+        List<FilesObject> objects = listObjects(containerName);
+        List<String> contentItems = new ArrayList<String>();
+        for (FilesObject object : objects) {
+            contentItems.add(object.getName());
+        }
+        return contentItems;
+    }
+
+    private List<FilesObject> listObjects(String containerName) {
+        StringBuilder err = new StringBuilder("Could not get contents of " +
+                "Rackspace container " + containerName + " due to error: ");
         try {
-            checkContainerExists(spaceId);
-            List<FilesObject> objects = filesClient.listObjects(containerName);
-            List<String> contentItems = new ArrayList<String>();
-            for (FilesObject object : objects) {
-                contentItems.add(object.getName());
-            }
-            return contentItems;
-        } catch (Exception e) {
-            String err =
-                    "Could not get contents of Rackspace container "
-                            + containerName + " due to error: "
-                            + e.getMessage();
-            throw new StorageException(err, e);
+            return filesClient.listObjects(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
-    /**
-     * Checks if a space (container) exists, throws a StorageException if false.
-     * Call before attempting to get information from a space (container)
-     */
-    private void checkContainerExists(String spaceId) {
-        String containerName = getContainerName(spaceId);
-        try {
-            if (!filesClient.containerExists(containerName)) {
-                throw new StorageException("Rackspace container "
-                        + containerName + " does not exist");
-            }
-        } catch (Exception e) {
-            throw new StorageException(e.getMessage());
+    private void throwIfSpaceExists(String spaceId) {
+        if (spaceExists(spaceId)) {
+            String msg = "Error: Space already exists: " + spaceId;
+            throw new StorageException(msg, NO_RETRY);
         }
+    }
+
+    private void throwIfSpaceNotExist(String spaceId) {
+        if (!spaceExists(spaceId)) {
+            String msg = "Error: Space does not exist: " + spaceId;
+            throw new StorageException(msg, NO_RETRY);
+        }
+    }
+
+    private boolean spaceExists(String spaceId) {
+        String containerName = getContainerName(spaceId);
+        boolean exists = false;
+        try {
+            exists = filesClient.containerExists(containerName);
+        } catch (IOException e) {
+        }
+        return exists;
     }
 
     /**
@@ -135,24 +154,32 @@ public class RackspaceStorageProvider
      */
     public void createSpace(String spaceId) {
         log.debug("getCreateSpace(" + spaceId + ")");
-        String containerName = getContainerName(spaceId);
-        try {
-            if (!filesClient.containerExists(containerName)) {
-                filesClient.createContainer(containerName);
+        throwIfSpaceExists(spaceId);
 
-                // Add space metadata
-                Map<String, String> spaceMetadata =
-                        new HashMap<String, String>();
-                Date created = new Date(System.currentTimeMillis());
-                spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
-                setSpaceMetadata(containerName, spaceMetadata);
-            }
-        } catch (Exception e) {
-            String err =
-                    "Could not create Rackspace container with name "
-                            + containerName + " due to error: "
-                            + e.getMessage();
-            throw new StorageException(err, e);
+        createContainer(spaceId);
+
+        // Add space metadata
+        Map<String, String> spaceMetadata = new HashMap<String, String>();
+        Date created = new Date(System.currentTimeMillis());
+        spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+        setSpaceMetadata(spaceId, spaceMetadata);
+    }
+
+    private void createContainer(String spaceId) {
+        String containerName = getContainerName(spaceId);
+
+        StringBuilder err = new StringBuilder("Could not create Rackspace " +
+                "container with name " + containerName + " due to error: ");
+        try {
+            filesClient.createContainer(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -161,22 +188,42 @@ public class RackspaceStorageProvider
      */
     public void deleteSpace(String spaceId) {
         log.debug("deleteSpace(" + spaceId + ")");
+        throwIfSpaceNotExist(spaceId);
+
         List<String> contents = getCompleteSpaceContents(spaceId);
         for (String contentItem : contents) {
             deleteContent(spaceId, contentItem);
         }
+        deleteContainer(spaceId);
+    }
 
+    private void deleteContainer(String spaceId) {
         String containerName = getContainerName(spaceId);
+        StringBuilder err = new StringBuilder("Could not delete Rackspace" +
+                " container with name " + containerName + " due to error: ");
+
         try {
-            if (filesClient.containerExists(containerName)) {
-                filesClient.deleteContainer(containerName);
-            }
-        } catch (Exception e) {
-            String err =
-                    "Could not delete Rackspace container with name "
-                            + containerName + " due to error: "
-                            + e.getMessage();
-            throw new StorageException(err, e);
+            filesClient.deleteContainer(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesInvalidNameException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesNotFoundException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesContainerNotEmptyException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -186,33 +233,43 @@ public class RackspaceStorageProvider
     public Map<String, String> getSpaceMetadata(String spaceId) {
         log.debug("getSpaceMetadata(" + spaceId + ")");
 
+        throwIfSpaceNotExist(spaceId);
+
         // Space metadata is stored as a content item
         String containerName = getContainerName(spaceId);
         InputStream is =
                 getContent(spaceId, containerName + SPACE_METADATA_SUFFIX);
         Map<String, String> spaceMetadata = loadMetadata(is);
 
-        try {
-            FilesContainerInfo containerInfo =
-                    filesClient.getContainerInfo(containerName);
+        FilesContainerInfo containerInfo = getContainerInfo(containerName);
 
-            spaceMetadata.put(METADATA_SPACE_COUNT, String
-                    .valueOf(containerInfo.getObjectCount()));
+        spaceMetadata.put(METADATA_SPACE_COUNT, String
+                .valueOf(containerInfo.getObjectCount()));
 
-            spaceMetadata.put("space-total-size", String.valueOf(containerInfo
-                    .getTotalSize()));
+        spaceMetadata.put("space-total-size", String.valueOf(containerInfo
+                .getTotalSize()));
 
-            AccessType access = getSpaceAccess(spaceId);
-            spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
-        } catch (Exception e) {
-            String err =
-                    "Could not retrieve metadata from Rackspace container "
-                            + containerName + " due to error: "
-                            + e.getMessage();
-            log.warn(err, e);
-        }
+        AccessType access = getSpaceAccess(spaceId);
+        spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
 
         return spaceMetadata;
+    }
+
+    private FilesContainerInfo getContainerInfo(String containerName) {
+        StringBuilder err = new StringBuilder("Could not retrieve metadata " +
+                "from Rackspace container " + containerName + " due to error: ");
+
+        try {
+            return filesClient.getContainerInfo(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+        }
     }
 
     /**
@@ -222,9 +279,10 @@ public class RackspaceStorageProvider
                                  Map<String, String> spaceMetadata) {
         log.debug("setSpaceMetadata(" + spaceId + ")");
 
+        throwIfSpaceNotExist(spaceId);
+
         if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
-            spaceMetadata.put(METADATA_SPACE_CREATED,
-                              creationTimestamp(spaceId));
+            spaceMetadata.put(METADATA_SPACE_CREATED, creationTimestamp(spaceId));
         }
 
         String containerName = getContainerName(spaceId);
@@ -257,28 +315,42 @@ public class RackspaceStorageProvider
     public AccessType getSpaceAccess(String spaceId) {
         log.debug("getSpaceAccess(" + spaceId + ")");
 
-        checkContainerExists(spaceId);
+        throwIfSpaceNotExist(spaceId);
+
         String containerName = getContainerName(spaceId);
         AccessType spaceAccess = AccessType.CLOSED;
 
         try {
-            FilesCDNContainer cdnContainer =
-                    filesClient.getCDNContainerInfo(containerName);
+            FilesCDNContainer cdnContainer = getCDNContainerInfo(containerName);
             if (cdnContainer.isEnabled()) {
                 spaceAccess = AccessType.OPEN;
             }
-        } catch (Exception e) {
-            //            String err = "Could not retrieve CDN info for Rackspace container " +
-            //                          containerName + " due to error: " + e.getMessage();
-            //            throw new StorageException(err, e);
-
+        } catch (StorageException e) {
             // While a bug in the Rackspace SDK is being ironed out
             // just return CLOSED when an exception is thrown
             // TODO: Return to above code after SDK has been fixed
+            log.warn("Return temp error access: "+AccessType.CLOSED, e);
             spaceAccess = AccessType.CLOSED;
         }
 
         return spaceAccess;
+    }
+
+    private FilesCDNContainer getCDNContainerInfo(String containerName) {
+        StringBuilder err = new StringBuilder("Could not retrieve CDN info " +
+                "for Rackspace container " + containerName + " due to error: ");
+
+        try {
+            return filesClient.getCDNContainerInfo(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+        }
     }
 
     /**
@@ -287,26 +359,55 @@ public class RackspaceStorageProvider
     public void setSpaceAccess(String spaceId, AccessType access) {
         log.debug("setSpaceAccess(" + spaceId + ", " + access + ")");
 
+        throwIfSpaceNotExist(spaceId);
+
         String containerName = getContainerName(spaceId);
-        try {
-            AccessType currentAccess = getSpaceAccess(spaceId);
-            if (!currentAccess.equals(access)) {
-                boolean cdnEnabled = false;
-                if (access.equals(AccessType.OPEN)) {
-                    cdnEnabled = true;
-                    filesClient.cdnEnableContainer(containerName);
-                } else {
-                    filesClient.cdnUpdateContainer(containerName,
-                                                   -1,
-                                                   cdnEnabled);
-                }
+        AccessType currentAccess = getSpaceAccess(spaceId);
+        if (!currentAccess.equals(access)) {
+            boolean cdnEnabled = false;
+            if (access.equals(AccessType.OPEN)) {
+                cdnEnabled = true;
+                cdnEnableContainer(containerName);
+            } else {
+                cdnUpdateContainer(containerName, cdnEnabled);
             }
-        } catch (Exception e) {
-            String err =
-                    "Could not set Rackspace container " + containerName
-                            + " ACL to access type " + access.toString()
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
+        }
+    }
+
+
+    private void cdnEnableContainer(String containerName) {
+        StringBuilder err = new StringBuilder("Could not set Rackspace "
+                + "container " + containerName
+                + " ACL to access enabled due to error: ");
+
+        try {
+            filesClient.cdnEnableContainer(containerName);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+        }
+    }
+
+    private void cdnUpdateContainer(String containerName, boolean cdnEnabled) {
+        StringBuilder err = new StringBuilder("Could not set Rackspace "
+                + "container " + containerName
+                + " ACL to access enabled: " + cdnEnabled + " due to error: ");
+
+        try {
+            filesClient.cdnUpdateContainer(containerName, -1, cdnEnabled);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -321,35 +422,49 @@ public class RackspaceStorageProvider
         log.debug("addContent(" + spaceId + ", " + contentId + ", "
                 + contentMimeType + ", " + contentSize + ")");
 
-        String checksum;
+        throwIfSpaceNotExist(spaceId);
+
+        Map<String, String> metadata = new HashMap<String, String>();
+        metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
+        // TODO: Determine how to set Rackspace object mimetype.
+
+        // Wrap the content to be able to compute a checksum during transfer
+        DigestInputStream wrappedContent = wrapStream(content);
+
+        storeStreamedObject(contentId,
+                            contentMimeType,
+                            spaceId,
+                            metadata,
+                            wrappedContent);
+
+        // Compare checksum
+        return compareChecksum(this, spaceId, contentId, wrappedContent);
+    }
+
+    private void storeStreamedObject(String contentId, String contentMimeType,
+                                     String spaceId,
+                                     Map<String, String> metadata,
+                                     DigestInputStream wrappedContent) {
         String containerName = getContainerName(spaceId);
+        StringBuilder err = new StringBuilder("Could not add content "
+                + contentId + " with type " + contentMimeType
+                + " to Rackspace container " + containerName
+                + " due to error: ");
+
         try {
-            checkContainerExists(spaceId);
-            Map<String, String> metadata = new HashMap<String, String>();
-            metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
-            // TODO: Determine how to set Rackspace object mimetype.
-
-            // Wrap the content to be able to compute a checksum during transfer
-            DigestInputStream wrappedContent = wrapStream(content);
-
             filesClient.storeStreamedObject(containerName,
                                             wrappedContent,
                                             contentMimeType,
                                             contentId,
                                             metadata);
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
 
-            // Compare checksum
-            checksum =
-                    compareChecksum(this, spaceId, contentId, wrappedContent);
-        } catch (Exception e) {
-            String err =
-                    "Could not add content " + contentId + " with type "
-                            + contentMimeType + " and size " + contentSize
-                            + " to Rackspace container " + containerName
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
         }
-        return checksum;
     }
 
     /**
@@ -358,19 +473,28 @@ public class RackspaceStorageProvider
     public InputStream getContent(String spaceId, String contentId) {
         log.debug("getContent(" + spaceId + ", " + contentId + ")");
 
+        throwIfSpaceNotExist(spaceId);
+
         String containerName = getContainerName(spaceId);
-        InputStream content = null;
+
+        StringBuilder err = new StringBuilder("Could not retrieve content "
+                + contentId + " from Rackspace container " + containerName
+                + " due to error: ");
         try {
-            checkContainerExists(spaceId);
-            content = filesClient.getObjectAsStream(containerName, contentId);
-        } catch (Exception e) {
-            String err =
-                    "Could not retrieve content " + contentId
-                            + " from Rackspace container " + containerName
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
+            return filesClient.getObjectAsStream(containerName, contentId);
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesInvalidNameException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+            
         }
-        return content;
     }
 
     /**
@@ -379,25 +503,37 @@ public class RackspaceStorageProvider
     public void deleteContent(String spaceId, String contentId) {
         log.debug("deleteContent(" + spaceId + ", " + contentId + ")");
 
-        int statusCode = -1;
+        throwIfSpaceNotExist(spaceId);
+
+        int statusCode = deleteObject(contentId, spaceId);
+        if (statusCode == HTTP_NOT_FOUND) {
+            String err = "Object to delete not found: " + spaceId + ":" + contentId;
+            log.error(err);
+            throw new StorageException(err, RETRY);
+        }
+    }
+
+    private int deleteObject(String contentId,
+                             String spaceId) {
         String containerName = getContainerName(spaceId);
+        StringBuilder err = new StringBuilder("Could not delete content " + contentId
+                    + " from Rackspace container " + containerName
+                    + " due to error: ");
 
         try {
-            checkContainerExists(spaceId);
-            statusCode = filesClient.deleteObject(containerName, contentId);
-        } catch (Exception e) {
-            String err =
-                    "Could not delete content " + contentId
-                            + " from Rackspace container " + containerName
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
-        }
+            return filesClient.deleteObject(containerName, contentId);
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
 
-        if (statusCode == HTTP_NOT_FOUND) {
-            String err =
-                    "Object to delete not found: " + spaceId + ", " + contentId;
-            log.error(err);
-            throw new StorageException(err);
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesInvalidNameException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
         }
     }
 
@@ -409,7 +545,7 @@ public class RackspaceStorageProvider
                                    Map<String, String> contentMetadata) {
         log.debug("setContentMetadata(" + spaceId + ", " + contentId + ")");
 
-        checkContainerExists(spaceId);
+        throwIfSpaceNotExist(spaceId);
 
         // Remove calculated properties
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
@@ -425,28 +561,68 @@ public class RackspaceStorageProvider
         // TODO: Determine how to update Rackspace-specific object mimetype
 
         // Get the object and replace its metadata
-        try {
-            // TODO: Determine how to update object metadata directly.
-            // This doesn't actually push the object metadata to the store.
-            //             FilesObjectMetaData objMetadata =
-            //                 filesClient.getObjectMetaData(containerName, contentId);
-            //             objMetadata.setMetaData(contentMetadata);
+        // TODO: Determine how to update object metadata directly.
+        // This doesn't actually push the object metadata to the store.
+        //             FilesObjectMetaData objMetadata =
+        //              filesClient.getObjectMetaData(containerName, contentId);
+        //             objMetadata.setMetaData(contentMetadata);
 
-            // In the meantime, replace the object. This is terribly inefficient
-            // and will only work for small files. Remove ASAP.
-            byte[] content = filesClient.getObject(containerName, contentId);
-            filesClient
-                    .storeObject(containerName,
-                                 content,
-                                 contentMetadata.get(METADATA_CONTENT_MIMETYPE),
-                                 contentId,
-                                 contentMetadata);
-        } catch (Exception e) {
-            String err =
-                    "Could not update metadata for content " + contentId
-                            + " in Rackspace container " + containerName
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
+        // In the meantime, replace the object. This is terribly inefficient
+        // and will only work for small files. Remove ASAP.
+        byte[] content = getObject(contentId, containerName);
+        storeObject(contentId, contentMetadata, containerName, content);
+
+    }
+
+    private byte[] getObject(String contentId, String containerName) {
+        StringBuilder err = new StringBuilder("Could not get object for "
+                + contentId + " in Rackspace container "
+                + containerName + " due to error: ");
+
+        try {
+            return filesClient.getObject(containerName, contentId);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesInvalidNameException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesNotFoundException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        }
+    }
+
+    private void storeObject(String contentId,
+                             Map<String, String> contentMetadata,
+                             String containerName,
+                             byte[] content) {
+        StringBuilder err = new StringBuilder("Could not update metadata "
+                + "for content " + contentId + " in Rackspace container "
+                + containerName + " due to error: ");
+
+        try {
+            filesClient.storeObject(containerName,
+                                    content,
+                                    contentMetadata.get(METADATA_CONTENT_MIMETYPE),
+                                    contentId,
+                                    contentMetadata);
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
         }
     }
 
@@ -457,25 +633,13 @@ public class RackspaceStorageProvider
                                                   String contentId) {
         log.debug("getContentMetadata(" + spaceId + ", " + contentId + ")");
 
-        checkContainerExists(spaceId);
-        String containerName = getContainerName(spaceId);
+        throwIfSpaceNotExist(spaceId);
 
-        FilesObjectMetaData metadata = null;
-        try {
-            metadata = filesClient.getObjectMetaData(containerName, contentId);
-        } catch (Exception e) {
-            String err =
-                    "Could not retrieve metadata for content " + contentId
-                            + " from Rackspace container " + containerName
-                            + " due to error: " + e.getMessage();
-            throw new StorageException(err, e);
-        }
-
+        FilesObjectMetaData metadata = getObjectMetadata(spaceId, contentId);
         if (metadata == null) {
-            String err =
-                    "No metadata is available for item " + contentId
-                            + " in Rackspace container " + containerName;
-            throw new StorageException(err);
+            String err = "No metadata is available for item " + contentId
+                    + " in Rackspace space " + spaceId;
+            throw new StorageException(err, RETRY);
         }
 
         Map<String, String> metadataMap = metadata.getMetaData();
@@ -514,6 +678,32 @@ public class RackspaceStorageProvider
         }
 
         return resultMap;
+    }
+
+    private FilesObjectMetaData getObjectMetadata(String spaceId,
+                                                  String contentId) {
+        String containerName = getContainerName(spaceId);
+
+        StringBuilder err = new StringBuilder("Could not retrieve metadata"
+                + " for content " + contentId
+                + " from Rackspace container " + containerName
+                + " due to error: ");
+
+        try {
+            return filesClient.getObjectMetaData(containerName, contentId);
+
+        } catch (IOException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, RETRY);
+
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+
+        } catch (FilesInvalidNameException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+        }
     }
 
     /**
