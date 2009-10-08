@@ -23,8 +23,12 @@ public class StorageAccountTestUtil {
             try {
                  cred = dbUtil.findCredentialForProvider(type);
             } catch (Exception e) {
-                // No credentials available for provider type - skip
-                continue;
+                if(type.equals(StorageProviderType.TEST)) {
+                    cred = new Credential("", "");
+                } else {
+                    // No credentials available for provider type - skip
+                    continue;
+                }
             }
             if(cred != null) {
                 ++acctId;

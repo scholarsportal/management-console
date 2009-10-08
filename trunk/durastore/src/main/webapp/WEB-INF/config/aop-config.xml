@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
   
-  <!-- AOP - Advice -->
+  <!-- AOP Advice - Ingest -->
   <bean id="ingestAdvice" class="org.duracloud.durastore.aop.IngestAdvice" >
     <property name="jmsTemplate" ref="jmsTemplate" />
     <property name="destination" ref="ingestDestination" />
@@ -15,7 +15,17 @@
     <property name="advice" ref="ingestAdvice"/>
     <property name="pattern" value=".*StatelessStorageProvider.addContent"/>
   </bean>
- 
+
+<!-- AOP Advice - Retry -->
+  <bean id="retryAdvice" class="org.duracloud.durastore.aop.RetryAdvice" >
+    <property name="maxRetries" value="3" />
+  </bean>
+
+  <bean id="retryAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice" ref="retryAdvice"/>
+    <property name="pattern" value=".*StatelessStorageProvider.*"/>
+  </bean>
+
   <!-- Enables Auto-AOP Proxy Creation -->
   <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
   
