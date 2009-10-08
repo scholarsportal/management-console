@@ -1,21 +1,12 @@
 package org.duracloud.s3storage;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
-
+import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -23,17 +14,21 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
-import org.jets3t.service.model.S3Object;
-
-import junit.framework.Assert;
-
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
+import org.jets3t.service.model.S3Object;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Tests the S3 Storage Provider. This test is run via the command line in order
@@ -209,8 +204,11 @@ public class S3StorageProviderTest {
         // test invalid content
         log.debug("Test getContent() with invalid content ID");
         log.debug("-- Begin expected error log -- ");
-        is = s3Provider.getContent(SPACE_ID, "non-existant-content");
-        assertTrue(is == null);
+        try {
+            is = s3Provider.getContent(SPACE_ID, "non-existant-content");
+            fail("Exception expected");
+        } catch (Exception e) {
+        }
         log.debug("-- End expected error log --");
 
         // test setContentMetadata()
