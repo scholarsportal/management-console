@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.error.StorageException;
+import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 
 import static org.duracloud.common.util.IOUtil.readStringFromStream;
@@ -118,7 +119,7 @@ public class StorageProviderUtil {
                          " but the checksum computed enroute does not match the " +
                          "checksum computed by the storage provider. This content " +
                          "should be checked for validity:" + se.getMessage();
-            throw new StorageException(err, se);
+            throw new StorageException(err, se, NO_RETRY);
         }
         return streamChecksum;
     }
@@ -145,7 +146,7 @@ public class StorageProviderUtil {
             String err = "Checksum " + checksum + " does not match " +
             		     "content checksum from storage provider " +
                          providerChecksum;
-            throw new StorageException(err);
+            throw new StorageException(err, NO_RETRY);
         }
     }
 
