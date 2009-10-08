@@ -17,7 +17,7 @@
 	<link rel="stylesheet"  href="style/menu_style.css" type="text/css" />
 	<link rel="stylesheet"  href="style/main.css" type="text/css" />
     
-    <title>Duradmin :: <tiles:insertAttribute name="title"/></title>
+    <title>Duradmin :: ${title}</title>
   </head>
   <body class="tundra">
 
@@ -29,7 +29,12 @@
 			    <tiles:insertAttribute name="menu"/>
    			</td>
    			<td id="main-content">
-			    <tiles:insertAttribute name="main-content" />
+   				<div id="main-content-header">
+				    ${title}
+   				</div>
+   				<div id="main-content-body">
+				    <tiles:insertAttribute name="main-content" />
+   				</div>
    			</td>
    		</tr>
    	</table>

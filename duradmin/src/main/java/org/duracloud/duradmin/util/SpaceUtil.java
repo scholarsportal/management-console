@@ -31,6 +31,7 @@ public class SpaceUtil {
     public static Space populateSpace(Space space,
                                       org.duracloud.domain.Space cloudSpace)
             throws Exception {
+        space.setSpaceId(cloudSpace.getId());
         space.setMetadata(SpaceUtil.getSpaceMetadata(cloudSpace.getMetadata()));
         space.setContents(cloudSpace.getContentIds());
         return space;

@@ -10,7 +10,6 @@ dojo.addOnLoad(function(){
 
 
 dojo.addOnLoad(function(){
-
 	/*adds mouse listeners on spaces table rows*/
 	dojo.query("#spacesTable > tbody > tr",document).forEach(
 	    function(row) {
@@ -25,15 +24,19 @@ dojo.addOnLoad(function(){
 					console.debug('moused out of row: ' + row);
 					dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'hidden'});
       		});
+           	
+
+
 	    }
 	);		
 });
 
 
-function confirmDeleteOperation(){
+function confirmDeleteOperation(e){
 	var result = confirm('You are about to perform an irreversible delete operation\.\nClick \'OK\' if you are sure you wish to continue\.');
-	
 	if(!result) { 
 		return false; 
+	}else{
+		return true;
 	}
 }
