@@ -1,9 +1,14 @@
 package org.duracloud.storage.domain;
 
 public enum StorageProviderType {
-    AMAZON_S3("amazon-s3"), MICROSOFT_AZURE("ms-azure"), SUN("sun"),
-    EMC("emc"), EMC_SECONDARY("emc-secondary"), RACKSPACE("rackspace"),
-    UNKNOWN("unknown");
+    AMAZON_S3("amazon-s3"),
+    MICROSOFT_AZURE("ms-azure"),
+    SUN("sun"),
+    EMC("emc"),
+    EMC_SECONDARY("emc-secondary"),
+    RACKSPACE("rackspace"),
+    UNKNOWN("unknown"),
+    TEST("test");
 
     private final String text;
 

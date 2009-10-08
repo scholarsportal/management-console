@@ -1,19 +1,19 @@
 package org.duracloud.durastore.util;
 
-import java.io.InputStream;
-
-import java.util.Iterator;
-
+import org.duracloud.durastore.test.TestStorageProvider;
 import org.duracloud.emcstorage.EMCStorageProvider;
 import org.duracloud.rackspacestorage.RackspaceStorageProvider;
 import org.duracloud.s3storage.S3StorageProvider;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
-import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.BrokeredStorageProvider;
 import org.duracloud.storage.provider.StatelessStorageProvider;
 import org.duracloud.storage.provider.StorageProvider;
+
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Performs storage provider services
@@ -112,6 +112,8 @@ public class StorageProviderFactory {
             storageProvider = new RackspaceStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.EMC)) {
             storageProvider = new EMCStorageProvider(username, password);
+        } else if (type.equals(StorageProviderType.TEST)) {
+            storageProvider = new TestStorageProvider();
         }
 
         return new BrokeredStorageProvider(statelessProvider,
