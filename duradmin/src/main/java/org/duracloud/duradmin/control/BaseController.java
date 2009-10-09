@@ -1,6 +1,8 @@
 
 package org.duracloud.duradmin.control;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,7 +13,6 @@ import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public abstract class BaseController
@@ -36,6 +37,12 @@ public abstract class BaseController
     
     protected List<Space> getSpaces() throws Exception {
         List<Space> spaces = SpaceUtil.getSpacesList(getContentStore().getSpaces());
+        Collections.sort(spaces, new Comparator<Space>(){
+            @Override
+            public int compare(Space o1, Space o2) {
+                return o1.getSpaceId().compareTo(o2.getSpaceId());
+            }
+        });
         return spaces;
     }
 

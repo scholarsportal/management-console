@@ -24,7 +24,7 @@
 				</tr>
 			</table>
 		</div>
-		<div class="basic-form-buttons" ><input type="submit" value="Add" /> <a href="spaces.htm">Cancel</a>
+		<div class="basic-form-buttons" ><input type="submit" value="Add" onclick="this.disabled = true;"/> <a  id="cancel" href="spaces.htm">Cancel</a>
 		</div>
 	</form>
 </div>
