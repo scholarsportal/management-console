@@ -1,42 +1,37 @@
 package org.duracloud.emcstorage;
 
+import com.emc.esu.api.EsuApi;
+import com.emc.esu.api.Identifier;
+import com.emc.esu.api.ObjectMetadata;
+import com.emc.esu.api.rest.EsuRestApi;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.common.util.ChecksumUtil.Algorithm;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.provider.StorageProvider.AccessType;
+import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
+import static org.duracloud.storage.util.StorageProviderUtil.contains;
+import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.junit.After;
+import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.emc.esu.api.EsuApi;
-import com.emc.esu.api.Identifier;
-import com.emc.esu.api.ObjectMetadata;
-import com.emc.esu.api.rest.EsuRestApi;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.duracloud.common.model.Credential;
-import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.common.util.ChecksumUtil.Algorithm;
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
-import org.duracloud.storage.provider.StorageProvider;
-import org.duracloud.storage.provider.StorageProvider.AccessType;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-
-import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
-import static org.duracloud.storage.util.StorageProviderUtil.contains;
-import static org.duracloud.storage.util.StorageProviderUtil.count;
-import static org.junit.Assert.fail;
 
 public class EMCStorageProviderTest {
 
@@ -112,10 +107,14 @@ public class EMCStorageProviderTest {
         Iterator<String> spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
 
-        assertEquals(0, count(spaces));
+        long initialNumSpaces = count(spaces);
 
         emcProvider.createSpace(spaceId0);
         emcProvider.createSpace(spaceId1);
+
+        spaces = emcProvider.getSpaces();
+        assertNotNull(spaces);
+        assertEquals(initialNumSpaces + 2, count(spaces));
 
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
@@ -128,9 +127,13 @@ public class EMCStorageProviderTest {
 
     @Test
     public void testGetSpaceContents() throws StorageException {
-        Iterator<String> spaceContents = emcProvider.getSpaceContents(spaceId0);
-        assertNotNull(spaceContents);
-        assertEquals(0, count(spaceContents));
+        Iterator<String> spaceContents = null;
+        try {
+            emcProvider.getSpaceContents(spaceId0);
+            fail("Exception expected since space does not exist.");
+        } catch (Exception e) {
+            // do nothing
+        }
 
         emcProvider.createSpace(spaceId0);
 
@@ -223,14 +226,15 @@ public class EMCStorageProviderTest {
 
         Iterator<String> spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-        assertEquals(0, count(spaces));
+
+        long initialNumSpaces = count(spaces);
 
         // Add some spaces.
         emcProvider.createSpace(spaceId1);
         emcProvider.createSpace(spaceId2);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-        assertEquals(2, count(spaces));
+        assertEquals(initialNumSpaces + 2, count(spaces));
 
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
@@ -245,7 +249,7 @@ public class EMCStorageProviderTest {
         emcProvider.deleteSpace(spaceId2);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-        assertEquals(1, count(spaces));
+        assertEquals(initialNumSpaces + 1, count(spaces));
 
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
@@ -259,7 +263,7 @@ public class EMCStorageProviderTest {
         emcProvider.deleteSpace(spaceId1);
         spaces = emcProvider.getSpaces();
         assertNotNull(spaces);
-        assertEquals(0, count(spaces));
+        assertEquals(initialNumSpaces, count(spaces));
 
     }
 
@@ -641,7 +645,7 @@ public class EMCStorageProviderTest {
         assertTrue(metadata.containsKey(modifiedKey));
         assertTrue(metadata.containsKey(cksumKey));
 
-        assertEquals(mimeText, metadata.get(mimeKey));
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE, metadata.get(mimeKey));
         assertEquals(data.length, Integer.parseInt((String) metadata.get(sizeKey)));
         assertNotNull(metadata.get(modifiedKey));
         assertEquals(digest, metadata.get(cksumKey));
