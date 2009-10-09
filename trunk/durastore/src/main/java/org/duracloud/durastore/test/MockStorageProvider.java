@@ -15,7 +15,7 @@ import java.util.Map;
  * @author: Bill Branan
  * Date: Oct 7, 2009
  */
-public class TestStorageProvider implements StorageProvider {
+public class MockStorageProvider implements StorageProvider {
 
     private static int getSpaceContentsAttempts = 0;
 

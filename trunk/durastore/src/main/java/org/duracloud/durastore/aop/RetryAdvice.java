@@ -19,8 +19,9 @@ public class RetryAdvice implements MethodInterceptor {
                 return invocation.proceed();
             } catch (StorageException se) {
                 if (se.isRetry()) {
-                    if(numAttempts <= maxRetries) {
+                    if (numAttempts <= maxRetries) {
                         logRetry(invocation, se.getMessage());
+                        Thread.sleep(5000);
                     } else {
                         logRetriesExceeded(invocation, se.getMessage());
                         throw se;
@@ -46,7 +47,8 @@ public class RetryAdvice implements MethodInterceptor {
         }
     }
 
-    private void logRetriesExceeded(MethodInvocation invocation, String errorMsg) {
+    private void logRetriesExceeded(MethodInvocation invocation,
+                                    String errorMsg) {
         if (log.isDebugEnabled()) {
             StringBuilder logMsg = new StringBuilder();
             logMsg.append("Caught StorageException (");
@@ -63,10 +65,10 @@ public class RetryAdvice implements MethodInterceptor {
     private String buildMethodArgs(MethodInvocation invocation) {
         StringBuilder methodArgs = new StringBuilder();
         Object[] arguments = invocation.getArguments();
-        for(int i=0; i<arguments.length; i++) {
+        for (int i = 0; i < arguments.length; i++) {
             Object argument = arguments[i];
             methodArgs.append(argument.toString());
-            if(i < arguments.length -1) {
+            if (i < arguments.length - 1) {
                 methodArgs.append(", ");
             }
         }

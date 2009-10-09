@@ -1,6 +1,6 @@
 package org.duracloud.durastore.util;
 
-import org.duracloud.durastore.test.TestStorageProvider;
+import org.duracloud.durastore.test.MockStorageProvider;
 import org.duracloud.emcstorage.EMCStorageProvider;
 import org.duracloud.rackspacestorage.RackspaceStorageProvider;
 import org.duracloud.s3storage.S3StorageProvider;
@@ -113,7 +113,7 @@ public class StorageProviderFactory {
         } else if (type.equals(StorageProviderType.EMC)) {
             storageProvider = new EMCStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.TEST)) {
-            storageProvider = new TestStorageProvider();
+            storageProvider = new MockStorageProvider();
         }
 
         return new BrokeredStorageProvider(statelessProvider,
