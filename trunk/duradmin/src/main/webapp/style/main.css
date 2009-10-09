@@ -121,25 +121,12 @@ div.space {
   margin-bottom: 20px;
 }
 
-div.space_action {
-  clear:both;
-  margin-top:20px;
-}
 
 #contents {
   float:left;
   margin-right:20px;
 }
 
-#content_list {
-  border:0px solid #fff;
-}
-
-#content_target {
-  width:450px;
-  height:450px;
-  border:0px solid #fff;
-}
 
 table{
   border-collapse: collapse;
@@ -157,23 +144,32 @@ td, th {
 	text-align:left;
 }
 
-.standard > tbody > tr.oddRow {
-	background-color:#FFFFCC;	
+.standard > tbody > tr.evenRow {
+	background-color:#EEE;	
 }
 
 .standard > tbody > tr.hover {
-	background-color: #00B2EE;	
+	background-color: #CCC;	
 	opacity: 0.65;
 	
 }
 
-.actions{
+.standard tr, .standard th {
+	border-bottom: 1px solid #CCC;	
+}
+
+div.actions{
 	visibility:hidden;
 	border:1px dotted green;	
 }
 
+.actions ul{
+   margin:0;
+   padding:0;
+}
+
 #actionDiv{
-	text-align: left;	
+	#text-align: left;	
 }
 
 table.basic-form {

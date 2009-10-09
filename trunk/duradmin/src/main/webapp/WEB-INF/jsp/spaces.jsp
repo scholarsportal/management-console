@@ -6,19 +6,16 @@
 <div class="spaces">
 <table class="standard" id="spacesTable">
 	<tr>
-		<th>ID</th>
-		<th>Created</th>
+		<th></th>
+		<th>Space ID</th>
 		<th>Items</th>
 		<th>Access</th>
-		<th></th>
+		<th>Created</th>
+
 	</tr>
 	<tbody>
 		<c:forEach items="${spaces}" var="space">
 			<tr id="${space.spaceId}">
-				<td><c:out value="${space.spaceId}" /></td>
-				<td><c:out value="${space.metadata.created}" /></td>
-				<td><c:out value="${space.metadata.count}" /></td>
-				<td><c:out value="${space.metadata.access}" /></td>
 				<td id="actionColumn">
 				<div id="actionDiv" class="actions">
 				<ul>
@@ -30,6 +27,11 @@
 				</ul>
 				</div>
 				</td>
+				<td><c:out value="${space.spaceId}" /></td>
+				<td><c:out value="${space.metadata.count}" /></td>
+				<td><c:out value="${space.metadata.access}" /></td>
+				<td><c:out value="${space.metadata.created}" /></td>
+
 			</tr>
 
 

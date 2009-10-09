@@ -9,7 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- load the dojo toolkit base -->
 	<script type="text/javascript" src="dojo/dojo.js"
-	    djConfig="parseOnLoad:true, isDebug:true"></script>
+	    djConfig="parseOnLoad:true, isDebug:false"></script>
 
 	<!-- load the duradmin base -->
 	<script type="text/javascript" src="script/common/base.js"></script>

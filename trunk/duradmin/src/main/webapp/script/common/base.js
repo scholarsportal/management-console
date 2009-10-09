@@ -4,7 +4,7 @@ dojo.require("dijit.Dialog");
 
 /*zebra stripe standard tables*/	
 dojo.addOnLoad(function(){
-	dojo.query(".standard > tbody > tr:nth-child(odd)").addClass("oddRow");
+	dojo.query(".standard > tbody > tr:nth-child(even)").addClass("evenRow");
 });
 
 
