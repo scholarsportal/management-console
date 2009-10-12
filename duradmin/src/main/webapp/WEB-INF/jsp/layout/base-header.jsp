@@ -1,15 +1,17 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+
 <div id="top-header">
 	<img alt="<spring:message code="application.title"/>" height="25px" src="images/duraspace-logo.jpg">
 	<strong>
-		<spring:message code="application.title"/>: 
+		<spring:message code="application.title"/>
 	</strong>
-	<spring:message code="application.tagline"/>
 </div>
 <div id="global-message-div">
 	<center>
 		<c:if test="${not empty flashMessage}">
-			<span class="message-${flashMessage.typeAsString}">${flashMessage.message}</span>
+			<span class="message-${fn:toLowerCase(flashMessage.severity)}">${flashMessage.text}</span>
 		</c:if>
 	</center>
 </div>

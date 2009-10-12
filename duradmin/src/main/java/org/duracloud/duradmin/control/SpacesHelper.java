@@ -1,5 +1,4 @@
 package org.duracloud.duradmin.control;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.domain.Space;
@@ -25,7 +24,7 @@ public class SpacesHelper {
         ModelAndView mav = new ModelAndView();
         mav.addObject("baseURL", store.getBaseURL());
         mav.addObject("space", space);
-        mav.addObject("title", "Space: " + space.getSpaceId());
+        mav.addObject("title", space.getSpaceId());
         return mav;
     }
 }

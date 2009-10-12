@@ -9,7 +9,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 public class SpacesController
-        extends BaseController {
+        extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
 

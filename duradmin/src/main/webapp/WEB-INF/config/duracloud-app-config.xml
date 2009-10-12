@@ -11,7 +11,7 @@
     Imports the configurations of the different infrastructure systems
     of the application
   -->
-  <import resource="core-beans-config.xml"  />
+  <import resource="service-config.xml"  />
   <import resource="webmvc-config.xml" />
-  
+  <import resource="webflow-config.xml" />
 </beans>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 
   xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+           
   <!-- Localization   -->
   <bean id="messageSource"
       class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -15,18 +17,18 @@
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
 
+
+  
   <!-- Map URLs to Controllers -->
   <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
-        <prop key="/spaceDelete.action">spaceDeleteController</prop>
-        <prop key="/addSpace.htm">addSpaceController</prop>
+        <prop key="/removeSpace.htm">removeSpaceController</prop>
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
         <prop key="/removeContent.htm">removeContentController</prop>
-        <prop key="/addContent.htm">addContentController</prop>
         <prop key="/services.htm">servicesController</prop>
         <prop key="/deployService.htm">deployServiceController</prop>
         <prop key="/unDeployService.htm">unDeployServiceController</prop>
@@ -35,22 +37,6 @@
     <property name="order" value="1" />
   </bean>
   
-  <!-- validator configuration -->
-	<!-- 
-  <bean id="beanValidator" class="org.springmodules.commons.validator.DefaultBeanValidator">
-  	<property name="validatorFactory" ref="validatorFactory"/>
-  </bean>
-
-  <bean id="validatorFactory" class="org.springmodules.commons.validator.DefaultValidatorFactory">
-  	<property name="validationConfigLocations">
-		<list>
-			<value>WEB-INF/config/validation.xml</value>
-		</list>
-  	</property>
-  </bean>
-	 -->
-	 
-
   <!-- Request Controllers - processes request -->
   <bean id="homeController" class="org.duracloud.duradmin.control.HomeController"/>
 
@@ -59,18 +45,8 @@
     <property name="successView" value="spaces" />
   </bean>
 
-  <bean id="spaceDeleteController" class="org.duracloud.duradmin.control.SpaceDeleteController">
+  <bean id="removeSpaceController" class="org.duracloud.duradmin.control.RemoveSpaceController">
   	<property name="contentStoreManager" ref="contentStoreManager"/>
-    <property name="successView" value="spaces" />
-  </bean>
-
-  <bean id="addSpaceController" class="org.duracloud.duradmin.control.AddSpaceController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
-    <property name="successView" value="contents" />
-    <property name="validator">
-	  <bean class="org.duracloud.duradmin.validation.SpaceValidator" />
-	</property>
-    
   </bean>
 
   <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController">
@@ -80,13 +56,8 @@
   
   <bean id="removeContentController" class="org.duracloud.duradmin.control.RemoveContentController">
   	<property name="contentStoreManager" ref="contentStoreManager"/>
-    <property name="successView" value="contents" />
   </bean>
   
-  <bean id="addContentController" class="org.duracloud.duradmin.control.AddContentController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
-    <property name="successView" value="contents" />
-  </bean>    
 
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController">
   	<property name="contentStoreManager" ref="contentStoreManager"/>
