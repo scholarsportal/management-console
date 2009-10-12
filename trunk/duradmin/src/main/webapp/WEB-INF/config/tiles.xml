@@ -14,6 +14,7 @@
 	</definition>
 		
 	<definition name="home" extends="base">
+		<put-attribute name="menu" value="/WEB-INF/jsp/homeMenu.jsp"/>
 		<put-attribute name="main-content" value="/WEB-INF/jsp/home.jsp"/>
 	</definition>
 	

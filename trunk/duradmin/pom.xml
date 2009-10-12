@@ -131,7 +131,14 @@
       <artifactId>org.springframework.webflow</artifactId>
       <version>2.0.8.RELEASE</version>
     </dependency>
-   
+   	
+   	<!-- for spring aop proxying -->
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2</version>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
@@ -203,30 +210,31 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>  
       <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>  
-        <version>1.3.0</version>  
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>  
-        <groupId>org.xmlpull</groupId>  
-        <artifactId>com.springsource.org.xmlpull</artifactId>  
-        <version>1.1.4</version> 
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>com.springsource.org.apache.commons.io</artifactId>
-        <version>1.4.0</version>
-        <scope>runtime</scope>
-      </dependency>
+      <version>1.3.0</version>  
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>  
+      <groupId>org.xmlpull</groupId>  
+      <artifactId>com.springsource.org.xmlpull</artifactId>  
+      <version>1.1.4</version> 
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.io</artifactId>
+      <version>1.4.0</version>
+      <scope>runtime</scope>
+    </dependency>
 
-  	  <!-- dojo -->    
-      <dependency>
-        <groupId>org.dojotoolkit</groupId>
-        <artifactId>dojo-war</artifactId>
-        <version>1.3-SNAPSHOT</version>
-        <type>war</type>
-        <scope>runtime</scope>
-      </dependency>
+  	<!-- dojo -->    
+    <dependency>
+      <groupId>org.dojotoolkit</groupId>
+      <artifactId>dojo-war</artifactId>
+      <version>1.3-SNAPSHOT</version>
+      <type>war</type>
+      <scope>runtime</scope>
+    </dependency>
+    
     </dependencies>
     <profiles>
       <profile>

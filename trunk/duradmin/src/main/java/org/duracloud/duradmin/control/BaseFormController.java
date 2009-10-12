@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -18,8 +18,6 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public abstract class BaseFormController
         extends SimpleFormController {
 
-    
-    
     protected final Logger log = Logger.getLogger(getClass());
 
     private ControllerSupport controllerSupport = new ControllerSupport();
@@ -37,12 +35,12 @@ public abstract class BaseFormController
     }
 
 
-    public ContentStoreManager getContentStoreManager() {
-        return controllerSupport.getContentStoreManager();
+    public ContentStoreProvider getContentStoreProvider() {
+        return controllerSupport.getContentStoreProvider();
     }
 
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.controllerSupport.setContentStoreManager(contentStoreManager);
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.controllerSupport.setContentStoreProvider(contentStoreProvider);
     }
     
     protected List<Space> getSpaces() throws Exception {

@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.config.DuradminConfig;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
@@ -20,19 +20,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 public class ControllerSupport {
-    private ContentStoreManager contentStoreManager;
+    private ContentStoreProvider contentStoreProvider;
 
     public ContentStore getContentStore() throws ContentStoreException {
-        return contentStoreManager.getPrimaryContentStore();
+        return contentStoreProvider.getContentStore();
     }
 
 
-    public ContentStoreManager getContentStoreManager() {
-        return contentStoreManager;
+    public ContentStoreProvider getContentStoreProvider() {
+        return contentStoreProvider;
     }
 
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.contentStoreManager = contentStoreManager;
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.contentStoreProvider = contentStoreProvider;
     }
     
     protected List<Space> getSpaces() throws Exception {

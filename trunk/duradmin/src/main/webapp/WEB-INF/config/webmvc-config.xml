@@ -38,29 +38,31 @@
   </bean>
   
   <!-- Request Controllers - processes request -->
-  <bean id="homeController" class="org.duracloud.duradmin.control.HomeController"/>
+  <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
+  	<property name="contentStoreSelector" ref="contentStoreSelector"/>
+  </bean>
 
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
     <property name="successView" value="spaces" />
   </bean>
 
   <bean id="removeSpaceController" class="org.duracloud.duradmin.control.RemoveSpaceController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
 
   <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
     <property name="successView" value="contents" />
   </bean>
   
   <bean id="removeContentController" class="org.duracloud.duradmin.control.RemoveContentController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
   
 
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
     <property name="successView" value="content" />  
   </bean>
 
