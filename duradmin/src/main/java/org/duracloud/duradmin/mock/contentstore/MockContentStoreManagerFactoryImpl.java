@@ -30,28 +30,33 @@ public class MockContentStoreManagerFactoryImpl
 
     private class MockContentStoreManager
             implements ContentStoreManager {
-        private ContentStore contentStore;
-        
+        private ContentStore primaryContentStore;
+        private Map<String,ContentStore> contentStores = new HashMap<String,ContentStore>();
+        public MockContentStoreManager(){
+
+            for(int i = 0; i < 3; i++){
+                String storeId ="Mock Store #"+i;
+                this.contentStores.put(storeId, new MockContentStore(storeId));
+            }
+            
+            this.primaryContentStore = this.contentStores.get(this.contentStores.keySet().iterator().next());
+        }
         public ContentStore getContentStore(String storeID)
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
-            return null;
+            return this.contentStores.get(storeID);
         }
 
         
         public Map<String, ContentStore> getContentStores()
                 throws ContentStoreException {
             // TODO Auto-generated method stub
-            return null;
+            return this.contentStores;
         }
 
         
         public ContentStore getPrimaryContentStore()
                 throws ContentStoreException {
-            if(this.contentStore == null){
-                this.contentStore = new MockContentStore();
-            }
-            return this.contentStore;
+            return this.primaryContentStore;
         }
 
     }
@@ -60,8 +65,13 @@ public class MockContentStoreManagerFactoryImpl
             implements ContentStore {
 
         Map<String, Space> spaceMap = new HashMap<String, Space>();
-
-        MockContentStore() {
+        private String storeId;
+        private String storageProviderType;
+        
+        MockContentStore(String storeId) {
+            this.storeId = storeId;
+            this.storageProviderType = "Mock Storage Provider [" + storeId + "]";
+            
             for (int i = 0; i < 10; i++) {
                 Space s = new Space();
                 s.setId("space-number-" + i);
@@ -176,14 +186,12 @@ public class MockContentStoreManagerFactoryImpl
 
         
         public String getStorageProviderType() {
-            // TODO Auto-generated method stub
-            return null;
+            return this.storageProviderType;
         }
 
         
         public String getStoreId() {
-            // TODO Auto-generated method stub
-            return null;
+            return this.storeId;
         }
 
         

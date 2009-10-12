@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
@@ -38,12 +38,12 @@ public  abstract class BaseCommandController extends AbstractCommandController{
     }
 
 
-    public ContentStoreManager getContentStoreManager() {
-        return controllerSupport.getContentStoreManager();
+    public ContentStoreProvider getContentStoreProvider() {
+        return controllerSupport.getContentStoreProvider();
     }
 
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.controllerSupport.setContentStoreManager(contentStoreManager);
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.controllerSupport.setContentStoreProvider(contentStoreProvider);
     }
     
     protected List<Space> getSpaces() throws Exception {
