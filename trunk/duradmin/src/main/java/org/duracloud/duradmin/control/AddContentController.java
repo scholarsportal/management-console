@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 public class AddContentController
-        extends BaseController {
+        extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
 

@@ -13,9 +13,9 @@
 
 	<!-- load the duradmin base -->
 	<script type="text/javascript" src="script/common/base.js"></script>
-	<link rel="stylesheet"  href="dijit/themes/tundra/tundra.css" type="text/css" />
-	<link rel="stylesheet"  href="style/menu_style.css" type="text/css" />
-	<link rel="stylesheet"  href="style/main.css" type="text/css" />
+	<link rel="stylesheet"  href="/duradmin/dijit/themes/tundra/tundra.css" type="text/css" />
+	<link rel="stylesheet"  href="/duradmin/style/menu_style.css" type="text/css" />
+	<link rel="stylesheet"  href="/duradmin/style/main.css" type="text/css" />
     
     <title>Duradmin :: ${title}</title>
   </head>
@@ -30,7 +30,7 @@
    			</td>
    			<td id="main-content">
    				<div id="main-content-header">
-				    ${title}
+				    <h3>${title}</h3>
    				</div>
    				<div id="main-content-body">
 				    <tiles:insertAttribute name="main-content" />

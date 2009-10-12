@@ -23,19 +23,26 @@
 		<put-attribute name="mainTab" value="spaces" />
 	</definition>
 
-	<definition name="add.space" extends="spaces">
-		<put-attribute name="main-content" value="/WEB-INF/jsp/addSpace.jsp"/>
+
+
+	<definition name="defineSpace" extends="spaces">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/newSpaceForm.jsp"/>
+		<put-attribute name="menu" value=""/>
+	</definition>
+
+	<definition name="defineContentItem" extends="spaces">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/newContentItemForm.jsp"/>
 		<put-attribute name="menu" value=""/>
 	</definition>
 
 	<definition name="contents" extends="spaces" >
 		<put-attribute name="main-content" value="/WEB-INF/jsp/contents.jsp"/>
-		<put-attribute name="menu" value=""/>
+		<put-attribute name="menu" value="/WEB-INF/jsp/contentsMenu.jsp"/>
 	</definition>
 	
 	<definition name="content" extends="contents">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/content.jsp"/>
-		<put-attribute name="menu" value="Content Menu"/>
+		<put-attribute name="menu" value="/WEB-INF/jsp/contentMenu.jsp"/>
 	</definition>
 	
 	<definition name="services" extends="base">
@@ -45,6 +52,12 @@
 	</definition>
 
 	<definition name="error" extends="base">
+		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
+		<put-attribute name="mainTab" value="" />
+		<put-attribute name="menu" value="No Menu: Error"/>
+	</definition>
+
+	<definition name="exception" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
 		<put-attribute name="mainTab" value="" />
 		<put-attribute name="menu" value="No Menu: Error"/>

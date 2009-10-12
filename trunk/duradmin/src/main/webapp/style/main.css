@@ -179,7 +179,7 @@ div.actions {
 	#text-align: left;	
 }
 
-table.basic-form {
+table.basic-form, table.property-list {
 	border:1px solid #CCC;
 }
 
@@ -188,7 +188,7 @@ div.basic-form-buttons{
 	
 }
 
-.basic-form tr {
+.basic-form tr, .property-list tr  {
 	border-bottom: 1px solid #CCC;	
 }
 td.label {

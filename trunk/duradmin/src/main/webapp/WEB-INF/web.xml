@@ -62,10 +62,7 @@
     <url-pattern>*.htm</url-pattern>
   </servlet-mapping>
   
-  <servlet-mapping>
-    <servlet-name>duradmin</servlet-name>
-    <url-pattern>*.action</url-pattern>
-  </servlet-mapping>
+
 
   <servlet-mapping>
     <servlet-name>duradmin</servlet-name>

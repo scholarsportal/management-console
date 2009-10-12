@@ -1,12 +1,14 @@
 
 package org.duracloud.duradmin.domain;
 
+import java.io.Serializable;
+
 /**
  * Stores content metadata.
  * 
  * @author Bill Branan
  */
-public class ContentMetadata {
+public class ContentMetadata implements Serializable{
 
     private String mimetype;
 

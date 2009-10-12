@@ -4,54 +4,68 @@ package org.duracloud.duradmin.control;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
+import org.duracloud.duradmin.util.ControllerUtils;
+import org.duracloud.duradmin.util.MessageUtils;
+import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ContentController
-        extends BaseController {
+        extends BaseFormController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    private static final String CONTENT_ITEM = "contentItem";
+    protected final Log log = LogFactory.getLog(getClass());
 
     public ContentController() {
         setCommandClass(ContentItem.class);
-        setCommandName("content");
+        setCommandName(CONTENT_ITEM);
     }
 
+    @Override
+    protected boolean isFormSubmission(HttpServletRequest request) {
+        // TODO Auto-generated method stub
+        return true;
+    }
+    
+    
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
         ContentItem contentItem = (ContentItem) command;
         String spaceId = contentItem.getSpaceId();
         String contentId = contentItem.getContentId();
+        ModelAndView mav = new ModelAndView(getSuccessView());
 
-        if (spaceId == null || spaceId.equals("")) {
-            throw new IllegalArgumentException("Space ID must be provided.");
-        }
-        if (contentId == null || contentId.equals("")) {
-            throw new IllegalArgumentException("Content ID must be provided.");
-        }
+        ControllerUtils.checkContentRequestParams(spaceId,contentId);
+
 
         ContentStore store = null;
         try {
             store = getContentStore();
         } catch (Exception se) {
-            ModelAndView mav = new ModelAndView("error");
+            mav.setViewName("error");
             mav.addObject("error", se.getMessage());
             return mav;
         }
 
-        Map<String, String> contentMetadata = null;
+        Map<String, String> contentMetadata = store.getContentMetadata(spaceId, contentId);
+
         String action = contentItem.getAction();
         if (action != null && action.equals("update")) {
             String newMime = contentItem.getContentMimetype();
-            if (newMime != null) {
-                contentMetadata = new HashMap<String, String>();
-                contentMetadata.put(ContentStore.CONTENT_MIMETYPE, newMime);
-                store.setContentMetadata(spaceId, contentId, contentMetadata);
+            if (!StringUtils.isEmptyOrAllWhiteSpace(newMime) && 
+                    !newMime.equals(contentMetadata.get(ContentStore.CONTENT_MIMETYPE))) {
+                Map<String,String> updatedMetadata = new HashMap<String, String>();
+                updatedMetadata.put(ContentStore.CONTENT_MIMETYPE, newMime);
+                store.setContentMetadata(spaceId, contentId, updatedMetadata);
+                MessageUtils.addFlashMessage("Successfully modified content.", mav);
             }
         }
 
@@ -66,8 +80,10 @@ public class ContentController
                 .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
         contentItem.setMetadata(metadata);
 
-        ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject("content", contentItem);
+        mav.addObject(CONTENT_ITEM, contentItem);
+        mav.addObject("baseURL", store.getBaseURL());
+        mav.addObject("title", "Content Detail");
+        
 
         return mav;
     }

@@ -12,7 +12,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ServicesController
-        extends BaseController {
+        extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
 

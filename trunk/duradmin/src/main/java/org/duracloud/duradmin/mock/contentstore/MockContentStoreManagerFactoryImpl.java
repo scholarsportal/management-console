@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Hex;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
@@ -19,7 +20,7 @@ public class MockContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {
 
     private ContentStoreManager contentStoreManager;
-    @Override
+
     public ContentStoreManager create() throws Exception {
         if(this.contentStoreManager == null){
             this.contentStoreManager = new MockContentStoreManager();
@@ -31,21 +32,20 @@ public class MockContentStoreManagerFactoryImpl
             implements ContentStoreManager {
         private ContentStore contentStore;
         
-        @Override
         public ContentStore getContentStore(String storeID)
                 throws ContentStoreException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public Map<String, ContentStore> getContentStores()
                 throws ContentStoreException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public ContentStore getPrimaryContentStore()
                 throws ContentStoreException {
             if(this.contentStore == null){
@@ -70,12 +70,20 @@ public class MockContentStoreManagerFactoryImpl
                 metadata.put(ContentStore.SPACE_CREATED, new Date().toString());
                 metadata.put(ContentStore.SPACE_ACCESS, AccessType.OPEN.name());
                 s.setMetadata(metadata);
+                
+                List<String> contentIds = new ArrayList<String>();
+                for (int j = 0; j < 10; j++) {
+                    contentIds.add("Item-" + j);
+                }
+                
+                s.setContentIds(contentIds);
+
                 spaceMap.put(s.getId(), s);
             }
 
         }
 
-        @Override
+        
         public String addContent(String spaceId,
                                  String contentId,
                                  InputStream content,
@@ -87,7 +95,7 @@ public class MockContentStoreManagerFactoryImpl
             return null;
         }
 
-        @Override
+        
         public void createSpace(String spaceId,
                                 Map<String, String> spaceMetadata)
                 throws ContentStoreException {
@@ -105,75 +113,80 @@ public class MockContentStoreManagerFactoryImpl
                spaceMap.put(spaceId, space);
         }
 
-        @Override
+        
         public void deleteContent(String spaceId, String contentId)
                 throws ContentStoreException {
 
         }
 
-        @Override
+        
         public void deleteSpace(String spaceId) throws ContentStoreException {
                spaceMap.remove(spaceId);
         }
 
-        @Override
+        
         public String getBaseURL() {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public Content getContent(String spaceId, String contentId)
                 throws ContentStoreException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public Map<String, String> getContentMetadata(String spaceId,
                                                       String contentId)
                 throws ContentStoreException {
-            // TODO Auto-generated method stub
-            return null;
+            Map<String, String> metadata = new HashMap<String,String>();
+            metadata.put(ContentStore.CONTENT_CHECKSUM, new String(Hex.encodeHex(String.valueOf(spaceId+contentId).getBytes())));
+            metadata.put(ContentStore.CONTENT_MIMETYPE, "image/jpeg");
+            metadata.put(ContentStore.CONTENT_SIZE, String.valueOf(100000));
+            metadata.put(ContentStore.CONTENT_MODIFIED, new Date().toString());
+            return metadata;
         }
+        
 
-        @Override
+        
         public Space getSpace(String spaceId) throws ContentStoreException {
             return spaceMap.get(spaceId);
         }
 
-        @Override
+        
         public AccessType getSpaceAccess(String spaceId)
                 throws ContentStoreException {
             String access = spaceMap.get(spaceId).getMetadata().get(ContentStore.SPACE_ACCESS);
             return AccessType.valueOf(access);
         }
 
-        @Override
+        
         public Map<String, String> getSpaceMetadata(String spaceId)
                 throws ContentStoreException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public List<Space> getSpaces() throws ContentStoreException {
             return new ArrayList<Space>(spaceMap.values());
         }
 
-        @Override
+        
         public String getStorageProviderType() {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public String getStoreId() {
             // TODO Auto-generated method stub
             return null;
         }
 
-        @Override
+        
         public void setContentMetadata(String spaceId,
                                        String contentId,
                                        Map<String, String> contentMetadata)
@@ -182,14 +195,14 @@ public class MockContentStoreManagerFactoryImpl
 
         }
 
-        @Override
+        
         public void setSpaceAccess(String spaceId, AccessType spaceAccess)
                 throws ContentStoreException {
             // TODO Auto-generated method stub
 
         }
 
-        @Override
+        
         public void setSpaceMetadata(String spaceId,
                                      Map<String, String> spaceMetadata)
                 throws ContentStoreException {

@@ -1,12 +1,14 @@
 
 package org.duracloud.duradmin.domain;
 
+import java.io.Serializable;
+
 /**
  * Stores space metadata.
  * 
  * @author Bill Branan
  */
-public class SpaceMetadata {
+public class SpaceMetadata implements Serializable{
 
     private String access;
 

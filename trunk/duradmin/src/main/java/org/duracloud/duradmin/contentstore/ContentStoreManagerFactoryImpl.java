@@ -8,9 +8,8 @@ import org.duracloud.duradmin.config.DuradminConfig;
 public class ContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {
 
-    @Override
     public ContentStoreManager create() throws Exception {
-        return new ContentStoreManagerImpl(DuradminConfig.getHost(),
-                                           DuradminConfig.getPort());
+            return new ContentStoreManagerImpl(DuradminConfig.getHost(),
+                                               DuradminConfig.getPort());
     }
 }

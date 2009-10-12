@@ -17,6 +17,18 @@
 
   <repositories>
     <repository>
+      <id>com.springsource.repository.bundles.release</id>
+      <name>SpringSource Enterprise Bundle Repository - SpringSource Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
+
+    <repository>
       <id>dojo</id>
       <name>Dojo Maven2 Repository</name>
       <url>http://download.dojotoolkit.org/maven2</url>
@@ -47,7 +59,7 @@
     </repository>		
   </repositories>
   <build>
-    <plugins>     
+  	<plugins>     
 	  <plugin>
 	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-war-plugin</artifactId>
@@ -64,6 +76,7 @@
 	    </configuration>
       </plugin>
     </plugins>
+    
   </build>
 
   <dependencies>
@@ -107,6 +120,18 @@
       <scope>compile</scope>
     </dependency>
     
+    <dependency>
+	  <groupId>org.springframework.webflow</groupId>
+	  <artifactId>org.springframework.binding</artifactId>
+	  <version>2.0.8.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>org.springframework.webflow</artifactId>
+      <version>2.0.8.RELEASE</version>
+    </dependency>
+   
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
@@ -218,7 +243,6 @@
 		      <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-war-plugin</artifactId>
-		        <version>2.0</version>
 		        <configuration>
 		          <webappDirectory>${tomcat.deploy.dir}/${project.artifactId}</webappDirectory>
 		        </configuration>
