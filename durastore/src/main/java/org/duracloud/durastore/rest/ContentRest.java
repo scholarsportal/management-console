@@ -30,7 +30,7 @@ import org.duracloud.storage.provider.StorageProvider;
  *
  * @author Bill Branan
  */
-@Path("/{spaceID}/{contentID}")
+@Path("/{spaceID}/{contentID: [^?]+}")
 public class ContentRest extends BaseRest {
 
     /**
