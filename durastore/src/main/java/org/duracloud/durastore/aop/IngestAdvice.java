@@ -1,16 +1,15 @@
 package org.duracloud.durastore.aop;
 
-import java.lang.reflect.Method;
-
-import javax.jms.Destination;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.core.Ordered;
 import org.springframework.jms.core.JmsTemplate;
 
+import javax.jms.Destination;
+import java.lang.reflect.Method;
+
 public class IngestAdvice
-        implements AfterReturningAdvice {
+        implements AfterReturningAdvice, Ordered {
 
     private final Logger log = Logger.getLogger(getClass());
 
@@ -25,6 +24,8 @@ public class IngestAdvice
     private JmsTemplate jmsTemplate;
 
     private Destination destination;
+
+    private int order;
 
     public void afterReturning(Object returnObj,
                                Method method,
@@ -115,5 +116,13 @@ public class IngestAdvice
     public void setDestination(Destination destination) {
         this.destination = destination;
     }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }    
 
 }

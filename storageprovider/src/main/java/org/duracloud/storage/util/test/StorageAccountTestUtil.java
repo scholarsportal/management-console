@@ -23,7 +23,9 @@ public class StorageAccountTestUtil {
             try {
                  cred = dbUtil.findCredentialForProvider(type);
             } catch (Exception e) {
-                if(type.equals(StorageProviderType.TEST)) {
+                if(type.equals(StorageProviderType.TEST_RETRY) ||
+                   type.equals(StorageProviderType.TEST_VERIFY_CREATE) ||
+                   type.equals(StorageProviderType.TEST_VERIFY_DELETE)) {
                     cred = new Credential("", "");
                 } else {
                     // No credentials available for provider type - skip
