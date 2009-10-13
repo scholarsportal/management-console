@@ -1,10 +1,14 @@
 package org.duracloud.durastore.rest;
 
-import junit.framework.TestCase;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -19,8 +23,7 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class TestContentRest
-        extends TestCase {
+public class TestContentRest {
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
 
@@ -30,14 +33,17 @@ public class TestContentRest
 
     private static String spaceId;
 
+    private static String[] contentIds = {"content1",
+                                          "dir0/dir1/content2",
+                                          "dir0/dir1/content3?storeID=0"};
+
     static {
         String random = String.valueOf(new Random().nextInt(99999));
         spaceId = "space" + random;
     }
 
-    @Override
-    @Before
-    protected void setUp() throws Exception {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
         baseUrl = RestTestHelper.getBaseUrl();
 
         // Initialize the Instance
@@ -49,9 +55,22 @@ public class TestContentRest
         response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
         assertEquals(201, statusCode);
+    }
 
-        // Add content1 to space
-        String url = baseUrl + "/" + spaceId + "/content1";
+    @Before
+    public void setUp() throws Exception {
+
+        for (String contentId : contentIds) {
+            setUpContent(contentId);
+        }
+    }
+
+    private void setUpContent(String contentId) throws Exception {
+        HttpResponse response;
+        int statusCode;
+
+        // Add content to space
+        String url = baseUrl + "/" + spaceId + "/" + contentId;
         Map<String, String> headers = new HashMap<String, String>();
         headers.put(RestTestHelper.METADATA_NAME,
                     RestTestHelper.METADATA_VALUE);
@@ -60,27 +79,49 @@ public class TestContentRest
         assertEquals(201, statusCode);
     }
 
-    @Override
     @After
-    protected void tearDown() throws Exception {
-        // Delete content1 from space
-        String url = baseUrl + "/" + spaceId + "/content1";
+    public void tearDown() throws Exception {
+
+        for (String contentId : contentIds) {
+            tearDownContent(contentId);
+        }
+    }
+
+    private void tearDownContent(String contentId) throws Exception {
+        // Delete content from space
+        String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.delete(url);
 
         assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
-        assertTrue(responseText.contains("content1"));
-        assertTrue(responseText.contains("deleted"));
 
+        assertTrue(responseText.contains(removeParams(contentId)));
+        assertTrue(responseText.contains("deleted"));
+    }
+
+    private String removeParams(String contentId) {
+        int paramStart = contentId.indexOf('?');
+        int endIndex = paramStart > 0 ? paramStart : contentId.length();
+        return contentId.substring(0, endIndex);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
         // Delete space
-        response = RestTestHelper.deleteSpace(spaceId);
+        HttpResponse response = RestTestHelper.deleteSpace(spaceId);
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
     public void testGetContent() throws Exception {
-        String url = baseUrl + "/" + spaceId + "/content1";
+        for (String contentId : contentIds) {
+            doTestGetContent(contentId);
+        }
+    }
+
+    private void doTestGetContent(String contentId) throws Exception {
+        String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.get(url);
 
         assertEquals(200, response.getStatusCode());
@@ -88,46 +129,59 @@ public class TestContentRest
         assertNotNull(content);
         assertEquals(CONTENT, content);
 
-        String contentType =
-            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
+        String contentType = response.getResponseHeader(HttpHeaders.CONTENT_TYPE)
+            .getValue();
         assertNotNull(contentType);
         assertTrue(contentType.contains("text/xml"));
     }
 
     @Test
     public void testGetContentMetadata() throws Exception {
-        String url = baseUrl + "/" + spaceId + "/content1";
+        for (String contentId : contentIds) {
+            doTestGetContentMetadata(contentId);
+        }
+    }
+
+    private void doTestGetContentMetadata(String contentId) throws Exception {
+        String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.head(url);
         assertEquals(200, response.getStatusCode());
 
-        testMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
+        verifyMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
-        String contentType =
-            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
+        String contentType = response.getResponseHeader(HttpHeaders.CONTENT_TYPE)
+            .getValue();
         assertNotNull(contentType);
         assertTrue(contentType.contains("text/xml"));
 
-        String contentChecksum =
-            response.getResponseHeader("Content-MD5").getValue();
+        String contentChecksum = response.getResponseHeader("Content-MD5")
+            .getValue();
         assertNotNull(contentChecksum);
 
-        String contentETag =
-            response.getResponseHeader(HttpHeaders.ETAG).getValue();
+        String contentETag = response.getResponseHeader(HttpHeaders.ETAG)
+            .getValue();
         assertNotNull(contentETag);
         assertEquals(contentChecksum, contentETag);
 
-        String contentModified =
-            response.getResponseHeader(HttpHeaders.LAST_MODIFIED).getValue();
+        String contentModified = response.getResponseHeader(HttpHeaders.LAST_MODIFIED)
+            .getValue();
         assertNotNull(contentModified);
 
-        testMetadata(response,
-                     RestTestHelper.METADATA_NAME,
-                     RestTestHelper.METADATA_VALUE);
+        verifyMetadata(response,
+                       RestTestHelper.METADATA_NAME,
+                       RestTestHelper.METADATA_VALUE);
     }
 
     @Test
     public void testUpdateContentMetadata() throws Exception {
-        String url = baseUrl + "/" + spaceId + "/content1";
+        for (String contentId : contentIds) {
+            doTestUpdateContentMetadata(contentId);
+        }
+    }
+
+    private void doTestUpdateContentMetadata(String contentId)
+        throws Exception {
+        String url = baseUrl + "/" + spaceId + "/" + contentId;
         Map<String, String> headers = new HashMap<String, String>();
         String newContentMime = "text/plain";
         headers.put(HttpHeaders.CONTENT_TYPE, newContentMime);
@@ -139,21 +193,22 @@ public class TestContentRest
         assertEquals(200, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
-        assertTrue(responseText.contains("content1"));
+        assertTrue(responseText.contains(removeParams(contentId)));
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/" + spaceId + "/content1";
+        url = baseUrl + "/" + spaceId + "/" + contentId;
         response = restHelper.head(url);
 
         assertEquals(200, response.getStatusCode());
 
-        testMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
-        testMetadata(response, newMetaName, newMetaValue);
+        verifyMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
+        verifyMetadata(response, newMetaName, newMetaValue);
     }
 
-    private void testMetadata(HttpResponse response, String name, String value)
-            throws Exception {
+    private void verifyMetadata(HttpResponse response,
+                                String name,
+                                String value) throws Exception {
         String metadata = response.getResponseHeader(name).getValue();
         assertNotNull(metadata);
         assertEquals(metadata, value);
