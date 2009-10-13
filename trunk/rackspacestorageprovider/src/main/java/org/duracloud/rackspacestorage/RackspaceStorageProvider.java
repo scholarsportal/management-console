@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.text.ParseException;
 
 /**
  * Provides content storage backed by Rackspace's Cloud Files service.
@@ -161,8 +163,13 @@ public class RackspaceStorageProvider
         // Add space metadata
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = new Date(System.currentTimeMillis());
-        spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+        spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         setSpaceMetadata(spaceId, spaceMetadata);
+    }
+
+    private String formattedDate(Date created) {
+        RFC822_DATE_FORMAT.setTimeZone(TimeZone.getDefault());
+        return RFC822_DATE_FORMAT.format(created);
     }
 
     private void createContainer(String spaceId) {
@@ -243,8 +250,11 @@ public class RackspaceStorageProvider
 
         FilesContainerInfo containerInfo = getContainerInfo(containerName);
 
-        spaceMetadata.put(METADATA_SPACE_COUNT, String
-                .valueOf(containerInfo.getObjectCount()));
+        final int sysMetadataObjectCount = 1;
+        int totalObjectCount = containerInfo.getObjectCount();
+        int visibleObjectCount = totalObjectCount - sysMetadataObjectCount;
+        spaceMetadata.put(METADATA_SPACE_COUNT,
+                          String.valueOf(visibleObjectCount));
 
         spaceMetadata.put("space-total-size", String.valueOf(containerInfo
                 .getTotalSize()));
@@ -281,8 +291,9 @@ public class RackspaceStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
-            spaceMetadata.put(METADATA_SPACE_CREATED, creationTimestamp(spaceId));
+        Date created = getCreationDate(spaceId, spaceMetadata);
+        if (created != null) {
+            spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         }
 
         String containerName = getContainerName(spaceId);
@@ -294,7 +305,25 @@ public class RackspaceStorageProvider
                    is);
     }
 
-    private String creationTimestamp(String spaceId) {
+    private Date getCreationDate(String spaceId,
+                                 Map<String, String> spaceMetadata) {
+        String dateText;
+        if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
+            dateText = getCreationTimestamp(spaceId);
+        } else {
+            dateText = spaceMetadata.get(METADATA_SPACE_CREATED);
+        }
+
+        Date created = null;
+        try {
+            created =  RFC822_DATE_FORMAT.parse(dateText);
+        } catch (ParseException e) {
+            log.warn("Unable to parse date: '" + dateText + "'");
+        }
+        return created;
+    }
+
+    private String getCreationTimestamp(String spaceId) {
         Map<String, String> spaceMd = getSpaceMetadata(spaceId);
         String creationTime = spaceMd.get(METADATA_SPACE_CREATED);
 

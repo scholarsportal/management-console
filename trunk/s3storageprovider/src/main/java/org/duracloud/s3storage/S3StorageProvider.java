@@ -3,9 +3,10 @@ package org.duracloud.s3storage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.storage.error.StorageException;
-import static org.duracloud.storage.error.StorageException.RETRY;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
+import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.util.StorageProviderUtil;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
@@ -24,6 +25,7 @@ import org.jets3t.service.security.AWSCredentials;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.DigestInputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * Provides content storage backed by Amazon's Simple Storage Service.
@@ -165,7 +168,7 @@ public class S3StorageProvider
         // Add space metadata
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = bucket.getCreationDate();
-        spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
+        spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         setSpaceMetadata(spaceId, spaceMetadata);
     }
 
@@ -180,6 +183,11 @@ public class S3StorageProvider
                     + " due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
+    }
+
+     private String formattedDate(Date created) {
+        RFC822_DATE_FORMAT.setTimeZone(TimeZone.getDefault());
+        return RFC822_DATE_FORMAT.format(created);
     }
 
     /**
@@ -220,21 +228,35 @@ public class S3StorageProvider
         InputStream is = getContent(spaceId, bucketName + SPACE_METADATA_SUFFIX);
         Map<String, String> spaceMetadata = loadMetadata(is);
 
-        if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
-            S3Bucket bucket = getBucket(bucketName);
-            Date created = bucket.getCreationDate();
-            if (created != null) {
-                spaceMetadata.put(METADATA_SPACE_CREATED, created.toString());
-            }
+        Date created = getCreationDate(bucketName, spaceMetadata);
+        if (created != null) {
+            spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         }
 
-        int count = getCompleteSpaceContents(spaceId).size();
+        long count = StorageProviderUtil.count(getSpaceContents(spaceId));
         spaceMetadata.put(METADATA_SPACE_COUNT, String.valueOf(count));
 
         AccessType access = getSpaceAccess(spaceId);
         spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
 
         return spaceMetadata;
+    }
+
+    private Date getCreationDate(String bucketName,
+                                 Map<String, String> spaceMetadata) {
+        Date created = null;
+        if (!spaceMetadata.containsKey(METADATA_SPACE_CREATED)) {
+            S3Bucket bucket = getBucket(bucketName);
+            created = bucket.getCreationDate();
+        } else {
+            String dateText = spaceMetadata.get(METADATA_SPACE_CREATED);
+            try {
+                created = RFC822_DATE_FORMAT.parse(dateText);
+            } catch (ParseException e) {
+                log.warn("Unable to parse date: '" + dateText + "'");
+            }
+        }
+        return created;
     }
 
     private S3Bucket getBucket(String bucketName) {
@@ -570,7 +592,7 @@ public class S3StorageProvider
             Object metaValueObj = contentItemMetadata.get(metaName);
             String metaValue;
             if (metaValueObj instanceof Date) {
-                metaValue = RFC822_DATE_FORMAT.format(metaValueObj);
+                metaValue = formattedDate((Date) metaValueObj);
             } else {
                 metaValue = metaValueObj.toString();
             }
