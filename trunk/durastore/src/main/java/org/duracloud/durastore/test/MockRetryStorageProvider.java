@@ -1,21 +1,22 @@
 package org.duracloud.durastore.test;
 
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.provider.StorageProvider;
-
 import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider;
+
 /**
- * Storage Provider implementation used for system testing 
+ * Storage Provider implementation used for testing retry AOP
  *
  * @author: Bill Branan
  * Date: Oct 7, 2009
  */
-public class MockStorageProvider implements StorageProvider {
+public class MockRetryStorageProvider implements StorageProvider {
 
     private static int getSpaceContentsAttempts = 0;
 

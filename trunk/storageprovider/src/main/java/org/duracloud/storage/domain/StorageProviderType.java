@@ -8,7 +8,9 @@ public enum StorageProviderType {
     EMC_SECONDARY("emc-secondary"),
     RACKSPACE("rackspace"),
     UNKNOWN("unknown"),
-    TEST("test");
+    TEST_RETRY("test-retry"),
+    TEST_VERIFY_CREATE("test-verify-create"),
+    TEST_VERIFY_DELETE("test-verify-delete");
 
     private final String text;
 

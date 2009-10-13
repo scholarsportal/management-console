@@ -1,6 +1,12 @@
 package org.duracloud.durastore.util;
 
-import org.duracloud.durastore.test.MockStorageProvider;
+import java.io.InputStream;
+
+import java.util.Iterator;
+
+import org.duracloud.durastore.test.MockRetryStorageProvider;
+import org.duracloud.durastore.test.MockVerifyCreateStorageProvider;
+import org.duracloud.durastore.test.MockVerifyDeleteStorageProvider;
 import org.duracloud.emcstorage.EMCStorageProvider;
 import org.duracloud.rackspacestorage.RackspaceStorageProvider;
 import org.duracloud.s3storage.S3StorageProvider;
@@ -11,9 +17,6 @@ import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.BrokeredStorageProvider;
 import org.duracloud.storage.provider.StatelessStorageProvider;
 import org.duracloud.storage.provider.StorageProvider;
-
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * Performs storage provider services
@@ -112,8 +115,12 @@ public class StorageProviderFactory {
             storageProvider = new RackspaceStorageProvider(username, password);
         } else if (type.equals(StorageProviderType.EMC)) {
             storageProvider = new EMCStorageProvider(username, password);
-        } else if (type.equals(StorageProviderType.TEST)) {
-            storageProvider = new MockStorageProvider();
+        } else if (type.equals(StorageProviderType.TEST_RETRY)) {
+            storageProvider = new MockRetryStorageProvider();
+        } else if (type.equals(StorageProviderType.TEST_VERIFY_CREATE)) {
+            storageProvider = new MockVerifyCreateStorageProvider();
+        } else if (type.equals(StorageProviderType.TEST_VERIFY_DELETE)) {
+            storageProvider = new MockVerifyDeleteStorageProvider();
         }
 
         return new BrokeredStorageProvider(statelessProvider,

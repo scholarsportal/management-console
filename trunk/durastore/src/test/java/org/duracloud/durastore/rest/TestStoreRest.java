@@ -88,7 +88,11 @@ public class TestStoreRest
                // TODO: Enable this when EMC provider is working
                !type.equals(StorageProviderType.EMC) &&
                // TODO: Enable this when Sun provider is working
-               !type.equals(StorageProviderType.SUN)) {
+               !type.equals(StorageProviderType.SUN) &&
+               // Test types
+               !type.equals(StorageProviderType.TEST_RETRY) &&
+               !type.equals(StorageProviderType.TEST_VERIFY_CREATE) &&
+               !type.equals(StorageProviderType.TEST_VERIFY_DELETE)) {
                 log.info("Testing storage account with id " +
                          acctId + " and type " + type.name());
                 testStore(acctId);

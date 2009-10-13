@@ -4,12 +4,17 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.log4j.Logger;
 import org.duracloud.storage.error.StorageException;
+import org.springframework.core.Ordered;
 
-public class RetryAdvice implements MethodInterceptor {
+public class RetryAdvice implements MethodInterceptor, Ordered {
 
     private final Logger log = Logger.getLogger(getClass());
 
     private int maxRetries;
+
+    private int waitTime;
+
+    private int order;
 
     public Object invoke(MethodInvocation invocation) throws Throwable {
         int numAttempts = 0;
@@ -21,7 +26,7 @@ public class RetryAdvice implements MethodInterceptor {
                 if (se.isRetry()) {
                     if (numAttempts <= maxRetries) {
                         logRetry(invocation, se.getMessage());
-                        Thread.sleep(5000);
+                        Thread.sleep(waitTime);
                     } else {
                         logRetriesExceeded(invocation, se.getMessage());
                         throw se;
@@ -82,4 +87,20 @@ public class RetryAdvice implements MethodInterceptor {
     public void setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
     }
+
+    public int getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }    
 }
