@@ -1,12 +1,12 @@
 package org.duracloud.client;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.storage.provider.StorageProvider;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides access to a content store
@@ -47,13 +47,12 @@ public interface ContentStore {
 
 
     /**
-     * Provides a listing of all spaces. Spaces in the list include metadata but
-     * not a listing of content.
+     * Provides a listing of all spaces IDs.
      *
      * @return Iterator listing spaceIds
      * @throws ContentStoreException
      */
-    public List<Space> getSpaces() throws ContentStoreException;
+    public List<String> getSpaces() throws ContentStoreException;
 
     /**
      * Provides a Space, including a listing of all of the content files within
@@ -123,7 +122,7 @@ public interface ContentStore {
      * Sets the accessibility of a space to either OPEN or CLOSED.
      *
      * @param spaceId
-     * @param access
+     * @param spaceAccess
      * @throws ContentStoreException
      */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)

@@ -1,14 +1,6 @@
 package org.duracloud.client;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.common.util.ChecksumUtil;
@@ -20,6 +12,13 @@ import org.duracloud.storage.util.test.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Runtime test of DuraCloud java client.
@@ -55,7 +54,7 @@ public class TestContentStore
 
     @Override
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         String url = "http://" + host + ":" + getPort() + "/" + context + "/stores";
         if(accountXml == null) {
             accountXml = StorageAccountTestUtil.buildTestAccountXml();
@@ -81,7 +80,7 @@ public class TestContentStore
 
     @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         // Make sure the space is deleted
         try {
             store.deleteSpace(spaceId);
@@ -134,24 +133,16 @@ public class TestContentStore
         store.createSpace(spaceId, spaceMetadata);
 
         // Check space
-        List<Space> spaces = store.getSpaces();
+        List<String> spaces = store.getSpaces();
         assertNotNull(spaces);
         assertTrue(spaces.size() >= 1);
-        Space spaceFromList = null;
-        for(Space space : spaces) {
-            if(space.getId().equals(spaceId)) {
-                spaceFromList = space;
-                break;
-            }
-        }
-        assertNotNull(spaceFromList);
+        assertTrue(spaces.contains(spaceId));
 
         Space space = store.getSpace(spaceId);
         assertNotNull(space);
         assertNotNull(space.getId());
         assertEquals(spaceId, space.getId());
         assertNotNull(space.getContentIds());
-        assertTrue(space.equals(spaceFromList));
 
         // Check space metadata
         Map<String, String> responseMetadata = space.getMetadata();

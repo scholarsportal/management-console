@@ -45,10 +45,6 @@ public  abstract class BaseCommandController extends AbstractCommandController{
     public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
         this.controllerSupport.setContentStoreProvider(contentStoreProvider);
     }
-    
-    protected List<Space> getSpaces() throws Exception {
-        return controllerSupport.getSpaces();
-    }
 
     protected ServicesManager getServicesManager() throws Exception {
         return controllerSupport.getServicesManager();
