@@ -1,11 +1,6 @@
 package org.duracloud.durastore.rest;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.common.web.RestResourceException;
 import org.duracloud.durastore.util.StorageProviderFactory;
 import org.duracloud.storage.error.StorageException;
@@ -14,6 +9,10 @@ import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides interaction with spaces
@@ -29,6 +28,7 @@ public class SpaceResource {
      * always included in the list, closed spaces are included based
      * on user authorization.
      *
+     * @param storeID
      * @return XML listing of spaces
      */
     public static String getSpaces(String storeID)
@@ -42,16 +42,9 @@ public class SpaceResource {
             Iterator<String> spaces = storage.getSpaces();
             while(spaces.hasNext()) {
                 String spaceID = spaces.next();
-                try {
-                    Element spaceElem = getSpaceXML(storage, spaceID);
-                    spacesElem.addContent(spaceElem);
-                } catch(StorageException e) {
-                    // This bucket may not be part of DuraSpace, log the
-                    // error and continue attempting to build spaces list
-                    String error = "Error attempting to build space XML for '" +
-                                   spaceID + "': " + e.getMessage();
-                    log.warn(error);
-                }
+                Element spaceElem = new Element("space");
+                spaceElem.setAttribute("id", spaceID);
+                spacesElem.addContent(spaceElem);
             }
         } catch (StorageException e) {
             String error = "Error attempting to build spaces XML: " + e.getMessage();
@@ -65,31 +58,10 @@ public class SpaceResource {
     }
 
     /**
-     * Builds space metadata XML tree
-     */
-    private static Element getSpaceXML(StorageProvider storage, String spaceID)
-    throws StorageException {
-        Element spaceElem = new Element("space");
-        spaceElem.setAttribute("id", spaceID);
-
-        Map<String, String> metadata = storage.getSpaceMetadata(spaceID);
-        if(metadata != null) {
-            Iterator<String> metadataNames = metadata.keySet().iterator();
-            while(metadataNames.hasNext()) {
-                String metadataName = (String)metadataNames.next();
-                String metadataValue = metadata.get(metadataName);
-                Element metadataElem = new Element(metadataName);
-                metadataElem.setText(metadataValue);
-                spaceElem.addContent(metadataElem);
-            }
-        }
-        return spaceElem;
-    }
-
-    /**
      * Gets the metadata of a space.
      *
      * @param spaceID
+     * @param storeID
      * @return Map of space metadata
      */
     public static Map<String, String> getSpaceMetadata(String spaceID, String storeID)
@@ -110,6 +82,7 @@ public class SpaceResource {
      * Gets a listing of the contents of a space.
      *
      * @param spaceID
+     * @param storeID
      * @return XML listing of space contents
      */
     public static String getSpaceContents(String spaceID, String storeID)
@@ -151,8 +124,9 @@ public class SpaceResource {
      * Adds a space.
      *
      * @param spaceID
-     * @param spaceName
      * @param spaceAccess
+     * @param userMetadata
+     * @param storeID
      */
     public static void addSpace(String spaceID,
                                 String spaceAccess,
@@ -181,8 +155,9 @@ public class SpaceResource {
      * Updates the metadata of a space.
      *
      * @param spaceID
-     * @param spaceName
      * @param spaceAccess
+     * @param userMetadata
+     * @param storeID
      */
     public static void updateSpaceMetadata(String spaceID,
                                            String spaceAccess,
@@ -248,6 +223,7 @@ public class SpaceResource {
      * Deletes a space, removing all included content.
      *
      * @param spaceID
+     * @param storeID
      */
     public static void deleteSpace(String spaceID, String storeID)
     throws RestResourceException {

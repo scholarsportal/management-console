@@ -42,7 +42,9 @@ public class ContentStoreImpl implements ContentStore{
     /**
      * Creates a ContentStore
      *
-     * @param storeID
+     * @param baseURL
+     * @param type
+     * @param storeId
      */
     public ContentStoreImpl(String baseURL, StorageProviderType type, String storeId) {
         this.baseURL = baseURL;
@@ -79,14 +81,14 @@ public class ContentStoreImpl implements ContentStore{
     }
     
     @Override
-    public List<Space> getSpaces() throws ContentStoreException {
+    public List<String> getSpaces() throws ContentStoreException {
         String url = buildURL("/spaces");
         try {
             HttpResponse response = restHelper.get(url);
             checkResponse(response, 200);
             String responseText = response.getResponseBody();
             if (responseText != null) {
-                List<Space> spaces = new ArrayList<Space>();
+                List<String> spaceIds = new ArrayList<String>();
                 InputStream is =
                         new ByteArrayInputStream(responseText.getBytes());
                 SAXBuilder builder = new SAXBuilder();
@@ -94,19 +96,10 @@ public class ContentStoreImpl implements ContentStore{
                 Element spacesElem = doc.getRootElement();
                 Iterator<?> spaceList = spacesElem.getChildren().iterator();
                 while (spaceList.hasNext()) {
-                    Space space = new Space();
                     Element spaceElem = (Element) spaceList.next();
-                    space.setId(spaceElem.getAttributeValue("id"));
-                    Iterator<?> spaceMetadata =
-                            spaceElem.getChildren().iterator();
-                    while (spaceMetadata.hasNext()) {
-                        Element metaElem = (Element) spaceMetadata.next();
-                        space.addMetadata(metaElem.getName(), metaElem
-                                .getTextTrim());
-                    }
-                    spaces.add(space);
+                    spaceIds.add((String)(spaceElem.getAttributeValue("id")));
                 }
-                return spaces;
+                return spaceIds;
             } else {
                 throw new ContentStoreException("Response body is empty");
             }

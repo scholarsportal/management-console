@@ -14,16 +14,14 @@
 	
 		</tr>
 		<tbody>
-			<c:forEach items="${spaces}" var="space">
-				<tr id="${space.spaceId}">
+			<c:forEach items="${spaces}" var="spaceId">
+				<tr id="${spaceId}">
 					<td id="actionColumn">
 					<div id="actionDiv" class="actions">
 					<ul>
-						<li><b><a href="contents.htm?spaceId=${space.spaceId}">View</a></b></li>
-						<li><a href="<c:url value="contents/add?spaceId=${space.spaceId}&returnTo=${returnTo}"/>">Add Content</a></li>
-						
+						<li><a href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${returnTo}"/>">Add Content</a></li>					
 						<li><a href="<c:url value="removeSpace.htm">
-								   		<c:param name="spaceId" value="${space.spaceId}"/>
+								   		<c:param name="spaceId" value="${spaceId}"/>
 								   		<c:param name="returnTo" value="${returnTo}"/>
 								    </c:url>"
 							onclick="return confirmDeleteOperation();">Delete</a>
@@ -31,10 +29,12 @@
 					</ul>
 					</div>
 					</td>
-					<td><c:out value="${space.spaceId}" /></td>
+					<td><a href="contents.htm?spaceId=${spaceId}"><c:out value="${spaceId}" /></a></td>
+                    <!-- Space Metadata is no longer available at this point
 					<td><c:out value="${space.metadata.count}" /></td>
 					<td><c:out value="${space.metadata.access}" /></td>
 					<td><c:out value="${space.metadata.created}" /></td>
+					-->
 	
 				</tr>
 	
