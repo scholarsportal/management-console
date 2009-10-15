@@ -121,7 +121,7 @@ public class MockServiceManager
 		}
 
 		@Override
-		public List<Space> getSpaces() throws ContentStoreException {
+		public List<String> getSpaces() throws ContentStoreException {
 			// TODO Auto-generated method stub
 			return null;
 		}
