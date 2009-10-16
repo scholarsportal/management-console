@@ -16,9 +16,8 @@
 	<link rel="stylesheet"  href="/duradmin/dijit/themes/tundra/tundra.css" type="text/css" />
 	<link rel="stylesheet"  href="/duradmin/style/main.css" type="text/css" />
 	<link rel="stylesheet"  href="/duradmin/style/menu.css" type="text/css" />
-    <tiles:importAttribute name="title" />
     <title>
-    	<spring:message code="application.title" /> :: <spring:message code="${title}" />
+    	<spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
     </title>
   </head>
   <body class="tundra">
