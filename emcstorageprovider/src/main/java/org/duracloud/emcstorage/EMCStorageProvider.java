@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class EMCStorageProvider implements StorageProvider {
 
-    private final Logger log = Logger.getLogger(EMCPathStorageProvider.class);
+    private final Logger log = Logger.getLogger(EMCStorageProvider.class);
 
     private static final String SPACE_ROOT_TAG_NAME = "emc-space-root-tag";
 
