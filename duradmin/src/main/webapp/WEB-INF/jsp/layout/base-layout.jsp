@@ -14,10 +14,12 @@
 	<!-- load the duradmin base -->
 	<script type="text/javascript" src="script/common/base.js"></script>
 	<link rel="stylesheet"  href="/duradmin/dijit/themes/tundra/tundra.css" type="text/css" />
-	<link rel="stylesheet"  href="/duradmin/style/menu_style.css" type="text/css" />
 	<link rel="stylesheet"  href="/duradmin/style/main.css" type="text/css" />
-    
-    <title>Duradmin :: ${title}</title>
+	<link rel="stylesheet"  href="/duradmin/style/menu.css" type="text/css" />
+    <tiles:importAttribute name="title" />
+    <title>
+    	<spring:message code="application.title" /> :: <spring:message code="${title}" />
+    </title>
   </head>
   <body class="tundra">
 
@@ -29,12 +31,7 @@
 			    <tiles:insertAttribute name="menu"/>
    			</td>
    			<td id="main-content">
-   				<div id="main-content-header">
-				    <h3>${title}</h3>
-   				</div>
-   				<div id="main-content-body">
-				    <tiles:insertAttribute name="main-content" />
-   				</div>
+			    <tiles:insertAttribute name="main-content" />
    			</td>
    		</tr>
    	</table>

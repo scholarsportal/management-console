@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;
+import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.domain.SpaceMetadata;
 
@@ -44,5 +45,17 @@ public class SpaceUtil {
         spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
         spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
         return spaceMetadata;
+    }
+    
+    public static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
+        ContentMetadata metadata = new ContentMetadata();
+        metadata
+                .setMimetype(contentMetadata.get(ContentStore.CONTENT_MIMETYPE));
+        metadata.setSize(contentMetadata.get(ContentStore.CONTENT_SIZE));
+        metadata
+                .setChecksum(contentMetadata.get(ContentStore.CONTENT_CHECKSUM));
+        metadata
+                .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
+        return metadata;
     }
 }

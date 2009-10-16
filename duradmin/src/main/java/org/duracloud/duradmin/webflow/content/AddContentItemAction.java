@@ -59,15 +59,16 @@ public class AddContentItemAction implements Serializable{
 
             messageContext.addMessage(new MessageBuilder()
                                           .info()
-                                          .code("contentItemAdded")
-                                          .defaultText("Content added!").build());
+                                          .code("add.contentItem.success")
+                                          .arg(contentId)
+                                          .build());
             return true;
         } catch (ContentStoreException e) {
             log.error(e);
             messageContext.addMessage(
                                new MessageBuilder().error()
-                                   .code("contentNotAdded").defaultText("Content could not be added:{0}")
-                                   .resolvableArg(e.getMessage())
+                                   .code("transaction.failure")
+                                   .arg(e.getMessage())
                                    .build());
             return false;
         }
