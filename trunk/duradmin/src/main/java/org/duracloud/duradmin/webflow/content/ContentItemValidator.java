@@ -11,8 +11,10 @@ public class ContentItemValidator {
         MultipartFile file = contentItem.getFile();
         if (file == null || file.isEmpty()) {
             MessageContext messages = context.getMessageContext();
-            messages.addMessage(new MessageBuilder().error().source("file").
-                                defaultText("A file must be provided in order to add content.").build());
+            messages.addMessage(new MessageBuilder()
+                                    .error()
+                                    .source("file")
+                                    .code("required").build());
         }
     }
 }

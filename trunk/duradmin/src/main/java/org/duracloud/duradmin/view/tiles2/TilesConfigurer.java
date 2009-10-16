@@ -47,7 +47,12 @@ import org.springframework.web.servlet.view.tiles2.SimpleSpringPreparerFactory;
 import org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory;
 import org.springframework.web.servlet.view.tiles2.SpringLocaleResolver;
 import org.springframework.web.servlet.view.tiles2.TilesView;
-
+/* 
+ * TODO REMOVE THIS FILE WHEN UPGRADING TO SPRING 3.0
+ * This is a workaround to fix a 2.5.6 issue that is resolved in 3.0.
+ * --Daniel Bernstein 10/15/2009
+ * 
+ */
 /**
  * Helper class to configure Tiles2 for the Spring Framework. See <a
  * href="http://tiles.apache.org">http://tiles.apache.org</a> for more

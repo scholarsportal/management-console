@@ -31,7 +31,6 @@ public class HomeController
                                                  HttpServletResponse response)
             throws Exception {
         ModelAndView m = new ModelAndView("home");
-        m.addObject("contentStoreSelector", contentStoreSelector);
         return m;
     }
     

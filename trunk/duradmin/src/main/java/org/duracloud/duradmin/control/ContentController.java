@@ -13,6 +13,7 @@ import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MessageUtils;
+import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,17 +70,10 @@ public class ContentController
             }
         }
 
+        
         contentMetadata = store.getContentMetadata(spaceId, contentId);
-        ContentMetadata metadata = new ContentMetadata();
-        metadata
-                .setMimetype(contentMetadata.get(ContentStore.CONTENT_MIMETYPE));
-        metadata.setSize(contentMetadata.get(ContentStore.CONTENT_SIZE));
-        metadata
-                .setChecksum(contentMetadata.get(ContentStore.CONTENT_CHECKSUM));
-        metadata
-                .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
+        ContentMetadata metadata = SpaceUtil.populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
-
         mav.addObject(CONTENT_ITEM, contentItem);
         mav.addObject("baseURL", store.getBaseURL());
         mav.addObject("title", "Content Detail");
@@ -87,5 +81,7 @@ public class ContentController
 
         return mav;
     }
+
+
 
 }

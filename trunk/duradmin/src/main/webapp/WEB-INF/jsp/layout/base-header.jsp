@@ -1,5 +1,4 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
 <div id="top-header">
@@ -18,17 +17,32 @@
 
 <tiles:importAttribute name="mainMenu" />
 
-<div id="main-menu">
-	
-	<ul id="menu">
-		<c:forEach items="${mainMenu}" var="mi">
-			<li>
-				<a href='<c:url value="${mi.href}" />' class="<c:if test="${mi.name == mainTab}">current</c:if>" >
-					<spring:message code="${mi.messageKey}"/>
-				</a>
-			</li>
-		</c:forEach>
-	</ul>
-	
-</div>
+<div id="main-menu" >
+	<div id="main-menu-left">
+		<ul id="menu">
+			<c:forEach items="${mainMenu}" var="mi">
+				<li>
+					<a href='<c:url value="${mi.href}" />' class="<c:if test="${mi.name == mainTab}">current</c:if>" >
+						<spring:message code="${mi.messageKey}"/>
+					</a>
+				</li>
+			</c:forEach>
+		</ul>
+	</div>		
 
+	<tiles:importAttribute name="contentStoreSelector" />
+	
+	<div id="main-menu-right">
+		<form>
+			Providers:
+			<select >
+				<c:forEach var="store" items="${contentStoreSelector.contentStores}">
+					<option value="${store.storeId}" selected="<c:if test="${store.storeId == contentStoreSelector.selectedId}">selected</c:if>">
+						${store.storageProviderType}
+					</option>
+				</c:forEach>
+			</select>
+		</form>
+	</div>
+</div>
+	

@@ -5,30 +5,37 @@
 		<div>
 			<table class="basic-form">
 				<tr>
-					<td class="label"><label for="contentId">Content ID</label></td>
+					<td class="label"><label for="contentId"><spring:message code="contentItem.id"/></label></td>
 					<td class="input">
 						<form:input  path="contentId" />
 						<form:errors path="contentId" cssClass="message-error" />
 					</td>
-					<td class="field-help">Content ID help goes here.</td>
+					<td class="field-help"><spring:message code="contentItem.id.help"/></td>
 				</tr>
 				<tr>
-					<td class="label"><label for="access">Mime Type</label></td>
+					<td class="label"><label for="access"><spring:message code="mimetype"/></label></td>
 					<td class="input">
 						<form:input path="contentMimetype" />
 						<form:errors path="contentMimetype" cssClass="message-error" />
 					</td>
-					<td class="field-help">Mime type help goes here.</td>
+					<td class="field-help">
+						<spring:message code="mimetype.help"/>
+						<a href="http://en.wikipedia.org/wiki/MIME"><spring:message code="help.moreInfo"/></a>
+					</td>
 				</tr>
 				<tr>
-					<td class="label"><label for="access">File</label></td>
+					<td class="label"><label for="access">						
+						<spring:message code="form.contentItem.file"/>
+					</label></td>
 					<td class="input">
 						<input type="file" name="file"/>
 						<div>
 							<form:errors path="file" cssClass="message-error" />
 						</div>
 					</td>
-					<td class="field-help">File help goes here</td>
+					<td class="field-help">
+						<spring:message code="form.contentItem.file.help"/>
+					</td>
 				</tr>
 
 			</table>

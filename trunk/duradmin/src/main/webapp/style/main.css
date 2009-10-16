@@ -9,9 +9,23 @@ body, #footer{
 	font-family: sans-serif;
 }
 
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	color:#555;
+}
+
 table{
 	width:100%;	
 }
+
 
 #header {
 	width:100%;
@@ -24,10 +38,27 @@ table{
 	padding:1em;
 }
 
+
 #main-menu {
 	width:100%;
-	background-color:#CAE1FF;
-	min-height:1em;
+	background: #555;
+	font: 67.5% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+}
+
+#main-menu-right {
+	width:50%;
+	text-align:right;
+	float:right;
+	background-color:#333;
+	padding-top:3px;
+	padding-bottom:3px;
+}
+
+#main-menu-left {
+	width:50%;
+	text-align:right;
+	float:left;
+	background-color:#333;
 }
 
 table.body{
@@ -45,21 +76,46 @@ td#menu-div {
 }
 
 #main-content {
-	background-color:#FFFFEE;
 }
 
 #menu-div, td#main-content  {
 	vertical-align:top;
 }
 
-#main-content-header{
-	font-size:1.5em;
-		
+td#main-content{
+	padding:0;
+	margin:0;
 }
 
-#main-content-body, #main-content-header {
+/* Main Content Header */
+
+.main-content-header{
+	background-color:#FFFFDD;
 	padding:0.5em;
-	
+}
+
+div.main-content-header{
+	min-height:3em;	
+	padding:0.25;
+}
+
+.main-content-header h1{
+	font-size:1.5em;	
+	margin:0;
+}
+
+.main-content-header h2{
+	padding:0.25em;
+	font-size:0.9em;	
+	margin:0;
+}
+
+
+
+
+.main-content-body {
+	padding:0.5em;
+	background-color:#FFFFEE;
 }
 
 #global-message-div {
@@ -136,12 +192,13 @@ table{
 
 td, th {
   padding:0.5em; 
+	text-align:left;
+	vertical-align: top;
 }
 
 
 .standard th {
 	background-color:#B9D3EE;
-	text-align:left;
 }
 
 .standard > tbody > tr.evenRow {
@@ -162,22 +219,6 @@ td, th {
 	text-decoration: none;	
 }
 
-.actions {
-	font-size:0.8em;	
-}
-
-div.actions {
-	visibility:hidden;
-}
-
-.actions ul{
-   margin:0;
-   padding:0;
-}
-
-#actionDiv{
-	#text-align: left;	
-}
 
 table.basic-form, table.property-list {
 	border:1px solid #CCC;
@@ -211,19 +252,40 @@ td.field-help {
 	font-size:0.8em;	
 }
 
+div.actions {
+	visibility:hidden;
+}
+
 .actions ul{
-	list-style-type: none;	
-	margin:0;
+	padding:0.25em;
+	background-color:#DDD;
+	list-style-type:square;
+	
 }
 
 .actions  li {
 	display: inline;
-	padding:0;
-	margin:0;
+	font-size:0.8em;	
+	margin-right:2.0em;
 }
 
 #error {
   font-size: 1.2em;
   color: red;
   margin: 20px 0px; 
+}
+
+table#spacesTable > tbody > tr > td#actionColumn {
+	max-width:50%;
+	min-width:50%;
+}
+
+table#spacesTable > tbody > tr > td#contentId {
+	vertical-align: top;
+}
+
+
+table#spacesTable > tbody > tr > td#metadata {
+	min-width:8em;
+	max-width:8em;
 }
