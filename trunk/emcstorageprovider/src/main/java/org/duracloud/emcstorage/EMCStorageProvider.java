@@ -1,4 +1,3 @@
-
 package org.duracloud.emcstorage;
 
 import com.emc.esu.api.*;
@@ -11,7 +10,6 @@ import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.StorageProviderUtil;
-import static org.duracloud.storage.util.StorageProviderUtil.contains;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,10 +27,9 @@ import java.util.Set;
  *
  * @author Andrew Woods
  */
-public class EMCStorageProvider
-        implements StorageProvider {
+public class EMCStorageProvider implements StorageProvider {
 
-    private final Logger log = Logger.getLogger(EMCStorageProvider.class);
+    private final Logger log = Logger.getLogger(EMCPathStorageProvider.class);
 
     private static final String SPACE_ROOT_TAG_NAME = "emc-space-root-tag";
 
@@ -47,12 +44,15 @@ public class EMCStorageProvider
     protected static final int ESU_PORT = 80;
 
     private EsuApi emcService = null;
+    private final String uid;
 
     public EMCStorageProvider(String uid, String sharedSecret) {
+        this.uid = uid;
         emcService = new EsuRestApi(ESU_HOST, ESU_PORT, uid, sharedSecret);
     }
 
     public EMCStorageProvider(EsuApi esuApi) {
+        this.uid = "probed-emc-uid";
         emcService = esuApi;
     }
 
@@ -69,9 +69,9 @@ public class EMCStorageProvider
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Spaces found:");
+            log.warn("Spaces found:");
             for (String space : spaces) {
-                log.debug("\t-> " + space);
+                log.warn("\t-> " + space);
             }
         }
         return spaces.iterator();
@@ -80,6 +80,7 @@ public class EMCStorageProvider
     private List<Identifier> getSpaceObjects() {
         try {
             return emcService.listObjects(spaceRootTag());
+
         } catch (EsuException e) {
             String err = "Unable to find any spaces: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
@@ -96,8 +97,8 @@ public class EMCStorageProvider
             return userMetadata.iterator().next().getValue();
 
         } catch (Exception e) {
-            String err = "Unable to find spaceRootTag for space: "
-                    + e.getMessage();
+            String err =
+                "Unable to find spaceRootTag for space: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -121,13 +122,24 @@ public class EMCStorageProvider
 
     private List<Identifier> getCompleteSpaceContents(String spaceId) {
         try {
-            return emcService.listObjects(currentSpaceTag(spaceId));
+            List<DirectoryEntry> entries = emcService.listDirectory(getSpacePath(
+                spaceId));
+            return getSpaceContentsIds(entries);
 
         } catch (EsuException e) {
-            String err = "Unable to list objs with current space tag: "
-                    + spaceId + ", due to error: " + e.getMessage();
+            String err =
+                "Unable to list objs with current space tag: " + spaceId +
+                    ", due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
+    }
+
+    private List<Identifier> getSpaceContentsIds(List<DirectoryEntry> entries) {
+        List<Identifier> contentIds = new ArrayList<Identifier>();
+        for (DirectoryEntry entry : entries) {
+            contentIds.add(entry.getId());
+        }
+        return contentIds;
     }
 
     private String getContentNameForContentObject(Identifier objId,
@@ -161,8 +173,13 @@ public class EMCStorageProvider
     }
 
     private boolean spaceExists(String spaceId) {
+        return objectExists(getSpacePath(spaceId));
+    }
+
+    private boolean objectExists(Identifier objId) {
         try {
-            return contains(getSpaces(), spaceId);            
+            emcService.getAcl(objId);
+            return true;
         } catch (Exception e) {
             return false;
         }
@@ -176,7 +193,7 @@ public class EMCStorageProvider
         throwIfSpaceExists(spaceId);
 
         MetadataList metadataList = createRequiredRootMetadata(spaceId);
-        Identifier objId = createSpaceObject(metadataList);
+        Identifier objId = createSpaceObject(spaceId, metadataList);
 
         log.debug("\t...space created with id: " + objId);
     }
@@ -189,19 +206,25 @@ public class EMCStorageProvider
         return metadataList;
     }
 
-    private Identifier createSpaceObject(MetadataList metadataList) {
+    private Identifier createSpaceObject(String spaceId,
+                                         MetadataList metadataList) {
         Acl acl = null;
         byte[] data = null;
         String mimeType = null;
 
+        ObjectPath spacePath = getSpacePath(spaceId);
         try {
             // This object only serves the purpose of representing the
             //  existence of a 'space' with id: spaceId.
-            return emcService.createObject(acl, metadataList, data, mimeType);
+            return emcService.createObjectOnPath(spacePath,
+                                                 acl,
+                                                 metadataList,
+                                                 data,
+                                                 mimeType);
         } catch (EsuException e) {
-            String err = "Could not create EMC space with spaceId "
-                    + metadataList.getMetadata(SPACE_ROOT_TAG_NAME).getValue()
-                    + ", due to error: " + e.getMessage();
+            String err =
+                "Could not create EMC space with spacePath: '" + spacePath +
+                    "', due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -214,7 +237,7 @@ public class EMCStorageProvider
         throwIfSpaceNotExist(spaceId);
 
         deleteSpaceContents(spaceId);
-        deleteObject(getRootId(spaceId));
+        deleteObject(getSpacePath(spaceId));
     }
 
     private void deleteSpaceContents(String spaceId) {
@@ -231,8 +254,9 @@ public class EMCStorageProvider
             emcService.deleteObject(objId);
 
         } catch (Exception e) {
-            String err = "Unable to delete object: " + objId
-                    + ", due to error: " + e.getMessage();
+            String err =
+                "Unable to delete object: " + objId + ", due to error: " +
+                    e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -253,7 +277,8 @@ public class EMCStorageProvider
             throw new StorageException(err, RETRY);
         }
 
-        log.debug("Found rootId [" + rootId + "] for spaceId [" + spaceId + "]");
+        log.debug(
+            "Found rootId [" + rootId + "] for spaceId [" + spaceId + "]");
         return rootId;
     }
 
@@ -265,14 +290,14 @@ public class EMCStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        ObjectId rootObjId = (ObjectId) getRootId(spaceId);
-        Map<String, String> spaceMetadata = getExistingUserMetadata(rootObjId);
+        Identifier spacePath = getSpacePath(spaceId);
+        Map<String, String> spaceMetadata = getExistingUserMetadata(spacePath);
 
         // Over-write managed metadata.
-        spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(rootObjId));
+        spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(spacePath));
         spaceMetadata.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
-        spaceMetadata.put(METADATA_SPACE_ACCESS, doGetSpaceAccess(rootObjId)
-                .toString());
+        spaceMetadata.put(METADATA_SPACE_ACCESS,
+                          doGetSpaceAccess(spacePath).toString());
 
         return spaceMetadata;
     }
@@ -310,11 +335,11 @@ public class EMCStorageProvider
         throwIfSpaceNotExist(spaceId);
 
         // Remove volatile metadata.
-        Identifier rootObjId = getRootId(spaceId);
-        MetadataTags existingTags = listUserMetadataTags(rootObjId);
+        Identifier spacePath = getSpacePath(spaceId);
+        MetadataTags existingTags = listUserMetadataTags(spacePath);
         MetadataTags disposableTags = getSpaceTagsToRemove(existingTags);
         if (disposableTags.count() > 0) {
-            deleteUserMetadata(rootObjId, disposableTags);
+            deleteUserMetadata(spacePath, disposableTags);
         }
 
         // Start with required metadata.
@@ -332,15 +357,15 @@ public class EMCStorageProvider
         }
 
         // The actual setting.
-        setUserMetadata(rootObjId, metadatas);
+        setUserMetadata(spacePath, metadatas);
     }
 
     private MetadataTags listUserMetadataTags(Identifier objId) {
         try {
             return emcService.listUserMetadataTags(objId);
         } catch (Exception e) {
-            String err = "Error listing user metadata for :" + objId + ", "
-                    + e.getMessage();
+            String err = "Error listing user metadata for :" + objId + ", " +
+                e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -361,18 +386,18 @@ public class EMCStorageProvider
         try {
             emcService.deleteUserMetadata(objId, disposableTags);
         } catch (Exception e) {
-            String err = "Error deleting user metadata for :" + objId + ", "
-                    + e.getMessage();
+            String err = "Error deleting user metadata for :" + objId + ", " +
+                e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
 
-    private void setUserMetadata(Identifier rootObjId, MetadataList metadatas) {
+    private void setUserMetadata(Identifier objId, MetadataList metadatas) {
         try {
-            emcService.setUserMetadata(rootObjId, metadatas);
+            emcService.setUserMetadata(objId, metadatas);
         } catch (Exception e) {
-            String err = "Error setting user metadata: " + rootObjId + ", "
-                    + e.getMessage();
+            String err =
+                "Error setting user metadata: " + objId + ", " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -384,7 +409,7 @@ public class EMCStorageProvider
         log.debug("getSpaceAccess(" + spaceId + ")");
         throwIfSpaceNotExist(spaceId);
 
-        return doGetSpaceAccess(getRootId(spaceId));
+        return doGetSpaceAccess(getSpacePath(spaceId));
     }
 
     private AccessType doGetSpaceAccess(Identifier spaceObjId) {
@@ -423,9 +448,9 @@ public class EMCStorageProvider
             permission = Permission.READ;
         }
 
-        Identifier rootObjId = getRootId(spaceId);
+        Identifier spacePath = getSpacePath(spaceId);
         Acl newAcl = new Acl();
-        Acl oldAcl = getAcl(rootObjId);
+        Acl oldAcl = getAcl(spacePath);
         for (Grant grant : oldAcl) {
             Grant g = grant;
             if (isGroup(grant)) {
@@ -435,7 +460,7 @@ public class EMCStorageProvider
         }
 
         // Set ACL for root.
-        setObjectAcl(rootObjId, newAcl);
+        setObjectAcl(spacePath, newAcl);
 
         // Set ACL for all objects contained in the space.
         List<Identifier> spaceContents = getCompleteSpaceContents(spaceId);
@@ -448,8 +473,8 @@ public class EMCStorageProvider
         try {
             emcService.setAcl(objId, newAcl);
         } catch (Exception e) {
-            String err = "Error setting acl: " + objId + ", due to: "
-                    + e.getMessage();
+            String err =
+                "Error setting acl: " + objId + ", due to: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }
@@ -467,53 +492,58 @@ public class EMCStorageProvider
                              long contentSize,
                              InputStream content) {
         try {
-            return doAddContent(spaceId, contentId, mimeType, contentSize, content);
+            return doAddContent(spaceId,
+                                contentId,
+                                mimeType,
+                                contentSize,
+                                content);
         } catch (StorageException e) {
             throw new StorageException(e, NO_RETRY);
         }
     }
 
-    public String doAddContent(String spaceId,
-                               String contentId,
-                               String mimeType,
-                               long contentSize,
-                               InputStream content) {
-        log.debug("addContent(" + spaceId + ", " + contentId + ", "
-                + mimeType + ", " + contentSize + ")");
+    private String doAddContent(String spaceId,
+                                String contentId,
+                                String mimeType,
+                                long contentSize,
+                                InputStream content) {
+        log.debug("addContent(" + spaceId + ", " + contentId + ", " + mimeType +
+            ", " + contentSize + ")");
 
         throwIfSpaceNotExist(spaceId);
 
         // Set access control to mirror the bucket
-        Acl acl = getAcl(getRootId(spaceId));
+        Acl acl = getAcl(getSpacePath(spaceId));
 
-        MetadataList metadataList =
-                createRequiredContentMetadata(spaceId, contentId, mimeType);
+        MetadataList metadataList = createRequiredContentMetadata(spaceId,
+                                                                  contentId,
+                                                                  mimeType);
 
         // Determine if object already exists.
-        ObjectId objId = null;
-        try {
-            objId = getContentObjId(spaceId, contentId);
-        } catch (Exception e) {
-            // do nothing
-        }
+        ObjectPath objectPath = getObjectPath(spaceId, contentId);
 
         // Wrap the content to be able to compute a checksum during transfer
-        DigestInputStream wrappedContent = StorageProviderUtil.wrapStream(content);
+        DigestInputStream wrappedContent = StorageProviderUtil.wrapStream(
+            content);
 
         UploadHelper helper = new UploadHelper(emcService);
         boolean closeStream = true;
 
-        // Add new object.
-        if (objId == null) {
-            helper.createObject(wrappedContent, acl, metadataList, closeStream);
-        }
         // Update existing object.
-        else {
-            helper.updateObject(objId,
+        if (objectExists(objectPath)) {
+            helper.updateObject(objectPath,
                                 wrappedContent,
                                 acl,
                                 metadataList,
                                 closeStream);
+        }
+        // Add new object.
+        else {
+            helper.createObjectOnPath(objectPath,
+                                      wrappedContent,
+                                      acl,
+                                      metadataList,
+                                      closeStream);
         }
 
         // Compare checksum
@@ -547,26 +577,8 @@ public class EMCStorageProvider
         return metadataList;
     }
 
-    protected ObjectId getContentObjId(String spaceId, String contentId) {
-        // FIXME: should not have to loop through all content to find contentId.
-        //        EsuApi.queryObjects(String xquery) ?
-
-        ObjectId contentObjId = null;
-        List<Identifier> spaceContents = getCompleteSpaceContents(spaceId);
-        for (Identifier objId : spaceContents) {
-            if (contentId
-                    .equals(getContentNameForContentObject(objId, spaceId))) {
-                contentObjId = (ObjectId) objId;
-            }
-        }
-
-        if (contentObjId == null) {
-            String err = "Unable to find content object for: [" + spaceId + ":"
-                    + contentId + "]";
-            throw new StorageException(err, RETRY);
-        }
-
-        return contentObjId;
+    protected ObjectPath getObjectPath(String spaceId, String contentId) {
+        return new ObjectPath(getSpaceName(spaceId) + "/" + contentId);
     }
 
     /**
@@ -576,10 +588,10 @@ public class EMCStorageProvider
         log.debug("getContent(" + spaceId + ", " + contentId + ")");
         throwIfSpaceNotExist(spaceId);
 
-        return doGetContent(getContentObjId(spaceId, contentId));
+        return doGetContent(getObjectPath(spaceId, contentId));
     }
 
-    private InputStream doGetContent(ObjectId contentObjId) {
+    private InputStream doGetContent(Identifier contentObjId) {
         log.debug("doGetContent(" + contentObjId + ")");
 
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -604,9 +616,10 @@ public class EMCStorageProvider
         throwIfSpaceNotExist(spaceId);
 
         try {
-            emcService.deleteObject(getContentObjId(spaceId, contentId));
+            emcService.deleteObject(getObjectPath(spaceId, contentId));
         } catch (Exception e) {
-            String err = "Error deleting: [" + spaceId + ":" + contentId + "], " +
+            String err =
+                "Error deleting: [" + spaceId + ":" + contentId + "], " +
                     "due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
@@ -622,15 +635,15 @@ public class EMCStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        ObjectId objId = getContentObjId(spaceId, contentId);
+        Identifier objectPath = getObjectPath(spaceId, contentId);
 
         // Remove existing user metadata.
-        MetadataTags existingTags = listUserMetadataTags(objId);
-        deleteUserMetadata(objId, existingTags);
+        MetadataTags existingTags = listUserMetadataTags(objectPath);
+        deleteUserMetadata(objectPath, existingTags);
 
         // Start with required metadata.
-        MetadataList metadatas =
-                createRequiredContentMetadata(spaceId, contentId);
+        MetadataList metadatas = createRequiredContentMetadata(spaceId,
+                                                               contentId);
 
         // Start adding arg user metadata.
         final boolean isIndexed = false;
@@ -640,17 +653,7 @@ public class EMCStorageProvider
             metadatas.addMetadata(new Metadata(key, val, isIndexed));
         }
 
-        setUserMetadata(objId, metadatas);
-    }
-
-    private MetadataTags listUserMetadataTags(ObjectId objId) {
-        try {
-            return emcService.listUserMetadataTags(objId);
-        } catch (Exception e) {
-            String err = "Error listing user metadata tags for: " + objId +
-                    ", due to error: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
+        setUserMetadata(objectPath, metadatas);
     }
 
     /**
@@ -662,19 +665,19 @@ public class EMCStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        ObjectId objId = getContentObjId(spaceId, contentId);
+        Identifier objectPath = getObjectPath(spaceId, contentId);
 
         if (log.isDebugEnabled()) {
-            for (Metadata md : emcService.getSystemMetadata(objId, null)) {
+            for (Metadata md : emcService.getSystemMetadata(objectPath, null)) {
                 log.debug("System-metadata: " + md.toString());
             }
-            for (Metadata md : emcService.getUserMetadata(objId, null)) {
+            for (Metadata md : emcService.getUserMetadata(objectPath, null)) {
                 log.debug("User-metadata:" + md.toString());
             }
         }
 
-        Map<String, String> metadata = getExistingUserMetadata(objId);
-        metadata.putAll(generateManagedContentMetadata(objId));
+        Map<String, String> metadata = getExistingUserMetadata(objectPath);
+        metadata.putAll(generateManagedContentMetadata(objectPath));
 
         // Normalize metadata keys to lowercase.
         Map<String, String> resultMap = new HashMap<String, String>();
@@ -687,7 +690,7 @@ public class EMCStorageProvider
         return resultMap;
     }
 
-    private Map<String, String> getExistingUserMetadata(ObjectId objId) {
+    private Map<String, String> getExistingUserMetadata(Identifier objId) {
         Map<String, String> metadata = new HashMap<String, String>();
         MetadataList existingMetadata = null;
         try {
@@ -704,7 +707,7 @@ public class EMCStorageProvider
         return metadata;
     }
 
-    private Map<String, String> generateManagedContentMetadata(ObjectId objId) {
+    private Map<String, String> generateManagedContentMetadata(Identifier objId) {
         MetadataList sysMd = getSystemMetadata(objId);
 
         // Content size
@@ -742,18 +745,48 @@ public class EMCStorageProvider
         try {
             return emcService.getSystemMetadata(objId, null);
         } catch (Exception e) {
-            String err = "Error getting system metadata for " + objId + ", "
-                    + "due to error: " + e.getMessage();
+            String err = "Error getting system metadata for " + objId + ", " +
+                "due to error: " + e.getMessage();
             throw new StorageException(err, RETRY);
         }
     }
 
-    private MetadataTag currentSpaceTag(String spaceId) {
-        return new MetadataTag(spaceId, true);
-    }
-
     private MetadataTag spaceRootTag() {
         return new MetadataTag(SPACE_ROOT_TAG_NAME, true);
+    }
+
+    private ObjectPath getSpacePath(String spaceId) {
+        String spaceName = getSpaceName(spaceId);
+        return new ObjectPath(spaceName + "/");
+    }
+
+    private String getSpaceName(String spaceId) {
+        int indexOfSep = uid.indexOf('/');
+        int index = indexOfSep == -1 ? 0 : indexOfSep;
+        String uniquePrefix = uid.substring(index, uid.length());
+
+        String spaceName = uniquePrefix + "." + spaceId;
+        spaceName = spaceName.toLowerCase();
+        spaceName = spaceName.replaceAll("[^a-z0-9-./]", "-");
+
+        // Remove duplicate separators (. and -)
+        while (spaceName.contains("--") || spaceName.contains("..") ||
+            spaceName.contains("-.") || spaceName.contains(".-")) {
+            spaceName = spaceName.replaceAll("[-]+", "-");
+            spaceName = spaceName.replaceAll("[.]+", ".");
+            spaceName = spaceName.replaceAll("-[.]", "-");
+            spaceName = spaceName.replaceAll("[.]-", ".");
+        }
+
+        if (spaceName.length() > 63) {
+            spaceName = spaceName.substring(0, 63);
+        }
+        while (spaceName.endsWith("-") || spaceName.endsWith(".")) {
+            spaceName = spaceName.substring(0, spaceName.length() - 1);
+        }
+
+        log.debug("spaceName: '" + spaceName + "'");
+        return spaceName;
     }
 
 }
