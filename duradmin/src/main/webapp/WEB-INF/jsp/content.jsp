@@ -52,28 +52,43 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
-			    <table  class="property-list">
-			        <tr>
-			          <td class="label"><spring:message code="contentItem.id"/></td>
-			          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}">${contentItem.contentId}</a></td>
-			        </tr>
-			        <tr>
-			          <td class="label"><spring:message code="size"/></td>
-			          <td class="value"><c:out value="${contentItem.metadata.size}"/> bytes</td>
-			        </tr>
-			        <tr>
-			          <td class="label"><spring:message code="mimetype"/></td>
-			          <td class="value"><c:out value="${contentItem.metadata.mimetype}"/></td>
-			        </tr>
-			        <tr>
-			          <td class="label"><spring:message code="checksum"/></td>
-			          <td class="value"><c:out value="${contentItem.metadata.checksum}"/></td>
-			        </tr>
-			        <tr>
-			          <td class="label"><spring:message code="modified"/></td>
-			          <td class="value"><c:out value="${contentItem.metadata.modified}"/></td>
-			        </tr>
-			    </table>
+				<table>
+					<tr>
+						<td style="width:75%">
+						    <table  class="property-list" >
+						        <tr>
+						          <td class="label"><spring:message code="contentItem.id"/></td>
+						          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}">${contentItem.contentId}</a></td>
+						        </tr>
+						        <tr>
+						          <td class="label"><spring:message code="size"/></td>
+						          <td class="value"><c:out value="${contentItem.metadata.size}"/> bytes</td>
+						        </tr>
+						        <tr>
+						          <td class="label"><spring:message code="mimetype"/></td>
+						          <td class="value"><c:out value="${contentItem.metadata.mimetype}"/></td>
+						        </tr>
+						        <tr>
+						          <td class="label"><spring:message code="checksum"/></td>
+						          <td class="value"><c:out value="${contentItem.metadata.checksum}"/></td>
+						        </tr>
+						        <tr>
+						          <td class="label"><spring:message code="modified"/></td>
+						          <td class="value"><c:out value="${contentItem.metadata.modified}"/></td>
+						        </tr>
+						    </table>
+						
+						</td>					
+						<td >
+							<div class="content-preview-div" style="border:1px dashed #999; min-height:10.5em; padding:0.25em">
+								<p>Content Item Preview/Thumbnail</p>
+							</div>							
+						</td>					
+
+					</tr>
+					
+				</table>
+
 
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
