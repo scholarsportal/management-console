@@ -272,6 +272,11 @@ td.label {
 	background-color:#DDD;
 }
 
+.property-list td.label {
+	width:30%;	
+}
+
+
 td.input {
 	width:40%;	
 	background-color:#EEE;
@@ -319,4 +324,32 @@ table#spacesTable > tbody > tr > td#contentId {
 	vertical-align: top;
 }
 
+.sidebar-actions {
+	font-size: 0.9em;	
+}
+
+.sidebar-actions ul {
+	list-style-type: none;
+	padding:0;
+}
+
+.sidebar-actions li {
+	border-bottom: 1px solid #ccc;
+	padding:0.25em;
+}
+
+.sidebar-actions li:hover {
+	background-color:#EECFA1;
+}
+
+.sidebar-actions p {
+	font-size: 0.9em;	
+}
+
+#help {
+	width:15%; 
+	background-color:#FFFFAA; 
+	border-left:1px solid #CCC
+		
+}
 

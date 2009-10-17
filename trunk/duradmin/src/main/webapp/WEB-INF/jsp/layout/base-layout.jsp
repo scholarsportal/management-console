@@ -32,6 +32,14 @@
    			<td id="main-content">
 			    <tiles:insertAttribute name="main-content" />
    			</td>
+
+   			<td id="help">
+   				<p>
+					Context sensitive help to go here   				
+   				</p>
+   				
+   			</td>
+
    		</tr>
    	</table>
    	

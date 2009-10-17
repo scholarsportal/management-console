@@ -10,8 +10,10 @@
 					<a href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message code="add.contentItem"/></a>
 				</li>
 			</ul>
+
+			<p> Mouse over a content item for details.</p>
+
 		</div>
-		<p> Mouse over a content item for details.</p>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">
