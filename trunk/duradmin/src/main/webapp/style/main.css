@@ -232,18 +232,19 @@ td, th {
 
 
 .standard th {
-	background-color:#B9D3EE;
+  background-color:#EEE;	
+	
 }
 
 .standard > tbody > tr.evenRow {
-	background-color:#EEE;	
+	background-color:#FFEEFF;	
 }
 
 .standard > tbody > tr.hover {
 	background-color: #CCC;	
-	opacity: 0.65;
-	
 }
+
+
 
 .standard tr, .standard th {
 	border-bottom: 1px solid #CCC;	
@@ -319,7 +320,3 @@ table#spacesTable > tbody > tr > td#contentId {
 }
 
 
-table#spacesTable > tbody > tr > td#metadata {
-	min-width:8em;
-	max-width:8em;
-}

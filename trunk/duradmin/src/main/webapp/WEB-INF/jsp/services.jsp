@@ -1,84 +1,101 @@
-<%@include file="/WEB-INF/jsp/include.jsp"%>
-    <c:if test="${not empty error}">
-      <div id="error"><c:out value="${error}" /></div>
-    </c:if>
-    
-    <h2>Services</h2>
-    
-    <div class="service">
-    <h4>Deployed Services</h4>
-    <c:forEach items="${deployedServices}" var="service">
-      <div class="service">
-        <table class="space">
-          <tr>
-            <th>ID</th>
-            <td><c:out value="${service.serviceId}" /></td>
-          </tr>
-          <tr>
-            <th>Status</th>
-            <td><c:out value="${service.status}" /></td>
-          </tr>          
-          <tr>
-            <th>Configuration</th>
-            <td>
-              <table>
-              <c:forEach items="${service.config}" var="configItem">                
-                <tr>
-                  <td><c:out value="${configItem.key}" />:</td>
-                  <td><c:out value="${configItem.value}" /></td>
-                </tr>
-              </c:forEach>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <form action="unDeployService.htm" method="post">
-                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceId}" />" />
-                <input type="submit" value="UnDeploy <c:out value="${service.serviceId}" />" />
-              </form>          
-            </td>
-          </tr>
-        </table>
-      </div>
-    </c:forEach>
-    </div>
-    
-    <div class="service">
-    <h4>Available Services</h4>
-    <c:forEach items="${availableServices}" var="service">
-      <div class="service">
-        <table class="space">
-          <tr>
-            <th><c:out value="${service.serviceId}" /></th>
-          </tr>
-          <tr>
-            <td>
-              <form action="deployService.htm" method="post">
-                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceId}" />" />
-                <table>
-                  <c:forEach items="${service.config}" var="configItem">                
-                  <tr>
-                    <th><c:out value="${configItem.key}" /></th>
-                    <td><input type="text" id="config.<c:out value="${configItem.key}" />" name="config.<c:out value="${configItem.key}" />" value="<c:out value="${configItem.value}" />" /></td>
-                  </tr>
-                  </c:forEach>
-                  <tr>
-                    <th>Deploy To</th>
-                    <td>
-                      <select name="serviceHost">                
-                        <c:forEach items="${serviceHosts}" var="serviceHost">
-                        <option value="<c:out value="${serviceHost}" />"><c:out value="${serviceHost}" /></option>
-                        </c:forEach>
-                      </select>
-                      <input type="submit" value="Deploy" />
-                    </td>
-                  </tr>
-                </table>        
-              </form>   
-            </td>       
-          </tr>
-        </table>
-      </div>
-    </c:forEach>    
-    </div>
+<%@include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="base-service" >
+	<tiles:putAttribute name="title">
+		<spring:message code="services" />	
+	</tiles:putAttribute>
+	<tiles:putAttribute name="mainTab" value="services"/>
+	<tiles:putAttribute name="menu">
+		&lt;&lt;Menu Here&gt;&gt;
+	</tiles:putAttribute>
+	<tiles:putAttribute name="main-content">
+		<tiles:insertDefinition name="base-main-content">
+			<tiles:putAttribute name="header">
+				<tiles:insertDefinition name="base-content-header">
+					<tiles:putAttribute name="title">
+						<spring:message code="services"/>
+					</tiles:putAttribute>	
+				</tiles:insertDefinition>
+			</tiles:putAttribute>
+			<tiles:putAttribute name="body">
+			    <div class="service">
+			    <h4>Deployed Services</h4>
+			    <c:forEach items="${deployedServices}" var="service">
+			      <div class="service">
+			        <table class="space">
+			          <tr>
+			            <th>ID</th>
+			            <td><c:out value="${service.serviceId}" /></td>
+			          </tr>
+			          <tr>
+			            <th>Status</th>
+			            <td><c:out value="${service.status}" /></td>
+			          </tr>          
+			          <tr>
+			            <th>Configuration</th>
+			            <td>
+			              <table>
+			              <c:forEach items="${service.config}" var="configItem">                
+			                <tr>
+			                  <td><c:out value="${configItem.key}" />:</td>
+			                  <td><c:out value="${configItem.value}" /></td>
+			                </tr>
+			              </c:forEach>
+			              </table>
+			            </td>
+			          </tr>
+			          <tr>
+			            <td colspan="2">
+			              <form action="unDeployService.htm" method="post">
+			                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceId}" />" />
+			                <input type="submit" value="UnDeploy <c:out value="${service.serviceId}" />" />
+			              </form>          
+			            </td>
+			          </tr>
+			        </table>
+			      </div>
+			    </c:forEach>
+			    </div>
+			    
+			    <div class="service">
+			    <h4>Available Services</h4>
+			    <c:forEach items="${availableServices}" var="service">
+			      <div class="service">
+			        <table class="space">
+			          <tr>
+			            <th><c:out value="${service.serviceId}" /></th>
+			          </tr>
+			          <tr>
+			            <td>
+			              <form action="deployService.htm" method="post">
+			                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceId}" />" />
+			                <table>
+			                  <c:forEach items="${service.config}" var="configItem">                
+			                  <tr>
+			                    <th><c:out value="${configItem.key}" /></th>
+			                    <td><input type="text" id="config.<c:out value="${configItem.key}" />" name="config.<c:out value="${configItem.key}" />" value="<c:out value="${configItem.value}" />" /></td>
+			                  </tr>
+			                  </c:forEach>
+			                  <tr>
+			                    <th>Deploy To</th>
+			                    <td>
+			                      <select name="serviceHost">                
+			                        <c:forEach items="${serviceHosts}" var="serviceHost">
+			                        <option value="<c:out value="${serviceHost}" />"><c:out value="${serviceHost}" /></option>
+			                        </c:forEach>
+			                      </select>
+			                      <input type="submit" value="Deploy" />
+			                    </td>
+			                  </tr>
+			                </table>        
+			              </form>   
+			            </td>       
+			          </tr>
+			        </table>
+			      </div>
+			    </c:forEach>    
+			    </div>
+			</tiles:putAttribute>
+		</tiles:insertDefinition>
+	</tiles:putAttribute>
+</tiles:insertDefinition>
+
