@@ -1,9 +1,8 @@
 <%@include file="/WEB-INF/jsp/include.jsp"%>
-<tiles:insertDefinition name="base" >
+<tiles:insertDefinition name="base-space" >
 	<tiles:putAttribute name="title">
 		<spring:message code="add.space" />	
 	</tiles:putAttribute>
-	<tiles:putAttribute name="mainTab" value="spaces"/>
 	<tiles:putAttribute name="menu" value=""/>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">

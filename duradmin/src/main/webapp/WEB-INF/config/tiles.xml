@@ -29,21 +29,26 @@
 
 	<definition name="home" template="/WEB-INF/jsp/home.jsp"/>
 	
-	<definition name="spaces" extends="base" template="/WEB-INF/jsp/spaces.jsp"/>
-
-	<definition name="defineSpace" extends="base" template="/WEB-INF/jsp/spaces/addSpace.jsp"/>
-
-	<definition name="defineContentItem" extends="base" template="/WEB-INF/jsp/spaces/addContentItem.jsp"/>
-
-	<definition name="contents" extends="base" template="/WEB-INF/jsp/contents.jsp"/>
-	
-	<definition name="content" extends="base" template="/WEB-INF/jsp/content.jsp"/>
-	
-	<definition name="services" extends="base">
-		<put-attribute name="main-content" value="/WEB-INF/jsp/services.jsp"/>
-		<put-attribute name="menu" value="Services Menu"/>
-		<put-attribute name="mainTab" value="services" />
+	<definition name="base-space" extends="base" >
+		<put-attribute name="mainTab" value="spaces"/>
 	</definition>
+	
+	
+	<definition name="spaces" extends="base-space" template="/WEB-INF/jsp/spaces.jsp"/>
+
+	<definition name="defineSpace" extends="base-space" template="/WEB-INF/jsp/spaces/addSpace.jsp"/>
+
+	<definition name="defineContentItem" extends="base-space" template="/WEB-INF/jsp/spaces/addContentItem.jsp"/>
+
+	<definition name="contents" extends="base-space" template="/WEB-INF/jsp/contents.jsp"/>
+	
+	<definition name="content" extends="base-space" template="/WEB-INF/jsp/content.jsp"/>
+	
+	<definition name="base-service" extends="base" >
+		<put-attribute name="mainTab" value="services"/>
+	</definition>
+
+	<definition name="services" extends="base-service" template="/WEB-INF/jsp/services.jsp"/>
 
 	<definition name="error" extends="base">
 		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
