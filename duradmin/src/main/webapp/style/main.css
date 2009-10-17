@@ -6,7 +6,7 @@ body{
 body, #footer{
 	/*slate gray*/
 	background-color:#B9D3EE;
-	font-family: sans-serif;
+	font-family: "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
 }
 
 a {
@@ -41,25 +41,39 @@ table{
 
 #main-menu {
 	width:100%;
-	background: #555;
-	font: 67.5% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+	background: #333;
+	border-collapse:collapse;
 }
 
-#main-menu-right {
-	width:50%;
-	text-align:right;
-	float:right;
-	background-color:#333;
-	padding-top:3px;
-	padding-bottom:3px;
-}
+#main-menu td  {
+	padding:0;
+} 
 
 #main-menu-left {
-	width:50%;
-	text-align:right;
-	float:left;
-	background-color:#333;
+	font-size: 67.5%;
+	
+	width:33%;
+	text-align:left;
 }
+
+#main-menu-center {
+	width:33%;
+	text-align:center;
+	vertical-align:middle;
+}
+
+
+#main-menu-right {
+	width:34%;
+	text-align:right;
+	vertical-align:middle;
+	
+}
+
+#main-menu-right select {
+}
+
+
 
 table.body{
 	min-height:40em;	
@@ -94,6 +108,26 @@ td#main-content{
 	padding:0.5em;
 }
 
+.main-content-header div.subtitle{
+	padding:0.50em;
+	font-size:0.9em;	
+	margin:0;
+	border-top:1px solid #EEE;
+	background-color: #FFFFCC;
+	
+}
+
+.main-content-header  .subtitle ul {
+	display: inline;
+	list-style-type: none;
+	margin: 0;
+	padding:0;
+} 
+
+.main-content-header  .subtitle li{
+	display: inline;
+	padding-right:2em;
+}
 div.main-content-header{
 	min-height:3em;	
 	padding:0.25;
@@ -102,12 +136,11 @@ div.main-content-header{
 .main-content-header h1{
 	font-size:1.5em;	
 	margin:0;
+	padding:0.25em;
 }
 
 .main-content-header h2{
-	padding:0.25em;
-	font-size:0.9em;	
-	margin:0;
+	
 }
 
 
@@ -116,6 +149,7 @@ div.main-content-header{
 .main-content-body {
 	padding:0.5em;
 	background-color:#FFFFEE;
+	min-height:10em;
 }
 
 #global-message-div {

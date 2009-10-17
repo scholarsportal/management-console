@@ -10,7 +10,7 @@ function loadContentItem(nodeId, spaceId, contentId){
 		return;
 	}
 	
-	node.innerHTML = "Retrieving metadata...";
+	showWaitMessage(node, "Retrieving metadata...");
 
 	
 	dojo.xhrGet( {
@@ -29,6 +29,10 @@ function loadContentItem(nodeId, spaceId, contentId){
 		}
 
 	});
+}
+
+function showWaitMessage(node, messageText){
+	node.innerHTML = "<div><img src='/duradmin/images/wait.gif'/><span>"+messageText+"</span></div>";
 }
 
 
@@ -54,7 +58,7 @@ function loadSpaceMetadata(nodeId, spaceId){
 		return;
 	}
 	
-	node.innerHTML = "Retrieving metadata...";
+	showWaitMessage(node, "Retrieving metadata...");
 	
 	dojo.xhrGet( {
 	    // The following URL must match that used to test the server.

@@ -18,7 +18,7 @@
 		</div>
 		
 		<div class="sidebar-actions">
-			<h4>Modify Properties</h4>
+			<h4><spring:message code="form.contentItem.modifyProperties"/></h4>
 		    <form:form commandName="contentItem"  action="content.htm?spaceId=${contentItem.spaceId}&contentId=${contentItem.contentId}" method="post">
 		      <input type="hidden" name="action" value="update" />
 		      <p>
@@ -27,7 +27,7 @@
 		        <form:errors path="contentMimetype"/>
 		      </p>
 		      <p>                        
-		        <input type='submit' value="Modify Properties"/>
+		        <input type='submit' value="<spring:message code="update"/>"/>
 		      </p>
 		    </form:form>    
 		</div>
@@ -56,7 +56,7 @@
 			    <table  class="property-list">
 			        <tr>
 			          <td class="label"><spring:message code="contentItem.id"/></td>
-			          <td class="value"><c:out value="${contentItem.contentId}"/></td>
+			          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}">${contentItem.contentId}</a></td>
 			        </tr>
 			        <tr>
 			          <td class="label"><spring:message code="size"/></td>
