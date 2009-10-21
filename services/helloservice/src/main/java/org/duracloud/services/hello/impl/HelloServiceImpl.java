@@ -1,30 +1,36 @@
 
 package org.duracloud.services.hello.impl;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-
+import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 
-public class HelloServiceImpl
+import java.util.Dictionary;
+import java.util.Enumeration;
+
+public class HelloServiceImpl extends BaseService
         implements ComputeService, ManagedService {
 
     private String text;
 
+    @Override
     public void start() throws Exception {
         System.out.println("HelloService is Starting");
+        super.start();
     }
 
+    @Override
     public void stop() throws Exception {
         System.out.println("HelloService is Stopping");
+        super.stop();
     }
 
+    @Override
     public String describe() throws Exception {
         System.out.println("HelloServiceImpl: Calling describe().");
-        return "Service: " + getClass().getName() + ", my message: '" + text
-                + "'";
+        String baseDescribe = super.describe();
+        return baseDescribe + "; Service message: '" + text + "'";
     }
 
     @SuppressWarnings("unchecked")

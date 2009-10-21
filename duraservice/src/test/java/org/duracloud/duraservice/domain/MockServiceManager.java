@@ -189,5 +189,15 @@ public class MockServiceManager
         throws Exception {
 
         }
+
+        @Override
+        public HttpResponse startServiceBundle(String bundleId) throws Exception {
+            return response;
+        }
+
+        @Override
+        public HttpResponse stopServiceBundle(String bundleId) throws Exception {
+            return response;        
+        }
     }
 }

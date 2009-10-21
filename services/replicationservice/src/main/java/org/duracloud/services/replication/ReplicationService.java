@@ -1,17 +1,8 @@
 
 package org.duracloud.services.replication;
 
-import java.util.Dictionary;
-
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
-
+import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
@@ -20,7 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
-public class ReplicationService
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import java.util.Dictionary;
+
+public class ReplicationService extends BaseService
         implements ComputeService, MessageListener, ManagedService {
 
     protected static final String STORE_ID = "storeId";
@@ -54,6 +53,7 @@ public class ReplicationService
 
     private Replicator replicator;
 
+    @Override
     public void start() throws Exception {
         log.info("Starting Replication Service");
 
@@ -84,15 +84,14 @@ public class ReplicationService
         System.out.println("jmsContainer.isRunning()");
         System.out.println("**********");
         log.info("Replication Service Listener Started");
+        setServiceStatus(ServiceStatus.STARTED);
     }
 
+    @Override
     public void stop() throws Exception {
         log.info("Stopping Replication Service");
         jmsContainer.stop();
-    }
-
-    public String describe() throws Exception {
-        return "Service: " + getClass().getName();
+        setServiceStatus(ServiceStatus.STOPPED);
     }
 
     public ActiveMQConnectionFactory getConnectionFactory() {

@@ -76,13 +76,21 @@ public class TestServices
     }
 
     @Test
-    public void testServiceStarter() {
+    public void testServiceStarter() throws Exception {
         log.debug("testing ServiceStarter");
+
+        ServiceStarterTester tester = new ServiceStarterTester(getStarter(),
+                                                               getLister());
+        tester.testServiceStarter();
     }
 
     @Test
-    public void testServiceStopper() {
+    public void testServiceStopper() throws Exception {
         log.debug("testing ServiceStopper");
+
+        ServiceStopperTester tester = new ServiceStopperTester(getStopper(),
+                                                               getLister());
+        tester.testServiceStopper();
     }
 
     @Test
@@ -164,7 +172,7 @@ public class TestServices
         return starter;
     }
 
-    public ServiceStopper getStoppper() throws Exception {
+    public ServiceStopper getStopper() throws Exception {
         if (stopper == null) {
             stopper =
                     (ServiceStopper) getService(ServiceStopper.class.getName());
