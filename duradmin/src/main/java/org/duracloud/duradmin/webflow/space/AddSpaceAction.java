@@ -6,13 +6,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStore.AccessType;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.webflow.execution.RequestContext;
 
 
 public class AddSpaceAction implements Serializable{
@@ -21,18 +20,21 @@ public class AddSpaceAction implements Serializable{
      */
     private static final long serialVersionUID = 1L;
     private static Log log = LogFactory.getLog(AddSpaceAction.class);
-    private transient ContentStoreManager contentStoreManager;
+    
+    private transient ContentStoreProvider contentStoreProvider;
+    
+    public ContentStoreProvider getContentStoreProvider() {
+        return contentStoreProvider;
+    }
 
-    public ContentStoreManager getContentStoreManager() {
-        return contentStoreManager;
-    }
     
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.contentStoreManager = contentStoreManager;
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.contentStoreProvider = contentStoreProvider;
     }
-    
+
+
     private ContentStore getContentStore() throws ContentStoreException {
-        return contentStoreManager.getPrimaryContentStore();
+        return contentStoreProvider.getContentStore();
     }
     
     public boolean execute(Space space, MessageContext context) throws Exception{

@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
@@ -25,21 +27,27 @@ public class AddContentItemFlowHandler extends AbstractFlowHandler {
     private static final String CONTENT_ITEM = "contentItem";
     private static final String SPACE = "space";
     private static Log log = LogFactory.getLog(AddContentItemFlowHandler.class);
-    private ContentStoreManager contentStoreManager;
+
+    private transient ContentStoreProvider contentStoreProvider;
     
-    
-    public ContentStoreManager getContentStoreManager() {
-        return contentStoreManager;
+    public ContentStoreProvider getContentStoreProvider() {
+        return contentStoreProvider;
     }
+
     
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.contentStoreManager = contentStoreManager;
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.contentStoreProvider = contentStoreProvider;
+    }
+
+
+    private ContentStore getContentStore() throws ContentStoreException {
+        return contentStoreProvider.getContentStore();
     }
 
 
     private Space getSpace(String spaceId) throws Exception{
         Space space = new Space();
-        org.duracloud.domain.Space cloudSpace = contentStoreManager.getPrimaryContentStore().getSpace(spaceId);
+        org.duracloud.domain.Space cloudSpace = getContentStore().getSpace(spaceId);
         SpaceUtil.populateSpace(space, cloudSpace);
         return space;
     }

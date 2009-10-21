@@ -47,16 +47,16 @@
   <!-- add space configuration --> 
   <bean name="spaces/add" class="org.duracloud.duradmin.control.AddSpaceFlowHandler" />
   <bean name="addSpaceAction" class="org.duracloud.duradmin.webflow.space.AddSpaceAction">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
   <bean name="spaceValidator" class="org.duracloud.duradmin.webflow.space.SpaceValidator"/>
 
   <!-- add content configuration --> 
   <bean name="contents/add" class="org.duracloud.duradmin.control.AddContentItemFlowHandler">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
   <bean name="addContentItemAction" class="org.duracloud.duradmin.webflow.content.AddContentItemAction">
-  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
   <bean name="contentItemValidator" class="org.duracloud.duradmin.webflow.content.ContentItemValidator"/>
 
