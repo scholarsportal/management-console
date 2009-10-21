@@ -32,12 +32,15 @@
 		
 		<td id="main-menu-right">
 			<tiles:importAttribute name="contentStoreSelector" />
+			<tiles:importAttribute name="currentUrl" />
 
-			<form>
+			<form  action="<c:url value="/changeProvider"/>" method="put">
+				<input type="hidden" name="returnTo" value="${currentUrl}"/>
+				
 				Providers:
-				<select >
+				<select name="storageProviderId" onchange="submit();">
 					<c:forEach var="store" items="${contentStoreSelector.contentStores}">
-						<option value="${store.storeId}" selected="<c:if test="${store.storeId == contentStoreSelector.selectedId}">selected</c:if>">
+						<option value="${store.storeId}" <c:if test="${store.storeId == contentStoreSelector.selectedId}">selected</c:if> >
 							${store.storageProviderType}
 						</option>
 					</c:forEach>

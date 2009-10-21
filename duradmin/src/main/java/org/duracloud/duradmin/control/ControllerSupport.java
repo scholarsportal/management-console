@@ -46,8 +46,7 @@ public class ControllerSupport {
 
     public ModelAndView handle(ModelAndView modelAndView, HttpServletRequest request,
                                       HttpServletResponse response) {
-        modelAndView.addObject(NavigationUtils.RETURN_TO_KEY, request.getRequestURI()+"?"+request.getQueryString());
-        MessageUtils.addRedirectMessage(modelAndView,request);
+        MessageUtils.addRedirectMessageToModelAndView(modelAndView,request);
         return modelAndView;
     }
     

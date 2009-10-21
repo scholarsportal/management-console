@@ -8,6 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 public class MessageUtils {
+    private static final String REDIRECT_KEY = "redirectKey";
     public static final String FLASH_MESSAGE = "flashMessage";
 
     public static void addFlashMessage(Message message, HttpServletRequest request){
@@ -21,7 +22,7 @@ public class MessageUtils {
     }
     
     public static Message getRedirectMessage(HttpServletRequest request){
-        String key = request.getParameter("redirectKey");
+        String key = request.getParameter(REDIRECT_KEY);
         NameValuePair obj = (NameValuePair)request.getSession().getAttribute(key);
         if(obj != null){
             request.getSession().removeAttribute(key);
@@ -54,11 +55,30 @@ public class MessageUtils {
                                                Message message,
                                                HttpServletRequest request) {
         String key = addMessageToRedirect(message, request);
-        outcomeUrl+="&redirectKey="+key;
+        if(!outcomeUrl.contains("?")){
+            outcomeUrl+="?";
+        }else{
+            outcomeUrl+="&";
+        }
+        
+        int index = outcomeUrl.indexOf(REDIRECT_KEY);
+        
+        if(index > 0){
+           int start = index + REDIRECT_KEY.length()+1;
+           int end = outcomeUrl.indexOf("=", start);
+           if(end < 0){
+               end = outcomeUrl.length();
+           }
+           String value = outcomeUrl.substring(start, end);
+           outcomeUrl = outcomeUrl.replace(REDIRECT_KEY + "=" + value, REDIRECT_KEY + "=" + key);
+        }else{
+            outcomeUrl+=REDIRECT_KEY + "="+key;
+        }
+
         return outcomeUrl;
     }
 
-    public static void addRedirectMessage(ModelAndView modelAndView, HttpServletRequest request) {
+    public static void addRedirectMessageToModelAndView(ModelAndView modelAndView, HttpServletRequest request) {
         Message message = getRedirectMessage(request);
         if(message != null){
             modelAndView.addObject(FLASH_MESSAGE, message);

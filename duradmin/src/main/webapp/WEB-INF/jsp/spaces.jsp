@@ -42,14 +42,14 @@
 								
 									<div id="actionDiv" class="actions" >
 										<ul>
-											<li><a style="font-weight:bold" href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${returnTo}"/>">
+											<li><a style="font-weight:bold" href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${currentUrl}"/>">
 													<spring:message code="add.contentItem"/>
 												</a>
 											</li>
 											
 											<li><a href="<c:url value="removeSpace.htm">
 													   		<c:param name="spaceId" value="${spaceId}"/>
-													   		<c:param name="returnTo" value="${returnTo}"/>
+													   		<c:param name="returnTo" value="${currentUrl}"/>
 													    </c:url>" onclick="return confirmDeleteOperation();">
 													<spring:message code="remove"/>
 												</a>

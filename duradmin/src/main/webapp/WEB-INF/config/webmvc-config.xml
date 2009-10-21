@@ -34,7 +34,7 @@
         <prop key="/unDeployService.htm">unDeployServiceController</prop>
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
-
+		<prop key="/changeProvider">changeProviderController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -42,8 +42,12 @@
   
   <!-- Request Controllers - processes request -->
   <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
-  	<property name="contentStoreSelector" ref="contentStoreSelector"/>
   </bean>
+
+  <bean id="changeProviderController" class="org.duracloud.duradmin.control.ChangeProviderController">
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
+  </bean>
+
 
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController">
   	<property name="contentStoreProvider" ref="contentStoreProvider"/>
