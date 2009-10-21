@@ -3,11 +3,12 @@ package org.duracloud.duradmin.control;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.Service;
 import org.duracloud.duradmin.util.ServicesUtil;
-import org.duracloud.duradmin.view.MainMenu;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,6 +22,11 @@ public class ServicesController
         setCommandName("service");
     }
 
+    @Override
+    protected boolean isFormSubmission(HttpServletRequest request) {
+        return true;
+    }
+    
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
