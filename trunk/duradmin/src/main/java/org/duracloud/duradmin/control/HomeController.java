@@ -15,7 +15,7 @@ public class HomeController
         extends AbstractController {
 
     private ContentStoreSelector contentStoreSelector;
-    
+    private ControllerSupport controllerSupport = new ControllerSupport();
     
     public ContentStoreSelector getContentStoreSelector() {
         return contentStoreSelector;
@@ -26,6 +26,14 @@ public class HomeController
         this.contentStoreSelector = contentStoreSelector;
     }
 
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request,
+                                      HttpServletResponse response)
+            throws Exception {
+        
+       ModelAndView mav = super.handleRequest(request, response);
+       return controllerSupport.handle(mav,request,response);
+    }
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request,
                                                  HttpServletResponse response)

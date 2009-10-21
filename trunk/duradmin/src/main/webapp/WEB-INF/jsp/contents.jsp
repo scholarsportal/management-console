@@ -53,7 +53,7 @@
 												<a href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
 											   		<c:param name="contentId" value="${content}"/>
-											   		<c:param name="returnTo" value="${returnTo}"/>
+											   		<c:param name="returnTo" value="${currentUrl}"/>
 											    </c:url>" onclick="return confirmDeleteOperation();"><spring:message code="remove"/></a>
 										   	</li>
 										</ul>

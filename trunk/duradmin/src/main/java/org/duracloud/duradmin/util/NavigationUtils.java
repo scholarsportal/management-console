@@ -1,7 +1,10 @@
 package org.duracloud.duradmin.util;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 
@@ -13,6 +16,8 @@ public class NavigationUtils {
         String returnTo = request.getParameter(NavigationUtils.RETURN_TO_KEY);
         map.put(NavigationUtils.RETURN_TO_KEY, returnTo);
     }
+    
+
 
     public static String getReturnTo(FlowExecutionOutcome outcome) {
         String returnTo = outcome.getOutput().getString(NavigationUtils.RETURN_TO_KEY);
@@ -25,7 +30,7 @@ public class NavigationUtils {
 
     public static String getReturnTo(HttpServletRequest request) {
         Object returnTo =  request.getParameter(RETURN_TO_KEY);
-        return (returnTo != null ? returnTo.toString() : null);
+        return (returnTo != null ? returnTo.toString() : "");
     }
 
     

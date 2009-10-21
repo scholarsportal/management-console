@@ -31,7 +31,8 @@ public class BaseViewPreparer
         attributeContext.putAttribute(
                             "contentStoreSelector",
                             new Attribute(contentStoreSelector), true);
-
+        String currentUrl = (String)tilesRequestContext.getRequestScope().get("currentUrl");
+        attributeContext.putAttribute("currentUrl", new Attribute(currentUrl), true);
     }
     
     

@@ -9,7 +9,7 @@
 			    <li>
 				    <a href="<c:url value="/contents/add" >
 				   		<c:param name="spaceId" value="${contentItem.spaceId}"/>
-				   		<c:param name="returnTo" value="${returnTo}"/>
+				   		<c:param name="returnTo" value="${currentUrl}"/>
 				    </c:url>"><spring:message code="add.contentItem"/></a>
 				</li>
 				<li><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}"><spring:message code="download"/></a></li>
