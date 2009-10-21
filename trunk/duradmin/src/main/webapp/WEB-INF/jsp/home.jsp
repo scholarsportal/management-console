@@ -22,7 +22,7 @@
 							</p>							
 						</td>
 						<td>
-							<h3>My Duracould</h3>
+							<h3>My Duracloud</h3>
 							<p>
 								We might display some useful information about 
 								the current size, scope, activity of this 
