@@ -1,11 +1,11 @@
 
 package org.duracloud.servicesutil.util.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.ServiceLister;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NoopServiceListerImpl
         implements ServiceLister {
@@ -23,18 +23,26 @@ public class NoopServiceListerImpl
             final String name = "service-" + srv;
             this.duraServices.add(new ComputeService() {
 
+                private ServiceStatus status = ServiceStatus.STOPPED;
+
                 public String describe() throws Exception {
                     return name;
                 }
 
-                public void start() throws Exception {
-                    // TODO Auto-generated method stub
+                public String getServiceId() throws Exception {
+                    return name;
+                }
 
+                public ServiceStatus getServiceStatus() throws Exception {
+                    return status;
+                }
+
+                public void start() throws Exception {
+                    status = ServiceStatus.STARTED;
                 }
 
                 public void stop() throws Exception {
-                    // TODO Auto-generated method stub
-
+                    status = ServiceStatus.STOPPED;
                 }
             });
         }

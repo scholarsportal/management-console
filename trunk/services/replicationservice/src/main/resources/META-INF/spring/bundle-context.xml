@@ -28,6 +28,7 @@
     <!-- <property name="jmsContainer" ref="jmsContainer" />  -->
     <property name="connectionFactory" ref="connFactory" />
     <property name="destination" ref="ingestDestination" />
+    <property name="serviceId" value="replicationservice-1.0.0" />
   </bean>
 
 </beans>

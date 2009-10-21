@@ -21,10 +21,14 @@
     <property name="osgiConfigAdmin" ref="osgiConfigAdminSrv" />
   </bean>
   
-  <bean id="srvStarter" class="org.duracloud.servicesutil.util.internal.NoopServiceStarterImpl" />
-
-  <bean id="srvStopper" class="org.duracloud.servicesutil.util.internal.NoopServiceStopperImpl" />
-
+  <bean id="srvStarter" class="org.duracloud.servicesutil.util.internal.ServiceStarterImpl">
+    <property name="duraServices" ref="duraServices" />
+  </bean>
+  
+  <bean id="srvStopper" class="org.duracloud.servicesutil.util.internal.ServiceStopperImpl">
+    <property name="duraServices" ref="duraServices" />
+  </bean>
+  
   <!-- Properties config -->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
     <property name="location" value="osgi-config.properties" />

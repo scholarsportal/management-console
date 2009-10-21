@@ -1,23 +1,20 @@
 
 package org.duracloud.servicesadminclient;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
+import junit.framework.Assert;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.easymock.EasyMock;
-
-import junit.framework.Assert;
-
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServicesAdminClientTest {
 
@@ -45,6 +42,10 @@ public class ServicesAdminClientTest {
     }
 
     public void testGetServiceListing() {
+        //        fail("Not yet implemented");
+    }
+
+    public void testIsServiceDeployed() {
         //        fail("Not yet implemented");
     }
 

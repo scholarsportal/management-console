@@ -1,12 +1,5 @@
 package org.duracloud.duraservice.domain;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
@@ -16,13 +9,20 @@ import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
-import org.duracloud.domain.Space;
 import org.duracloud.domain.Content;
+import org.duracloud.domain.Space;
 import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Performs management functions over services.
@@ -196,13 +196,34 @@ public class ServiceManager {
             InputStream serviceStream = content.getStream();
             long length = getContentLength(content);
 
-            // Push file to services admin
+            // Deploy the service (push file to services admin)
             ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
             HttpResponse response =
                 servicesAdmin.postServiceBundle(serviceId, serviceStream, length);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
-                throw new ServiceException("Services Admin response code was " +
-                                           response.getStatusCode());
+                String error = "Error deploying service: " + serviceId +
+                               " Services Admin response code was " +
+                               response.getStatusCode();
+                throw new ServiceException(error);
+            }
+
+            // Wait to allow deployment to complete
+            int maxLoops = 5;
+            for(int i=0; i < maxLoops; i++) {
+                if(servicesAdmin.isServiceDeployed(serviceId)) {
+                    break;
+                } else {
+                    Thread.sleep(2000);
+                }
+            }
+
+            // Start the service
+            response = servicesAdmin.startServiceBundle(serviceId);
+            if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
+                String error = "Error starting service: " + serviceId +
+                               " Services Admin response code was " +
+                               response.getStatusCode();
+                throw new ServiceException(error);
             }
         } catch(Exception e) {
             String error = "Unable to deploy service " + serviceId +
@@ -332,8 +353,8 @@ public class ServiceManager {
 
             try {
                 ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
-                HttpResponse response = servicesAdmin.deleteServiceBundle(serviceId);
-
+                HttpResponse response = servicesAdmin.stopServiceBundle(serviceId);
+                response = servicesAdmin.deleteServiceBundle(serviceId);
                 if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                     throw new ServiceException("Services Admin response code was " +
                                                response.getStatusCode());

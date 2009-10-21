@@ -1,14 +1,14 @@
 
 package org.duracloud.services.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.duracloud.services.BaseService;
+import org.duracloud.services.ComputeService;
+import org.duracloud.services.beans.ComputeServiceBean;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.duracloud.services.ComputeService;
-import org.duracloud.services.beans.ComputeServiceBean;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XMLServiceSerializerImplTest {
 
@@ -73,7 +73,7 @@ public class XMLServiceSerializerImplTest {
 
     }
 
-    private class MockComputeService
+    private class MockComputeService extends BaseService
             implements ComputeService {
 
         private final String name;
@@ -82,16 +82,15 @@ public class XMLServiceSerializerImplTest {
             this.name = name;
         }
 
+        @Override
         public String describe() throws Exception {
             return name;
         }
 
-        public void start() throws Exception {
+        @Override
+        public String getServiceId() {
+            return name;
         }
-
-        public void stop() throws Exception {
-        }
-
     }
 
 }
