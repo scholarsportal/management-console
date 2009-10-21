@@ -231,7 +231,7 @@ td, th {
 }
 
 
-.standard th {
+.standard > tbody > tr > th {
   background-color:#EEE;	
 	
 }
@@ -246,7 +246,7 @@ td, th {
 
 
 
-.standard tr, .standard th {
+.standard > tbody > tr, .standard > tr > th {
 	border-bottom: 1px solid #CCC;	
 }
 
