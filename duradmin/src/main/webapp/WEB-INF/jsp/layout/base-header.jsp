@@ -31,21 +31,23 @@
 		
 		
 		<td id="main-menu-right">
-			<tiles:importAttribute name="contentStoreSelector" />
-			<tiles:importAttribute name="currentUrl" />
+			<tiles:importAttribute name="contentStores" ignore="true"/>
+			<tiles:importAttribute name="selectedStoreId" ignore="true" />
 
-			<form  action="<c:url value="/changeProvider"/>" method="put">
-				<input type="hidden" name="returnTo" value="${currentUrl}"/>
-				
-				Providers:
-				<select name="storageProviderId" onchange="submit();">
-					<c:forEach var="store" items="${contentStoreSelector.contentStores}">
-						<option value="${store.storeId}" <c:if test="${store.storeId == contentStoreSelector.selectedId}">selected</c:if> >
-							${store.storageProviderType}
-						</option>
-					</c:forEach>
-				</select>
-			</form>
+			<tiles:importAttribute name="currentUrl" />
+			<c:if test="${not empty contentStores}">
+				<form  action="<c:url value="/changeProvider"/>" method="put">
+					<input type="hidden" name="returnTo" value="${currentUrl}"/>
+					<spring:message code="storageProviders"/>:
+					<select name="storageProviderId" onchange="submit();">
+						<c:forEach var="store" items="${contentStores}">
+							<option value="${store.storeId}" <c:if test="${store.storeId == selectedStoreId}">selected</c:if> >
+								<spring:message code="${fn:toLowerCase(store.storageProviderType)}"/> (#${store.storeId})
+							</option>
+						</c:forEach>
+					</select>
+				</form>
+			</c:if>
 		</td>
 	</tr>
 </table>
