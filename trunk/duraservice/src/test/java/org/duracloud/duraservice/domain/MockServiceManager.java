@@ -199,5 +199,10 @@ public class MockServiceManager
         public HttpResponse stopServiceBundle(String bundleId) throws Exception {
             return response;        
         }
+
+        @Override
+        public boolean isServiceDeployed(String bundleId) throws Exception {
+            return true;
+        }
     }
 }
