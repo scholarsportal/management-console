@@ -6,15 +6,17 @@
 <tiles-definitions>
 	
 	<definition name="base" template="/WEB-INF/jsp/layout/base-layout.jsp" preparer="basePreparer">
-		<put-attribute name="title" value="home" />
+		<put-attribute name="title" value="title" />
 		<put-attribute name="header" value="base-header" />
-		<put-attribute name="menu" value=""/>
+		<put-attribute name="menu" value="menu"/>
 		<put-attribute name="main-content" value="main-content"/>
 		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
 		<put-attribute name="mainTab" value="home" />
 	</definition>
 		
 	<definition name="base-header" template="/WEB-INF/jsp/layout/base-header.jsp" />
+
+
 
 	<definition name="base-content-header" template="/WEB-INF/jsp/layout/base-content-header.jsp">
 		<put-attribute name="title"/>	
@@ -50,16 +52,12 @@
 
 	<definition name="services" extends="base-service" template="/WEB-INF/jsp/services.jsp"/>
 
-	<definition name="error" extends="base">
-		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
+	<definition name="error" extends="base" template="/WEB-INF/jsp/error.jsp">
 		<put-attribute name="mainTab" value="" />
-		<put-attribute name="menu" value="No Menu: Error"/>
+		<put-attribute name="menu" value=""/>
 	</definition>
 
-	<definition name="exception" extends="base">
-		<put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp"/>
-		<put-attribute name="mainTab" value="" />
-		<put-attribute name="menu" value="No Menu: Error"/>
+	<definition name="exception" extends="error">
 	</definition>
 
 </tiles-definitions>

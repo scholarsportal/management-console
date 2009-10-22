@@ -14,7 +14,6 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.Message;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.ViewResolver;
 
 public class RemoveContentController
         extends BaseCommandController {
