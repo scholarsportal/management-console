@@ -187,6 +187,93 @@ public class TestContentStore
     }
 
     @Test
+    public void testInvalidSpace() throws Exception {
+        String invalidSpaceId = "invalid-space-id";
+        Map emptyMap = new HashMap<String, String>();
+
+        // Ensure invalid space is not in spaces listing
+        List<String> spaces = store.getSpaces();
+        assertNotNull(spaces);
+        assertTrue(spaces.size() >= 1);
+        assertFalse(spaces.contains(invalidSpaceId));
+
+        try {
+            store.deleteSpace(invalidSpaceId);
+            fail("Exception expected on deleteSpace(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.getSpace(invalidSpaceId);
+            fail("Exception expected on getSpace(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.getSpaceAccess(invalidSpaceId);
+            fail("Exception expected on getSpaceAccess(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.setSpaceAccess(invalidSpaceId, AccessType.OPEN);
+            fail("Exception expected on setSpaceAccess(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.getSpaceMetadata(invalidSpaceId);
+            fail("Exception expected on getSpaceMetadata(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.setSpaceMetadata(invalidSpaceId, emptyMap);
+            fail("Exception expected on setSpaceMetadata(invalidSpaceId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            String contentId = "test-content";
+            String content = "This is the information stored as content";
+            InputStream contentStream = IOUtil.writeStringToStream(content);
+            String contentMimeType = "text/plain";
+            store.addContent(invalidSpaceId, contentId, contentStream,
+                             content.length(), contentMimeType, emptyMap);
+            fail("Exception expected on addContent(invalidSpaceId, ...)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            String contentId = "test-content";
+            store.getContent(invalidSpaceId, contentId);
+            fail("Exception expected on getContent(invalidSpaceId, ...)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            String contentId = "test-content";
+            store.deleteContent(invalidSpaceId, contentId);
+            fail("Exception expected on deleteContent(invalidSpaceId, ...)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            String contentId = "test-content";
+            store.getContentMetadata(invalidSpaceId, contentId);
+            fail("Exception expected on getContentMetadata(invalidSpaceId, ...)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            String contentId = "test-content";
+            store.setContentMetadata(invalidSpaceId, contentId, emptyMap);
+            fail("Exception expected on setContentMetadata(invalidSpaceId, ...)");
+        } catch(ContentStoreException expected) {
+        }
+    }
+
+    @Test
     public void testContent() throws Exception {
         String contentId = "test-content";
         String content = "This is the information stored as content";
@@ -254,6 +341,41 @@ public class TestContentStore
             assertNotNull(cse.getMessage());
         }
         store.deleteSpace(spaceId);
+    }
+
+    @Test
+    public void testInvalidContent() throws Exception {
+        String invalidContentId = "invalid-content-id";
+        Map emptyMap = new HashMap<String, String>();
+
+        // Create space
+        store.createSpace(spaceId, null);
+        Space space = store.getSpace(spaceId);
+        assertNotNull(space);
+
+        try {
+            store.deleteContent(spaceId, invalidContentId);
+            fail("Exception expected on deleteContent(spaceId, invalidContentId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.getContent(spaceId, invalidContentId);
+            fail("Exception expected on getContent(spaceId, invalidContentId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.getContentMetadata(spaceId, invalidContentId);
+            fail("Exception expected on getContentMetadata(spaceId, invalidContentId)");
+        } catch(ContentStoreException expected) {
+        }
+
+        try {
+            store.setContentMetadata(spaceId, invalidContentId, emptyMap);
+            fail("Exception expected on setContentMetadata(spaceId, invalidContentId, ...)");
+        } catch(ContentStoreException expected) {
+        }
     }
 
 }

@@ -50,22 +50,16 @@ public interface ContentStore {
      * Provides a listing of all spaces IDs.
      *
      * @return Iterator listing spaceIds
-     * @throws ContentStoreException
+     * @throws ContentStoreException if space IDs cannot be retrieved
      */
     public List<String> getSpaces() throws ContentStoreException;
 
-    //TODO Bill - should I expected a null space if one with the specified name
-    //doesn't exist?  I think the behavior should follow the same convention that 
-    //getContent follows.  From the code in ContentStoreImpl,  if the body returns
-    //empty you throw an exception. The driving concern: if there is are huge number
-    //of spaces validating space name by checking the list as I'm doing now could 
-    //be time consuming. See duradmin - SpaceValidator for details.
     /**
      * Provides a Space, including a listing of all of the content files within
      * a space and the metadata associated with the space.
      *
      * @return Space
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or cannot be retrieved
      */
     public Space getSpace(String spaceId) throws ContentStoreException;
     
@@ -77,7 +71,7 @@ public interface ContentStore {
      * call to getSpaces() may not include a space with exactly this same name.
      *
      * @param spaceId
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space already exists or cannot be created
      */
     public void createSpace(String spaceId, Map<String, String> spaceMetadata)
             throws ContentStoreException;
@@ -87,7 +81,7 @@ public interface ContentStore {
      * Deletes a space.
      *
      * @param spaceId
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or cannot be deleted
      */
     public void deleteSpace(String spaceId) throws ContentStoreException;
     
@@ -96,7 +90,7 @@ public interface ContentStore {
      *
      * @param spaceId
      * @return Map of space metadata or null if no metadata exists
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or the metadata cannot be retrieved
      */
     public Map<String, String> getSpaceMetadata(String spaceId)
             throws ContentStoreException;
@@ -107,7 +101,7 @@ public interface ContentStore {
      *
      * @param spaceId
      * @param spaceMetadata
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or the metadata cannot be set
      */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata)
@@ -119,8 +113,8 @@ public interface ContentStore {
      * authentication prior to viewing any of the contents.
      *
      * @param spaceId
-     * @return
-     * @throws ContentStoreException
+     * @return AccessType - OPEN or CLOSED
+     * @throws ContentStoreException if the space does not exist or access cannot be retrieved
      */
     public AccessType getSpaceAccess(String spaceId) throws ContentStoreException;
     
@@ -129,7 +123,7 @@ public interface ContentStore {
      *
      * @param spaceId
      * @param spaceAccess
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or access cannot be set
      */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)
             throws ContentStoreException;
@@ -146,7 +140,7 @@ public interface ContentStore {
      * @param contentSize
      * @param contentMetadata
      * @return
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space does not exist or content cannot be added
      */
     public String addContent(String spaceId,
                              String contentId,
@@ -155,24 +149,24 @@ public interface ContentStore {
                              String contentMimeType,
                              Map<String, String> contentMetadata)
             throws ContentStoreException;
+
     /**
      * Gets content from a space.
      *
      * @param spaceId
      * @param contentId
-     * @return the content stream or null if the content does not exist
-     * @throws ContentStoreException
+     * @return the content stream
+     * @throws ContentStoreException if the space or content does not exist or the content cannot be retrieved
      */
     public Content getContent(String spaceId, String contentId)
             throws ContentStoreException;
-    
 
     /**
      * Removes content from a space.
      *
      * @param spaceId
      * @param contentId
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space or content does not exist or the content cannot be deleted
      */
     public void deleteContent(String spaceId, String contentId)
             throws ContentStoreException;
@@ -182,18 +176,17 @@ public interface ContentStore {
      * of the current content metadata and adds a new set of metadata. Some
      * metadata, such as system metadata provided by the underlying storage
      * system, cannot be updated or removed. Some of the values which cannot be
-     * updated or removed: content-checksum content-modified content-size
+     * updated or removed: content-checksum, content-modified, content-size
      *
      * @param spaceId
      * @param contentId
      * @param contentMetadata
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space or content does not exist or the content metadata cannot be set
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
                                    Map<String, String> contentMetadata)
             throws ContentStoreException;
-    
 
     /**
      * Retrieves the metadata associated with content. This includes both
@@ -202,7 +195,7 @@ public interface ContentStore {
      * @param spaceId
      * @param contentId
      * @return
-     * @throws ContentStoreException
+     * @throws ContentStoreException if the space or content does not exist or the content metadata cannot be retrieved
      */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId)
