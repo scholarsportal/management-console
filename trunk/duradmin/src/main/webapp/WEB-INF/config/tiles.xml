@@ -10,6 +10,8 @@
 		<put-attribute name="header" value="base-header" />
 		<put-attribute name="menu" value="menu"/>
 		<put-attribute name="main-content" value="main-content"/>
+		<put-attribute name="help" value=""/>
+
 		<put-attribute name="footer" value="/WEB-INF/jsp/layout/base-footer.jsp"/>
 		<put-attribute name="mainTab" value="home" />
 	</definition>
