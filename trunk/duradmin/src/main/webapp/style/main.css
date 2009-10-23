@@ -126,7 +126,7 @@ td#main-content{
 
 .main-content-header  .subtitle li{
 	display: inline;
-	padding-right:2em;
+	padding-right:0em;
 }
 div.main-content-header{
 	min-height:3em;	

@@ -25,6 +25,7 @@ function loadContentItem(nodeId, spaceId, contentId){
 	},
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
+	          showError(node, ioArgs);
 	          return responseObject;
 		}
 
@@ -32,7 +33,19 @@ function loadContentItem(nodeId, spaceId, contentId){
 }
 
 function showWaitMessage(node, messageText){
-	node.innerHTML = "<div><img src='/duradmin/images/wait.gif'/><span>"+messageText+"</span></div>";
+	node.innerHTML = "";
+	var div = dojo.create("div",null, node);
+	var img =  dojo.create("img", {src:"/duradmin/images/wait.gif" },div);
+	var span = dojo.create("span", {innerHTML: messageText},div);
+
+}
+
+function showError(node, ioArgs){
+	node.innerHTML = "";
+	var div = dojo.create("div",null, node);
+	var img =  dojo.create("img", {src:"/duradmin/images/error.gif" },div);
+	var messageText = "Unable to complete request: status (" + ioArgs.xhr.status + ")";
+	var span = dojo.create("span", {innerHTML: messageText},div);
 }
 
 
@@ -45,7 +58,7 @@ function formatContentItemMetadataHtml(ci){
 	  var size = metadata.size;
 	  var modified  = metadata.modified;
 	  var checksum  = metadata.checksum;
-      return modified + "<br/>" + mimetype + "<br/>" + size + "<br/>" + checksum;
+      return "Modified on " +  modified + "<br/>" + mimetype + "<br/>" + size + " bytes<br/>checksum: " + checksum;
 }
 
 
@@ -72,6 +85,7 @@ function loadSpaceMetadata(nodeId, spaceId){
 	},
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
+	          showError(node, ioArgs);
 	          return responseObject;
 		}
 
