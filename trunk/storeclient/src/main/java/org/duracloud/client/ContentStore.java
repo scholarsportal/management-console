@@ -54,6 +54,12 @@ public interface ContentStore {
      */
     public List<String> getSpaces() throws ContentStoreException;
 
+    //TODO Bill - should I expected a null space if one with the specified name
+    //doesn't exist?  I think the behavior should follow the same convention that 
+    //getContent follows.  From the code in ContentStoreImpl,  if the body returns
+    //empty you throw an exception. The driving concern: if there is are huge number
+    //of spaces validating space name by checking the list as I'm doing now could 
+    //be time consuming. See duradmin - SpaceValidator for details.
     /**
      * Provides a Space, including a listing of all of the content files within
      * a space and the metadata associated with the space.
