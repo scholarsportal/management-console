@@ -34,10 +34,7 @@
    			</td>
 
    			<td id="help">
-   				<p>
-					Context sensitive help to go here   				
-   				</p>
-   				
+				<tiles:insertAttribute name="help"/>   				
    			</td>
 
    		</tr>

@@ -7,6 +7,8 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.duracloud.client.ContentStoreException;
+import org.duracloud.client.ServicesException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -18,13 +20,15 @@ public class SimpleExceptionResolver
                                          HttpServletResponse response,
                                          Object handler,
                                          Exception ex) {
+        
         ModelAndView mav = new ModelAndView("exception");
         mav.addObject("message", ex.getMessage());
 
-        StringWriter stackTrace = new StringWriter();
-        ex.printStackTrace(new PrintWriter(stackTrace));
-        mav.addObject("stack", stackTrace.toString());
-
+        if(!(ex instanceof ContentStoreException) && !(ex instanceof ServicesException)){
+            StringWriter stackTrace = new StringWriter();
+            ex.printStackTrace(new PrintWriter(stackTrace));
+            mav.addObject("stack", stackTrace.toString());
+        }
         return mav;
     }
 }

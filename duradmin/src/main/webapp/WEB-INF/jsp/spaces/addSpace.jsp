@@ -21,7 +21,7 @@
 							<tr>
 								<td class="label"><label for="spaceId">Space ID</label></td>
 								<td class="input">
-									<form:input id="spaceId" path="spaceId" />
+									<form:input id="spaceId" path="spaceId" maxlength="255"/>
 									<form:errors path="spaceId" cssClass="message-error" />
 								</td>
 								<td class="field-help">Space ID help goes here.</td>
