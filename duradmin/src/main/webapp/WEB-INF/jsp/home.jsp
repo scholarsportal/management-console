@@ -3,6 +3,8 @@
 	<tiles:putAttribute name="title">
 		<spring:message code="home" />	
 	</tiles:putAttribute>
+	<tiles:putAttribute name="menu" value=""/>
+	
 	<tiles:putAttribute name="mainTab" value="home" />
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">

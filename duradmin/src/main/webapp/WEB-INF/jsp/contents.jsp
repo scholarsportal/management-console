@@ -23,7 +23,7 @@
 						${space.spaceId}
 					</tiles:putAttribute>
 					<tiles:putAttribute name="subtitle">
-						<a href="<c:url value="/spaces.htm"/>"><spring:message code="spaces"/></a>
+						<a href="<c:url value="/spaces.htm"/>"><spring:message code="spaces"/></a> <c:out value="::"/> 
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
