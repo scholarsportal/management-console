@@ -1,10 +1,10 @@
 package org.duracloud.storage.provider;
 
-import java.io.InputStream;
+import org.duracloud.storage.error.StorageException;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Iterator;
 import java.util.Map;
 
@@ -51,6 +51,7 @@ public interface StorageProvider {
      * Provides a listing of all of the content files within a space.
      *
      * @return Iterator listing contentIds
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public Iterator<String> getSpaceContents(String spaceId);
 
@@ -65,6 +66,7 @@ public interface StorageProvider {
      * may not include a space with exactly this same name.
      *
      * @param spaceId
+     * @throws StorageException if space with ID spaceId already exists
      */
     public void createSpace(String spaceId);
 
@@ -72,6 +74,7 @@ public interface StorageProvider {
      * Deletes a space.
      *
      * @param spaceId
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public void deleteSpace(String spaceId);
 
@@ -80,6 +83,7 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @return Map of space metadata or null if no metadata exists
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public Map<String, String> getSpaceMetadata(String spaceId);
 
@@ -88,6 +92,7 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @param spaceMetadata
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata);
@@ -98,7 +103,8 @@ public interface StorageProvider {
      * viewing any of the contents.
      *
      * @param spaceId
-     * @return
+     * @return the access type of the space, OPEN or CLOSED
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public AccessType getSpaceAccess(String spaceId);
 
@@ -107,6 +113,7 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @param access
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public void setSpaceAccess(String spaceId,
                                AccessType access);
@@ -121,6 +128,7 @@ public interface StorageProvider {
      * @param contentId
      * @param content
      * @return The checksum of the provided content
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public String addContent(String spaceId,
                              String contentId,
@@ -134,6 +142,7 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @return the content stream or null if the content does not exist
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public InputStream getContent(String spaceId,
                                   String contentId);
@@ -143,6 +152,7 @@ public interface StorageProvider {
      *
      * @param spaceId
      * @param contentId
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public void deleteContent(String spaceId,
                               String contentId);
@@ -163,6 +173,7 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @param contentMetadata
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
@@ -176,6 +187,7 @@ public interface StorageProvider {
      * @param spaceId
      * @param contentId
      * @return
+     * @throws StorageException if space with ID spaceId does not exist
      */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId);

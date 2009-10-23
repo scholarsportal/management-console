@@ -443,6 +443,7 @@ public class StorageProvidersTestCore
                                   String spaceId0,
                                   String contentId0,
                                   String contentId1) throws StorageException {
+        // Test with non-existant space
         try {
             provider.deleteContent(spaceId0, contentId0);
             fail("Exception expected.");
@@ -455,12 +456,12 @@ public class StorageProvidersTestCore
         Iterator<String> spaceContents = provider.getSpaceContents(spaceId0);
         verifyContentListing(spaceContents);
 
-        // TODO: All providers do not implement this consistently
-        //        try {
-        //            provider.deleteContent(spaceId0, contentId0);
-        //            fail("Exception expected.");
-        //        } catch (Exception e) {
-        //        }
+        // Test with valid space, non-existant content
+        try {
+            provider.deleteContent(spaceId0, contentId0);
+            fail("Exception expected.");
+        } catch (Exception e) {
+        }
 
         // Add some content.
         byte[] data = "sample-text".getBytes();

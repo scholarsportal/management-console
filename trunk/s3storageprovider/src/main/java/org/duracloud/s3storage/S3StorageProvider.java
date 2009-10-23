@@ -477,8 +477,15 @@ public class S3StorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        String bucketName = getBucketName(spaceId);
+        String bucketName = getBucketName(spaceId);       
+
         try {
+            // See if the content exists to be deleted
+            S3Bucket bucket = new S3Bucket();
+            bucket.setName(bucketName);
+            s3Service.getObjectDetails(bucket, contentId);
+
+            // Delete content
             s3Service.deleteObject(bucketName, contentId);
         } catch (S3ServiceException e) {
             String err = "Could not delete content " + contentId
