@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 public class MessageUtils {
-    private static final String REDIRECT_KEY = "redirectKey";
+    protected static final String REDIRECT_KEY = "redirectKey";
     public static final String FLASH_MESSAGE = "flashMessage";
 
     public static void addFlashMessage(Message message, HttpServletRequest request){
@@ -30,7 +30,6 @@ public class MessageUtils {
         }else{
             return null;
         }
-        
     }
 
     public static class NameValuePair {
@@ -50,7 +49,16 @@ public class MessageUtils {
         private String key;
         private Object Value;
     }
-
+    
+    /**
+     * adds a redirect message and appends the redirect key to the 
+     * outcomeUrl. If a redirect key already exists, it is replaced.
+     * replace redirect key if it exists in the outcomeUrl.
+     * @param outcomeUrl
+     * @param message
+     * @param request
+     * @return
+     */
     public static String appendRedirectMessage(String outcomeUrl,
                                                Message message,
                                                HttpServletRequest request) {
