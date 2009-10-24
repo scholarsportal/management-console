@@ -36,7 +36,8 @@ public class AddSpaceActionTest extends BaseContentStoreProviderTest{
         space.setAccess(AccessType.OPEN.name());
         
         MessageContext messageContext = new MockMessageContext();
-        this.addSpaceAction.execute(space, messageContext);
+        boolean result = this.addSpaceAction.execute(space, messageContext);
+        Assert.assertTrue(result);
     }
 }
 
