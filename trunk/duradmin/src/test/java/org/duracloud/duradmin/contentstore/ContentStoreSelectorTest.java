@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 
-public class ContentStoreSelectorTest extends ContentStoreProviderTest {
+public class ContentStoreSelectorTest extends BaseContentStoreProviderTest {
     
     @Test
     public void testSelectStore() throws Exception {
