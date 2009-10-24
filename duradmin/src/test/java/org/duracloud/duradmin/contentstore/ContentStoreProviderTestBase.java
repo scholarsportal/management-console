@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 
 
-public class BaseContentStoreProviderTest {
+public class ContentStoreProviderTestBase {
     
     protected ContentStoreProvider contentStoreProvider;
 

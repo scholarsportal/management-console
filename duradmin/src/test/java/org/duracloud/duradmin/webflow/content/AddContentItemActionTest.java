@@ -2,7 +2,7 @@ package org.duracloud.duradmin.webflow.content;
 
 import java.io.ByteArrayInputStream;
 
-import org.duracloud.duradmin.contentstore.BaseContentStoreProviderTest;
+import org.duracloud.duradmin.contentstore.ContentStoreProviderTestBase;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.mock.MockMessageContext;
@@ -15,7 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 
-public class AddContentItemActionTest extends BaseContentStoreProviderTest{
+public class AddContentItemActionTest extends ContentStoreProviderTestBase {
     private AddContentItemAction addContentItemAction; 
     @Before
     public void setUp() throws Exception {

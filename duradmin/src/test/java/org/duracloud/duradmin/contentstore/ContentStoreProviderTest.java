@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 
-public class ContentStoreProviderTest extends BaseContentStoreProviderTest{
+public class ContentStoreProviderTest extends ContentStoreProviderTestBase {
     
     
     @Test
