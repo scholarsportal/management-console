@@ -38,12 +38,15 @@ public class AddContentItemActionTest extends BaseContentStoreProviderTest{
         ContentItem contentItem = new ContentItem();
         contentItem.setContentId("test-content");
         MultipartFile file = new MockMultipartFile("test-content.jpg", new ByteArrayInputStream("test".getBytes()));
+        String spaceId =  this.contentStoreProvider.getContentStore().getSpaces().get(0);
         Space space = new Space();
-        space.setSpaceId("test-space");
+        space.setSpaceId(spaceId);
+        
         contentItem.setSpaceId(space.getSpaceId());
         contentItem.setFile(file);
         MessageContext messageContext = new MockMessageContext();
-        this.addContentItemAction.execute(contentItem, space, messageContext);
+        boolean result = this.addContentItemAction.execute(contentItem, space, messageContext);
+        Assert.assertTrue(result);
     }
 
 
