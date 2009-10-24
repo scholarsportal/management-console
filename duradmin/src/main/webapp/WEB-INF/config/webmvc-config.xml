@@ -26,6 +26,8 @@
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
         <prop key="/removeSpace.htm">removeSpaceController</prop>
+        <prop key="/space/changeAccess">changeSpaceAccessController</prop>
+
         <prop key="/contents.htm">contentsController</prop>
         <prop key="/content.htm">contentController</prop>
         <prop key="/removeContent.htm">removeContentController</prop>
@@ -52,6 +54,10 @@
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController">
   	<property name="contentStoreProvider" ref="contentStoreProvider"/>
     <property name="successView" value="spaces" />
+  </bean>
+
+  <bean id="changeSpaceAccessController" class="org.duracloud.duradmin.control.ChangeSpaceAccessController">
+  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
 
   <bean id="removeSpaceController" class="org.duracloud.duradmin.control.RemoveSpaceController">
