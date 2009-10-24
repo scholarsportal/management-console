@@ -9,6 +9,15 @@
 				<li>
 					<a href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message code="add.contentItem"/></a>
 				</li>
+				<li>
+					<a href="<c:url value="/space/changeAccess">
+						<c:param name="spaceId" value="${space.spaceId}"/>
+						<c:param name="returnTo" value="${currentUrl}"/>
+					</c:url>" >
+						<spring:message code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}"/>
+					</a>
+				</li>
+
 			</ul>
 
 			<p> Mouse over a content item for details.</p>
@@ -23,7 +32,24 @@
 						${space.spaceId}
 					</tiles:putAttribute>
 					<tiles:putAttribute name="subtitle">
-						<a href="<c:url value="/spaces.htm"/>"><spring:message code="spaces"/></a> <c:out value="::"/> 
+						<table style="margin:0;padding:0;">
+							<tr>
+								<td>
+									<a href="<c:url value="/spaces.htm"/>"><spring:message code="spaces"/></a> <c:out value="::"/> 
+								</td>
+								<td style="text-align:right">
+									<ul>
+										<li>
+											<spring:message code="access"/>: <spring:message code="access.${fn:toLowerCase(space.metadata.access)}"/> | 
+										</li>
+										<li>
+											<spring:message code="created"/>: ${space.metadata.created}
+										</li>
+
+									</ul>
+								</td>
+							</tr>
+						</table>
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
 			</tiles:putAttribute>

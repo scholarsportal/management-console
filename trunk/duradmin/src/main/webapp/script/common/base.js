@@ -96,7 +96,9 @@ function formatSpaceMetadataHtml(space){
 	  var metadata = space.metadata;
 	  var count = metadata.count;
 	  var created  = metadata.created;
-    return "Created on " + created + "<br/>" + count +  " items";
+	  var access  = metadata.access;
+
+	  return "Access: " + access + "<br/>" + "Created on " + created + "<br/>" + count +  " items";
 }
 
 
