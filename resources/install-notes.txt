@@ -104,3 +104,11 @@ In order to persist services deployed into the services-framework, please make s
 
 ..where ${duracloud.home} is already defined in settings.xml
 
+:: BagIt Manifest Verifier Utility ::
+There is a commandline utility that can be used to verify the equality of two BagIt-style checksum manifest files.
+To create an executable jar file of the utility, from within the /common project run:
+
+mvn install -P manifest-verifier
+
+The executable jar will be found at /common/target/manifest-verifier.jar.
+
