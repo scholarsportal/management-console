@@ -65,9 +65,6 @@ public class AddContentItemFlowHandler extends AbstractFlowHandler {
             String spaceId = request.getParameter("spaceId");
             Space space = getSpace(spaceId);
             map.put(SPACE, space);
-            ContentItem contentItem = new ContentItem();
-            contentItem.setSpaceId(spaceId);
-            map.put("contentItem", contentItem);
         }catch(Exception ex){
             log.error(ex);
         }
