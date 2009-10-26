@@ -5,6 +5,7 @@ import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Content;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
+import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -23,7 +24,7 @@ public class ContentItemValidator {
         this.contentStoreProvider = contentStoreProvider;
     }
 
-    public void validateDefineContentItem(ContentItem contentItem, ValidationContext context) {
+    public void validateDefineContentItem(Space space, ContentItem contentItem, ValidationContext context) {
         MessageContext messages = context.getMessageContext();
         MultipartFile file = contentItem.getFile();
         if (file == null || file.isEmpty()) {
@@ -46,7 +47,7 @@ public class ContentItemValidator {
         
         //check if item already exists.
         try{
-            if(contentItemExists(contentItem)){
+            if(contentItemExists(space, contentItem)){
                 messages.addMessage(new MessageBuilder().error().source("spaceId").
                                     defaultText("A content item with this ID already exists. Please try another.").build());
             }
@@ -57,7 +58,7 @@ public class ContentItemValidator {
         
     }
     
-    private boolean contentItemExists(ContentItem contentItem) throws ContentStoreException{
+    private boolean contentItemExists(Space space, ContentItem contentItem) throws ContentStoreException{
         ContentStore contentStore = this.contentStoreProvider.getContentStore();
         Content content = contentStore.getContent(contentItem.getSpaceId(), contentItem.getContentId());
         return (content != null);
