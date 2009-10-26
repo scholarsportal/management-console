@@ -1,16 +1,6 @@
 package org.duracloud.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.httpclient.Header;
-
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
@@ -20,6 +10,14 @@ import org.duracloud.storage.provider.StorageProvider;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides access to a content store
@@ -42,9 +40,9 @@ public class ContentStoreImpl implements ContentStore{
     /**
      * Creates a ContentStore
      *
-     * @param baseURL
-     * @param type
-     * @param storeId
+     * @param baseURL a {@link java.lang.String} object.
+     * @param type a {@link org.duracloud.storage.domain.StorageProviderType} object.
+     * @param storeId a {@link java.lang.String} object.
      */
     public ContentStoreImpl(String baseURL, StorageProviderType type, String storeId) {
         this.baseURL = baseURL;
@@ -52,14 +50,21 @@ public class ContentStoreImpl implements ContentStore{
         this.storeId = storeId;
     }
 
+
     public String getBaseURL() {
         return baseURL;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getStoreId() {
         return storeId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getStorageProviderType() {
         return type.name();
     }
@@ -80,7 +85,9 @@ public class ContentStoreImpl implements ContentStore{
         return buildURL("/" + spaceId + "/" + contentId);
     }
     
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public List<String> getSpaces() throws ContentStoreException {
         String url = buildURL("/spaces");
         try {
@@ -109,7 +116,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Space getSpace(String spaceId) throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
@@ -143,7 +152,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void createSpace(String spaceId, Map<String, String> spaceMetadata)
             throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
@@ -157,7 +168,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void deleteSpace(String spaceId) throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
         try {
@@ -169,7 +182,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String> getSpaceMetadata(String spaceId)
             throws ContentStoreException {
         String url = buildSpaceURL(spaceId);
@@ -184,7 +199,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata)
             throws ContentStoreException {
@@ -199,7 +216,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public AccessType getSpaceAccess(String spaceId) throws ContentStoreException {
         Map<String, String> spaceMetadata = getSpaceMetadata(spaceId);
         if(spaceMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS)) {
@@ -221,7 +240,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)
             throws ContentStoreException {
         Map<String, String> metadata = new HashMap<String, String>();
@@ -229,7 +250,9 @@ public class ContentStoreImpl implements ContentStore{
         setSpaceMetadata(spaceId, metadata);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public String addContent(String spaceId,
                              String contentId,
                              InputStream content,
@@ -259,7 +282,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Content getContent(String spaceId, String contentId)
             throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
@@ -280,7 +305,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void deleteContent(String spaceId, String contentId)
             throws ContentStoreException {
         String url = buildContentURL(spaceId, contentId);
@@ -294,7 +321,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void setContentMetadata(String spaceId,
                                    String contentId,
                                    Map<String, String> contentMetadata)
@@ -314,7 +343,9 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId)
             throws ContentStoreException {
