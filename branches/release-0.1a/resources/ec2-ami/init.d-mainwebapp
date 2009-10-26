@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# duracloud    
+#
+# chkconfig: 
+# description: Startup of mainwebapp, assuming tomcat is already running.     
+
+
+RETVAL=$?
+
+case "$1" in
+ start)
+        if [ 1 ];
+          then
+            echo $"Starting DuraCloud.org"
+            cd /opt/duracloud
+            /bin/su tomcat -c "mvn -P profile-bootstrap scm:bootstrap"
+            cd /opt/duracloud/target/checkout
+            /bin/su tomcat -c "./resources/scripts/installLibs.sh"
+            /bin/su tomcat -c "mvn install -Dmaven.test.skip=true -Ddatabase.home.default=/mnt/db/duracloudDB"
+            cd /opt/duracloud/target/checkout/durastore
+            /bin/su tomcat -c "mvn tomcat:undeploy -Dmaven.tomcat.server=tomcat-server"
+
+            cd /opt/duracloud/target/checkout/duradavwebapp
+            /bin/su tomcat -c "mvn tomcat:undeploy -Dmaven.tomcat.server=tomcat-server"
+            
+        fi
+        ;;
+ stop)
+        echo $"Nothing to be done."
+        ;;
+ *)
+        echo $"Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit $RETVAL
+
+
+
