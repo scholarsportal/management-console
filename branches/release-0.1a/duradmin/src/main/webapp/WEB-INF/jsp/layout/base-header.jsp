@@ -42,7 +42,7 @@
 					<select name="storageProviderId" onchange="submit();">
 						<c:forEach var="store" items="${contentStores}">
 							<option value="${store.storeId}" <c:if test="${store.storeId == selectedStoreId}">selected</c:if> >
-								<spring:message code="${fn:toLowerCase(store.storageProviderType)}"/> (#${store.storeId})
+								<spring:message code="${fn:toLowerCase(store.storageProviderType)}"/> 
 							</option>
 						</c:forEach>
 					</select>
