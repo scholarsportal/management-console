@@ -1,0 +1,44 @@
+<assembly>
+  <id>store-client</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <files>
+    <file>
+      <source>target/storeclient-1.0.0-javadoc.jar</source>
+      <outputDirectory>/docs</outputDirectory>
+    </file>
+  </files>
+
+  <fileSets>
+    <fileSet>
+      <directory>src/main/resources</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>*.properties</include>
+        <include>readme.txt</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib</outputDirectory>
+      <excludes>
+        <exclude>org.springframework:spring-core</exclude>
+        <exclude>org.springframework:spring-jdbc</exclude>
+        <exclude>org.springframework:spring-dao</exclude>
+        <exclude>org.springframework:spring-tx</exclude>
+        <exclude>org.springframework:spring-beans</exclude>
+        <exclude>org.springframework:spring-context</exclude>
+        <exclude>aopalliance:aopalliance</exclude>
+        <exclude>org.jdom:com.springsource.org.jdom</exclude>
+        <exclude>commons-lang:commons-lang</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>
+
