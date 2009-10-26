@@ -5,7 +5,10 @@
      "http://www.springframework.org/schema/webflow
      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"  >
 
-  <input name="contentItem" required="true"/>
+
+  <var name="contentItem"
+      class="org.duracloud.duradmin.domain.ContentItem"/>
+
   <input name="space" required="true"/>
   <input name="returnTo" />
 
