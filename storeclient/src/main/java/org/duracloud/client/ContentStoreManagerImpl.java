@@ -1,16 +1,16 @@
 package org.duracloud.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.error.StorageException;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides facilities for connecting to a set of content stores
@@ -25,10 +25,23 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
 
+    /**
+     * <p>Constructor for ContentStoreManagerImpl.</p>
+     *
+     * @param host a {@link java.lang.String} object.
+     * @param port a {@link java.lang.String} object.
+     */
     public ContentStoreManagerImpl(String host, String port) {
         this(host, port, DEFAULT_CONTEXT);
     }
 
+    /**
+     * <p>Constructor for ContentStoreManagerImpl.</p>
+     *
+     * @param host the host name on which DuraStore can be accessed
+     * @param port the port on which DuraStore can be accessed
+     * @param context the application context by which DuraStore can be accessed
+     */
     public ContentStoreManagerImpl(String host, String port, String context) {
         if (host == null || host.equals("")) {
             throw new IllegalArgumentException("Host must be a valid server host name");
@@ -45,7 +58,9 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, ContentStore> getContentStores() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         Map<String, StorageAccount> accounts = acctManager.getStorageAccounts();
@@ -62,7 +77,9 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         return contentStores;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public ContentStore getContentStore(String storeID) throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
@@ -71,7 +88,9 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         return contentStore;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public ContentStore getPrimaryContentStore() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
