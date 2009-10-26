@@ -37,6 +37,7 @@ public class ServicesController
         List<Service> depServiceList;
         List<Service> avlServiceList;
         List<String> serviceHosts;
+	/*
         try {
             ServicesManager servicesManager = getServicesManager();
             depServiceList = ServicesUtil.getDeployedServices(servicesManager);
@@ -53,6 +54,8 @@ public class ServicesController
         mav.addObject("availableServices", avlServiceList);
         mav.addObject("serviceHosts", serviceHosts);
         return mav;
+	*/
+        return new ModelAndView(getSuccessView());
 
     }
 
