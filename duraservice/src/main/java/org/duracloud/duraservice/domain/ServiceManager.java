@@ -33,7 +33,7 @@ public class ServiceManager {
 
     private static final Logger log = Logger.getLogger(ServiceManager.class);
 
-    private static final String LOCAL_HOST = "localhost";
+    private static String localHost;
 
     private String localServicesAdminBaseURL;
 
@@ -89,7 +89,8 @@ public class ServiceManager {
 
         try {
             localServicesAdminBaseURL = DuraServiceConfig.getServicesAdminUrl();
-            addServicesAdmin(LOCAL_HOST);
+            localHost = DuraServiceConfig.getHost();
+            addServicesAdmin(localHost);
         } catch (Exception e) {
             String error = "Could not retrieve local servicesAdmin " +
             		       "URL due to error: " + e.getMessage();
@@ -179,7 +180,7 @@ public class ServiceManager {
         checkConfigured();
 
         if(serviceHost == null || serviceHost.equals("")) {
-            serviceHost = LOCAL_HOST;
+            serviceHost = localHost;
         }
 
         if(!services.contains(serviceId)) {
@@ -386,13 +387,13 @@ public class ServiceManager {
                                            instanceHost + ".");
             }
         } else {
-            return servicesAdmins.get(LOCAL_HOST);
+            return servicesAdmins.get(localHost);
         }
     }
 
     private void addServicesAdmin(String instanceHost) {
         String baseUrl =
-            localServicesAdminBaseURL.replace(LOCAL_HOST, instanceHost);
+            localServicesAdminBaseURL.replace(localHost, instanceHost);
         ServicesAdminClient servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(baseUrl);
         servicesAdmin.setRester(new RestHttpHelper());

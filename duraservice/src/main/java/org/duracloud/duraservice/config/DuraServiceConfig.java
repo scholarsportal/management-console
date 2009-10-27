@@ -1,8 +1,8 @@
 package org.duracloud.duraservice.config;
 
-import java.util.Properties;
-
 import org.duracloud.common.util.ApplicationConfig;
+
+import java.util.Properties;
 
 /**
  * This class provides configuration properties associated with the duracloud
@@ -18,11 +18,16 @@ public class DuraServiceConfig
 
     private static String configFileName;
 
+    private static String hostKey = "host";
     private static String portKey = "port";
     private static String servicesAdminUrlKey = "servicesAdminURL";
 
     private static Properties getProps() throws Exception {
         return getPropsFromResource(getConfigFileName());
+    }
+
+    public static String getHost() throws Exception {
+        return getProps().getProperty(hostKey);
     }
 
     public static String getPort() throws Exception {
