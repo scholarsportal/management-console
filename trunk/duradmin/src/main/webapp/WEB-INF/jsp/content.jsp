@@ -12,7 +12,7 @@
 				   		<c:param name="returnTo" value="${currentUrl}"/>
 				    </c:url>"><spring:message code="add.contentItem"/></a> 
 				</li>
-				<li><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}"><spring:message code="download"/></a> 
+				<li><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${storeID}"><spring:message code="download"/></a> 
 				</li>
 			</ul>
 		</div>
@@ -62,7 +62,7 @@
 						    <table  class="property-list" >
 						        <tr>
 						          <td class="label"><spring:message code="contentItem.id"/></td>
-						          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}">${contentItem.contentId}</a></td>
+						          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${storeID}">${contentItem.contentId}</a></td>
 						        </tr>
 						        <tr>
 						          <td class="label"><spring:message code="size"/></td>
