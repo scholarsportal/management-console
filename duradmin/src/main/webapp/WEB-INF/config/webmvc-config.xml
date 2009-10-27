@@ -138,6 +138,7 @@
 
 
 	<bean name="viewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-		<property name="order" value="0"/>
+	  <property name="location" value="/WEB-INF/config/views.xml"/>
+      <property name="order" value="0"/>
 	</bean>  
 </beans>
