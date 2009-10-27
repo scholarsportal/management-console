@@ -74,7 +74,7 @@
 			
 									<div id="actionDiv" class="actions">
 										<ul>
-											<li><a href="${baseURL}/${space.spaceId}/${content}"><spring:message code="download"/></a></li>
+											<li><a href="${baseURL}/${space.spaceId}/${content}?storeID=${storeID}"><spring:message code="download"/></a></li>
 											<li>
 												<a href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>

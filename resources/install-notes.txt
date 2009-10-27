@@ -112,3 +112,10 @@ mvn install -P manifest-verifier
 
 The executable jar will be found at /common/target/manifest-verifier.jar.
 
+
+:: StoreClient Package ::
+To create a distributable zip of the storeclient and its dependencies, from within storeclient run:
+
+mvn install -P package-client
+
+The zip will be found at /storeclient/target/store-client.zip
