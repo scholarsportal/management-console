@@ -5,20 +5,22 @@
     <format>zip</format>
   </formats>
 
-  <files>
-    <file>
-      <source>target/storeclient-1.0.0-javadoc.jar</source>
-      <outputDirectory>/docs</outputDirectory>
-    </file>
-  </files>
-
   <fileSets>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>/docs</outputDirectory>
+      <includes>
+        <include>*javadoc.jar</include>
+      </includes>      
+    </fileSet>  
     <fileSet>
       <directory>src/main/resources</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>*.properties</include>
         <include>readme.txt</include>
+        <include>build.xml</include>
+        <include>ExampleClient.java</include>
       </includes>
     </fileSet>
   </fileSets>
