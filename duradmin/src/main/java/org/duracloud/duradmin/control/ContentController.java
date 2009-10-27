@@ -1,11 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
@@ -17,6 +12,10 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContentController
         extends BaseFormController {
@@ -76,6 +75,7 @@ public class ContentController
         contentItem.setMetadata(metadata);
         mav.addObject(CONTENT_ITEM, contentItem);
         mav.addObject("baseURL", store.getBaseURL());
+        mav.addObject("storeID", store.getStoreId());
         mav.addObject("title", "Content Detail");
         
 
