@@ -1,5 +1,11 @@
 #!/bin/sh
 
+killOsgiContainer() {
+    kill $1
+    pkill -xf ".*felix.*"
+}
+
+
 echo "========================="
 echo "Starting services tests...."
 echo "========================="
@@ -24,15 +30,7 @@ chmod +x run.sh
 # Give a moment for osgi-container to come up
 sleep 20
 
-# Find child pid of PAX_PID (the PAX_PID will not kill the osgi-container)
 PAX_PID=$!
-PAX_GID=`ps -p $PAX_PID -o pgid=`
-
-sed_cmd="s/\(\d*\)\s.*/\1/p"
-CONTAINER_PID=`ps -e -o pid= -o pgid= -o cmd= | grep java | grep felix.fileinstall.dir | sed -n -e $sed_cmd`
-echo "PAX container gid: $PAX_GID" >> $SERVICESADMIN_DIR/provision.log
-echo "PAX container pid: $CONTAINER_PID" >> $SERVICESADMIN_DIR/provision.log
-
 
 echo ""
 echo "==============================================================="
@@ -44,8 +42,8 @@ $MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: DuraService Integration test(s) failed; see above"
-  kill $PAX_PID
-  exit 1
+  killOsgiContainer $PAX_PID
+  return 1
 fi
 
 echo ""
@@ -58,8 +56,8 @@ $MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: ServiceClient Integration test(s) failed; see above"
-  kill $PAX_PID
-  exit 1
+  killOsgiContainer $PAX_PID
+  return 1
 fi
 
 echo ""
@@ -72,19 +70,20 @@ $MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level
 if [ $? -ne 0 ]; then
   echo ""
   echo "ERROR: ServicesAdminClient Integration test(s) failed; see above"
-  kill $PAX_PID
-  exit 1
+  killOsgiContainer $PAX_PID
+  return 1
 fi
 
 echo "======================="
 echo "Shutting Down Services Admin..."
 echo "======================="
 echo ""
-kill $PAX_PID
-kill $CONTAINER_PID
+killOsgiContainer $PAX_PID
 
 echo ""
 echo "===================================="
 echo "Completed services tests successfully!"
 echo "===================================="
 cd $BUILD_HOME
+
+return 0
