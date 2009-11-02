@@ -1,37 +1,23 @@
 package org.duracloud.emcstorage;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.emc.esu.api.Acl;
-import com.emc.esu.api.EsuApi;
-import com.emc.esu.api.EsuException;
-import com.emc.esu.api.Grant;
-import com.emc.esu.api.Grantee;
-import com.emc.esu.api.Identifier;
-import com.emc.esu.api.Metadata;
-import com.emc.esu.api.MetadataList;
-import com.emc.esu.api.MetadataTag;
-import com.emc.esu.api.MetadataTags;
-import com.emc.esu.api.ObjectId;
-import com.emc.esu.api.ObjectPath;
+import com.emc.esu.api.*;
 import com.emc.esu.api.Grantee.GRANT_TYPE;
 import com.emc.esu.api.rest.EsuRestApi;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
-
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EMCApiTestNotRun {
 
@@ -40,6 +26,10 @@ public class EMCApiTestNotRun {
     private String token;
 
     private String subtenant;
+
+    private final String PERMISSION_FULL = "FULL_CONTROL";
+    private final String PERMISSION_NONE = "NONE";
+    private final String PERMISSION_CUSTOM = "CUSTOM";
 
     private EsuApi emcApi;
 
@@ -111,11 +101,7 @@ public class EMCApiTestNotRun {
         // User is not recognized.
         Acl acl1 = new Acl();
         acl1.addGrant(this.createUserGrant("smith"));
-        try {
-            doCreateObject(acl1);
-            fail("Exception expected");
-        } catch (EsuException e) {
-        }
+        doCreateObject(acl1);
     }
 
     @Test
@@ -161,11 +147,10 @@ public class EMCApiTestNotRun {
                                         MetadataList argMetadataList,
                                         byte[] argData,
                                         String argMimeType) {
-        ObjectId id =
-                emcApi.createObject(argAcl,
-                                    argMetadataList,
-                                    argData,
-                                    argMimeType);
+        ObjectId id = emcApi.createObject(argAcl,
+                                          argMetadataList,
+                                          argData,
+                                          argMimeType);
         assertNotNull(id);
 
         verifyAcl(argAcl, emcApi.getAcl(id));
@@ -237,12 +222,7 @@ public class EMCApiTestNotRun {
 
     @Test
     public void testDeleteDirObjectByPath3() {
-        // Expected failure, uppercase not handled.
-        try {
-            doDeleteObjectByPath("/testAnother/");
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
+        doDeleteObjectByPath("/testAnother/");
     }
 
     @Test
@@ -324,7 +304,7 @@ public class EMCApiTestNotRun {
 
     @Test
     public void testCreateObjectOnPath1() {
-        doCreateObjectOnPath("/");
+        doCreateObjectOnPath("/dir0/DIR1");
     }
 
     @Test
@@ -334,11 +314,7 @@ public class EMCApiTestNotRun {
 
     @Test
     public void testCreateObjectOnPath3() {
-        try {
-            doCreateObjectOnPath("/PATH");
-            fail("Exception expected: must be lowercase.");
-        } catch (Exception e) {
-        }
+        doCreateObjectOnPath("/PATH");
     }
 
     @Test
@@ -350,6 +326,31 @@ public class EMCApiTestNotRun {
         String mimeType = "application/octet-stream";
 
         doCreateObjectOnPathWithArgs(path, acl, metadataList, data, mimeType);
+    }
+
+    @Test
+    public void testCreateObjectOnPath5() {
+        try {
+            doCreateObjectOnPath("probed-emc-uid.duracloud-test-space.17339/");
+            fail("Exception expected. Path should start with '/'");
+        } catch (Exception e) {
+            // do nothing
+        }
+    }
+
+    @Test
+    public void testCreateObjectOnPath6() {
+        doCreateObjectOnPath("/probed-emc-uid.duracloud-test-space.17339/");
+    }
+
+    @Test
+    public void testCreateObjectOnPath7() {
+        try {
+            doCreateObjectOnPath("/");
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // do nothing
+        }
     }
 
     @Test
@@ -381,7 +382,7 @@ public class EMCApiTestNotRun {
     }
 
     private Grant createUserGrant(String name) {
-        return new Grant(new Grantee(name, GRANT_TYPE.USER), null);
+        return new Grant(new Grantee(name, GRANT_TYPE.USER), PERMISSION_FULL);
     }
 
     private void doCreateObjectOnPath(String argPath) {
@@ -396,12 +397,11 @@ public class EMCApiTestNotRun {
         ObjectPath path = new ObjectPath(argPath);
         deleteIfExists(path);
 
-        ObjectId id =
-                emcApi.createObjectOnPath(path,
-                                          argAcl,
-                                          argMetadataList,
-                                          argData,
-                                          argMimeType);
+        ObjectId id = emcApi.createObjectOnPath(path,
+                                                argAcl,
+                                                argMetadataList,
+                                                argData,
+                                                argMimeType);
 
         assertNotNull(id);
 
@@ -428,8 +428,13 @@ public class EMCApiTestNotRun {
         List<Grant> argGrants = new ArrayList<Grant>();
         List<Grant> grants = new ArrayList<Grant>();
 
+        final int NUM_DEFAULT_GRANTEES = 2; // other, token
+        int defaultGranteesFound = 0;
         for (Grant g : argAcl) {
             argGrants.add(g);
+            if (isDefaultGrantee(g)) {
+                defaultGranteesFound++;
+            }
         }
 
         for (Grant g : acl) {
@@ -437,12 +442,18 @@ public class EMCApiTestNotRun {
         }
 
         // There are two default Grantee's in the ACL.
-        int expectedSize = argGrants.size() + 2;
+        int expectedSize =
+            argGrants.size() + NUM_DEFAULT_GRANTEES - defaultGranteesFound;
         assertEquals(expectedSize, grants.size());
         for (Grant g : argAcl) {
             assertTrue(grants.contains(g));
         }
 
+    }
+
+    private boolean isDefaultGrantee(Grant g) {
+        String name = g.getGrantee().getName();
+        return ("other".equals(name) || token.equals(name));
     }
 
     private void verifyMetadataList(MetadataList argMetadataList,
@@ -555,18 +566,24 @@ public class EMCApiTestNotRun {
 
         final boolean isListable = true;
 
-        Metadata metadataSpaceA =
-                new Metadata(mdNameSpace, "spaceId:0", isListable);
-        Metadata metadataSpaceB =
-                new Metadata(mdNameSpace, "spaceId:1", !isListable);
-        Metadata metadataSpaceC =
-                new Metadata(mdNameSpace, "spaceId:2", isListable);
-        Metadata metadataContentA =
-                new Metadata(mdNameContent, "content:0", !isListable);
-        Metadata metadataContentB =
-                new Metadata(mdNameContent, "content:1", !isListable);
-        Metadata metadataContentC =
-                new Metadata(mdNameContent, "content:2", !isListable);
+        Metadata metadataSpaceA = new Metadata(mdNameSpace,
+                                               "spaceId:0",
+                                               isListable);
+        Metadata metadataSpaceB = new Metadata(mdNameSpace,
+                                               "spaceId:1",
+                                               !isListable);
+        Metadata metadataSpaceC = new Metadata(mdNameSpace,
+                                               "spaceId:2",
+                                               isListable);
+        Metadata metadataContentA = new Metadata(mdNameContent,
+                                                 "content:0",
+                                                 !isListable);
+        Metadata metadataContentB = new Metadata(mdNameContent,
+                                                 "content:1",
+                                                 !isListable);
+        Metadata metadataContentC = new Metadata(mdNameContent,
+                                                 "content:2",
+                                                 !isListable);
 
         MetadataList metadataListA = new MetadataList();
         metadataListA.addMetadata(metadataSpaceA);
