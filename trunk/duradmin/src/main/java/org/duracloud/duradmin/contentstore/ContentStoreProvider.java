@@ -33,5 +33,4 @@ public class ContentStoreProvider {
         String contentStoreId = this.contentStoreSelector.getSelectedId();
         return this.contentStoreManager.getContentStore(contentStoreId);
     }
-
 }

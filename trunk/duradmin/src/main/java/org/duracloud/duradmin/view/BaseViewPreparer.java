@@ -11,6 +11,7 @@ import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.contentstore.ContentStoreSelector;
 
 /**
@@ -24,14 +25,14 @@ public class BaseViewPreparer
 
     private Log log = LogFactory.getLog(getClass());
     
-    private ContentStoreSelector contentStoreSelector;
+    private ContentStoreProvider contentStoreProvider;
     
-    public ContentStoreSelector getContentStoreSelector() {
-        return contentStoreSelector;
+    public ContentStoreProvider getContentStoreProvider() {
+        return contentStoreProvider;
     }
     
-    public void setContentStoreSelector(ContentStoreSelector contentStoreSelector) {
-        this.contentStoreSelector = contentStoreSelector;
+    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
+        this.contentStoreProvider = contentStoreProvider;
     }
 
     public void execute(TilesRequestContext tilesRequestContext,
@@ -48,20 +49,16 @@ public class BaseViewPreparer
     
             log.debug("currentUrl attribute set:" + currentUrl);
         
-            List<ContentStore> contentStores = contentStoreSelector.getContentStores();
+            contentStoreProvider.getContentStore();
+
             
             attributeContext.putAttribute(
-                              "contentStores",
-                              new Attribute(contentStores), true);
+                                          "contentStoreProvider",
+                                          new Attribute(contentStoreProvider), true);
 
-            log.debug("contentStores attribute set: " + contentStores);
+            log.debug("contentStoreProvider attribute set: " + contentStoreProvider);
 
-            String selectedStorageProviderId = contentStoreSelector.getSelectedId();
             
-            attributeContext.putAttribute(
-                                          "selectedStoreId",
-                                          new Attribute(selectedStorageProviderId), true);
-
         }catch(ContentStoreException ex){
             log.error("failed to complete execution of BaseViewPreparer: " 
                       + ex.getMessage());

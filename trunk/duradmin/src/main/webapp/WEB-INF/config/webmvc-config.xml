@@ -119,7 +119,7 @@
     </bean>
     
     <bean id="basePreparer" class="org.duracloud.duradmin.view.BaseViewPreparer">
-		<property name="contentStoreSelector" ref="contentStoreSelector"/>
+		<property name="contentStoreProvider" ref="contentStoreProvider"/>
 	</bean>
 	
   <bean id="exceptionResolver" class="org.duracloud.duradmin.common.SimpleExceptionResolver">

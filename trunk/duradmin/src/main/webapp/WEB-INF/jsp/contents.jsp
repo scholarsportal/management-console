@@ -54,9 +54,11 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
+				<tiles:importAttribute name="contentStoreProvider"/>
+				<c:set var="contentStore" value="${contentStoreProvider.contentStore}"/>
 				<c:if test="${empty space.contents}">
 					<p>
-					This space is empty. <a href="contents/add?spaceId=${space.spaceId}">Add Content >></a>
+					This space is empty. <a href="contents/add?spaceId=${space.spaceId}"><spring:message code="add.contentItem"/> >></a>
 					</p>
 				</c:if>
 			
@@ -71,10 +73,9 @@
 							<tr id="${content}" onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content}');">
 								<td id="actionColumn">
 									<b><a href="content.htm?spaceId=${space.spaceId}&contentId=${content}">${content}</a></b>
-			
 									<div id="actionDiv" class="actions">
 										<ul>
-											<li><a href="${baseURL}/${space.spaceId}/${content}?storeID=${storeID}"><spring:message code="download"/></a></li>
+											<li><a href="${contentStore.baseURL}/${space.spaceId}/${content}?storeID=${contentStore.storeId}"><spring:message code="download"/></a></li>
 											<li>
 												<a href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>

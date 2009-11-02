@@ -1,9 +1,13 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="base-space" >
+	<tiles:importAttribute name="contentStoreProvider"/>
+	<c:set var="contentStore" value="${contentStoreProvider.contentStore}"/>
+
 	<tiles:putAttribute name="title">
 		<spring:message code="space"/> :: ${contentItem.spaceId} :: ${contentItem.contentId}
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
+	
 		<div class="sidebar-actions">
 			<ul>
 			    <li>
@@ -12,7 +16,7 @@
 				   		<c:param name="returnTo" value="${currentUrl}"/>
 				    </c:url>"><spring:message code="add.contentItem"/></a> 
 				</li>
-				<li><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${storeID}"><spring:message code="download"/></a> 
+				<li><a href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${contentStore.storeId}"><spring:message code="download"/></a> 
 				</li>
 			</ul>
 		</div>
@@ -56,13 +60,14 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
+			
 				<table>
 					<tr>
 						<td style="width:75%">
 						    <table  class="property-list" >
 						        <tr>
 						          <td class="label"><spring:message code="contentItem.id"/></td>
-						          <td class="value"><a href="${baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${storeID}">${contentItem.contentId}</a></td>
+						          <td class="value"><a href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${contentStore.storeId}">${contentItem.contentId}</a></td>
 						        </tr>
 						        <tr>
 						          <td class="label"><spring:message code="size"/></td>
