@@ -74,11 +74,6 @@ public class ContentController
         ContentMetadata metadata = SpaceUtil.populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
         mav.addObject(CONTENT_ITEM, contentItem);
-        mav.addObject("baseURL", store.getBaseURL());
-        mav.addObject("storeID", store.getStoreId());
-        mav.addObject("title", "Content Detail");
-        
-
         return mav;
     }
 

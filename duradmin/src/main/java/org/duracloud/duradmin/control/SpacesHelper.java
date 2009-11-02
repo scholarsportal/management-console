@@ -22,8 +22,6 @@ public class SpacesHelper {
         Space space = new Space();
         SpaceUtil.populateSpace(space, store.getSpace(spaceId));
         ModelAndView mav = new ModelAndView();
-        mav.addObject("baseURL", store.getBaseURL());
-        mav.addObject("storeID", store.getStoreId());
         mav.addObject("space", space);
         mav.addObject("title", space.getSpaceId());
         return mav;

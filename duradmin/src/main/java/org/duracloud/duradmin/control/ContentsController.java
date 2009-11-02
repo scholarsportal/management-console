@@ -4,7 +4,6 @@ package org.duracloud.duradmin.control;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.Space;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
