@@ -1,29 +1,26 @@
 
 package org.duracloud.durastore.storage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.apache.log4j.Logger;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.emcstorage.ProbedEMCStorageProvider;
 import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
 import org.duracloud.s3storage.ProbedS3StorageProvider;
-import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
-
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * This class runs a suite of tests on the StorageProvider interface across all
@@ -50,7 +47,7 @@ public class StorageProvidersTest {
     @BeforeClass
     public static void beforeClass() throws StorageException {
 
-        final int NUM_PROVIDERS = 2;
+        final int NUM_PROVIDERS = 3;
         for (StorageProviderType providerType : StorageProviderType.values()) {
             Credential credential = getCredential(providerType);
             if (credential != null) {
@@ -61,7 +58,7 @@ public class StorageProvidersTest {
                 if (StorageProviderType.AMAZON_S3.equals(providerType)) {
                     provider = new ProbedS3StorageProvider(user, pass);
                 } else if (StorageProviderType.EMC.equals(providerType)) {
-                    //                    provider = new ProbedEMCStorageProvider(user, pass);
+                    provider = new ProbedEMCStorageProvider(user, pass);
                 } else if (StorageProviderType.RACKSPACE.equals(providerType)) {
                     provider = new ProbedRackspaceStorageProvider(user, pass);
                 } else {
@@ -209,16 +206,13 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testSetSpaceMetadata() throws StorageException {
         log.debug("testSetSpaceMetadata()");
         String spaceId0 = getNewSpaceId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
-                tester.testSetSpaceMetadata(provider, spaceId0);
-            }
+            tester.testSetSpaceMetadata(provider, spaceId0);
         }
     }
 
@@ -249,7 +243,6 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testAddAndGetContentOverwrite() throws Exception {
         log.debug("testAddAndGetContentOverwrite()");
@@ -258,12 +251,10 @@ public class StorageProvidersTest {
         String contentId1 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
-                tester.testAddAndGetContentOverwrite(provider,
-                                                     spaceId0,
-                                                     contentId0,
-                                                     contentId1);
-            }
+            tester.testAddAndGetContentOverwrite(provider,
+                                                 spaceId0,
+                                                 contentId0,
+                                                 contentId1);
         }
     }
 
@@ -282,7 +273,6 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testDeleteContent() throws StorageException {
         log.debug("testDeleteContent()");
@@ -291,12 +281,10 @@ public class StorageProvidersTest {
         String contentId1 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
-                tester.testDeleteContent(provider,
-                                         spaceId0,
-                                         contentId0,
-                                         contentId1);
-            }
+            tester.testDeleteContent(provider,
+                                     spaceId0,
+                                     contentId0,
+                                     contentId1);
         }
     }
 
@@ -315,7 +303,6 @@ public class StorageProvidersTest {
         }
     }
 
-    // TODO: not all work
     @Test
     public void testGetContentMetadata() throws StorageException {
         log.debug("testGetContentMetadata()");
@@ -323,9 +310,7 @@ public class StorageProvidersTest {
         String contentId0 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
-            if (!ProbedEMCStorageProvider.class.isInstance(provider)) {
-                tester.testGetContentMetadata(provider, spaceId0, contentId0);
-            }
+            tester.testGetContentMetadata(provider, spaceId0, contentId0);
         }
     }
 

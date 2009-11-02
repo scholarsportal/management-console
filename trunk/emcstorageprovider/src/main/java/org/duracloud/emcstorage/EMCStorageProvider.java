@@ -52,7 +52,7 @@ public class EMCStorageProvider implements StorageProvider {
     }
 
     public EMCStorageProvider(EsuApi esuApi) {
-        this.uid = "probed-emc-uid";
+        this.uid = "/probed-emc-uid";
         emcService = esuApi;
     }
 
