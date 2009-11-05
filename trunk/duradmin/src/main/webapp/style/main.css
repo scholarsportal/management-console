@@ -117,14 +117,14 @@ td#main-content{
 	
 }
 
-.main-content-header  .subtitle ul {
+.main-content-header  .subtitle ul, ul.horizontal-list {
 	display: inline;
 	list-style-type: none;
 	margin: 0;
 	padding:0;
 } 
 
-.main-content-header  .subtitle li{
+.main-content-header  .subtitle li, .horizontal-list li{
 	display: inline;
 	padding-right:0em;
 }
@@ -324,6 +324,10 @@ table#spacesTable > tbody > tr > td#contentId {
 	vertical-align: top;
 }
 
+.small {
+	font-size:0.8em;	
+}
+
 .sidebar-actions {
 	font-size: 0.9em;	
 }
@@ -338,14 +342,19 @@ table#spacesTable > tbody > tr > td#contentId {
 	padding:0.25em;
 }
 
-.sidebar-actions li:hover {
+.sidebar-actions li:hover, .box-control .title {
 	background-color:#EECFA1;
 }
+
 
 .sidebar-actions p {
 	font-size: 0.9em;	
 }
 
+.box-control div.miniform {
+	border-bottom: 1px solid #EECFA1;
+	padding-bottom:0.5em;
+}
 #help {
 	width:15%; 
 	background-color:#FFFFAA; 

@@ -4,13 +4,36 @@
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
-		<div class="sidebar-actions">
-			<ul>
-				<li>
-					<a href="<c:url value="/spaces/add"/>">Add Space</a>
-				</li>
-			</ul>
-		</div>	
+		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
+			<tiles:putAttribute name="title">
+				Tags
+			</tiles:putAttribute>
+			<tiles:putAttribute name="miniform">
+				<form>
+					<input type="text" size="13"/> <input type="submit" value="Add"/>
+					<input type="button" onclick="hide('miniform')" value="Cancel"/>					
+				</form>
+			</tiles:putAttribute>
+			<tiles:putAttribute name="body">
+				<ul class="small horizontal-list">
+					<li>
+						<span onmouseover="makeVisible('button-0')" onmouseout="makeInvisible('button-0')" style="white-space:nowrap;">
+							<a href="#" >tag 1</a>  <input id="button-0" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+					<li>
+						<span onmouseover="makeVisible('button-1')" onmouseout="makeInvisible('button-1')" style="white-space:nowrap;" >
+							<a href="#">tag 2</a>  <input id="button-1" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+					<li>
+						<span onmouseover="makeVisible('button-2')" onmouseout="makeInvisible('button-2')" style="white-space:nowrap;">
+							<a href="#">tag 3</a>  <input id="button-2" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+				</ul>
+			</tiles:putAttribute>
+		</tiles:insertTemplate>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">
@@ -19,6 +42,9 @@
 					<tiles:putAttribute name="title">
 						<spring:message code="spaces"/>
 					</tiles:putAttribute>	
+					<tiles:putAttribute name="subtitle">
+						<a href="<c:url value="/spaces/add"/>">Add Space</a>
+					</tiles:putAttribute>
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
@@ -42,6 +68,8 @@
 								
 									<div id="actionDiv" class="actions" >
 										<ul>
+										
+										
 											<li><a style="font-weight:bold" href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${currentUrl}"/>">
 													<spring:message code="add.contentItem"/>
 												</a>
