@@ -34,10 +34,10 @@ public class AddContentItemActionTest extends ContentStoreProviderTestBase {
     }
 
     @Test
-    public void testExecute() throws Exception{
+    public void testExecuteSuccess() throws Exception{
         ContentItem contentItem = new ContentItem();
-        contentItem.setContentId("test-content");
-        MultipartFile file = new MockMultipartFile("test-content.jpg", new ByteArrayInputStream("test".getBytes()));
+        MockMultipartFile file = new MockMultipartFile("testcontent.jpg", new ByteArrayInputStream("test".getBytes()));
+        
         String spaceId =  this.contentStoreProvider.getContentStore().getSpaces().get(0);
         Space space = new Space();
         space.setSpaceId(spaceId);
@@ -45,11 +45,25 @@ public class AddContentItemActionTest extends ContentStoreProviderTestBase {
         contentItem.setSpaceId(space.getSpaceId());
         contentItem.setFile(file);
         MessageContext messageContext = new MockMessageContext();
-        boolean result = this.addContentItemAction.execute(contentItem, space, messageContext);
-        Assert.assertTrue(result);
+        Assert.assertTrue(this.addContentItemAction.execute(contentItem, space, messageContext));
     }
 
 
+    @Test
+    public void testExecuteFailure() throws Exception{
+        ContentItem contentItem = new ContentItem();
+        MockMultipartFile file = new MockMultipartFile("testcontent.jpg", new ByteArrayInputStream("test".getBytes()));
+        
+        String spaceId =   "randomspaceid";
+        Space space = new Space();
+        space.setSpaceId(spaceId);
+        
+        contentItem.setSpaceId(spaceId);
+        contentItem.setFile(file);
+        MessageContext messageContext = new MockMessageContext();
+        Assert.assertFalse(this.addContentItemAction.execute(contentItem, space, messageContext));
+
+    }
 
 
 }
