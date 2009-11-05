@@ -1,5 +1,7 @@
 <%@include file="/WEB-INF/jsp/include.jsp"%>
 		<script>
+
+
 			function show(id){
 				dojo.attr(id,{
 				    style:{
