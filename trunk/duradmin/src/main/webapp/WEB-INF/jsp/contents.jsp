@@ -4,6 +4,73 @@
 		<spring:message code="space" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
+		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
+			<tiles:putAttribute name="title">
+				Tags
+			</tiles:putAttribute>
+			<tiles:putAttribute name="miniform">
+				<form>
+					<input type="text" size="13"/> <input type="submit" value="Add"/>
+					<input type="button" onclick="hide('miniform')" value="Cancel"/>					
+				</form>
+			</tiles:putAttribute>
+			<tiles:putAttribute name="body">
+				<ul class="small horizontal-list">
+					<li>
+						<span onmouseover="makeVisible('button-0')" onmouseout="makeInvisible('button-0')" style="white-space:nowrap;">
+							<a href="#" >tag 1</a>  <input id="button-0" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+					<li>
+						<span onmouseover="makeVisible('button-1')" onmouseout="makeInvisible('button-1')" style="white-space:nowrap;" >
+							<a href="#">tag 2</a>  <input id="button-1" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+					<li>
+						<span onmouseover="makeVisible('button-2')" onmouseout="makeInvisible('button-2')" style="white-space:nowrap;">
+							<a href="#">tag 3</a>  <input id="button-2" type="button" value="x" style="visibility:hidden"/>
+						</span>
+					</li>
+				</ul>
+			</tiles:putAttribute>
+		</tiles:insertTemplate>
+
+		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
+			<tiles:putAttribute name="title">
+				Metadata
+			</tiles:putAttribute>
+			<tiles:putAttribute name="miniform">
+				<form>
+					<input type="text" size="13"/> 
+					<textarea rows="3" cols="13"></textarea>
+					<input type="submit" value="Add"/>
+					<input type="button" onclick="hide('miniform')" value="Cancel"/>					
+				</form>
+			</tiles:putAttribute>
+			<tiles:putAttribute name="body">
+				<table class="small extended-metadata">
+					<tr onmouseover="makeVisible('metadata-0')" onmouseout="makeInvisible('metadata-0')" >
+						<td>Name 1</td>
+						<td><input id="metadata-0" type="button" value="x" style="visibility:hidden"/></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							Value1
+						</td>
+					</tr>
+					<tr onmouseover="makeVisible('metadata-1')" onmouseout="makeInvisible('metadata-1')" >
+						<td>Name 2</td><td><input id="metadata-1" type="button" value="x" style="visibility:hidden"/> </td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							Value2
+						</td>
+					</tr>
+				</table>
+			</tiles:putAttribute>
+		</tiles:insertTemplate>
+
+	
 		<div class="sidebar-actions">
 			<ul>
 				<li>
