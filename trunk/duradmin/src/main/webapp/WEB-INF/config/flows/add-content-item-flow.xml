@@ -6,13 +6,17 @@
      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"  >
 
 
-  <var name="contentItem"
+  <var name="contentItem" 
       class="org.duracloud.duradmin.domain.ContentItem"/>
 
   <input name="space" required="true"/>
   <input name="returnTo" />
 
+  <on-start>
+    <evaluate expression="#{contentItem.setSpaceId(space.getSpaceId())}"></evaluate>
+  </on-start>
   <view-state id="defineContentItem" model="contentItem">
+    
     <transition on="submit" to="success">
 		<evaluate expression="addContentItemAction.execute(contentItem,space, messageContext)" />    
     </transition>

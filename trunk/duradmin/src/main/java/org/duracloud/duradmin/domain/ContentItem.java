@@ -1,9 +1,13 @@
 
 package org.duracloud.duradmin.domain;
 
+import java.io.IOException;
 import java.io.Serializable;
 
+import org.duracloud.duradmin.util.FileData;
+import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
 
 public class ContentItem
         implements Serializable {
@@ -17,11 +21,22 @@ public class ContentItem
     private String contentId;
 
     private String contentMimetype;
+    
+
+
+    private transient MultipartFile file;
+    
+    private FileData fileData = new FileData();
+    
+    public long getSize() {
+        return fileData.getSize();
+    }
+
+
+
 
     private ContentMetadata metadata;
-
-    private MultipartFile file;
-
+    
     public String getAction() {
         return action;
     }
@@ -39,7 +54,10 @@ public class ContentItem
     }
 
     public String getContentId() {
-        return contentId;
+        if(!StringUtils.isEmptyOrAllWhiteSpace(contentId)){
+           return contentId; 
+        }
+        return fileData.getName();
     }
 
     public void setContentId(String contentId) {
@@ -47,7 +65,10 @@ public class ContentItem
     }
 
     public String getContentMimetype() {
-        return contentMimetype;
+        if(!StringUtils.isEmptyOrAllWhiteSpace(this.contentMimetype)){
+            return this.contentMimetype;
+        }
+        return this.fileData.getMimetype();
     }
 
     public void setContentMimetype(String contentMimetype) {
@@ -62,11 +83,22 @@ public class ContentItem
         this.metadata = metadata;
     }
 
+
+    public void setFile(MultipartFile file) throws IOException {
+        if(file == null){
+            return;
+        }
+
+        this.file = file;
+        
+        this.fileData.setFile(file);
+    }
+    
     public MultipartFile getFile() {
         return file;
     }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    
+    public FileData getFileData(){
+        return this.fileData;
     }
 }

@@ -16,13 +16,14 @@
 			<tiles:putAttribute name="body">
 				<form:form modelAttribute="contentItem" enctype="multipart/form-data" >
 					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
+					<form:errors element="div" cssClass="message-error"/>
 					<div>
 						<table class="basic-form">
 							<tr>
 								<td class="label"><label for="contentId"><spring:message code="contentItem.id"/></label></td>
 								<td class="input">
 									<form:input  path="contentId" />
-									<form:errors path="contentId" cssClass="message-error" />
+									<form:errors path="contentId" element="div" cssClass="message-error"/>
 								</td>
 								<td class="field-help"><spring:message code="contentItem.id.help"/></td>
 							</tr>
@@ -30,28 +31,37 @@
 								<td class="label"><label for="access"><spring:message code="mimetype"/></label></td>
 								<td class="input">
 									<form:input path="contentMimetype" />
-									<form:errors path="contentMimetype" cssClass="message-error" />
+									<form:errors path="contentMimetype" element="div" cssClass="message-error"/>
+
 								</td>
 								<td class="field-help">
 									<spring:message code="mimetype.help"/>
 									<a href="http://en.wikipedia.org/wiki/MIME"><spring:message code="help.moreInfo"/></a>
 								</td>
 							</tr>
+
 							<tr>
 								<td class="label"><label for="access">						
 									<spring:message code="form.contentItem.file"/>
 								</label></td>
 								<td class="input">
-									<input type="file" name="file"/>
-									<div>
-										<form:errors path="file" cssClass="message-error" />
-									</div>
+									<c:set var="filename" value=""/>
+									<c:choose>
+										<c:when test="${not empty contentItem.fileData.name}">
+											${contentItem.fileData.name}								
+										</c:when>
+										<c:otherwise>
+											<input  type="file" name="file" id="file"/>
+										</c:otherwise>
+									</c:choose>
+									
+									<form:errors path="file" element="div" cssClass="message-error"/>
 								</td>
 								<td class="field-help">
 									<spring:message code="form.contentItem.file.help"/>
 								</td>
 							</tr>
-			
+							
 						</table>
 					</div>
 					<div class="basic-form-buttons" >

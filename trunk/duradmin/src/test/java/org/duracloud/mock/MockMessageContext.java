@@ -1,13 +1,18 @@
 package org.duracloud.mock;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
 import org.springframework.binding.message.Message;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.message.MessageCriteria;
 import org.springframework.binding.message.MessageResolver;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 
 public class MockMessageContext implements MessageContext{
-    
+    public List<Message> messages= new LinkedList<Message>();
     public boolean hasErrorMessages() {
         // TODO Auto-generated method stub
         return false;
@@ -24,8 +29,7 @@ public class MockMessageContext implements MessageContext{
     }
     
     public Message[] getAllMessages() {
-        // TODO Auto-generated method stub
-        return null;
+        return messages.toArray(new Message[0]);
     }
     
     public void clearMessages() {
@@ -34,7 +38,6 @@ public class MockMessageContext implements MessageContext{
     }
     
     public void addMessage(MessageResolver messageResolver) {
-        // TODO Auto-generated method stub
-        
+        messages.add(new Message(null, messageResolver.toString(),null));
     }
 }

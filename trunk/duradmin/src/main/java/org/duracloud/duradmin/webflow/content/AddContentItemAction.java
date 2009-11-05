@@ -1,5 +1,6 @@
 package org.duracloud.duradmin.webflow.content;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
@@ -10,10 +11,8 @@ import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
-import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.web.multipart.MultipartFile;
 
 
 public class AddContentItemAction implements Serializable{
@@ -43,27 +42,15 @@ public class AddContentItemAction implements Serializable{
 
             String spaceId = space.getSpaceId();
             ContentStore contentStore = getContentStore();
-            MultipartFile file = contentItem.getFile();
 
             String contentId = contentItem.getContentId();
-            if (StringUtils.isEmptyOrAllWhiteSpace(contentId)) {
-                contentId = file.getOriginalFilename();
-                contentItem.setContentId(contentId);
-            }
-            
+
             String contentMimeType = contentItem.getContentMimetype();
-            if (StringUtils.isEmptyOrAllWhiteSpace(contentMimeType)) {
-                contentMimeType = file.getContentType();
-            }
-            contentStore.addContent(spaceId, contentId, file.getInputStream(), 
-                                    file.getSize(), contentMimeType, null);
+            
+            contentStore.addContent(spaceId, contentId, new ByteArrayInputStream(contentItem.getFileData().getData()), 
+                                    contentItem.getSize(), contentMimeType, null);
             SpaceUtil.populateSpace(space, contentStore.getSpace(spaceId));
 
-            messageContext.addMessage(new MessageBuilder()
-                                          .info()
-                                          .code("add.contentItem.success")
-                                          .arg(contentId)
-                                          .build());
             return true;
         } catch (ContentStoreException e) {
             log.error(e);

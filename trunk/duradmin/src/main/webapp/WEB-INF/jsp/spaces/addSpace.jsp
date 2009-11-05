@@ -22,6 +22,7 @@
 								<td class="label"><label for="spaceId">Space ID</label></td>
 								<td class="input">
 									<form:input id="spaceId" path="spaceId" maxlength="255"/>
+										
 									<form:errors path="spaceId" cssClass="message-error" />
 								</td>
 								<td class="field-help">Space ID help goes here.</td>
@@ -33,7 +34,6 @@
 										<form:option value="OPEN" label="Open" />
 										<form:option value="CLOSED" label="Closed" />
 									</form:select>
-									<form:errors path="access" cssClass="message-error" />
 								</td>
 								<td class="field-help">Access field description goes here.</td>
 							</tr>
