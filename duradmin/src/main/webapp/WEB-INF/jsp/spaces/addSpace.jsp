@@ -16,6 +16,7 @@
 			<tiles:putAttribute name="body">
 				<form:form modelAttribute="space">
 					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
+					<form:errors element="div" cssClass="message-error" />
 					<div>
 						<table class="basic-form">
 							<tr>
@@ -23,7 +24,7 @@
 								<td class="input">
 									<form:input id="spaceId" path="spaceId" maxlength="255"/>
 										
-									<form:errors path="spaceId" cssClass="message-error" />
+									<form:errors path="spaceId" cssClass="message-error" element="div"/>
 								</td>
 								<td class="field-help">Space ID help goes here.</td>
 							</tr>
