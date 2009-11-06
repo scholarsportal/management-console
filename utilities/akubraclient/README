@@ -1,0 +1,13 @@
+This is an Akubra adapter for the DuraCloud REST api.
+
+Build Instructions
+==================
+1) Install DuraCloud dependencies in local repository
+
+mvn install:install-file -DgroupId=org.duracloud -DartifactId=common -Dversion=1.0.0 -Dpackaging=jar -Dfile=resources/lib/common-1.0.0.jar
+mvn install:install-file -DgroupId=org.duracloud -DartifactId=storageprovider -Dversion=1.0.0 -Dpackaging=jar -Dfile=resources/lib/storageprovider-1.0.0.jar
+mvn install:install-file -DgroupId=org.duracloud -DartifactId=storeclient -Dversion=1.0.0 -Dpackaging=jar -Dfile=resources/lib/storeclient-1.0.0.jar -DpomFile=resources/lib/storeclient-1.0.0.pom
+
+2) Compile and install
+
+mvn install
