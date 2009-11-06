@@ -81,6 +81,7 @@
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="input" type="inputType" use="required"/>
     <xs:attribute name="display" type="xs:string" use="required"/>
+    <xs:attribute name="selected" type="xs:boolean" default="false"/>
 
   </xs:complexType>
 
@@ -88,6 +89,7 @@
   <xs:simpleType name="inputType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="SELECT"/>
+      <xs:enumeration value="MULTISELECT"/>
       <xs:enumeration value="TEXT"/>
     </xs:restriction>
   </xs:simpleType>
@@ -109,6 +111,14 @@
     <xs:attribute name="state" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              active: denotes currently deployed to this location
+              available: denotes location is available as a deployment option
+              unavailable: see above
+              selected: indicates user would like to deploy to this location
+            </xs:documentation>
+          </xs:annotation>
           <xs:enumeration value="active"/>
           <xs:enumeration value="available"/>
           <xs:enumeration value="unavailable"/>
