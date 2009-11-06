@@ -17,8 +17,12 @@ import org.fedoracommons.akubra.UnsupportedIdException;
 import org.fedoracommons.akubra.impl.AbstractBlobStoreConnection;
 import org.fedoracommons.akubra.impl.StreamManager;
 
-
-public class DuraCloudBlobStoreConnection
+/**
+ * DuraCloud-backed BlobStoreConnection implementation.
+ *
+ * @author Chris Wilper
+ */
+class DuraCloudBlobStoreConnection
         extends AbstractBlobStoreConnection
         implements BlobStoreConnection {
 
@@ -35,18 +39,22 @@ public class DuraCloudBlobStoreConnection
         this.spaceId = spaceId;
     }
 
+    //@Override
     public Blob getBlob(URI blobId, Map<String, String> hints)
             throws IOException,
             UnsupportedIdException, UnsupportedOperationException {
+        ensureOpen();
         return new DuraCloudBlob(this, blobId, streamManager, contentStore,
                                  spaceId);
     }
 
+    //@Override
     public Iterator<URI> listBlobIds(String filterPrefix) throws IOException {
-        // ISSUE: Space.getContentIds() appears to be memory-bound; this
-        //        will cause OOM exceptions when trying to iterate over
-        //        large spaces.
+        ensureOpen();
         try {
+           // ISSUE: Space.getContentIds() appears to be memory-bound; this
+           //        will cause OOM exceptions when trying to iterate over
+           //        large spaces.
             List<String> ids = contentStore.getSpace(spaceId).getContentIds();
             // TODO: turn this list of strings into an iterator of ids, and
             //       filter by filterPrefix if non-null
@@ -58,7 +66,9 @@ public class DuraCloudBlobStoreConnection
         }
     }
 
+    //@Override
     public void sync() throws IOException, UnsupportedOperationException {
+        ensureOpen();
         // No-op; ContentStore does not expose a sync function,
         // so we optimistically assume that data is flushed to stable
         // storage right away.
