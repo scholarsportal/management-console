@@ -17,13 +17,9 @@
 				</form>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
-				<table onmouseover="show(event)" onmouseout="hide(event)" style="white-space:nowrap;">
-					<tr>
-						<td>
-							<a href="#" >tag 1</a>  <input id="button-0" type="button" value="x" style="visibility:hidden"/>
-						</td>
-					</tr>
-				</table>
+				<span  style="white-space:nowrap;">
+					tag1  <input id="button-0" type="button"  class="minibutton"  value="x" />
+				</span>
 			</tiles:putAttribute>
 		</tiles:insertTemplate>
 		</div>
@@ -43,22 +39,12 @@
 			<tiles:putAttribute name="body">
 				<table class="small extended-metadata">
 					<tr>
-						<td onmouseover="show(event)" onmouseout="hide(event)">Name 1
-							<input id="metadata-0" type="button" value="x" style="visibility:hidden"/></td>
+						<td >Name 1
+							<input class="minibutton"  id="metadata-0" type="button" value="x"/></td>
 					</tr>
 					<tr>
 						<td >
 							Value1
-						</td>
-					</tr>
-					<tr>
-						<td onmouseover="show(event)" onmouseout="hide(event)" >
-							Name 2 <input id="metadata-1" type="button" value="x" style="visibility:hidden" /> 
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							Value2
 						</td>
 					</tr>
 				</table>

@@ -171,7 +171,7 @@ function show(event){
 }
 
 function makeVisible(root,visible){
-	dojo.query("input[type='button']",root)
+	dojo.query("[type='button']",root)
 		.attr({style:{visibility:(visible ? 'visible' : 'hidden')}});
 }
 
