@@ -346,6 +346,11 @@ table#spacesTable > tbody > tr > td#contentId {
 	background-color:#EECFA1;
 }
 
+.minibutton {
+	font-size:0.8em;
+	padding:0;
+	margin:0;
+}
 
 .sidebar-actions p {
 	font-size: 0.9em;	

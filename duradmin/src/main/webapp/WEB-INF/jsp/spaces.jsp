@@ -17,13 +17,13 @@
 			<tiles:putAttribute name="body">
 				<ul class="small horizontal-list">
 					<li>
-						<span onmouseover="show(event)" onmouseout="hide(event)" style="white-space:nowrap;">
-							<a href="#" >tag 1</a>  <input id="button-0" type="button" value="x" style="visibility:hidden"/>
+						<span style="white-space:nowrap;">
+							tag 1  <input  class="minibutton" type="button" value="x" />
 						</span>
 					</li>
 					<li>
-						<span onmouseover="show(event)" onmouseout="hide(event)" style="white-space:nowrap;" >
-							<a href="#">tag 2</a>  <input id="button-1" type="button" value="x" style="visibility:hidden"/>
+						<span  style="white-space:nowrap;" >
+							tag 2  <input  class="minibutton"  type="button" value="x"  />
 						</span>
 					</li>
 				</ul>
