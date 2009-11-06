@@ -11,24 +11,19 @@
 			<tiles:putAttribute name="miniform">
 				<form>
 					<input type="text" size="13"/> <input type="submit" value="Add"/>
-					<input type="button" onclick="hide('miniform')" value="Cancel"/>					
+					<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
 				</form>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
 				<ul class="small horizontal-list">
 					<li>
-						<span onmouseover="makeVisible('button-0')" onmouseout="makeInvisible('button-0')" style="white-space:nowrap;">
+						<span onmouseover="show(event)" onmouseout="hide(event)" style="white-space:nowrap;">
 							<a href="#" >tag 1</a>  <input id="button-0" type="button" value="x" style="visibility:hidden"/>
 						</span>
 					</li>
 					<li>
-						<span onmouseover="makeVisible('button-1')" onmouseout="makeInvisible('button-1')" style="white-space:nowrap;" >
+						<span onmouseover="show(event)" onmouseout="hide(event)" style="white-space:nowrap;" >
 							<a href="#">tag 2</a>  <input id="button-1" type="button" value="x" style="visibility:hidden"/>
-						</span>
-					</li>
-					<li>
-						<span onmouseover="makeVisible('button-2')" onmouseout="makeInvisible('button-2')" style="white-space:nowrap;">
-							<a href="#">tag 3</a>  <input id="button-2" type="button" value="x" style="visibility:hidden"/>
 						</span>
 					</li>
 				</ul>

@@ -141,3 +141,40 @@ function confirmDeleteOperation(e){
 		return true;
 	}
 }
+
+
+function getBoxControlRoot(source){
+	var root = source;
+	//search up the tree for boxcontrol
+	while(!dojo.hasClass(root,'boxcontrol')){
+		root = root.parentNode;
+	}
+	return root;
+}
+
+function showMiniform(event){
+	changeDisplay(event,"block");
+}
+
+function hideMiniform(event){
+	changeDisplay(event,"none");
+}
+
+function changeDisplay(event, val){
+	var root = getBoxControlRoot(event.target);
+	dojo.query("[id='miniform']",root).style({"display" : val});
+
+}	
+
+function show(event){
+	makeVisible(event.target,true);
+}
+
+function makeVisible(root,visible){
+	dojo.query("input[type='button']",root)
+		.attr({style:{visibility:(visible ? 'visible' : 'hidden')}});
+}
+
+function hide(event){
+	makeVisible(event.target,false);
+}
