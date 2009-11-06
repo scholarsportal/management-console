@@ -72,13 +72,14 @@
       <xs:element name="option">
         <xs:complexType>
           <xs:attribute name="value" type="xs:string" use="required"/>
+          <xs:attribute name="display" type="xs:string" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
 
     <xs:attribute name="id" type="xs:int" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
-    <xs:attribute name="type" type="inputType" use="required"/>
+    <xs:attribute name="input" type="inputType" use="required"/>
     <xs:attribute name="display" type="xs:string" use="required"/>
 
   </xs:complexType>
@@ -86,8 +87,8 @@
 
   <xs:simpleType name="inputType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="select"/>
-      <xs:enumeration value="text"/>
+      <xs:enumeration value="SELECT"/>
+      <xs:enumeration value="TEXT"/>
     </xs:restriction>
   </xs:simpleType>
 
