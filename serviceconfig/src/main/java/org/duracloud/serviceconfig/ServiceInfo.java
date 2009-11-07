@@ -1,9 +1,8 @@
 package org.duracloud.serviceconfig;
 
-
-import com.sun.deploy.resources.Deployment;
-
 import java.util.List;
+
+
 
 /**
  * This class is the container for all of the settings and options available for 
