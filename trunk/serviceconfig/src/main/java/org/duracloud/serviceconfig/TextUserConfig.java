@@ -3,6 +3,8 @@ package org.duracloud.serviceconfig;
 
 public class TextUserConfig extends UserConfig{
 
+    private static final long serialVersionUID = 5635327521932472393L;
+
     private String value;
     
     public TextUserConfig (String name, String displayName, boolean required, String value){

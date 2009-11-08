@@ -1,12 +1,16 @@
 package org.duracloud.serviceconfig;
 
+import java.io.Serializable;
+
 /**
  * This class holds the description and state of a service deployment host option.
  *
  * @author Andrew Woods
  *         Date: Nov 6, 2009
  */
-public class Deployment {
+public class Deployment implements Serializable{
+
+    private static final long serialVersionUID = -5554753103296039413L;
 
     /**
      * Is this the primary host? new one? existing secondary host?

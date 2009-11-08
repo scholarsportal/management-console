@@ -1,6 +1,6 @@
 package org.duracloud.serviceconfig;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * * This class holds service config info supplied by the user.
@@ -8,7 +8,10 @@ import java.util.List;
  * @author Andrew Woods
  *         Date: Nov 6, 2009
  */
-public abstract class UserConfig {
+public abstract class UserConfig implements Serializable{
+
+    private static final long serialVersionUID = -6727102713612538135L;
+
 
     /**
      * Directs UI input type.
