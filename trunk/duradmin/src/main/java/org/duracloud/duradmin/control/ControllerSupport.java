@@ -37,17 +37,20 @@ public class ControllerSupport {
         return spaces;
     }
 
-    protected ServicesManager getServicesManager() throws Exception {
-        ServicesManager servicesManager =
-                new ServicesManager(DuradminConfig.getHost(), DuradminConfig
-                        .getPort());
-        return servicesManager;
-    }
+
 
     public ModelAndView handle(ModelAndView modelAndView, HttpServletRequest request,
                                       HttpServletResponse response) {
         MessageUtils.addRedirectMessageToModelAndView(modelAndView,request);
         return modelAndView;
+    }
+
+
+    public ServicesManager getServicesManager() throws Exception {
+        ServicesManager servicesManager =
+            new ServicesManager(DuradminConfig.getHost(), DuradminConfig
+                    .getPort());
+        return servicesManager;
     }
     
 

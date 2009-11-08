@@ -1,4 +1,4 @@
-package org.duracloud.duradmin.control;
+package org.duracloud.duradmin.webflow.space;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

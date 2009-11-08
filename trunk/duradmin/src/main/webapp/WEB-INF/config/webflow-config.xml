@@ -19,6 +19,8 @@
   <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
 	<webflow:flow-location id="spaces/add"  path="/WEB-INF/config/flows/add-space-flow.xml" />
 	<webflow:flow-location id="contents/add"  path="/WEB-INF/config/flows/add-content-item-flow.xml" />
+    <webflow:flow-location id="services/deploy"  path="/WEB-INF/config/flows/deploy-service-flow.xml" />
+
   </webflow:flow-registry>
   
   <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
@@ -45,7 +47,7 @@
   </bean>
 
   <!-- add space configuration --> 
-  <bean name="spaces/add" class="org.duracloud.duradmin.control.AddSpaceFlowHandler" />
+  <bean name="spaces/add" class="org.duracloud.duradmin.webflow.space.AddSpaceFlowHandler" />
   <bean name="addSpaceAction" class="org.duracloud.duradmin.webflow.space.AddSpaceAction">
   	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
@@ -54,7 +56,7 @@
   </bean>
 
   <!-- add content configuration --> 
-  <bean name="contents/add" class="org.duracloud.duradmin.control.AddContentItemFlowHandler">
+  <bean name="contents/add" class="org.duracloud.duradmin.webflow.content.AddContentItemFlowHandler">
   	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
   <bean name="addContentItemAction" class="org.duracloud.duradmin.webflow.content.AddContentItemAction">
@@ -63,5 +65,13 @@
   <bean name="contentItemValidator" class="org.duracloud.duradmin.webflow.content.ContentItemValidator">
   	<property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
+
+  <!-- deploy service configuration --> 
+  <bean name="services/deploy" class="org.duracloud.duradmin.webflow.service.DeployServiceFlowHandler" />
+  <bean name="deployServiceAction" class="org.duracloud.duradmin.webflow.service.DeployServiceAction">
+  </bean>
+  <bean name="serviceConfigurationValidator" class="org.duracloud.duradmin.webflow.service.ServiceConfigurationValidator">
+  </bean>
+
 
 </beans>

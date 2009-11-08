@@ -1,18 +1,14 @@
 
 package org.duracloud.duradmin.view;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
-import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
-import org.duracloud.duradmin.contentstore.ContentStoreSelector;
 
 /**
  * A view preparer to be invoked by every page in the application.  

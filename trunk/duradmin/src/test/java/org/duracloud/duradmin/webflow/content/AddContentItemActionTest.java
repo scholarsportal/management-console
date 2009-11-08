@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 
 public class AddContentItemActionTest extends ContentStoreProviderTestBase {

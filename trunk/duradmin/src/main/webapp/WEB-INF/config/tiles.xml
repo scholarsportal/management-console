@@ -44,6 +44,9 @@
 
 	<definition name="defineContentItem" extends="base-space" template="/WEB-INF/jsp/spaces/addContentItem.jsp"/>
 
+    <definition name="configureService" extends="base-space" template="/WEB-INF/jsp/services/configureService.jsp"/>
+
+
 	<definition name="contents" extends="base-space" template="/WEB-INF/jsp/contents.jsp"/>
 	
 	<definition name="content" extends="base-space" template="/WEB-INF/jsp/content.jsp"/>

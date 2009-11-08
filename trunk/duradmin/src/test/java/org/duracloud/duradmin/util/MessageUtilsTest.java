@@ -1,10 +1,7 @@
 package org.duracloud.duradmin.util;
 
-import javax.servlet.http.HttpServletRequest;
-
 import junit.framework.TestCase;
 
-import org.duracloud.duradmin.util.MessageUtils.NameValuePair;
 import org.junit.Assert;
 import org.springframework.binding.message.Message;
 import org.springframework.mock.web.MockHttpServletRequest;

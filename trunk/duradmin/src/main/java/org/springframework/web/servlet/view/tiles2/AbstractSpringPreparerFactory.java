@@ -23,7 +23,6 @@ import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.PreparerFactory;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.apache.tiles.servlet.context.ServletTilesApplicationContext;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 

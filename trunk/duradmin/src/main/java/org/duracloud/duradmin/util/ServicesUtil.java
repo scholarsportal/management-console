@@ -2,12 +2,16 @@
 package org.duracloud.duradmin.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.duracloud.client.ServicesException;
 import org.duracloud.client.ServicesManager;
-import org.duracloud.duradmin.domain.Service;
+import org.duracloud.serviceconfig.Option;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.SingleSelectUserConfig;
+import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.UserConfig;
 
 /**
  * Utilities for handling services
@@ -16,32 +20,52 @@ import org.duracloud.duradmin.domain.Service;
  */
 public class ServicesUtil {
 
-    public static List<Service> getDeployedServices(ServicesManager servicesManager)
+    public static List<ServiceInfo> getDeployedServices(ServicesManager servicesManager)
             throws ServicesException {
         List<String> deployedServices = servicesManager.getDeployedServices();
-        List<Service> depServiceList = new ArrayList<Service>();
+        List<ServiceInfo> depServiceList = new ArrayList<ServiceInfo>();
 
         for (String serviceId : deployedServices) {
-            Service service = new Service();
-            service.setServiceId(serviceId);
-            service.setConfig(servicesManager.getServiceConfig(serviceId));
-            service.setStatus(servicesManager.getServiceStatus(serviceId));
-            depServiceList.add(service);
+            depServiceList.add(initializeService(servicesManager, serviceId));
         }
 
         return depServiceList;
     }
 
-    public static List<Service> getAvailableServices(ServicesManager servicesManager)
+    public static ServiceInfo initializeService(ServicesManager servicesManager,
+                                          String serviceId)
+            throws ServicesException {
+        List<SystemConfig> systemConfigs = new LinkedList<SystemConfig>();
+        systemConfigs.add(new SystemConfig("host", "localhost", "localhost"));
+        systemConfigs.add(new SystemConfig("port", "8080", "8080"));
+
+        List<UserConfig> userConfigs = new LinkedList<UserConfig>();
+        
+        List<Option> stores = new LinkedList<Option>();
+        stores.add(new Option("Amazon", "1", false));
+        stores.add(new Option("EMC", "2", false));
+        stores.add(new Option("Rackspace", "3", false));
+
+        userConfigs.add(new SingleSelectUserConfig("fromStoreId", "The source store", true, stores));
+        userConfigs.add(new SingleSelectUserConfig("toStoreId", "The destination store", true, stores));
+
+        
+        ServiceInfo service = new ServiceInfo();
+        service.setServiceName(serviceId);
+        service.setDisplayName("Replicaton Service");
+        service.setDescription("A description of the replication service goes here.  We should provide enough space for multiple lines of text.");
+        service.setSystemConfigs(systemConfigs);
+        service.setUserConfigs(userConfigs);
+        return service;
+    }
+
+    public static List<ServiceInfo> getAvailableServices(ServicesManager servicesManager)
             throws ServicesException {
         List<String> availableServices = servicesManager.getAvailableServices();
-        List<Service> avlServiceList = new ArrayList<Service>();
+        List<ServiceInfo> avlServiceList = new ArrayList<ServiceInfo>();
 
         for (String serviceId : availableServices) {
-            Service service = new Service();
-            service.setServiceId(serviceId);
-            // TODO: Determine where to get configuration options for available services
-            service.setConfig(new HashMap<String, String>());
+            ServiceInfo service = initializeService(servicesManager, serviceId);
             avlServiceList.add(service);
         }
 

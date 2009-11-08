@@ -16,6 +16,8 @@
   <!-- 
   <bean id="contentStoreManagerFactory" class="org.duracloud.duradmin.mock.contentstore.MockContentStoreManagerFactoryImpl"/>
    -->  
+
+
   
   <bean id="contentStoreManager"  factory-bean="contentStoreManagerFactory" factory-method="create" />
 
