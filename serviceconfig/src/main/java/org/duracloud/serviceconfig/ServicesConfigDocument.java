@@ -11,6 +11,7 @@ import java.util.List;
  *         Date: Nov 6, 2009
  */
 public interface ServicesConfigDocument {
+
     public String getVersion();
 
     public List<ServiceInfo> getServiceInfos();
