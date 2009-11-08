@@ -18,6 +18,10 @@ public abstract class UserConfig implements Serializable{
      */
     public enum InputType {
         SINGLESELECT, MULTISELECT, TEXT;
+        
+        public String getName(){
+            return name();
+        }
     }
 
 
