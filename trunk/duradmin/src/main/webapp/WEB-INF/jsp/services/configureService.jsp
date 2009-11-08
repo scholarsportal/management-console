@@ -25,9 +25,7 @@
 									<td class="label">${userConfig.displayName}</td>
 									<td class="input">
 										<c:choose>
-											<c:when test="${userConfig.inputType.name == 'TEXT' }">
-												Text field
-											</c:when>
+
 											<c:when test="${userConfig.inputType.name == 'SINGLESELECT' }">
 												<select name="${userConfig.name}">
 													<c:forEach items="${userConfig.options}" var="option">
@@ -40,7 +38,6 @@
 												<ul>
 														<c:forEach items="${userConfig.options}" var="option" varStatus="status">
 														<li>
-
 															<input type="checkbox" name="${userconfig.name}-checkbox-${status.count}" <c:if test="${option.selected}">checked</c:if>/>
 															<label for="${userconfig.name}-checkbox-${status.count}">${option.displayName}</label>
 															</li>
