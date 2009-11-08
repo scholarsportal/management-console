@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.duracloud.client.ServicesException;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.serviceconfig.MultiSelectUserConfig;
 import org.duracloud.serviceconfig.Option;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.SingleSelectUserConfig;
 import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.TextUserConfig;
 import org.duracloud.serviceconfig.UserConfig;
 
 /**
@@ -48,6 +50,14 @@ public class ServicesUtil {
 
         userConfigs.add(new SingleSelectUserConfig("fromStoreId", "The source store", true, stores));
         userConfigs.add(new SingleSelectUserConfig("toStoreId", "The destination store", true, stores));
+
+        List<Option> spaces= new LinkedList<Option>();
+        spaces.add (new Option("Space 1", "1", false));
+        spaces.add (new Option("Space 2", "2", false));
+        spaces.add (new Option("Space 3", "3", false));
+        spaces.add (new Option("Space 4", "4", false));
+        userConfigs.add(new MultiSelectUserConfig("spaces", "Spaces", true, spaces));
+        userConfigs.add(new TextUserConfig("mimetypes", "Mime Types", true, null));
 
         
         ServiceInfo service = new ServiceInfo();

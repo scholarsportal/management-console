@@ -90,11 +90,6 @@
 							              <form action="services/deploy" method="post">
 							                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceName}" />" />
 							                <table>
-							                  <c:forEach items="${service.userConfigs}" var="userConfig">                
-							                  <tr>
-							                    <td><c:out value="${userConfig}" /></td>
-							                  </tr>
-							                  </c:forEach>
 							                  <tr style="border-bottom:0px solid #ccc">
 							                    <td>Deploy To</td>
 							                    <td>

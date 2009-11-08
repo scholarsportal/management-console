@@ -37,7 +37,21 @@
 											</c:when>
 
 											<c:when test="${userConfig.inputType.name == 'MULTISELECT' }">
-												Multi select
+												<ul>
+														<c:forEach items="${userConfig.options}" var="option" varStatus="status">
+														<li>
+
+															<input type="checkbox" name="${userconfig.name}-checkbox-${status.count}" <c:if test="${option.selected}">checked</c:if>/>
+															<label for="${userconfig.name}-checkbox-${status.count}">${option.displayName}</label>
+															</li>
+	
+														</c:forEach>
+												</ul>
+																									
+											</c:when>
+
+											<c:when test="${userConfig.inputType.name == 'TEXT' }">
+												<input type="text" name="${userConfig.name}" value="${userConfig.value}"/>
 											</c:when>
 											
 										</c:choose>										
