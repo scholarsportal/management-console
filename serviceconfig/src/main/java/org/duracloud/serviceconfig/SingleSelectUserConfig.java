@@ -5,6 +5,8 @@ import java.util.List;
 
 
 public class SingleSelectUserConfig extends SelectableUserConfig{
+    private static final long serialVersionUID = -2912715735337021361L;
+
     public SingleSelectUserConfig(String name, String displayName, boolean required, List<Option> options){
         super(name,displayName, required, options);
         
