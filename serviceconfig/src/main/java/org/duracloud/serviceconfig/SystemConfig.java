@@ -11,18 +11,20 @@ import java.io.Serializable;
 public class SystemConfig implements Serializable{
 
     private static final long serialVersionUID = -3280385789614105156L;
-
     private String name;
     private String value;
     private String defaultValue;
+
+    public SystemConfig(String name, String value, String defaultValue) {
+        this.name = name;
+        this.value = value;
+        this.defaultValue = defaultValue;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getValue() {
         return value;
@@ -36,8 +38,5 @@ public class SystemConfig implements Serializable{
         return defaultValue;
     }
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
 
 }

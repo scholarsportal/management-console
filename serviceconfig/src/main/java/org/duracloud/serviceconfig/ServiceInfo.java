@@ -1,5 +1,6 @@
 package org.duracloud.serviceconfig;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -11,14 +12,17 @@ import java.util.List;
  * @author Andrew Woods
  *         Date: Nov 6, 2009
  */
-public class ServiceInfo {
+public class ServiceInfo implements Serializable{
+
+    private static final long serialVersionUID = -7958760599324208594L;
 
     private String displayName;
     private String serviceName;
+    private String description;
+    
     private List<SystemConfig> systemConfigs;
     private List<UserConfig> userConfigs;
     private List<Deployment> deployments;
-    private String description;
 
 
     public String getDisplayName() {
@@ -67,6 +71,23 @@ public class ServiceInfo {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public String getHost(){
+        return getSystemConfigValueByName("host");
+    }
+
+    public Integer getPort(){
+        String value = getSystemConfigValueByName("port");
+        return value != null ? Integer.valueOf(value) : null;
+    }
+    private String getSystemConfigValueByName(String name) {
+        for(SystemConfig s : systemConfigs){
+            if(s.getName().equals(name)){
+                return s.getValue();
+            }
+        }
+        return null;
     }
 
 }
