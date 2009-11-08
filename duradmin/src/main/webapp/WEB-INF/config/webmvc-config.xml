@@ -32,7 +32,6 @@
         <prop key="/content.htm">contentController</prop>
         <prop key="/removeContent.htm">removeContentController</prop>
         <prop key="/services.htm">servicesController</prop>
-        <prop key="/deployService.htm">deployServiceController</prop>
         <prop key="/unDeployService.htm">unDeployServiceController</prop>
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
@@ -91,9 +90,6 @@
     <property name="successView" value="services" />
   </bean>
   
-  <bean id="deployServiceController" class="org.duracloud.duradmin.control.DeployServiceController">
-    <property name="successView" value="services" />
-  </bean>
   
   <bean id="unDeployServiceController" class="org.duracloud.duradmin.control.UnDeployServiceController">
     <property name="successView" value="services" />

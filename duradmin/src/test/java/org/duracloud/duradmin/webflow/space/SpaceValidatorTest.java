@@ -2,11 +2,8 @@ package org.duracloud.duradmin.webflow.space;
 
 import junit.framework.Assert;
 
-import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.contentstore.ContentStoreProviderTestBase;
-import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
-import org.duracloud.mock.MockMessageContext;
 import org.duracloud.mock.MockValidationContext;
 import org.junit.Before;
 import org.junit.Test;

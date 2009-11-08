@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
@@ -43,9 +42,6 @@ public abstract  class BaseCommandController extends AbstractCommandController{
         this.controllerSupport.setContentStoreProvider(contentStoreProvider);
     }
 
-    protected ServicesManager getServicesManager() throws Exception {
-        return controllerSupport.getServicesManager();
-    }
 
     protected ModelAndView setView(HttpServletRequest request, ModelAndView mav, Message message) {
         String url = NavigationUtils.getReturnTo(request);

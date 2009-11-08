@@ -7,8 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ServicesManager;
-import org.duracloud.duradmin.domain.Service;
+import org.duracloud.duradmin.domain.ServiceCommand;
 import org.duracloud.duradmin.util.ServicesUtil;
+import org.duracloud.serviceconfig.ServiceInfo;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,9 +17,15 @@ public class ServicesController
         extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
-
+    
+    protected ControllerSupport controllerSupport = new ControllerSupport();
+    
+    protected ServicesManager getServicesManager() throws Exception {
+        return controllerSupport.getServicesManager();
+    }
+    
     public ServicesController() {
-        setCommandClass(Service.class);
+        setCommandClass(ServiceCommand.class);
         setCommandName("service");
     }
 
@@ -34,8 +41,8 @@ public class ServicesController
     }
 
     protected ModelAndView getServices() {
-        List<Service> depServiceList;
-        List<Service> avlServiceList;
+        List<ServiceInfo> depServiceList;
+        List<ServiceInfo> avlServiceList;
         List<String> serviceHosts;
         try {
             ServicesManager servicesManager = getServicesManager();

@@ -1,6 +1,13 @@
 
 package org.duracloud.duradmin.mock.contentstore;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.codec.binary.Hex;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
@@ -8,13 +15,6 @@ import org.duracloud.client.ContentStoreManager;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MockContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {

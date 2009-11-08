@@ -1,17 +1,17 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
-import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
-import org.duracloud.client.ServicesManager;
-import org.duracloud.duradmin.contentstore.ContentStoreProvider;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public abstract class BaseFormController
         extends SimpleFormController {
@@ -43,10 +43,6 @@ public abstract class BaseFormController
     
     protected List<String> getSpaces() throws Exception {
         return controllerSupport.getSpaces();
-    }
-
-    protected ServicesManager getServicesManager() throws Exception {
-        return controllerSupport.getServicesManager();
     }
 
 

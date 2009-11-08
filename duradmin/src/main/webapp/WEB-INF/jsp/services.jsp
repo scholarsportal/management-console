@@ -5,7 +5,7 @@
 	</tiles:putAttribute>
 	<tiles:putAttribute name="mainTab" value="services"/>
 	<tiles:putAttribute name="menu">
-		&lt;&lt;Menu Here&gt;&gt;
+
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">
@@ -28,7 +28,7 @@
 							<div class="service">
 							<table class="standard">
 								<tr>
-									<th><c:out value="${service.serviceId}" /></th>
+									<th><c:out value="${service.displayName}" /></th>
 								</tr>
 								<tr>
 									<td>
@@ -40,7 +40,7 @@
 											<td><c:out value="${service.status}" /></td>
 											<td style="text-align: right"><input type="hidden"
 												name="serviceId"
-												value="<c:out value="${service.serviceId}" />" /> <input
+												value="<c:out value="${service.serviceName}" />" /> <input
 												type="submit" value="Undeploy"
 												style="margin: 0; padding: 0; font-size: 0.8em" /></td>
 										</tr>
@@ -55,10 +55,9 @@
 												<td>Configuration</td>
 												<td>
 													<table style="background-color:#EEE">
-														<c:forEach items="${service.config}" var="configItem">
+														<c:forEach items="${service.userConfigs}" var="userConfig">
 															<tr>
-																<td><c:out value="${configItem.key}" />:</td>
-																<td><c:out value="${configItem.value}" /></td>
+																<td><c:out value="${userConfig}" /></td>
 															</tr>
 														</c:forEach>
 													</table>
@@ -84,17 +83,16 @@
 							      <div class="service">
 							        <table class="standard">
 							          <tr>
-							            <th><c:out value="${service.serviceId}" /></th>
+							            <th><c:out value="${service.displayName}" /></th>
 							          </tr>
 							          <tr>
 							            <td>
-							              <form action="deployService.htm" method="post">
-							                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceId}" />" />
+							              <form action="services/deploy" method="post">
+							                <input type="hidden" name="serviceId" value="<c:out value="${service.serviceName}" />" />
 							                <table>
-							                  <c:forEach items="${service.config}" var="configItem">                
+							                  <c:forEach items="${service.userConfigs}" var="userConfig">                
 							                  <tr>
-							                    <td><c:out value="${configItem.key}" /></td>
-							                    <td><input type="text" id="config.<c:out value="${configItem.key}" />" name="config.<c:out value="${configItem.key}" />" value="<c:out value="${configItem.value}" />" /></td>
+							                    <td><c:out value="${userConfig}" /></td>
 							                  </tr>
 							                  </c:forEach>
 							                  <tr style="border-bottom:0px solid #ccc">
