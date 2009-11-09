@@ -6,6 +6,7 @@ import java.util.Map;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.serviceconfig.ServiceInfo;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -90,6 +91,8 @@ public class ServicesManager {
     public List<String> getAllServices() throws ServicesException {
         return getServices(buildGetServicesURL(ServicesList.ALL));
     }
+
+    
 
     /**
      * Provides a listing of available services, that is, services which
@@ -290,6 +293,31 @@ public class ServicesManager {
                                             ", expected value was " +
                                             expectedCode);
         }
+    }
+    
+    public ServiceInfo getServiceInfo(String serviceName, String serviceHost) throws ServicesException {
+        //TODO Implement properly - this is a just a place holder.
+        return null;
+    }
+    
+    public void updateServiceConfiguration(ServiceInfo serviceInfo) throws ServicesException {
+        //TODO Implement properly - this is a just a place holder.
+    }
+
+    public void deployService(ServiceInfo serviceInfo, String serviceHost) 
+              throws ServicesException{
+        //TODO Implement properly - this is a just a place holder.
+        
+    }
+    
+    public List<ServiceInfo> getAvailableServiceInfos(){
+        //TODO Implement properly - this is a just a place holder.
+        return null;
+    }
+    
+    public List<ServiceInfo> getDeployedServiceInfos(){
+        //TODO Implement properly - this is a just a place holder.
+        return null;
     }
 
 }
