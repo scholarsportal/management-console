@@ -8,6 +8,10 @@
   <version>1.0.0</version>
   <name>Akubra DuraCloud Client</name>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
 
     <dependency>
@@ -29,4 +33,38 @@
     </dependency>  
  
   </dependencies>
+
+  <reporting>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <debug>true</debug>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <sourceEncoding>UTF-8</sourceEncoding>
+          <targetJdk>1.5</targetJdk>
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
+
+    </plugins>
+
+  </reporting>
 </project>

@@ -30,8 +30,7 @@ import org.fedoracommons.akubra.impl.StreamManager;
  * @author Chris Wilper
  */
 class DuraCloudBlob
-        extends AbstractBlob
-        implements Blob {
+        extends AbstractBlob {
 
     private final StreamManager streamManager;
 
@@ -240,7 +239,7 @@ class DuraCloudBlob
      * an exception has been externally signaled after the underlying call
      * is made, and throwing that exception if so.
      */
-    class ExAwareOutputStream extends FilterOutputStream {
+    static class ExAwareOutputStream extends FilterOutputStream {
 
         private IOException exception;
 

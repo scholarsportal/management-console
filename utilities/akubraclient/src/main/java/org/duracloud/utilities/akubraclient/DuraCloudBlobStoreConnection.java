@@ -11,7 +11,6 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.fedoracommons.akubra.Blob;
 import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.BlobStoreConnection;
 import org.fedoracommons.akubra.UnsupportedIdException;
 import org.fedoracommons.akubra.impl.AbstractBlobStoreConnection;
 import org.fedoracommons.akubra.impl.StreamManager;
@@ -22,8 +21,7 @@ import org.fedoracommons.akubra.impl.StreamManager;
  * @author Chris Wilper
  */
 class DuraCloudBlobStoreConnection
-        extends AbstractBlobStoreConnection
-        implements BlobStoreConnection {
+        extends AbstractBlobStoreConnection {
 
     private final ContentStore contentStore;
 
