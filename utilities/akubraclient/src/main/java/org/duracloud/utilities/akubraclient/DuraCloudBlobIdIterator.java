@@ -43,7 +43,7 @@ class DuraCloudBlobIdIterator
                 throw new Error(wontHappen);
             }
         }
-        return null;
+        return endOfData();
     }
 
 }
