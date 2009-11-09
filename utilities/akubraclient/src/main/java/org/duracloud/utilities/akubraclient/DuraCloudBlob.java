@@ -1,8 +1,11 @@
 package org.duracloud.utilities.akubraclient;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 import java.net.URI;
 
@@ -121,11 +124,48 @@ class DuraCloudBlob
     }
 
     //@Override
-    public OutputStream openOutputStream(long arg0, boolean arg1)
+    public OutputStream openOutputStream(final long estimatedSize,
+                                         boolean overwrite)
             throws IOException, DuplicateBlobException {
         ensureOpen();
-        // TODO: implement
-        return null;
+
+        if (!overwrite && exists()) {
+            throw new DuplicateBlobException(id);
+        }
+
+        // Since contentStore expects an InputStream from which it can
+        // read the bytes to be read, but the Blob interface needs to
+        // return an OutputStream to which bytes can be written, we
+        // need to set up a pipe and invoke addContent in a separate
+        // thread.
+        //
+        // ExAwareOutputStream is used in conjunction with this pipe
+        // in order to facilitate exception-passing; if an exception occurs
+        // within contentStore.addContent, the original thread that called
+        // openOutputStream will receive that exception the next time it
+        // attempts a write or close on the returned output stream.
+
+        PipedOutputStream pipedOut = new PipedOutputStream();
+        final ExAwareOutputStream eaOut = new ExAwareOutputStream(pipedOut);
+        final PipedInputStream pipedIn = new PipedInputStream(pipedOut);
+
+        Runnable invoker = new Runnable() {
+            public void run() {
+                try {
+                    contentStore.addContent(spaceId, contentId, pipedIn,
+                                            estimatedSize, null, null);
+                } catch (ContentStoreException e) {
+                    IOException ioe = new IOException("Error writing to store");
+                    ioe.initCause(e);
+                    eaOut.setException(ioe);
+                } finally {
+                    IOUtils.closeQuietly(pipedIn);
+                }
+            }
+        };
+        new Thread(invoker).start();
+
+        return eaOut;
     }
 
     /**
@@ -193,6 +233,55 @@ class DuraCloudBlob
     static String getURIPrefix(ContentStore contentStore,
                                String spaceId) {
         return contentStore.getBaseURL() + "/" + spaceId + "/";
+    }
+
+    /**
+     * Wraps a given OutputStream, overriding all methods to check whether
+     * an exception has been externally signaled after the underlying call
+     * is made, and throwing that exception if so.
+     */
+    class ExAwareOutputStream extends FilterOutputStream {
+
+        private IOException exception;
+
+        ExAwareOutputStream(OutputStream sink) {
+            super(sink);
+        }
+
+        void setException(IOException exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            super.write(b);
+            if (exception != null) throw exception;
+        }
+
+        @Override
+        public void write(byte[] b) throws IOException {
+            super.write(b);
+            if (exception != null) throw exception;
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            super.write(b, off, len);
+            if (exception != null) throw exception;
+        }
+
+        @Override
+        public void flush() throws IOException {
+            super.flush();
+            if (exception != null) throw exception;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            if (exception != null) throw exception;
+        }
+
     }
 
 }
