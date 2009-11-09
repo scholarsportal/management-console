@@ -2,6 +2,7 @@
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Stores content metadata.
@@ -18,6 +19,9 @@ public class ContentMetadata implements Serializable{
 
     private String modified;
 
+    private Set<String> tags;
+
+    
     public String getMimetype() {
         return mimetype;
     }
@@ -49,4 +53,16 @@ public class ContentMetadata implements Serializable{
     public void setModified(String modified) {
         this.modified = modified;
     }
+
+    
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+    
+    
 }

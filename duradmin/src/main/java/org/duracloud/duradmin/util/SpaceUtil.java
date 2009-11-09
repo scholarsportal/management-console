@@ -41,21 +41,24 @@ public class SpaceUtil {
     public static SpaceMetadata getSpaceMetadata(Map<String, String> spaceProps)
             throws Exception {
         SpaceMetadata spaceMetadata = new SpaceMetadata();
-        spaceMetadata.setCreated(spaceProps.get(ContentStore.SPACE_CREATED));
-        spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
-        spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
+        spaceMetadata.setCreated(spaceProps.remove(ContentStore.SPACE_CREATED));
+        spaceMetadata.setCount(spaceProps.remove(ContentStore.SPACE_COUNT));
+        spaceMetadata.setAccess(spaceProps.remove(ContentStore.SPACE_ACCESS));
+        spaceMetadata.setTags(TagUtil.parseTags(spaceProps.remove(TagUtil.TAGS)));
         return spaceMetadata;
     }
     
     public static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
         ContentMetadata metadata = new ContentMetadata();
         metadata
-                .setMimetype(contentMetadata.get(ContentStore.CONTENT_MIMETYPE));
-        metadata.setSize(contentMetadata.get(ContentStore.CONTENT_SIZE));
+                .setMimetype(contentMetadata.remove(ContentStore.CONTENT_MIMETYPE));
+        metadata.setSize(contentMetadata.remove(ContentStore.CONTENT_SIZE));
         metadata
-                .setChecksum(contentMetadata.get(ContentStore.CONTENT_CHECKSUM));
+                .setChecksum(contentMetadata.remove(ContentStore.CONTENT_CHECKSUM));
         metadata
-                .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
+                .setModified(contentMetadata.remove(ContentStore.CONTENT_MODIFIED));
+        metadata.setTags(TagUtil.parseTags(contentMetadata.remove(TagUtil.TAGS)));
+
         return metadata;
     }
 }

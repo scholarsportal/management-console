@@ -4,31 +4,6 @@
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
-		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
-			<tiles:putAttribute name="title">
-				Tags
-			</tiles:putAttribute>
-			<tiles:putAttribute name="miniform">
-				<form>
-					<input type="text" size="13"/> <input type="submit" value="Add"/>
-					<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
-				</form>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="body">
-				<ul class="small horizontal-list">
-					<li>
-						<span style="white-space:nowrap;">
-							tag 1  <input  class="minibutton" type="button" value="x" />
-						</span>
-					</li>
-					<li>
-						<span  style="white-space:nowrap;" >
-							tag 2  <input  class="minibutton"  type="button" value="x"  />
-						</span>
-					</li>
-				</ul>
-			</tiles:putAttribute>
-		</tiles:insertTemplate>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">

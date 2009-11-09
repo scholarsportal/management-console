@@ -21,6 +21,14 @@
 			</ul>
 		</div>
 		
+		<div>
+		<tiles:insertTemplate template="/WEB-INF/jsp/layout/tag-control.jsp">
+			<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}"/>
+			<tiles:putAttribute name="contentId" value="${contentItem.contentId}"/>
+			<tiles:putAttribute name="tags" value="${contentItem.metadata.tags}"/>
+		</tiles:insertTemplate>
+		</div>		
+		
 		<div class="sidebar-actions">
 			<h4><spring:message code="form.contentItem.modifyProperties"/></h4>
 		    <form:form commandName="contentItem"  action="content.htm?spaceId=${contentItem.spaceId}&contentId=${contentItem.contentId}" method="post">
