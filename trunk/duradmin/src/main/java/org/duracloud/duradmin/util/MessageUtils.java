@@ -94,11 +94,15 @@ public class MessageUtils {
     }
 
     public static Message createMessage(String string) {
-        Message message = new Message(null, string, Severity.INFO);
-        return message;
+        return createMessage(string, Severity.INFO);
     }
 
     public static void addFlashMessage(String messageText, ModelAndView mav) {
         mav.addObject("flashMessage", MessageUtils.createMessage(messageText));
+    }
+
+    public static Message createMessage(String string, Severity severity) {
+        Message message = new Message(null, string, severity);
+        return message;
     }
 }

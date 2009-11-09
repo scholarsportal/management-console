@@ -4,23 +4,26 @@
 		<spring:message code="space" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
+		<div class="sidebar-actions">
+			<ul>
+				<li>
+					<a href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message code="add.contentItem"/></a>
+				</li>
+				<li>
+					<a href="<c:url value="/space/changeAccess">
+						<c:param name="spaceId" value="${space.spaceId}"/>
+						<c:param name="returnTo" value="${currentUrl}"/>
+					</c:url>" >
+						<spring:message code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}"/>
+					</a>
+				</li>
+
+			</ul>
+		</div>
 		<div>
-		
-		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
-			<tiles:putAttribute name="title">
-				Tags
-			</tiles:putAttribute>
-			<tiles:putAttribute name="miniform">
-				<form>
-					<input type="text" size="13"/> <input type="submit" value="Add"/>
-					<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
-				</form>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="body">
-				<span  style="white-space:nowrap;">
-					tag1  <input id="button-0" type="button"  class="minibutton"  value="x" />
-				</span>
-			</tiles:putAttribute>
+		<tiles:insertTemplate template="/WEB-INF/jsp/layout/tag-control.jsp">
+			<tiles:putAttribute name="spaceId" value="${space.spaceId}"/>
+			<tiles:putAttribute name="tags" value="${space.metadata.tags}"/>
 		</tiles:insertTemplate>
 		</div>
 		<div>
@@ -51,27 +54,7 @@
 			</tiles:putAttribute>
 		</tiles:insertTemplate>
 		</div>
-		
-	
-		<div class="sidebar-actions">
-			<ul>
-				<li>
-					<a href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message code="add.contentItem"/></a>
-				</li>
-				<li>
-					<a href="<c:url value="/space/changeAccess">
-						<c:param name="spaceId" value="${space.spaceId}"/>
-						<c:param name="returnTo" value="${currentUrl}"/>
-					</c:url>" >
-						<spring:message code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}"/>
-					</a>
-				</li>
 
-			</ul>
-
-			<p> Mouse over a content item for details.</p>
-
-		</div>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
 		<tiles:insertDefinition name="base-main-content">

@@ -2,6 +2,7 @@
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Stores space metadata.
@@ -15,6 +16,8 @@ public class SpaceMetadata implements Serializable{
     private String created;
 
     private String count;
+    
+    private Set<String> tags;
 
     public String getAccess() {
         return access;
@@ -38,6 +41,16 @@ public class SpaceMetadata implements Serializable{
 
     public void setCount(String count) {
         this.count = count;
+    }
+
+    
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
 }

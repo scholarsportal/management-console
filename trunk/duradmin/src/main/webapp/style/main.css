@@ -128,6 +128,13 @@ td#main-content{
 	display: inline;
 	padding-right:0em;
 }
+
+ul.vertical-list li {
+	list-style-type:none;
+	margin:0;
+	padding:0;	
+}
+
 div.main-content-header{
 	min-height:3em;	
 	padding:0.25;
@@ -367,3 +374,9 @@ table#spacesTable > tbody > tr > td#contentId {
 		
 }
 
+.deleting {
+	border: 1px solid red;
+	background-color: pink;
+	color:red;
+	text-decoration: blink;
+}

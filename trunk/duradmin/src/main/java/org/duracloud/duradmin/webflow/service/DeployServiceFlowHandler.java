@@ -59,7 +59,7 @@ public class DeployServiceFlowHandler extends AbstractFlowHandler {
         
         String outcomeUrl = null;
         
-        if (outcome.getId().equals(outcome.getId())) {
+        if (outcome.getId().equals(SUCCESS_OUTCOME)) {
             outcomeUrl = MessageFormat.format("contextRelative:/services.htm?serviceId={0}", 
                                          service.getServiceName());
             outcomeUrl = MessageUtils.appendRedirectMessage(

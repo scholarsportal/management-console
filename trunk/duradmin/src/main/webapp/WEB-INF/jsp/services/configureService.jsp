@@ -14,8 +14,15 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
+				<div>
+					<h3>
+						${service.displayName}
+					</h3>
+					<p>
+						${service.description}
+					</p>
+				</div>
 				<form:form >
-					Configure Service
 					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
 					<form:errors element="div" cssClass="message-error" />
 					<div>
@@ -35,7 +42,7 @@
 											</c:when>
 
 											<c:when test="${userConfig.inputType.name == 'MULTISELECT' }">
-												<ul>
+												<ul class="vertical-list">
 														<c:forEach items="${userConfig.options}" var="option" varStatus="status">
 														<li>
 															<input type="checkbox" name="${userconfig.name}-checkbox-${status.count}" <c:if test="${option.selected}">checked</c:if>/>
