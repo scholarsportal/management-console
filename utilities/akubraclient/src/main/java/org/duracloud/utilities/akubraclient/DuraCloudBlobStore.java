@@ -20,7 +20,8 @@ import org.fedoracommons.akubra.impl.StreamManager;
  * to content stored within a given space in a given DuraCloud content store.
  * <p>
  * <h2>Blob Ids</h2>
- * This store supports arbitrary blob ids.
+ * This store supports DuraCloud content URLs as blob ids.  These are of the
+ * form http://<em>host:port</em>/durastore/<em>spaceID</em>/<em>contentID</em>
  * <p>
  * <h2>Id Generation</h2>
  * This store does not support id generation.

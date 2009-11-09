@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;
@@ -52,13 +51,13 @@ class DuraCloudBlobStoreConnection
     public Iterator<URI> listBlobIds(String filterPrefix) throws IOException {
         ensureOpen();
         try {
-           // ISSUE: Space.getContentIds() appears to be memory-bound; this
-           //        will cause OOM exceptions when trying to iterate over
-           //        large spaces.
-            List<String> ids = contentStore.getSpace(spaceId).getContentIds();
-            // TODO: turn this list of strings into an iterator of ids, and
-            //       filter by filterPrefix if non-null
-        return null;
+            // ISSUE: Space.getContentIds() appears to be memory-bound; this
+            //        will cause OOM exceptions when trying to iterate over
+            //        large spaces.
+            return new DuraCloudBlobIdIterator(
+                    DuraCloudBlob.getURIPrefix(contentStore, spaceId),
+                    contentStore.getSpace(spaceId).getContentIds().iterator(),
+                    filterPrefix);
         } catch (ContentStoreException e) {
             IOException ioe = new IOException();
             ioe.initCause(e);

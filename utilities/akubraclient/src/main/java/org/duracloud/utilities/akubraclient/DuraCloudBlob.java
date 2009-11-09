@@ -13,6 +13,7 @@ import org.fedoracommons.akubra.Blob;
 import org.fedoracommons.akubra.BlobStoreConnection;
 import org.fedoracommons.akubra.DuplicateBlobException;
 import org.fedoracommons.akubra.MissingBlobException;
+import org.fedoracommons.akubra.UnsupportedIdException;
 import org.fedoracommons.akubra.impl.AbstractBlob;
 import org.fedoracommons.akubra.impl.StreamManager;
 
@@ -31,13 +32,17 @@ class DuraCloudBlob
 
     private final String spaceId;
 
-    DuraCloudBlob(BlobStoreConnection connection, URI blobId,
-                  StreamManager streamManager, ContentStore contentStore,
-                  String spaceId) {
+    DuraCloudBlob(BlobStoreConnection connection,
+                  URI blobId,
+                  StreamManager streamManager,
+                  ContentStore contentStore,
+                  String spaceId)
+              throws UnsupportedIdException {
         super(connection, blobId);
         this.streamManager = streamManager;
         this.contentStore = contentStore;
         this.spaceId = spaceId;
+        validateId(blobId);
     }
 
     //@Override
@@ -83,6 +88,25 @@ class DuraCloudBlob
         ensureOpen();
         // TODO: implement
         return null;
+    }
+
+    private void validateId(URI blobId)
+            throws UnsupportedIdException {
+        if (blobId == null) {
+            throw new NullPointerException("Id cannot be null");
+        }
+        String uriPrefix = getURIPrefix(contentStore, spaceId);
+        if (!blobId.toString().startsWith(uriPrefix)) {
+            throw new UnsupportedIdException(blobId,
+                    "Unsupported blob id: " + blobId.toString()
+                    + " (ids for this store should begin "
+                    + "with " + uriPrefix + ")");
+        }
+    }
+
+    static String getURIPrefix(ContentStore contentStore,
+                               String spaceId) {
+        return contentStore.getBaseURL() + "/" + spaceId + "/";
     }
 
 }
