@@ -1,7 +1,6 @@
 package org.duracloud.utilities.akubra;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import java.util.Iterator;
 
@@ -33,17 +32,12 @@ class DuraCloudBlobIdIterator
     @Override
     protected URI computeNext() {
         while (ids.hasNext()) {
-            try {
-                URI uri = new URI(uriPrefix + ids.next());
-                if (filterPrefix == null
-                        || uri.toString().startsWith(filterPrefix)) {
-                    return uri;
-                }
-            } catch (URISyntaxException wontHappen) {
-                throw new Error(wontHappen);
+            URI uri = URI.create(uriPrefix + ids.next());
+            if (filterPrefix == null
+                    || uri.toString().startsWith(filterPrefix)) {
+                return uri;
             }
         }
         return endOfData();
     }
-
 }
