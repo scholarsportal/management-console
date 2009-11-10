@@ -1,4 +1,4 @@
-package org.duracloud.utilities.akubraclient;
+package org.duracloud.utilities.akubra;
 
 import java.io.IOException;
 
