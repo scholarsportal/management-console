@@ -34,7 +34,7 @@
  
   </dependencies>
 
-  <reporting>
+  <build>
 
     <plugins>
 
@@ -47,6 +47,14 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+
+    </plugins>
+
+  </build>
+
+  <reporting>
+
+    <plugins>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
