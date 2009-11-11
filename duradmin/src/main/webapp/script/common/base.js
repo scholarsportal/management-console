@@ -53,6 +53,24 @@ function removeTag(spaceId,tag, contentId, element){
 	});
 }
 
+function removeMetadataByKey(spaceId,key, contentId, element){
+	dojo.addClass(element, "deleting")
+	
+	dojo.xhrGet( {
+	    url: "/duradmin/spaces/metadata/remove?spaceId="+spaceId+"&name=" + key + "&contentId="+contentId,
+	    handleAs: "json",
+	    load: function(responseObject, ioArgs) {
+		  console.debug(responseObject);  // Dump it to the console
+		  element.parentNode.removeChild(element);
+		  
+		},
+		error: function(responseObject, ioArgs){
+	          console.error("HTTP status code: ", ioArgs.xhr.status); 
+	          return responseObject;
+		}
+	});
+}
+
 function showWaitMessage(node, messageText){
 	node.innerHTML = "";
 	var div = dojo.create("div",null, node);

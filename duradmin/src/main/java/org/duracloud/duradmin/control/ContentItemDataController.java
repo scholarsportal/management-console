@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.util.ControllerUtils;
@@ -26,15 +27,6 @@ public class ContentItemDataController
         setCommandName("contentItem");
     }
 
-    @Override
-    protected void initBinder(HttpServletRequest request,
-                              ServletRequestDataBinder binder) throws Exception {
-        // TODO Auto-generated method stub
-        super.initBinder(request, binder);
-    }
-    
-
-    
     
     @Override
     protected ModelAndView handle(HttpServletRequest request,
@@ -44,11 +36,9 @@ public class ContentItemDataController
         ContentItem contentItem = (ContentItem) command;
         String spaceId = contentItem.getSpaceId();
         String contentId = contentItem.getContentId();
-        ControllerUtils.checkContentRequestParams(spaceId, contentId);
+        ControllerUtils.checkContentItemId(spaceId, contentId);
         ContentStore store = getContentStore();
-        Map<String,String> contentMetadata = store.getContentMetadata(spaceId, contentId);
-        ContentMetadata metadata = SpaceUtil.populateContentMetadata(contentMetadata);
-        contentItem.setMetadata(metadata);
+        SpaceUtil.populateContentItem(contentItem, spaceId, contentId, store);
         
         ModelAndView mav = new ModelAndView();
         mav.setViewName("jsonView");
@@ -56,5 +46,7 @@ public class ContentItemDataController
         mav.addObject(contentItem);
         return mav;
     }
+
+
 
 }

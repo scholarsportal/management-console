@@ -57,6 +57,17 @@ public class MockServiceManager
             return mockSpace;
         }
 
+        
+        @Override
+        public Space getSpace(String spaceId,
+                              String contentIdFilter,
+                              long startIndex, 
+                              int maxResultCount) throws ContentStoreException {
+            // TODO Auto-generated method stub
+            Space space = getSpace(spaceId);
+            space.getMetadata().put(ContentStore.SPACE_QUERY_COUNT, String.valueOf(space.getContentIds().size()));
+            return space;
+        }
         @Override
         public Content getContent(String spaceId, String contentId) {
             Content mockContent = new Content();

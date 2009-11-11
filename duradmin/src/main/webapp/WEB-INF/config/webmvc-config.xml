@@ -34,8 +34,10 @@
         <prop key="/unDeployService.htm">unDeployServiceController</prop>
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
-        <prop key="/spaces/tag/remove">removeTagController</prop>
         <prop key="/spaces/tag/add">addTagController</prop>
+        <prop key="/spaces/tag/remove">removeTagController</prop>
+        <prop key="/spaces/metadata/add">addMetadataController</prop>
+        <prop key="/spaces/metadata/remove">removeMetadataController</prop>
 
         <prop key="/data/spaces/space">spaceDataController</prop>
 
@@ -86,6 +88,14 @@
   </bean>
 
   <bean id="removeTagController" class="org.duracloud.duradmin.control.RemoveTagController">
+    <property name="contentStoreProvider" ref="contentStoreProvider"/>
+  </bean>
+
+  <bean id="addMetadataController" class="org.duracloud.duradmin.control.AddMetadataController">
+    <property name="contentStoreProvider" ref="contentStoreProvider"/>
+  </bean>
+
+  <bean id="removeMetadataController" class="org.duracloud.duradmin.control.RemoveMetadataController">
     <property name="contentStoreProvider" ref="contentStoreProvider"/>
   </bean>
 

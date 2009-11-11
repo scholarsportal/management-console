@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreException;
+import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.domain.SpaceMetadata;
@@ -34,30 +36,42 @@ public class SpaceUtil {
             throws Exception {
         space.setSpaceId(cloudSpace.getId());
         space.setMetadata(SpaceUtil.getSpaceMetadata(cloudSpace.getMetadata()));
+        space.setExtendedMetadata(cloudSpace.getMetadata());
         space.setContents(cloudSpace.getContentIds());
         return space;
     }
 
-    public static SpaceMetadata getSpaceMetadata(Map<String, String> spaceProps)
+    private static SpaceMetadata getSpaceMetadata(Map<String, String> spaceProps)
             throws Exception {
         SpaceMetadata spaceMetadata = new SpaceMetadata();
-        spaceMetadata.setCreated(spaceProps.remove(ContentStore.SPACE_CREATED));
-        spaceMetadata.setCount(spaceProps.remove(ContentStore.SPACE_COUNT));
-        spaceMetadata.setAccess(spaceProps.remove(ContentStore.SPACE_ACCESS));
-        spaceMetadata.setTags(TagUtil.parseTags(spaceProps.remove(TagUtil.TAGS)));
+        spaceMetadata.setCreated(spaceProps.get(ContentStore.SPACE_CREATED));
+        spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
+        spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
+        spaceMetadata.setTags(TagUtil.parseTags(spaceProps.get(TagUtil.TAGS)));
         return spaceMetadata;
     }
     
-    public static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
+    public static void populateContentItem(ContentItem contentItem,
+                                     String spaceId,
+                                     String contentId,
+                                     ContentStore store)
+            throws ContentStoreException {
+        Map<String,String> contentMetadata = store.getContentMetadata(spaceId, contentId);
+        ContentMetadata metadata = populateContentMetadata(contentMetadata);
+        contentItem.setMetadata(metadata);
+    }
+
+    
+    private static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
         ContentMetadata metadata = new ContentMetadata();
         metadata
-                .setMimetype(contentMetadata.remove(ContentStore.CONTENT_MIMETYPE));
-        metadata.setSize(contentMetadata.remove(ContentStore.CONTENT_SIZE));
+                .setMimetype(contentMetadata.get(ContentStore.CONTENT_MIMETYPE));
+        metadata.setSize(contentMetadata.get(ContentStore.CONTENT_SIZE));
         metadata
-                .setChecksum(contentMetadata.remove(ContentStore.CONTENT_CHECKSUM));
+                .setChecksum(contentMetadata.get(ContentStore.CONTENT_CHECKSUM));
         metadata
-                .setModified(contentMetadata.remove(ContentStore.CONTENT_MODIFIED));
-        metadata.setTags(TagUtil.parseTags(contentMetadata.remove(TagUtil.TAGS)));
+                .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
+        metadata.setTags(TagUtil.parseTags(contentMetadata.get(TagUtil.TAGS)));
 
         return metadata;
     }

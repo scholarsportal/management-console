@@ -51,6 +51,7 @@
   <modules>
       <module>mavenplugins</module>
       <module>common</module>
+      <module>serviceconfig</module>
       <module>computeprovider</module>
 <!--      <module>ec2computeprovider</module>-->
       <module>ec2typicacomputeprovider</module>
@@ -60,7 +61,6 @@
       <module>emcstorageprovider</module>
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
-      <module>serviceconfig</module>
       <module>durastore</module> 
       <module>duradavwebapp</module>
       <module>storeclient</module>

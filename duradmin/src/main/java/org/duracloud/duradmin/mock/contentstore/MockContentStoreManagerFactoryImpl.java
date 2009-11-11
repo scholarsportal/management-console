@@ -104,6 +104,7 @@ public class MockContentStoreManagerFactoryImpl
         }
 
         
+        
         public String addContent(String spaceId,
                                  String contentId,
                                  InputStream content,
@@ -199,6 +200,19 @@ public class MockContentStoreManagerFactoryImpl
         public Space getSpace(String spaceId) throws ContentStoreException {
             return spaceMap.get(spaceId);
         }
+        
+        public Space getSpace(String spaceId,
+                              String contentIdFilter,
+                              long startIndex,
+                              int maxResultSize) throws ContentStoreException {
+            //TODO IMPLEMENT THIS METHOD
+            //just a placeholder implementation.
+            Space space = getSpace(spaceId);
+            space.getMetadata().put(ContentStore.SPACE_QUERY_COUNT, 
+                                    String.valueOf(space.getContentIds().size()));
+            return space;
+        }
+        
 
         
         public AccessType getSpaceAccess(String spaceId)

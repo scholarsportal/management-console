@@ -66,5 +66,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/seleniumhq/selenium/client-drivers/selenium-java-client-driver/1.0.1/selenium-java-client-driver-1.0.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/serviceconfig"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/duraservice"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

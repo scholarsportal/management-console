@@ -3,8 +3,12 @@ package org.duracloud.duradmin.domain;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import org.duracloud.duradmin.util.FileData;
+import org.duracloud.duradmin.util.MetadataUtils;
+import org.duracloud.duradmin.util.NameValuePair;
 import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +26,7 @@ public class ContentItem
 
     private String contentMimetype;
     
+    private List<NameValuePair> extendedMetadata;
 
 
     private transient MultipartFile file;
@@ -101,4 +106,14 @@ public class ContentItem
     public FileData getFileData(){
         return this.fileData;
     }
+    
+    public List<NameValuePair> getExtendedMetadata() {
+        return extendedMetadata;
+    }
+    
+    public void setExtendedMetadata(Map<String,String> extendedMetadata) {
+        this.extendedMetadata = MetadataUtils.convertExtendedMetadata(extendedMetadata);
+    }
+
+
 }

@@ -8,34 +8,33 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.duracloud.duradmin.domain.Tag;
+import org.duracloud.duradmin.domain.MetadataItem;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.MetadataUtils;
-import org.duracloud.duradmin.util.TagUtil;
 import org.springframework.binding.message.Message;
 import org.springframework.binding.message.Severity;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class AddTagController
-        extends TagController {
+public class AddMetadataController
+        extends MetadataController {
     
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
-    protected ModelAndView handleTag(HttpServletRequest request,
+    protected ModelAndView handleMetadataItem(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              Tag tag, 
+                                              MetadataItem metadataItem,
                                               BindException errors) throws Exception {
         ModelAndView mav = new ModelAndView();
         Message message;
-        Map<String,String> metadata = getMetadata(tag);
-        if(TagUtil.addTag(tag.getTag(),metadata)){
-            setMetadata(metadata, tag);
-            log.info(formatLogMessage("added", tag));
-            message = MessageUtils.createMessage("Successfully added tag");        
+        Map<String,String> metadata = getMetadata(metadataItem);
+        if(MetadataUtils.add(metadataItem.getName(), metadataItem.getValue(), metadata) == null){
+            setMetadata(metadata, metadataItem);
+            log.info(formatLogMessage("added", metadataItem));
+            message = MessageUtils.createMessage("Successfully added metadata");        
         }else{
-            message = MessageUtils.createMessage("Tag not added because it already exists.", Severity.WARNING);        
+            message = MessageUtils.createMessage("Metadata value replaced.", Severity.WARNING);        
         }
         return setView(request, mav, message);
     }

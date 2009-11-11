@@ -27,32 +27,10 @@
 		</tiles:insertTemplate>
 		</div>
 		<div>
-		<tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
-			<tiles:putAttribute name="title">
-				Metadata
-			</tiles:putAttribute>
-			<tiles:putAttribute name="miniform">
-				<form>
-					<input type="text" size="13"/> 
-					<textarea rows="3" cols="13"></textarea>
-					<input type="submit" value="Add"/>
-					<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
-				</form>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="body">
-				<table class="small extended-metadata">
-					<tr>
-						<td >Name 1
-							<input class="minibutton"  id="metadata-0" type="button" value="x"/></td>
-					</tr>
-					<tr>
-						<td >
-							Value1
-						</td>
-					</tr>
-				</table>
-			</tiles:putAttribute>
-		</tiles:insertTemplate>
+			<tiles:insertTemplate template="/WEB-INF/jsp/layout/metadata-control.jsp">
+				<tiles:putAttribute name="spaceId" value="${space.spaceId}"/>
+				<tiles:putAttribute name="metadata" value="${space.extendedMetadata}"/>
+			</tiles:insertTemplate>
 		</div>
 
 	</tiles:putAttribute>
@@ -94,7 +72,26 @@
 					</p>
 				</c:if>
 			
+				
 				<c:if test="${not empty space.contents}">
+					<div>
+						<span style="float:left">
+							<input type="text" name="filter"/> <spring:message code="filterById"/>
+						</span>
+						<span style="float:right">
+							<ul class="horizontal-list">
+								<a  href="#">first</a>
+								<a  href="#">previous</a>
+								<a  href="#"> 1 </a>
+								<a  href="#"> 2 </a>
+								<a  href="#"> 3 </a>
+								<a  href="#"> 4 </a>
+								<a  href="#">next</a>
+								<a  href="#">last</a>
+							</ul>
+
+						</span>
+					</div>	
 					<table class="standard" id="spacesTable">
 						<tr>
 							<th><spring:message code="contentItem.id"/> </th>
