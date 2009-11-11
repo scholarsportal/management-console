@@ -1,31 +1,33 @@
 package org.duracloud.serviceconfig;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * This class holds the description and state of a service deployment host option.
+ * This class holds the name, status, and configuration of an deployed service.
  *
- * @author Andrew Woods
- *         Date: Nov 6, 2009
+ * @author Bill Branan
+ *         Date: Nov 9, 2009
  */
 public class Deployment implements Serializable{
 
-    private static final long serialVersionUID = -5554753103296039413L;
+    private static final long serialVersionUID = -5554753103296039412L;
 
-    /**
-     * Is this the primary host? new one? existing secondary host?
-     */
-    public enum LocationType {
-        PRIMARY, NEW, EXISTING;
+    public enum StatusType {
+        STOPPED, STARTED;
     }
 
-    public enum StateType {
-        ACTIVE, AVAILABLE, UNAVAILABLE, SELECTED;
-    }
-
+    /** The name of the host on which this service is deployed */
     private String name;
-    private LocationType locationType;
-    private StateType stateType;
+
+    /** The status of this deployed service */
+    private StatusType status;
+
+    /** The system configuration settings for this deployed service */
+    private List<SystemConfig> systemConfigs;
+
+    /** The user configuration settings for this deployed service */
+    private List<UserConfig> userConfigs;
 
     public String getName() {
         return name;
@@ -35,20 +37,27 @@ public class Deployment implements Serializable{
         this.name = name;
     }
 
-    public LocationType getLocationType() {
-        return locationType;
+    public StatusType getStatus() {
+        return status;
     }
 
-    public void setLocationType(LocationType locationType) {
-        this.locationType = locationType;
+    public void setStatus(StatusType status) {
+        this.status = status;
     }
 
-    public StateType getStateType() {
-        return stateType;
+    public List<SystemConfig> getSystemConfigs() {
+        return systemConfigs;
     }
 
-    public void setStateType(StateType stateType) {
-        this.stateType = stateType;
+    public void setSystemConfigs(List<SystemConfig> systemConfigs) {
+        this.systemConfigs = systemConfigs;
     }
 
+    public List<UserConfig> getUserConfigs() {
+        return userConfigs;
+    }
+
+    public void setUserConfigs(List<UserConfig> userConfigs) {
+        this.userConfigs = userConfigs;
+    }
 }

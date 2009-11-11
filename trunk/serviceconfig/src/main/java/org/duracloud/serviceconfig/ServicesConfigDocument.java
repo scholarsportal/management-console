@@ -16,6 +16,8 @@ public interface ServicesConfigDocument {
 
     public List<ServiceInfo> getServiceInfos();
 
-    public String getDocumentAsXML();
+    public String getServiceListAsXML(List<ServiceInfo> serviceList);
+
+    public String getUserConfigAsXML(List<UserConfig> userConfig);    
 
 }

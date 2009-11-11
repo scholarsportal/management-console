@@ -12,7 +12,7 @@ import java.util.List;
  * @author Andrew Woods
  *         Date: Nov 6, 2009
  */
-public class ServiceInfo implements Serializable{
+public class ServiceInfo implements Serializable, Cloneable{
 
     private static final long serialVersionUID = -7958760599324208594L;
 
@@ -20,10 +20,20 @@ public class ServiceInfo implements Serializable{
     private String serviceName;
     private String description;
     
+    /** The default system configuration options */
     private List<SystemConfig> systemConfigs;
-    private List<UserConfig> userConfigs;
-    private List<Deployment> deployments;
 
+    /** The default user configuration options */
+    private List<UserConfig> userConfigs;
+
+    /** User configuration version, checked at deployment time */
+    private String userConfigVersion;
+
+    /** Includes information necessary to deploy a new service of this type */
+    private List<DeploymentOption> deploymentOptions;
+
+    /** Includes information about existing deployments of this service */
+    private List<Deployment> deployments;
 
     public String getDisplayName() {
         return displayName;
@@ -55,6 +65,22 @@ public class ServiceInfo implements Serializable{
 
     public void setUserConfigs(List<UserConfig> userConfigs) {
         this.userConfigs = userConfigs;
+    }
+
+    public String getUserConfigVersion() {
+        return userConfigVersion;
+    }
+
+    public void setUserConfigVersion(String userConfigVersion) {
+        this.userConfigVersion = userConfigVersion;
+    }
+
+    public List<DeploymentOption> getDeploymentOptions() {
+        return deploymentOptions;
+    }
+
+    public void setDeploymentOptions(List<DeploymentOption> deploymentOptions) {
+        this.deploymentOptions = deploymentOptions;
     }
 
     public List<Deployment> getDeployments() {
@@ -90,4 +116,8 @@ public class ServiceInfo implements Serializable{
         return null;
     }
 
+    public ServiceInfo clone() {
+        // TODO: Actually perform clone
+        return this;
+    }
 }
