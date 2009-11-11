@@ -45,6 +45,8 @@ public interface ContentStore {
     public static final String CONTENT_MODIFIED =
             StorageProvider.METADATA_CONTENT_MODIFIED;
 
+    /** Basic space metadata: count of items matching the current query*/
+    public static final String SPACE_QUERY_COUNT = "space-query-count";
 
     /**
      * Gets the base URL pointing to the DuraCloud DuraStore REST API
@@ -80,6 +82,8 @@ public interface ContentStore {
      */
     public Space getSpace(String spaceId) throws ContentStoreException;
     
+    public Space getSpace(String spaceId, String contentIdFilter, long startIndex, int maxResultSize) 
+        throws ContentStoreException;
     /**
      * Creates a new space. Depending on the storage implementation, the spaceId
      * may be changed somewhat to comply with the naming rules of the underlying

@@ -32,23 +32,7 @@ public class MessageUtils {
         }
     }
 
-    public static class NameValuePair {
-        public NameValuePair(String key, Object value) {
-            super();
-            this.key = key;
-            Value = value;
-        }
-        
-        public String getKey() {
-            return key;
-        }
-        
-        public Object getValue() {
-            return Value;
-        }
-        private String key;
-        private Object Value;
-    }
+  
     
     /**
      * adds a redirect message and appends the redirect key to the 

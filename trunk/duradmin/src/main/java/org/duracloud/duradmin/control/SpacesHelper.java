@@ -1,9 +1,13 @@
 package org.duracloud.duradmin.control;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
+import org.duracloud.duradmin.contentstore.ScrollableContentItemList;
 import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -14,16 +18,26 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Id$
  */
 public class SpacesHelper {
-    protected static ModelAndView prepareContentsView(String spaceId, ContentStore store)
+    protected static ModelAndView prepareContentsView(HttpServletRequest request,String spaceId, ContentStore store)
     throws Exception, ContentStoreException {
-        if (!StringUtils.hasText(spaceId)) {
-            throw new IllegalArgumentException("Space ID must be provided.");
-        }
+        ControllerUtils.checkSpaceId(spaceId);
         Space space = new Space();
-        SpaceUtil.populateSpace(space, store.getSpace(spaceId));
+        
+        ScrollableContentItemList contentItemList = getContentItemList(request, spaceId); 
+        
+        SpaceUtil.populateSpace(space, store.getSpace(spaceId, contentItemList.getContentIdFilterString(), contentItemList.getFirstResultIndex(), contentItemList.getMaxResultsPerPage()));
         ModelAndView mav = new ModelAndView();
         mav.addObject("space", space);
-        mav.addObject("title", space.getSpaceId());
         return mav;
+    }
+
+    private static ScrollableContentItemList getContentItemList(HttpServletRequest request,String spaceId) {
+        HttpSession session = request.getSession();
+        ScrollableContentItemList list =  (ScrollableContentItemList)session.getAttribute("content-list-"+spaceId);
+        if(list == null){
+            list = new ScrollableContentItemList();
+            session.setAttribute("content-list-"+spaceId, list);
+        }
+        return list;
     }
 }

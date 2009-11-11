@@ -44,7 +44,7 @@ public class ContentController
         String contentId = contentItem.getContentId();
         ModelAndView mav = new ModelAndView(getSuccessView());
 
-        ControllerUtils.checkContentRequestParams(spaceId,contentId);
+        ControllerUtils.checkContentItemId(spaceId,contentId);
 
 
         ContentStore store = null;
@@ -70,10 +70,7 @@ public class ContentController
             }
         }
 
-        
-        contentMetadata = store.getContentMetadata(spaceId, contentId);
-        ContentMetadata metadata = SpaceUtil.populateContentMetadata(contentMetadata);
-        contentItem.setMetadata(metadata);
+        SpaceUtil.populateContentItem(contentItem, spaceId, contentId, store);
         mav.addObject(CONTENT_ITEM, contentItem);
         return mav;
     }

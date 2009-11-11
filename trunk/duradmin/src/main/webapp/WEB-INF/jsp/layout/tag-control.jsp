@@ -6,7 +6,7 @@
 
 <tiles:insertTemplate template="/WEB-INF/jsp/layout/box-control.jsp">
 	<tiles:putAttribute name="title">
-		Tags
+		<spring:message code="tags"/>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="miniform">
 		

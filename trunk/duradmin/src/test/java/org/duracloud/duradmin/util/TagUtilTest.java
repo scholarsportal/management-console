@@ -1,7 +1,5 @@
 package org.duracloud.duradmin.util;
 
-import static org.junit.Assert.fail;
-
 import java.util.HashMap;
 import java.util.Map;
 

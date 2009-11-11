@@ -34,7 +34,7 @@ public class RemoveContentController
         ContentItem contentItem = (ContentItem) command;
         String spaceId = contentItem.getSpaceId();
         String contentId = contentItem.getContentId();
-        ControllerUtils.checkContentRequestParams(spaceId, contentId);
+        ControllerUtils.checkContentItemId(spaceId, contentId);
         ContentStore store = getContentStore();
         store.deleteContent(spaceId, contentId);
         Space space = new Space();

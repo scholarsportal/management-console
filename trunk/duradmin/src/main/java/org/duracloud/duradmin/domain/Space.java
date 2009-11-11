@@ -2,7 +2,13 @@
 package org.duracloud.duradmin.domain;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import org.duracloud.duradmin.util.MetadataUtils;
+import org.duracloud.duradmin.util.NameValuePair;
+
 
 public class Space
         implements Serializable {
@@ -16,6 +22,8 @@ public class Space
     private String access;
 
     private SpaceMetadata metadata;
+
+    private List<NameValuePair> extendedMetadata;
 
     private List<String> contents;
 
@@ -57,6 +65,16 @@ public class Space
 
     public void setContents(List<String> contents) {
         this.contents = contents;
+    }
+
+    
+    public List<NameValuePair> getExtendedMetadata() {
+        return extendedMetadata;
+    }
+
+    
+    public void setExtendedMetadata(Map<String,String> extendedMetadata) {
+        this.extendedMetadata = MetadataUtils.convertExtendedMetadata(extendedMetadata);
     }
 
 }

@@ -27,7 +27,6 @@ public class SpacesController
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
         ModelAndView mav = new ModelAndView(getSuccessView(),"spaces", getSpaces());
-        mav.addObject("title", "Spaces");
         return mav;
     }
 
