@@ -11,7 +11,7 @@ public abstract class ScrollableList<E> implements Scrollable<E>{
     
     private long firstResultIndex = -1;
     
-    private int maxResultsPerPage = 2;
+    private int maxResultsPerPage = 10;
     
     private List<E> resultList;
 
@@ -91,9 +91,8 @@ public abstract class ScrollableList<E> implements Scrollable<E>{
            this.firstResultIndex = 0;
        }
        
-       int resultSize = resultList.size();
-       int lastIndex = (this.maxResultsPerPage < resultSize ? this.maxResultsPerPage : resultSize) + (int)this.firstResultIndex;
-       this.resultList = resultList.subList((int)this.firstResultIndex, lastIndex);
+       int lastIndex = Math.min(this.maxResultsPerPage, resultList.size());
+       this.resultList = resultList.subList(0, lastIndex);
        markedForUpdate = false;
     }
 }
