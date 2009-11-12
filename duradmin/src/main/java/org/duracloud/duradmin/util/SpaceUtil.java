@@ -35,7 +35,7 @@ public class SpaceUtil {
                                       org.duracloud.domain.Space cloudSpace)
             throws Exception {
         space.setSpaceId(cloudSpace.getId());
-        space.setMetadata(SpaceUtil.getSpaceMetadata(cloudSpace.getMetadata()));
+        space.setMetadata(getSpaceMetadata(cloudSpace.getMetadata()));
         space.setExtendedMetadata(cloudSpace.getMetadata());
         space.setContents(cloudSpace.getContentIds());
         return space;
@@ -48,6 +48,7 @@ public class SpaceUtil {
         spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
         spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
         spaceMetadata.setTags(TagUtil.parseTags(spaceProps.get(TagUtil.TAGS)));
+        spaceMetadata.setQueryCount(Integer.valueOf(spaceProps.get(ContentStore.SPACE_QUERY_COUNT)));
         return spaceMetadata;
     }
     

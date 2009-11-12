@@ -22,16 +22,19 @@ public class SpacesHelper {
     throws Exception, ContentStoreException {
         ControllerUtils.checkSpaceId(spaceId);
         Space space = new Space();
-        
         ScrollableContentItemList contentItemList = getContentItemList(request, spaceId); 
-        
+
         SpaceUtil.populateSpace(space, store.getSpace(spaceId, contentItemList.getContentIdFilterString(), contentItemList.getFirstResultIndex(), contentItemList.getMaxResultsPerPage()));
+
+        contentItemList.update(space.getMetadata().getQueryCount(), space.getContents());
+
         ModelAndView mav = new ModelAndView();
         mav.addObject("space", space);
+        mav.addObject("contentItemList", contentItemList);
         return mav;
     }
 
-    private static ScrollableContentItemList getContentItemList(HttpServletRequest request,String spaceId) {
+    private static ScrollableContentItemList getContentItemList(HttpServletRequest request, String spaceId) {
         HttpSession session = request.getSession();
         ScrollableContentItemList list =  (ScrollableContentItemList)session.getAttribute("content-list-"+spaceId);
         if(list == null){

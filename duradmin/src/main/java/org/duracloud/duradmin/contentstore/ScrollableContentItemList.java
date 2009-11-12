@@ -19,7 +19,7 @@ public class ScrollableContentItemList extends ScrollableList<String>{
     protected void updateList() throws DataRetrievalException {
         try {
             ContentStore contentStore = contentStoreProvider.getContentStore();
-            Space space = contentStore.getSpace(spaceId, contentIdFilterString, getFirstResultIndex(), getMaxResultsPerPage());
+            Space space = contentStore.getSpace(spaceId, contentIdFilterString, getFirstResultIndex()==-1?0:getFirstResultIndex(), getMaxResultsPerPage());
             update(Long.valueOf(space.getMetadata().get(ContentStore.SPACE_QUERY_COUNT)), space.getContentIds());
         } catch (ContentStoreException e) {
             throw new DataRetrievalException(e);

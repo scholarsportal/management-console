@@ -94,7 +94,7 @@
 						type="text" name="filter" /> <spring:message code="filterById" />
 					</span> <span style="float: right">
 					<ul class="horizontal-list">
-						<li>[1 - 10 of 100] &nbsp;&nbsp;&nbsp;</li>
+						<li>[${contentItemList.firstDisplayIndex} - ${contentItemList.lastDisplayIndex} of ${contentItemList.resultCount }] &nbsp;&nbsp;&nbsp;</li>
 						<a href="#"><<</a>
 						<a href="#"><</a>
 						<a href="#"> 1 </a>
