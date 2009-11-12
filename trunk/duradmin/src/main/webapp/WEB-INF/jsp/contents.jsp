@@ -9,7 +9,7 @@
 			<tiles:putAttribute name="title">
 				Space Details
 			</tiles:putAttribute>
-			<tiles:putAttribute name="miniform" value=""/>
+			<tiles:putAttribute name="miniform" value="" />
 			<tiles:putAttribute name="body">
 				<table class="small extended-metadata">
 					<tr>
@@ -90,23 +90,56 @@
 
 
 				<c:if test="${not empty space.contents}">
-					<div class="small"><span style="float: left"> <input
-						type="text" name="filter" /> <spring:message code="filterById" />
-					</span> <span style="float: right">
-					
-					<ul class="horizontal-list">
-						<li>[${contentItemList.firstDisplayIndex} - ${contentItemList.lastDisplayIndex} of ${contentItemList.resultCount }] &nbsp;&nbsp;&nbsp;</li>
-						<c:if test="${contentItemList.resultCount > contentItemList.maxResultsPerPage}">
-						
-						<a title="first page" href="contents.htm?fi=0&spaceId=${space.spaceId}"><<</a>
-									
-						<a title="last page" href="contents.htm?fi=${ contentItemList.lastPageStartingIndex}&spaceId=${space.spaceId}">>></a>
+					<table class="small">
+						<tr>
+							<td><input type="text" name="filter" /> <spring:message
+								code="filterById" /></td>
+							<td>
+							<!-- ugly: should be cleaned up  -->
+							<form action="contents.htm?spaceId=${space.spaceId}"
+								method="post"><select id="mpp" name="mpp"
+								onchange="submit()">
+								<option <c:if test="${contentItemList.maxResultsPerPage == 5 }">selected</c:if>>5</option>
+								<option <c:if test="${contentItemList.maxResultsPerPage == 10 }">selected</c:if>>10</option>
+								<option <c:if test="${contentItemList.maxResultsPerPage == 25 }">selected</c:if>>25</option>
+								<option <c:if test="${contentItemList.maxResultsPerPage == 50 }">selected</c:if>>50</option>
+								<option <c:if test="${contentItemList.maxResultsPerPage == 100 }">selected</c:if>>100</option>
+								<option <c:if test="${contentItemList.maxResultsPerPage == 200 }">selected</c:if>>200</option>
 
-						</c:if>
-						
-					</ul>
+							</select> <label for="mpp">items per page</label></form>
 
-					</span></div>
+							</td>
+							<td>
+							<ul class="horizontal-list">
+								<li>[${contentItemList.firstDisplayIndex} -
+								${contentItemList.lastDisplayIndex} of
+								${contentItemList.resultCount }] &nbsp;&nbsp;&nbsp;</li>
+								<c:if
+									test="${contentItemList.resultCount > contentItemList.maxResultsPerPage}">
+
+									<a title="first page"
+										href="contents.htm?fi=0&spaceId=${space.spaceId}"><<</a>
+									<c:forEach items="${pages}" var="page">
+										<c:choose>
+											<c:when test="${page.current}">
+							${ page.number }
+						</c:when>
+											<c:otherwise>
+												<a title="page ${page.number}"
+													href="contents.htm?fi=${page.firstResultIndex}&spaceId=${space.spaceId}">
+												${page.number} </a>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+									<a title="last page"
+										href="contents.htm?fi=${ contentItemList.lastPageStartingIndex}&spaceId=${space.spaceId}">>></a>
+								</c:if>
+
+							</ul>
+
+							</td>
+						</tr>
+					</table>
 					<table class="standard" id="spacesTable" style="margin-top: 0.25em">
 						<tr>
 							<th><spring:message code="contentItem.id" /></th>
