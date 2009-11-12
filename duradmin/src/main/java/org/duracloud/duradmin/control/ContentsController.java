@@ -28,7 +28,7 @@ public class ContentsController
                                   BindException errors) throws Exception {
         Space space = (Space) command;
         String spaceId = space.getSpaceId();
-        ModelAndView mav = SpacesHelper.prepareContentsView(request, spaceId, getContentStore());  
+        ModelAndView mav = SpacesHelper.prepareContentsView(request, spaceId, getContentStoreProvider());  
         mav.setViewName(getSuccessView());
         return mav;
     }

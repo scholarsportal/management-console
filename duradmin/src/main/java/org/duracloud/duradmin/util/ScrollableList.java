@@ -45,9 +45,10 @@ public abstract class ScrollableList<E> implements Scrollable<E>{
 
     public void setMaxResultsPerPage(int maxResultsPerPage) {
         if(this.maxResultsPerPage != maxResultsPerPage){
+            this.firstResultIndex = 0;
+            this.maxResultsPerPage = maxResultsPerPage;
             markedForUpdate = true;
         }
-        this.maxResultsPerPage = maxResultsPerPage;
     }
 
     public long getFirstResultIndex() {
