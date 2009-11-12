@@ -146,6 +146,8 @@ function formatSpaceMetadataHtml(space){
 /*zebra stripe standard tables*/	
 dojo.addOnLoad(function(){
 	dojo.query(".standard > tbody > tr:nth-child(even)").addClass("evenRow");
+	dojo.query(".extended-metadata tr:nth-child(even)").addClass("evenRow");
+
 });
 
 

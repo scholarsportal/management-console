@@ -83,8 +83,10 @@ table.body{
 
 
 td#menu-div {
-	width:10em;
-	min-width:10em;
+	width:20em;
+	min-width:20em;
+	max-width:20em;
+	
 	background-color:#F5DEB3;
 	padding:0.5em;
 }
@@ -373,9 +375,45 @@ table#spacesTable > tbody > tr > td#contentId {
 	border-left:1px solid #CCC
 		
 }
+div.tag  {
+	margin-right:0.5em;
+	padding:0.25em;
+	float:left;	
+	
+}
+
+div.tag:hover, table.extended-metadata > tr:hover {
+	border:2px dashed #ccc;
+}
+
+
+.extended-metadata td {
+	text-align:left;
+	vertical-align:top;s	
+}
+
+.extended-metadata tr.evenRow {
+	background-color: #EECFAE
+
+}
+
+.extended-metadata  td:first-child {
+	font-weight: bolder;
+}
+
+.extended-metadata  td:last-child {
+	background-color:#F5DEA9;
+}
+
+
+
+.extended-metadata  tr.evenRow > td:last-child {
+	background-color: #EECFA0;
+	
+}
 
 .deleting {
-	border: 1px solid red;
+	border: 1px dashed red;
 	background-color: pink;
 	color:red;
 	text-decoration: blink;

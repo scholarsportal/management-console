@@ -16,16 +16,18 @@
 			<input type="hidden" name="returnTo" value="${currentUrl}"/>
 			<input type="text" name="tag" type="text" size="13"/> 
 			<input type="submit" value="Add"/>
-			<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
+			<input type="button" onclick="hideMiniform(event)" value="<spring:message code='cancel'/>"/>					
 		</form>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 		<c:choose>
 			<c:when test="${not empty tags}">
 					<c:forEach items="${tags}" var="tag" varStatus="status">
-						<span  style="white-space:nowrap;">
-							${tag}  <input type="button"  class="minibutton"  value="x" onclick="removeTag('${spaceId}', '${tag}','${contentId}', this.parentNode);"/>
-						</span>
+						
+						<div class="small tag">
+							<input type="button"  class="small minibutton"  value="x" onclick="removeTag('${spaceId}', '${tag}','${contentId}', this.parentNode);"/>
+							${tag}  
+						</div>
 					</c:forEach>					
 			</c:when>
 			<c:otherwise>
