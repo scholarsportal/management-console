@@ -4,10 +4,11 @@ import javax.servlet.http.HttpSession;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.duradmin.contentstore.ScrollableContentItemList;
+import org.duracloud.duradmin.contentstore.ContentItemList;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,23 +23,23 @@ public class SpacesHelper {
     throws Exception, ContentStoreException {
         ControllerUtils.checkSpaceId(spaceId);
         Space space = new Space();
-        ScrollableContentItemList contentItemList = getContentItemList(request, spaceId); 
-
-        SpaceUtil.populateSpace(space, store.getSpace(spaceId, contentItemList.getContentIdFilterString(), contentItemList.getFirstResultIndex(), contentItemList.getMaxResultsPerPage()));
-
-        contentItemList.update(space.getMetadata().getQueryCount(), space.getContents());
-
+        ContentItemList contentItemList = getContentItemList(request, spaceId, store); 
+        String firstIndex = request.getParameter("fi");
+        if(StringUtils.hasText(firstIndex)){
+            contentItemList.setFirstResultIndex(Integer.parseInt(firstIndex));
+        }
+        SpaceUtil.populateSpace(space, store.getSpace(spaceId));
         ModelAndView mav = new ModelAndView();
         mav.addObject("space", space);
         mav.addObject("contentItemList", contentItemList);
         return mav;
     }
 
-    private static ScrollableContentItemList getContentItemList(HttpServletRequest request, String spaceId) {
+    private static ContentItemList getContentItemList(HttpServletRequest request, String spaceId, ContentStore store) {
         HttpSession session = request.getSession();
-        ScrollableContentItemList list =  (ScrollableContentItemList)session.getAttribute("content-list-"+spaceId);
+        ContentItemList list =  (ContentItemList)session.getAttribute("content-list-"+spaceId);
         if(list == null){
-            list = new ScrollableContentItemList();
+            list = new ContentItemList(spaceId, store);
             session.setAttribute("content-list-"+spaceId, list);
         }
         return list;

@@ -48,7 +48,11 @@ public class SpaceUtil {
         spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
         spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
         spaceMetadata.setTags(TagUtil.parseTags(spaceProps.get(TagUtil.TAGS)));
-        spaceMetadata.setQueryCount(Integer.valueOf(spaceProps.get(ContentStore.SPACE_QUERY_COUNT)));
+
+        String queryCount = spaceProps.get(ContentStore.SPACE_QUERY_COUNT);
+        if(queryCount != null){
+            spaceMetadata.setQueryCount(Integer.valueOf(queryCount));
+        }
         return spaceMetadata;
     }
     
