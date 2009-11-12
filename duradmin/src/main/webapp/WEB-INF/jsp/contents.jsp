@@ -93,16 +93,17 @@
 					<div class="small"><span style="float: left"> <input
 						type="text" name="filter" /> <spring:message code="filterById" />
 					</span> <span style="float: right">
+					
 					<ul class="horizontal-list">
 						<li>[${contentItemList.firstDisplayIndex} - ${contentItemList.lastDisplayIndex} of ${contentItemList.resultCount }] &nbsp;&nbsp;&nbsp;</li>
-						<a href="#"><<</a>
-						<a href="#"><</a>
-						<a href="#"> 1 </a>
-						<a href="#"> 2 </a>
-						<a href="#"> 3 </a>
-						<a href="#"> 4 </a>
-						<a href="#">></a>
-						<a href="#">>></a>
+						<c:if test="${contentItemList.resultCount > contentItemList.maxResultsPerPage}">
+						
+						<a title="first page" href="contents.htm?fi=0&spaceId=${space.spaceId}"><<</a>
+									
+						<a title="last page" href="contents.htm?fi=${ contentItemList.lastPageStartingIndex}&spaceId=${space.spaceId}">>></a>
+
+						</c:if>
+						
 					</ul>
 
 					</span></div>
@@ -112,7 +113,7 @@
 							<th><spring:message code="metadata" /></th>
 						</tr>
 						<tbody>
-							<c:forEach items="${space.contents}" var="content"
+							<c:forEach items="${contentItemList.resultList}" var="content"
 								varStatus="status">
 								<tr id="${content}"
 									onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content}');">

@@ -6,16 +6,16 @@ import org.duracloud.common.util.Scrollable;
 
 
 
-public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<E>{
+public abstract class ScrollableList<E> implements Scrollable<E>{
     private long resultCount;
     
     private long firstResultIndex = -1;
     
-    private int maxResultsPerPage;
+    private int maxResultsPerPage = 2;
     
     private List<E> resultList;
 
-    private boolean markedForUpdate;
+    private boolean markedForUpdate = true;
     
     public int getMaxResultsPerPage() {
         return this.maxResultsPerPage;
@@ -37,6 +37,7 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
         }
 
         if(this.firstResultIndex != index){
+            this.firstResultIndex = index;
             markedForUpdate = true;
         }
 
@@ -50,7 +51,6 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
     }
 
     public long getFirstResultIndex() {
-        update();
         return this.firstResultIndex;
     }
     
@@ -59,6 +59,7 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
     }
     
     public long getLastDisplayIndex(){
+        update();
         return getFirstResultIndex()+getResultList().size();
     }
     
@@ -72,18 +73,26 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
         }
     }
     
+    public long getLastPageStartingIndex(){
+       long lastPageSize = (this.resultCount % this.maxResultsPerPage);
+       return this.resultCount - (lastPageSize > 0 ? lastPageSize : this.maxResultsPerPage);
+    }
+    
     public Object getFilterParameters(){
         return null;
     }
     
     protected abstract void updateList() throws DataRetrievalException;
     
-    public void update(long resultCount, List<E> resultList) {
+    protected void update(long resultCount, List<E> resultList) {
        this.resultCount = resultCount;
-       this.resultList = resultList;
        if(this.firstResultIndex < 0){
            this.firstResultIndex = 0;
        }
+       
+       int resultSize = resultList.size();
+       int lastIndex = (this.maxResultsPerPage < resultSize ? this.maxResultsPerPage : resultSize) + (int)this.firstResultIndex;
+       this.resultList = resultList.subList((int)this.firstResultIndex, lastIndex);
        markedForUpdate = false;
     }
 }
