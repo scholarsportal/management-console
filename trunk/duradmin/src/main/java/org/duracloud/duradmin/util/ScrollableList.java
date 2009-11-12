@@ -54,6 +54,14 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
         return this.firstResultIndex;
     }
     
+    public long getFirstDisplayIndex(){
+        return getFirstResultIndex()+1;
+    }
+    
+    public long getLastDisplayIndex(){
+        return getFirstResultIndex()+getResultList().size();
+    }
+    
     private void update(){
         if(markedForUpdate){
             try {
@@ -73,6 +81,9 @@ public abstract class ScrollableList<E> implements Scrollable<E>, UpdatableList<
     public void update(long resultCount, List<E> resultList) {
        this.resultCount = resultCount;
        this.resultList = resultList;
+       if(this.firstResultIndex < 0){
+           this.firstResultIndex = 0;
+       }
        markedForUpdate = false;
     }
 }

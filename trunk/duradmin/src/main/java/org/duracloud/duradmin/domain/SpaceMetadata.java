@@ -17,6 +17,8 @@ public class SpaceMetadata implements Serializable{
 
     private String count;
     
+    private int queryCount;
+    
     private Set<String> tags;
 
     public String getAccess() {
@@ -51,6 +53,16 @@ public class SpaceMetadata implements Serializable{
     
     public void setTags(Set<String> tags) {
         this.tags = tags;
+    }
+
+    public void setQueryCount(int queryCount) {
+        this.queryCount = queryCount;
+        
+    }
+
+    
+    public int getQueryCount() {
+        return queryCount;
     }
 
 }
