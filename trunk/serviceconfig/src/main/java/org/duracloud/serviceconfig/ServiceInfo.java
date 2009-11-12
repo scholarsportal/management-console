@@ -16,10 +16,11 @@ public class ServiceInfo implements Serializable, Cloneable{
 
     private static final long serialVersionUID = -7958760599324208594L;
 
+    private String id;
     private String displayName;
     private String serviceName;
     private String description;
-    
+
     /** The default system configuration options */
     private List<SystemConfig> systemConfigs;
 
@@ -34,6 +35,14 @@ public class ServiceInfo implements Serializable, Cloneable{
 
     /** Includes information about existing deployments of this service */
     private List<Deployment> deployments;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getDisplayName() {
         return displayName;

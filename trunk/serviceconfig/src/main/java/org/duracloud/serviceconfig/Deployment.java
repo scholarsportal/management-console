@@ -17,6 +17,9 @@ public class Deployment implements Serializable{
         STOPPED, STARTED;
     }
 
+    /** The identifier of this service deployment */
+    private int id;
+
     /** The name of the host on which this service is deployed */
     private String name;
 
@@ -28,6 +31,14 @@ public class Deployment implements Serializable{
 
     /** The user configuration settings for this deployed service */
     private List<UserConfig> userConfigs;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }    
 
     public String getName() {
         return name;

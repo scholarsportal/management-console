@@ -1,5 +1,6 @@
 package org.duracloud.serviceconfig;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -14,7 +15,9 @@ public interface ServicesConfigDocument {
 
     public String getVersion();
 
-    public List<ServiceInfo> getServiceInfos();
+    public List<ServiceInfo> getServiceInfoList(InputStream xml);
+
+    public List<UserConfig> getUserConfigList(InputStream xml);
 
     public String getServiceListAsXML(List<ServiceInfo> serviceList);
 
