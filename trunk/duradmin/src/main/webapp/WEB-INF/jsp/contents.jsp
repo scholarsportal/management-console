@@ -122,7 +122,7 @@
 									<c:forEach items="${pages}" var="page">
 										<c:choose>
 											<c:when test="${page.current}">
-							${ page.number }
+							<b>${ page.number }</b>
 						</c:when>
 											<c:otherwise>
 												<a title="page ${page.number}"
