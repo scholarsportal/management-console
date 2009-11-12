@@ -11,17 +11,16 @@ public class ServicesConfigDocumentImpl implements ServicesConfigDocument {
     private String version;
     private List<ServiceInfo> serviceInfos;
 
-    public ServicesConfigDocumentImpl(InputStream documentXml) {
-        // TODO: Parse services config document xml,
-        //       extract version and service infos list       
-    }
-
     public String getVersion() {
         return version;
     }
 
-    public List<ServiceInfo> getServiceInfos() {
-        return serviceInfos;
+    public List<ServiceInfo> getServiceInfoList(InputStream xml) {
+        return null;
+    }
+
+    public List<UserConfig> getUserConfigList(InputStream xml) {
+        return null;
     }
 
     public String getServiceListAsXML(List<ServiceInfo> serviceList) {
