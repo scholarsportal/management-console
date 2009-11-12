@@ -12,31 +12,38 @@
 			<input type="hidden" name="spaceId" value="${spaceId}"/>
 			<input type="hidden" name="contentId" value="${contentId}"/>
 			<input type="hidden" name="returnTo" value="${currentUrl}"/>
-			<input name="name" type="text" size="13"/> 
-			<textarea name="value" rows="3" cols="13"></textarea>
+			<div><input style="min-width:10em" name="name" type="text" /></div> 
+			<div>
+			<textarea style="min-width:20em" name="value" rows="3" cols="25"></textarea>
+			</div>
+			<div style="white-space:nowrap">
 			<input type="submit" value="Add" />
 			<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
+			</div>
+			
 		</form>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 			<c:choose>
 				<c:when test="${not empty metadata}">
+						<table class="small extended-metadata">
 						<c:forEach items="${metadata}" var="m" varStatus="status">
-							<table class="small extended-metadata">
 							<tr>
-								<td >${m.name}
-									<input class="minibutton" 
+								<td>
+											<input class="minibutton" 
 											type="button" value="x" 
-											onclick="removeMetadataByKey('${spaceId}', '${m.name}','${contentId}', this.parentNode.parentNode.parentNode);"/>
+											onclick="removeMetadataByKey('${spaceId}', '${m.name}','${contentId}', this.parentNode.parentNode);"/>								
 								</td>
-							</tr>
-							<tr>
+								<td>
+								${m.name}
+								</td>
 								<td>
 									${m.value }
 								</td>
 							</tr>
-							</table>
 						</c:forEach>					
+						</table>
+
 				</c:when>
 				<c:otherwise>
 					No metadata defined.
