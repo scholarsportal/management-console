@@ -45,8 +45,9 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
      *
      * @param id the unique identifier of this blobstore.
      * @param contentStore the DuraCloud content store.
-     * @param spaceId the space within the content store; will be created
-     *        if it doesn't yet exist.
+     * @param spaceId the space within the content store; must exist.
+     * @throws IOException if there is an error connecting to DuraCloud or
+     *         the space does not exist.
      */
     public DuraCloudBlobStore(URI id,
                               ContentStore contentStore,
@@ -54,7 +55,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
         super(id);
         this.contentStore = contentStore;
         this.spaceId = spaceId;
-        // TODO: Check whether the space exists; if it doesn't, create it
+        // TODO: Ensure that the space exists
     }
 
     //@Override

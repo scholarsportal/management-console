@@ -11,3 +11,26 @@ mvn install:install-file -DgroupId=org.duracloud -DartifactId=storeclient -Dvers
 2) Compile and install
 
 mvn install
+
+Starting/Stopping a DuraCloud Instance
+======================================
+To start:
+  [Launch a DuraCloud instance]
+    Login to the AWS Management Console: https://console.aws.amazon.com/
+    Launch a small-CPU instance of the private AMI: ami-3333d05a
+    Choose the "default" security group (allows connections to port 8080)
+    Use your own keypair (allows you to ssh in if you want to look at logs, etc)
+  [Wait for it to start]
+    After the EC2 instance starts, the DuraCloud service will automatically
+    deploy. This will take a few minutes to complete. When ready, the following
+    URL: http://host:8080/durastore/stores ..should result in a simple HTML
+    page saying that "The Storage Provider Utility must be initialized (..etc)".
+  [POST the initialization xml file to this URL (e.g, using Poster for Firefox)]
+    This file provides the necessary info for DuraCloud to connect to the
+    backend storage provider (e.g. an S3 account).
+    When finished, you should get a 200 text/plain response saying
+    "Initialization Successful".  Now when you GET this URL, you should see
+    the information for the store you just initialized with.
+
+To stop:
+  Use the AWS Management Console to terminate the instance.

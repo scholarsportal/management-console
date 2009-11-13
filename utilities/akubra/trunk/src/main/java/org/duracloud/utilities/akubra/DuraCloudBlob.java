@@ -189,7 +189,7 @@ class DuraCloudBlob
      * Assuming the blobId is valid, returns the suffix that is the content id.
      */
     private String getContentId(URI blobId) {
-        return blobId.toString().substring(0,
+        return blobId.toString().substring(
                 getURIPrefix(contentStore, spaceId).length());
     }
 

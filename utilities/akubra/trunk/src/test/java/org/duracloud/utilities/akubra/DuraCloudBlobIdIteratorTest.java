@@ -29,12 +29,12 @@ public class DuraCloudBlobIdIteratorTest {
     }
 
     @Test
-    void fPrefix() {
+    public void fPrefix() {
         compare("f", urisFor(fPrefixIds));
     }
 
     @Test
-    void bPrefix() {
+    public void bPrefix() {
         compare("b", urisFor(bPrefixIds));
     }
 
