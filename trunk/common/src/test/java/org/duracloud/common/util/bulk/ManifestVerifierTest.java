@@ -1,10 +1,13 @@
 package org.duracloud.common.util.bulk;
 
+import org.duracloud.common.util.ExceptionUtil;
 import org.duracloud.common.util.error.ManifestVerifyException;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
+
+import java.io.File;
 
 /**
  * @author Andrew Woods
@@ -14,22 +17,25 @@ public class ManifestVerifierTest {
 
     private ManifestVerifier verifier;
 
-    private final String baseDir = "src/test/resources/";
-    private String file0 = baseDir + "manifest-md5.txt";
-    private String file1 = baseDir + "manifest-md5-sameContent.txt";
-    private String file2 = baseDir + "manifest-md5-lessContent.txt";
-    private String file3 = baseDir + "manifest-md5-mismatchCksum.txt";
-    private String file4 = baseDir + "manifest-md5-mismatchName.txt";
-    private String file5 = baseDir + "manifest-md5-lessContentMismatch.txt";
-    private String file6 = baseDir + "log4j.properties";
+    private File dir = new File("src/test/resources/");
+    private File file0 = new File(dir, "manifest-md5.txt");
+    private File file1 = new File(dir, "manifest-md5-sameContent.txt");
+    private File file2 = new File(dir, "manifest-md5-lessContent.txt");
+    private File file3 = new File(dir, "manifest-md5-mismatchCksum.txt");
+    private File file4 = new File(dir, "manifest-md5-mismatchName.txt");
+    private File file5 = new File(dir, "manifest-md5-lessContentMismatch.txt");
+    private File file6 = new File(dir, "log4j.properties");
 
     @Test
     public void testVerifyGood() {
         verifier = new ManifestVerifier(file0, file1);
         try {
             verifier.verify();
-        } catch (Exception e) {
-            fail("No exception should be thrown.");
+        } catch (ManifestVerifyException e) {
+            StringBuilder sb = new StringBuilder("No exception expected.\n\n");
+            sb.append(e.getFormatedMessage()+"\n\n");
+            sb.append(ExceptionUtil.getStackTraceAsString(e));
+            fail(sb.toString());
         }
     }
 
@@ -101,7 +107,8 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            fail("ManifestVerifyException not expected.");
+            fail("ManifestVerifyException not expected.\n" +
+                e.getFormatedMessage());
         } catch (RuntimeException re) {
             runtimeThrown = true;
         }
