@@ -32,8 +32,7 @@ public class SpaceUtil {
     }
 
     public static Space populateSpace(Space space,
-                                      org.duracloud.domain.Space cloudSpace)
-            throws Exception {
+                                      org.duracloud.domain.Space cloudSpace){
         space.setSpaceId(cloudSpace.getId());
         space.setMetadata(getSpaceMetadata(cloudSpace.getMetadata()));
         space.setExtendedMetadata(cloudSpace.getMetadata());
@@ -41,18 +40,12 @@ public class SpaceUtil {
         return space;
     }
 
-    private static SpaceMetadata getSpaceMetadata(Map<String, String> spaceProps)
-            throws Exception {
+    private static SpaceMetadata getSpaceMetadata(Map<String, String> spaceProps) {
         SpaceMetadata spaceMetadata = new SpaceMetadata();
         spaceMetadata.setCreated(spaceProps.get(ContentStore.SPACE_CREATED));
         spaceMetadata.setCount(spaceProps.get(ContentStore.SPACE_COUNT));
         spaceMetadata.setAccess(spaceProps.get(ContentStore.SPACE_ACCESS));
         spaceMetadata.setTags(TagUtil.parseTags(spaceProps.get(TagUtil.TAGS)));
-
-        String queryCount = spaceProps.get(ContentStore.SPACE_QUERY_COUNT);
-        if(queryCount != null){
-            spaceMetadata.setQueryCount(Integer.valueOf(queryCount));
-        }
         return spaceMetadata;
     }
     

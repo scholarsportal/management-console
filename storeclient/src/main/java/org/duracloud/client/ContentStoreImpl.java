@@ -153,18 +153,39 @@ public class ContentStoreImpl implements ContentStore{
     }
 
     
-    @Override
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public Space getSpace(String spaceId,
-                          String contentIdFilter,
-                          long startIndex,
-                          int maxResultSize) throws ContentStoreException {
-        //TODO IMPLEMENT THIS METHOD
-        //just a placeholder implementation.
+                          String prefix,
+                          String marker,
+                          Integer maxResults) throws ContentStoreException {
+        // TODO THIS IS JUST A PLACEHOLDER IMPLEMENTATION
         Space space = getSpace(spaceId);
-        space.getMetadata().put(ContentStore.SPACE_QUERY_COUNT, 
-                                String.valueOf(space.getContentIds().size()));
+        if(maxResults == null){
+            maxResults = 0;
+        }
+
+        List<String> ids = space.getContentIds();
+        
+        int beginIndex = 0;
+        
+        if(marker != null && marker.length() > 0){
+            beginIndex = ids.indexOf(marker)+1;
+        }
+
+        if(beginIndex == ids.size()){
+            ids.clear();
+        }else if(maxResults == 0){
+            space.setContentIds(ids.subList(beginIndex, ids.size()));
+        }else{
+            int lastIndex = Math.min(beginIndex+maxResults, ids.size());
+            space.setContentIds(ids.subList(beginIndex, lastIndex));
+        }
         return space;
     }
+    
     
     
     /**
