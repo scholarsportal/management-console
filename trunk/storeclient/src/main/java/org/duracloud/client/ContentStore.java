@@ -45,9 +45,6 @@ public interface ContentStore {
     public static final String CONTENT_MODIFIED =
             StorageProvider.METADATA_CONTENT_MODIFIED;
 
-    /** Basic space metadata: count of items matching the current query*/
-    public static final String SPACE_QUERY_COUNT = "space-query-count";
-
     /**
      * Gets the base URL pointing to the DuraCloud DuraStore REST API
      */
@@ -81,8 +78,18 @@ public interface ContentStore {
      * @throws ContentStoreException if the space does not exist or cannot be retrieved
      */
     public Space getSpace(String spaceId) throws ContentStoreException;
-    
-    public Space getSpace(String spaceId, String contentIdFilter, long startIndex, int maxResultSize) 
+
+    /**
+     * Provides a Space as above, but with a constrained list of content files
+     * based on the parameters.
+     * @param spaceId 
+     * @param prefix The prefix of the content id - null for no constraints.
+     * @param marker The content id marking the last item in the previous set - null to specify first set of ids
+     * @param maxResults The maximum number of content ids to return in the list - null means no limit
+     * @return
+     * @throws ContentStoreException
+     */
+    public Space getSpace(String spaceId, String prefix, String marker, Integer maxResults) 
         throws ContentStoreException;
     /**
      * Creates a new space. Depending on the storage implementation, the spaceId

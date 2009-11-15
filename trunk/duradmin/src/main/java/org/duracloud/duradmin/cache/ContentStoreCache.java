@@ -73,10 +73,9 @@ public class ContentStoreCache implements ContentStore{
      * 
      * {@inheritDoc}
      */
-    public Space getSpace(String spaceId, String contentIdFilter, long startIndex, int maxResultCount)
+    public Space getSpace(String spaceId, String prefix, String marker, Integer maxResults)
             throws ContentStoreException {
-        // TODO Auto-generated method stub
-        return this.backendStore.getSpace(spaceId, contentIdFilter, startIndex, maxResultCount);
+        return this.backendStore.getSpace(spaceId, prefix, marker, maxResults);
     }
     
     /**

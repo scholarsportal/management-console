@@ -1,98 +1,134 @@
+
 package org.duracloud.duradmin.util;
 
+import java.util.LinkedList;
 import java.util.List;
-
-import org.duracloud.common.util.Scrollable;
-
+import java.util.Queue;
 
 
-public abstract class ScrollableList<E> implements Scrollable<E>{
-    private long resultCount;
-    
-    private long firstResultIndex = -1;
-    
+public abstract class ScrollableList<E>
+        implements Scrollable<E> {
+
     private int maxResultsPerPage = 10;
-    
+
     private List<E> resultList;
 
     private boolean markedForUpdate = true;
-    
+
+    private E currentMarker = null;
+
+    /**
+     * The markers represent the last item in each previous "page" of results.
+     * The last element in the list refers to the marker for the current page.
+     */
+    private Queue<E> markers = new LinkedList<E>();
+
     public int getMaxResultsPerPage() {
         return this.maxResultsPerPage;
     }
 
-    public long getResultCount() {
-        update();
-        return this.resultCount;
+    public void setMaxResultsPerPage(int maxResults) {
+        if (this.maxResultsPerPage != maxResults) {
+            markedForUpdate = true;
+            this.maxResultsPerPage = maxResults;
+        }
     }
+
+    private E getLastResultInCurrentList() {
+        List<E> results = this.resultList;
+        if (results.size() > 0) {
+            return results.get(results.size() - 1);
+        } else {
+            return null;
+        }
+
+    }
+
+    public void next() {
+        if (!isNextAvailable()) {
+            return;
+        }
+        //put curent marker in the previous queue.
+        E previousMarker = this.currentMarker;
+        if (previousMarker != null) {
+            this.markers.add(previousMarker);
+        }
+
+        //set the currentMarker
+        this.currentMarker = getLastResultInCurrentList();
+        //flag for update.
+        markedForUpdate = true;
+        
+        try {
+
+            update();
+        } catch (DataRetrievalException ex) {
+            //rollback state
+            if (previousMarker != null) {
+                this.markers.remove();
+            }
+            this.currentMarker = previousMarker;
+            throw new RuntimeException(ex);
+        }
+
+        
+     }
+
+    public void first(){
+        this.markers.clear();
+        this.currentMarker = null;
+        this.markedForUpdate = true;
+    }
+    
+    public void previous() {
+        if (isPreviousAvailable()) {
+            //pop the "current" marker off the queue
+            this.markers.remove();
+            if(this.markers.size() > 0){
+                this.currentMarker = this.markers.remove();
+            }else{
+                this.currentMarker = null;
+            }
+
+            this.markedForUpdate = true;
+        }
+    }
+
+    public boolean isPreviousAvailable() {
+        return this.markers.size() > 0;
+    }
+
+    public boolean isNextAvailable() {
+        try {
+            update();
+            return getResultList().size() >= this.maxResultsPerPage;
+        } catch (DataRetrievalException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    protected E getCurrentMarker() {
+        return this.currentMarker;
+    }
+
 
     public List<E> getResultList() {
-        update();
-        return this.resultList;
-    }
-
-    public void setFirstResultIndex(long index) throws IndexOutOfBoundsException {
-        if(index >= resultCount){
-            throw new IndexOutOfBoundsException("index (" + index + ") must be less than "+ resultCount);
-        }
-
-        if(this.firstResultIndex != index){
-            this.firstResultIndex = index;
-            markedForUpdate = true;
-        }
-
-    }
-
-    public void setMaxResultsPerPage(int maxResultsPerPage) {
-        if(this.maxResultsPerPage != maxResultsPerPage){
-            this.firstResultIndex = 0;
-            this.maxResultsPerPage = maxResultsPerPage;
-            markedForUpdate = true;
+        try {
+            update();
+            return this.resultList;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public long getFirstResultIndex() {
-        return this.firstResultIndex;
-    }
-    
-    public long getFirstDisplayIndex(){
-        return getFirstResultIndex()+1;
-    }
-    
-    public long getLastDisplayIndex(){
-        update();
-        return getFirstResultIndex()+getResultList().size();
-    }
-    
-    private void update(){
-        if(markedForUpdate){
-            try {
-                updateList();
-            } catch (DataRetrievalException e) {
-                throw new RuntimeException(e);
-            }
+    protected final void update() throws DataRetrievalException {
+        if (markedForUpdate) {
+            this.resultList = getData();
+            this.currentMarker = getLastResultInCurrentList();
+            markedForUpdate = false;
         }
     }
-    
-    public long getLastPageStartingIndex(){
-       long lastPageSize = (this.resultCount % this.maxResultsPerPage);
-       return this.resultCount - (lastPageSize > 0 ? lastPageSize : this.maxResultsPerPage);
-    }
-    
-    public Object getFilterParameters(){
-        return null;
-    }
-    
-    protected abstract void updateList() throws DataRetrievalException;
-    
-    protected void update(long resultCount, List<E> resultList) {
-       this.resultCount = resultCount;
-       if(this.firstResultIndex < 0){
-           this.firstResultIndex = 0;
-       }
-       
-       int lastIndex = Math.min(this.maxResultsPerPage, resultList.size());
-       this.resultList = resultList.subList(0, lastIndex);
-       markedForUpdate = false;
-    }
+
+    protected abstract List<E> getData() throws DataRetrievalException;
+
 }

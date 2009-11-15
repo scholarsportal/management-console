@@ -1,10 +1,13 @@
 package org.duracloud.duradmin.contentstore;
 
+import java.util.List;
+
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.duracloud.domain.Space;
+import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.DataRetrievalException;
 import org.duracloud.duradmin.util.ScrollableList;
+import org.duracloud.duradmin.util.SpaceUtil;
 
 
 public class ContentItemList extends ScrollableList<String>{
@@ -12,6 +15,8 @@ public class ContentItemList extends ScrollableList<String>{
     private ContentStoreProvider contentStoreProvider;
     
     private String spaceId; 
+    
+    private Space space;
     
     private String contentIdFilterString = null;
     
@@ -27,25 +32,37 @@ public class ContentItemList extends ScrollableList<String>{
         this.contentStoreProvider = contentStoreProvider;
         this.spaceId = spaceId;
     }
+
+    public Space getSpace(){
+        try {
+            update();
+            return this.space;
+        } catch (DataRetrievalException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
     @Override
-    protected void updateList() throws DataRetrievalException {
+    protected List<String> getData() throws DataRetrievalException {
         try {
             ContentStore contentStore = this.contentStoreProvider.getContentStore();
-            Space space = contentStore.getSpace(spaceId, contentIdFilterString, getFirstResultIndex()==-1?0:getFirstResultIndex(), getMaxResultsPerPage());
-            update(Long.valueOf(space.getMetadata().get(ContentStore.SPACE_QUERY_COUNT)), space.getContentIds());
+            space = new Space();
+            org.duracloud.domain.Space cloudSpace = 
+                    contentStore.getSpace(
+                                          spaceId, 
+                                          contentIdFilterString, 
+                                          getCurrentMarker(), 
+                                          getMaxResultsPerPage());
+
+            SpaceUtil.populateSpace(space, cloudSpace);
+            
+            return space.getContents();
         } catch (ContentStoreException e) {
             throw new DataRetrievalException(e);
         }
     }
-
+    
     public String getContentIdFilterString() {
         return contentIdFilterString;
     }
-
-
-
-
-
-    
 }

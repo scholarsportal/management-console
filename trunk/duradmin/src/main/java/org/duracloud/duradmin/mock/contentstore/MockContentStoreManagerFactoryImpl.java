@@ -84,7 +84,7 @@ public class MockContentStoreManagerFactoryImpl
                 s.setMetadata(metadata);
                 
                 List<String> contentIds = new ArrayList<String>();
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 20; j++) {
                     String id = "Item-" + j;
                     contentIds.add(id);
                     Content content = new Content();
@@ -203,13 +203,9 @@ public class MockContentStoreManagerFactoryImpl
         
         public Space getSpace(String spaceId,
                               String contentIdFilter,
-                              long startIndex,
-                              int maxResultSize) throws ContentStoreException {
-            //TODO IMPLEMENT THIS METHOD
-            //just a placeholder implementation.
+                              String marker,
+                              Integer maxResultSize) throws ContentStoreException {
             Space space = getSpace(spaceId);
-            space.getMetadata().put(ContentStore.SPACE_QUERY_COUNT, 
-                                    String.valueOf(space.getContentIds().size()));
             return space;
         }
         

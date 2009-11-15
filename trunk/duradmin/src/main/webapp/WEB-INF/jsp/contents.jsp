@@ -110,33 +110,26 @@
 
 							</td>
 							<td>
-							<ul class="horizontal-list">
-								<li>[${contentItemList.firstDisplayIndex} -
-								${contentItemList.lastDisplayIndex} of
-								${contentItemList.resultCount }] &nbsp;&nbsp;&nbsp;</li>
 								<c:if
-									test="${contentItemList.resultCount > contentItemList.maxResultsPerPage}">
+									test="${contentItemList.previousAvailable or contentItemList.nextAvailable}">
+
+							<ul class="horizontal-list">
+								<c:if
+									test="${contentItemList.previousAvailable}">
 
 									<a title="first page"
-										href="contents.htm?fi=0&spaceId=${space.spaceId}"><<</a>
-									<c:forEach items="${pages}" var="page">
-										<c:choose>
-											<c:when test="${page.current}">
-							<b>${ page.number }</b>
-						</c:when>
-											<c:otherwise>
-												<a title="page ${page.number}"
-													href="contents.htm?fi=${page.firstResultIndex}&spaceId=${space.spaceId}">
-												${page.number} </a>
-											</c:otherwise>
-										</c:choose>
-									</c:forEach>
-									<a title="last page"
-										href="contents.htm?fi=${ contentItemList.lastPageStartingIndex}&spaceId=${space.spaceId}">>></a>
+										href="contents.htm?action=f&spaceId=${space.spaceId}">first</a>
+									<a title="next page"
+										href="contents.htm?action=p&spaceId=${space.spaceId}">previous</a>
 								</c:if>
 
+								<c:if
+									test="${contentItemList.nextAvailable}">
+									<a title="next"
+										href="contents.htm?action=n&spaceId=${space.spaceId}">next</a>
+								</c:if>
 							</ul>
-
+								</c:if>
 							</td>
 						</tr>
 					</table>
