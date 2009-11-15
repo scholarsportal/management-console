@@ -25,7 +25,6 @@ public class RemoveContentController
         setCommandName("contentItem");
     }
 
-
     @Override
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -40,7 +39,8 @@ public class RemoveContentController
         Space space = new Space();
         space.setSpaceId(spaceId);
         SpaceUtil.populateSpace(space, store.getSpace(spaceId));
-        Message message = MessageUtils.createMessage("Successfully removed content item");        
+        Message message =
+                MessageUtils.createMessage("Successfully removed content item");
         return setView(request, new ModelAndView(), message);
     }
 

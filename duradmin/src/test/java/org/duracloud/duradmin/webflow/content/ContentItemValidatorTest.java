@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.webflow.content;
 
 import junit.framework.Assert;
@@ -11,33 +12,35 @@ import org.junit.Test;
 import org.springframework.binding.validation.ValidationContext;
 import org.springframework.mock.web.MockMultipartFile;
 
+public class ContentItemValidatorTest
+        extends ContentStoreProviderTestBase {
 
-public class ContentItemValidatorTest extends ContentStoreProviderTestBase{
     ContentItemValidator v = new ContentItemValidator();
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
         v.setContentStoreProvider(contentStoreProvider);
-    }    
-   
-    
-    
+    }
+
     @Test
-    public void checkQuestionMark() throws Exception{
+    public void checkQuestionMark() throws Exception {
         ContentStore cs = this.contentStoreProvider.getContentStore();
         String spaceId = cs.getSpaces().iterator().next();
         ContentItem ci = new ContentItem();
         ci.setSpaceId(spaceId);
-        ci.setFile(new MockMultipartFile("my?file.jpg", "my?file.jpg", "image/jpg", "test".getBytes()));
+        ci.setFile(new MockMultipartFile("my?file.jpg",
+                                         "my?file.jpg",
+                                         "image/jpg",
+                                         "test".getBytes()));
         ValidationContext vc = new MockValidationContext();
         v.validateDefineContentItem(ci, vc);
         Assert.assertEquals(1, vc.getMessageContext().getAllMessages().length);
-        
+
     }
-    
+
     @Test
-    public void checkNoFile() throws Exception{
+    public void checkNoFile() throws Exception {
         ContentStore cs = this.contentStoreProvider.getContentStore();
         String spaceId = cs.getSpaces().iterator().next();
         ContentItem ci = new ContentItem();
@@ -46,7 +49,7 @@ public class ContentItemValidatorTest extends ContentStoreProviderTestBase{
         ValidationContext vc = new MockValidationContext();
         v.validateDefineContentItem(ci, vc);
         Assert.assertEquals(2, vc.getMessageContext().getAllMessages().length);
-        
+
     }
 
 }

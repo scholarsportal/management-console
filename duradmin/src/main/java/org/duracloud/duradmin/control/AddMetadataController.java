@@ -18,27 +18,30 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class AddMetadataController
         extends MetadataController {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
     protected ModelAndView handleMetadataItem(HttpServletRequest request,
                                               HttpServletResponse response,
                                               MetadataItem metadataItem,
-                                              BindException errors) throws Exception {
+                                              BindException errors)
+            throws Exception {
         ModelAndView mav = new ModelAndView();
         Message message;
-        Map<String,String> metadata = getMetadata(metadataItem);
-        if(MetadataUtils.add(metadataItem.getName(), metadataItem.getValue(), metadata) == null){
+        Map<String, String> metadata = getMetadata(metadataItem);
+        if (MetadataUtils.add(metadataItem.getName(),
+                              metadataItem.getValue(),
+                              metadata) == null) {
             setMetadata(metadata, metadataItem);
             log.info(formatLogMessage("added", metadataItem));
-            message = MessageUtils.createMessage("Successfully added metadata");        
-        }else{
-            message = MessageUtils.createMessage("Metadata value replaced.", Severity.WARNING);        
+            message = MessageUtils.createMessage("Successfully added metadata");
+        } else {
+            message =
+                    MessageUtils.createMessage("Metadata value replaced.",
+                                               Severity.WARNING);
         }
         return setView(request, mav, message);
     }
-    
-
 
 }

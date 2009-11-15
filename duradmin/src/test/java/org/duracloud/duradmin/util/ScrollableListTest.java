@@ -1,5 +1,5 @@
-package org.duracloud.duradmin.util;
 
+package org.duracloud.duradmin.util;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,13 +11,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ScrollableListTest {
+
     private MockScrollableList scrollableList;
-    
+
     @Before
     public void setUp() throws Exception {
         scrollableList = new MockScrollableList();
         scrollableList.setMaxResultsPerPage(10);
-        
+
     }
 
     @After
@@ -25,28 +26,28 @@ public class ScrollableListTest {
     }
 
     @Test
-    public void testGetResultList(){
+    public void testGetResultList() {
         List<String> results = scrollableList.getResultList();
         assertNotNull(results);
         assertEquals("list-value-0", results.get(0));
     }
 
     @Test
-    public void testNextPrevious(){
+    public void testNextPrevious() {
         assertEquals(false, scrollableList.isPreviousAvailable());
         assertEquals(true, scrollableList.isNextAvailable());
         scrollableList.next();
         assertEquals("list-value-10", scrollableList.getResultList().get(0));
-        
+
         assertEquals(true, scrollableList.isPreviousAvailable());
         scrollableList.previous();
         assertEquals("list-value-0", scrollableList.getResultList().get(0));
         assertEquals(false, scrollableList.isPreviousAvailable());
 
     }
-    
+
     @Test
-    public void testLast(){
+    public void testLast() {
         for (int i = 0; i < 9; i++) {
             scrollableList.next();
         }
@@ -60,42 +61,44 @@ public class ScrollableListTest {
         scrollableList.next();
         assertEquals(true, scrollableList.isPreviousAvailable());
     }
-    
-    
+
     @Test
-    public void testFirst(){
+    public void testFirst() {
         for (int i = 0; i < 3; i++) {
             scrollableList.next();
         }
-        
+
         assertNotSame("list-value-0", scrollableList.getResultList().get(0));
         scrollableList.first();
         assertEquals("list-value-0", scrollableList.getResultList().get(0));
-        
+
     }
-    
-    private class MockScrollableList extends ScrollableList<String> {
+
+    private class MockScrollableList
+            extends ScrollableList<String> {
+
         @Override
         protected List<String> getData() throws DataRetrievalException {
             List<String> list = new LinkedList<String>();
             for (int i = 0; i < 101; i++) {
                 list.add("list-value-" + i);
             }
-            
-            int maxResults  = getMaxResultsPerPage();
+
+            int maxResults = getMaxResultsPerPage();
             String currentMarker = getCurrentMarker();
-            if(currentMarker != null){
+            if (currentMarker != null) {
                 int index = list.indexOf(currentMarker);
                 //if last element in list
-                if(index == list.size()-1){
+                if (index == list.size() - 1) {
                     return new LinkedList<String>();
-                }else{
-                    return list.subList(index+1, Math.min(index+1+maxResults, list.size()));
+                } else {
+                    return list.subList(index + 1, Math.min(index + 1
+                            + maxResults, list.size()));
                 }
-            }else{
-                if(isPreviousAvailable()){
+            } else {
+                if (isPreviousAvailable()) {
                     return new LinkedList<String>();
-                }else{
+                } else {
                     return list.subList(0, Math.min(maxResults, list.size()));
                 }
             }

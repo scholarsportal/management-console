@@ -28,18 +28,18 @@ public class SpaceDataController
         // TODO Auto-generated method stub
         super.initBinder(request, binder);
     }
-    
+
     @Override
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
                                   Object command,
                                   BindException errors) throws Exception {
-        Space space = (Space)command;
+        Space space = (Space) command;
         String spaceId = space.getSpaceId();
         ContentStore store = getContentStore();
-        
+
         SpaceUtil.populateSpace(space, store.getSpace(spaceId));
-        
+
         ModelAndView mav = new ModelAndView();
         mav.setViewName("jsonView");
         mav.getModel().clear();

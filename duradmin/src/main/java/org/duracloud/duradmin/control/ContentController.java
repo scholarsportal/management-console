@@ -22,6 +22,7 @@ public class ContentController
         extends BaseFormController {
 
     private static final String CONTENT_ITEM = "contentItem";
+
     protected final Log log = LogFactory.getLog(getClass());
 
     public ContentController() {
@@ -34,8 +35,7 @@ public class ContentController
         // TODO Auto-generated method stub
         return true;
     }
-    
-    
+
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
@@ -44,8 +44,7 @@ public class ContentController
         String contentId = contentItem.getContentId();
         ModelAndView mav = new ModelAndView(getSuccessView());
 
-        ControllerUtils.checkContentItemId(spaceId,contentId);
-
+        ControllerUtils.checkContentItemId(spaceId, contentId);
 
         ContentStore store = null;
         try {
@@ -56,17 +55,21 @@ public class ContentController
             return mav;
         }
 
-        Map<String, String> contentMetadata = store.getContentMetadata(spaceId, contentId);
+        Map<String, String> contentMetadata =
+                store.getContentMetadata(spaceId, contentId);
 
         String action = contentItem.getAction();
         if (action != null && action.equals("update")) {
             String newMime = contentItem.getContentMimetype();
-            if (!StringUtils.isEmptyOrAllWhiteSpace(newMime) && 
-                    !newMime.equals(contentMetadata.get(ContentStore.CONTENT_MIMETYPE))) {
-                Map<String,String> updatedMetadata = new HashMap<String, String>();
+            if (!StringUtils.isEmptyOrAllWhiteSpace(newMime)
+                    && !newMime.equals(contentMetadata
+                            .get(ContentStore.CONTENT_MIMETYPE))) {
+                Map<String, String> updatedMetadata =
+                        new HashMap<String, String>();
                 updatedMetadata.put(ContentStore.CONTENT_MIMETYPE, newMime);
                 store.setContentMetadata(spaceId, contentId, updatedMetadata);
-                MessageUtils.addFlashMessage("Successfully modified content.", mav);
+                MessageUtils.addFlashMessage("Successfully modified content.",
+                                             mav);
             }
         }
 
@@ -74,7 +77,5 @@ public class ContentController
         mav.addObject(CONTENT_ITEM, contentItem);
         return mav;
     }
-
-
 
 }

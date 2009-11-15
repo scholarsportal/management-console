@@ -1,3 +1,4 @@
+
 package org.duracloud.mock;
 
 import java.security.Principal;
@@ -5,9 +6,11 @@ import java.security.Principal;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
+public class MockValidationContext
+        implements ValidationContext {
 
-public class MockValidationContext implements ValidationContext{
     private MessageContext messageContext = new MockMessageContext();
+
     public MessageContext getMessageContext() {
         return this.messageContext;
     }
@@ -26,6 +29,5 @@ public class MockValidationContext implements ValidationContext{
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
+
 }

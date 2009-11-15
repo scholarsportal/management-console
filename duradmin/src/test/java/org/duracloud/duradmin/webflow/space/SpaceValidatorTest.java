@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.webflow.space;
 
 import junit.framework.Assert;
@@ -9,33 +10,33 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.binding.validation.ValidationContext;
 
+public class SpaceValidatorTest
+        extends ContentStoreProviderTestBase {
 
-public class SpaceValidatorTest extends ContentStoreProviderTestBase{
     SpaceValidator v = new SpaceValidator();
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
         v.setContentStoreProvider(contentStoreProvider);
-    }    
-   
-    
+    }
+
     @Test
-    public void checkInvalidSpaceIds() throws Exception{
+    public void checkInvalidSpaceIds() throws Exception {
         ValidationContext vc = null;
         Space space = new Space();
-        
+
         //too short;
         space.setSpaceId("a");
         v.validateDefineSpace(space, vc = new MockValidationContext());
         Assert.assertEquals(1, vc.getMessageContext().getAllMessages().length);
-    
+
         //too long
         String tooLong = "";
         for (int i = 0; i < 66; i++) {
-            tooLong+="t";
+            tooLong += "t";
         }
-        
+
         space.setSpaceId(tooLong);
         v.validateDefineSpace(space, vc = new MockValidationContext());
         Assert.assertEquals(1, vc.getMessageContext().getAllMessages().length);
@@ -50,7 +51,7 @@ public class SpaceValidatorTest extends ContentStoreProviderTestBase{
         space.setSpaceId("-startswithdash");
         v.validateDefineSpace(space, vc = new MockValidationContext());
         Assert.assertEquals(1, vc.getMessageContext().getAllMessages().length);
-        
+
         //has a period followed by a dash
         space.setSpaceId("hasaperiodfollowedbyadash.-here");
         v.validateDefineSpace(space, vc = new MockValidationContext());
@@ -65,8 +66,7 @@ public class SpaceValidatorTest extends ContentStoreProviderTestBase{
         space.setSpaceId("a.0879dsfdsf-dfks.dsfdsf-da.");
         v.validateDefineSpace(space, vc = new MockValidationContext());
         Assert.assertEquals(0, vc.getMessageContext().getAllMessages().length);
-        
+
     }
-    
 
 }

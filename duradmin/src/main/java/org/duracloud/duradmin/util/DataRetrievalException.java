@@ -1,6 +1,5 @@
+
 package org.duracloud.duradmin.util;
-
-
 
 public class DataRetrievalException
         extends Exception {

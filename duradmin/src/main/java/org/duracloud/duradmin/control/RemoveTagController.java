@@ -15,16 +15,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class RemoveTagController
         extends TagController {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
     protected ModelAndView handleTag(HttpServletRequest request,
-                                              HttpServletResponse response,
-                                              Tag tag,
-                                              BindException errors) throws Exception{
-        Map<String,String> metadata = getMetadata(tag);
-        if(TagUtil.removeTag(tag.getTag(),metadata)){
+                                     HttpServletResponse response,
+                                     Tag tag,
+                                     BindException errors) throws Exception {
+        Map<String, String> metadata = getMetadata(tag);
+        if (TagUtil.removeTag(tag.getTag(), metadata)) {
             log.info(formatLogMessage("removed", tag));
         }
         ModelAndView mav = new ModelAndView();
@@ -32,7 +32,5 @@ public class RemoveTagController
         mav.setViewName("jsonView");
         return mav;
     }
-    
-
 
 }

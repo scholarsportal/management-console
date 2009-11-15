@@ -9,7 +9,6 @@ import java.util.Map;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.NameValuePair;
 
-
 public class Space
         implements Serializable {
 
@@ -67,14 +66,13 @@ public class Space
         this.contents = contents;
     }
 
-    
     public List<NameValuePair> getExtendedMetadata() {
         return extendedMetadata;
     }
 
-    
-    public void setExtendedMetadata(Map<String,String> extendedMetadata) {
-        this.extendedMetadata = MetadataUtils.convertExtendedMetadata(extendedMetadata);
+    public void setExtendedMetadata(Map<String, String> extendedMetadata) {
+        this.extendedMetadata =
+                MetadataUtils.convertExtendedMetadata(extendedMetadata);
     }
 
 }

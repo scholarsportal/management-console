@@ -18,14 +18,14 @@ public class ContentsController
         extends BaseCommandController {
 
     protected final Logger log = Logger.getLogger(getClass());
-    
+
     private String successView;
 
     public ContentsController() {
         setCommandClass(Space.class);
         setCommandName("space");
     }
-    
+
     @Override
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -34,20 +34,20 @@ public class ContentsController
         Space space = (Space) command;
         String spaceId = space.getSpaceId();
         ControllerUtils.checkSpaceId(spaceId);
-        ContentItemList contentItemList = getContentItemList(request, spaceId); 
+        ContentItemList contentItemList = getContentItemList(request, spaceId);
 
         String maxPerPage = request.getParameter("mpp");
-        if(StringUtils.hasText(maxPerPage)){
+        if (StringUtils.hasText(maxPerPage)) {
             contentItemList.setMaxResultsPerPage(Integer.parseInt(maxPerPage));
         }
 
         String action = space.getAction();
-        if(StringUtils.hasText(action)){
-            if(action.equals("n")){
+        if (StringUtils.hasText(action)) {
+            if (action.equals("n")) {
                 contentItemList.next();
-            }else if(action.equals("p")){
+            } else if (action.equals("p")) {
                 contentItemList.previous();
-            }else{
+            } else {
                 contentItemList.first();
             }
         }
@@ -59,25 +59,25 @@ public class ContentsController
         return mav;
     }
 
-    
     public String getSuccessView() {
         return successView;
     }
 
-
-    private  ContentItemList getContentItemList(HttpServletRequest request, String spaceId) {
+    private ContentItemList getContentItemList(HttpServletRequest request,
+                                               String spaceId) {
         HttpSession session = request.getSession();
-        ContentItemList list =  (ContentItemList)session.getAttribute("content-list-"+spaceId);
-        if(list == null){
+        ContentItemList list =
+                (ContentItemList) session.getAttribute("content-list-"
+                        + spaceId);
+        if (list == null) {
             list = new ContentItemList(spaceId, getContentStoreProvider());
-            session.setAttribute("content-list-"+spaceId, list);
+            session.setAttribute("content-list-" + spaceId, list);
         }
         return list;
     }
 
     public void setSuccessView(String successView) {
         this.successView = successView;
-    }    
-    
+    }
 
 }

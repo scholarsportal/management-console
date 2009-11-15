@@ -20,11 +20,12 @@ public class SimpleExceptionResolver
                                          HttpServletResponse response,
                                          Object handler,
                                          Exception ex) {
-        
+
         ModelAndView mav = new ModelAndView("exception");
         mav.addObject("message", ex.getMessage());
 
-        if(!(ex instanceof ContentStoreException) && !(ex instanceof ServicesException)){
+        if (!(ex instanceof ContentStoreException)
+                && !(ex instanceof ServicesException)) {
             StringWriter stackTrace = new StringWriter();
             ex.printStackTrace(new PrintWriter(stackTrace));
             mav.addObject("stack", stackTrace.toString());

@@ -11,8 +11,8 @@ import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 
 /**
- * A view preparer to be invoked by every page in the application.  
- *
+ * A view preparer to be invoked by every page in the application.
+ * 
  * @author Daniel Bernstein
  * @version $Id$
  */
@@ -20,13 +20,13 @@ public class BaseViewPreparer
         implements ViewPreparer {
 
     private Log log = LogFactory.getLog(getClass());
-    
+
     private ContentStoreProvider contentStoreProvider;
-    
+
     public ContentStoreProvider getContentStoreProvider() {
         return contentStoreProvider;
     }
-    
+
     public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
         this.contentStoreProvider = contentStoreProvider;
     }
@@ -34,34 +34,35 @@ public class BaseViewPreparer
     public void execute(TilesRequestContext tilesRequestContext,
                         AttributeContext attributeContext) {
 
-        try{
+        try {
 
             attributeContext.putAttribute("mainMenu", new Attribute(MainMenu
                     .instance()), true);
             log.debug("main menu attribute set");
-            
-            String currentUrl = (String)tilesRequestContext.getRequestScope().get("currentUrl");
-            attributeContext.putAttribute("currentUrl", new Attribute(currentUrl), true);
-    
+
+            String currentUrl =
+                    (String) tilesRequestContext.getRequestScope()
+                            .get("currentUrl");
+            attributeContext.putAttribute("currentUrl",
+                                          new Attribute(currentUrl),
+                                          true);
+
             log.debug("currentUrl attribute set:" + currentUrl);
-        
+
             contentStoreProvider.getContentStore();
 
-            
-            attributeContext.putAttribute(
-                                          "contentStoreProvider",
-                                          new Attribute(contentStoreProvider), true);
+            attributeContext.putAttribute("contentStoreProvider",
+                                          new Attribute(contentStoreProvider),
+                                          true);
 
-            log.debug("contentStoreProvider attribute set: " + contentStoreProvider);
+            log.debug("contentStoreProvider attribute set: "
+                    + contentStoreProvider);
 
-            
-        }catch(ContentStoreException ex){
-            log.error("failed to complete execution of BaseViewPreparer: " 
-                      + ex.getMessage());
-            
-            
+        } catch (ContentStoreException ex) {
+            log.error("failed to complete execution of BaseViewPreparer: "
+                    + ex.getMessage());
+
         }
-
 
     }
 }

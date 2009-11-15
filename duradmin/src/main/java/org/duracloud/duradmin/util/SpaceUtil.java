@@ -32,7 +32,7 @@ public class SpaceUtil {
     }
 
     public static Space populateSpace(Space space,
-                                      org.duracloud.domain.Space cloudSpace){
+                                      org.duracloud.domain.Space cloudSpace) {
         space.setSpaceId(cloudSpace.getId());
         space.setMetadata(getSpaceMetadata(cloudSpace.getMetadata()));
         space.setExtendedMetadata(cloudSpace.getMetadata());
@@ -48,18 +48,18 @@ public class SpaceUtil {
         spaceMetadata.setTags(TagUtil.parseTags(spaceProps.get(TagUtil.TAGS)));
         return spaceMetadata;
     }
-    
+
     public static void populateContentItem(ContentItem contentItem,
-                                     String spaceId,
-                                     String contentId,
-                                     ContentStore store)
+                                           String spaceId,
+                                           String contentId,
+                                           ContentStore store)
             throws ContentStoreException {
-        Map<String,String> contentMetadata = store.getContentMetadata(spaceId, contentId);
+        Map<String, String> contentMetadata =
+                store.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
     }
 
-    
     private static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
         ContentMetadata metadata = new ContentMetadata();
         metadata

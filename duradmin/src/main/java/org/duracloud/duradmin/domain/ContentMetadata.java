@@ -9,7 +9,8 @@ import java.util.Set;
  * 
  * @author Bill Branan
  */
-public class ContentMetadata implements Serializable{
+public class ContentMetadata
+        implements Serializable {
 
     private String mimetype;
 
@@ -21,7 +22,6 @@ public class ContentMetadata implements Serializable{
 
     private Set<String> tags;
 
-    
     public String getMimetype() {
         return mimetype;
     }
@@ -54,15 +54,12 @@ public class ContentMetadata implements Serializable{
         this.modified = modified;
     }
 
-    
     public Set<String> getTags() {
         return tags;
     }
 
-    
     public void setTags(Set<String> tags) {
         this.tags = tags;
     }
-    
-    
+
 }
