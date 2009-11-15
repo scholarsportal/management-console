@@ -23,10 +23,12 @@ public class SpacesController
         // TODO Auto-generated method stub
         return true;
     }
+
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {
-        ModelAndView mav = new ModelAndView(getSuccessView(),"spaces", getSpaces());
+        ModelAndView mav =
+                new ModelAndView(getSuccessView(), "spaces", getSpaces());
         return mav;
     }
 

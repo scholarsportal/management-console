@@ -19,19 +19,18 @@ public abstract class BaseFormController
     protected final Logger log = Logger.getLogger(getClass());
 
     private ControllerSupport controllerSupport = new ControllerSupport();
-    
+
     @Override
     public ModelAndView handleRequest(HttpServletRequest request,
-                                                 HttpServletResponse response)
+                                      HttpServletResponse response)
             throws Exception {
         ModelAndView mav = super.handleRequest(request, response);
-        return controllerSupport.handle(mav,request,response);
+        return controllerSupport.handle(mav, request, response);
     }
 
     public ContentStore getContentStore() throws ContentStoreException {
         return controllerSupport.getContentStore();
     }
-
 
     public ContentStoreProvider getContentStoreProvider() {
         return controllerSupport.getContentStoreProvider();
@@ -40,10 +39,9 @@ public abstract class BaseFormController
     public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
         this.controllerSupport.setContentStoreProvider(contentStoreProvider);
     }
-    
+
     protected List<String> getSpaces() throws Exception {
         return controllerSupport.getSpaces();
     }
-
 
 }

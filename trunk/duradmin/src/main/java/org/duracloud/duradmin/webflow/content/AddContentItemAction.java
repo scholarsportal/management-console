@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.webflow.content;
 
 import java.io.ByteArrayInputStream;
@@ -14,30 +15,33 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
+public class AddContentItemAction
+        implements Serializable {
 
-public class AddContentItemAction implements Serializable{
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
+
     private static Log log = LogFactory.getLog(AddContentItemAction.class);
+
     private transient ContentStoreProvider contentStoreProvider;
-    
+
     public ContentStoreProvider getContentStoreProvider() {
         return contentStoreProvider;
     }
 
-    
     public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
         this.contentStoreProvider = contentStoreProvider;
     }
-
 
     private ContentStore getContentStore() throws ContentStoreException {
         return contentStoreProvider.getContentStore();
     }
 
-    public boolean execute(ContentItem contentItem, Space space, MessageContext messageContext) throws Exception{
+    public boolean execute(ContentItem contentItem,
+                           Space space,
+                           MessageContext messageContext) throws Exception {
         try {
 
             String spaceId = space.getSpaceId();
@@ -46,21 +50,23 @@ public class AddContentItemAction implements Serializable{
             String contentId = contentItem.getContentId();
 
             String contentMimeType = contentItem.getContentMimetype();
-            
-            contentStore.addContent(spaceId, contentId, new ByteArrayInputStream(contentItem.getFileData().getData()), 
-                                    contentItem.getSize(), contentMimeType, null);
+
+            contentStore.addContent(spaceId,
+                                    contentId,
+                                    new ByteArrayInputStream(contentItem
+                                            .getFileData().getData()),
+                                    contentItem.getSize(),
+                                    contentMimeType,
+                                    null);
             SpaceUtil.populateSpace(space, contentStore.getSpace(spaceId));
 
             return true;
         } catch (ContentStoreException e) {
             log.error(e);
-            messageContext.addMessage(
-                               new MessageBuilder().error()
-                                   .code("transaction.failure")
-                                   .arg(e.getMessage())
-                                   .build());
+            messageContext.addMessage(new MessageBuilder().error()
+                    .code("transaction.failure").arg(e.getMessage()).build());
             return false;
         }
     }
-        
-}         
+
+}

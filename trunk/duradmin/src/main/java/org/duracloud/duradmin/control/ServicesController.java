@@ -17,13 +17,13 @@ public class ServicesController
         extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
-    
+
     protected ControllerSupport controllerSupport = new ControllerSupport();
-    
+
     protected ServicesManager getServicesManager() throws Exception {
         return controllerSupport.getServicesManager();
     }
-    
+
     public ServicesController() {
         setCommandClass(ServiceCommand.class);
         setCommandName("service");
@@ -33,7 +33,7 @@ public class ServicesController
     protected boolean isFormSubmission(HttpServletRequest request) {
         return true;
     }
-    
+
     @Override
     protected ModelAndView onSubmit(Object command, BindException errors)
             throws Exception {

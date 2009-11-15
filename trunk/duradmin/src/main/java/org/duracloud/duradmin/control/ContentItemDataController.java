@@ -27,7 +27,6 @@ public class ContentItemDataController
         setCommandName("contentItem");
     }
 
-    
     @Override
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -39,14 +38,12 @@ public class ContentItemDataController
         ControllerUtils.checkContentItemId(spaceId, contentId);
         ContentStore store = getContentStore();
         SpaceUtil.populateContentItem(contentItem, spaceId, contentId, store);
-        
+
         ModelAndView mav = new ModelAndView();
         mav.setViewName("jsonView");
         mav.getModel().clear();
         mav.addObject(contentItem);
         return mav;
     }
-
-
 
 }

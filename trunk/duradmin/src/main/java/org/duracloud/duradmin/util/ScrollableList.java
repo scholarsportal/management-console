@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-
 public abstract class ScrollableList<E>
         implements Scrollable<E> {
 
@@ -58,7 +57,7 @@ public abstract class ScrollableList<E>
         this.currentMarker = getLastResultInCurrentList();
         //flag for update.
         markedForUpdate = true;
-        
+
         try {
 
             update();
@@ -71,22 +70,21 @@ public abstract class ScrollableList<E>
             throw new RuntimeException(ex);
         }
 
-        
-     }
+    }
 
-    public void first(){
+    public void first() {
         this.markers.clear();
         this.currentMarker = null;
         this.markedForUpdate = true;
     }
-    
+
     public void previous() {
         if (isPreviousAvailable()) {
             //pop the "current" marker off the queue
             this.markers.remove();
-            if(this.markers.size() > 0){
+            if (this.markers.size() > 0) {
                 this.currentMarker = this.markers.remove();
-            }else{
+            } else {
                 this.currentMarker = null;
             }
 
@@ -106,11 +104,10 @@ public abstract class ScrollableList<E>
             throw new RuntimeException(e);
         }
     }
-    
+
     protected E getCurrentMarker() {
         return this.currentMarker;
     }
-
 
     public List<E> getResultList() {
         try {

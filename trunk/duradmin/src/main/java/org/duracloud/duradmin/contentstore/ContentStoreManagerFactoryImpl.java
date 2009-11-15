@@ -9,7 +9,7 @@ public class ContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {
 
     public ContentStoreManager create() throws Exception {
-            return new ContentStoreManagerImpl(DuradminConfig.getHost(),
-                                               DuradminConfig.getPort());
+        return new ContentStoreManagerImpl(DuradminConfig.getHost(),
+                                           DuradminConfig.getPort());
     }
 }

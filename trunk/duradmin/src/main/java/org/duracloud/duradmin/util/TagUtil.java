@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.util;
 
 import java.util.Arrays;
@@ -5,14 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 public class TagUtil {
 
     public static final String TAGS = "tags";
+
     protected static final String DELIMITER = "|";
-    
+
     /**
-     * 
      * @param tag
      * @param metadata
      * @return true if the tag was present and was removed.
@@ -28,8 +28,8 @@ public class TagUtil {
 
     static Set<String> parseTags(String tagsValue) {
         Set<String> set = new LinkedHashSet<String>();
-        if(!StringUtils.isEmptyOrAllWhiteSpace(tagsValue)){
-            set.addAll(Arrays.asList(tagsValue.split("["+DELIMITER+"]")));
+        if (!StringUtils.isEmptyOrAllWhiteSpace(tagsValue)) {
+            set.addAll(Arrays.asList(tagsValue.split("[" + DELIMITER + "]")));
         }
         return set;
     }
@@ -37,32 +37,30 @@ public class TagUtil {
     private static String formatTags(Set<String> tags) {
         StringBuffer buf = new StringBuffer();
         String[] tagsArray = tags.toArray(new String[0]);
-        for(int i = 0; i < tagsArray.length; i++){
-            if(i > 0){
+        for (int i = 0; i < tagsArray.length; i++) {
+            if (i > 0) {
                 buf.append(DELIMITER);
             }
             buf.append(tagsArray[i]);
         }
-        
+
         return buf.toString();
     }
-    
-    
+
     /**
-     * 
      * @param tag
      * @param metadata
      * @return true if the tag was added (ie wasn't already present in list)
      */
-    public static boolean addTag(String tag, Map<String,String> metadata){
+    public static boolean addTag(String tag, Map<String, String> metadata) {
         String tags = metadata.get(TAGS);
-        if(tags==null){
+        if (tags == null) {
             metadata.put(TAGS, tag);
             return true;
         }
         Set<String> list = parseTags(tags);
         boolean result = list.add(tag);
-        
+
         metadata.put(TAGS, formatTags(list));
         return result;
     }

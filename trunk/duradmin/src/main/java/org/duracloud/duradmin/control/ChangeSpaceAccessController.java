@@ -36,11 +36,15 @@ public class ChangeSpaceAccessController
         ContentStore store = getContentStore();
         SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId()));
         AccessType access = AccessType.valueOf(space.getMetadata().getAccess());
-        AccessType newAccess = access.equals(AccessType.OPEN) ? AccessType.CLOSED : AccessType.OPEN;
+        AccessType newAccess =
+                access.equals(AccessType.OPEN) ? AccessType.CLOSED
+                        : AccessType.OPEN;
         store.setSpaceAccess(space.getSpaceId(), newAccess);
         ModelAndView mav = new ModelAndView();
-        String text = MessageFormat.format("Space access is now {0}", newAccess.toString().toLowerCase());
-        Message message = MessageUtils.createMessage(text);        
+        String text =
+                MessageFormat.format("Space access is now {0}", newAccess
+                        .toString().toLowerCase());
+        Message message = MessageUtils.createMessage(text);
         return setView(request, mav, message);
     }
 

@@ -39,7 +39,8 @@ public class RemoveSpaceController
         }
         store.deleteSpace(space.getSpaceId());
         ModelAndView mav = new ModelAndView();
-        Message message = MessageUtils.createMessage("Successfully removed space");        
+        Message message =
+                MessageUtils.createMessage("Successfully removed space");
         return setView(request, mav, message);
     }
 

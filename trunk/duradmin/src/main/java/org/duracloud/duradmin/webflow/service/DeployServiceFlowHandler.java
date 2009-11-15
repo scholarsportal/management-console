@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.webflow.service;
 
 import java.text.MessageFormat;
@@ -17,64 +18,71 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.servlet.AbstractFlowHandler;
 
+public class DeployServiceFlowHandler
+        extends AbstractFlowHandler {
 
-public class DeployServiceFlowHandler extends AbstractFlowHandler {
-    
     private static final String SUCCESS_OUTCOME = "success";
+
     private static final String SERVICE = "service";
+
     private static final String SERVICE_ID = "serviceId";
-    
-    private static Log log = LogFactory.getLog(DeployServiceFlowHandler.class);    
+
+    private static Log log = LogFactory.getLog(DeployServiceFlowHandler.class);
+
     private ControllerSupport controllerSupport = new ControllerSupport();
-    
-    
+
     @Override
     public MutableAttributeMap createExecutionInputMap(HttpServletRequest request) {
-        MutableAttributeMap map =  super.createExecutionInputMap(request);
-        try{
-            if(map == null){
+        MutableAttributeMap map = super.createExecutionInputMap(request);
+        try {
+            if (map == null) {
                 map = new LocalAttributeMap();
             }
-            
+
             NavigationUtils.setReturnTo(request, map);
 
             String serviceId = request.getParameter(SERVICE_ID);
-            
+
             map.put(SERVICE, getService(serviceId));
-        }catch(Exception ex){
+        } catch (Exception ex) {
             log.error(ex);
         }
         return map;
     }
-    
+
     private ServiceInfo getService(String serviceId) throws Exception {
-        ServiceInfo s =  ServicesUtil.initializeService(controllerSupport.getServicesManager(), serviceId);
+        ServiceInfo s =
+                ServicesUtil.initializeService(controllerSupport
+                        .getServicesManager(), serviceId);
         return s;
     }
-    
+
     public String handleExecutionOutcome(FlowExecutionOutcome outcome,
-                                         HttpServletRequest request, HttpServletResponse response) {
+                                         HttpServletRequest request,
+                                         HttpServletResponse response) {
         String returnTo = NavigationUtils.getReturnTo(outcome);
-        ServiceInfo service = (ServiceInfo)outcome.getOutput().get(SERVICE);
-        
+        ServiceInfo service = (ServiceInfo) outcome.getOutput().get(SERVICE);
+
         String outcomeUrl = null;
-        
+
         if (outcome.getId().equals(SUCCESS_OUTCOME)) {
-            outcomeUrl = MessageFormat.format("contextRelative:/services.htm?serviceId={0}", 
-                                         service.getServiceName());
-            outcomeUrl = MessageUtils.appendRedirectMessage(
-                                        outcomeUrl, 
-                                        MessageUtils.createMessage("Successfully deployed service."), 
-                                        request);
-        } else if(returnTo == null) {
+            outcomeUrl =
+                    MessageFormat
+                            .format("contextRelative:/services.htm?serviceId={0}",
+                                    service.getServiceName());
+            outcomeUrl =
+                    MessageUtils
+                            .appendRedirectMessage(outcomeUrl,
+                                                   MessageUtils
+                                                           .createMessage("Successfully deployed service."),
+                                                   request);
+        } else if (returnTo == null) {
             outcomeUrl = "contextRelative:/services.htm";
-        }else{
+        } else {
             outcomeUrl = returnTo;
         }
-        
-            
+
         return outcomeUrl;
     }
-
 
 }

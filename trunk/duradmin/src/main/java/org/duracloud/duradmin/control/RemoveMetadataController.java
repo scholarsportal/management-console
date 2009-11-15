@@ -15,27 +15,26 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class RemoveMetadataController
         extends MetadataController {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
     protected ModelAndView handleMetadataItem(HttpServletRequest request,
                                               HttpServletResponse response,
                                               MetadataItem metadataItem,
-                                              BindException errors) throws Exception{
-        
-        Map<String,String> metadata = getMetadata(metadataItem);
-        if(MetadataUtils.remove(metadataItem.getName(), metadata) != null){
+                                              BindException errors)
+            throws Exception {
+
+        Map<String, String> metadata = getMetadata(metadataItem);
+        if (MetadataUtils.remove(metadataItem.getName(), metadata) != null) {
             setMetadata(metadata, metadataItem);
             log.info(formatLogMessage("removed", metadataItem));
         }
-        
+
         ModelAndView mav = new ModelAndView();
         mav.addObject("success");
         mav.setViewName("jsonView");
         return mav;
     }
-    
-
 
 }

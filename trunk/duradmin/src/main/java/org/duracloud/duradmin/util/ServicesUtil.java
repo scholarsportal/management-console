@@ -35,35 +35,47 @@ public class ServicesUtil {
     }
 
     public static ServiceInfo initializeService(ServicesManager servicesManager,
-                                          String serviceId)
+                                                String serviceId)
             throws ServicesException {
         List<SystemConfig> systemConfigs = new LinkedList<SystemConfig>();
         systemConfigs.add(new SystemConfig("host", "localhost", "localhost"));
         systemConfigs.add(new SystemConfig("port", "8080", "8080"));
 
         List<UserConfig> userConfigs = new LinkedList<UserConfig>();
-        
+
         List<Option> stores = new LinkedList<Option>();
         stores.add(new Option("Amazon", "1", false));
         stores.add(new Option("EMC", "2", false));
         stores.add(new Option("Rackspace", "3", false));
 
-        userConfigs.add(new SingleSelectUserConfig("fromStoreId", "The source store", true, stores));
-        userConfigs.add(new SingleSelectUserConfig("toStoreId", "The destination store", true, stores));
+        userConfigs.add(new SingleSelectUserConfig("fromStoreId",
+                                                   "The source store",
+                                                   true,
+                                                   stores));
+        userConfigs.add(new SingleSelectUserConfig("toStoreId",
+                                                   "The destination store",
+                                                   true,
+                                                   stores));
 
-        List<Option> spaces= new LinkedList<Option>();
-        spaces.add (new Option("Space 1", "1", false));
-        spaces.add (new Option("Space 2", "2", false));
-        spaces.add (new Option("Space 3", "3", false));
-        spaces.add (new Option("Space 4", "4", false));
-        userConfigs.add(new MultiSelectUserConfig("spaces", "Spaces", true, spaces));
-        userConfigs.add(new TextUserConfig("mimetypes", "Mime Types", true, null));
+        List<Option> spaces = new LinkedList<Option>();
+        spaces.add(new Option("Space 1", "1", false));
+        spaces.add(new Option("Space 2", "2", false));
+        spaces.add(new Option("Space 3", "3", false));
+        spaces.add(new Option("Space 4", "4", false));
+        userConfigs.add(new MultiSelectUserConfig("spaces",
+                                                  "Spaces",
+                                                  true,
+                                                  spaces));
+        userConfigs.add(new TextUserConfig("mimetypes",
+                                           "Mime Types",
+                                           true,
+                                           null));
 
-        
         ServiceInfo service = new ServiceInfo();
         service.setServiceName(serviceId);
         service.setDisplayName("Replicaton Service");
-        service.setDescription("A description of the replication service goes here.  We should provide enough space for multiple lines of text.");
+        service
+                .setDescription("A description of the replication service goes here.  We should provide enough space for multiple lines of text.");
         service.setSystemConfigs(systemConfigs);
         service.setUserConfigs(userConfigs);
         return service;

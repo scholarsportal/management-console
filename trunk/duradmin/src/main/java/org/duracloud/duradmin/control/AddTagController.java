@@ -19,27 +19,28 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class AddTagController
         extends TagController {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
     protected ModelAndView handleTag(HttpServletRequest request,
-                                              HttpServletResponse response,
-                                              Tag tag, 
-                                              BindException errors) throws Exception {
+                                     HttpServletResponse response,
+                                     Tag tag,
+                                     BindException errors) throws Exception {
         ModelAndView mav = new ModelAndView();
         Message message;
-        Map<String,String> metadata = getMetadata(tag);
-        if(TagUtil.addTag(tag.getTag(),metadata)){
+        Map<String, String> metadata = getMetadata(tag);
+        if (TagUtil.addTag(tag.getTag(), metadata)) {
             setMetadata(metadata, tag);
             log.info(formatLogMessage("added", tag));
-            message = MessageUtils.createMessage("Successfully added tag");        
-        }else{
-            message = MessageUtils.createMessage("Tag not added because it already exists.", Severity.WARNING);        
+            message = MessageUtils.createMessage("Successfully added tag");
+        } else {
+            message =
+                    MessageUtils
+                            .createMessage("Tag not added because it already exists.",
+                                           Severity.WARNING);
         }
         return setView(request, mav, message);
     }
-    
-
 
 }

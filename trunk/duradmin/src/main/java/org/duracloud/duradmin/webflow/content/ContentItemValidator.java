@@ -1,3 +1,4 @@
+
 package org.duracloud.duradmin.webflow.content;
 
 import org.duracloud.client.ContentStore;
@@ -13,7 +14,7 @@ import org.springframework.binding.validation.ValidationContext;
 public class ContentItemValidator {
 
     private ContentStoreProvider contentStoreProvider;
-    
+
     public ContentStoreProvider getContentStoreProvider() {
         return contentStoreProvider;
     }
@@ -22,47 +23,52 @@ public class ContentItemValidator {
         this.contentStoreProvider = contentStoreProvider;
     }
 
-    public void validateDefineContentItem(ContentItem contentItem, ValidationContext context) {
+    public void validateDefineContentItem(ContentItem contentItem,
+                                          ValidationContext context) {
         MessageContext messages = context.getMessageContext();
-        if (StringUtils.isEmptyOrAllWhiteSpace(contentItem.getFileData().getName())) {
-            messages.addMessage(new MessageBuilder()
-                                    .error()
-                                    .source("file")
-                                    .code("required").build());
+        if (StringUtils.isEmptyOrAllWhiteSpace(contentItem.getFileData()
+                .getName())) {
+            messages.addMessage(new MessageBuilder().error().source("file")
+                    .code("required").build());
         }
-        
+
         String contentId = contentItem.getContentId();
-        if(!StringUtils.isEmptyOrAllWhiteSpace(contentId)){
+        if (!StringUtils.isEmptyOrAllWhiteSpace(contentId)) {
             //from http://docs.amazonwebservices.com/AmazonS3/2006-03-01/gsg/
             //The key may be any UTF-8 string
             //no validation required for a string > in length;
             //
             //right now spaces are breaking durastore - therefore 
             //I'm adding in the whitespace checker
-            if(contentId.matches("^.*[?].*$") || contentId.getBytes().length > 1024){
+            if (contentId.matches("^.*[?].*$")
+                    || contentId.getBytes().length > 1024) {
                 messages.addMessage(new MessageBuilder().error()
-                                            .source("contentId")
-                                            .code("contentId.invalid")
-                                            .build());
+                        .source("contentId").code("contentId.invalid").build());
             }
         }
-        
+
         //how about mimetype validation?
         //TODO Discuss any validation rules for mimetype.
         //check that space doesn't already exist.
-        
+
         //check if item already exists.
-            if(contentItemExists(contentItem)){
-                messages.addMessage(new MessageBuilder().error().
-                                    defaultText("A content item with this ID already exists. Please try another.").build());
-            }
-        
+        if (contentItemExists(contentItem)) {
+            messages
+                    .addMessage(new MessageBuilder()
+                            .error()
+                            .defaultText("A content item with this ID already exists. Please try another.")
+                            .build());
+        }
+
     }
-    
+
     private boolean contentItemExists(ContentItem contentItem) {
         try {
-            ContentStore contentStore = this.contentStoreProvider.getContentStore();
-            Content content = contentStore.getContent(contentItem.getSpaceId(), contentItem.getContentId());
+            ContentStore contentStore =
+                    this.contentStoreProvider.getContentStore();
+            Content content =
+                    contentStore.getContent(contentItem.getSpaceId(),
+                                            contentItem.getContentId());
             return (content != null);
         } catch (ContentStoreException e) {
             return false;

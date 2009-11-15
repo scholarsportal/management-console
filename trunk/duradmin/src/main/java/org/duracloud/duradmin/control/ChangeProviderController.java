@@ -19,12 +19,10 @@ public class ChangeProviderController
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    
     public ChangeProviderController() {
         setCommandClass(StorageProvider.class);
         setCommandName("storageProvider");
     }
-    
 
     @Override
     protected ModelAndView handle(HttpServletRequest request,
@@ -35,11 +33,14 @@ public class ChangeProviderController
         String storageProviderId = storageProvider.getStorageProviderId();
         if (StringUtils.isEmptyOrAllWhiteSpace(storageProviderId)) {
             throw new IllegalArgumentException("Storage Provider ID must be provided.");
-        }        
-        
-        ContentStoreSelector selector = getContentStoreProvider().getContentStoreSelector();
+        }
+
+        ContentStoreSelector selector =
+                getContentStoreProvider().getContentStoreSelector();
         selector.setSelectedId(storageProviderId);
-        Message message = MessageUtils.createMessage("Successfully modified storage provider.");        
+        Message message =
+                MessageUtils
+                        .createMessage("Successfully modified storage provider.");
         return setView(request, new ModelAndView(), message);
     }
 

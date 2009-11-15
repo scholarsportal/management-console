@@ -12,7 +12,6 @@ import org.duracloud.duradmin.util.NameValuePair;
 import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-
 public class ContentItem
         implements Serializable {
 
@@ -25,23 +24,19 @@ public class ContentItem
     private String contentId;
 
     private String contentMimetype;
-    
+
     private List<NameValuePair> extendedMetadata;
 
-
     private transient MultipartFile file;
-    
+
     private FileData fileData = new FileData();
-    
+
     public long getSize() {
         return fileData.getSize();
     }
 
-
-
-
     private ContentMetadata metadata;
-    
+
     public String getAction() {
         return action;
     }
@@ -59,8 +54,8 @@ public class ContentItem
     }
 
     public String getContentId() {
-        if(!StringUtils.isEmptyOrAllWhiteSpace(contentId)){
-           return contentId; 
+        if (!StringUtils.isEmptyOrAllWhiteSpace(contentId)) {
+            return contentId;
         }
         return fileData.getName();
     }
@@ -70,7 +65,7 @@ public class ContentItem
     }
 
     public String getContentMimetype() {
-        if(!StringUtils.isEmptyOrAllWhiteSpace(this.contentMimetype)){
+        if (!StringUtils.isEmptyOrAllWhiteSpace(this.contentMimetype)) {
             return this.contentMimetype;
         }
         return this.fileData.getMimetype();
@@ -88,32 +83,31 @@ public class ContentItem
         this.metadata = metadata;
     }
 
-
     public void setFile(MultipartFile file) throws IOException {
-        if(file == null){
+        if (file == null) {
             return;
         }
 
         this.file = file;
-        
+
         this.fileData.setFile(file);
     }
-    
+
     public MultipartFile getFile() {
         return file;
     }
-    
-    public FileData getFileData(){
+
+    public FileData getFileData() {
         return this.fileData;
     }
-    
+
     public List<NameValuePair> getExtendedMetadata() {
         return extendedMetadata;
     }
-    
-    public void setExtendedMetadata(Map<String,String> extendedMetadata) {
-        this.extendedMetadata = MetadataUtils.convertExtendedMetadata(extendedMetadata);
-    }
 
+    public void setExtendedMetadata(Map<String, String> extendedMetadata) {
+        this.extendedMetadata =
+                MetadataUtils.convertExtendedMetadata(extendedMetadata);
+    }
 
 }
