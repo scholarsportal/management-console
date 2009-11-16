@@ -74,8 +74,7 @@ public class DuraCloudBlobStoreConnectionTest {
             boolean exceptionOnGetSpace)
             throws IOException {
         BlobStore blobStore = EasyMock.createMock(BlobStore.class);
-        EasyMock.expect(contentStore.getBaseURL()).andReturn(baseURL).times(1,
-                Integer.MAX_VALUE);
+        EasyMock.expect(contentStore.getBaseURL()).andReturn(baseURL).anyTimes();
         try {
             if (exceptionOnGetSpace) {
                 EasyMock.expect(contentStore.getSpace(spaceId)).andThrow(
@@ -83,7 +82,7 @@ public class DuraCloudBlobStoreConnectionTest {
             } else {
                 Space space = new Space();
                 EasyMock.expect(contentStore.getSpace(spaceId)).andReturn(
-                        space).times(0, 1);
+                        space).anyTimes();
             }
         } catch (ContentStoreException e) {
             fail();

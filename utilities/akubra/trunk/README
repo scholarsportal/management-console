@@ -10,7 +10,37 @@ mvn install:install-file -DgroupId=org.duracloud -DartifactId=storeclient -Dvers
 
 2) Compile and install
 
-mvn install
+  mvn clean install -Dmaven.test.skip=true
+
+Test Instructions
+=================
+Unit Tests:
+  1) mvn test
+
+Unit and Integration Tests:
+  1) Start a DuraCloud instance (see below)
+  2) Use the /duradmin interface to create the test space (e.g. akubra-test) if needed
+  3) mvn verify -DspaceURL=http://host:port/durastore/akubra-test
+
+Single Integration Test Example:
+  1) mvn test -Dtest=AkubraDuraCloudIT -DspaceURL=http://host:port/durastore/akubra-test
+
+Site Generation
+===============
+Full Site:
+  Produces:
+    - Browsable source code and javadocs
+    - Findbugs, PMD, and CPD reports
+    - Separate unit and integration test reports
+    - Combined unit and integration test coverage report
+  1) mvn clean verify -DspaceURL=http://host:port/durastore/akubra-test
+  2) mvn site
+  3) rm -rf target/cobertura
+  4) mvn cobertura:cobertura -Dtest=*Test,*IT -DspaceURL=http://host:port/durastore/akubra-test
+
+Partial Site:
+  Same as above, but with unit test information only
+  1) mvn clean site
 
 Starting/Stopping a DuraCloud Instance
 ======================================

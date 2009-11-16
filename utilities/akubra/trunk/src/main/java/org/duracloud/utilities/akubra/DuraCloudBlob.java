@@ -1,6 +1,5 @@
 package org.duracloud.utilities.akubra;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -151,8 +150,12 @@ class DuraCloudBlob
         Runnable invoker = new Runnable() {
             public void run() {
                 try {
-                    contentStore.addContent(spaceId, contentId, pipedIn,
-                                            estimatedSize, null, null);
+                    contentStore.addContent(spaceId,
+                                            contentId,
+                                            pipedIn,
+                                            estimatedSize,
+                                            "application/octet-stream",
+                                            null);
                 } catch (ContentStoreException e) {
                     IOException ioe = new IOException("Error writing to store");
                     ioe.initCause(e);
@@ -232,55 +235,6 @@ class DuraCloudBlob
     static String getURIPrefix(ContentStore contentStore,
                                String spaceId) {
         return contentStore.getBaseURL() + "/" + spaceId + "/";
-    }
-
-    /**
-     * Wraps a given OutputStream, overriding all methods to check whether
-     * an exception has been externally signaled after the underlying call
-     * is made, and throwing that exception if so.
-     */
-    static class ExAwareOutputStream extends FilterOutputStream {
-
-        private IOException exception;
-
-        ExAwareOutputStream(OutputStream sink) {
-            super(sink);
-        }
-
-        void setException(IOException exception) {
-            this.exception = exception;
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            super.write(b);
-            if (exception != null) throw exception;
-        }
-
-        @Override
-        public void write(byte[] b) throws IOException {
-            super.write(b);
-            if (exception != null) throw exception;
-        }
-
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            super.write(b, off, len);
-            if (exception != null) throw exception;
-        }
-
-        @Override
-        public void flush() throws IOException {
-            super.flush();
-            if (exception != null) throw exception;
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            if (exception != null) throw exception;
-        }
-
     }
 
 }
