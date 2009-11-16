@@ -2,11 +2,50 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.duracloud.utilities.akubra</groupId>
-  <artifactId>akubra-duracloud</artifactId>
+  <groupId>org.duracloud</groupId>
+  <artifactId>duracloud-akubra</artifactId>
   <packaging>jar</packaging>
   <version>1.0.0-SNAPSHOT</version>
-  <name>Akubra DuraCloud Client</name>
+  <name>DuraCloud Akubra Plugin</name>
+  <description>Provides an Akubra BlobStore interface to the DuraCloud storage service.</description>
+  <organization>
+    <name>DuraSpace</name>
+    <url>http://duraspace.org/</url>
+  </organization>
+
+  <prerequisites>
+    <maven>2.0.9</maven>
+  </prerequisites>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>https://fedora-commons.org/jira/browse/DURACLOUD</url>
+  </issueManagement>
+
+  <developers>
+    <developer>
+      <name>Wilper, Chris</name>
+      <email>cwilper@duraspace.org</email>
+    </developer>
+  </developers>
+
+  <ciManagement>
+    <system>bamboo</system>
+    <url>https://fedora-commons.org/bamboo/browse/DURACLOUD-AKU</url>
+  </ciManagement>
+
+  <scm>
+    <connection>scm:svn:https://fedora-commons.org/svn/duracloud/utilities/akubra/trunk</connection>
+    <developerConnection>scm:svn:https://fedora-commons.org/svn/duracloud/utilities/akubra/trunk</developerConnection>
+    <url>https://fedora-commons.org/svn/viewvc/duracloud/utilities/akubra/trunk</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -94,7 +133,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-<!--        <version>2.4.2</version> -->
+        <version>2.4.2</version>
         <configuration>
           <systemProperties>
             <property>
@@ -145,6 +184,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>https://fedora-commons.org/bamboo/browse/AKUBRA-SAN/latest/artifact/site/apidocs/</link>
+          </links>
+        </configuration>
       </plugin>
 
       <!-- cross-referenced source code report -->
