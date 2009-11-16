@@ -15,21 +15,21 @@ public class ServicesConfigDocumentImpl implements ServicesConfigDocument {
         return version;
     }
 
-    public List<ServiceInfo> getServiceInfoList(InputStream xml) {
+    public List<ServiceInfo> getServiceList(InputStream xml) {
         return null;
     }
 
-    public List<UserConfig> getUserConfigList(InputStream xml) {
+    public ServiceInfo getService(InputStream xml) {
         return null;
     }
 
     public String getServiceListAsXML(List<ServiceInfo> serviceList) {
-        // TODO: Convert Service Infos list to XML
+        // TODO: Convert ServiceInfo list to XML
         return null;
     }
 
-    public String getUserConfigAsXML(List<UserConfig> userConfig) {
-        // TODO: Convert User Config List to XML
+    public String getServiceAsXML(ServiceInfo service) {
+        // TODO: Convert ServiceInfo to XML
         return null;
     }
 

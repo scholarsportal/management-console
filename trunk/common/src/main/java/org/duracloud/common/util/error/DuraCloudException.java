@@ -1,7 +1,5 @@
 package org.duracloud.common.util.error;
 
-import org.duracloud.common.util.ExceptionUtil;
-
 import java.text.MessageFormat;
 
 /**
@@ -72,7 +70,7 @@ public class DuraCloudException extends Exception {
         }
         
         if (pattern == null) {
-            return ExceptionUtil.getStackTraceAsString(this);
+            return this.getMessage();
         } else {
             return MessageFormat.format(pattern, getArgs());
         }

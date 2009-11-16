@@ -39,18 +39,18 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "========================================"
-echo "Building service deployment projects ..."
-echo "========================================"
-chmod +x "$scriptdir"/services.sh
-. "$scriptdir"/services.sh
-
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "ERROR: Service deployment integration test(s) failed; see above"
-  $CATALINA_HOME/bin/shutdown.sh
-  exit 1
-fi
+# echo "========================================"
+# echo "Building service deployment projects ..."
+# echo "========================================"
+# chmod +x "$scriptdir"/services.sh
+# . "$scriptdir"/services.sh
+# 
+# if [ $? -ne 0 ]; then
+#   echo ""
+#   echo "ERROR: Service deployment integration test(s) failed; see above"
+#   $CATALINA_HOME/bin/shutdown.sh
+#   exit 1
+# fi
 
 echo "======================="
 echo "Shutting Down Tomcat..."

@@ -1,13 +1,15 @@
 package org.duracloud.duraservice.rest;
 
-import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.duracloud.duraservice.domain.ServiceException;
 import org.duracloud.duraservice.domain.ServiceManager;
+import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
+import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
+import org.duracloud.duraservice.error.NoSuchServiceException;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.ServicesConfigDocument;
+import org.duracloud.serviceconfig.ServicesConfigDocumentImpl;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * Provides interaction with content
@@ -22,51 +24,59 @@ public class ServiceResource {
         serviceManager.configure(configXml);
     }
 
-    public static List<String> getAllServices() {
-        return serviceManager.getAllServices();
+    public static String getDeployedServices() {
+        List<ServiceInfo> deployedServices = serviceManager.getDeployedServices();
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        return configDoc.getServiceListAsXML(deployedServices);        
     }
 
-    public static List<String> getDeployedServices() {
-        return serviceManager.getDeployedServices();
+    public static String getAvailableServices() {
+        List<ServiceInfo> availableServices = serviceManager.getAvailableServices();
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        return configDoc.getServiceListAsXML(availableServices);
     }
 
-    public static List<String> getAvailableServices() {
-        List<String> allServices = serviceManager.getAllServices();
-        List<String> deployedServices = serviceManager.getDeployedServices();
-
-        List<String> availableServices = new ArrayList<String>();
-        for(String service : allServices) {
-            if(!deployedServices.contains(service)) {
-                availableServices.add(service);
-            }
-        }
-
-        return availableServices;
+    public static String getService(String serviceId)
+        throws NoSuchServiceException {
+        ServiceInfo service = serviceManager.getService(serviceId);
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        return configDoc.getServiceAsXML(service);
     }
 
-    public static Map<String, String> getService(String serviceId)
-    throws ServiceException {
-        return serviceManager.getService(serviceId);
+    public static String getDeployedService(String serviceId, int deploymentId)
+        throws NoSuchDeployedServiceException {
+        ServiceInfo service =
+            serviceManager.getDeployedService(serviceId, deploymentId);
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        return configDoc.getServiceAsXML(service);
     }
 
-    public static void deployService(String serviceId, String serviceHost)
-    throws ServiceException {
-        serviceManager.deployService(serviceId, serviceHost);
+    public static void deployService(String serviceId,
+                                     String serviceHost,
+                                     InputStream serviceXml)
+        throws NoSuchServiceException, NoSuchServiceComputeInstanceException {
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        ServiceInfo service = configDoc.getService(serviceXml);
+        serviceManager.deployService(serviceId,
+                                     serviceHost,
+                                     service.getUserConfigVersion(),
+                                     service.getUserConfigs());
     }
 
-    public static void configureService(String serviceId, InputStream configXml)
-    throws ServiceException {
-        serviceManager.configureService(serviceId, configXml);
+    public static void updateServiceConfig(String serviceId,
+                                            int deploymentId,
+                                            InputStream serviceXml)
+        throws NoSuchDeployedServiceException {
+        ServicesConfigDocument configDoc = new ServicesConfigDocumentImpl();
+        ServiceInfo service = configDoc.getService(serviceXml);
+        serviceManager.updateServiceConfig(serviceId,
+                                           deploymentId,
+                                           service.getUserConfigs());
     }
 
-    public static void undeployService(String serviceId)
-    throws ServiceException {
-        serviceManager.undeployService(serviceId);
-    }
-
-    public static List<String> getServiceHosts()
-    throws ServiceException {
-        return serviceManager.getServiceHosts();
+    public static void undeployService(String serviceId, int deploymentId)
+        throws NoSuchDeployedServiceException {
+        serviceManager.undeployService(serviceId, deploymentId);
     }
 
     public ServiceManager getServiceManager() {

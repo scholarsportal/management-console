@@ -7,10 +7,10 @@ package org.duracloud.duraservice.domain;
  */
 public class Service {
 
-    private String id;
-    private boolean deployed;
-    private String deploymentLocation;
-    private String deploymentStatus;
+    private String id = null;
+    private String description = null;
+    private boolean deployed = false;
+    private String deploymentLocation = null;
 
     public String getId() {
         return id;
@@ -18,6 +18,14 @@ public class Service {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean getDeployed() {
@@ -36,12 +44,5 @@ public class Service {
         this.deploymentLocation = deploymentLocation;
     }
 
-    public String getDeploymentStatus() {
-        return deploymentStatus;
-    }
-
-    public void setDeploymentStatus(String deploymentStatus) {
-        this.deploymentStatus = deploymentStatus;
-    }
 
 }

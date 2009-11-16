@@ -8,41 +8,41 @@ import java.util.Properties;
  * This class provides configuration properties associated with the duracloud
  * duraservice.
  *
- * @author bbranan
+ * @author Bill Branan
  */
 public class DuraServiceConfig
         extends ApplicationConfig {
 
-    private static String DURASERVICE_PROPERTIES_NAME =
-            "duraservice.properties";
+    private static final String DURASERVICE_PROPERTIES_NAME =
+        "duraservice.properties";
+    
+    private static final String HOST_KEY = "host";
+    private static final String PORT_KEY = "port";
+    private static final String SERVICES_ADMIN_URL_KEY = "servicesAdminURL";
 
-    private static String configFileName;
+    private String configFileName = null;
 
-    private static String hostKey = "host";
-    private static String portKey = "port";
-    private static String servicesAdminUrlKey = "servicesAdminURL";
-
-    private static Properties getProps() throws Exception {
+    private Properties getProps() throws Exception {
         return getPropsFromResource(getConfigFileName());
     }
 
-    public static String getHost() throws Exception {
-        return getProps().getProperty(hostKey);
+    public String getHost() throws Exception {
+        return getProps().getProperty(HOST_KEY);
     }
 
-    public static String getPort() throws Exception {
-        return getProps().getProperty(portKey);
+    public String getPort() throws Exception {
+        return getProps().getProperty(PORT_KEY);
     }
 
-    public static String getServicesAdminUrl() throws Exception {
-        return getProps().getProperty(servicesAdminUrlKey);
+    public String getServicesAdminUrl() throws Exception {
+        return getProps().getProperty(SERVICES_ADMIN_URL_KEY);
     }
 
-    public static void setConfigFileName(String name) {
+    public void setConfigFileName(String name) {
         configFileName = name;
     }
 
-    public static String getConfigFileName() {
+    public String getConfigFileName() {
         if (configFileName == null) {
             configFileName = DURASERVICE_PROPERTIES_NAME;
         }

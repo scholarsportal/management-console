@@ -15,12 +15,12 @@ public interface ServicesConfigDocument {
 
     public String getVersion();
 
-    public List<ServiceInfo> getServiceInfoList(InputStream xml);
+    public List<ServiceInfo> getServiceList(InputStream xml);
 
-    public List<UserConfig> getUserConfigList(InputStream xml);
+    public ServiceInfo getService(InputStream xml);
 
     public String getServiceListAsXML(List<ServiceInfo> serviceList);
 
-    public String getUserConfigAsXML(List<UserConfig> userConfig);    
+    public String getServiceAsXML(ServiceInfo service);
 
 }
