@@ -1,16 +1,14 @@
 package org.duracloud.duraservice.domain;
 
-import java.io.ByteArrayInputStream;
-
-import java.util.List;
-
+import junit.framework.TestCase;
+import org.duracloud.duraservice.rest.RestTestHelper;
+import org.duracloud.serviceconfig.ServiceInfo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.duraservice.rest.RestTestHelper;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 /**
  * Tests ServiceManager
@@ -43,34 +41,44 @@ public class ServiceManagerTest
         String failMsg = "Should throw an exception if not initialized";
 
         try{
-            serviceManager.getAllServices();
+            serviceManager.getAvailableServices();
             fail(failMsg);
         } catch (RuntimeException re) {}
 
         try{
             serviceManager.getDeployedServices();
             fail(failMsg);
-        } catch (RuntimeException re) {}
+        } catch (RuntimeException re) {}        
 
         try{
-            serviceManager.deployService("test", "test");
+            serviceManager.getService("testServiceId");
             fail(failMsg);
         } catch (RuntimeException re) {}
 
         try{
-            serviceManager.configureService("test", null);
+            serviceManager.getDeployedService("testServiceId", 0);
             fail(failMsg);
         } catch (RuntimeException re) {}
 
         try{
-            serviceManager.undeployService("test");
+            serviceManager.deployService("testServiceId", "test", "1.0", null);
+            fail(failMsg);
+        } catch (RuntimeException re) {}
+
+        try{
+            serviceManager.updateServiceConfig("testServiceId", 0, null);
+            fail(failMsg);
+        } catch (RuntimeException re) {}
+
+        try{
+            serviceManager.undeployService("testServiceId", 0);
             fail(failMsg);
         } catch (RuntimeException expected) {}
     }
 
     @Test
-    public void testGetAllServices() throws Exception {
-        List<String> services = serviceManager.getAllServices();
+    public void testGetAvailableServices() throws Exception {
+        List<ServiceInfo> services = serviceManager.getAvailableServices();
         assertTrue(services.size() == 3);
         assertTrue(services.contains(MockServiceManager.SERVICE_PACKAGE_1));
         assertTrue(services.contains(MockServiceManager.SERVICE_PACKAGE_2));

@@ -21,6 +21,9 @@ public class ServiceInfo implements Serializable, Cloneable{
     private String serviceName;
     private String description;
 
+    /** DuraStore ID for retrieving the service binaries */
+    private String contentId;
+
     /** The default system configuration options */
     private List<SystemConfig> systemConfigs;
 
@@ -123,6 +126,14 @@ public class ServiceInfo implements Serializable, Cloneable{
             }
         }
         return null;
+    }
+
+    public String getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(String contentId) {
+        this.contentId = contentId;
     }
 
     public ServiceInfo clone() {

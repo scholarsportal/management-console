@@ -59,6 +59,11 @@ public class RestTestHelper {
     }
 
     public static String buildTestInitXml() throws Exception {
+        String userStorageHost = "localhost";
+        String userStoragePort = getPort();
+        String userStorageContext = "durastore";
+        String userMsgBrokerURL = "tcp://localhost:61617";
+
         String serviceStorageHost = "localhost";
         String serviceStoragePort = getPort();
         String serviceStorageContext = "durastore";
@@ -71,6 +76,12 @@ public class RestTestHelper {
 
         StringBuilder xml = new StringBuilder();
         xml.append("<servicesConfig>");
+          xml.append("<userStorage>");
+            xml.append("<host>"+userStorageHost+"</host>");
+            xml.append("<port>"+userStoragePort+"</port>");
+            xml.append("<context>"+userStorageContext+"</context>");
+            xml.append("<msgBrokerUrl>"+userMsgBrokerURL+"</msgBrokerUrl>");
+          xml.append("</userStorage>");
           xml.append("<serviceStorage>");
             xml.append("<host>"+serviceStorageHost+"</host>");
             xml.append("<port>"+serviceStoragePort+"</port>");
