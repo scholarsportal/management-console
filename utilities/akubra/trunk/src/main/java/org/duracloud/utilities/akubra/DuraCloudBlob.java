@@ -12,16 +12,16 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
+import org.akubraproject.Blob;
+import org.akubraproject.BlobStoreConnection;
+import org.akubraproject.DuplicateBlobException;
+import org.akubraproject.MissingBlobException;
+import org.akubraproject.UnsupportedIdException;
+import org.akubraproject.impl.AbstractBlob;
+import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Content;
-import org.fedoracommons.akubra.Blob;
-import org.fedoracommons.akubra.BlobStoreConnection;
-import org.fedoracommons.akubra.DuplicateBlobException;
-import org.fedoracommons.akubra.MissingBlobException;
-import org.fedoracommons.akubra.UnsupportedIdException;
-import org.fedoracommons.akubra.impl.AbstractBlob;
-import org.fedoracommons.akubra.impl.StreamManager;
 
 /**
  * DuraCloud-backed Blob implementation.

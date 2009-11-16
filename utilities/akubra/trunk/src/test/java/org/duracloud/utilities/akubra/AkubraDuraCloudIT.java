@@ -11,9 +11,9 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import org.fedoracommons.akubra.Blob;
-import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.BlobStoreConnection;
+import org.akubraproject.Blob;
+import org.akubraproject.BlobStore;
+import org.akubraproject.BlobStoreConnection;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

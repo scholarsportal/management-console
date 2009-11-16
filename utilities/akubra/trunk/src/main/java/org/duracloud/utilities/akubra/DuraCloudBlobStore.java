@@ -8,13 +8,13 @@ import java.util.Map;
 
 import javax.transaction.Transaction;
 
+import org.akubraproject.Blob;
+import org.akubraproject.BlobStoreConnection;
+import org.akubraproject.impl.AbstractBlobStore;
+import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManagerImpl;
-import org.fedoracommons.akubra.Blob;
-import org.fedoracommons.akubra.BlobStoreConnection;
-import org.fedoracommons.akubra.impl.AbstractBlobStore;
-import org.fedoracommons.akubra.impl.StreamManager;
 
 /**
  * DuraCloud-backed Akubra implementation.

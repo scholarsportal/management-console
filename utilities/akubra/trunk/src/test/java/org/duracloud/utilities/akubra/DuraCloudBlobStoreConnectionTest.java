@@ -4,13 +4,13 @@ import java.io.IOException;
 
 import java.net.URI;
 
+import org.akubraproject.BlobStore;
+import org.akubraproject.BlobStoreConnection;
+import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Space;
 import org.easymock.classextension.EasyMock;
-import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.BlobStoreConnection;
-import org.fedoracommons.akubra.impl.StreamManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

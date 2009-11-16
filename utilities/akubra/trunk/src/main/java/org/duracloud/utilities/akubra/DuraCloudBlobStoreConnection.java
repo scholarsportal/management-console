@@ -7,13 +7,13 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.akubraproject.Blob;
+import org.akubraproject.BlobStore;
+import org.akubraproject.UnsupportedIdException;
+import org.akubraproject.impl.AbstractBlobStoreConnection;
+import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
-import org.fedoracommons.akubra.Blob;
-import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.UnsupportedIdException;
-import org.fedoracommons.akubra.impl.AbstractBlobStoreConnection;
-import org.fedoracommons.akubra.impl.StreamManager;
 
 /**
  * DuraCloud-backed BlobStoreConnection implementation.

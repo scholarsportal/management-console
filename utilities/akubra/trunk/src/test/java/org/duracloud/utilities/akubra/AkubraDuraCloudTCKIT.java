@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import java.net.URI;
 
+import org.akubraproject.BlobStore;
+import org.akubraproject.tck.TCKTestSuite;
 import org.duracloud.client.ContentStoreException;
-import org.fedoracommons.akubra.BlobStore;
-import org.fedoracommons.akubra.tck.TCKTestSuite;
 
 /**
  * Akubra-DuraCloud TCK Integration Tests.

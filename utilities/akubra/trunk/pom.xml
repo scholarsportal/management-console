@@ -55,7 +55,7 @@
     <!-- akubra dependencies -->
     <repository>
       <id>duraspace-releases</id>
-      <name>Duraspace Releases Maven Repository</name>
+      <name>DuraSpace Releases</name>
       <url>https://fedora-commons.org/m2/content/repositories/releases</url>
       <releases>
         <enabled>true</enabled>
@@ -64,14 +64,25 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>duraspace-snapshots</id>
+      <name>DuraSpace Snapshots</name>
+      <url>https://fedora-commons.org/m2/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.fedoracommons</groupId>  
+      <groupId>org.akubraproject</groupId>  
       <artifactId>akubra-core</artifactId>  
-      <version>0.1</version>
+      <version>0.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -109,9 +120,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.fedoracommons</groupId>
+      <groupId>org.akubraproject</groupId>
       <artifactId>akubra-tck</artifactId>
-      <version>0.1</version>
+      <version>0.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
  
