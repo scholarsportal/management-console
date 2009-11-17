@@ -26,12 +26,10 @@ public abstract class UserConfig implements Serializable {
     private int id;
     private String name;
     private String displayName;
-    private boolean required; // NOTE: this not persisted in underlying XML
 
-    public UserConfig(String name, String displayName, boolean required) {
+    public UserConfig(String name, String displayName) {
         this.name = name;
         this.displayName = displayName;
-        this.required = required;
     }
 
     public abstract InputType getInputType();
@@ -51,9 +49,4 @@ public abstract class UserConfig implements Serializable {
     public String getDisplayName() {
         return displayName;
     }
-
-    public boolean isRequired() {
-        return required;
-    }
-
 }

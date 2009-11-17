@@ -11,7 +11,7 @@ public class MultiSelectUserConfig extends SelectableUserConfig {
                                  String displayName,
                                  boolean required,
                                  List<Option> options) {
-        super(name, displayName, required, options);
+        super(name, displayName, options);
     }
 
     public InputType getInputType() {

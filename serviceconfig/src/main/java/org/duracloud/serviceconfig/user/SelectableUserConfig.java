@@ -12,9 +12,8 @@ public abstract class SelectableUserConfig extends UserConfig {
 
     public SelectableUserConfig(String name,
                                 String displayName,
-                                boolean required,
                                 List<Option> options) {
-        super(name, displayName, required);
+        super(name, displayName);
         this.options = Collections.unmodifiableList(options);
     }
 
