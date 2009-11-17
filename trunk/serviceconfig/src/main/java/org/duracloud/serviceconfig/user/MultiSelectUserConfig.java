@@ -9,7 +9,6 @@ public class MultiSelectUserConfig extends SelectableUserConfig {
 
     public MultiSelectUserConfig(String name,
                                  String displayName,
-                                 boolean required,
                                  List<Option> options) {
         super(name, displayName, options);
     }

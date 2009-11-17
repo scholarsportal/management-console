@@ -50,11 +50,9 @@ public class ServicesUtil {
 
         userConfigs.add(new SingleSelectUserConfig("fromStoreId",
                                                    "The source store",
-                                                   true,
                                                    stores));
         userConfigs.add(new SingleSelectUserConfig("toStoreId",
                                                    "The destination store",
-                                                   true,
                                                    stores));
 
         List<Option> spaces = new LinkedList<Option>();
@@ -64,11 +62,9 @@ public class ServicesUtil {
         spaces.add(new Option("Space 4", "4", false));
         userConfigs.add(new MultiSelectUserConfig("spaces",
                                                   "Spaces",
-                                                  true,
                                                   spaces));
         userConfigs.add(new TextUserConfig("mimetypes",
                                            "Mime Types",
-                                           true,
                                            null));
 
         ServiceInfo service = new ServiceInfo();

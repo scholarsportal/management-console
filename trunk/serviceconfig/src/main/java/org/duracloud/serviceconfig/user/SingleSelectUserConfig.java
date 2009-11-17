@@ -1,7 +1,5 @@
 package org.duracloud.serviceconfig.user;
 
-import org.duracloud.serviceconfig.user.Option;
-
 import java.util.List;
 
 
@@ -9,7 +7,7 @@ import java.util.List;
 public class SingleSelectUserConfig extends SelectableUserConfig{
     private static final long serialVersionUID = -2912715735337021361L;
 
-    public SingleSelectUserConfig(String name, String displayName, boolean required, List<Option> options){
+    public SingleSelectUserConfig(String name, String displayName, List<Option> options){
         super(name,displayName, options);
         
         boolean hasSelected = false;
@@ -23,6 +21,7 @@ public class SingleSelectUserConfig extends SelectableUserConfig{
             }
         }
     }
+    
     public InputType getInputType() {
         return InputType.SINGLESELECT;
     }

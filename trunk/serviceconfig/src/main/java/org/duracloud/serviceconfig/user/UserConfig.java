@@ -49,4 +49,5 @@ public abstract class UserConfig implements Serializable {
     public String getDisplayName() {
         return displayName;
     }
+
 }
