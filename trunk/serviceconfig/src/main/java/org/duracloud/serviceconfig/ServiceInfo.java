@@ -1,12 +1,14 @@
 package org.duracloud.serviceconfig;
 
+import org.duracloud.serviceconfig.user.UserConfig;
+
 import java.io.Serializable;
 import java.util.List;
 
 
 
 /**
- * This class is the container for all of the settings and options available for 
+ * This class is the container for all of the settings and options available for
  *  a service.
  *
  * @author Andrew Woods
@@ -16,13 +18,26 @@ public class ServiceInfo implements Serializable, Cloneable{
 
     private static final long serialVersionUID = -7958760599324208594L;
 
-    private String id;
-    private String displayName;
-    private String serviceName;
-    private String description;
+    /** Unique identifier for this service */
+    private int id;
 
     /** DuraStore ID for retrieving the service binaries */
     private String contentId;
+
+    /** User-friendly Service name */
+    private String displayName;
+
+    /** Release version number of the service software */
+    private String version;
+
+    /** User configuration version, checked at deployment time */
+    private String userConfigVersion;
+
+    /** Text description of service capabilities */
+    private String description;
+
+    /** Specifies number of deployments of this service that are allowed */
+    private int maxDeploymentsAllowed;
 
     /** The default system configuration options */
     private List<SystemConfig> systemConfigs;
@@ -30,20 +45,17 @@ public class ServiceInfo implements Serializable, Cloneable{
     /** The default user configuration options */
     private List<UserConfig> userConfigs;
 
-    /** User configuration version, checked at deployment time */
-    private String userConfigVersion;
-
     /** Includes information necessary to deploy a new service of this type */
     private List<DeploymentOption> deploymentOptions;
 
     /** Includes information about existing deployments of this service */
     private List<Deployment> deployments;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -55,12 +67,20 @@ public class ServiceInfo implements Serializable, Cloneable{
         this.displayName = displayName;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public String getVersion() {
+        return version;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public int getMaxDeploymentsAllowed() {
+        return maxDeploymentsAllowed;
+    }
+
+    public void setMaxDeploymentsAllowed(int maxDeploymentsAllowed) {
+        this.maxDeploymentsAllowed = maxDeploymentsAllowed;
     }
 
     public List<SystemConfig> getSystemConfigs() {
@@ -110,18 +130,19 @@ public class ServiceInfo implements Serializable, Cloneable{
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public String getHost(){
+
+    public String getHost() {
         return getSystemConfigValueByName("host");
     }
 
-    public Integer getPort(){
+    public Integer getPort() {
         String value = getSystemConfigValueByName("port");
         return value != null ? Integer.valueOf(value) : null;
     }
+
     private String getSystemConfigValueByName(String name) {
-        for(SystemConfig s : systemConfigs){
-            if(s.getName().equals(name)){
+        for (SystemConfig s : systemConfigs) {
+            if (s.getName().equals(name)) {
                 return s.getValue();
             }
         }

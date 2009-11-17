@@ -1,11 +1,6 @@
 
 package org.duracloud.duradmin.webflow.service;
 
-import java.text.MessageFormat;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.duradmin.control.ControllerSupport;
@@ -17,6 +12,10 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.servlet.AbstractFlowHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.MessageFormat;
 
 public class DeployServiceFlowHandler
         extends AbstractFlowHandler {
@@ -69,7 +68,7 @@ public class DeployServiceFlowHandler
             outcomeUrl =
                     MessageFormat
                             .format("contextRelative:/services.htm?serviceId={0}",
-                                    service.getServiceName());
+                                    service.getId());
             outcomeUrl =
                     MessageUtils
                             .appendRedirectMessage(outcomeUrl,

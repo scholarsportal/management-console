@@ -1,4 +1,6 @@
-package org.duracloud.serviceconfig;
+package org.duracloud.serviceconfig.user;
+
+import org.duracloud.serviceconfig.user.Option;
 
 import java.util.List;
 
