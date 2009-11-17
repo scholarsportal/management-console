@@ -295,29 +295,6 @@ public class ServicesManager {
         }
     }
     
-    public ServiceInfo getServiceInfo(String serviceName, String serviceHost) throws ServicesException {
-        //TODO Implement properly - this is a just a place holder.
-        return null;
-    }
-    
-    public void updateServiceConfiguration(ServiceInfo serviceInfo) throws ServicesException {
-        //TODO Implement properly - this is a just a place holder.
-    }
-
-    public void deployService(ServiceInfo serviceInfo, String serviceHost) 
-              throws ServicesException{
-        //TODO Implement properly - this is a just a place holder.
-        
-    }
-    
-    public List<ServiceInfo> getAvailableServiceInfos(){
-        //TODO Implement properly - this is a just a place holder.
-        return null;
-    }
-    
-    public List<ServiceInfo> getDeployedServiceInfos(){
-        //TODO Implement properly - this is a just a place holder.
-        return null;
-    }
+ 
 
 }
