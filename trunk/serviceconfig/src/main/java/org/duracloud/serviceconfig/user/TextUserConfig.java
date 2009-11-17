@@ -9,13 +9,13 @@ public class TextUserConfig extends UserConfig {
 
     private String value;
     
-    public TextUserConfig (String name, String displayName, boolean required, String value){
-        super(name, displayName,required);
+    public TextUserConfig (String name, String displayName,  String value){
+        super(name, displayName);
         this.value = value;
     }
     
-    public TextUserConfig(String name, String displayName, boolean required){
-        super(name,displayName, required);
+    public TextUserConfig(String name, String displayName){
+        super(name,displayName);
     }
     
     public InputType getInputType() {
