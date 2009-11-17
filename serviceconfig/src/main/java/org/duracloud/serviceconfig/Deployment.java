@@ -1,5 +1,7 @@
 package org.duracloud.serviceconfig;
 
+import org.duracloud.serviceconfig.user.UserConfig;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class Deployment implements Serializable{
     private int id;
 
     /** The name of the host on which this service is deployed */
-    private String name;
+    private String hostname;
 
     /** The status of this deployed service */
     private StatusType status;
@@ -40,12 +42,12 @@ public class Deployment implements Serializable{
         this.id = id;
     }    
 
-    public String getName() {
-        return name;
+    public String getHostname() {
+        return hostname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public StatusType getStatus() {

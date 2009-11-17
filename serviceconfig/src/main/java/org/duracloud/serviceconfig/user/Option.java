@@ -1,4 +1,4 @@
-package org.duracloud.serviceconfig;
+package org.duracloud.serviceconfig.user;
 
 import java.io.Serializable;
 
@@ -41,7 +41,7 @@ public class Option implements Serializable{
         return selected;
     }
 
-    protected void setSelected(boolean selected) {
+    public void setSelected(boolean selected) {
        this.selected = selected;
     }
 }

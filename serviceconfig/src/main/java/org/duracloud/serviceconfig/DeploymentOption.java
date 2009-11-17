@@ -19,22 +19,13 @@ public class DeploymentOption implements Serializable{
         PRIMARY, NEW, EXISTING;
     }
 
-    public enum StateType {
-        AVAILABLE, UNAVAILABLE;
+    public enum State {
+        ACTIVE, AVAILABLE, UNAVAILABLE, SELECTED;
     }
 
-    private String hostName;
     private String displayName;
     private LocationType locationType;
-    private StateType stateType;
-
-    public String getHostName() {
-        return hostName;
-    }
-
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
+    private State state;
 
     public String getDisplayName() {
         return displayName;
@@ -52,12 +43,12 @@ public class DeploymentOption implements Serializable{
         this.locationType = locationType;
     }
 
-    public StateType getStateType() {
-        return stateType;
+    public State getState() {
+        return state;
     }
 
-    public void setStateType(StateType stateType) {
-        this.stateType = stateType;
+    public void setState(State state) {
+        this.state = state;
     }
 
 }

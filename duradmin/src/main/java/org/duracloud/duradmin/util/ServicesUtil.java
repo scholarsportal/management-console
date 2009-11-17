@@ -1,19 +1,19 @@
 
 package org.duracloud.duradmin.util;
 
+import org.duracloud.client.ServicesException;
+import org.duracloud.client.ServicesManager;
+import org.duracloud.serviceconfig.user.Option;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
+import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
+import org.duracloud.serviceconfig.user.TextUserConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.duracloud.client.ServicesException;
-import org.duracloud.client.ServicesManager;
-import org.duracloud.serviceconfig.MultiSelectUserConfig;
-import org.duracloud.serviceconfig.Option;
-import org.duracloud.serviceconfig.ServiceInfo;
-import org.duracloud.serviceconfig.SingleSelectUserConfig;
-import org.duracloud.serviceconfig.SystemConfig;
-import org.duracloud.serviceconfig.TextUserConfig;
-import org.duracloud.serviceconfig.UserConfig;
 
 /**
  * Utilities for handling services
@@ -72,7 +72,7 @@ public class ServicesUtil {
                                            null));
 
         ServiceInfo service = new ServiceInfo();
-        service.setServiceName(serviceId);
+        service.setId(Integer.parseInt(serviceId)); // FIXME: if this is indeed an int, it should be guaranteed at a higher level.
         service.setDisplayName("Replicaton Service");
         service
                 .setDescription("A description of the replication service goes here.  We should provide enough space for multiple lines of text.");
