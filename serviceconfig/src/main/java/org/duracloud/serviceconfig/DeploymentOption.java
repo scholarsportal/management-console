@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Andrew Woods
  *         Date: Nov 6, 2009
  */
-public class DeploymentOption implements Serializable{
+public class DeploymentOption implements Serializable {
 
     private static final long serialVersionUID = -5554753103296039413L;
 
@@ -20,11 +20,12 @@ public class DeploymentOption implements Serializable{
     }
 
     public enum State {
-        ACTIVE, AVAILABLE, UNAVAILABLE, SELECTED;
+        AVAILABLE, UNAVAILABLE;
     }
 
     private String displayName;
     private LocationType locationType;
+    private String hostname;
     private State state;
 
     public String getDisplayName() {
@@ -41,6 +42,14 @@ public class DeploymentOption implements Serializable{
 
     public void setLocationType(LocationType locationType) {
         this.locationType = locationType;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     public State getState() {
