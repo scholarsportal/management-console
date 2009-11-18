@@ -7,12 +7,15 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.serviceconfig.MultiSelectUserConfig;
-import org.duracloud.serviceconfig.Option;
+import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
+import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
-import org.duracloud.serviceconfig.SingleSelectUserConfig;
-import org.duracloud.serviceconfig.TextUserConfig;
-import org.duracloud.serviceconfig.UserConfig;
+import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
+import org.duracloud.serviceconfig.user.Option;
+import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
+import org.duracloud.serviceconfig.user.TextUserConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
 
 import java.io.ByteArrayInputStream;
@@ -30,23 +33,34 @@ import java.util.Map;
  */
 public class MockServiceManager extends ServiceManager {
 
-    public static ServiceInfo service1;
+    private List<ServiceInfo> serviceList;
+    public ServiceInfo service1;
+    public ServiceInfo service2;
+    public ServiceInfo service3;
 
     public MockServiceManager() {
         buildService1();
+        buildService2();
+        buildService3();
 
+        serviceList = new ArrayList<ServiceInfo>();
+        serviceList.add(service1);
+        serviceList.add(service2);
+        serviceList.add(service3);
     }
 
     private void buildService1() {
         service1 = new ServiceInfo();
-        service1.setId("1");
-        service1.setContentId("service1-1.0.0.zip");
+        service1.setId(1);
+        service1.setContentId("service1.zip");
         service1.setDescription("Service 1 Description");
         service1.setDisplayName("Service 1");
+        service1.setUserConfigVersion("1.0");
+        service1.setMaxDeploymentsAllowed(-1);
 
         List<UserConfig> service1UserConfig = new ArrayList<UserConfig>();
         TextUserConfig config1 =
-            new TextUserConfig("config1", "Config 1", true);
+            new TextUserConfig("config1", "Config 1", "Config Value");
 
         List<Option> config2ops = new ArrayList<Option>();
         Option config2op1 = new Option("Config 2 Option 1", "config2op1", false);
@@ -54,7 +68,7 @@ public class MockServiceManager extends ServiceManager {
         config2ops.add(config2op1);
         config2ops.add(config2op2);
         SingleSelectUserConfig config2 =
-            new SingleSelectUserConfig("config2", "Config 2", true, config2ops);
+            new SingleSelectUserConfig("config2", "Config 2", config2ops);
 
         List<Option> config3ops = new ArrayList<Option>();
         Option config3op1 = new Option("Config 3 Option 1", "config3op1", false);
@@ -64,37 +78,137 @@ public class MockServiceManager extends ServiceManager {
         config3ops.add(config3op2);
         config3ops.add(config3op3);
         MultiSelectUserConfig config3 =
-            new MultiSelectUserConfig("config3", "Config 3", true, config3ops);
+            new MultiSelectUserConfig("config3", "Config 3", config3ops);
 
         service1UserConfig.add(config1);
         service1UserConfig.add(config2);
         service1UserConfig.add(config3);
 
         service1.setUserConfigs(service1UserConfig);
+
+        List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
+        systemConfig.add(new SystemConfig("sysConfig1", null, "default"));
+        service1.setSystemConfigs(systemConfig);
+
+        DeploymentOption depOp = new DeploymentOption();
+        depOp.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp.setState(DeploymentOption.State.AVAILABLE);
+        List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
+        depOptions.add(depOp);
+
+        service1.setDeploymentOptions(depOptions);
+    }
+
+    private void buildService2() {
+        service2 = new ServiceInfo();
+        service2.setId(2);
+        service2.setContentId("service2.zip");
+        service2.setDescription("Service 2 Description");
+        service2.setDisplayName("Service 2");
+        service2.setUserConfigVersion("1.0");
+        service2.setMaxDeploymentsAllowed(-1);
+
+        List<UserConfig> service2UserConfig = new ArrayList<UserConfig>();
+        TextUserConfig config1 =
+            new TextUserConfig("config1", "Config 1", "Config Value");
+
+        List<Option> config2ops = new ArrayList<Option>();
+        Option config2op = new Option("Stores", STORES_VAR, false);
+        config2ops.add(config2op);
+        SingleSelectUserConfig config2 =
+            new SingleSelectUserConfig("config2", "Config 2", config2ops);
+
+        List<Option> config3ops = new ArrayList<Option>();
+        Option config3op = new Option("Spaces", SPACES_VAR, false);
+        config3ops.add(config3op);
+        MultiSelectUserConfig config3 =
+            new MultiSelectUserConfig("config3", "Config 3", config3ops);
+
+        service2UserConfig.add(config1);
+        service2UserConfig.add(config2);
+        service2UserConfig.add(config3);
+
+        service2.setUserConfigs(service2UserConfig);
+
+        List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
+        systemConfig.add(
+            new SystemConfig("sysConfig1", "$DURASTORE-HOST", "default"));
+
+        service2.setSystemConfigs(systemConfig);
+
+        DeploymentOption depOp1 = new DeploymentOption();
+        depOp1.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp1.setState(DeploymentOption.State.UNAVAILABLE);
+        DeploymentOption depOp2 = new DeploymentOption();
+        depOp2.setLocationType(DeploymentOption.LocationType.NEW);
+        depOp2.setState(DeploymentOption.State.AVAILABLE);
+        List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
+        depOptions.add(depOp1);
+        depOptions.add(depOp2);
+
+        service2.setDeploymentOptions(depOptions);
+    }
+
+    private void buildService3() {
+        service3 = new ServiceInfo();
+        service3.setId(3);
+        service3.setContentId("service3.zip");
+        service3.setDescription("Service 3 Description");
+        service3.setDisplayName("Service 3");
+        service3.setUserConfigVersion("1.0");
+        service3.setMaxDeploymentsAllowed(-1);
+
+        List<UserConfig> service3UserConfig = new ArrayList<UserConfig>();
+        service3.setUserConfigs(service3UserConfig);
+
+        DeploymentOption depOp1 = new DeploymentOption();
+        depOp1.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp1.setState(DeploymentOption.State.UNAVAILABLE);
+        DeploymentOption depOp2 = new DeploymentOption();
+        depOp2.setLocationType(DeploymentOption.LocationType.NEW);
+        depOp2.setState(DeploymentOption.State.UNAVAILABLE);
+        DeploymentOption depOp3 = new DeploymentOption();
+        depOp3.setLocationType(DeploymentOption.LocationType.EXISTING);
+        depOp3.setState(DeploymentOption.State.UNAVAILABLE);
+        List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
+        depOptions.add(depOp1);
+        depOptions.add(depOp2);
+        depOptions.add(depOp3);
+
+        service3.setDeploymentOptions(depOptions);
     }
 
     @Override
-    protected void initializeServicesList(ServiceStore serviceStore)
+    protected void initializeServicesList()
     throws ContentStoreException {
         ContentStore mockStore = new MockContentStore();
-        Space space = mockStore.getSpace(serviceStore.getSpaceId());
-        setServiceContentStore(mockStore);
-        setServicesList(space.getContentIds());
+        setServiceContentStore(mockStore);       
+        setServicesList(serviceList);
     }
 
     @Override
-    protected ServicesAdminClient getServicesAdmin(String instanceHost)
-    throws ServiceException {
-        return new MockServiceUploadClient();
+    protected ServiceComputeInstance getServiceComputeInstanceByHostName(String hostName)
+        throws NoSuchServiceComputeInstanceException {
+        if(hostName.equals(primaryHost)) {
+            return new ServiceComputeInstance(primaryHost,
+                                              PRIMARY_HOST_DISPLAY,
+                                              new MockServicesAdminClient());
+        } else {
+            return super.getServiceComputeInstanceByHostName(hostName);
+        }
+    }
+
+    @Override
+    protected void refreshServicesList() {
+        // Do nothing
     }
 
     private class MockContentStore implements ContentStore {
 
         public Space getSpace(String spaceId) throws ContentStoreException {
             Space mockSpace = new Space();
-            mockSpace.addContentId(SERVICE_PACKAGE_1);
-            mockSpace.addContentId(SERVICE_PACKAGE_2);
-            mockSpace.addContentId(SERVICE_PACKAGE_3);
+            mockSpace.addContentId("service1.zip");
+            mockSpace.addContentId("service2.zip");
             return mockSpace;
         }
 
@@ -102,28 +216,8 @@ public class MockServiceManager extends ServiceManager {
                               String prefix,
                               String marker,
                               Integer maxResults) throws ContentStoreException {
-            Space space = getSpace(spaceId);
-            if(maxResults == null){
-                maxResults = 0;
-            }
-
-            List<String> ids = space.getContentIds();
-            
-            int beginIndex = 0;
-            
-            if(marker != null && marker.length() > 0){
-                beginIndex = ids.indexOf(marker)+1;
-            }
-
-            if(beginIndex == ids.size()){
-                ids.clear();
-            }else if(maxResults == 0){
-                space.setContentIds(ids.subList(beginIndex, ids.size()));
-            }else{
-                int lastIndex = Math.min(beginIndex+maxResults, ids.size());
-                space.setContentIds(ids.subList(beginIndex, lastIndex));
-            }
-            return space;
+            // Auto-generated method stub
+            return null;
         }
         
         public Content getContent(String spaceId, String contentId) {
@@ -216,7 +310,7 @@ public class MockServiceManager extends ServiceManager {
         }
     }
 
-    private class MockServiceUploadClient extends ServicesAdminClient {
+    private class MockServicesAdminClient extends ServicesAdminClient {
 
         RestHttpHelper.HttpResponse response =
             new RestHttpHelper().

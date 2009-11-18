@@ -8,9 +8,9 @@ import org.duracloud.common.util.error.DuraCloudException;
  */
 public class NoSuchServiceException extends DuraCloudException {
 
-    public NoSuchServiceException(String serviceId) {
+    public NoSuchServiceException(int serviceId) {
         super("There is no service with service ID  " +  serviceId,
               "duracloud.error.duraservice.nosuchservice");
-        setArgs(serviceId);
+        setArgs(new Integer(serviceId).toString());
     }
 }

@@ -19,13 +19,13 @@ public class DuraServiceConfigTest {
 
     @Test
     public void testGetProps() throws Exception {
+        DuraServiceConfig config = new DuraServiceConfig();
 
-        String port = DuraServiceConfig.getPort();
+        String port = config.getPort();
         assertNotNull(port);
         assertFalse(port.equals("${tomcat.port}"));
 
-        String servicesAdminURL = DuraServiceConfig.getServicesAdminUrl();
+        String servicesAdminURL = config.getServicesAdminUrl();
         assertNotNull(servicesAdminURL);
-
     }
 }

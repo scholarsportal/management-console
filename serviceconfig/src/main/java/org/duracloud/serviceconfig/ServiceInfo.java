@@ -36,8 +36,11 @@ public class ServiceInfo implements Serializable, Cloneable{
     /** Text description of service capabilities */
     private String description;
 
-    /** Specifies number of deployments of this service that are allowed */
-    private int maxDeploymentsAllowed;
+    /**
+     * Specifies number of deployments of this service that are allowed,
+     * a value of -1 indicates that there is no limit
+     */
+    private int maxDeploymentsAllowed = -1;
 
     /** The default system configuration options */
     private List<SystemConfig> systemConfigs;
@@ -129,24 +132,6 @@ public class ServiceInfo implements Serializable, Cloneable{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getHost() {
-        return getSystemConfigValueByName("host");
-    }
-
-    public Integer getPort() {
-        String value = getSystemConfigValueByName("port");
-        return value != null ? Integer.valueOf(value) : null;
-    }
-
-    private String getSystemConfigValueByName(String name) {
-        for (SystemConfig s : systemConfigs) {
-            if (s.getName().equals(name)) {
-                return s.getValue();
-            }
-        }
-        return null;
     }
 
     public String getContentId() {

@@ -12,9 +12,19 @@ import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Content;
 import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
-import org.duracloud.duraservice.error.NoSuchServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
-import org.duracloud.serviceconfig.*;
+import org.duracloud.duraservice.error.NoSuchServiceException;
+import org.duracloud.serviceconfig.Deployment;
+import org.duracloud.serviceconfig.DeploymentOption;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.ServicesConfigDocument;
+import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
+import org.duracloud.serviceconfig.user.Option;
+import org.duracloud.serviceconfig.user.SelectableUserConfig;
+import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
+import org.duracloud.serviceconfig.user.TextUserConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -35,10 +45,10 @@ public class ServiceManager {
 
     private static final Logger log = Logger.getLogger(ServiceManager.class);
 
-    private static final String PRIMARY_HOST_DISPLAY = "Primary Service Instance";
+    protected static final String PRIMARY_HOST_DISPLAY = "Primary Service Instance";
 
     // The primary services host, generally deployed on the primary user instance
-    private static String primaryHost;
+    protected static String primaryHost;
 
     private String localServicesAdminBaseURL;
 
@@ -80,6 +90,8 @@ public class ServiceManager {
     public static final String STORE_PORT_VAR = "$DURASTORE-PORT";
     public static final String STORE_CONTEXT_VAR = "$DURASTORE-CONTEXT";
     public static final String STORE_MSG_BROKER_VAR = "$MESSAGE-BROKER-URL";
+
+    public static final String NEW_SERVICE_HOST = "new";
 
     public static enum ServiceStatus {
         AVAILABLE ("available"),
@@ -221,7 +233,7 @@ public class ServiceManager {
      * Retrieves the xml file where all service information is contained
      * and rebuilds the list of services.
      */
-    private void refreshServicesList() {
+    protected void refreshServicesList() {
         String servicesSpaceId = serviceStore.getSpaceId();
         try {
             String configFileName = servicesSpaceId+".xml";
@@ -245,8 +257,7 @@ public class ServiceManager {
      */
     private List<ServiceInfo> buildServiceList(InputStream servicesInfoXml) {
         // Use serviceconfig tools to parse xml
-        ServicesConfigDocument configDoc =
-            new ServicesConfigDocumentImpl();
+        ServicesConfigDocument configDoc = new ServicesConfigDocument();
         return configDoc.getServiceList(servicesInfoXml);
     }
 
@@ -277,7 +288,7 @@ public class ServiceManager {
             // Determine if service has an available deployment option
             boolean availDeployment = false;
             for(DeploymentOption depOp : service.getDeploymentOptions()) {
-                if(depOp.getStateType().equals(DeploymentOption.StateType.AVAILABLE)) {
+                if(depOp.getState().equals(DeploymentOption.State.AVAILABLE)) {
                     availDeployment = true;
                 }
             }
@@ -304,17 +315,24 @@ public class ServiceManager {
         ServiceInfo srvClone = service.clone();
 
         // Populate server instance options
-        populateServiceComputeInstances(srvClone);
+        List<DeploymentOption> populatedDeploymentOptions =
+            populateDeploymentOptions(srvClone.getDeploymentOptions());
+        srvClone.setDeploymentOptions(populatedDeploymentOptions);
 
         // Populate variables in user config ($STORES and $SPACES)
-        populateVariables(srvClone);
+        List<UserConfig> populatedUserConfigs =
+            populateVariables(srvClone.getUserConfigs());
+        srvClone.setUserConfigs(populatedUserConfigs);
 
         // Remove system configs
         srvClone.setSystemConfigs(null);
 
         // Remove system configs from deployments
-        for(Deployment deployment : srvClone.getDeployments()) {
-            deployment.setSystemConfigs(null);
+        List<Deployment> deployments = srvClone.getDeployments();
+        if(deployments != null) {
+            for(Deployment deployment : deployments) {
+                deployment.setSystemConfigs(null);
+            }
         }
 
         return srvClone;
@@ -323,68 +341,100 @@ public class ServiceManager {
     /*
      * Handles the population of option sets for variables $STORES and $SPACES
      */
-    private void populateVariables(ServiceInfo service) {
-        List<UserConfig> userConfigs = service.getUserConfigs();
+    private List<UserConfig> populateVariables(List<UserConfig> userConfigs) {
+        List<UserConfig> newUserConfigs = new ArrayList<UserConfig>();
         for(UserConfig config : userConfigs) {
             if(config instanceof SelectableUserConfig) {
                 List<Option> options =
                     ((SelectableUserConfig)config).getOptions();
-                for(Option option : options) {
-                    String value = option.getValue();
-                    if(value.equals(STORES_VAR)) {
-                        populateStoresVariable(options, option);
-                    } else if(value.equals(SPACES_VAR)) {
-                        populateSpacesVariable(options, option);
-                    }
+                options = populateStoresVariable(options);
+                options = populateSpacesVariable(options);
+                if(config instanceof SingleSelectUserConfig) {
+                    SingleSelectUserConfig newConfig =
+                        new SingleSelectUserConfig(config.getName(),
+                                                   config.getDisplayName(),
+                                                   options);
+                    newUserConfigs.add(newConfig);
+                } else if(config instanceof MultiSelectUserConfig) {
+                    MultiSelectUserConfig newConfig =
+                        new MultiSelectUserConfig(config.getName(),
+                                                  config.getDisplayName(), 
+                                                  options);
+                    newUserConfigs.add(newConfig);
+                } else {
+                    throw new RuntimeException("Unexpected UserConfig type: " +
+                                               config.getClass());
                 }
+            } else {
+                newUserConfigs.add(config);
             }
         }
+        return newUserConfigs;
     }
 
     /*
      * Populates the $STORES variable
      */
-    private void populateStoresVariable(List<Option> options, Option option) {
-        try {
-            options.remove(option);
-            Map<String, ContentStore> contentStores =
-                userStoreManager.getContentStores();
-            String primaryId =
-                userStoreManager.getPrimaryContentStore().getStoreId();
-            for(String storeId : contentStores.keySet()) {
-                ContentStore contentStore =
-                    userStoreManager.getContentStore(storeId);
-                String type = contentStore.getStorageProviderType();
-                String displayName = type + " (" + storeId + ")";
-                boolean primary = storeId.equals(primaryId);
-                Option storeOption = new Option(displayName, storeId, primary);
-                options.add(storeOption);
+    private List<Option> populateStoresVariable(List<Option> options) {
+        List<Option> newOptionsList = new ArrayList<Option>();
+        for (Option option : options) {
+            String value = option.getValue();
+            if (value.equals(STORES_VAR)) {
+                try {
+                    Map<String, ContentStore> contentStores =
+                        userStoreManager.getContentStores();
+                    String primaryId =
+                        userStoreManager.getPrimaryContentStore().getStoreId();
+                    for (String storeId : contentStores.keySet()) {
+                        ContentStore contentStore =
+                            userStoreManager.getContentStore(storeId);
+                        String type = contentStore.getStorageProviderType();
+                        String displayName = type + " (" + storeId + ")";
+                        boolean primary = storeId.equals(primaryId);
+                        Option storeOption = new Option(displayName,
+                                                        storeId,
+                                                        primary);
+                        newOptionsList.add(storeOption);
+                    }
+                } catch (ContentStoreException cse) {
+                    String error =
+                        "Error encountered attempting to construct user" +
+                            " content stores options " + cse.getMessage();
+                    throw new RuntimeException(error, cse);
+                }
+            } else {
+                newOptionsList.add(option);
             }
-        } catch(ContentStoreException cse) {
-            String error = "Error encountered attempting to construct user" +
-                           " content stores options " + cse.getMessage();
-            throw new RuntimeException(error, cse);
         }
+        return newOptionsList;
     }
 
     /*
      * Populates the $SPACES variable
      */
-    private void populateSpacesVariable(List<Option> options, Option option) {
-        try {
-            options.remove(option);
-            ContentStore primaryStore =
-                userStoreManager.getPrimaryContentStore();
-            List<String> spaces = primaryStore.getSpaces();
-            for(String spaceId : spaces) {
-                Option storeOption = new Option(spaceId, spaceId, false);
-                options.add(storeOption);
+    private List<Option> populateSpacesVariable(List<Option> options) {
+        List<Option> newOptionsList = new ArrayList<Option>();
+        for (Option option : options) {
+            String value = option.getValue();
+            if (value.equals(SPACES_VAR)) {
+                try {
+                    ContentStore primaryStore =
+                        userStoreManager.getPrimaryContentStore();
+                    List<String> spaces = primaryStore.getSpaces();
+                    for(String spaceId : spaces) {
+                        Option storeOption = new Option(spaceId, spaceId, false);
+                        newOptionsList.add(storeOption);
+                    }
+                } catch(ContentStoreException cse) {
+                    String error = "Error encountered attempting to construct user" +
+                                   " content spaces options " + cse.getMessage();
+                    throw new RuntimeException(error, cse);
+                }
+            } else {
+                newOptionsList.add(option);
             }
-        } catch(ContentStoreException cse) {
-            String error = "Error encountered attempting to construct user" +
-                           " content spaces options " + cse.getMessage();
-            throw new RuntimeException(error, cse);
         }
+        return newOptionsList;
     }
 
     /*
@@ -392,26 +442,30 @@ public class ServiceManager {
      * EXISTING type is available, then adds all of the currently available
      * service instances to the list as options for deploying this service. 
      */
-    private void populateServiceComputeInstances(ServiceInfo service) {
-        List<DeploymentOption> deploymentOptions = service.getDeploymentOptions();
+    private List<DeploymentOption> populateDeploymentOptions(List<DeploymentOption> deploymentOptions) {
+        List<DeploymentOption> newDeploymentOptions =
+            new ArrayList<DeploymentOption>();
         for(DeploymentOption depOp : deploymentOptions) {
             if(depOp.getLocationType().equals(DeploymentOption.LocationType.EXISTING) &&
-               depOp.getStateType().equals(DeploymentOption.StateType.AVAILABLE)) {
-                deploymentOptions.remove(depOp);
+               depOp.getState().equals(DeploymentOption.State.AVAILABLE)) {
                 for(ServiceComputeInstance computeInstance : serviceComputeInstances) {
                     String hostName = computeInstance.getHostName();
                     if(!hostName.equals(primaryHost) &&
                        !computeInstance.isLocked()) {
                         DeploymentOption newDepOpt = new DeploymentOption();
-                        newDepOpt.setHostName(hostName);
+                        newDepOpt.setHostname(hostName);
                         newDepOpt.setDisplayName(computeInstance.getDisplayName());
                         newDepOpt.setLocationType(DeploymentOption.LocationType.EXISTING);
-                        newDepOpt.setStateType(DeploymentOption.StateType.AVAILABLE);
+                        newDepOpt.setState(DeploymentOption.State.AVAILABLE);
                         deploymentOptions.add(newDepOpt);
+                        newDeploymentOptions.add(newDepOpt);
                     }
                 }
+            } else {
+                newDeploymentOptions.add(depOp);
             }
         }
+        return newDeploymentOptions;
     }
 
     /**
@@ -451,7 +505,7 @@ public class ServiceManager {
      * @throws NoSuchServiceException if there is no service with ID = serviceId
      * @throws NoSuchServiceComputeInstanceException if there is no services compute instance at serviceHost
      */
-    public int deployService(String serviceId,
+    public int deployService(int serviceId,
                              String serviceHost,
                              String userConfigVersion,
                              List<UserConfig> userConfig)
@@ -459,38 +513,28 @@ public class ServiceManager {
         checkConfigured();
         refreshServicesList();
 
-        if(serviceHost == null || serviceHost.equals("")) {
-            serviceHost = primaryHost;
-        }
-
         ServiceInfo srvToDeploy = findService(serviceId);
 
-        // Make sure the user config version is current
-        String currentConfigVersion = srvToDeploy.getUserConfigVersion();
-        if(!userConfigVersion.equals(currentConfigVersion)) {
-            String error = "User config version " + userConfigVersion +
-                " does not match the most current user config version: " +
-                currentConfigVersion + ". These versions must match in order " +
-                "to ensure that the service configuration is created " +
-                "properly for deployment.";
+        checkUserConfigVersion(srvToDeploy, userConfigVersion);
+
+        // Make sure that another deployment of this service is allowed
+        int maxDeployments = srvToDeploy.getMaxDeploymentsAllowed();
+        if(!underMaxDeployments(serviceId, maxDeployments)) {
+            String error = "Service not deployed, the maximum deployment " +
+                "limit for this service " + maxDeployments + " has been reached";
             throw new RuntimeException(error);
         }
 
         ServiceComputeInstance computeInstance =
-            getServiceComputeInstanceByHostName(serviceHost);
-        if(computeInstance.isLocked()) {
-            String error = "Cannot deploy service, the services compute " +
-                "instance at host " + serviceHost + " has been locked to " +
-                "ensure no further services are deployed. You must unlock " +
-                "this instance prior to deploying additional services.";
-            throw new RuntimeException(error);
-        }
+            getServiceHost(serviceId, serviceHost);
 
         log.info("Deploying service " + serviceId + " to " + serviceHost);
 
         // Resolve system config
-        List<SystemConfig> systemConfig =
-            resolveSystemConfigVars(srvToDeploy.getSystemConfigs());
+        List<SystemConfig> systemConfig = srvToDeploy.getSystemConfigs();
+        if(systemConfig != null) {
+            systemConfig = resolveSystemConfigVars(systemConfig);
+        }
 
         Map<String, String> serviceConfig =
             createServiceConfig(userConfig, systemConfig);
@@ -499,14 +543,16 @@ public class ServiceManager {
             // Grab file from store
             String contentId = srvToDeploy.getContentId();
             Content content =
-                serviceStoreClient.getContent(serviceStore.getSpaceId(), contentId);
+                serviceStoreClient.getContent(serviceStore.getSpaceId(),
+                                              contentId);
             InputStream serviceStream = content.getStream();
             long length = getContentLength(content);
 
             // Deploy the service (push file to services admin)
-            ServicesAdminClient servicesAdmin = computeInstance.getServicesAdmin();
+            ServicesAdminClient servicesAdmin =
+                computeInstance.getServicesAdmin();
             HttpResponse response =
-                servicesAdmin.postServiceBundle(serviceId, serviceStream, length);
+                servicesAdmin.postServiceBundle(contentId, serviceStream, length);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                 String error = "Error deploying service: " + serviceId +
                                " Services Admin response code was " +
@@ -517,7 +563,7 @@ public class ServiceManager {
             // Wait to allow deployment to complete
             int maxLoops = 5;
             for(int i=0; i < maxLoops; i++) {
-                if(servicesAdmin.isServiceDeployed(serviceId)) {
+                if(servicesAdmin.isServiceDeployed(contentId)) {
                     break;
                 } else {
                     Thread.sleep(2000);
@@ -525,10 +571,10 @@ public class ServiceManager {
             }
 
             // Configure the service
-            servicesAdmin.postServiceConfig(serviceId, serviceConfig);
+            servicesAdmin.postServiceConfig(contentId, serviceConfig);
 
             // Start the service
-            response = servicesAdmin.startServiceBundle(serviceId);
+            response = servicesAdmin.startServiceBundle(contentId);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                 String error = "Error starting service: " + serviceId +
                                " Services Admin response code was " +
@@ -544,9 +590,107 @@ public class ServiceManager {
         }
 
         return storeDeployedService(srvToDeploy,
-                                    serviceHost,
+                                    computeInstance.getHostName(),
                                     userConfig,
                                     systemConfig);
+    }
+
+    private void checkUserConfigVersion(ServiceInfo service,
+                                        String userConfigVersion) {
+        // Make sure the user config version is current
+        String currentConfigVersion = service.getUserConfigVersion();
+        if(!userConfigVersion.equals(currentConfigVersion)) {
+            String error = "User config version " + userConfigVersion +
+                " does not match the most current user config version: " +
+                currentConfigVersion + ". These versions must match in order " +
+                "to ensure that the service configuration is created " +
+                "properly for deployment.";
+            throw new RuntimeException(error);
+        }
+    }
+
+    /*
+     * Checks to see if a service has hit its max deployment limit
+     * @return true if the service is still under the max deployment limit
+     */
+    private boolean underMaxDeployments(int serviceId, int maxDeployments)
+        throws NoSuchServiceException {
+        if(maxDeployments < 0) {
+            return true;
+        }
+
+        int deploymentCount = 0;
+        for(ServiceInfo deployedService : deployedServices) {
+            if(serviceId == deployedService.getId()) {
+                List<Deployment> deployments = deployedService.getDeployments();
+                if(deployments != null) {
+                    deploymentCount += deployments.size();
+                }
+            }
+        }
+        return (deploymentCount < maxDeployments);
+    }
+
+    /*
+     * Attempts to verify that the service host is valid based on
+     * deployment options configured for this service. If the service
+     * is to be deployed on a new compute host, makes the call to create
+     * the new host.
+     *
+     * @return the service compute instance for this host
+     */
+    private ServiceComputeInstance getServiceHost(int serviceId,
+                                                  String serviceHost)
+        throws NoSuchServiceException,
+               NoSuchServiceComputeInstanceException {
+        String host = serviceHost;
+        if(host == null || host.equals("")) {
+            host = primaryHost;
+        }
+
+        ServiceInfo service = findService(serviceId);
+        List<DeploymentOption> depOptions = service.getDeploymentOptions();
+
+        String error = "Cannot deploy service, the host " + host + " is not " +
+            "a valid deployment location for service with ID " + serviceId;
+
+        if(host.equals(primaryHost)) { // Primary Host
+            for(DeploymentOption option : depOptions) {
+                if(option.getLocationType().equals(
+                    DeploymentOption.LocationType.PRIMARY)) {
+                    if(option.getState().equals(
+                        DeploymentOption.State.UNAVAILABLE)) {
+                        throw new RuntimeException(error);
+                    }
+                }
+            }
+        } else if(host.equalsIgnoreCase(NEW_SERVICE_HOST)) { // New Host
+            for(DeploymentOption option : depOptions) {
+                if(option.getLocationType().equals(
+                    DeploymentOption.LocationType.NEW)) {
+                    if(option.getState().equals(
+                        DeploymentOption.State.AVAILABLE)) {
+                        host =
+                            createServiceInstance("Service Compute Instance");
+                    } else {
+                        throw new RuntimeException(error);
+                    }
+                }
+            }
+        }
+
+        // Existing Host
+        ServiceComputeInstance computeInstance =
+            getServiceComputeInstanceByHostName(host);
+        if(computeInstance.isLocked()) {
+            error = "Cannot deploy service, the host " + host + " has " +
+                "been locked to ensure no further services are deployed. You " +
+                "must unlock this instance prior to deploying " +
+                "additional services.";
+            throw new RuntimeException(error);
+        }
+
+        return computeInstance;
     }
 
     /*
@@ -554,10 +698,10 @@ public class ServiceManager {
      *
      * @throws NoSuchServiceException if there is no service in the list with the given ID
      */
-    private ServiceInfo findService(String serviceId)
+    private ServiceInfo findService(int serviceId)
         throws NoSuchServiceException {
         for(ServiceInfo service : services) {
-            if(service.getId().equals(serviceId)) {
+            if(service.getId() == (serviceId)) {
                 return service;
             }
         }
@@ -592,48 +736,53 @@ public class ServiceManager {
         Map<String, String> serviceConfig = new HashMap<String, String>();
 
         // Add User Config
-        for(UserConfig userConfig : userServiceConfig) {
-            if(userConfig instanceof TextUserConfig) {
-                TextUserConfig textConfig = (TextUserConfig) userConfig;
-                serviceConfig.put(textConfig.getName(), textConfig.getValue());
-            } else if(userConfig instanceof SingleSelectUserConfig) {
-                SingleSelectUserConfig singleConfig =
-                    (SingleSelectUserConfig) userConfig;
-                String value = null;
-                for(Option option : singleConfig.getOptions()) {
-                    if(option.isSelected()) {
-                        value = option.getValue();
-                    }
-                }
-                if(value != null) {
-                    serviceConfig.put(singleConfig.getName(), value);
-                }
-            } else if(userConfig instanceof MultiSelectUserConfig) {
-                MultiSelectUserConfig multiConfig =
-                    (MultiSelectUserConfig) userConfig;
-                StringBuilder valueBuilder = new StringBuilder();
-                for(Option option : multiConfig.getOptions()) {
-                    if(option.isSelected()) {
-                        if(valueBuilder.length() > 0) {
-                            valueBuilder.append(",");
+        if(userServiceConfig != null) {
+            for(UserConfig userConfig : userServiceConfig) {
+                if(userConfig instanceof TextUserConfig) {
+                    TextUserConfig textConfig = (TextUserConfig) userConfig;
+                    serviceConfig.put(textConfig.getName(),
+                                      textConfig.getValue());
+                } else if(userConfig instanceof SingleSelectUserConfig) {
+                    SingleSelectUserConfig singleConfig =
+                        (SingleSelectUserConfig) userConfig;
+                    String value = null;
+                    for(Option option : singleConfig.getOptions()) {
+                        if(option.isSelected()) {
+                            value = option.getValue();
                         }
-                        valueBuilder.append(option.getValue());
                     }
-                }
-                if(valueBuilder.length() > 0) {
-                    serviceConfig.put(multiConfig.getName(),
-                                      valueBuilder.toString());
+                    if(value != null) {
+                        serviceConfig.put(singleConfig.getName(), value);
+                    }
+                } else if(userConfig instanceof MultiSelectUserConfig) {
+                    MultiSelectUserConfig multiConfig =
+                        (MultiSelectUserConfig) userConfig;
+                    StringBuilder valueBuilder = new StringBuilder();
+                    for(Option option : multiConfig.getOptions()) {
+                        if(option.isSelected()) {
+                            if(valueBuilder.length() > 0) {
+                                valueBuilder.append(",");
+                            }
+                            valueBuilder.append(option.getValue());
+                        }
+                    }
+                    if(valueBuilder.length() > 0) {
+                        serviceConfig.put(multiConfig.getName(),
+                                          valueBuilder.toString());
+                    }
                 }
             }
         }
 
         // Add System Config
-        for(SystemConfig systemConfig : systemServiceConfig) {
-            String value = systemConfig.getValue();
-            if(value == null || value.isEmpty()) {
-                value = systemConfig.getDefaultValue();
+        if(systemServiceConfig != null) {
+            for(SystemConfig systemConfig : systemServiceConfig) {
+                String value = systemConfig.getValue();
+                if(value == null || value.isEmpty()) {
+                    value = systemConfig.getDefaultValue();
+                }
+                serviceConfig.put(systemConfig.getName(), value);
             }
-            serviceConfig.put(systemConfig.getName(), value);
         }
 
         return serviceConfig;
@@ -676,7 +825,7 @@ public class ServiceManager {
 
         Deployment deployment = new Deployment();
         deployment.setId(deploymentId);
-        deployment.setName(serviceHost);
+        deployment.setHostname(serviceHost);
         deployment.setUserConfigs(userConfig);
         deployment.setSystemConfigs(systemConfig);
         deployment.setStatus(Deployment.StatusType.STARTED);
@@ -684,14 +833,18 @@ public class ServiceManager {
         // Determine if there is already a service of this type deployed
         ServiceInfo existingServiceDeployment = null;
         for(ServiceInfo deployedService : deployedServices) {
-            if(deployedService.getUserConfigVersion().equals(service.getUserConfigVersion())) {
-                existingServiceDeployment = deployedService;
-                break;
+            if(service.getId() == deployedService.getId()) {
+                if(deployedService.getUserConfigVersion().
+                    equals(service.getUserConfigVersion())) {
+                    existingServiceDeployment = deployedService;
+                    break;
+                }
             }
         }
 
         if(existingServiceDeployment != null) { // Add to deployment list
-            List<Deployment> deployments = existingServiceDeployment.getDeployments();
+            List<Deployment> deployments =
+                existingServiceDeployment.getDeployments();
             deployments.add(deployment);
             existingServiceDeployment.setDeployments(deployments);
         } else { // Add service with new deployment list
@@ -714,10 +867,14 @@ public class ServiceManager {
      * @return the service with a single deployment
      * @throws NoSuchDeployedServiceException if either service or deployment does not exist
      */
-    public ServiceInfo getDeployedService(String serviceId, int deploymentId)
+    public ServiceInfo getDeployedService(int serviceId, int deploymentId)
         throws NoSuchDeployedServiceException {
+        checkConfigured();
+
         ServiceInfo deployedService =
             findDeployedService(serviceId, deploymentId);
+
+        deployedService = populateService(deployedService);
 
         List<Deployment> deployments = deployedService.getDeployments();
         for(Deployment deployment : deployments) {
@@ -726,25 +883,37 @@ public class ServiceManager {
             }
         }
 
-        return populateService(deployedService);
+        return deployedService;
     }
 
     /*
      * Finds a deployed service in the list based on the service
      * and deployment IDs
      */
-    private ServiceInfo findDeployedService(String serviceId, int deploymentId)
+    private ServiceInfo findDeployedService(int serviceId, int deploymentId)
         throws NoSuchDeployedServiceException {
         for(ServiceInfo service : deployedServices) {
-            if(service.getId().equals(serviceId)) {
-                for(Deployment deployment : service.getDeployments()) {
-                    if(deployment.getId() == deploymentId) {
-                        return service;
-                    }
+            if(service.getId() == serviceId) {
+                if(findServiceDeployment(service, deploymentId) != null) {
+                    return service;
                 }
             }
         }
         throw new NoSuchDeployedServiceException(serviceId, deploymentId);
+    }
+
+    /*
+     * Finds a particular deployment for a given service
+     */
+    private Deployment findServiceDeployment(ServiceInfo service,
+                                             int deploymentId)
+        throws NoSuchDeployedServiceException {
+        for(Deployment deployment : service.getDeployments()) {
+            if(deployment.getId() == deploymentId) {
+                return deployment;
+            }
+        }
+        throw new NoSuchDeployedServiceException(service.getId(), deploymentId);
     }
 
     /**
@@ -752,17 +921,23 @@ public class ServiceManager {
      *
      * @param serviceId the ID of the service to update
      * @param deploymentId the ID of the service deployment to update
+     * @param userConfigVersion version of the user configuration
      * @param userConfig the updated user configuration for this service deployment
      * @throws NoSuchDeployedServiceException if either service or deployment does not exist
      */
-    public void updateServiceConfig(String serviceId,
+    public void updateServiceConfig(int serviceId,
                                     int deploymentId,
+                                    String userConfigVersion,
                                     List<UserConfig> userConfig)
         throws NoSuchDeployedServiceException {
         checkConfigured();
 
         ServiceInfo deployedService =
             findDeployedService(serviceId, deploymentId);
+        Deployment serviceDeployment =
+            findServiceDeployment(deployedService, deploymentId);
+
+        checkUserConfigVersion(deployedService, userConfigVersion);
 
         log.info("Configuring service: " + serviceId);
 
@@ -771,13 +946,19 @@ public class ServiceManager {
 
         try {
             ServicesAdminClient servicesAdmin =
-                getServicesAdmin(deployedService.getHost());
-            servicesAdmin.postServiceConfig(serviceId, config);
+                getServicesAdmin(serviceDeployment.getHostname());
+            String contentId = deployedService.getContentId();
+            servicesAdmin.postServiceConfig(contentId, config);
         } catch(Exception e) {
             String error = "Unable to update service configuration " +
                            "due to error " + e.getMessage();
             throw new RuntimeException(error, e);
         }
+
+        List<Deployment> deployments = deployedService.getDeployments();
+        deployments.remove(serviceDeployment);
+        serviceDeployment.setUserConfigs(userConfig);
+        deployments.add(serviceDeployment);
     }
 
     /**
@@ -789,7 +970,7 @@ public class ServiceManager {
      * @return a service
      * @throws NoSuchServiceException if the service does not exist
      */
-    public ServiceInfo getService(String serviceId)
+    public ServiceInfo getService(int serviceId)
         throws NoSuchServiceException {
         checkConfigured();
         refreshServicesList();
@@ -797,12 +978,53 @@ public class ServiceManager {
         ServiceInfo service = findService(serviceId);
 
         for(ServiceInfo deployedService : deployedServices) {
-            if(service.getId().equals(serviceId)) {
+            if(service.getId() == serviceId) {
                 service.setDeployments(deployedService.getDeployments());
             }
         }
         
         return populateService(service);
+    }
+
+    /**
+     * Undeploys all of the deployed services.
+     */
+    public void undeployAllServices() {
+        // Create the list of deployments first so that we don't end up
+        // trying to reference a service which has been removed from the list,
+        // which occurs when there are no further deployments of a service
+        List<DeploymentInstance> deployments =
+            new ArrayList<DeploymentInstance>();
+        for(ServiceInfo service : deployedServices) {
+            for(Deployment deployment : service.getDeployments()) {
+                deployments.add(new DeploymentInstance(service.getId(),
+                                                       deployment.getId()));
+            }
+        }
+
+        for(DeploymentInstance deployment : deployments) {
+            try {
+                undeployService(deployment.serviceId, deployment.deploymentId);
+            } catch(NoSuchDeployedServiceException e) {
+                String error = "Could not undeploy a service in the deployed " +
+                    "services list. ServiceID: " + deployment.serviceId +
+                    ", DeploymentID: " + deployment.deploymentId;
+                log.error(error);
+            }
+        }
+    }
+
+    /*
+     * Simple data structure to contain the serviceId and deploymentId pair
+     */
+    private class DeploymentInstance {
+        int serviceId;
+        int deploymentId;
+
+        public DeploymentInstance(int serviceId, int deploymentId) {
+            this.serviceId = serviceId;
+            this.deploymentId = deploymentId;
+        }
     }
 
     /**
@@ -812,19 +1034,24 @@ public class ServiceManager {
      * @param deploymentId the ID of the service deployment to undeploy
      * @throws NoSuchDeployedServiceException if either service or deployment does not exist
      */
-    public void undeployService(String serviceId, int deploymentId)
+    public void undeployService(int serviceId, int deploymentId)
         throws NoSuchDeployedServiceException {
         checkConfigured();
 
-        ServiceInfo service = findDeployedService(serviceId, deploymentId);
-        String serviceHost = service.getHost();
+        ServiceInfo deployedService =
+            findDeployedService(serviceId, deploymentId);
+        Deployment serviceDeployment =
+            findServiceDeployment(deployedService, deploymentId);
+
+        String serviceHost = serviceDeployment.getHostname();
+        String contentId = deployedService.getContentId();
 
         log.info("UnDeploying service: " + serviceId + " from " + serviceHost);
 
         try {
             ServicesAdminClient servicesAdmin = getServicesAdmin(serviceHost);
-            servicesAdmin.stopServiceBundle(serviceId);
-            HttpResponse response = servicesAdmin.deleteServiceBundle(serviceId);
+            servicesAdmin.stopServiceBundle(contentId);
+            HttpResponse response = servicesAdmin.deleteServiceBundle(contentId);
             if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
                 throw new Exception("Services Admin response code was " +
                                     response.getStatusCode());
@@ -843,28 +1070,25 @@ public class ServiceManager {
     /*
      * Removes a service deployment from the deployed services list
      */
-    private void removeDeployedService(String serviceId, int deploymentId)
+    private void removeDeployedService(int serviceId, int deploymentId)
         throws NoSuchDeployedServiceException {
-        for(ServiceInfo service : deployedServices) {
-            if(service.getId().equals(serviceId)) {
-                List<Deployment> deployments = service.getDeployments();
-                for(Deployment deployment : deployments) {
-                    if(deployment.getId() == deploymentId) {
-                        deployments.remove(deployment);
-                        if(deployments.size() <= 0) {
-                            deployedServices.remove(service);
-                        }
-                    }
-                }
-            }
+        ServiceInfo deployedService =
+            findDeployedService(serviceId, deploymentId);
+        Deployment serviceDeployment =
+            findServiceDeployment(deployedService, deploymentId);
+
+        List<Deployment> deployments = deployedService.getDeployments();
+        deployments.remove(serviceDeployment);
+
+        if(deployments.size() <= 0) {
+            deployedServices.remove(deployedService);
         }
-        throw new NoSuchDeployedServiceException(serviceId, deploymentId);
     }
 
     /*
      * Retrieves a connection to the services administrator on the given host
      */
-    protected ServicesAdminClient getServicesAdmin(String instanceHost)
+    private ServicesAdminClient getServicesAdmin(String instanceHost)
         throws NoSuchServiceComputeInstanceException {
         ServiceComputeInstance instance =
             getServiceComputeInstanceByHostName(instanceHost);
@@ -880,6 +1104,7 @@ public class ServiceManager {
      */
     public void lockServiceComputeInstance(String instanceHost)
         throws NoSuchServiceComputeInstanceException {
+        checkConfigured();
         ServiceComputeInstance instance =
             getServiceComputeInstanceByHostName(instanceHost);
         instance.lock();
@@ -894,6 +1119,7 @@ public class ServiceManager {
      */
     public void unlockServiceComputeInstance(String instanceHost)
         throws NoSuchServiceComputeInstanceException {
+        checkConfigured();
         ServiceComputeInstance instance =
             getServiceComputeInstanceByHostName(instanceHost);
         instance.unlock();
@@ -902,9 +1128,9 @@ public class ServiceManager {
     /*
      * Retrieves a service compute instance based on its host name 
      */
-    private ServiceComputeInstance getServiceComputeInstanceByHostName(String hostName)
+    protected ServiceComputeInstance getServiceComputeInstanceByHostName(String hostName)
         throws NoSuchServiceComputeInstanceException {
-        if(hostName != null && !hostName.isEmpty()) {
+        if(hostName == null || hostName.isEmpty()) {
             String error = "instanceHost may not be null or empty";
             throw new IllegalArgumentException(error);
         }
@@ -921,7 +1147,7 @@ public class ServiceManager {
      * Adds a new service compute instance to the internal list.
      */
     private void addServiceComputeInstance(String hostName,
-                                    String displayName) {
+                                           String displayName) {
         ServicesAdminClient servicesAdmin =
             createServicesAdminClient(hostName);
         ServiceComputeInstance instance =
@@ -954,7 +1180,7 @@ public class ServiceManager {
         //String hostName = startNewServiceInstance();
         //addServiceComputeInstance(hostName, displayName);
         //return hostName;
-        return null;
+        return primaryHost;
     }
 
 }
