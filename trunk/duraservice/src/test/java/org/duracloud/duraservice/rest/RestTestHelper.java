@@ -10,9 +10,6 @@ import org.duracloud.duraservice.config.DuraServiceConfig;
 public class RestTestHelper {
 
     private static String configFileName = "test-duraservice.properties";
-    static {
-        DuraServiceConfig.setConfigFileName(configFileName);
-    }
 
     private static RestHttpHelper restHelper = new RestHttpHelper();
 
@@ -45,8 +42,11 @@ public class RestTestHelper {
     }
 
     private static String getPort() throws Exception {
+        DuraServiceConfig config = new DuraServiceConfig();
+        config.setConfigFileName(configFileName);
+
         if (port == null) {
-            port = DuraServiceConfig.getPort();
+            port = config.getPort();
         }
 
         try { // Ensure the port is a valid port value
@@ -97,26 +97,6 @@ public class RestTestHelper {
             xml.append("</computeProviderCredential>");
           xml.append("</serviceCompute>");
         xml.append("</servicesConfig>");
-        return xml.toString();
-    }
-
-    public static String buildTestServiceConfigXml() throws Exception {
-        String prop1Name = "property1";
-        String prop1Value = "value1";
-        String prop2Name = "property2";
-        String prop2Value = "value2";
-
-        StringBuilder xml = new StringBuilder();
-        xml.append("<serviceConfig>");
-          xml.append("<configItem>");
-            xml.append("<name>"+prop1Name+"</name>");
-            xml.append("<value>"+prop1Value+"</value>");
-          xml.append("</configItem>");
-          xml.append("<configItem>");
-            xml.append("<name>"+prop2Name+"</name>");
-            xml.append("<value>"+prop2Value+"</value>");
-          xml.append("</configItem>");
-        xml.append("</serviceConfig>");
         return xml.toString();
     }
 

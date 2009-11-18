@@ -139,7 +139,7 @@ public class ServiceRest extends BaseRest {
     @Path("/services/{serviceId}")
     @GET
     public Response getService(@PathParam("serviceId")
-                               String serviceId) {
+                               int serviceId) {
         ResponseBuilder response = Response.ok();
         String serviceXml;
         try {
@@ -170,7 +170,7 @@ public class ServiceRest extends BaseRest {
     @Path("/services/{serviceId}/{deploymentId}")
     @GET
     public Response getDeployedService(@PathParam("serviceId")
-                                       String serviceId,
+                                       int serviceId,
                                        @PathParam("deploymentId")
                                        int deploymentId) {
         ResponseBuilder response = Response.ok();
@@ -206,7 +206,7 @@ public class ServiceRest extends BaseRest {
     @Path("/services/{serviceId}")
     @PUT
     public Response deployService(@PathParam("serviceId")
-                                  String serviceId,
+                                  int serviceId,
                                   @QueryParam("serviceHost")
                                   String serviceHost) {
         InputStream userConfigXml = getRequestContent();
@@ -232,7 +232,7 @@ public class ServiceRest extends BaseRest {
     @Path("/services/{serviceId}/{deploymentId}")
     @POST
     public Response configureService(@PathParam("serviceId")
-                                     String serviceId,
+                                     int serviceId,
                                      @PathParam("deploymentId")
                                      int deploymentId) {
         InputStream userConfigXml = getRequestContent();
@@ -257,7 +257,7 @@ public class ServiceRest extends BaseRest {
     @Path("/services/{serviceId}/{deploymentId}")
     @DELETE
     public Response undeployService(@PathParam("serviceId")
-                                    String serviceId,
+                                    int serviceId,
                                     @PathParam("deploymentId")
                                     int deploymentId) {
         try {

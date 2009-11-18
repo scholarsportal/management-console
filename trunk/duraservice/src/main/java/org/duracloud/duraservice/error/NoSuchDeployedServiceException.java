@@ -8,10 +8,11 @@ import org.duracloud.common.util.error.DuraCloudException;
  */
 public class NoSuchDeployedServiceException extends DuraCloudException {
 
-    public NoSuchDeployedServiceException(String serviceId, int deploymentId) {
+    public NoSuchDeployedServiceException(int serviceId, int deploymentId) {
         super("There is no deployed service with service ID  " +  serviceId +
               " and deployment ID " + deploymentId,
               "duracloud.error.duraservice.nosuchdeployedservice");
-        setArgs(serviceId, new Integer(deploymentId).toString());
+        setArgs(new Integer(serviceId).toString(),
+                new Integer(deploymentId).toString());
     }
 }
