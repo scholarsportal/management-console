@@ -11,11 +11,11 @@ import java.util.List;
  * @author Bill Branan
  *         Date: Nov 9, 2009
  */
-public class Deployment implements Serializable{
+public class Deployment implements Serializable {
 
     private static final long serialVersionUID = -5554753103296039412L;
 
-    public enum StatusType {
+    public enum Status {
         STOPPED, STARTED;
     }
 
@@ -26,7 +26,7 @@ public class Deployment implements Serializable{
     private String hostname;
 
     /** The status of this deployed service */
-    private StatusType status;
+    private Status status;
 
     /** The system configuration settings for this deployed service */
     private List<SystemConfig> systemConfigs;
@@ -50,11 +50,11 @@ public class Deployment implements Serializable{
         this.hostname = hostname;
     }
 
-    public StatusType getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(StatusType status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -73,4 +73,5 @@ public class Deployment implements Serializable{
     public void setUserConfigs(List<UserConfig> userConfigs) {
         this.userConfigs = userConfigs;
     }
+
 }

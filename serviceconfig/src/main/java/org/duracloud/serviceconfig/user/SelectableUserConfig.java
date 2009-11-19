@@ -43,4 +43,32 @@ public abstract class SelectableUserConfig extends UserConfig {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SelectableUserConfig)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        SelectableUserConfig that = (SelectableUserConfig) o;
+
+        if (options != null ? !options.equals(that.options) :
+            that.options != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (options != null ? options.hashCode() : 0);
+        return result;
+    }
 }
