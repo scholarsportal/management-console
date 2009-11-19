@@ -15,7 +15,7 @@ public class DeploymentOption implements Serializable {
     /**
      * Is this the primary host? new one? existing secondary host?
      */
-    public enum LocationType {
+    public enum Location {
         PRIMARY, NEW, EXISTING;
     }
 
@@ -24,7 +24,7 @@ public class DeploymentOption implements Serializable {
     }
 
     private String displayName;
-    private LocationType locationType;
+    private Location location;
     private String hostname;
     private State state;
 
@@ -36,12 +36,12 @@ public class DeploymentOption implements Serializable {
         this.displayName = displayName;
     }
 
-    public LocationType getLocationType() {
-        return locationType;
+    public Location getLocationType() {
+        return location;
     }
 
-    public void setLocationType(LocationType locationType) {
-        this.locationType = locationType;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public String getHostname() {
@@ -60,4 +60,42 @@ public class DeploymentOption implements Serializable {
         this.state = state;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DeploymentOption)) {
+            return false;
+        }
+
+        DeploymentOption that = (DeploymentOption) o;
+
+        if (displayName != null ? !displayName.equals(that.displayName) :
+            that.displayName != null) {
+            return false;
+        }
+        if (hostname != null ? !hostname.equals(that.hostname) :
+            that.hostname != null) {
+            return false;
+        }
+        if (location != that.location) {
+            return false;
+        }
+        if (state != that.state) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = displayName != null ? displayName.hashCode() : 0;
+        result =
+            31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        return result;
+    }
 }

@@ -46,5 +46,41 @@ public class SystemConfig implements Serializable {
         return defaultValue;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SystemConfig)) {
+            return false;
+        }
 
+        SystemConfig that = (SystemConfig) o;
+
+        if (id != that.id) {
+            return false;
+        }
+        if (defaultValue != null ? !defaultValue.equals(that.defaultValue) :
+            that.defaultValue != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result =
+            31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
+        return result;
+    }
 }

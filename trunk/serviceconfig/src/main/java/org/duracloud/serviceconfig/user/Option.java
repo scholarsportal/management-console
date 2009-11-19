@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * This class holds config option details.
  */
-public class Option implements Serializable{
+public class Option implements Serializable {
 
     private static final long serialVersionUID = -2243245528826127669L;
 
@@ -42,6 +42,40 @@ public class Option implements Serializable{
     }
 
     public void setSelected(boolean selected) {
-       this.selected = selected;
+        this.selected = selected;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Option)) {
+            return false;
+        }
+
+        Option option = (Option) o;
+
+        if (selected != option.selected) {
+            return false;
+        }
+        if (displayName != null ? !displayName.equals(option.displayName) :
+            option.displayName != null) {
+            return false;
+        }
+        if (value != null ? !value.equals(option.value) :
+            option.value != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = displayName != null ? displayName.hashCode() : 0;
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (selected ? 1 : 0);
+        return result;
     }
 }

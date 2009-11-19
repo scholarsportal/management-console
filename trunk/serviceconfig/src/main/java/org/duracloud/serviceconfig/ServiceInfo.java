@@ -28,7 +28,7 @@ public class ServiceInfo implements Serializable, Cloneable{
     private String displayName;
 
     /** Release version number of the service software */
-    private String version;
+    private String serviceVersion;
 
     /** User configuration version, checked at deployment time */
     private String userConfigVersion;
@@ -70,12 +70,12 @@ public class ServiceInfo implements Serializable, Cloneable{
         this.displayName = displayName;
     }
 
-    public String getVersion() {
-        return version;
+    public String getServiceVersion() {
+        return serviceVersion;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
     }
 
     public int getMaxDeploymentsAllowed() {
@@ -146,4 +146,5 @@ public class ServiceInfo implements Serializable, Cloneable{
         // TODO: Actually perform clone
         return this;
     }
+    
 }

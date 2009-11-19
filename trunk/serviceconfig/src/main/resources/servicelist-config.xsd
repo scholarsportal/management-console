@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="duracloud" targetNamespace="duracloud">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="duracloud.org" targetNamespace="duracloud.org">
 
-  <xs:include schemaLocation="service-config.xsd"/>
+  <xs:include schemaLocation="service-types.xsd"/>
 
   <!-- top-level listing of services -->
   <xs:element name="services">
@@ -9,7 +9,7 @@
       <xs:sequence>
         <xs:element name="service" minOccurs="0" maxOccurs="unbounded" type="serviceType"/>
       </xs:sequence>
-      <xs:attribute name="version" type="xs:string" fixed="0.2" use="required"/>
+      <xs:attribute name="schemaVersion" type="xs:string" fixed="0.2" use="required"/>
     </xs:complexType>
   </xs:element>
 
