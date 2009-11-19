@@ -1,8 +1,9 @@
-package org.duracloud.duraservice.domain;
+package org.duracloud.duraservice.mgmt;
 
 import junit.framework.TestCase;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.duraservice.domain.MockServiceManager;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
@@ -85,7 +86,8 @@ public class ServiceManagerTest
 
         ContentStoreManager mockUserContentStoreMgr =
             createMockUserContentStoreMgr();
-        serviceManager.setUserContentStoreManager(mockUserContentStoreMgr);
+        ServiceConfigUtil configUtil = serviceManager.getServiceConfigUtil();
+        configUtil.setUserContentStoreManager(mockUserContentStoreMgr);
     }
 
     @Override

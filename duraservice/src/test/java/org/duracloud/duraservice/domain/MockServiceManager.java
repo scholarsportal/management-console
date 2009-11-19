@@ -8,6 +8,8 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
+import org.duracloud.duraservice.mgmt.ServiceConfigUtil;
+import org.duracloud.duraservice.mgmt.ServiceManager;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.SystemConfig;
@@ -113,13 +115,15 @@ public class MockServiceManager extends ServiceManager {
             new TextUserConfig("config1", "Config 1", "Config Value");
 
         List<Option> config2ops = new ArrayList<Option>();
-        Option config2op = new Option("Stores", STORES_VAR, false);
+        Option config2op =
+            new Option("Stores", ServiceConfigUtil.STORES_VAR, false);
         config2ops.add(config2op);
         SingleSelectUserConfig config2 =
             new SingleSelectUserConfig("config2", "Config 2", config2ops);
 
         List<Option> config3ops = new ArrayList<Option>();
-        Option config3op = new Option("Spaces", SPACES_VAR, false);
+        Option config3op =
+            new Option("Spaces", ServiceConfigUtil.SPACES_VAR, false);
         config3ops.add(config3op);
         MultiSelectUserConfig config3 =
             new MultiSelectUserConfig("config3", "Config 3", config3ops);
