@@ -1,4 +1,4 @@
-package org.duracloud.duraservice.domain;
+package org.duracloud.duraservice.mgmt;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.log4j.Logger;
@@ -11,6 +11,10 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Content;
 import org.duracloud.duraservice.config.DuraServiceConfig;
+import org.duracloud.duraservice.domain.ServiceCompute;
+import org.duracloud.duraservice.domain.ServiceComputeInstance;
+import org.duracloud.duraservice.domain.ServiceStore;
+import org.duracloud.duraservice.domain.UserStore;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
@@ -21,7 +25,6 @@ import org.duracloud.serviceconfig.ServicesConfigDocument;
 import org.duracloud.serviceconfig.SystemConfig;
 import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
 import org.duracloud.serviceconfig.user.Option;
-import org.duracloud.serviceconfig.user.SelectableUserConfig;
 import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
 import org.duracloud.serviceconfig.user.TextUserConfig;
 import org.duracloud.serviceconfig.user.UserConfig;
@@ -61,9 +64,6 @@ public class ServiceManager {
     // Provides access to service packages
     private ContentStore serviceStoreClient = null;
 
-    // Provides access to user storage
-    private ContentStoreManager userStoreManager = null;
-
     // Store in which user content is stored
     private UserStore userStore = null;
 
@@ -73,37 +73,14 @@ public class ServiceManager {
     // ServiceCompute used to run service compute instances
     private ServiceCompute serviceCompute = null;
 
+    private ServiceConfigUtil configUtil = null;
+
     private int serviceDeploymentIds = 0;
 
     // List of service compute instances
     private List<ServiceComputeInstance> serviceComputeInstances = null;
 
-    public static final String SERVICE_STATUS = "service.status";
-    public static final String SERVICE_HOST = "service.host";
-
-    // User Config Variables
-    public static final String STORES_VAR = "$STORES";
-    public static final String SPACES_VAR = "$SPACES";
-
-    // System Config Variables
-    public static final String STORE_HOST_VAR = "$DURASTORE-HOST";
-    public static final String STORE_PORT_VAR = "$DURASTORE-PORT";
-    public static final String STORE_CONTEXT_VAR = "$DURASTORE-CONTEXT";
-    public static final String STORE_MSG_BROKER_VAR = "$MESSAGE-BROKER-URL";
-
     public static final String NEW_SERVICE_HOST = "new";
-
-    public static enum ServiceStatus {
-        AVAILABLE ("available"),
-        DEPLOYED ("deployed"),
-        UNKNOWN_SERVICE ("not-available");
-
-        public String status;
-
-        ServiceStatus(String status) {
-            this.status = status;
-        }
-    }
 
     public ServiceManager() {
         deployedServices = new ArrayList<ServiceInfo>();
@@ -130,7 +107,7 @@ public class ServiceManager {
         }
 
         try {
-            initializeUserStorageClient();
+            configUtil = new ServiceConfigUtil(userStore);
         } catch (ContentStoreException cse) {
             String error = "Could not create connection to user storage " +
                            "list due to exception: " + cse.getMessage();
@@ -202,16 +179,10 @@ public class ServiceManager {
     }
 
     /*
-     * Initializes the user storage client, which provides access to the
-     * user's content store.
+     * Provides access to the underlying configuration utility
      */
-    protected void initializeUserStorageClient()
-    throws ContentStoreException {
-        ContentStoreManager storeManager =
-            new ContentStoreManagerImpl(userStore.getHost(),
-                                        userStore.getPort(),
-                                        userStore.getContext());
-        setUserContentStoreManager(storeManager);
+    protected ServiceConfigUtil getServiceConfigUtil() {
+        return configUtil;
     }
 
     /*
@@ -261,9 +232,7 @@ public class ServiceManager {
         return configDoc.getServiceList(servicesInfoXml);
     }
 
-    protected void setUserContentStoreManager(ContentStoreManager storeMgr) {
-        this.userStoreManager = storeMgr;
-    }
+
 
     protected void setServiceContentStore(ContentStore store) {
         this.serviceStoreClient = store;
@@ -296,176 +265,15 @@ public class ServiceManager {
             // TODO: Determine if any deployment constraints make this service unavailable
 
             if(availDeployment) {
-                ServiceInfo availService = populateService(service);
+                ServiceInfo availService =
+                    configUtil.populateAvailableService(service,
+                                                        serviceComputeInstances,
+                                                        primaryHost);
                 availableServices.add(availService);
             }
         }
 
         return availableServices;
-    }
-
-    /*
-     * Handles the population of all deployment and configuration options
-     * for a service.
-     *
-     * @return a clone of the provided service with all variables resolved
-     */
-    private ServiceInfo populateService(ServiceInfo service) {
-        // Perform a deep clone of the service (includes all configs and deployments)
-        ServiceInfo srvClone = service.clone();
-
-        // Populate server instance options
-        List<DeploymentOption> populatedDeploymentOptions =
-            populateDeploymentOptions(srvClone.getDeploymentOptions());
-        srvClone.setDeploymentOptions(populatedDeploymentOptions);
-
-        // Populate variables in user config ($STORES and $SPACES)
-        List<UserConfig> populatedUserConfigs =
-            populateVariables(srvClone.getUserConfigs());
-        srvClone.setUserConfigs(populatedUserConfigs);
-
-        // Remove system configs
-        srvClone.setSystemConfigs(null);
-
-        // Remove system configs from deployments
-        List<Deployment> deployments = srvClone.getDeployments();
-        if(deployments != null) {
-            for(Deployment deployment : deployments) {
-                deployment.setSystemConfigs(null);
-            }
-        }
-
-        return srvClone;
-    }
-
-    /*
-     * Handles the population of option sets for variables $STORES and $SPACES
-     */
-    private List<UserConfig> populateVariables(List<UserConfig> userConfigs) {
-        List<UserConfig> newUserConfigs = new ArrayList<UserConfig>();
-        for(UserConfig config : userConfigs) {
-            if(config instanceof SelectableUserConfig) {
-                List<Option> options =
-                    ((SelectableUserConfig)config).getOptions();
-                options = populateStoresVariable(options);
-                options = populateSpacesVariable(options);
-                if(config instanceof SingleSelectUserConfig) {
-                    SingleSelectUserConfig newConfig =
-                        new SingleSelectUserConfig(config.getName(),
-                                                   config.getDisplayName(),
-                                                   options);
-                    newUserConfigs.add(newConfig);
-                } else if(config instanceof MultiSelectUserConfig) {
-                    MultiSelectUserConfig newConfig =
-                        new MultiSelectUserConfig(config.getName(),
-                                                  config.getDisplayName(), 
-                                                  options);
-                    newUserConfigs.add(newConfig);
-                } else {
-                    throw new RuntimeException("Unexpected UserConfig type: " +
-                                               config.getClass());
-                }
-            } else {
-                newUserConfigs.add(config);
-            }
-        }
-        return newUserConfigs;
-    }
-
-    /*
-     * Populates the $STORES variable
-     */
-    private List<Option> populateStoresVariable(List<Option> options) {
-        List<Option> newOptionsList = new ArrayList<Option>();
-        for (Option option : options) {
-            String value = option.getValue();
-            if (value.equals(STORES_VAR)) {
-                try {
-                    Map<String, ContentStore> contentStores =
-                        userStoreManager.getContentStores();
-                    String primaryId =
-                        userStoreManager.getPrimaryContentStore().getStoreId();
-                    for (String storeId : contentStores.keySet()) {
-                        ContentStore contentStore =
-                            userStoreManager.getContentStore(storeId);
-                        String type = contentStore.getStorageProviderType();
-                        String displayName = type + " (" + storeId + ")";
-                        boolean primary = storeId.equals(primaryId);
-                        Option storeOption = new Option(displayName,
-                                                        storeId,
-                                                        primary);
-                        newOptionsList.add(storeOption);
-                    }
-                } catch (ContentStoreException cse) {
-                    String error =
-                        "Error encountered attempting to construct user" +
-                            " content stores options " + cse.getMessage();
-                    throw new RuntimeException(error, cse);
-                }
-            } else {
-                newOptionsList.add(option);
-            }
-        }
-        return newOptionsList;
-    }
-
-    /*
-     * Populates the $SPACES variable
-     */
-    private List<Option> populateSpacesVariable(List<Option> options) {
-        List<Option> newOptionsList = new ArrayList<Option>();
-        for (Option option : options) {
-            String value = option.getValue();
-            if (value.equals(SPACES_VAR)) {
-                try {
-                    ContentStore primaryStore =
-                        userStoreManager.getPrimaryContentStore();
-                    List<String> spaces = primaryStore.getSpaces();
-                    for(String spaceId : spaces) {
-                        Option storeOption = new Option(spaceId, spaceId, false);
-                        newOptionsList.add(storeOption);
-                    }
-                } catch(ContentStoreException cse) {
-                    String error = "Error encountered attempting to construct user" +
-                                   " content spaces options " + cse.getMessage();
-                    throw new RuntimeException(error, cse);
-                }
-            } else {
-                newOptionsList.add(option);
-            }
-        }
-        return newOptionsList;
-    }
-
-    /*
-     * Populates the list of existing service instances. Ensures that the
-     * EXISTING type is available, then adds all of the currently available
-     * service instances to the list as options for deploying this service. 
-     */
-    private List<DeploymentOption> populateDeploymentOptions(List<DeploymentOption> deploymentOptions) {
-        List<DeploymentOption> newDeploymentOptions =
-            new ArrayList<DeploymentOption>();
-        for(DeploymentOption depOp : deploymentOptions) {
-            if(depOp.getLocationType().equals(DeploymentOption.LocationType.EXISTING) &&
-               depOp.getState().equals(DeploymentOption.State.AVAILABLE)) {
-                for(ServiceComputeInstance computeInstance : serviceComputeInstances) {
-                    String hostName = computeInstance.getHostName();
-                    if(!hostName.equals(primaryHost) &&
-                       !computeInstance.isLocked()) {
-                        DeploymentOption newDepOpt = new DeploymentOption();
-                        newDepOpt.setHostname(hostName);
-                        newDepOpt.setDisplayName(computeInstance.getDisplayName());
-                        newDepOpt.setLocationType(DeploymentOption.LocationType.EXISTING);
-                        newDepOpt.setState(DeploymentOption.State.AVAILABLE);
-                        deploymentOptions.add(newDepOpt);
-                        newDeploymentOptions.add(newDepOpt);
-                    }
-                }
-            } else {
-                newDeploymentOptions.add(depOp);
-            }
-        }
-        return newDeploymentOptions;
     }
 
     /**
@@ -480,7 +288,9 @@ public class ServiceManager {
 
         List<ServiceInfo> populatedDepServices = new ArrayList<ServiceInfo>();
         for(ServiceInfo deployedService : deployedServices) {
-            populatedDepServices.add(populateService(deployedService));
+            ServiceInfo populatedDepService = 
+                configUtil.populateDeployedService(deployedService);
+            populatedDepServices.add(populatedDepService);
         }
         return populatedDepServices;
     }
@@ -533,7 +343,7 @@ public class ServiceManager {
         // Resolve system config
         List<SystemConfig> systemConfig = srvToDeploy.getSystemConfigs();
         if(systemConfig != null) {
-            systemConfig = resolveSystemConfigVars(systemConfig);
+            systemConfig = configUtil.resolveSystemConfigVars(systemConfig);
         }
 
         Map<String, String> serviceConfig =
@@ -698,7 +508,7 @@ public class ServiceManager {
      *
      * @throws NoSuchServiceException if there is no service in the list with the given ID
      */
-    private ServiceInfo findService(int serviceId)
+    protected ServiceInfo findService(int serviceId)
         throws NoSuchServiceException {
         for(ServiceInfo service : services) {
             if(service.getId() == (serviceId)) {
@@ -706,25 +516,6 @@ public class ServiceManager {
             }
         }
         throw new NoSuchServiceException(serviceId);
-    }
-
-    /*
-     * Populates variables in a service's system configuration
-     */
-    private List<SystemConfig> resolveSystemConfigVars(List<SystemConfig> systemConfig) {
-       for(SystemConfig config : systemConfig) {
-            String configValue = config.getValue();
-            if(configValue.equals(STORE_HOST_VAR)) {
-                config.setValue(userStore.getHost());
-            } else if(configValue.equals(STORE_PORT_VAR)) {
-                config.setValue(userStore.getPort());
-            } else if(configValue.equals(STORE_CONTEXT_VAR)) {
-                config.setValue(userStore.getContext());
-            } else if(configValue.equals(STORE_MSG_BROKER_VAR)) {
-                config.setValue(userStore.getMsgBrokerUrl());
-            }
-        }
-        return systemConfig;
     }
 
     /*
@@ -874,16 +665,17 @@ public class ServiceManager {
         ServiceInfo deployedService =
             findDeployedService(serviceId, deploymentId);
 
-        deployedService = populateService(deployedService);
+        ServiceInfo populatedDepService =
+            configUtil.populateDeployedService(deployedService);
 
-        List<Deployment> deployments = deployedService.getDeployments();
+        List<Deployment> deployments = populatedDepService.getDeployments();
         for(Deployment deployment : deployments) {
             if(deployment.getId() != deploymentId) {
                 deployments.remove(deployment);
             }
         }
 
-        return deployedService;
+        return populatedDepService;
     }
 
     /*
@@ -983,7 +775,9 @@ public class ServiceManager {
             }
         }
         
-        return populateService(service);
+        return configUtil.populateAvailableService(service,
+                                                   serviceComputeInstances,
+                                                   primaryHost);
     }
 
     /**

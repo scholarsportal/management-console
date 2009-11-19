@@ -1,6 +1,6 @@
 package org.duracloud.duraservice.rest;
 
-import org.duracloud.duraservice.domain.ServiceManager;
+import org.duracloud.duraservice.mgmt.ServiceManager;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;

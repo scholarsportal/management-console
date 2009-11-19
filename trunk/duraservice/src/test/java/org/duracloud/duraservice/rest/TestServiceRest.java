@@ -5,7 +5,6 @@ import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.duraservice.config.DuraServiceConfig;
-import org.duracloud.duraservice.domain.ServiceManager;
 import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
@@ -115,9 +114,9 @@ public class TestServiceRest
             SerializationUtil.deserializeMap(content);
         assertNotNull(serviceConfig);
 
-        String status = serviceConfig.get(ServiceManager.SERVICE_STATUS);
+        String status = serviceConfig.get("status");
         assertNotNull(status);
-        assertEquals(status, ServiceManager.ServiceStatus.DEPLOYED.status);
+        assertEquals(status, "DEPLOYED");
 
         Map<String, String> serviceAdminConfig =
             servicesAdmin.getServiceConfig(testServiceId);
