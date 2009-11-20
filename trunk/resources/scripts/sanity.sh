@@ -8,13 +8,6 @@ echo ""
 scriptdir=`dirname "$0"`
 . "$scriptdir"/common.sh 
 
-echo "================================"
-echo "Installing UnHosted Dependencies"
-echo "================================"
-echo ""
-cd $BUILD_HOME 
-. "$scriptdir"/installLibs.sh
-
 echo "=================="
 echo "Starting Tomcat..."
 echo "=================="
