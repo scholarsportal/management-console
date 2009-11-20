@@ -212,12 +212,12 @@ public class ServicesManager {
 
         ServicesConfigDocument configDoc = new ServicesConfigDocument();
         String serviceXml = configDoc.getServiceAsXML(serviceToDeploy);
-
+        
         try {
             HttpResponse response = restHelper.put(url, serviceXml, null);
             checkResponse(response, HttpStatus.SC_CREATED);
             String responseBody = response.getResponseBody();
-            return Integer.valueOf(responseBody);
+            return extractDeploymentId(responseBody);
         } catch (NotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -225,6 +225,12 @@ public class ServicesManager {
                                         " to host " + hostName +
                                         " due to: " + e.getMessage(), e);
         }
+    }
+
+    private int extractDeploymentId(String deploymentUrl) {
+        String[] deploymentUrlSplit = deploymentUrl.split("/");
+        String depId = deploymentUrlSplit[deploymentUrlSplit.length-1];
+        return Integer.valueOf(depId);
     }
 
     /**
