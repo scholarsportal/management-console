@@ -40,7 +40,8 @@ public class DeployServiceFlowHandler
 
             NavigationUtils.setReturnTo(request, map);
 
-            String serviceId = request.getParameter(SERVICE_ID);
+            String serviceIdValue = request.getParameter(SERVICE_ID);
+            int serviceId = Integer.valueOf(serviceIdValue);
 
             map.put(SERVICE, getService(serviceId));
         } catch (Exception ex) {
@@ -49,10 +50,10 @@ public class DeployServiceFlowHandler
         return map;
     }
 
-    private ServiceInfo getService(String serviceId) throws Exception {
+    private ServiceInfo getService(int serviceId) throws Exception {
         ServiceInfo s =
-                ServicesUtil.initializeService(controllerSupport
-                        .getServicesManager(), serviceId);
+                ServicesUtil.getService(controllerSupport.getServicesManager(),
+                                        serviceId);
         return s;
     }
 
