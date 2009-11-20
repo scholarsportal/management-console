@@ -35,8 +35,8 @@
     </dependency>  
   
     <dependency>
-      <groupId>com.sun.cloud.api</groupId>
-      <artifactId>object-client</artifactId>
+      <groupId>org.duracloud</groupId>
+      <artifactId>sun-object-client</artifactId>
       <version>0.2</version>
     </dependency> 
 

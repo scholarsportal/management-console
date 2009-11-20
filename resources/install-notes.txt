@@ -22,7 +22,6 @@ To use the tomcat plugin, also add the 'server' to your maven 'settings.xml' (se
   <password>password</password>
 </server>
 
-Until we have an internal maven repository to host third-party jars that do not exist in an m2 repository, run the resources/scripts/installLibs.sh from ./trunk.
 
 ::Eclipse::
 To make your .classpath resolve, from trunk run:

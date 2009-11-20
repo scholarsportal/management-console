@@ -39,8 +39,8 @@
     </dependency>
     
     <dependency>
-      <groupId>com.google.code.typica</groupId>
-      <artifactId>typica</artifactId>
+      <groupId>org.duracloud</groupId>
+      <artifactId>aws-typica</artifactId>
       <version>1.5.1</version>
     </dependency>
     
