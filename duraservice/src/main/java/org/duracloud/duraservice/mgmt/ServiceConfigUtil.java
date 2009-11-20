@@ -81,9 +81,9 @@ public class ServiceConfigUtil {
      *
      * @return a clone of the provided service with all variables resolved
      */
-    public ServiceInfo populateAvailableService(ServiceInfo service,
-                                                List<ServiceComputeInstance> serviceComputeInstances,
-                                                String primaryHostName) {
+    public ServiceInfo populateService(ServiceInfo service,
+                                       List<ServiceComputeInstance> serviceComputeInstances,
+                                       String primaryHostName) {
         // Perform a deep clone of the service (includes all configs and deployments)
         ServiceInfo srvClone = service.clone();
 
@@ -93,39 +93,6 @@ public class ServiceConfigUtil {
                                       serviceComputeInstances,
                                       primaryHostName);
         srvClone.setDeploymentOptions(populatedDeploymentOptions);
-
-        // Populate variables in user config ($STORES and $SPACES)
-        List<UserConfig> populatedUserConfigs =
-            populateVariables(srvClone.getUserConfigs());
-        srvClone.setUserConfigs(populatedUserConfigs);
-
-        // Remove system configs
-        srvClone.setSystemConfigs(null);
-
-        // Remove system configs from deployments
-        List<Deployment> deployments = srvClone.getDeployments();
-        if(deployments != null) {
-            for(Deployment deployment : deployments) {
-                deployment.setSystemConfigs(null);
-            }
-        }
-
-        return srvClone;
-    }
-
-    /*
-     * Handles the population of all configuration options for a
-     * deployed service.
-     *
-     * @return a clone of the provided service with all variables resolved
-     */
-    public ServiceInfo populateDeployedService(ServiceInfo service) {
-        // Perform a deep clone of the service (includes all configs and deployments)
-        ServiceInfo srvClone = service.clone();
-
-        // Remove deployment options
-        // FIXME: Uncomment when clone is implemented
-        //srvClone.setDeploymentOptions(null);
 
         // Populate variables in user config ($STORES and $SPACES)
         List<UserConfig> populatedUserConfigs =

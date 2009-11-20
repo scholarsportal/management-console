@@ -263,13 +263,13 @@ public class ServiceManager {
                 }
             }
 
-            // TODO: Determine if any deployment constraints make this service unavailable
+            if(!underMaxDeployments(service.getId(),
+                                    service.getMaxDeploymentsAllowed())) {
+                availDeployment = false;
+            }
 
             if(availDeployment) {
-                ServiceInfo availService =
-                    configUtil.populateAvailableService(service,
-                                                        serviceComputeInstances,
-                                                        primaryHost);
+                ServiceInfo availService = populateService(service);
                 availableServices.add(availService);
             }
         }
@@ -289,11 +289,19 @@ public class ServiceManager {
 
         List<ServiceInfo> populatedDepServices = new ArrayList<ServiceInfo>();
         for(ServiceInfo deployedService : deployedServices) {
-            ServiceInfo populatedDepService = 
-                configUtil.populateDeployedService(deployedService);
+            ServiceInfo populatedDepService = populateService(deployedService);
             populatedDepServices.add(populatedDepService);
         }
         return populatedDepServices;
+    }
+
+    /*
+     * Uses the config util to populate service values
+     */
+    private ServiceInfo populateService(ServiceInfo service) {
+          return configUtil.populateService(service,
+                                            serviceComputeInstances,
+                                            primaryHost);
     }
 
     /*
@@ -424,8 +432,7 @@ public class ServiceManager {
      * Checks to see if a service has hit its max deployment limit
      * @return true if the service is still under the max deployment limit
      */
-    private boolean underMaxDeployments(int serviceId, int maxDeployments)
-        throws NoSuchServiceException {
+    private boolean underMaxDeployments(int serviceId, int maxDeployments) {
         if(maxDeployments < 0) {
             return true;
         }
@@ -666,8 +673,7 @@ public class ServiceManager {
         ServiceInfo deployedService =
             findDeployedService(serviceId, deploymentId);
 
-        ServiceInfo populatedDepService =
-            configUtil.populateDeployedService(deployedService);
+        ServiceInfo populatedDepService = populateService(deployedService);
 
         List<Deployment> deployments = populatedDepService.getDeployments();
         for(Deployment deployment : deployments) {
@@ -768,17 +774,20 @@ public class ServiceManager {
         checkConfigured();
         refreshServicesList();
 
-        ServiceInfo service = findService(serviceId);
-
-        for(ServiceInfo deployedService : deployedServices) {
-            if(service.getId() == serviceId) {
-                service.setDeployments(deployedService.getDeployments());
+        // See if this is a deployed service
+        ServiceInfo service = null;
+        for(ServiceInfo depService : deployedServices) {
+            if(depService.getId() == serviceId) {
+                service = depService;
             }
         }
-        
-        return configUtil.populateAvailableService(service,
-                                                   serviceComputeInstances,
-                                                   primaryHost);
+
+        // If not deployed, get from the services list
+        if(service == null) {
+            service = findService(serviceId);
+        }
+
+        return populateService(service);
     }
 
     /**
