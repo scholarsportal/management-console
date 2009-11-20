@@ -1,10 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.ServiceCommand;
@@ -12,6 +8,10 @@ import org.duracloud.duradmin.util.ServicesUtil;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServicesController
         extends BaseFormController {
@@ -48,7 +48,10 @@ public class ServicesController
             ServicesManager servicesManager = getServicesManager();
             depServiceList = ServicesUtil.getDeployedServices(servicesManager);
             avlServiceList = ServicesUtil.getAvailableServices(servicesManager);
-            serviceHosts = ServicesUtil.getServiceHosts(servicesManager);
+
+            // FIXME: Each service has its own list of deployment options, so
+            //        the list of hosts needs to be specific for each service
+            serviceHosts = new ArrayList<String>();
         } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());

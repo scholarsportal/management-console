@@ -26,7 +26,9 @@ public class UnDeployServiceController
 
         // UnDeploy Service
         try {
-            servicesManager.undeployService(serviceToUnDeploy.getServiceId());
+            // FIXME: Undeploying a service requires both a service ID and
+            //        a deployment ID.
+            //servicesManager.undeployService(serviceToUnDeploy.getServiceId());
         } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
