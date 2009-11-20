@@ -1,13 +1,13 @@
 package org.duracloud.client.error;
 
-import org.duracloud.common.util.error.DuraCloudException;
+import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
  * Exception thrown by the Services Manager.
  *
  * @author Bill Branan
  */
-public class ServicesException extends DuraCloudException {
+public class ServicesException extends DuraCloudCheckedException {
 
     private static final long serialVersionUID = 1L;
 

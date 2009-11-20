@@ -1,7 +1,7 @@
 package org.duracloud.duraservice.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.duracloud.common.util.error.DuraCloudException;
+import org.duracloud.common.error.DuraCloudCheckedException;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
@@ -296,9 +296,9 @@ public class ServiceRest extends BaseRest {
         }
     }
 
-    private Response buildNotFoundResponse(DuraCloudException e) {
+    private Response buildNotFoundResponse(DuraCloudCheckedException e) {
         ResponseBuilder response = Response.status(HttpStatus.SC_NOT_FOUND);
-        response.entity(e.getFormatedMessage());
+        response.entity(e.getFormattedMessage());
         return response.build();
     }
 

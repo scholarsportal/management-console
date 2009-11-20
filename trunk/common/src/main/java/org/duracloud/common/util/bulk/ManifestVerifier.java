@@ -2,7 +2,7 @@ package org.duracloud.common.util.bulk;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
-import org.duracloud.common.util.error.ManifestVerifyException;
+import org.duracloud.common.error.ManifestVerifyException;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,6 +1,6 @@
 package org.duracloud.client.error;
 
-import org.duracloud.common.util.error.DuraCloudException;
+import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
  * Exception thrown when a response from a services call returns a
@@ -9,7 +9,7 @@ import org.duracloud.common.util.error.DuraCloudException;
  *
  * @author Bill Branan
  */
-public class NotFoundException extends DuraCloudException {
+public class NotFoundException extends DuraCloudCheckedException {
 
     private static final long serialVersionUID = 1L;
 

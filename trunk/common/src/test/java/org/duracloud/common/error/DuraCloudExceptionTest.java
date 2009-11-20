@@ -1,10 +1,10 @@
-package org.duracloud.common.util.error;
+package org.duracloud.common.error;
 
-import org.junit.Test;
-import org.junit.Before;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Andrew Woods
@@ -24,30 +24,30 @@ public class DuraCloudExceptionTest {
 
     @Test
     public void testGetFormatedMessagePattern() {
-        DuraCloudException e = createException(key0);
+        DuraCloudCheckedException e = createException(key0);
         assertNotNull(e);
 
-        String msg = e.getFormatedMessage();
+        String msg = e.getFormattedMessage();
         assertNotNull(msg);
         assertEquals(val0, msg);
     }
 
     @Test
     public void testGetFormatedMessageStack() {
-        DuraCloudException e = createException(key1);
+        DuraCloudCheckedException e = createException(key1);
         assertNotNull(e);
 
-        String msg = e.getFormatedMessage();
+        String msg = e.getFormattedMessage();
         assertNotNull(msg);
         assertTrue(!val0.equals(msg));
     }
 
-    private DuraCloudException createException(String key) {
-        DuraCloudException e = null;
+    private DuraCloudCheckedException createException(String key) {
+        DuraCloudCheckedException e = null;
         try {
             Integer.parseInt("junk");
         } catch (NumberFormatException nfe) {
-            e = new DuraCloudException(nfe, key);
+            e = new DuraCloudCheckedException(nfe, key);
         }
         return e;
     }

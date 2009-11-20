@@ -1,7 +1,7 @@
 package org.duracloud.common.util.bulk;
 
 import org.duracloud.common.util.ExceptionUtil;
-import org.duracloud.common.util.error.ManifestVerifyException;
+import org.duracloud.common.error.ManifestVerifyException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -33,7 +33,7 @@ public class ManifestVerifierTest {
             verifier.verify();
         } catch (ManifestVerifyException e) {
             StringBuilder sb = new StringBuilder("No exception expected.\n\n");
-            sb.append(e.getFormatedMessage()+"\n\n");
+            sb.append(e.getFormattedMessage()+"\n\n");
             sb.append(ExceptionUtil.getStackTraceAsString(e));
             fail(sb.toString());
         }
@@ -108,7 +108,7 @@ public class ManifestVerifierTest {
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
             fail("ManifestVerifyException not expected.\n" +
-                e.getFormatedMessage());
+                e.getFormattedMessage());
         } catch (RuntimeException re) {
             runtimeThrown = true;
         }

@@ -1,4 +1,4 @@
-package org.duracloud.common.util.error;
+package org.duracloud.common.error;
 
 import org.duracloud.common.util.ApplicationConfig;
 

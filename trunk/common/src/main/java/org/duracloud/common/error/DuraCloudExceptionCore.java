@@ -1,47 +1,49 @@
-package org.duracloud.common.util.error;
+package org.duracloud.common.error;
 
 import java.text.MessageFormat;
 
+
 /**
- * This class is the top-level DuraCloud exception from which other internal
- *  exceptions extend.
+ * This class is the core utility for supporting DuraCloud exceptions and
+ * user-friendly formatted messages.
  *
  * @author Andrew Woods
- *         Date: Oct 24, 2009
+ *         Date: Nov 20, 2009
  */
-public class DuraCloudException extends Exception {
+public class DuraCloudExceptionCore extends Throwable implements MessageFormattable {
 
     private String key = "duracloud.error.general";
-
     private String[] args;
 
-    public DuraCloudException() {
+    public DuraCloudExceptionCore() {
         super();
     }
 
-    public DuraCloudException(String message) {
+    public DuraCloudExceptionCore(String message) {
         super(message);
     }
 
-    public DuraCloudException(String message, String key) {
+    public DuraCloudExceptionCore(String message, String key) {
         super(message);
         this.key = key;
     }
 
-    public DuraCloudException(String message, Throwable throwable) {
+    public DuraCloudExceptionCore(String message, Throwable throwable) {
         super(message, throwable);
     }
 
-    public DuraCloudException(String message, Throwable throwable, String key) {
+    public DuraCloudExceptionCore(String message,
+                                  Throwable throwable,
+                                  String key) {
         super(message, throwable);
         this.key = key;
     }
 
-    public DuraCloudException(Throwable throwable) {
+    public DuraCloudExceptionCore(Throwable throwable) {
         super(throwable);
     }
 
-    public DuraCloudException(Throwable throwable, String key) {
+    public DuraCloudExceptionCore(Throwable throwable, String key) {
         super(throwable);
         this.key = key;
     }
@@ -57,22 +59,23 @@ public class DuraCloudException extends Exception {
         return args;
     }
 
-    protected void setArgs(String... args) {
+    public void setArgs(String... args) {
         this.args = args;
     }
 
-    public String getFormatedMessage() {
+    public String getFormattedMessage() {
         String pattern = null;
         try {
             pattern = ExceptionMessages.getMessagePattern(getKey());
         } catch (Exception e) {
             // do nothing
         }
-        
+
         if (pattern == null) {
             return this.getMessage();
         } else {
             return MessageFormat.format(pattern, getArgs());
         }
     }
+
 }
