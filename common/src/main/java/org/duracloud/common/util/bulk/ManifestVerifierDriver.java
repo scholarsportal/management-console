@@ -1,6 +1,6 @@
 package org.duracloud.common.util.bulk;
 
-import org.duracloud.common.util.error.ManifestVerifyException;
+import org.duracloud.common.error.ManifestVerifyException;
 
 import java.io.File;
 
@@ -22,7 +22,7 @@ public class ManifestVerifierDriver {
     }
 
     private static void reportError(ManifestVerifyException e) {
-        System.out.println(e.getFormatedMessage());
+        System.out.println(e.getFormattedMessage());
     }
 
     private static void success() {

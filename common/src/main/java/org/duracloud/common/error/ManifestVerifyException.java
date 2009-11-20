@@ -1,4 +1,4 @@
-package org.duracloud.common.util.error;
+package org.duracloud.common.error;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * @author Andrew Woods
  *         Date: Oct 24, 2009
  */
-public class ManifestVerifyException extends DuraCloudException {
+public class ManifestVerifyException extends DuraCloudCheckedException {
 
     private ErrorType errorType;
 

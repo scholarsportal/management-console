@@ -1,12 +1,12 @@
 package org.duracloud.duraservice.error;
 
-import org.duracloud.common.util.error.DuraCloudException;
+import org.duracloud.common.error.DuraCloudCheckedException;
 
 /**
  * @author: Bill Branan
  * Date: Nov 13, 2009
  */
-public class NoSuchServiceException extends DuraCloudException {
+public class NoSuchServiceException extends DuraCloudCheckedException {
 
     private static final String messageKey =
         "duracloud.error.duraservice.nosuchservice";
