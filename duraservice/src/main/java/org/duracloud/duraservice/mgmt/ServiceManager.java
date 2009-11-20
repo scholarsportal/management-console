@@ -468,7 +468,7 @@ public class ServiceManager {
         if(host.equals(primaryHost)) { // Primary Host
             for(DeploymentOption option : depOptions) {
                 if(option.getLocationType().equals(
-                    DeploymentOption.LocationType.PRIMARY)) {
+                    DeploymentOption.Location.PRIMARY)) {
                     if(option.getState().equals(
                         DeploymentOption.State.UNAVAILABLE)) {
                         throw new RuntimeException(error);
@@ -478,7 +478,7 @@ public class ServiceManager {
         } else if(host.equalsIgnoreCase(NEW_SERVICE_HOST)) { // New Host
             for(DeploymentOption option : depOptions) {
                 if(option.getLocationType().equals(
-                    DeploymentOption.LocationType.NEW)) {
+                    DeploymentOption.Location.NEW)) {
                     if(option.getState().equals(
                         DeploymentOption.State.AVAILABLE)) {
                         host =
@@ -620,7 +620,7 @@ public class ServiceManager {
         deployment.setHostname(serviceHost);
         deployment.setUserConfigs(userConfig);
         deployment.setSystemConfigs(systemConfig);
-        deployment.setStatus(Deployment.StatusType.STARTED);
+        deployment.setStatus(Deployment.Status.STARTED);
 
         // Determine if there is already a service of this type deployed
         ServiceInfo existingServiceDeployment = null;

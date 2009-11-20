@@ -93,7 +93,7 @@ public class MockServiceManager extends ServiceManager {
         service1.setSystemConfigs(systemConfig);
 
         DeploymentOption depOp = new DeploymentOption();
-        depOp.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp.setLocation(DeploymentOption.Location.PRIMARY);
         depOp.setState(DeploymentOption.State.AVAILABLE);
         List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
         depOptions.add(depOp);
@@ -141,10 +141,10 @@ public class MockServiceManager extends ServiceManager {
         service2.setSystemConfigs(systemConfig);
 
         DeploymentOption depOp1 = new DeploymentOption();
-        depOp1.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp1.setLocation(DeploymentOption.Location.PRIMARY);
         depOp1.setState(DeploymentOption.State.UNAVAILABLE);
         DeploymentOption depOp2 = new DeploymentOption();
-        depOp2.setLocationType(DeploymentOption.LocationType.NEW);
+        depOp2.setLocation(DeploymentOption.Location.NEW);
         depOp2.setState(DeploymentOption.State.AVAILABLE);
         List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
         depOptions.add(depOp1);
@@ -166,13 +166,13 @@ public class MockServiceManager extends ServiceManager {
         service3.setUserConfigs(service3UserConfig);
 
         DeploymentOption depOp1 = new DeploymentOption();
-        depOp1.setLocationType(DeploymentOption.LocationType.PRIMARY);
+        depOp1.setLocation(DeploymentOption.Location.PRIMARY);
         depOp1.setState(DeploymentOption.State.UNAVAILABLE);
         DeploymentOption depOp2 = new DeploymentOption();
-        depOp2.setLocationType(DeploymentOption.LocationType.NEW);
+        depOp2.setLocation(DeploymentOption.Location.NEW);
         depOp2.setState(DeploymentOption.State.UNAVAILABLE);
         DeploymentOption depOp3 = new DeploymentOption();
-        depOp3.setLocationType(DeploymentOption.LocationType.EXISTING);
+        depOp3.setLocation(DeploymentOption.Location.EXISTING);
         depOp3.setState(DeploymentOption.State.UNAVAILABLE);
         List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
         depOptions.add(depOp1);
