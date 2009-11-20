@@ -1,4 +1,6 @@
-package org.duracloud.client;
+package org.duracloud.client.error;
+
+import org.duracloud.client.error.ServicesException;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
  * @author Danny Bernstein
  * @version $Id$
  */
-public class InvalidServiceConfigurationException extends ServicesException{
+public class InvalidServiceConfigurationException extends ServicesException {
     private static final long serialVersionUID = 104604226824986975L;
 
     private List<ValidationError> errors;

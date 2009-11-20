@@ -49,6 +49,7 @@ public class ServiceManager {
     private static final Logger log = Logger.getLogger(ServiceManager.class);
 
     protected static final String PRIMARY_HOST_DISPLAY = "Primary Service Instance";
+    protected static final String NEW_HOST_DISPLAY = "New Service Instance";
 
     // The primary services host, generally deployed on the primary user instance
     protected static String primaryHost;

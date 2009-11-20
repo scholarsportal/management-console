@@ -8,9 +8,12 @@ import org.duracloud.common.util.error.DuraCloudException;
  */
 public class NoSuchServiceComputeInstanceException extends DuraCloudException {
 
+    private static final String messageKey =
+        "duracloud.error.duraservice.nosuchservicecomputeinstance";
+
     public NoSuchServiceComputeInstanceException(String instanceHost) {
         super("No service compute instance is available on host " +  instanceHost,
-              "duracloud.error.duraservice.nosuchservicecomputeinstance");
+              messageKey);
         setArgs(instanceHost);
     }
 }

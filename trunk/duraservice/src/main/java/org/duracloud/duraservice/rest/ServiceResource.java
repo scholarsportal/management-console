@@ -50,16 +50,16 @@ public class ServiceResource {
         return configDoc.getServiceAsXML(service);
     }
 
-    public static void deployService(int serviceId,
+    public static int deployService(int serviceId,
                                      String serviceHost,
                                      InputStream serviceXml)
         throws NoSuchServiceException, NoSuchServiceComputeInstanceException {
         ServicesConfigDocument configDoc = new ServicesConfigDocument();
         ServiceInfo service = configDoc.getService(serviceXml);
-        serviceManager.deployService(serviceId,
-                                     serviceHost,
-                                     service.getUserConfigVersion(),
-                                     service.getUserConfigs());
+        return serviceManager.deployService(serviceId,
+                                            serviceHost,
+                                            service.getUserConfigVersion(),
+                                            service.getUserConfigs());
     }
 
     public static void updateServiceConfig(int serviceId,
