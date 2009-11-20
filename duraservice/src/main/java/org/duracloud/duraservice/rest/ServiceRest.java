@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Provides interaction with services via REST
@@ -201,7 +202,7 @@ public class ServiceRest extends BaseRest {
      *
      * @param serviceId the ID of the service to deploy
      * @param serviceHost the server host on which to deploy the service
-     * @return 201 on success
+     * @return 201 on success with deploymentId of the new service deployment
      */
     @Path("/services/{serviceId}")
     @PUT
@@ -210,16 +211,29 @@ public class ServiceRest extends BaseRest {
                                   @QueryParam("serviceHost")
                                   String serviceHost) {
         InputStream userConfigXml = getRequestContent();
+        int deploymentId;
         try {
-            ServiceResource.deployService(serviceId, serviceHost, userConfigXml);
+            deploymentId = ServiceResource.deployService(serviceId,
+                                                         serviceHost,
+                                                         userConfigXml);
         } catch(NoSuchServiceException e) {
             return buildNotFoundResponse(e);
         } catch(NoSuchServiceComputeInstanceException e) {
             return buildNotFoundResponse(e);
         }
 
-        URI location = uriInfo.getRequestUri();
-        return Response.created(location).build();
+        URI serviceUri = uriInfo.getRequestUri();
+        String depServicePath = serviceUri.getPath() + "/" + deploymentId;
+        URI deploymentUri = serviceUri;
+        try {
+            deploymentUri = new URI(serviceUri.getScheme(),
+                                    serviceUri.getHost(),
+                                    depServicePath,
+                                    serviceUri.getFragment());
+        } catch (URISyntaxException e){
+            throw new RuntimeException(e);
+        }
+        return Response.created(deploymentUri).build();
     }
 
     /**

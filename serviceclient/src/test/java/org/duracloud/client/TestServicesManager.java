@@ -1,17 +1,18 @@
 package org.duracloud.client;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-
+import org.duracloud.client.error.NotFoundException;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.user.Option;
+import org.duracloud.serviceconfig.user.SelectableUserConfig;
+import org.duracloud.serviceconfig.user.TextUserConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 /**
  * Runtime test of DuraService java client. DuraService must
@@ -33,7 +34,9 @@ public class TestServicesManager
 
     private ServicesManager servicesManager;
 
-    private static final String testServiceId = "helloservice-1.0.0.jar";
+    private static final int testServiceId = 1;
+    private static int testDeploymentId = 0;
+    private static final String textConfigValue = "Test";
 
     @Override
     @Before
@@ -57,103 +60,133 @@ public class TestServicesManager
     protected void tearDown() throws Exception {
         // Make sure the test service is undeployed
         try {
-            servicesManager.undeployService(testServiceId);
-        } catch(ServicesException se) {
+            servicesManager.undeployService(testServiceId, testDeploymentId);
+        } catch(NotFoundException e) {
             // Ignore, the service was likely already removed
         }
     }
 
     @Test
-    public void testGetAllServices() throws Exception {
-        List<String> allServices = servicesManager.getAllServices();
-        assertTrue(allServices.contains(testServiceId));
+    public void testGetAvailableServices() throws Exception {
+        List<ServiceInfo> availableServicesList =
+            servicesManager.getAvailableServices();
+        assertNotNull(availableServicesList);
+        assertFalse(availableServicesList.isEmpty());
     }
 
+    /*
+     * Tests both deployService and getDeployedServices
+     */
     @Test
     public void testDeployService() throws Exception {
-        List<String> deployedServicesStart = servicesManager.getDeployedServices();
-        assertNotNull(deployedServicesStart);
-        servicesManager.deployService(testServiceId, null);
-        List<String> deployedServicesEnd = servicesManager.getDeployedServices();
-        assertNotNull(deployedServicesEnd);
-        assertTrue((deployedServicesStart.size() + 1)  == deployedServicesEnd.size());
+        List<ServiceInfo> deployedServicesListStart =
+            servicesManager.getDeployedServices();
+        assertNotNull(deployedServicesListStart);
+        assertNull(findService(testServiceId, deployedServicesListStart));
+
+        deployService();
+
+        List<ServiceInfo> deployedServicesListEnd =
+            servicesManager.getDeployedServices();
+        assertNotNull(deployedServicesListEnd);
+        assertNotNull(findService(testServiceId, deployedServicesListEnd));
     }
 
+    /*
+     * Tests both updateServiceConfig and getService
+     */
     @Test
-    public void testGetServiceStatus() throws Exception {
-        String status = servicesManager.getServiceStatus(testServiceId);
-        assertNotNull(status);
-        assertEquals("available", status);
-        servicesManager.deployService(testServiceId, null);
-        status = servicesManager.getServiceStatus(testServiceId);
-        assertNotNull(status);
-        assertEquals("deployed", status);
+    public void testUpdateServiceConfig() throws Exception {
+        deployService();
+
+        String updatedTextConfigValue = "Updated";
+
+        ServiceInfo service = servicesManager.getService(testServiceId);
+        assertNotNull(service);
+        List<UserConfig> userConfigs = service.getUserConfigs();
+        for(UserConfig config : userConfigs) {
+            if(config instanceof TextUserConfig) {
+                assertEquals(textConfigValue,
+                             ((TextUserConfig)config).getValue());
+                ((TextUserConfig)config).setValue(updatedTextConfigValue);
+            }
+        }
+
+        servicesManager.updateServiceConfig(testServiceId,
+                                            testDeploymentId,
+                                            service.getUserConfigVersion(),
+                                            userConfigs);
+
+        service = servicesManager.getService(testServiceId);
+        assertNotNull(service);
+        userConfigs = service.getUserConfigs();
+        for(UserConfig config : userConfigs) {
+            if(config instanceof TextUserConfig) {
+                assertEquals(updatedTextConfigValue,
+                             ((TextUserConfig)config).getValue());
+            }
+        }
+
     }
 
-    @Test
-    public void testConfigureService() throws Exception {
-        servicesManager.deployService(testServiceId, null);
-
-        Map<String, String> configStart =
-            servicesManager.getServiceConfig(testServiceId);
-        assertNotNull(configStart);
-
-        Map<String, String> newConfig = new HashMap<String, String>();
-        String value1 = String.valueOf(new Random().nextInt(99999));
-        String value2 = String.valueOf(new Random().nextInt(99999));
-        newConfig.put("property1", value1);
-        newConfig.put("property2", value2);
-        servicesManager.configureService(testServiceId, newConfig);
-
-        Map<String, String> configEnd =
-            servicesManager.getServiceConfig(testServiceId);
-        assertNotNull(configEnd);
-        assertTrue(configEnd.get("property1").equals(value1));
-        assertTrue(configEnd.get("property2").equals(value2));
-
-        assertFalse(configStart.equals(configEnd));
-    }
-
+    /*
+     * Tests both undeployService and getDeployedService
+     */
     @Test
     public void testUnDeployService() throws Exception {
-        servicesManager.deployService(testServiceId, null);
-        List<String> deployedServicesStart = servicesManager.getDeployedServices();
-        assertNotNull(deployedServicesStart);
-        servicesManager.undeployService(testServiceId);
-        List<String> deployedServicesEnd = servicesManager.getDeployedServices();
-        assertNotNull(deployedServicesEnd);
-        assertTrue((deployedServicesStart.size() - 1)  == deployedServicesEnd.size());
+        deployService();
+
+        ServiceInfo depService =
+            servicesManager.getDeployedService(testServiceId, testDeploymentId);
+        assertNotNull(depService);
+
+        servicesManager.undeployService(testServiceId, testDeploymentId);
+
+        try {
+            servicesManager.getDeployedService(testServiceId, testDeploymentId);
+            fail("Should not be able to retrieve an undeployed service");
+        } catch(NotFoundException expected) {
+            assertNotNull(expected);
+        }
     }
 
-    @Test
-    public void testGetAvailableServices() throws Exception {
-        List<String> availableServicesListStart =
+    private void deployService() throws Exception {
+        List<ServiceInfo> availableServicesList =
             servicesManager.getAvailableServices();
-        assertTrue(availableServicesListStart.size() >= 1);
-        assertTrue(availableServicesListStart.contains(testServiceId));
+        assertNotNull(availableServicesList);
+        ServiceInfo serviceToDeploy =
+            findService(testServiceId, availableServicesList);
 
-        servicesManager.deployService(testServiceId, null);
+        String userConfigVer = serviceToDeploy.getUserConfigVersion();
 
-        List<String> availableServicesListEnd =
-            servicesManager.getAvailableServices();
-        assertTrue((availableServicesListStart.size() - 1) ==
-                    availableServicesListEnd.size());
-        assertFalse(availableServicesListEnd.contains(testServiceId));
+        List<UserConfig> userConfigs = serviceToDeploy.getUserConfigs();
+        for(UserConfig config : userConfigs) {
+            if(config instanceof TextUserConfig) {
+                ((TextUserConfig)config).setValue(textConfigValue);
+            } else if(config instanceof SelectableUserConfig) {
+                List<Option> options =
+                    ((SelectableUserConfig)config).getOptions();
+                for(Option option : options) {
+                    option.setSelected(false);
+                }
+                options.get(0).setSelected(true);
+            }
+        }
+
+        testDeploymentId =
+             servicesManager.deployService(testServiceId,
+                                             userConfigVer,
+                                             userConfigs,
+                                             null);
     }
 
-    @Test
-    public void testGetDeployedServices() throws Exception {
-        List<String> deployedServicesListStart =
-            servicesManager.getDeployedServices();
-        assertFalse(deployedServicesListStart.contains(testServiceId));
-
-        servicesManager.deployService(testServiceId, null);
-
-        List<String> deployedServicesListEnd =
-            servicesManager.getDeployedServices();
-        assertTrue((deployedServicesListStart.size() + 1) ==
-                    deployedServicesListEnd.size());
-        assertTrue(deployedServicesListEnd.contains(testServiceId));
+    private ServiceInfo findService(int serviceId, List<ServiceInfo> services) {
+        for(ServiceInfo service : services) {
+            if(service.getId() == serviceId) {
+                return service;
+            }
+        }
+        return null;
     }
 
 }

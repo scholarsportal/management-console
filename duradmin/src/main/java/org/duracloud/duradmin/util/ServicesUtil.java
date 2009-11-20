@@ -1,7 +1,7 @@
 
 package org.duracloud.duradmin.util;
 
-import org.duracloud.client.ServicesException;
+import org.duracloud.client.error.ServicesException;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.serviceconfig.user.Option;
 import org.duracloud.serviceconfig.ServiceInfo;
