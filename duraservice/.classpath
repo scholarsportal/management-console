@@ -32,5 +32,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/computeservice"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/serviceclient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/serviceconfig"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servicesadmin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servicesadminclient"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/servicescommon"/>
+	<classpathentry kind="var" path="M2_REPO/org/easymock/easymockclassextension/2.4/easymockclassextension-2.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/easymock/easymock/2.4/easymock-2.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
