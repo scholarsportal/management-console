@@ -121,30 +121,32 @@ public class ServiceConfigUtil {
      */
     public List<UserConfig> populateVariables(List<UserConfig> userConfigs) {
         List<UserConfig> newUserConfigs = new ArrayList<UserConfig>();
-        for(UserConfig config : userConfigs) {
-            if(config instanceof SelectableUserConfig) {
-                List<Option> options =
-                    ((SelectableUserConfig)config).getOptions();
-                options = populateStoresVariable(options);
-                options = populateSpacesVariable(options);
-                if(config instanceof SingleSelectUserConfig) {
-                    SingleSelectUserConfig newConfig =
-                        new SingleSelectUserConfig(config.getName(),
-                                                   config.getDisplayName(),
-                                                   options);
-                    newUserConfigs.add(newConfig);
-                } else if(config instanceof MultiSelectUserConfig) {
-                    MultiSelectUserConfig newConfig =
-                        new MultiSelectUserConfig(config.getName(),
-                                                  config.getDisplayName(),
-                                                  options);
-                    newUserConfigs.add(newConfig);
+        if(userConfigs != null){
+            for(UserConfig config : userConfigs) {
+                if(config instanceof SelectableUserConfig) {
+                    List<Option> options =
+                        ((SelectableUserConfig)config).getOptions();
+                    options = populateStoresVariable(options);
+                    options = populateSpacesVariable(options);
+                    if(config instanceof SingleSelectUserConfig) {
+                        SingleSelectUserConfig newConfig =
+                            new SingleSelectUserConfig(config.getName(),
+                                                       config.getDisplayName(),
+                                                       options);
+                        newUserConfigs.add(newConfig);
+                    } else if(config instanceof MultiSelectUserConfig) {
+                        MultiSelectUserConfig newConfig =
+                            new MultiSelectUserConfig(config.getName(),
+                                                      config.getDisplayName(),
+                                                      options);
+                        newUserConfigs.add(newConfig);
+                    } else {
+                        throw new RuntimeException("Unexpected UserConfig type: " +
+                                                   config.getClass());
+                    }
                 } else {
-                    throw new RuntimeException("Unexpected UserConfig type: " +
-                                               config.getClass());
+                    newUserConfigs.add(config);
                 }
-            } else {
-                newUserConfigs.add(config);
             }
         }
         return newUserConfigs;
