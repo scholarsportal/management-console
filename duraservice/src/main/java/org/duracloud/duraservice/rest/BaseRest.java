@@ -1,15 +1,9 @@
 package org.duracloud.duraservice.rest;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -37,32 +31,4 @@ public abstract class BaseRest {
     public static final String DEFAULT_MIME = "application/octet-stream";
 
     public static final String HEADER_PREFIX = "x-dura-meta-";
-
-    /**
-     * Looks through the request headers and pulls out user metadata.
-     * Only includes items which are not in the exceptions list.
-     */
-    protected Map<String, String> getUserMetadata(String... exceptions) {
-        MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
-        Map<String, String> userMetadata = new HashMap<String, String>();
-        Iterator<String> headerNames = rHeaders.keySet().iterator();
-        while(headerNames.hasNext()) {
-            String headerName = headerNames.next();
-            if(headerName.startsWith(HEADER_PREFIX)) {
-                boolean include = true;
-                for(String exception : exceptions) {
-                    if(exception.equals(headerName)) {
-                        include = false;
-                    }
-                }
-                if(include) {
-                    String noPrefixName =
-                        headerName.substring(HEADER_PREFIX.length());
-                    userMetadata.put(noPrefixName,
-                                     rHeaders.getFirst(headerName));
-                }
-            }
-        }
-        return userMetadata;
-    }
 }

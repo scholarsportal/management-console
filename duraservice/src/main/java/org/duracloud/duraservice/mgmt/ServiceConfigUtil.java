@@ -257,11 +257,11 @@ public class ServiceConfigUtil {
                     newDepOpt.setLocation(DeploymentOption.Location.PRIMARY);
                     newDepOpt.setState(DeploymentOption.State.AVAILABLE);
                     newDeploymentOptions.add(newDepOpt);
-                }
                 } else {
                     newDeploymentOptions.add(depOp);
                 }
             }
+        }
         return newDeploymentOptions;
     }
 

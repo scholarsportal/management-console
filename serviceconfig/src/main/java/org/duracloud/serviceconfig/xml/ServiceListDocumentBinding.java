@@ -60,10 +60,14 @@ public class ServiceListDocumentBinding {
                 serviceTypes[i++] = serviceType;
             }
 
-            ServicesDocument.Services servicesType = ServicesDocument.Services
-                .Factory
-                .newInstance();
+            ServicesDocument.Services servicesType =
+                ServicesDocument.Services.Factory.newInstance();
             servicesType.setServiceArray(serviceTypes);
+            doc.setServices(servicesType);
+        } else if(serviceList.size() == 0) {
+            ServicesDocument.Services servicesType =
+                ServicesDocument.Services.Factory.newInstance();
+            servicesType.setServiceArray(new ServiceType[0]);
             doc.setServices(servicesType);
         }
         return doc;
