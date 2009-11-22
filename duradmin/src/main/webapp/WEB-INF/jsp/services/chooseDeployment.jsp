@@ -22,6 +22,8 @@
 						${service.description}
 					</p>
 				</div>
+
+
 				<form:form >
 					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
 					<form:errors element="div" cssClass="message-error" />
@@ -29,13 +31,51 @@
 						<table class="basic-form">
 							<tr>
 								<td>Deployment Option</td>							
-								<td>value</td>
+								<td>
+									<table class="standard">
+									<c:forEach items="${serviceInfo.deploymentOptions}" var="option" varStatus="status">
+										<tr>
+											<th>
+												Name
+											</th>
+											<th>
+												Host
+											</th>
+											<th>
+												Location
+											</th>
+											<th>
+												State
+											</th>
+										</tr>
+										<tr>
+											<td>
+												<input id="do-${status.count}" selected="${status.count == 0 ? 'selected' : ''}" 
+														type="radio" name="deploymentOption" value="${option}" />
+												<label for="do-${status.count}"> ${option.displayName}</label>
+											</td>
+											<td>
+												<label for="do-${status.count}"> ${option.hostname}</label>
+											</td>
+											<td>
+												<label for="do-${status.count}"> ${option.locationType}</label>
+											</td>
+											<td>
+												<label for="do-${status.count}"> ${option.state}</label>
+											</td>
+											
+										</tr>
+									</c:forEach>
+									</table>
+									
+								</td>
 								<td>help</td>
 							</tr>
+							
 						</table>
 					</div>
 					<div class="basic-form-buttons" >
-						<input type="submit" name="_eventId_submit" value="Configure"/> 
+						<input type="submit" name="_eventId_submit" value="Next"/> 
 						<input type="submit" name="_eventId_cancel" value="<spring:message code="cancel"/>"/> 
 					</div>
 				</form:form>

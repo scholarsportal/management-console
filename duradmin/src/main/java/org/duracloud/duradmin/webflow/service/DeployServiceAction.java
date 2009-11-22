@@ -8,7 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.DeploymentOption.Location;
+import org.duracloud.serviceconfig.DeploymentOption.State;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 public class DeployServiceAction
@@ -21,10 +24,23 @@ public class DeployServiceAction
     public DeploymentOption chooseDeploymentOption(RequestContext request)
     throws Exception {
         ServiceInfo serviceInfo = getServiceInfo(request);
-        DeploymentOption option =  serviceInfo.getDeploymentOptions().get(0);
+        
+        DeploymentOption option =  getDeployOptionFromRequest(serviceInfo, request.getRequestParameters().get("deploymentOption").toString());
         request.getFlowScope().put("userConfigs", serviceInfo.getUserConfigs());
         return option;
     }
+    
+    private DeploymentOption getDeployOptionFromRequest(ServiceInfo serviceInfo, String deploymentOptionString) {
+
+        for(DeploymentOption option : serviceInfo.getDeploymentOptions()){
+            if(option.toString().equals(deploymentOptionString)){
+                return option;
+            }
+        }
+        
+        throw new RuntimeException("unable to find matching deployment option");
+    }
+
 
     
     public boolean configureAndDeployService(ServiceInfo serviceInfo, DeploymentOption option, MessageContext messageContext)
