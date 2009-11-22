@@ -141,6 +141,14 @@ public class ServiceInfo implements Serializable, Cloneable{
     public void setContentId(String contentId) {
         this.contentId = contentId;
     }
+    
+    public int getDeploymentCount(){
+        return this.deployments == null ? 0 : this.deployments.size();
+    }
+    
+    public boolean isNewDeploymentAllowed(){
+        return getDeploymentCount() < getMaxDeploymentsAllowed();
+    }
 
     public ServiceInfo clone() {
         // TODO: Actually perform clone
