@@ -79,41 +79,8 @@ public class DeployServiceFlowHandler
     }
 
     private ServiceInfo getService(int serviceId) throws Exception {
-        //ServiceInfo s = controllerSupport.getServicesManager().getService(serviceId);
-        //return s;
-        ServiceInfo service = new ServiceInfo();
-        service.setId(serviceId);
-        service.setServiceVersion("1.0");
-        service.setDisplayName("My Indeterminate Service");
-        List<DeploymentOption> dos = new LinkedList<DeploymentOption>();
-        DeploymentOption depOption = new DeploymentOption();
-        depOption.setDisplayName("Deployment Option xyz");
-        depOption.setHostname("127.0.0.1");
-        depOption.setState(State.AVAILABLE);
-        depOption.setLocation(DeploymentOption.Location.NEW);
-        dos.add(depOption);
-        service.setDeploymentOptions(dos);
-        List<UserConfig> userConfigs = new LinkedList<UserConfig>();
-        TextUserConfig config = new TextUserConfig("magicNumber", "Magic Number");
-        config.setValue("this is default value");
-        userConfigs.add(config);
-        
-        service.setUserConfigs(userConfigs);
-
-        List<Deployment> deployments = new LinkedList<Deployment>();
-        Deployment d = new Deployment();
-        d.setId(1);
-        d.setStatus(Status.STARTED);
-
-        userConfigs = new LinkedList<UserConfig>();
-        config = new TextUserConfig("magicNumber", "Magic Number");
-        config.setValue("this is an already configured value");
-        userConfigs.add(config);
-        d.setUserConfigs(userConfigs);
-        deployments.add(d);
-        service.setDeployments(deployments);
-        
-        return service;
+        ServiceInfo s = controllerSupport.getServicesManager().getService(serviceId);
+        return s;
     }
 
     public String handleExecutionOutcome(FlowExecutionOutcome outcome,
