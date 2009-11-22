@@ -154,7 +154,7 @@ dojo.addOnLoad(function(){
 
 dojo.addOnLoad(function(){
 	/*adds mouse listeners on spaces table rows*/
-	dojo.query("#spacesTable > tbody > tr",document).forEach(
+	dojo.query("#spacesTable > tbody > tr, #deploymentsTable > tbody > tr",document).forEach(
 	    function(row) {
 	    	dojo.connect(row, 'onmouseover', function() {
 				dojo.addClass(row,"hover");
@@ -166,11 +166,11 @@ dojo.addOnLoad(function(){
 					dojo.removeClass(row,"hover");
 					dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'hidden'});
       		});
-           	
-
-
 	    }
 	);		
+
+	
+
 });
 
 

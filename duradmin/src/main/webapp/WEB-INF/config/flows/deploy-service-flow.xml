@@ -5,16 +5,43 @@
      "http://www.springframework.org/schema/webflow
      http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"  >
 
-  <input name="service" required="true" type="org.duracloud.serviceconfig.ServiceInfo"/>
+  <input name="serviceInfo" required="true" type="org.duracloud.serviceconfig.ServiceInfo"/>
+  <input name="deployment" required="false" type="org.duracloud.serviceconfig.Deployment"/>
+  
+  <decision-state id="newOrExistingDeployment">
+    <if test="deployment eq null" then="chooseDeployment" else="reconfigureServiceDeployment"/>
+  </decision-state>
 
-  <view-state id="configureService" model="service" >
-    <transition on="submit" to="success">
-		<evaluate expression="deployServiceAction.execute(service,messageContext)" />    
+  <view-state id="chooseDeployment">
+    <transition on="submit" to="configureAndDeployService">
+      <evaluate expression="deployServiceAction.chooseDeploymentOption(flowRequestContext)" result="flowScope.deploymentOption" />    
     </transition>
   </view-state>
 
-  <end-state id="success">
-  	<output name="service" value="service"/>
+
+  <view-state id="configureAndDeployService" model="serviceInfo" >
+    <transition on="submit" to="deployed">
+		<evaluate expression="deployServiceAction.configureAndDeployService(serviceInfo,flowScope.deploymentOption, messageContext)" />    
+    </transition>
+  </view-state>
+
+  <view-state id="reconfigureServiceDeployment" model="serviceInfo">
+    <on-entry>
+      <set name="flowScope.userConfigs" value="deployment.userConfigs"/>
+    </on-entry>
+    <transition on="submit" to="reconfigured">
+      <evaluate expression="deployServiceAction.reconfigureServiceDeployment(serviceInfo,deployment,messageContext)" />    
+    </transition>
+  </view-state>
+
+
+  <end-state id="deployed">
+  	<output name="serviceInfo" value="serviceInfo"/>
+  </end-state>
+
+  <end-state id="reconfigured">
+    <output name="serviceInfo" value="serviceInfo"/>
+    <output name="deployment" value="deployment"/>
   </end-state>
   
   <end-state id="cancel" />

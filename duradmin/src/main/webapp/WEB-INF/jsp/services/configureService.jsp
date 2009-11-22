@@ -16,10 +16,10 @@
 			<tiles:putAttribute name="body">
 				<div>
 					<h3>
-						${service.displayName}
+						${serviceInfo.displayName}
 					</h3>
 					<p>
-						${service.description}
+						${serviceInfo.description}
 					</p>
 				</div>
 				<form:form >
@@ -27,7 +27,7 @@
 					<form:errors element="div" cssClass="message-error" />
 					<div>
 						<table class="basic-form">
-							<c:forEach items="${service.userConfigs}" var="userConfig">
+							<c:forEach items="${userConfigs}" var="userConfig">
 								<tr>
 									<td class="label">${userConfig.displayName}</td>
 									<td class="input">
