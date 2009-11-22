@@ -187,6 +187,11 @@ div.main-content-header{
 	
 }
 
+.enabled{
+	color:green;	
+	
+}
+
 .message-error{
 	background-color:#FA8072;	
 	
@@ -214,6 +219,19 @@ div.service {
   margin-bottom: 20px;
 }
 
+
+td.config-option {
+	width:30%;	
+}
+
+.config-value{
+	
+}
+
+
+tr.deployment-panel {
+	/*background-color:#ffc;*/
+}
 div.space {
   float: left;
   margin-right: 20px;	

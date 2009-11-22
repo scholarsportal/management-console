@@ -1,19 +1,18 @@
 
 package org.duracloud.duradmin.control;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.ServiceCommand;
-import org.duracloud.duradmin.util.ServicesUtil;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ServicesController
+public class DeployedServicesController
         extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
@@ -24,7 +23,7 @@ public class ServicesController
         return controllerSupport.getServicesManager();
     }
 
-    public ServicesController() {
+    public DeployedServicesController() {
         setCommandClass(ServiceCommand.class);
         setCommandName("service");
     }
@@ -41,26 +40,17 @@ public class ServicesController
     }
 
     protected ModelAndView getServices() {
-        List<ServiceInfo> depServiceList;
-        List<ServiceInfo> avlServiceList;
-        List<String> serviceHosts;
         try {
-            ServicesManager servicesManager = getServicesManager();
-            depServiceList = ServicesUtil.getDeployedServices(servicesManager);
-            avlServiceList = ServicesUtil.getAvailableServices(servicesManager);
-            serviceHosts = new ArrayList<String>();
+            List<ServiceInfo> services = getDeployedServices();
+            return new ModelAndView("deployedServices", "serviceInfos", services);
         } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
-            return mav;
+            return new ModelAndView("error", "error", se.getMessage());
         }
-
-        ModelAndView mav = new ModelAndView(getSuccessView());
-        mav.addObject("deployedServices", depServiceList);
-        mav.addObject("availableServices", avlServiceList);
-        mav.addObject("serviceHosts", serviceHosts);
-        return mav;
-
     }
 
+    private List<ServiceInfo> getDeployedServices() throws Exception {
+        return getServicesManager().getDeployedServices();
+    }
 }
