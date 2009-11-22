@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -102,6 +103,7 @@ public class ServiceRest extends BaseRest {
      */
     @Path("/services")
     @GET
+    @Produces(XML)
     public Response getServices(@QueryParam("show")
                                 String show) {
         ResponseBuilder response = Response.ok();
@@ -139,6 +141,7 @@ public class ServiceRest extends BaseRest {
      */
     @Path("/services/{serviceId}")
     @GET
+    @Produces(XML)
     public Response getService(@PathParam("serviceId")
                                int serviceId) {
         ResponseBuilder response = Response.ok();
@@ -170,6 +173,7 @@ public class ServiceRest extends BaseRest {
      */
     @Path("/services/{serviceId}/{deploymentId}")
     @GET
+    @Produces(XML)
     public Response getDeployedService(@PathParam("serviceId")
                                        int serviceId,
                                        @PathParam("deploymentId")
