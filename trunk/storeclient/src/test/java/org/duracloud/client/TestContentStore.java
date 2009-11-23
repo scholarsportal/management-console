@@ -69,12 +69,17 @@ public class TestContentStore
     }
 
     private static String getPort() throws Exception {
-        if(port == null) {
-            port = System.getProperty("tomcat.port.default");
-            if(port == null) {
-                port = defaultPort;
-            }
+        if (port == null) {
+            StoreClientConfig config = new StoreClientConfig();
+            port = config.getPort();
         }
+
+        try { // Ensure the port is a valid port value
+            Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            port = defaultPort;
+        }
+
         return port;
     }
 
