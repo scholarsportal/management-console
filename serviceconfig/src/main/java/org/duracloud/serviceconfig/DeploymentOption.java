@@ -98,4 +98,8 @@ public class DeploymentOption implements Serializable {
         result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
+    
+    public String toString(){
+        return "DeploymentOption([displayName="+this.displayName + ", hostname=" + this.hostname + ", location=" + this.location + ", state="+this.state+"])";
+    }
 }
