@@ -10,7 +10,7 @@ import java.text.MessageFormat;
  * @author Andrew Woods
  *         Date: Nov 20, 2009
  */
-public class DuraCloudExceptionCore extends Throwable implements MessageFormattable {
+public class DuraCloudExceptionCore implements MessageFormattable {
 
     private String key = "duracloud.error.general";
     private String[] args;
@@ -19,32 +19,7 @@ public class DuraCloudExceptionCore extends Throwable implements MessageFormatta
         super();
     }
 
-    public DuraCloudExceptionCore(String message) {
-        super(message);
-    }
-
-    public DuraCloudExceptionCore(String message, String key) {
-        super(message);
-        this.key = key;
-    }
-
-    public DuraCloudExceptionCore(String message, Throwable throwable) {
-        super(message, throwable);
-    }
-
-    public DuraCloudExceptionCore(String message,
-                                  Throwable throwable,
-                                  String key) {
-        super(message, throwable);
-        this.key = key;
-    }
-
-    public DuraCloudExceptionCore(Throwable throwable) {
-        super(throwable);
-    }
-
-    public DuraCloudExceptionCore(Throwable throwable, String key) {
-        super(throwable);
+    public DuraCloudExceptionCore(String key) {
         this.key = key;
     }
 
@@ -72,7 +47,7 @@ public class DuraCloudExceptionCore extends Throwable implements MessageFormatta
         }
 
         if (pattern == null) {
-            return this.getMessage();
+            return null;
         } else {
             return MessageFormat.format(pattern, getArgs());
         }
