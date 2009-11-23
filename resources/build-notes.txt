@@ -1,5 +1,5 @@
 ::versions::
-maven-2.0.9
+maven-2.2.1
 tomcat-6.0.18
 
 ::build, run unit tests::

@@ -9,7 +9,7 @@
   <url>http://duracloud.org</url>
 
   <prerequisites>
-      <maven>2.0.9</maven>
+      <maven>2.2.1</maven>
   </prerequisites>
 
   <inceptionYear>2009</inceptionYear>
