@@ -61,6 +61,10 @@ public class DuraCloudRuntimeException extends RuntimeException implements Messa
     }
 
     public String getFormattedMessage() {
-        return core.getFormattedMessage();
+        String msg = core.getFormattedMessage();
+        if (null == msg) {
+            msg = this.getMessage();
+        }
+        return msg;
     }
 }

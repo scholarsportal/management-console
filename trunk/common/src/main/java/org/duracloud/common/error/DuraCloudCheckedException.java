@@ -8,37 +8,44 @@ package org.duracloud.common.error;
  *         Date: Oct 24, 2009
  */
 public class DuraCloudCheckedException extends Exception implements MessageFormattable {
-    
+
     private MessageFormattable core;
 
     public DuraCloudCheckedException() {
+        super();
         core = new DuraCloudExceptionCore();
     }
 
     public DuraCloudCheckedException(String message) {
-        core = new DuraCloudExceptionCore(message);
+        super(message);
+        core = new DuraCloudExceptionCore();
     }
 
     public DuraCloudCheckedException(String message, String key) {
-        core = new DuraCloudExceptionCore(message, key);
+        super(message);
+        core = new DuraCloudExceptionCore(key);
     }
 
     public DuraCloudCheckedException(String message, Throwable throwable) {
-        core = new DuraCloudExceptionCore(message, throwable);
+        super(message, throwable);
+        core = new DuraCloudExceptionCore();
     }
 
     public DuraCloudCheckedException(String message,
                                      Throwable throwable,
                                      String key) {
-        core = new DuraCloudExceptionCore(message, throwable, key);
+        super(message, throwable);
+        core = new DuraCloudExceptionCore(key);
     }
 
     public DuraCloudCheckedException(Throwable throwable) {
-        core = new DuraCloudExceptionCore(throwable);
+        super(throwable);
+        core = new DuraCloudExceptionCore();
     }
 
     public DuraCloudCheckedException(Throwable throwable, String key) {
-        core = new DuraCloudExceptionCore(throwable, key);
+        super(throwable);
+        core = new DuraCloudExceptionCore(key);
     }
 
     public String getKey() {
@@ -49,12 +56,15 @@ public class DuraCloudCheckedException extends Exception implements MessageForma
         return core.getArgs();
     }
 
-    public void setArgs(String... args)
-    {
+    public void setArgs(String... args) {
         core.setArgs(args);
     }
 
     public String getFormattedMessage() {
-        return core.getFormattedMessage();
+        String msg = core.getFormattedMessage();
+        if (null == msg) {
+            msg = this.getMessage();
+        }
+        return msg;
     }
 }
