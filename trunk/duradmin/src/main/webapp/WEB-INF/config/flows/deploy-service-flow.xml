@@ -19,9 +19,9 @@
   </view-state>
 
 
-  <view-state id="configureAndDeployService" model="serviceInfo" >
+  <view-state id="configureAndDeployService" >
     <transition on="submit" to="deployed">
-		<evaluate expression="deployServiceAction.configureAndDeployService(serviceInfo,flowScope.deploymentOption, messageContext)" />    
+		<evaluate expression="deployServiceAction.configureAndDeployService(flowRequestContext)" />    
     </transition>
   </view-state>
 
@@ -30,7 +30,7 @@
       <set name="flowScope.userConfigs" value="deployment.userConfigs"/>
     </on-entry>
     <transition on="submit" to="reconfigured">
-      <evaluate expression="deployServiceAction.reconfigureServiceDeployment(serviceInfo,deployment,messageContext)" />    
+      <evaluate expression="deployServiceAction.reconfigureServiceDeployment(flowRequestContext)" />    
     </transition>
   </view-state>
 

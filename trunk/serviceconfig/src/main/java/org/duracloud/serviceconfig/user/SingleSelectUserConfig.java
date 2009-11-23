@@ -22,6 +22,27 @@ public class SingleSelectUserConfig extends SelectableUserConfig{
         }
     }
     
+    
+    public Option getSelectedOption(){
+        for(Option o : getOptions()){
+            if(o.isSelected()){
+                return o;
+            }
+        }
+        
+        return null;
+    }
+    
+    
+    public String getSelectedValue(){
+        Option selected = getSelectedOption();
+        if(selected != null){
+            return selected.getValue();
+        }
+        
+        return null;
+    }
+    
     public InputType getInputType() {
         return InputType.SINGLESELECT;
     }

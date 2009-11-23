@@ -76,7 +76,13 @@
 													<c:param name="serviceId" value="${serviceInfo.id}"/>
 													<c:param name="deploymentId" value="${deployment.id}"/>
 													<c:param name="returnTo" value="${currentUrl}"/>
-													</c:url>">Reconfigure</a>
+													</c:url>">Reconfigure</a> |
+												
+												<a  href="<c:url value="/services/undeploy">
+													<c:param name="serviceId" value="${serviceInfo.id}"/>
+													<c:param name="deploymentId" value="${deployment.id}"/>
+													<c:param name="returnTo" value="${currentUrl}"/>
+													</c:url>">Undeploy</a>
 											</div>
 										</td>
 									</tr>

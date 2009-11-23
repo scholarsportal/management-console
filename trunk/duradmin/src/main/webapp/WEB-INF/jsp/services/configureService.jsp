@@ -60,7 +60,13 @@
 											
 										</c:choose>										
 									</td>
-									<td class="field-help">help</td>
+									<td>
+										<c:forEach items="${errors.allErrors}" var="err">
+											<c:if test="${err.source == userConfig.name }">
+												<spring:message message="${err}"/>
+											</c:if>
+										</c:forEach>
+									</td>
 								</tr>
 							</c:forEach>
 						</table>

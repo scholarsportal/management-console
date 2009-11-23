@@ -30,40 +30,16 @@
 					<div>
 						<table class="basic-form">
 							<tr>
-								<td>Deployment Option</td>							
+								<td>Select one deployment</td>							
 								<td>
 									<table class="standard">
 									<c:forEach items="${serviceInfo.deploymentOptions}" var="option" varStatus="status">
 										<tr>
-											<th>
-												Name
-											</th>
-											<th>
-												Host
-											</th>
-											<th>
-												Location
-											</th>
-											<th>
-												State
-											</th>
-										</tr>
-										<tr>
 											<td>
-												<input id="do-${status.count}" selected="${status.count == 0 ? 'selected' : ''}" 
+												<input id="do-${status.count}" checked="${status.count == 0}" 
 														type="radio" name="deploymentOption" value="${option}" />
-												<label for="do-${status.count}"> ${option.displayName}</label>
+												<label for="do-${status.count}"> ${option.displayName} ${option.hostname} ${option.locationType}</label>
 											</td>
-											<td>
-												<label for="do-${status.count}"> ${option.hostname}</label>
-											</td>
-											<td>
-												<label for="do-${status.count}"> ${option.locationType}</label>
-											</td>
-											<td>
-												<label for="do-${status.count}"> ${option.state}</label>
-											</td>
-											
 										</tr>
 									</c:forEach>
 									</table>
