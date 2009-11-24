@@ -13,6 +13,7 @@ public abstract class ScrollableList<E>
     private List<E> resultList;
 
     private boolean markedForUpdate = true;
+    
 
     private E currentMarker = null;
 
@@ -32,8 +33,8 @@ public abstract class ScrollableList<E>
     
     public void setMaxResultsPerPage(int maxResults) {
         if (this.maxResultsPerPage != maxResults) {
-            markedForUpdate = true;
             this.maxResultsPerPage = maxResults;
+            first();
         }
     }
 
@@ -109,7 +110,7 @@ public abstract class ScrollableList<E>
         }
     }
 
-    protected E getCurrentMarker() {
+    private E getCurrentMarker() {
         return this.currentMarker;
     }
 
@@ -124,12 +125,12 @@ public abstract class ScrollableList<E>
 
     protected final void update() throws DataRetrievalException {
         if (markedForUpdate) {
-            this.resultList = getData();
+            this.resultList = getData(isPreviousAvailable()? this.currentMarker : null);
             this.currentMarker = getLastResultInCurrentList();
             markedForUpdate = false;
         }
     }
 
-    protected abstract List<E> getData() throws DataRetrievalException;
+    protected abstract List<E> getData(E currentMarker) throws DataRetrievalException;
 
 }

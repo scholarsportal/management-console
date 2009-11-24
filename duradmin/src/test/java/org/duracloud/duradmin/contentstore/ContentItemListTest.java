@@ -1,7 +1,10 @@
 
 package org.duracloud.duradmin.contentstore;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +19,7 @@ public class ContentItemListTest
         super.setUp();
         String spaceId =
                 this.contentStoreProvider.getContentStore().getSpaces().get(0);
-        this.list = new ContentItemList(spaceId, this.contentStoreProvider);
+        this.list = new ContentItemList(spaceId, this.contentStoreProvider.getContentStore());
     }
 
     @Test

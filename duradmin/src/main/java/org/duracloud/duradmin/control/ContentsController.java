@@ -35,8 +35,10 @@ public class ContentsController
         Space space = (Space) command;
         String spaceId = space.getSpaceId();
         ControllerUtils.checkSpaceId(spaceId);
+        ContentItemListCache.refresh(request, spaceId, getContentStoreProvider());
         ContentItemList contentItemList = ContentItemListCache.get(request, spaceId, getContentStoreProvider());
-
+        
+        
         String maxPerPage = request.getParameter("mpp");
         if (StringUtils.hasText(maxPerPage)) {
             contentItemList.setMaxResultsPerPage(Integer.parseInt(maxPerPage));

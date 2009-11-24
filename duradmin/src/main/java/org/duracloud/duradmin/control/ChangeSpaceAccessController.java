@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStore.AccessType;
+import org.duracloud.duradmin.contentstore.ContentItemListCache;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
@@ -40,11 +41,15 @@ public class ChangeSpaceAccessController
                 access.equals(AccessType.OPEN) ? AccessType.CLOSED
                         : AccessType.OPEN;
         store.setSpaceAccess(space.getSpaceId(), newAccess);
+        SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId()));
+        ContentItemListCache.refresh(request, space.getSpaceId(), getContentStoreProvider());
+        
         ModelAndView mav = new ModelAndView();
         String text =
                 MessageFormat.format("Space access is now {0}", newAccess
                         .toString().toLowerCase());
         Message message = MessageUtils.createMessage(text);
+        mav.addObject("space", space);
         return setView(request, mav, message);
     }
 

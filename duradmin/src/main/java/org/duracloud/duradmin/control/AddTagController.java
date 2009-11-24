@@ -37,8 +37,11 @@ public class AddTagController
 
             //mark content item list for update if a spaces tag
             if(!StringUtils.hasText(tag.getContentId())){
-                ContentItemList list = ContentItemListCache.get(request, tag.getSpaceId(), getContentStoreProvider());
-                list.markForUpdate();
+                ContentItemList contentItemList = ContentItemListCache.get(request, tag.getSpaceId(), getContentStoreProvider());
+                contentItemList.markForUpdate();
+                mav.addObject("contentItemList", contentItemList);
+                mav.addObject("space", contentItemList.getSpace());
+
             }
             
             log.info(formatLogMessage("added", tag));
@@ -49,6 +52,8 @@ public class AddTagController
                             .createMessage("Tag not added because it already exists.",
                                            Severity.WARNING);
         }
+        
+
         return setView(request, mav, message);
     }
 
