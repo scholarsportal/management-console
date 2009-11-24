@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileData
@@ -47,7 +48,7 @@ public class FileData
 
     public void setFile(MultipartFile file) throws IOException {
         if (file == null
-                || StringUtils.isEmptyOrAllWhiteSpace(file
+                || !StringUtils.hasText(file
                         .getOriginalFilename())) {
             return;
         }

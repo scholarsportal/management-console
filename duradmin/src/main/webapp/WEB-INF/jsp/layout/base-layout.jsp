@@ -4,18 +4,19 @@
    
 <%@ page session="false"%>
 <%@include file="/WEB-INF/jsp/include.jsp" %>
+
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- load the dojo toolkit base -->
-	<script type="text/javascript" src="dojo/dojo.js"
+	<script type="text/javascript" src="${pageContext.request.contextPath}/dojo/dojo.js"
 	    djConfig="parseOnLoad:true, isDebug:false"></script>
 
 	<!-- load the duradmin base -->
-	<script type="text/javascript" src="script/common/base.js"></script>
-	<link rel="stylesheet"  href="/duradmin/dijit/themes/tundra/tundra.css" type="text/css" />
-	<link rel="stylesheet"  href="/duradmin/style/main.css" type="text/css" />
-	<link rel="stylesheet"  href="/duradmin/style/menu.css" type="text/css" />
+	<script type="text/javascript" src="${pageContext.request.contextPath}/script/common/base.js"></script>
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/dijit/themes/tundra/tundra.css" type="text/css" />
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/main.css" type="text/css" />
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/menu.css" type="text/css" />
     <title>
     	<spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
     </title>

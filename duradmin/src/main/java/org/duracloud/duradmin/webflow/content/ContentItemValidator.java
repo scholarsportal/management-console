@@ -6,10 +6,10 @@ import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Content;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
+import org.springframework.util.StringUtils;
 
 public class ContentItemValidator {
 
@@ -26,14 +26,18 @@ public class ContentItemValidator {
     public void validateDefineContentItem(ContentItem contentItem,
                                           ValidationContext context) {
         MessageContext messages = context.getMessageContext();
-        if (StringUtils.isEmptyOrAllWhiteSpace(contentItem.getFileData()
+        if (!StringUtils.hasText(contentItem.getFileData()
                 .getName())) {
             messages.addMessage(new MessageBuilder().error().source("file")
                     .code("required").build());
         }
 
         String contentId = contentItem.getContentId();
-        if (!StringUtils.isEmptyOrAllWhiteSpace(contentId)) {
+
+        if(!StringUtils.hasText(contentId)) {
+            messages.addMessage(new MessageBuilder().error()
+                                .source("contentId").code("required").build());
+        }else{
             //from http://docs.amazonwebservices.com/AmazonS3/2006-03-01/gsg/
             //The key may be any UTF-8 string
             //no validation required for a string > in length;
@@ -46,10 +50,8 @@ public class ContentItemValidator {
                         .source("contentId").code("contentId.invalid").build());
             }
         }
-
         //how about mimetype validation?
         //TODO Discuss any validation rules for mimetype.
-        //check that space doesn't already exist.
 
         //check if item already exists.
         if (contentItemExists(contentItem)) {
@@ -59,7 +61,6 @@ public class ContentItemValidator {
                             .defaultText("A content item with this ID already exists. Please try another.")
                             .build());
         }
-
     }
 
     private boolean contentItemExists(ContentItem contentItem) {

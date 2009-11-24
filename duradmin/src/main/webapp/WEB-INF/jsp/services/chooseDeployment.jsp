@@ -18,9 +18,6 @@
 					<h3>
 						${serviceInfo.displayName}
 					</h3>
-					<p>
-						${service.description}
-					</p>
 				</div>
 
 
@@ -30,22 +27,19 @@
 					<div>
 						<table class="basic-form">
 							<tr>
-								<td>Select one deployment</td>							
-								<td>
-									<table class="standard">
+								<td class="label">Where would you like to deploy this service?</td>							
+								<td class="input">
+									<ul class="vertical-list">
 									<c:forEach items="${serviceInfo.deploymentOptions}" var="option" varStatus="status">
-										<tr>
-											<td>
-												<input id="do-${status.count}" checked="${status.count == 0}" 
-														type="radio" name="deploymentOption" value="${option}" />
-												<label for="do-${status.count}"> ${option.displayName} ${option.hostname} ${option.locationType}</label>
-											</td>
-										</tr>
+										<li>
+											<input id="do-${status.count}" checked="${status.count == 0}" 
+													type="radio" name="deploymentOption" value="${option}" />
+											<label for="do-${status.count}"> ${option.displayName} ${option.hostname} ${option.locationType}</label>
+										</li>
 									</c:forEach>
-									</table>
+									</ul>
 									
 								</td>
-								<td>help</td>
 							</tr>
 							
 						</table>

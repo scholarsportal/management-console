@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.springframework.util.StringUtils;
@@ -12,15 +14,25 @@ import org.springframework.util.StringUtils;
 public class MetadataUtils {
 
     private static final String NAME_KEY_PREFIX = "ext-metadata-";
-
+    private static Log log = LogFactory.getLog(MetadataUtils.class);
+    
     public static void setMetadata(ContentStore contentStore,
                                    String spaceId,
                                    String contentId,
                                    Map<String, String> metadata)
             throws ContentStoreException {
         if (StringUtils.hasText(contentId)) {
+            log.info("on contentStore[" + contentStore.getStoreId() + "]: " +
+            		"setting content metadata: spaceId="+spaceId+", " +
+            				"contentId="+ contentId + ", metadata="+ metadata);
+            
             contentStore.setContentMetadata(spaceId, contentId, metadata);
+            
         } else {
+            log.info("on contentStore[" + contentStore.getStoreId() + "]: " +
+            		"setting space metadata: spaceId="+spaceId+", " +
+            				"metadata="+ metadata);
+            
             contentStore.setSpaceMetadata(spaceId, metadata);
         }
 

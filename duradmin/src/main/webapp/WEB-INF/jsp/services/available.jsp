@@ -22,13 +22,16 @@
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
 				<c:forEach items="${serviceInfos}" var="serviceInfo">
-				<div class="service">
-					<table>
+					<table class="standard small">
 						<tr>
-							<td>
+							<td style="width:25%">
 								${serviceInfo.displayName}
 							</td>
-							<td style="text-align:right">
+							<td>
+								${serviceInfo.description}
+							
+							</td>
+							<td style="text-align:right;width:25%">
 							<a href="<c:url value="/services/deploy">
 								<c:param name="serviceId" value="${serviceInfo.id}"/>
 								<c:param name="returnTo" value="${currentUrl}"/>
@@ -36,7 +39,6 @@
 							</td>
 						</tr>
 					</table>
-				</div>			
 				</c:forEach>
 
 			    

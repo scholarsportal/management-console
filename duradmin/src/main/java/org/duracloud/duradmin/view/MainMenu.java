@@ -17,7 +17,7 @@ public class MainMenu
     private MainMenu() {
         addMenuItem(HOME, "/", "home");
         addMenuItem(SPACES, "/spaces.htm", "spaces");
-        addMenuItem(SERVICES, "/services/available.htm", "services");
+        addMenuItem(SERVICES, "/services/deployed.htm", "services");
     }
 
     public static Menu instance() {
