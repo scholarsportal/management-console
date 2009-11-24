@@ -860,6 +860,16 @@ public class ServiceManager {
                 throw new Exception("Services Admin response code was " +
                                     response.getStatusCode());
             }
+
+            // Wait to allow undeployment to complete
+            int maxLoops = 5;
+            for(int i=0; i < maxLoops; i++) {
+                if(servicesAdmin.isServiceDeployed(contentId)) {
+                    Thread.sleep(2000);
+                } else {
+                    break;
+                }
+            }
         } catch (Exception e) {
             String error = "Unable to undeploy service " + serviceId +
                            " from " + serviceHost + " due to error: " +

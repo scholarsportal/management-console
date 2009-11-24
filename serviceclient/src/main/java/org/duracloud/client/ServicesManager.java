@@ -216,7 +216,8 @@ public class ServicesManager {
         try {
             HttpResponse response = restHelper.put(url, serviceXml, null);
             checkResponse(response, HttpStatus.SC_CREATED);
-            String responseBody = response.getResponseBody();
+            String responseBody =
+                response.getResponseHeader("Location").getValue();
             return extractDeploymentId(responseBody);
         } catch (NotFoundException e) {
             throw e;

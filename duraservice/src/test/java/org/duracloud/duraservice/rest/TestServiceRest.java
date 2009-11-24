@@ -1,10 +1,15 @@
 package org.duracloud.duraservice.rest;
 
 import junit.framework.TestCase;
-import org.duracloud.common.util.SerializationUtil;
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.duraservice.config.DuraServiceConfig;
+import org.duracloud.serviceconfig.Deployment;
+import org.duracloud.serviceconfig.ServiceInfo;
+import org.duracloud.serviceconfig.ServicesConfigDocument;
+import org.duracloud.serviceconfig.user.TextUserConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
 import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
@@ -13,10 +18,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * Runtime test of service REST API. The duraservice and durastore web
@@ -29,7 +33,8 @@ public class TestServiceRest
         extends TestCase {
 
     private static String configFileName = "test-duraservice.properties";
-    private static ServicesAdminClient servicesAdmin;
+    private static ServicesAdminClient servicesAdmin;   
+
     static {
         DuraServiceConfig config = new DuraServiceConfig();
         config.setConfigFileName(configFileName);
@@ -52,7 +57,9 @@ public class TestServiceRest
 
     private ServiceSerializer serializer;
 
-    private static final String testServiceId = "helloservice-1.0.0.jar";
+    private int deploymentId = 0;
+
+    private static final String testServiceId = "0";
 
     @Override
     @Before
@@ -62,39 +69,24 @@ public class TestServiceRest
 
         // Initialize DuraService
         HttpResponse response = RestTestHelper.initialize();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
     @Override
     @After
     protected void tearDown() throws Exception {
-        undeployService();
-    }
-
-    @Test
-    public void testGetAllServices() throws Exception {
-        String url = servicesUrl;
-        HttpResponse response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> allServicesList =
-            SerializationUtil.deserializeList(content);
-        assertTrue(allServicesList.contains(testServiceId));
-
-        url = servicesUrl + "?show=all";
-        response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String allContent = response.getResponseBody();
-        assertNotNull(allContent);
-        assertEquals(content, allContent);
+        try {
+            undeployService(deploymentId);
+        } catch(Exception e) {
+            // Ignore, the service has likely already been undeployed
+        }
     }
 
     @Test
     public void testDeployService() throws Exception {
         List<String> deployedServicesStart = getDeployedServicesViaAdmin();
         assertNotNull(deployedServicesStart);
-        deployService();
+        deploymentId = deployService();
         List<String> deployedServicesEnd = getDeployedServicesViaAdmin();
         assertNotNull(deployedServicesEnd);
 
@@ -104,64 +96,98 @@ public class TestServiceRest
 
     @Test
     public void testGetService() throws Exception {
-        deployService();
         String url = servicesUrl + "/" + testServiceId;
         HttpResponse response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        Map<String, String> serviceConfig =
-            SerializationUtil.deserializeMap(content);
-        assertNotNull(serviceConfig);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
-        String status = serviceConfig.get("status");
-        assertNotNull(status);
-        assertEquals(status, "DEPLOYED");
+        ServiceInfo service =
+            ServicesConfigDocument.getService(response.getResponseStream());
+        assertNotNull(service);
+        assertNotNull(service.getUserConfigVersion());
+    }
 
-        Map<String, String> serviceAdminConfig =
-            servicesAdmin.getServiceConfig(testServiceId);
-        for(String configName : serviceAdminConfig.keySet()) {
-            assertEquals(serviceConfig.get(configName),
-                         serviceAdminConfig.get(configName));
-        }
+    @Test
+    public void testGetDeployedService() throws Exception {
+        deploymentId = deployService();
+        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
+        HttpResponse response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+
+        ServiceInfo service =
+            ServicesConfigDocument.getService(response.getResponseStream());
+        assertNotNull(service);
+
+        List<Deployment> deployments = service.getDeployments();
+        assertNotNull(deployments);
+        assertFalse(deployments.isEmpty());
+
+        assertNotNull(findDeployment(deployments, deploymentId));
     }
 
     @Test
     public void testConfigureService() throws Exception {
-        deployService();
+        deploymentId = deployService();
 
-        Map<String, String> configStart =
-            servicesAdmin.getServiceConfig(testServiceId);
-        assertNotNull(configStart);
+        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
+        HttpResponse response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
-        String configXml = "";//RestTestHelper.buildTestServiceConfigXml();
-        String value1 = String.valueOf(new Random().nextInt(99999));
-        String value2 = String.valueOf(new Random().nextInt(99999));
-        configXml = configXml.replace("value1", value1).replace("value2", value2);
+        // Get Serivce
+        ServiceInfo service =
+            ServicesConfigDocument.getService(response.getResponseStream());
+        assertNotNull(service);
 
-        String url = servicesUrl + "/" + testServiceId;
-        HttpResponse response = restHelper.post(url, configXml, null);
-        assertEquals(200, response.getStatusCode());
+        // Create User Config
+        List<UserConfig> userConfigs = new ArrayList<UserConfig>();
+        assertNotNull(userConfigs);
 
-        Map<String, String> configEnd =
-            servicesAdmin.getServiceConfig(testServiceId);
-        assertNotNull(configEnd);
-        assertTrue(configEnd.get("property1").equals(value1));
-        assertTrue(configEnd.get("property2").equals(value2));
-        assertFalse(configStart.equals(configEnd));
+        String userConfigName = "test-name";
+        String userConfigValue = "test-value";
+        TextUserConfig newUserConfig =
+            new TextUserConfig(userConfigName, "Test Config");
+        newUserConfig.setValue(userConfigValue);
+        userConfigs.add(newUserConfig);
+        service.setUserConfigs(userConfigs);
+        String serviceXml = ServicesConfigDocument.getServiceAsXML(service);
+
+        // Update config
+        response = restHelper.post(url, serviceXml, null);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+
+        // Check config
+        response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+
+        service =
+            ServicesConfigDocument.getService(response.getResponseStream());
+        assertNotNull(service);
+
+        List<Deployment> deployments = service.getDeployments();
+        assertNotNull(deployments);
+        assertFalse(deployments.isEmpty());
+
+        Deployment dep = findDeployment(deployments, deploymentId);
+        userConfigs = dep.getUserConfigs();
+        assertNotNull(userConfigs);
+        assertFalse(userConfigs.isEmpty());
+        for(UserConfig config : userConfigs) {
+            assertTrue(config instanceof TextUserConfig);
+            assertEquals(userConfigName, ((TextUserConfig)config).getName());
+            assertEquals(userConfigValue, ((TextUserConfig)config).getValue());
+        }
     }
 
     @Test
     public void testUnDeployService() throws Exception {
-        deployService();
+        deploymentId = deployService();
         List<String> deployedServicesStart = getDeployedServicesViaAdmin();
         assertNotNull(deployedServicesStart);
-        HttpResponse response = undeployService();
-        assertEquals(200, response.getStatusCode());
+        HttpResponse response = undeployService(deploymentId);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         List<String> deployedServicesEnd = getDeployedServicesViaAdmin();
         assertNotNull(deployedServicesEnd);
 
-        // TODO: Re-enable after verifying that uninstalling via services admin works
+        // TODO: Re-enable after verifying that listing works properly
         // assertEquals((deployedServicesStart.size() - 1), deployedServicesEnd.size());
     }
 
@@ -169,75 +195,82 @@ public class TestServiceRest
     public void testGetAvailableServices() throws Exception {
         String url = servicesUrl + "?show=available";
         HttpResponse response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> availableServicesListStart =
-            SerializationUtil.deserializeList(content);
-        assertTrue(availableServicesListStart.size() >= 1);
-        assertTrue(availableServicesListStart.contains(testServiceId));
-
-        deployService();
-
-        response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> availableServicesListEnd =
-            SerializationUtil.deserializeList(content);
-
-        assertEquals((availableServicesListStart.size() - 1),
-                     availableServicesListEnd.size());
-        assertFalse(availableServicesListEnd.contains(testServiceId));
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        List<ServiceInfo> services =
+            ServicesConfigDocument.getServiceList(response.getResponseStream());
+        assertNotNull(services);
+        assertFalse(services.isEmpty());
     }
 
     @Test
     public void testGetDeployedServices() throws Exception {
         String url = servicesUrl + "?show=deployed";
         HttpResponse response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> deployedServicesListStart =
-            SerializationUtil.deserializeList(content);
-        assertFalse(deployedServicesListStart.contains(testServiceId));
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        List<ServiceInfo> servicesStart =
+            ServicesConfigDocument.getServiceList(response.getResponseStream());
+        assertNotNull(servicesStart);
+        assertNull(findService(servicesStart, testServiceId));
 
-        deployService();
+        deploymentId = deployService();
 
         response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> deployedServicesListEnd =
-            SerializationUtil.deserializeList(content);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        List<ServiceInfo> servicesEnd =
+            ServicesConfigDocument.getServiceList(response.getResponseStream());
+        assertNotNull(servicesEnd);
+        assertNotNull(findService(servicesEnd, testServiceId));
+    }   
 
-        assertEquals((deployedServicesListStart.size() + 1),
-                     deployedServicesListEnd.size());
-        assertTrue(deployedServicesListEnd.contains(testServiceId));
+    private ServiceInfo findService(List<ServiceInfo> services,
+                                    String serviceId) {
+        return findService(services, Integer.parseInt(serviceId));
     }
 
-    @Test
-    public void testGetServiceHosts() throws Exception {
-        String url = baseUrl + "/servicehosts";
+    private ServiceInfo findService(List<ServiceInfo> services, int serviceId) {
+        for(ServiceInfo service : services) {
+            if(service.getId() == serviceId) {
+                return service;
+            }
+        }
+        return null;
+    }
+
+    private Deployment findDeployment(List<Deployment> deployments, int deploymentId) {
+        for(Deployment deployment : deployments) {
+            if(deployment.getId() == deploymentId) {
+                return deployment;
+            }
+        }
+        return null;
+    }
+
+    private int deployService() throws Exception {
+        String url = servicesUrl + "/" + testServiceId;
         HttpResponse response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        List<String> serviceHosts =
-            SerializationUtil.deserializeList(content);
-        assertNotNull(serviceHosts);
-        assertTrue(serviceHosts.size() > 0);
-        assertTrue(serviceHosts.contains("localhost"));
+        InputStream serviceXmlStream = response.getResponseStream();
+        ServiceInfo service =
+            ServicesConfigDocument.getService(serviceXmlStream);
+        String serviceStr = ServicesConfigDocument.getServiceAsXML(service);
+
+        response = restHelper.put(url, serviceStr, null);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+        String deploymentIdUri =
+            response.getResponseHeader("Location").getValue();
+        int deploymentId = extractDeploymentId(deploymentIdUri);
+
+        assertNotNull(deploymentId);
+        return deploymentId;
     }
 
-    private void deployService() throws Exception {
-        String url = servicesUrl + "/" + testServiceId;
-        HttpResponse response = restHelper.put(url, null, null);
-        assertEquals(201, response.getStatusCode());
+    private int extractDeploymentId(String deploymentUrl) {
+        String[] deploymentUrlSplit = deploymentUrl.split("/");
+        String depId = deploymentUrlSplit[deploymentUrlSplit.length-1];
+        return Integer.valueOf(depId);
     }
 
-    private HttpResponse undeployService() throws Exception {
-        String url = servicesUrl + "/" + testServiceId;
+    private HttpResponse undeployService(int deploymentId) throws Exception {
+        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
         return restHelper.delete(url);
     }
 
