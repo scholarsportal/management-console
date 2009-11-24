@@ -116,7 +116,7 @@ public class ServiceElementReader {
         DeploymentOptionsType deploymentOptionsType = serviceType.getDeploymentOptions();
         if (null != deploymentOptionsType) {
             int max = deploymentOptionsType.getMax();
-            if (max >= 0) {
+            if (max >= -1) {
                 service.setMaxDeploymentsAllowed(max);
             }
 
@@ -230,7 +230,9 @@ public class ServiceElementReader {
                     locationType.toString()));
 
                 DeploymentOptionStateType.Enum stateType = deploymentOptionType.getState();
-                option.setState(DeploymentOption.State.valueOf(stateType.toString()));
+                if (null != stateType) {
+                    option.setState(DeploymentOption.State.valueOf(stateType.toString()));
+                }
 
                 options.add(option);
             }

@@ -81,7 +81,7 @@
       <xs:element name="option" type="deploymentOptionType" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:int" use="optional"/>
-    <xs:attribute name="max" type="xs:int" default="1">
+    <xs:attribute name="max" type="xs:int" default="-1">
       <xs:annotation>
         <xs:documentation> max identifies the total number of deployments allowed of this service.
         </xs:documentation>

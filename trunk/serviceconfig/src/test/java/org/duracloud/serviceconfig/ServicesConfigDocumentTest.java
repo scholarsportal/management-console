@@ -26,7 +26,7 @@ public class ServicesConfigDocumentTest {
     private String serviceVersion = "serviceVersion-";
     private String userConfigVersion = "userConfigVersion-";
     private String description = "description-";
-    private int maxDeploymentsAllowed = 10;
+    private int maxDeploymentsAllowed = -2;
     private String systemConfigName = "systemConfigName-";
     private String systemConfigValue = "systemConfigValue-";
     private String systemConfigDefaultName = "systemConfigDefaultName-";
@@ -251,7 +251,7 @@ public class ServicesConfigDocumentTest {
         Assert.assertNotNull(expected.getServiceVersion());
         Assert.assertNotNull(expected.getUserConfigVersion());
         Assert.assertNotNull(expected.getDescription());
-        Assert.assertTrue(expected.getMaxDeploymentsAllowed() >= 0);
+        Assert.assertTrue(expected.getMaxDeploymentsAllowed() >= -1);
 
         Assert.assertEquals(expected.getId(), serviceInfo.getId());
         Assert.assertEquals(expected.getContentId(),
