@@ -14,7 +14,7 @@
 			<input type="hidden" name="returnTo" value="${currentUrl}"/>
 			<div><input style="min-width:10em" name="name" type="text" /></div> 
 			<div>
-			<textarea style="min-width:20em" name="value" rows="3" cols="25"></textarea>
+			<textarea style="min-width:15em" name="value" rows="3" cols="10"></textarea>
 			</div>
 			<div style="white-space:nowrap">
 			<input type="submit" value="Add" />
@@ -35,10 +35,19 @@
 											onclick="removeMetadataByKey('${spaceId}', '${m.name}','${contentId}', this.parentNode.parentNode);"/>								
 								</td>
 								<td>
-								${m.name}
-								</td>
-								<td>
-									${m.value }
+								<table>
+									<tr>
+										<td style="font-weight:bold">
+										${m.name}
+										</td>
+									
+									</tr>
+									<tr>
+										<td>
+											${m.value}
+										</td>
+									</tr>
+								</table>
 								</td>
 							</tr>
 						</c:forEach>					
