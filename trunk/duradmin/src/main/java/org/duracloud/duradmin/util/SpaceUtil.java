@@ -58,6 +58,7 @@ public class SpaceUtil {
                 store.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
+        contentItem.setExtendedMetadata(contentMetadata);
     }
 
     private static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
@@ -70,7 +71,7 @@ public class SpaceUtil {
         metadata
                 .setModified(contentMetadata.get(ContentStore.CONTENT_MODIFIED));
         metadata.setTags(TagUtil.parseTags(contentMetadata.get(TagUtil.TAGS)));
-
+       
         return metadata;
     }
 }

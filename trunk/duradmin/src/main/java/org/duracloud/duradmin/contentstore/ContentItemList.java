@@ -16,7 +16,7 @@ import org.duracloud.duradmin.util.SpaceUtil;
 public class ContentItemList
         extends ScrollableList<String> {
 
-    private ContentStoreProvider contentStoreProvider;
+    private ContentStore contentStore;
 
     private String spaceId;
 
@@ -25,16 +25,16 @@ public class ContentItemList
     private String contentIdFilterString = null;
 
     public ContentItemList(String spaceId,
-                           ContentStoreProvider contentStoreProvider) {
-        if (contentStoreProvider == null) {
-            throw new NullPointerException("contentStoreProvider must be non-null");
+                           ContentStore contentStore) {
+        if ( contentStore == null) {
+            throw new NullPointerException("content store must be non-null");
         }
 
         if (spaceId == null) {
             throw new NullPointerException("spaceId must be non-null");
         }
 
-        this.contentStoreProvider = contentStoreProvider;
+        this.contentStore = contentStore;
         this.spaceId = spaceId;
     }
 
@@ -48,15 +48,13 @@ public class ContentItemList
     }
 
     @Override
-    protected List<String> getData() throws DataRetrievalException {
+    protected List<String> getData(String currentMarker) throws DataRetrievalException {
         try {
-            ContentStore contentStore =
-                    this.contentStoreProvider.getContentStore();
-            space = new Space();
+            this.space = new Space();
             org.duracloud.domain.Space cloudSpace =
                     contentStore.getSpace(spaceId,
                                           contentIdFilterString,
-                                          getCurrentMarker(),
+                                          currentMarker,
                                           getMaxResultsPerPage());
 
             SpaceUtil.populateSpace(space, cloudSpace);

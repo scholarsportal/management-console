@@ -43,9 +43,19 @@ public class MetadataUtils {
                                                   String contentId)
             throws ContentStoreException {
         if (StringUtils.hasText(contentId)) {
-            return contentStore.getContentMetadata(spaceId, contentId);
+
+            Map<String,String> metadata = contentStore.getContentMetadata(spaceId, contentId);
+            log.info("from contentStore[" + contentStore.getStoreId() + "]: " +
+                     "getting content metadata: spaceId="+spaceId+", " +
+                             "contentId="+ contentId + ", metadata="+ metadata);
+             return metadata;
         } else {
-            return contentStore.getSpaceMetadata(spaceId);
+
+            Map<String,String> metadata = contentStore.getSpaceMetadata(spaceId);
+            log.info("from contentStore[" + contentStore.getStoreId() + "]: " +
+                     "getting space metadata: spaceId="+spaceId+", " +
+                             "contentId="+ contentId + ", metadata="+ metadata);
+             return metadata;
         }
     }
 

@@ -78,14 +78,13 @@ public class ScrollableListTest {
             extends ScrollableList<String> {
 
         @Override
-        protected List<String> getData() throws DataRetrievalException {
+        protected List<String> getData(String currentMarker) throws DataRetrievalException {
             List<String> list = new LinkedList<String>();
             for (int i = 0; i < 101; i++) {
                 list.add("list-value-" + i);
             }
 
             int maxResults = getMaxResultsPerPage();
-            String currentMarker = getCurrentMarker();
             if (currentMarker != null) {
                 int index = list.indexOf(currentMarker);
                 //if last element in list

@@ -1,20 +1,48 @@
+
 package org.duracloud.duradmin.contentstore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.duracloud.client.ContentStoreException;
 
 public class ContentItemListCache {
+
+    public static void refresh(HttpServletRequest request,
+                                      String spaceId,
+                                      ContentStoreProvider contentStoreProvider) {
+    
+        get(request,spaceId, contentStoreProvider).markForUpdate();
+    }
+    
     public static ContentItemList get(HttpServletRequest request,
-                                                     String spaceId, ContentStoreProvider contentStoreProvider) {
-              HttpSession session = request.getSession();
-              ContentItemList list =
-                      (ContentItemList) session.getAttribute("content-list-"
-                              + spaceId);
-              if (list == null) {
-                  list = new ContentItemList(spaceId, contentStoreProvider);
-                  session.setAttribute("content-list-" + spaceId, list);
-              }
-              return list;
-          }
+                                      String spaceId,
+                                      ContentStoreProvider contentStoreProvider) {
+        try {
+
+            HttpSession session = request.getSession();
+            ContentItemList list =
+                    (ContentItemList) session.getAttribute(getKey(spaceId, contentStoreProvider));
+            if (list == null) {
+                list = new ContentItemList(spaceId, contentStoreProvider.getContentStore());
+                session.setAttribute(getKey(spaceId, contentStoreProvider), list);
+            }
+            return list;
+
+        } catch (ContentStoreException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static String getKey(String spaceId,
+                                 ContentStoreProvider contentStoreProvider)
+            throws ContentStoreException {
+        return "content-list-"
+                + spaceId
+                + "-"
+                + contentStoreProvider.getContentStore()
+                        .getStoreId();
+    }
+    
+    
 }

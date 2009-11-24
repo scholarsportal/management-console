@@ -33,18 +33,28 @@ public class AddMetadataController
         ModelAndView mav = new ModelAndView();
         Message message;
         Map<String, String> metadata = getMetadata(metadataItem);
-        if (MetadataUtils.add(metadataItem.getName(),
-                              metadataItem.getValue(),
-                              metadata) == null) {
-            setMetadata(metadata, metadataItem);
-           
-            //mark content item list for update if a spaces 
-            if(!StringUtils.hasText(metadataItem.getContentId())){
-                ContentItemList list = ContentItemListCache.get(request, metadataItem.getSpaceId(), getContentStoreProvider());
-                list.markForUpdate();
-            }
-            log.info(formatLogMessage("added", metadataItem));
+        boolean isNew =
+                MetadataUtils.add(metadataItem.getName(), metadataItem
+                        .getValue(), metadata) == null;
+        setMetadata(metadata, metadataItem);
 
+        //mark content item list for update if a spaces 
+        if (!StringUtils.hasText(metadataItem.getContentId())) {
+            ContentItemList contentItemList =
+                    ContentItemListCache.get(request,
+                                             metadataItem.getSpaceId(),
+                                             getContentStoreProvider());
+            contentItemList.markForUpdate();
+            mav.addObject("contentItemList", contentItemList);
+            mav.addObject("space", contentItemList.getSpace());
+
+        }
+
+
+        
+        log.info(formatLogMessage("added", metadataItem));
+
+        if (isNew) {
             message = MessageUtils.createMessage("Successfully added metadata");
         } else {
             message =
