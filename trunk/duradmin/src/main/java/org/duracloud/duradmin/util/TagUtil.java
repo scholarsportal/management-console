@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.util.StringUtils;
+
 public class TagUtil {
 
     public static final String TAGS = "tags";
@@ -28,7 +30,7 @@ public class TagUtil {
 
     static Set<String> parseTags(String tagsValue) {
         Set<String> set = new LinkedHashSet<String>();
-        if (!StringUtils.isEmptyOrAllWhiteSpace(tagsValue)) {
+        if (StringUtils.hasText(tagsValue)) {
             set.addAll(Arrays.asList(tagsValue.split("[" + DELIMITER + "]")));
         }
         return set;

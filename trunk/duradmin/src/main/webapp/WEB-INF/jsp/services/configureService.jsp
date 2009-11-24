@@ -24,7 +24,17 @@
 				</div>
 				<form:form >
 					<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}"/>
-					<form:errors element="div" cssClass="message-error" />
+					<c:forEach items="${errors}" var="err">
+						<ul>
+							<c:if test="${empty err.source}">
+							<li>
+									<span class="message-error">${err.text}</span>
+							</li>
+							</c:if>
+							
+						</ul>
+						
+					</c:forEach>
 					<div>
 						<table class="basic-form">
 							<c:forEach items="${userConfigs}" var="userConfig">
@@ -36,7 +46,7 @@
 											<c:when test="${userConfig.inputType.name == 'SINGLESELECT' }">
 												<select name="${userConfig.name}">
 													<c:forEach items="${userConfig.options}" var="option">
-														<option value="${option.value}">${option.displayName}</option>
+														<option value="${option.value}" <c:if test="${option.selected}">selected="selected"</c:if>>${option.displayName}</option>
 													</c:forEach>
 												</select>
 											</c:when>
@@ -45,8 +55,10 @@
 												<ul class="vertical-list">
 														<c:forEach items="${userConfig.options}" var="option" varStatus="status">
 														<li>
-															<input type="checkbox" name="${userconfig.name}-checkbox-${status.count}" <c:if test="${option.selected}">checked</c:if>/>
-															<label for="${userconfig.name}-checkbox-${status.count}">${option.displayName}</label>
+															<input id="${userConfig.name}-checkbox-${status.count-1}" type="checkbox" name="${userConfig.name}-checkbox-${status.count-1}" <c:if test="${option.selected}">checked="checked"</c:if>/>
+															<label  for="${userConfig.name}-checkbox-${status.count-1}" >
+															
+															${option.displayName}</label>
 															</li>
 	
 														</c:forEach>
@@ -61,9 +73,9 @@
 										</c:choose>										
 									</td>
 									<td>
-										<c:forEach items="${errors.allErrors}" var="err">
+										<c:forEach items="${errors}" var="err">
 											<c:if test="${err.source == userConfig.name }">
-												<spring:message message="${err}"/>
+												<span class="message-error">${err.text}</span>
 											</c:if>
 										</c:forEach>
 									</td>

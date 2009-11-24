@@ -28,9 +28,7 @@
 								${serviceInfo.displayName}
 							</td>
 							<td style="text-align:right">
-								<span class="enabled" >Deployments: ${serviceInfo.deploymentCount} </span> 
 								<c:if test="${serviceInfo.newDeploymentAllowed}">
-									| 
 									<a href="<c:url value="/services/deploy">
 									<c:param name="serviceId" value="${serviceInfo.id}"/>
 									<c:param name="returnTo" value="${currentUrl}"/>
@@ -60,14 +58,15 @@
 										</th>
 										<th style="text-align:right">Configuration</th>
 									</tr>
-									<c:forEach items="${serviceInfo.deployments}" var="deployment">
-									<tr>
+									<c:forEach items="${serviceInfo.deployments}" var="deployment" varStatus="status">
+									<tr id="deployment-${serviceInfo.id}-${deployment.id}">
 										<td>
 											${deployment.hostname}
 										</td>
 										<td>
 											${deployment.status}
 										</td>
+
 
 										<td style="text-align:right">
 											<div  id="actionDiv">
@@ -78,11 +77,9 @@
 													<c:param name="returnTo" value="${currentUrl}"/>
 													</c:url>">Reconfigure</a> |
 												
-												<a  href="<c:url value="/services/undeploy">
-													<c:param name="serviceId" value="${serviceInfo.id}"/>
-													<c:param name="deploymentId" value="${deployment.id}"/>
-													<c:param name="returnTo" value="${currentUrl}"/>
-													</c:url>">Undeploy</a>
+												<input type="button" 
+													   onclick="undeployService('${serviceInfo.id}','${deployment.id}')" 
+													   value="Undeploy"/>
 											</div>
 										</td>
 									</tr>

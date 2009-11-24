@@ -2,17 +2,12 @@ dojo.require("dijit.TooltipDialog");
 dojo.require("dijit.Dialog");
 
 function loadContentItem(nodeId, spaceId, contentId){
-	//check if already updated.
 	var node = dojo.byId(nodeId);
 	var contents = node.innerHTML;
-	//console.debug(contents);
 	if(contents.search('<!--empty-->') < 0){
 		return;
 	}
-	
 	showWaitMessage(node, "Retrieving metadata...");
-
-	
 	dojo.xhrGet( {
 	    // The following URL must match that used to test the server.
 	    url: "/duradmin/data/spaces/contentItem?spaceId="+spaceId+"&contentId=" + contentId,
@@ -28,10 +23,30 @@ function loadContentItem(nodeId, spaceId, contentId){
 	          showError(node, ioArgs);
 	          return responseObject;
 		}
-
 	});
 }
 
+
+function undeployService( serviceInfoId, deploymentId ){
+	if(!confirmDeleteOperation(null)){
+		return;
+	}
+	
+	var row = dojo.byId("deployment-"+serviceInfoId + "-" + deploymentId);
+	dojo.addClass(row, "deleting")
+	dojo.xhrGet( {
+	    url: "/duradmin/services/undeploy?serviceInfoId="+serviceInfoId+"&deploymentId=" + deploymentId,
+	    handleAs: "json",
+	    load: function(responseObject, ioArgs) {
+		  console.debug(responseObject);  // Dump it to the console
+		  row.parentNode.removeChild(row);
+		},
+		error: function(responseObject, ioArgs){
+	          console.error("HTTP status code: ", ioArgs.xhr.status); 
+	          return responseObject;
+		}
+	});
+}
 
 
 function removeTag(spaceId,tag, contentId, element){
@@ -175,7 +190,7 @@ dojo.addOnLoad(function(){
 
 
 function confirmDeleteOperation(e){
-	var result = confirm('You are about to perform an irreversible delete operation\.\nClick \'OK\' if you are sure you wish to continue\.');
+	var result = confirm('You are about to perform an irreversible operation\.\nClick \'OK\' if you are sure you wish to continue\.');
 	if(!result) { 
 		return false; 
 	}else{

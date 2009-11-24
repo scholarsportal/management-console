@@ -3,6 +3,7 @@ package org.duracloud.duradmin.webflow.service;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,8 @@ public class DeployServiceAction
             int deploymentId = deployService(serviceInfo, option);
             requestContext.getFlowScope().put("deploymentId",
                                               new Integer(deploymentId));
+
+               
         } catch (ServicesException e) {
             return handleException(e, requestContext);
         }
@@ -103,6 +106,7 @@ public class DeployServiceAction
         return deploymentId;
     }
 
+    @SuppressWarnings("unchecked")
     private void applyValues(List<UserConfig> list,
                              RequestContext requestContext) {
         Map<String, String> parameters =
@@ -116,21 +120,27 @@ public class DeployServiceAction
     }
 
     private boolean handleException(ServicesException e,
-                                    RequestContext requestContext)
-            throws ServicesException {
+                                    RequestContext requestContext) {
+        MessageContext context = requestContext.getMessageContext();
         if (e instanceof InvalidServiceConfigurationException) {
             InvalidServiceConfigurationException ex =
                     (InvalidServiceConfigurationException) e;
-            MessageContext context = requestContext.getMessageContext();
             for (ValidationError error : ex.getErrors()) {
-                context.addMessage(new MessageBuilder().error().source(error
-                        .getPropertyName()).defaultText(error.getErrorText())
+                context.addMessage(
+                        new MessageBuilder().error().source(error.getPropertyName()).defaultText(error.getErrorText())
                         .build());
             }
-            return false;
         } else {
-            throw e;
+            context.addMessage(new MessageBuilder()
+                                    .error().defaultText(e.getFormattedMessage())
+                                    .build());
         }
+
+        requestContext.getFlashScope().put("errors", 
+                                           requestContext.getMessageContext().getAllMessages());
+        
+        return false;
+
     }
 
     public boolean reconfigureServiceDeployment(RequestContext requestContext)

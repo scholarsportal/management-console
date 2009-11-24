@@ -11,8 +11,7 @@ import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.domain.Tag;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MetadataUtils;
-import org.duracloud.duradmin.util.SpaceUtil;
-import org.duracloud.duradmin.util.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,7 +55,7 @@ public abstract class TagController
     protected String formatLogMessage(String command, Tag tag) {
         String contentId = tag.getContentId();
         String contentString =
-                (!StringUtils.isEmptyOrAllWhiteSpace(contentId)) ? ": "
+                (StringUtils.hasText(contentId)) ? ": "
                         + contentId : "";
         return MessageFormat.format("successfully {0} from space {1} {2}",
                                     command,

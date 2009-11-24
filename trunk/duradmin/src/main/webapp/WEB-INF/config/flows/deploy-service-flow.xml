@@ -25,7 +25,7 @@
     </transition>
   </view-state>
 
-  <view-state id="reconfigureServiceDeployment" model="serviceInfo">
+  <view-state id="reconfigureServiceDeployment">
     <on-entry>
       <set name="flowScope.userConfigs" value="deployment.userConfigs"/>
     </on-entry>

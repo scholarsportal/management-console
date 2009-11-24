@@ -9,8 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.duracloud.duradmin.contentstore.ContentStoreSelector;
 import org.duracloud.duradmin.domain.StorageProvider;
 import org.duracloud.duradmin.util.MessageUtils;
-import org.duracloud.duradmin.util.StringUtils;
 import org.springframework.binding.message.Message;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -31,7 +31,7 @@ public class ChangeProviderController
                                   BindException errors) throws Exception {
         StorageProvider storageProvider = (StorageProvider) command;
         String storageProviderId = storageProvider.getStorageProviderId();
-        if (StringUtils.isEmptyOrAllWhiteSpace(storageProviderId)) {
+        if (!StringUtils.hasText(storageProviderId)) {
             throw new IllegalArgumentException("Storage Provider ID must be provided.");
         }
 

@@ -10,11 +10,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
-import org.duracloud.duradmin.util.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,7 +60,7 @@ public class ContentController
         String action = contentItem.getAction();
         if (action != null && action.equals("update")) {
             String newMime = contentItem.getContentMimetype();
-            if (!StringUtils.isEmptyOrAllWhiteSpace(newMime)
+            if (StringUtils.hasText(newMime)
                     && !newMime.equals(contentMetadata
                             .get(ContentStore.CONTENT_MIMETYPE))) {
                 Map<String, String> updatedMetadata =

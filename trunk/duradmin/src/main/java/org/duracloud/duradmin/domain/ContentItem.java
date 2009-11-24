@@ -9,7 +9,7 @@ import java.util.Map;
 import org.duracloud.duradmin.util.FileData;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.NameValuePair;
-import org.duracloud.duradmin.util.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ContentItem
@@ -54,7 +54,7 @@ public class ContentItem
     }
 
     public String getContentId() {
-        if (!StringUtils.isEmptyOrAllWhiteSpace(contentId)) {
+        if (StringUtils.hasText(contentId)) {
             return contentId;
         }
         return fileData.getName();
@@ -65,7 +65,7 @@ public class ContentItem
     }
 
     public String getContentMimetype() {
-        if (!StringUtils.isEmptyOrAllWhiteSpace(this.contentMimetype)) {
+        if (StringUtils.hasText(this.contentMimetype)) {
             return this.contentMimetype;
         }
         return this.fileData.getMimetype();
