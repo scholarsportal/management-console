@@ -102,7 +102,7 @@ public class ServiceElementWriter {
         if (deploymentOptions != null && deploymentOptions.size() > 0) {
             DeploymentOptionsType deploymentOptionsType = service.addNewDeploymentOptions();
             int maxDeploymentsAllowed = serviceInfo.getMaxDeploymentsAllowed();
-            if (maxDeploymentsAllowed >= 0) {
+            if (maxDeploymentsAllowed >= -1) {
                 deploymentOptionsType.setMax(maxDeploymentsAllowed);
             }
 
