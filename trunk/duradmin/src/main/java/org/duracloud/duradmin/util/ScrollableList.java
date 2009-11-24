@@ -26,6 +26,10 @@ public abstract class ScrollableList<E>
         return this.maxResultsPerPage;
     }
 
+    public void markForUpdate(){
+        this.markedForUpdate = true;
+    }
+    
     public void setMaxResultsPerPage(int maxResults) {
         if (this.maxResultsPerPage != maxResults) {
             markedForUpdate = true;
