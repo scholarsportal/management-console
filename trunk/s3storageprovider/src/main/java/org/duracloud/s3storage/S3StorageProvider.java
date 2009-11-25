@@ -506,6 +506,7 @@ public class S3StorageProvider
         throwIfSpaceNotExist(spaceId);
 
         // Remove calculated properties
+        contentMetadata.remove(METADATA_CONTENT_MD5);
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
         contentMetadata.remove(METADATA_CONTENT_MODIFIED);
         contentMetadata.remove(METADATA_CONTENT_SIZE);
@@ -516,6 +517,12 @@ public class S3StorageProvider
 
         // Remove mimetype to set later
         String newMimeType = contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
+
+        if (log.isDebugEnabled()) {
+            for (String key : contentMetadata.keySet()) {
+                log.debug("[" + key + "|" + contentMetadata.get(key) + "]");
+            }
+        }
 
         // Get the object and replace its metadata
         String bucketName = getBucketName(spaceId);
