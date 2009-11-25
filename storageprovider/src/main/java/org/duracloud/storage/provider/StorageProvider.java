@@ -29,6 +29,9 @@ public interface StorageProvider {
     public static final String METADATA_CONTENT_CHECKSUM = "content-checksum";
     public static final String METADATA_CONTENT_MODIFIED = "content-modified";
 
+    /* Names for reserved metadata properties */
+    public static final String METADATA_CONTENT_MD5 = "content-md5";
+
     /* Names values for metadata files */
     public static final String SPACE_METADATA_SUFFIX = "-space-metadata";
     public static final String CONTENT_METADATA_SUFFIX = "-content-metadata";
