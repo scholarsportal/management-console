@@ -131,7 +131,7 @@
            <configuration>
              <warSourceExcludes>WEB-INF/lib/*</warSourceExcludes>
              <archive>
-             <manifestFile>${project.build.directory}/clover/classes/META-INF/MANIFEST.MF</manifestFile>
+             <manifestFile>${project.build.directory}/classes/META-INF/MANIFEST.MF</manifestFile>
              </archive>
            </configuration>
           </plugin>
