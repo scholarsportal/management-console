@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 public class MetadataUtils {
 
-    private static final String NAME_KEY_PREFIX = "ext-metadata-";
+    static final String NAME_KEY_PREFIX = "ext-metadata-";
     private static Log log = LogFactory.getLog(MetadataUtils.class);
     
     public static void setMetadata(ContentStore contentStore,
@@ -83,6 +83,10 @@ public class MetadataUtils {
                              Map<String, String> metadata) {
         return metadata.put(NAME_KEY_PREFIX + name, value);
 
+    }
+
+    public static Object getValue(String key, Map<String, String> metadata) {
+        return metadata.get(NAME_KEY_PREFIX+key);
     }
 
 }
