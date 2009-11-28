@@ -13,7 +13,7 @@
 						<spring:message code="spaces"/>
 					</tiles:putAttribute>	
 					<tiles:putAttribute name="subtitle">
-						<a href="<c:url value="/spaces/add"/>">Add Space</a>
+						<a id="addSpaceLink" href="<c:url value="/spaces/add"/>"><spring:message code="add.space"/></a>
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
@@ -45,7 +45,7 @@
 												</a>
 											</li>
 											
-											<li><a href="<c:url value="removeSpace.htm">
+											<li><a id="removeSpaceLink" href="<c:url value="removeSpace.htm">
 													   		<c:param name="spaceId" value="${spaceId}"/>
 													   		<c:param name="returnTo" value="${currentUrl}"/>
 													    </c:url>" onclick="return confirmDeleteOperation();">
