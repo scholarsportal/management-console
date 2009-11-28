@@ -20,7 +20,7 @@
 					<div>
 						<table class="basic-form">
 							<tr>
-								<td class="label"><label for="spaceId">Space ID</label></td>
+								<td class="label"><label id="spaceIdLabel" for="spaceId"><spring:message code="space.id"/></label></td>
 								<td class="input">
 									<form:input id="spaceId" path="spaceId" maxlength="255"/>
 										
@@ -41,8 +41,9 @@
 						</table>
 					</div>
 					<div class="basic-form-buttons" >
-						<input type="submit" name="_eventId_submit" value="Add"/> 
-						<input type="submit" name="_eventId_cancel" value="Cancel"/> 
+						<input type="submit" id="addSpaceButton" name="_eventId_submit" value="<spring:message code="add"/>"/> 
+
+						<input type="submit" id="cancelButton" name="_eventId_cancel" value="<spring:message code="cancel"/>"/> 
 					</div>
 				</form:form>
 			</tiles:putAttribute>

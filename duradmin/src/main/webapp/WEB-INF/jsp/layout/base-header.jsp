@@ -16,7 +16,7 @@
 			<ul id="menu">
 				<c:forEach items="${mainMenu}" var="mi">
 					<li>
-						<a href='<c:url value="${mi.href}" />' class="<c:if test="${mi.name == mainTab}">current</c:if>" >
+						<a  id="${mi.name}MenuItem" href='<c:url value="${mi.href}" />' class="<c:if test="${mi.name == mainTab}">current</c:if>" >
 							<spring:message code="${mi.messageKey}"/>
 						</a>
 					</li>
