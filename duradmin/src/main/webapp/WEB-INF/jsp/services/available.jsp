@@ -15,7 +15,7 @@
 						Available Services
 					</tiles:putAttribute>	
 					<tiles:putAttribute name="subtitle">
-						<a href="<c:url value="/services/deployed.htm"/>">Deployed</a>
+						<a id="deployedServicesLink" href="<c:url value="/services/deployed.htm"/>">Deployed</a>
 					</tiles:putAttribute>	
 
 				</tiles:insertDefinition>
