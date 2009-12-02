@@ -34,7 +34,7 @@ public class TestServicesManager
 
     private ServicesManager servicesManager;
 
-    private static final int testServiceId = 1;
+    private static final int testServiceId = 1; // Replication Service
     private static int testDeploymentId = 0;
     private static final String textConfigValue = "Test";
 
@@ -103,7 +103,8 @@ public class TestServicesManager
 
         ServiceInfo service = servicesManager.getService(testServiceId);
         assertNotNull(service);
-        List<UserConfig> userConfigs = service.getUserConfigs();
+        List<UserConfig> userConfigs =
+            service.getDeployments().get(0).getUserConfigs();
         for(UserConfig config : userConfigs) {
             if(config instanceof TextUserConfig) {
                 assertEquals(textConfigValue,
@@ -119,7 +120,7 @@ public class TestServicesManager
 
         service = servicesManager.getService(testServiceId);
         assertNotNull(service);
-        userConfigs = service.getUserConfigs();
+        userConfigs = service.getDeployments().get(0).getUserConfigs();
         for(UserConfig config : userConfigs) {
             if(config instanceof TextUserConfig) {
                 assertEquals(updatedTextConfigValue,
