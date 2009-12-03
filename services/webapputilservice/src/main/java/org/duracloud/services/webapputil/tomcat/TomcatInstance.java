@@ -8,9 +8,11 @@ import org.duracloud.services.webapputil.error.WebAppDeployerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
@@ -95,9 +97,11 @@ public class TomcatInstance {
         String CATALINA = "CATALINA_HOME=" + catalinaHome.getAbsolutePath();
         String JAVA = "JAVA_HOME=" + System.getProperty("java.home");
         String[] env = {CATALINA, JAVA};
+
+        Process proc = null;
         Runtime runtime = Runtime.getRuntime();
         try {
-            Process proc = runtime.exec(script.getAbsolutePath(), env);
+            proc = runtime.exec(script.getAbsolutePath(), env);
         } catch (IOException e) {
             StringBuilder sb = new StringBuilder();
             sb.append("Error running script: \n -- ");
@@ -108,6 +112,34 @@ public class TomcatInstance {
             log.error(sb.toString());
             throw new WebAppDeployerException(sb.toString(), e);
         }
+
+        if (proc != null) {
+            logMessages(proc.getErrorStream());
+            logMessages(proc.getInputStream());
+        }
+    }
+
+    private void logMessages(InputStream input) {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        String line;
+        while ((line = readLine(reader)) != null) {
+            sb.append(line + "\n\t");
+        }
+        if (sb.length() > 0) {
+            log.warn(sb.toString());
+        }
+        IOUtils.closeQuietly(reader);
+    }
+
+    private String readLine(BufferedReader reader) {
+        String line = null;
+        try {
+            line = reader.readLine();
+        } catch (IOException e) {
+            // do nothing.
+        }
+        return line;
     }
 
     private File getStartUpScript() {

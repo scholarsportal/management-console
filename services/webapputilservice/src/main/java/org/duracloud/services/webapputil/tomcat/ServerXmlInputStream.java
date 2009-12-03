@@ -1,7 +1,7 @@
 package org.duracloud.services.webapputil.tomcat;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,32 +12,24 @@ import java.util.regex.Pattern;
  * @author Andrew Woods
  *         Date: Nov 30, 2009
  */
-public class ServerXmlInputStream extends BufferedInputStream {
+public class ServerXmlInputStream extends ByteArrayInputStream {
 
-    private static int BUFFER_SIZE = 8192;
     private static int BASE_PORT = 8080;
-    private int portOffset;
-
     private static final Pattern PORT_PATTERN = Pattern.compile("8\\d\\d\\d");
 
-
     public ServerXmlInputStream(InputStream input, int port) {
-        super(input, BUFFER_SIZE);
-        if (port < 1000) {
-            throw new IllegalArgumentException("port must be greater than 0");
-        }
+        super(filteredContent(input, port));
 
-        portOffset = port - BASE_PORT;
-        super.buf = filteredContent();
-        super.in = input;
-        super.pos = 0;
-        super.count = super.buf.length;
+        if (port < 1000) {
+            throw new IllegalArgumentException("port must be greater than 999");
+        }
     }
 
-    private byte[] filteredContent() {
+    private static byte[] filteredContent(InputStream input, int port) {
+        int portOffset = port - BASE_PORT;
         StringBuilder sb = new StringBuilder();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(this));
+        BufferedReader br = new BufferedReader(new InputStreamReader(input));
         String line = readLine(br);
         while (null != line) {
             Matcher m = PORT_PATTERN.matcher(line);
@@ -54,14 +46,14 @@ public class ServerXmlInputStream extends BufferedInputStream {
             }
 
             sb.append(line);
-
             line = readLine(br);
         }
+        close(br);
 
         return sb.toString().getBytes();
     }
 
-    private String readLine(BufferedReader br) {
+    private static String readLine(BufferedReader br) {
         String line = null;
         try {
             line = br.readLine();
@@ -69,6 +61,14 @@ public class ServerXmlInputStream extends BufferedInputStream {
             // do nothing.
         }
         return line;
+    }
+
+    private static void close(BufferedReader br) {
+        try {
+            br.close();
+        } catch (IOException e) {
+            // do nothing.
+        }
     }
 
 }
