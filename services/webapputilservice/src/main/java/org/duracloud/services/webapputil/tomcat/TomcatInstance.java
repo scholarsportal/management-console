@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * This class is a stateful representation of a tomcat instance.
@@ -92,16 +93,25 @@ public class TomcatInstance {
 
         return running;
     }
-
+   
     private void runScript(File script) {
-        String CATALINA = "CATALINA_HOME=" + catalinaHome.getAbsolutePath();
-        String JAVA = "JAVA_HOME=" + System.getProperty("java.home");
-        String[] env = {CATALINA, JAVA};
+        String catalina = catalinaHome.getAbsolutePath();
+        String java = System.getProperty("java.home");
+        if(java.endsWith("jre")) {
+            java = java.substring(0, java.lastIndexOf(File.separatorChar));
+        }
+        String scriptPath = script.getAbsolutePath();
 
-        Process proc = null;
-        Runtime runtime = Runtime.getRuntime();
+        ProcessBuilder pb = new ProcessBuilder(scriptPath);
+        Map<String, String> env = pb.environment();
+        env.put("CATALINA_HOME", catalina);
+        env.put("JAVA_HOME", java);
+
         try {
-            proc = runtime.exec(script.getAbsolutePath(), env);
+            // Caution: Attempting to use the process object returned
+            // by this call for anything, even a null check, 
+            // may cause tests to fail
+            pb.start();
         } catch (IOException e) {
             StringBuilder sb = new StringBuilder();
             sb.append("Error running script: \n -- ");
@@ -112,35 +122,8 @@ public class TomcatInstance {
             log.error(sb.toString());
             throw new WebAppDeployerException(sb.toString(), e);
         }
-
-        if (proc != null) {
-            logMessages(proc.getErrorStream());
-            logMessages(proc.getInputStream());
-        }
-    }
-
-    private void logMessages(InputStream input) {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        String line;
-        while ((line = readLine(reader)) != null) {
-            sb.append(line + "\n\t");
-        }
-        if (sb.length() > 0) {
-            log.warn(sb.toString());
-        }
-        IOUtils.closeQuietly(reader);
-    }
-
-    private String readLine(BufferedReader reader) {
-        String line = null;
-        try {
-            line = reader.readLine();
-        } catch (IOException e) {
-            // do nothing.
-        }
-        return line;
-    }
+        
+    }    
 
     private File getStartUpScript() {
         String os = System.getProperty("os.name");
