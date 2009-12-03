@@ -44,8 +44,6 @@ public class TomcatTestBase {
             }
         } else if (file.getName().endsWith(".sh")) {
             verifyExcecutable(file, true);
-        } else {
-            verifyExcecutable(file, false);
         }
 
         if (file.getName().endsWith("server.xml")) {

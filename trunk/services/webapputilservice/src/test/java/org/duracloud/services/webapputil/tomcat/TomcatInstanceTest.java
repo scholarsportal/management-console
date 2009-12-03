@@ -51,10 +51,10 @@ public class TomcatInstanceTest extends TomcatTestBase {
                 verifyStarted(false);
                 isStarted = true;
             } catch (Throwable e) {
-                tomcatInstance.stop();
                 try {
+                    tomcatInstance.stop();
                     Thread.sleep(500);
-                } catch (InterruptedException e1) {
+                } catch (Exception e1) {
                 }
             }
         }
