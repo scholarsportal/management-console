@@ -65,6 +65,7 @@
       <module>duradavwebapp</module>
       <module>storeclient</module>
       <module>duradmin</module>
+      <module>hellowebapp</module>
       <module>services</module>
       <module>duraservice</module>
       <module>serviceclient</module>	  
