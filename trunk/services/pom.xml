@@ -27,6 +27,7 @@
     <module>tomcatconfig</module>
     <module>servicesutil</module>
     <module>servicesadmin</module>
+    <module>webapputilservice</module>
   </modules>
 
   <build>
