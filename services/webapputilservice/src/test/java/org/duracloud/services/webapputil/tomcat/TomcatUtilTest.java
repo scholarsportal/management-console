@@ -14,7 +14,7 @@ public class TomcatUtilTest extends TomcatTestBase {
 
     private TomcatUtil tomcatUtil;
     private File installDir;
-    private final int port = 20000;
+    private final int port = 11080;
 
     @Before
     public void setUp() {
@@ -33,7 +33,7 @@ public class TomcatUtilTest extends TomcatTestBase {
 
     private TomcatInstance doInstall() throws IOException {
         TomcatInstance instance = tomcatUtil.installTomcat(installDir, port);
-        int numFiles = 6;
+        int numFiles = 7;
         verifyInstall(instance, numFiles);
 
         return instance;

@@ -40,10 +40,7 @@ public class TomcatInstance {
      */
     public void start() {
         runScript(getStartUpScript());
-
-        while (!isRunning()) {
-            sleep(500);
-        }
+        waitForStartup();
     }
 
     /**
@@ -52,9 +49,27 @@ public class TomcatInstance {
      */
     public void stop() {
         runScript(getShutdownScript());
+        waitForShutdown();
+    }
 
-        while (isRunning()) {
+    private void waitForStartup() {
+        isRunning(true);
+    }
+
+    private void waitForShutdown() {
+        isRunning(false);
+    }
+
+    private void isRunning(boolean state) {
+        int tries = 0;
+        int maxTries = 20;
+        while (isRunning() != state && tries++ < maxTries) {
             sleep(500);
+        }
+
+        if (isRunning() != state) {
+            String verb = state ? "start" : "stop";
+            throw new WebAppDeployerException("Unable to " + verb + " tomcat");
         }
     }
 
@@ -77,7 +92,9 @@ public class TomcatInstance {
     }
 
     private void runScript(File script) {
-        String[] env = {"CATALINA_HOME=" + catalinaHome.getAbsolutePath()};
+        String CATALINA = "CATALINA_HOME=" + catalinaHome.getAbsolutePath();
+        String JAVA = "JAVA_HOME=" + System.getProperty("java.home");
+        String[] env = {CATALINA, JAVA};
         Runtime runtime = Runtime.getRuntime();
         try {
             Process proc = runtime.exec(script.getAbsolutePath(), env);
@@ -127,8 +144,9 @@ public class TomcatInstance {
 
     /**
      * This method deploys the arg war into the appserver under the arg context
+     *
      * @param context of deployed webapp
-     * @param war to be deployed
+     * @param war     to be deployed
      */
     public void deploy(String context, InputStream war) {
         File webappsDir = new File(catalinaHome, "webapps");
@@ -142,6 +160,7 @@ public class TomcatInstance {
 
     /**
      * This method undeploys the webapp found under the arg context
+     *
      * @param context to be undeployed
      */
     public void unDeploy(String context) {

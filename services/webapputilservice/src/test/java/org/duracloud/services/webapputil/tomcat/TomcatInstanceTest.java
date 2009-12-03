@@ -18,7 +18,7 @@ import java.io.InputStream;
  */
 public class TomcatInstanceTest extends TomcatTestBase {
 
-    private final int port = 10000;
+    private final int port = 12080;
     private final String tomcatURL = "http://localhost:" + port;
     private TomcatUtil tomcatUtil;
     private TomcatInstance tomcatInstance;
@@ -43,8 +43,10 @@ public class TomcatInstanceTest extends TomcatTestBase {
     }
 
     private void ensureNotStarted() {
+        int maxTries = 20;
+        int tries = 0;
         boolean isStarted = false;
-        while (!isStarted) {
+        while (!isStarted && (tries++ < maxTries)) {
             try {
                 verifyStarted(false);
                 isStarted = true;
