@@ -6,7 +6,7 @@
   <version>1.0.0</version>
   <name>DuraCloud Administrative Services WebApp Bundle</name>
   <url>http://duracloud.org</url>
-  <packaging>war</packaging>
+  <packaging>bundle</packaging>
 
   <parent>
     <artifactId>services</artifactId>

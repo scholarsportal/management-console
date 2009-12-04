@@ -6,7 +6,7 @@ import java.util.Map;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.config.DuraStoreConfig;
-import org.duracloud.storage.util.test.StorageAccountTestUtil;
+import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 
 /**
  * @author Bill Branan
