@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -182,6 +183,8 @@ public class TestContentRest {
     private void doTestUpdateContentMetadata(String contentId)
         throws Exception {
         String url = baseUrl + "/" + spaceId + "/" + contentId;
+
+        // Add metadata
         Map<String, String> headers = new HashMap<String, String>();
         String newContentMime = "text/plain";
         headers.put(HttpHeaders.CONTENT_TYPE, newContentMime);
@@ -197,13 +200,26 @@ public class TestContentRest {
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/" + spaceId + "/" + contentId;
         response = restHelper.head(url);
-
         assertEquals(200, response.getStatusCode());
 
         verifyMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
         verifyMetadata(response, newMetaName, newMetaValue);
+
+        // Remove metadata
+        headers.remove(newMetaName);
+        response = restHelper.post(url, null, headers);
+
+        assertEquals(200, response.getStatusCode());
+        responseText = response.getResponseBody();
+        assertNotNull(responseText);
+        assertTrue(responseText.contains(removeParams(contentId)));
+        assertTrue(responseText.contains("updated"));
+
+        response = restHelper.head(url);
+        assertEquals(200, response.getStatusCode());
+
+        verifyNoMetadata(response, newMetaName);
     }
 
     private void verifyMetadata(HttpResponse response,
@@ -212,6 +228,11 @@ public class TestContentRest {
         String metadata = response.getResponseHeader(name).getValue();
         assertNotNull(metadata);
         assertEquals(metadata, value);
+    }
+
+    private void verifyNoMetadata(HttpResponse response,
+                                  String name) throws Exception {
+        assertNull(response.getResponseHeader(name));
     }
 
 }

@@ -1,18 +1,14 @@
 package org.duracloud.durastore.rest;
 
-import java.io.InputStream;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.common.web.RestResourceException;
 import org.duracloud.durastore.util.StorageProviderFactory;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
+
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Provides interaction with content
@@ -97,32 +93,15 @@ public class ContentResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            Map<String, String> metadata =
-                storage.getContentMetadata(spaceID, contentID);
-            if(metadata == null) {
-                metadata = new HashMap<String, String>();
-            }
-            boolean metadataUpdated = false;
-
             // Update content mime type if a new value was provided
             if(contentMimeType != null && !contentMimeType.equals("")) {
-                metadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE, contentMimeType);
-                metadataUpdated = true;
+                userMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
+                                 contentMimeType);
             }
 
-            // Update user metadata
-            if(userMetadata != null && userMetadata.size() > 0) {
-                Iterator<String> userMetaNames = userMetadata.keySet().iterator();
-                while(userMetaNames.hasNext()) {
-                    String userMetaName = userMetaNames.next();
-                    String userMetaValue = userMetadata.get(userMetaName);
-                    metadata.put(userMetaName, userMetaValue);
-                }
-                metadataUpdated = true;
-            }
-
-            if(metadataUpdated) {
-                storage.setContentMetadata(spaceID, contentID, metadata);
+            // Update content metadata
+            if(userMetadata != null) {
+                storage.setContentMetadata(spaceID, contentID, userMetadata);
             }
         } catch (StorageException e) {
             String error = "Error attempting to update metadata for content '" +
