@@ -1,4 +1,4 @@
-package org.duracloud.storage.util.test;
+package org.duracloud.storage.domain.test.db.util;
 
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.EncryptionUtil;

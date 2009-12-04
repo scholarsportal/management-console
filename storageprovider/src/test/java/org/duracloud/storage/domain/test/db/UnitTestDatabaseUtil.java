@@ -1,16 +1,14 @@
 package org.duracloud.storage.domain.test.db;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.common.util.TableSpec;
 import org.duracloud.storage.domain.StorageProviderType;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class UnitTestDatabaseUtil
         extends DatabaseUtil {

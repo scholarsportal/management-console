@@ -213,6 +213,21 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>storageprovider</artifactId>
+      <version>1.0.0</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common-db</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 

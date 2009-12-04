@@ -8,7 +8,7 @@ import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.storage.util.test.StorageAccountTestUtil;
+import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

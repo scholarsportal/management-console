@@ -1,17 +1,16 @@
 package org.duracloud.storage.domain.test.db;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.TableSpec;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PasswordRepositoryDBImpl
         extends SimpleJdbcDaoSupport {
