@@ -10,7 +10,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -169,26 +168,9 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            Map<String, String> spaceMeta = storage.getSpaceMetadata(spaceID);
-            if(spaceMeta == null) {
-                spaceMeta = new HashMap<String, String>();
-            }
-            boolean metadataUpdated = false;
-
-            // Update user metadata
-            if(userMetadata != null && userMetadata.size() > 0) {
-                Iterator<String> userMetaNames = userMetadata.keySet().iterator();
-                while(userMetaNames.hasNext()) {
-                    String userMetaName = userMetaNames.next();
-                    String userMetaValue = userMetadata.get(userMetaName);
-                    spaceMeta.put(userMetaName, userMetaValue);
-                }
-                metadataUpdated = true;
-            }
-
-            // Commit updates to space metadata
-            if(metadataUpdated) {
-                storage.setSpaceMetadata(spaceID, spaceMeta);
+            // Update space metadata
+            if(userMetadata != null) {
+                storage.setSpaceMetadata(spaceID, userMetadata);
             }
 
             // Set space access if necessary

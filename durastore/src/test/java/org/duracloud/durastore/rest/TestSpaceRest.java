@@ -95,6 +95,8 @@ public class TestSpaceRest
     @Test
     public void testUpdateSpaceMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId;
+
+        // Add metadata
         Map<String, String> headers = new HashMap<String, String>();
         String newSpaceAccess = "CLOSED";
         headers.put(BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
@@ -109,11 +111,26 @@ public class TestSpaceRest
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
-        url = baseUrl + "/" + spaceId;
         response = restHelper.head(url);
+        assertEquals(200, response.getStatusCode());
 
         testMetadata(response, BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         testMetadata(response, RestTestHelper.METADATA_NAME, newSpaceMetadata);
+
+        // Remove metadata
+        headers.remove(RestTestHelper.METADATA_NAME);
+        response = restHelper.post(url, null, headers);
+
+        assertEquals(200, response.getStatusCode());
+        responseText = response.getResponseBody();
+        assertNotNull(responseText);
+        assertTrue(responseText.contains(spaceId));
+        assertTrue(responseText.contains("updated"));
+
+        response = restHelper.head(url);
+        assertEquals(200, response.getStatusCode());
+
+        testNoMetadata(response, RestTestHelper.METADATA_NAME);        
     }
 
     private void testMetadata(HttpResponse response, String name, String value)
@@ -121,6 +138,11 @@ public class TestSpaceRest
         String metadata = response.getResponseHeader(name).getValue();
         assertNotNull(metadata);
         assertEquals(metadata, value);
+    }
+
+    private void testNoMetadata(HttpResponse response,
+                                String name) throws Exception {
+        assertNull(response.getResponseHeader(name));
     }
 
  }
