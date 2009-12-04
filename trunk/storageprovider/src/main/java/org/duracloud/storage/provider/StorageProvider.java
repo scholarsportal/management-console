@@ -168,10 +168,11 @@ public interface StorageProvider {
      * or removed.
      *
      * Some of the values which cannot be updated or removed:
-     * Content-Type
      * Content-MD5
      * ETag
      * Last-Modified
+     *
+     * Content-Type cannot be removed, but it can be updated
      *
      * @param spaceId
      * @param contentId

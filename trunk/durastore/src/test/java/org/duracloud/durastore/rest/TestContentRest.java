@@ -191,13 +191,8 @@ public class TestContentRest {
         String newMetaName = BaseRest.HEADER_PREFIX + "new-metadata";
         String newMetaValue = "New Metadata Value";
         headers.put(newMetaName, newMetaValue);
-        HttpResponse response = restHelper.post(url, null, headers);
 
-        assertEquals(200, response.getStatusCode());
-        String responseText = response.getResponseBody();
-        assertNotNull(responseText);
-        assertTrue(responseText.contains(removeParams(contentId)));
-        assertTrue(responseText.contains("updated"));
+        HttpResponse response = postMetadataUpdate(url, contentId, headers);
 
         // Make sure the changes were saved
         response = restHelper.head(url);
@@ -207,19 +202,42 @@ public class TestContentRest {
         verifyMetadata(response, newMetaName, newMetaValue);
 
         // Remove metadata
-        headers.remove(newMetaName);
-        response = restHelper.post(url, null, headers);
-
-        assertEquals(200, response.getStatusCode());
-        responseText = response.getResponseBody();
-        assertNotNull(responseText);
-        assertTrue(responseText.contains(removeParams(contentId)));
-        assertTrue(responseText.contains("updated"));
+        headers = new HashMap<String, String>();
+        response = postMetadataUpdate(url, contentId, headers);
 
         response = restHelper.head(url);
         assertEquals(200, response.getStatusCode());
 
+        // New metadata items should be gone, mimetype should be unchanged
         verifyNoMetadata(response, newMetaName);
+        verifyMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
+
+        // Update mimetype
+        String testMime = "application/test";
+        headers = new HashMap<String, String>();
+        headers.put(HttpHeaders.CONTENT_TYPE, testMime);
+        response = postMetadataUpdate(url, contentId, headers);
+
+        response = restHelper.head(url);
+        assertEquals(200, response.getStatusCode());
+
+        // Metadata should be updated
+        verifyMetadata(response, HttpHeaders.CONTENT_TYPE, testMime);
+    }
+
+    private HttpResponse postMetadataUpdate(String url,
+                                            String contentId,
+                                            Map<String, String> headers)
+        throws Exception {
+        HttpResponse response = restHelper.post(url, null, headers);
+
+        assertEquals(200, response.getStatusCode());
+        String responseText = response.getResponseBody();
+        assertNotNull(responseText);
+        assertTrue(responseText.contains(removeParams(contentId)));
+        assertTrue(responseText.contains("updated"));
+
+        return response;
     }
 
     private void verifyMetadata(HttpResponse response,

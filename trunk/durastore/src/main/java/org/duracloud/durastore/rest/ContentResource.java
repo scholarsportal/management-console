@@ -97,6 +97,15 @@ public class ContentResource {
             if(contentMimeType != null && !contentMimeType.equals("")) {
                 userMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
                                  contentMimeType);
+            } else { // Keep mimetype as is
+                Map<String, String> existingMeta =
+                    storage.getContentMetadata(spaceID, contentID);
+                String mimetype =
+                    existingMeta.get(StorageProvider.METADATA_CONTENT_MIMETYPE);
+                if(mimetype != null) {
+                    userMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
+                                     mimetype);
+                }
             }
 
             // Update content metadata
