@@ -45,12 +45,12 @@ public class TestServicesManager
         assertNotNull(servicesManager.getBaseURL());
     }
 
-    private static String getPort() throws Exception {
-        if(port == null) {
-            port = System.getProperty("tomcat.port.default");
-            if(port == null) {
-                port = defaultPort;
-            }
+    private String getPort() throws Exception {
+        ServiceClientConfig config = new ServiceClientConfig();
+        String port = config.getPort();
+
+        if(port == null || port.startsWith("$")) {
+           port = defaultPort;
         }
         return port;
     }
