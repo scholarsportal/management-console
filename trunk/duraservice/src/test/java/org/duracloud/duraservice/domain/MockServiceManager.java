@@ -316,14 +316,13 @@ public class MockServiceManager extends ServiceManager {
 
     private class MockServicesAdminClient extends ServicesAdminClient {
 
-        RestHttpHelper.HttpResponse response =
-            new RestHttpHelper().
+        RestHttpHelper.HttpResponse response = new RestHttpHelper().
             new HttpResponse(HttpURLConnection.HTTP_OK, null, null, null);
 
         @Override
         public HttpResponse postServiceBundle(String fileName,
-                                              InputStream stream, long length)
-                throws Exception {
+                                              InputStream stream,
+                                              long length) throws Exception {
             return response;
         }
 
@@ -333,24 +332,28 @@ public class MockServiceManager extends ServiceManager {
         }
 
         @Override
-        public HttpResponse deleteServiceBundle(String bundleId) throws Exception {
+        public HttpResponse deleteServiceBundle(String bundleId)
+            throws Exception {
             return response;
         }
 
         @Override
-        public void postServiceConfig(String configId, Map<String, String> config)
-        throws Exception {
-
-        }
-
-        @Override
-        public HttpResponse startServiceBundle(String bundleId) throws Exception {
+        public HttpResponse postServiceConfig(String configId,
+                                              Map<String, String> config)
+            throws Exception {
             return response;
         }
 
         @Override
-        public HttpResponse stopServiceBundle(String bundleId) throws Exception {
-            return response;        
+        public HttpResponse startServiceBundle(String bundleId)
+            throws Exception {
+            return response;
+        }
+
+        @Override
+        public HttpResponse stopServiceBundle(String bundleId)
+            throws Exception {
+            return response;
         }
 
         @Override

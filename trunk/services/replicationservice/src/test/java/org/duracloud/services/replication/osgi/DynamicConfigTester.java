@@ -1,13 +1,12 @@
 
 package org.duracloud.services.replication.osgi;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import junit.framework.Assert;
 import org.duracloud.services.replication.ReplicationService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
 
-import junit.framework.Assert;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DynamicConfigTester {
 
@@ -60,7 +59,7 @@ public class DynamicConfigTester {
         newConfig.put(REPLICATION_TYPE, "1");
 
         configAdmin
-                .updateConfiguration("org.duracloud.services.replicationservice.config",
+                .updateConfiguration("replicationservice-1.0.0.zip",
                                      newConfig);
 
         // Give time for config to propagate

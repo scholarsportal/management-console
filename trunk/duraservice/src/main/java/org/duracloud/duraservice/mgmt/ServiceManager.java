@@ -18,6 +18,7 @@ import org.duracloud.duraservice.domain.UserStore;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
+import org.duracloud.duraservice.error.ServiceException;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
@@ -33,6 +34,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,7 +106,7 @@ public class ServiceManager {
             String error = "Could not build services list due " +
             		       "to exception: " + cse.getMessage();
             log.error(error);
-            throw new RuntimeException(error, cse);
+            throw new ServiceException(error, cse);
         }
 
         try {
@@ -113,7 +115,7 @@ public class ServiceManager {
             String error = "Could not create connection to user storage " +
                            "list due to exception: " + cse.getMessage();
             log.error(error);
-            throw new RuntimeException(error, cse);
+            throw new ServiceException(error, cse);
         }
 
         try {
@@ -125,7 +127,7 @@ public class ServiceManager {
             String error = "Could not retrieve local servicesAdmin " +
             		       "URL due to error: " + e.getMessage();
             log.error(error);
-            throw new RuntimeException(error, e);
+            throw new ServiceException(error, e);
         }
     }
 
@@ -134,7 +136,7 @@ public class ServiceManager {
      */
     private void checkConfigured() {
         if(serviceStore == null) {
-            throw new RuntimeException("The Service Manager must be initialized " +
+            throw new ServiceException("The Service Manager must be initialized " +
             		                   "prior to performing any other activities.");
         }
     }
@@ -175,7 +177,7 @@ public class ServiceManager {
             String error = "Error encountered attempting to parse DuraService " +
             		       "configuration xml " + e.getMessage();
             log.error(error);
-            throw new RuntimeException(error, e);
+            throw new ServiceException(error, e);
         }
     }
 
@@ -220,7 +222,7 @@ public class ServiceManager {
                             servicesSpaceId + " due to exception: " +
                             cse.getMessage();
             log.error(error);
-            throw new RuntimeException(error, cse);
+            throw new ServiceException(error, cse);
         }
     }
 
@@ -341,7 +343,7 @@ public class ServiceManager {
         if(!underMaxDeployments(serviceId, maxDeployments)) {
             String error = "Service not deployed, the maximum deployment " +
                 "limit for this service " + maxDeployments + " has been reached";
-            throw new RuntimeException(error);
+            throw new ServiceException(error);
         }
 
         ServiceComputeInstance computeInstance =
@@ -358,6 +360,8 @@ public class ServiceManager {
         Map<String, String> serviceConfig =
             createServiceConfig(userConfig, systemConfig);
 
+        serviceConfig = cleanMap(serviceConfig);
+
         try {
             // Grab file from store
             String contentId = srvToDeploy.getContentId();
@@ -372,12 +376,8 @@ public class ServiceManager {
                 computeInstance.getServicesAdmin();
             HttpResponse response =
                 servicesAdmin.postServiceBundle(contentId, serviceStream, length);
-            if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
-                String error = "Error deploying service: " + serviceId +
-                               " Services Admin response code was " +
-                               response.getStatusCode();
-                throw new RuntimeException(error);
-            }
+            String error = "Unable to deploy service bundle." + contentId;
+            checkResponse(response, error);
 
             // Wait to allow deployment to complete
             int maxLoops = 5;
@@ -390,22 +390,21 @@ public class ServiceManager {
             }
 
             // Configure the service
-            servicesAdmin.postServiceConfig(contentId, serviceConfig);
+            response =
+                servicesAdmin.postServiceConfig(contentId, serviceConfig);
+            error = "Unable to configure service bundle." + contentId;
+            checkResponse(response, error);
 
             // Start the service
             response = servicesAdmin.startServiceBundle(contentId);
-            if(response.getStatusCode() != HttpURLConnection.HTTP_OK) {
-                String error = "Error starting service: " + serviceId +
-                               " Services Admin response code was " +
-                               response.getStatusCode();
-                throw new RuntimeException(error);
-            }
+            error = "Unable to start service bundle." + contentId;
+            checkResponse(response, error);
         } catch(Exception e) {
             String error = "Unable to deploy service " + serviceId +
                            " to " + serviceHost + " due to error: " +
                            e.getMessage();
             log.error(error);
-            throw new RuntimeException(error, e);
+            throw new ServiceException(error, e);
         }
 
         return storeDeployedService(srvToDeploy,
@@ -424,7 +423,7 @@ public class ServiceManager {
                 currentConfigVersion + ". These versions must match in order " +
                 "to ensure that the service configuration is created " +
                 "properly for deployment.";
-            throw new RuntimeException(error);
+            throw new ServiceException(error);
         }
     }
 
@@ -447,6 +446,19 @@ public class ServiceManager {
             }
         }
         return (deploymentCount < maxDeployments);
+    }
+
+    /*
+     * Removes null entries from a map, both keys and values
+     */
+    private Map<String, String> cleanMap(Map<String, String> map) {
+        Map<String, String> cleanMap = new HashMap<String, String>();
+        for(String key : map.keySet()) {
+            if(key != null && map.get(key) != null) {
+                cleanMap.put(key, map.get(key));
+            }
+        }
+        return cleanMap;
     }
 
     /*
@@ -478,7 +490,7 @@ public class ServiceManager {
                     DeploymentOption.Location.PRIMARY)) {
                     if(option.getState().equals(
                         DeploymentOption.State.UNAVAILABLE)) {
-                        throw new RuntimeException(error);
+                        throw new ServiceException(error);
                     }
                 }
             }
@@ -491,7 +503,7 @@ public class ServiceManager {
                         host =
                             createServiceInstance("Service Compute Instance");
                     } else {
-                        throw new RuntimeException(error);
+                        throw new ServiceException(error);
                     }
                 }
             }
@@ -505,7 +517,7 @@ public class ServiceManager {
                 "been locked to ensure no further services are deployed. You " +
                 "must unlock this instance prior to deploying " +
                 "additional services.";
-            throw new RuntimeException(error);
+            throw new ServiceException(error);
         }
 
         return computeInstance;
@@ -743,21 +755,52 @@ public class ServiceManager {
         Map<String, String> config =
             createServiceConfig(userConfig, deployedService.getSystemConfigs());
 
+        config = cleanMap(config);
+
         try {
             ServicesAdminClient servicesAdmin =
                 getServicesAdmin(serviceDeployment.getHostname());
             String contentId = deployedService.getContentId();
-            servicesAdmin.postServiceConfig(contentId, config);
+
+            HttpResponse response = servicesAdmin.stopServiceBundle(contentId);
+            String error = "Unable to stop service bundle." + contentId;
+            checkResponse(response, error);
+
+            response = servicesAdmin.postServiceConfig(contentId, config);
+            error = "Unable to update service bundle config." + contentId;
+            checkResponse(response, error);
+
+            response = servicesAdmin.startServiceBundle(contentId);
+            error = "Unable to re-start service bundle." + contentId;
+            checkResponse(response, error);
+
         } catch(Exception e) {
-            String error = "Unable to update service configuration " +
-                           "due to error " + e.getMessage();
-            throw new RuntimeException(error, e);
+            String error = "Unable to update service configuration  for " +
+                "deployment " + deploymentId + " of service " + serviceId +
+                "due to error " + e.getMessage();
+            throw new ServiceException(error, e);
         }
 
         List<Deployment> deployments = deployedService.getDeployments();
         deployments.remove(serviceDeployment);
         serviceDeployment.setUserConfigs(userConfig);
         deployments.add(serviceDeployment);
+    }
+
+    private void checkResponse(HttpResponse response,
+                               String error) {
+        int statusCode = response.getStatusCode();
+        String responseBody = "";
+        try {
+            responseBody = response.getResponseBody();
+        } catch(IOException e) {
+            responseBody = "none";
+        }
+        if(statusCode != HttpURLConnection.HTTP_OK) {
+            String err = error + " Services Admin response code: " +
+                statusCode + ", response message: " + responseBody;
+            throw new ServiceException(err);
+        }
     }
 
     /**
@@ -875,7 +918,7 @@ public class ServiceManager {
                            " from " + serviceHost + " due to error: " +
                            e.getMessage();
             log.error(error);
-            throw new RuntimeException(error, e);
+            throw new ServiceException(error, e);
         }
 
         removeDeployedService(serviceId, deploymentId);
