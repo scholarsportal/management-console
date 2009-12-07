@@ -11,7 +11,7 @@
   <bean id="srvHello" class="org.duracloud.services.hello.impl.HelloServiceImpl" 
    destroy-method="stop">
    <!-- init-method="start" destroy-method="stop"> -->
-    <osgix:managed-properties persistent-id="org.duracloud.services.helloservice.config" 
+    <osgix:managed-properties persistent-id="helloservice-1.0.0.jar" 
         update-strategy="container-managed"/>
     <property name="serviceId" value="helloservice-1.0.0" />
     <property name="text" value="joe" />

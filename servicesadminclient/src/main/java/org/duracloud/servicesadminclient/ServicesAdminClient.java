@@ -84,7 +84,7 @@ public class ServicesAdminClient {
         return SerializationUtil.deserializeMap(body);
     }
 
-    public void postServiceConfig(String configId, Map<String, String> config)
+    public HttpResponse postServiceConfig(String configId, Map<String, String> config)
             throws Exception {
         if (log.isDebugEnabled()) {
             log.debug(postServiceConfigText(configId, config));
@@ -94,9 +94,7 @@ public class ServicesAdminClient {
 
         log.debug("POST url: " + getConfigureURL(configId));
 
-        HttpResponse response =
-                getRester().post(getConfigureURL(configId), body, headers);
-        // TODO: process erroneous responses
+        return getRester().post(getConfigureURL(configId), body, headers);
     }
 
     public boolean isServiceDeployed(String bundleId) throws Exception {
