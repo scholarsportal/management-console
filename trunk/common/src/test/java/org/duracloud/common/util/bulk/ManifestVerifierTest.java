@@ -46,7 +46,7 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            assertEquals(ManifestVerifyException.ErrorType.UNEQUAL_NUM_ENTRIES,
+            assertEquals(ManifestVerifyException.ErrorType.INVALID,
                          e.getErrorType());
         }
     }
@@ -58,7 +58,7 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            assertEquals(ManifestVerifyException.ErrorType.UNEQUAL_NUM_ENTRIES,
+            assertEquals(ManifestVerifyException.ErrorType.INVALID,
                          e.getErrorType());
         }
     }
@@ -70,7 +70,7 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            assertEquals(ManifestVerifyException.ErrorType.CHKSUM_MISMATCH,
+            assertEquals(ManifestVerifyException.ErrorType.INVALID,
                          e.getErrorType());
         }
     }
@@ -82,7 +82,7 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            assertEquals(ManifestVerifyException.ErrorType.CHKSUM_MISMATCH,
+            assertEquals(ManifestVerifyException.ErrorType.INVALID,
                          e.getErrorType());
         }
     }
@@ -94,7 +94,7 @@ public class ManifestVerifierTest {
             verifier.verify();
             fail("Exception expected.");
         } catch (ManifestVerifyException e) {
-            assertEquals(ManifestVerifyException.ErrorType.UNEQUAL_NUM_ENTRIES,
+            assertEquals(ManifestVerifyException.ErrorType.INVALID,
                          e.getErrorType());
         }
     }

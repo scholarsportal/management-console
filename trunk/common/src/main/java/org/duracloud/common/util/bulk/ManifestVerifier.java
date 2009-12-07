@@ -1,5 +1,6 @@
 package org.duracloud.common.util.bulk;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
 import org.duracloud.common.error.ManifestVerifyException;
@@ -40,9 +41,7 @@ public class ManifestVerifier {
 
     private List<String> filters;
 
-    private List<String> validPairs;
-    private List<String> cksumMismatchPairs;
-
+    private Map<String, ResultEntry> results; // filename -> resultEntry
 
     public ManifestVerifier(File file0, File file1) {
         this.file0 = file0;
@@ -50,39 +49,28 @@ public class ManifestVerifier {
         entries0 = new HashMap<String, String>();
         entries1 = new HashMap<String, String>();
         filters = new ArrayList<String>();
-        validPairs = new ArrayList<String>();
-        cksumMismatchPairs = new ArrayList<String>();
+        results = new HashMap<String, ResultEntry>();
     }
 
     public void report(OutputStream out) {
         StringBuilder sb = new StringBuilder();
-        sb.append("=======================\n");
-        sb.append("Total entries: " + entries0.size() + "\n");
-        sb.append("Valid entries: " + validPairs.size() + "\n");
-        sb.append("Error entries: " + cksumMismatchPairs.size() + "\n");
+        String cksum0 = "0:" + FilenameUtils.getName(file0.getName());
+        String cksum1 = "1:" + FilenameUtils.getName(file1.getName());
+        sb.append("title,file," + cksum0 + "," + cksum1 + ",state");
+        sb.append("\n");
 
-        sb.append("-----------------------\n\n");
-        sb.append("All entries:\n");
-        sb.append("-----------------------\n");
-        for (String name : entries0.keySet()) {
-            sb.append("\t" + name + "\t" + entries0.get(name) + "\n");
+        for (ResultEntry result : results.values()) {
+            sb.append(result.getTitle());
+            sb.append(",");
+            sb.append(result.getFile());
+            sb.append(",");
+            sb.append(result.getChecksum0());
+            sb.append(",");
+            sb.append(result.getChecksum1());
+            sb.append(",");
+            sb.append(result.getState());
+            sb.append("\n");
         }
-
-        sb.append("-----------------------\n\n");
-        sb.append("Valid entries:\n");
-        sb.append("-----------------------\n");
-        for (String entry : validPairs) {
-            sb.append("\t" + entry + "\n");
-        }
-
-        sb.append("-----------------------\n\n");
-        sb.append("Error entries:\n");
-        sb.append("-----------------------\n");
-        for (String entry : cksumMismatchPairs) {
-            sb.append("\t" + entry + "\n");
-        }
-        sb.append("\n=======================\n\n");
-
 
         try {
             out.write(sb.toString().getBytes());
@@ -107,7 +95,6 @@ public class ManifestVerifier {
         verify();
     }
 
-
     /**
      * This method checks the provided manifest files for:
      * same number of manifest entries
@@ -117,8 +104,7 @@ public class ManifestVerifier {
      */
     public void verify() throws ManifestVerifyException {
         loadEntries();
-        verifyEntryCount();
-        verifyChecksums();
+        verifyFiles();
     }
 
     private void loadEntries() {
@@ -173,38 +159,61 @@ public class ManifestVerifier {
         }
     }
 
-    private void verifyEntryCount() throws ManifestVerifyException {
-        int size0 = entries0.size();
-        int size1 = entries1.size();
-        if (size0 != size1) {
-            throw new ManifestVerifyException(file0.getName(),
-                                              file1.getName(),
-                                              size0,
-                                              size1);
-        }
-    }
+    private void verifyFiles() throws ManifestVerifyException {
+        boolean hasErrors = entries0.size() != entries1.size();
 
-    private void verifyChecksums() throws ManifestVerifyException {
+        // Load the first set
         for (String name : entries0.keySet()) {
+            ResultEntry entry = new ResultEntry();
+            entry.setTitle(titleOf(name));
+            entry.setFile(fileOf(name));
+            entry.setChecksum0(entries0.get(name));
+            entry.setState(State.MISSING_FROM_1);
+            results.put(name, entry);
+        }
 
-            String cksum0 = entries0.get(name);
-            String cksum1 = entries1.get(name);
-            if (cksum1 == null) {
-                this.cksumMismatchPairs.add(name + ":\n\t\t" + cksum0 + ":null");
+        // Fill in from the second set
+        for (String name : entries1.keySet()) {
+            ResultEntry entry = results.get(name);
 
-            } else if (!cksum0.equals(cksum1)) {
-                this.cksumMismatchPairs.add(
-                    name + ":\n\t\t" + cksum0 + " != \n\t\t" + cksum1);
+            // Entry not loaded from first set
+            if (null == entry) {
+                hasErrors = true;
+
+                entry = new ResultEntry();
+                entry.setTitle(titleOf(name));
+                entry.setFile(fileOf(name));
+                entry.setChecksum1(entries1.get(name));
+                entry.setState(State.MISSING_FROM_0);
+                results.put(entry.getChecksum0(), entry);
+
+                // Entry found in both sets
             } else {
-                this.validPairs.add(name + "\t" + cksum0);
+                entry.setChecksum1(entries1.get(name));
+                if (entry.getChecksum0().equals(entry.getChecksum1())) {
+                    entry.setState(State.VALID);
+                } else {
+                    hasErrors = true;
+                    entry.setState(State.MISMATCH);
+                }
             }
         }
 
-        if (!this.cksumMismatchPairs.isEmpty()) {
-            throw new ManifestVerifyException(file0.getName(),
-                                              file1.getName(),
-                                              cksumMismatchPairs);
+        if (hasErrors) {
+            throw new ManifestVerifyException("Manifests do not match.");
         }
+
+    }
+
+    private String titleOf(String name) {
+        String pre = "data/";
+        int prefixIndex = name.startsWith(pre) ? pre.length() : 0;
+        int suffixIndex = name.lastIndexOf('/');
+        return name.substring(prefixIndex, suffixIndex);
+    }
+
+    private String fileOf(String name) {
+        return FilenameUtils.getName(name);
     }
 
     private void logFilters() {
@@ -221,6 +230,59 @@ public class ManifestVerifier {
         }
 
         log.info(sb.toString());
+    }
+
+
+    private class ResultEntry {
+        private String title;
+        private String file;
+        private String checksum0 = "";
+        private String checksum1 = "";
+        private State state;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
+        }
+
+        public String getChecksum0() {
+            return checksum0;
+        }
+
+        public void setChecksum0(String checksum0) {
+            this.checksum0 = checksum0;
+        }
+
+        public String getChecksum1() {
+            return checksum1;
+        }
+
+        public void setChecksum1(String checksum1) {
+            this.checksum1 = checksum1;
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        public void setState(State state) {
+            this.state = state;
+        }
+    }
+
+    private enum State {
+        VALID, MISMATCH, MISSING_FROM_0, MISSING_FROM_1
     }
 
 }
