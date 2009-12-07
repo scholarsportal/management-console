@@ -15,7 +15,8 @@ public class ManifestVerifyException extends DuraCloudCheckedException {
      */
     public static enum ErrorType {
         UNEQUAL_NUM_ENTRIES("duracloud.error.manifest.unequal"),
-        CHKSUM_MISMATCH("duracloud.error.manifest.chksum");
+        CHKSUM_MISMATCH("duracloud.error.manifest.chksum"),
+        INVALID("duracloud.error.manifest.invalid");
 
         private String key;
 
@@ -26,6 +27,15 @@ public class ManifestVerifyException extends DuraCloudCheckedException {
         public String getKey() {
             return key;
         }
+    }
+
+    /**
+     * @param msg General message of error.
+     */
+    public ManifestVerifyException(String msg) {
+        super(msg);
+        this.errorType = ErrorType.INVALID;
+        setArgs(msg);
     }
 
     /**
