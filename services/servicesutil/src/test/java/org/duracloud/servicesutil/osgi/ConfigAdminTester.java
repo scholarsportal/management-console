@@ -22,7 +22,7 @@ public class ConfigAdminTester {
     private final ComputeService hello;
 
     private final String CONFIG_PID =
-            "org.duracloud.services.helloservice.config";
+            "helloservice-1.0.0.jar";
 
     public ConfigAdminTester(DuraConfigAdmin configAdmin, ComputeService hello) {
         assertNotNull(configAdmin);
