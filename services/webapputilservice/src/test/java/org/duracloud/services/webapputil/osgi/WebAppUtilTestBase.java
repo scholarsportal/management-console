@@ -39,13 +39,13 @@ public class WebAppUtilTestBase {
             response = httpHelper.get(url.toString());
             Assert.assertTrue(success);
         } catch (Exception e) {
-            Assert.assertTrue(!success);
+            Assert.assertTrue("Error requesting: " + url, !success);
         }
 
         if (success) {
             Assert.assertNotNull(response);
 
-            int maxTries = 5;
+            int maxTries = 10;
             int tries = 0;
             while (response.getStatusCode() != 200 && tries++ < maxTries) {
                 Thread.sleep(1000);
@@ -55,7 +55,7 @@ public class WebAppUtilTestBase {
 
             String body = response.getResponseBody();
             Assert.assertNotNull(body);
-            Assert.assertTrue(body.contains("Hello from DuraCloud"));
+            Assert.assertTrue(body, body.contains("Hello from DuraCloud"));
         }
     }
 }

@@ -26,13 +26,17 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
     }
 
     public void testWebAppUtil() {
+        Throwable error = null;
         try {
             doTest();
         } catch (Throwable e) {
-            // do nothing
+            error = e;
         } finally {
             doTearDown(webappUtil);
         }
+
+        String msg = (error == null ? "no error" : error.getMessage());
+        Assert.assertNull(msg, error);
     }
 
     private void doTest() throws Exception {
@@ -43,7 +47,6 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
         webappUtil.unDeploy(url);
         verifyDeployment(url, false);
     }
-
 
     protected InputStream getWar() throws FileNotFoundException {
         String baseDir = System.getProperty(BASE_DIR_PROP);
