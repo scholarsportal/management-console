@@ -1,5 +1,8 @@
 package org.duracloud.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: Bill Branan
  * Date: Oct 21, 2009
@@ -16,6 +19,12 @@ public abstract class BaseService implements ComputeService {
 
     public void stop() throws Exception {
         setServiceStatus(ServiceStatus.STOPPED);
+    }
+
+    public Map<String, String> getServiceProps() {
+        Map<String, String> props = new HashMap<String, String>();
+        props.put("serviceId", getServiceId());
+        return props;
     }
 
     public String describe() throws Exception {
