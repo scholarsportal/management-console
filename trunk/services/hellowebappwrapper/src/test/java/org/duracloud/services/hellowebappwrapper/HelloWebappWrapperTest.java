@@ -88,7 +88,7 @@ public class HelloWebappWrapperTest {
         Assert.assertEquals(ComputeService.ServiceStatus.STARTED, status);
 
         String context = FilenameUtils.getBaseName(warName);
-        String newURL = "http://127.0.1.1:" + port + "/" + context;
+        String newURL = "http://127.\\d.\\d.1:" + port + "/" + context;
         verifyURL(newURL);
 
         wrapper.stop();
@@ -104,7 +104,7 @@ public class HelloWebappWrapperTest {
 
         String urlProp = props.get("url");
         Assert.assertNotNull(urlProp);
-        Assert.assertEquals(expectedURL, urlProp);
+        Assert.assertTrue(urlProp.matches(expectedURL));
     }
 
 }
