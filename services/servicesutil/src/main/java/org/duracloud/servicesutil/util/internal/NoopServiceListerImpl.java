@@ -1,14 +1,14 @@
-
 package org.duracloud.servicesutil.util.internal;
 
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.ServiceLister;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class NoopServiceListerImpl
-        implements ServiceLister {
+public class NoopServiceListerImpl implements ServiceLister {
 
     private List<ComputeService> duraServices;
 
@@ -43,6 +43,10 @@ public class NoopServiceListerImpl
 
                 public void stop() throws Exception {
                     status = ServiceStatus.STOPPED;
+                }
+
+                public Map<String, String> getServiceProps() {
+                    return new HashMap<String, String>();
                 }
             });
         }

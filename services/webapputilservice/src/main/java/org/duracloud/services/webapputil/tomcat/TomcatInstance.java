@@ -2,17 +2,17 @@ package org.duracloud.services.webapputil.tomcat;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.duracloud.common.error.DuraCloudCheckedException;
 import org.duracloud.common.util.IOUtil;
-import org.duracloud.common.web.RestHttpHelper;
+import static org.duracloud.common.web.NetworkUtil.waitForShutdown;
+import static org.duracloud.common.web.NetworkUtil.waitForStartup;
 import org.duracloud.services.webapputil.error.WebAppDeployerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -43,7 +43,11 @@ public class TomcatInstance {
      */
     public void start() {
         runScript(getStartUpScript());
-        waitForStartup();
+        try {
+            waitForStartup(getLocalUrl());
+        } catch (DuraCloudCheckedException e) {
+            throw new WebAppDeployerException("Unable to start tomcat", e);
+        }
     }
 
     /**
@@ -52,52 +56,21 @@ public class TomcatInstance {
      */
     public void stop() {
         runScript(getShutdownScript());
-        waitForShutdown();
-    }
-
-    private void waitForStartup() {
-        isRunning(true);
-    }
-
-    private void waitForShutdown() {
-        isRunning(false);
-    }
-
-    private void isRunning(boolean state) {
-        int tries = 0;
-        int maxTries = 20;
-        while (isRunning() != state && tries++ < maxTries) {
-            sleep(500);
-        }
-
-        if (isRunning() != state) {
-            String verb = state ? "start" : "stop";
-            throw new WebAppDeployerException("Unable to " + verb + " tomcat");
-        }
-    }
-
-    private boolean isRunning() {
-        boolean running = false;
-
-        RestHttpHelper httpHelper = new RestHttpHelper();
-        RestHttpHelper.HttpResponse response = null;
         try {
-            response = httpHelper.get("http://localhost:" + port);
-        } catch (Exception e) {
-            // do nothing.
+            waitForShutdown(getLocalUrl());
+        } catch (DuraCloudCheckedException e) {
+            throw new WebAppDeployerException("Unable to stop tomcat", e);
         }
-
-        if (response != null && response.getStatusCode() == 200) {
-            running = true;
-        }
-
-        return running;
     }
-   
+
+    private String getLocalUrl() {
+        return "http://localhost:" + port;
+    }
+
     private void runScript(File script) {
         String catalina = catalinaHome.getAbsolutePath();
         String java = System.getProperty("java.home");
-        if(java.endsWith("jre")) {
+        if (java.endsWith("jre")) {
             java = java.substring(0, java.lastIndexOf(File.separatorChar));
         }
         String scriptPath = script.getAbsolutePath();
@@ -122,8 +95,8 @@ public class TomcatInstance {
             log.error(sb.toString());
             throw new WebAppDeployerException(sb.toString(), e);
         }
-        
-    }    
+
+    }
 
     private File getStartUpScript() {
         String os = System.getProperty("os.name");
@@ -197,14 +170,6 @@ public class TomcatInstance {
 
     public int getPort() {
         return port;
-    }
-
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            // do nothing.
-        }
     }
 
 }

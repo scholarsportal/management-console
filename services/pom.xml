@@ -28,6 +28,7 @@
     <module>servicesutil</module>
     <module>servicesadmin</module>
     <module>webapputilservice</module>
+    <module>hellowebappwrapper</module>
   </modules>
 
   <build>
