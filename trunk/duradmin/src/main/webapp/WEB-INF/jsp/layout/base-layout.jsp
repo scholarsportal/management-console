@@ -22,8 +22,8 @@
     </title>
   </head>
   <body class="tundra">
-
 	<tiles:importAttribute name="mainTab" scope="request" />
+   	
     <div id="header"><tiles:insertAttribute name="header"/></div>
     <table class="body" >
    		<tr>
@@ -31,6 +31,7 @@
 			    <tiles:insertAttribute name="menu"/>
    			</td>
    			<td id="main-content">
+				
 			    <tiles:insertAttribute name="main-content" />
    			</td>
 

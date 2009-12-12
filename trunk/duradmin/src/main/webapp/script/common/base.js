@@ -1,5 +1,5 @@
-dojo.require("dijit.TooltipDialog");
-dojo.require("dijit.Dialog");
+dojo.require("dojo._base.html");
+dojo.require("dojo.fx");
 
 function loadContentItem(nodeId, spaceId, contentId){
 	var node = dojo.byId(nodeId);
@@ -21,7 +21,6 @@ function loadContentItem(nodeId, spaceId, contentId){
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
 	          showError(node, ioArgs);
-	          return responseObject;
 		}
 	});
 }
@@ -43,54 +42,123 @@ function undeployService( serviceInfoId, deploymentId ){
 		},
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
-	          return responseObject;
+	          showError(node, ioArgs);
 		}
 	});
 }
 
 
 function removeTag(spaceId,tag, contentId, element){
-	dojo.addClass(element, "deleting")
-	
+	var location = "/duradmin/spaces/tag/remove?spaceId="+spaceId+"&tag=" + tag + "&contentId="+contentId;
+	doRemoveCall(element, location);
+}
+
+function showInProcessOfDeletionFeedback(element){
+	clearFlashMessage();
+	dojo.addClass(element, "removing\-element");
+    var animation = dojo.animateProperty({
+        node : element,
+        duration : 500,
+        properties : {
+            opacity : {start : '1.0', end : '0.50'}
+        }
+    });
+
+    animation.play();
+    return animation;
+}
+
+function onDeletionSucceeded(element, message){
+	dojo.fadeOut({
+        node: element,
+        duration : 500,
+        delay: 1000,
+        onEnd: function () {
+			element.parentNode.removeChild(element);
+		}
+    }).play(  );
+}
+
+
+function cancelShowInProcessOfDeletionFeedback(element){
+	dojo.removeClass(element, "removing\-element")
+}
+
+
+function doRemoveCall(element, location) {
+	var animation = showInProcessOfDeletionFeedback(element);
 	dojo.xhrGet( {
-	    url: "/duradmin/spaces/tag/remove?spaceId="+spaceId+"&tag=" + tag + "&contentId="+contentId,
+	    url: location,
 	    handleAs: "json",
 	    load: function(responseObject, ioArgs) {
 		  console.debug(responseObject);  // Dump it to the console
-		  element.parentNode.removeChild(element);
-		  
-		},
-		error: function(responseObject, ioArgs){
-	          console.error("HTTP status code: ", ioArgs.xhr.status); 
-	          return responseObject;
-		}
+     	  //setOneSecondFloatingFlash(element, "successfully removed");
+		  onDeletionSucceeded(element);
 
+	},
+		error: function(responseObject, ioArgs){
+          console.error("HTTP status code: ", ioArgs.xhr.status); 
+          animation.stop();
+          cancelShowInProcessOfDeletionFeedback(element);
+		}
 	});
+	
 }
 
 function removeMetadataByKey(spaceId,key, contentId, element){
-	dojo.addClass(element, "deleting")
-	
-	dojo.xhrGet( {
-	    url: "/duradmin/spaces/metadata/remove?spaceId="+spaceId+"&name=" + key + "&contentId="+contentId,
-	    handleAs: "json",
-	    load: function(responseObject, ioArgs) {
-		  console.debug(responseObject);  // Dump it to the console
-		  element.parentNode.removeChild(element);
-		  
-		},
-		error: function(responseObject, ioArgs){
-	          console.error("HTTP status code: ", ioArgs.xhr.status); 
-	          return responseObject;
-		}
-	});
+	var location = "/duradmin/spaces/metadata/remove?spaceId="+spaceId+"&name=" + key + "&contentId="+contentId;
+	doRemoveCall(element, location);
 }
+
+function clearFlashMessage(){
+	dojo.byId("flashMessageDiv").innerHTML = "";
+}
+/*
+ this doesn't work properly.  for some response, 
+function setOneSecondFloatingFlash(refElement, message){
+	var popup = dojo.create("div",{innerHTML: message},dojo.body()); //works if I substitute dojo.body() with refElement.parentNode. Not really what I want.
+	var coords = dojo.coords(refElement,true);
+	dojo.addClass(popup, "message-info");
+	document.body.appendChild(popup);
+
+	dojo.style(popup, 
+			   {"opacity" : 1.0, 
+				"visibility" : "visible", "z-index" : "16",  "top" : coords.y, "left": coords.x});
+	var fi = dojo.fadeIn({
+        node: popup,
+        duration : 250
+    });
+
+	var fo = dojo.fadeOut({
+        node: popup,
+        duration : 500,
+        delay: 2000,
+        onEnd: function () {
+			dojo.destroy(popup);
+		}
+    });
+	
+	dojo.fx.chain([fi,fo]).play(  );
+	
+}
+*/
+function setFlashInfoMessage(message){
+	setFlashMessage(message, "info");
+}
+
+function setFlashMessage(message, type){
+	clearFlashMessage();
+	var div = dojo.byId("flashMessageDiv");
+	var span = dojo.create("span", {innerHTML: message}, div);
+	dojo.addClass(span, "message\-" + type);
+}
+
 
 function showWaitMessage(node, messageText){
 	node.innerHTML = "";
 	var div = dojo.create("div",null, node);
 	var img =  dojo.create("img", {src:"/duradmin/images/wait.gif" },div);
-	var span = dojo.create("span", {innerHTML: messageText},div);
+	dojo.create("span", {innerHTML: messageText},div);
 
 }
 
@@ -99,7 +167,7 @@ function showError(node, ioArgs){
 	var div = dojo.create("div",null, node);
 	var img =  dojo.create("img", {src:"/duradmin/images/error.gif" },div);
 	var messageText = "Unable to complete request: status (" + ioArgs.xhr.status + ")";
-	var span = dojo.create("span", {innerHTML: messageText},div);
+	dojo.create("span", {innerHTML: messageText},div);
 }
 
 
@@ -183,9 +251,30 @@ dojo.addOnLoad(function(){
       		});
 	    }
 	);		
+});
 
+dojo.addOnLoad(function(){
+	dojo.query(".boxcontrol .miniform-button").forEach(
+		    function(element) {
+		    	dojo.connect(element, 'onclick', function(evt) {
+		    		showMiniform(evt);
+		    	});
+		    }
+		);		
 	
+	
+	/*configure tag and metadata components*/
+	dojo.query("div.tag, table.extended-metadata tr").forEach(
+	    function(element) {
+	    	dojo.connect(element, 'onmouseover', function() {
+				dojo.query("[type=button]",element).attr('style', {visibility:'visible'});
+	    	});
 
+	    	dojo.connect(element, 'onmouseout', function() {
+				dojo.query("[type=button]",element).attr('style', {visibility:'hidden'});
+	    	});
+	    }
+	);		
 });
 
 

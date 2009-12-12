@@ -7,18 +7,22 @@
 	<tiles:putAttribute name="title">
 		<spring:message code="metadata"/>
 	</tiles:putAttribute>
+	<tiles:putAttribute name="titlebuttons">
+		<input type="button" class="minibutton miniform-button" value="+"/>
+	</tiles:putAttribute>
+
 	<tiles:putAttribute name="miniform">
 		<form action="<c:url value="/spaces/metadata/add"/>" method="post" >
 			<input type="hidden" name="spaceId" value="${spaceId}"/>
 			<input type="hidden" name="contentId" value="${contentId}"/>
 			<input type="hidden" name="returnTo" value="${currentUrl}"/>
-			<div><input style="min-width:10em" name="name" type="text" /></div> 
 			<div>
-			<textarea style="min-width:15em" name="value" rows="3" cols="10"></textarea>
+				<input style="min-width:10em" name="name" type="text" />
+				<textarea style="min-width:15em" name="value" rows="3" cols="10"></textarea>
 			</div>
-			<div style="white-space:nowrap">
-			<input type="submit" value="Add" />
-			<input type="button" onclick="hideMiniform(event)" value="Cancel"/>					
+			<div class="miniform-buttons">
+				<input type="submit" value="<spring:message code="add"/>"/>
+				<input type="button" onclick="hideMiniform(event)" value="<spring:message code="cancel"/>"/>					
 			</div>
 			
 		</form>
@@ -29,25 +33,16 @@
 						<table class="small extended-metadata">
 						<c:forEach items="${metadata}" var="m" varStatus="status">
 							<tr>
-								<td>
-											<input class="minibutton" 
-											type="button" value="x" 
-											onclick="removeMetadataByKey('${spaceId}', '${m.name}','${contentId}', this.parentNode.parentNode);"/>								
+								<td style="font-weight:bold">
+								${m.name}:
 								</td>
 								<td>
-								<table>
-									<tr>
-										<td style="font-weight:bold">
-										${m.name}
-										</td>
-									
-									</tr>
-									<tr>
-										<td>
-											${m.value}
-										</td>
-									</tr>
-								</table>
+									${m.value}
+								</td>
+								<td>
+									<input class="minibutton" style="visibility:hidden"
+									type="button" value="x" 
+									onclick="removeMetadataByKey('${spaceId}', '${m.name}','${contentId}', this.parentNode.parentNode);"/>								
 								</td>
 							</tr>
 						</c:forEach>					
@@ -55,7 +50,7 @@
 
 				</c:when>
 				<c:otherwise>
-					No metadata defined.
+					<p>No metadata defined.</p>
 				</c:otherwise>
 			</c:choose>
 	</tiles:putAttribute>

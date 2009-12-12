@@ -6,7 +6,7 @@
 						<tiles:insertAttribute name="title"/>
 					</div>
 					<div style="text-align:right;float:right; width:50%;">
-						<input type="button" class="minibutton" onclick="showMiniform(event);"  value="+"/>
+						<tiles:insertAttribute name="titlebuttons" ignore="true" />
 					</div>
 				</td>
 			</tr>

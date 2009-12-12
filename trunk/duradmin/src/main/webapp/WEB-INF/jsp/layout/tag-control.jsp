@@ -8,30 +8,40 @@
 	<tiles:putAttribute name="title">
 		<spring:message code="tags"/>
 	</tiles:putAttribute>
+	<tiles:putAttribute name="titlebuttons">
+		<input  type="button" class="miniform-button minibutton" value="+"/>
+	</tiles:putAttribute>
+	
 	<tiles:putAttribute name="miniform">
 		
 		<form action="<c:url value="/spaces/tag/add"/>" method="post" >
-			<input type="hidden" name="spaceId" value="${spaceId}"/>
-			<input type="hidden" name="contentId" value="${contentId}"/>
-			<input type="hidden" name="returnTo" value="${currentUrl}"/>
-			<input type="text" name="tag" type="text" size="13"/> 
-			<input type="submit" value="Add"/>
-			<input type="button" onclick="hideMiniform(event)" value="<spring:message code='cancel'/>"/>					
+			<p>
+				To add multiple tags at a time, separate the values with a "|" (pipe) character.
+			</p>
+			<div>
+				<input type="hidden" name="spaceId" value="${spaceId}"/>
+				<input type="hidden" name="contentId" value="${contentId}"/>
+				<input type="hidden" name="returnTo" value="${currentUrl}"/>
+				<input type="text" name="tag" type="text" size="13"/> 
+			</div>
+			<div class="miniform-buttons">
+				<input type="submit" value="Add"/>
+				<input type="button" onclick="hideMiniform(event)" value="<spring:message code='cancel'/>"/>					
+			</div>
 		</form>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 		<c:choose>
 			<c:when test="${not empty tags}">
 					<c:forEach items="${tags}" var="tag" varStatus="status">
-						
 						<div class="small tag">
-							<input type="button"  class="small minibutton"  value="x" onclick="removeTag('${spaceId}', '${tag}','${contentId}', this.parentNode);"/>
 							${tag}  
+							<input style="visibility:hidden" type="button"  class="small minibutton"  value="x" onclick="removeTag('${spaceId}', '${tag}','${contentId}', this.parentNode);"/>
 						</div>
 					</c:forEach>					
 			</c:when>
 			<c:otherwise>
-				No tags defined.
+				<p>No tags defined.</p>
 			</c:otherwise>
 		</c:choose>
 	
