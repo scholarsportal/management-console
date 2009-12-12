@@ -387,6 +387,16 @@ table#spacesTable > tbody > tr > td#contentId {
 	border-bottom: 1px solid #EECFA1;
 	padding-bottom:0.5em;
 }
+
+.boxcontrol div.miniform-buttons {
+	margin-top:0.5em;
+	padding-top:0.5em;
+}
+
+.boxcontrol p {
+	font-size: 0.9em;	
+}
+
 #help {
 	width:15%; 
 	background-color:#FFFFAA; 
@@ -397,11 +407,10 @@ div.tag  {
 	margin-right:0.5em;
 	padding:0.25em;
 	float:left;	
-	
 }
 
-div.tag:hover, table.extended-metadata > tr:hover {
-	border:2px dashed #ccc;
+div.tag:hover, .extended-metadata  tr:hover {
+	background-color: #EECFA9
 }
 
 
@@ -418,9 +427,7 @@ table.extended-metadata > tbody > tr {
 
 
 
-.deleting {
-	border: 1px dashed red;
+.removing-element {
 	background-color: pink;
-	color:red;
-	text-decoration: blink;
 }
+

@@ -24,9 +24,11 @@
 			</ul>
 		</td>		
 		<td id="main-menu-center">
+			<div id="flashMessageDiv">
 			<c:if test="${not empty flashMessage}">
 				<span class="message-${fn:toLowerCase(flashMessage.severity)}">${flashMessage.text}</span>
 			</c:if>
+			</div>
 			
 		</td>
 		
