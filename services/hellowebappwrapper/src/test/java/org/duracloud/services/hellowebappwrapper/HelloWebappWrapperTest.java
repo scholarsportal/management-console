@@ -3,6 +3,7 @@ package org.duracloud.services.hellowebappwrapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.duracloud.services.ComputeService;
+import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.webapputil.internal.WebAppUtilImpl;
 import org.duracloud.services.webapputil.tomcat.TomcatUtil;
 import org.junit.After;
@@ -25,7 +26,7 @@ public class HelloWebappWrapperTest {
     private HelloWebappWrapper wrapper;
     private String serviceId = "howdywrapper";
     private String url = "http://example.org";
-    private String workDir = testDir + "work";
+    private BundleHome bundleHome = new BundleHome(testDir);
     private String warName = "hellowebapp-1.0.0.war";
 
     private WebAppUtilImpl webappUtil;
@@ -54,10 +55,10 @@ public class HelloWebappWrapperTest {
         wrapper.setUrl(url);
         wrapper.setWebappWarName(warName);
         wrapper.setWebappUtil(webappUtil);
-        wrapper.setWorkDir(workDir);
+        wrapper.setBundleHomeDir(bundleHome.getBaseDir());
 
         File war = new File(resourceDir, warName);
-        File serviceWorkDir = new File(workDir, serviceId);
+        File serviceWorkDir = new File(bundleHome.getWork(), serviceId);
         serviceWorkDir.mkdirs();
 
         FileUtils.copyFileToDirectory(war, serviceWorkDir);

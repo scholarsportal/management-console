@@ -1,18 +1,16 @@
 
 package org.duracloud.servicesadminclient.webapp;
 
-import java.io.File;
-
+import junit.framework.Assert;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import junit.framework.Assert;
+import java.io.File;
 
 public class TestServiceAdminWepApp {
 
@@ -20,8 +18,9 @@ public class TestServiceAdminWepApp {
             LoggerFactory.getLogger(TestServiceAdminWepApp.class);
 
     private static final String FILE_INSTALL_PROP = "felix.fileinstall.dir";
-
     protected static final String BASE_DIR_PROP = "base.dir";
+
+    private final static String CONTAINER = "container";
 
     // Port:8089 is defined in the 'tomcatconfig' project
     private final static String BASE_URL =
@@ -45,7 +44,7 @@ public class TestServiceAdminWepApp {
     }
 
     private void deleteInstalledBundle() throws Exception {
-        new File(getBundleHome() + TEST_BUNDLE_FILE_NAME).delete();
+        new File(getContainer(), TEST_BUNDLE_FILE_NAME).delete();
     }
 
     @Test
@@ -69,14 +68,14 @@ public class TestServiceAdminWepApp {
 
         String resourceDir = baseDir + File.separator + "src/test/resources/";
 
-        return new File(resourceDir + TEST_BUNDLE_FILE_NAME);
+        return new File(resourceDir, TEST_BUNDLE_FILE_NAME);
     }
 
-    private String getBundleHome() throws Exception {
-        String home = System.getProperty(FILE_INSTALL_PROP);
-        Assert.assertNotNull(home);
-        log.debug("serviceadmin bundle-home: '" + home + "'");
-        return home + File.separator;
+    private File getContainer() throws Exception {
+        String bundleHome = System.getProperty(FILE_INSTALL_PROP);
+        Assert.assertNotNull(bundleHome);
+        log.debug("serviceadmin bundle-home: '" + bundleHome + "'");
+        return new File(bundleHome, CONTAINER);
     }
 
     private ServicesAdminClient getClient() {

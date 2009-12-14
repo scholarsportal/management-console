@@ -1,61 +1,32 @@
 package org.duracloud.servicesutil.util.internal;
 
+import org.apache.commons.io.FilenameUtils;
 import org.duracloud.services.common.error.ServiceException;
+import org.duracloud.services.common.util.BundleHome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-
 /**
  * @author Andrew Woods
- * Date: Oct 1, 2009
+ *         Date: Oct 1, 2009
  */
-public class ServiceInstallBase {
+public abstract class ServiceInstallBase {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected String bundleHome;
 
-    /**
-     * Internal management directory.
-     */
-    private final String ATTIC = "attic" + File.separator;
+    private BundleHome bundleHome;
 
+    abstract protected void init() throws Exception;
 
     protected boolean isJar(String name) throws ServiceException {
-        return getExtension(name).equalsIgnoreCase(".jar");
+        return FilenameUtils.getExtension(name).equalsIgnoreCase("jar");
+    }
+
+    protected boolean isWar(String name) throws ServiceException {
+        return FilenameUtils.getExtension(name).equalsIgnoreCase("war");
     }
 
     protected boolean isZip(String name) throws ServiceException {
-        return getExtension(name).equalsIgnoreCase(".zip");
-    }
-
-    private String getExtension(String name) throws ServiceException {
-        if (name == null) {
-            throwServiceException("Filename is null.");
-        }
-
-        int index = name.lastIndexOf('.');
-        if (index == -1) {
-            throwServiceException("No extension: '" + name + "'");
-        }
-
-        String ext = name.substring(index);
-        if (ext == null) {
-            throwServiceException("File extension null: '" + name + "'");
-        }
-
-        return ext;
-    }
-
-    protected File getFromAttic(String name) {
-        return new File(getAttic().getPath() + File.separator + name);
-    }
-
-    protected File getAttic() {
-        return new File(getBundleHome() + ATTIC);
-    }
-
-    protected File getHome() {
-        return new File(getBundleHome());
+        return FilenameUtils.getExtension(name).equalsIgnoreCase("zip");
     }
 
     protected void throwServiceException(String msg) throws ServiceException {
@@ -63,7 +34,13 @@ public class ServiceInstallBase {
         throw new ServiceException(msg);
     }
 
-    public String getBundleHome() {
+    public BundleHome getBundleHome() {
         return bundleHome;
     }
+
+    public void setBundleHome(BundleHome bundleHome) throws Exception {
+        this.bundleHome = bundleHome;
+        init();
+    }
+
 }

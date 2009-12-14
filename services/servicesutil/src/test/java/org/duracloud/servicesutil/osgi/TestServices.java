@@ -1,8 +1,6 @@
 package org.duracloud.servicesutil.osgi;
 
-import org.junit.Test;
-import org.junit.Before;
-
+import junit.framework.Assert;
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
 import org.duracloud.servicesutil.util.ServiceInstaller;
@@ -10,11 +8,13 @@ import org.duracloud.servicesutil.util.ServiceLister;
 import org.duracloud.servicesutil.util.ServiceStarter;
 import org.duracloud.servicesutil.util.ServiceStopper;
 import org.duracloud.servicesutil.util.ServiceUninstaller;
+import org.duracloud.servicesutil.util.catalog.BundleCatalog;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.Assert;
 
 public class TestServices
         extends AbstractDuracloudOSGiTestBasePax {
@@ -48,6 +48,11 @@ public class TestServices
         }
     }
 
+    @After
+    public void tearDown() {
+        BundleCatalog.clearCatalog();
+    }
+
     @Test
     public void testServiceInstaller() throws Exception {
         log.debug("testing ServiceInstaller");
@@ -65,6 +70,17 @@ public class TestServices
                 new ServiceUninstallerTester(getUninstaller());
 
         tester.testServiceUninstaller();
+    }
+
+    @Test
+    public void testServiceInstallationCycle() throws Exception {
+        log.debug("testing ServiceInstallationCycle");
+
+        ServiceInstallationCycleTester tester = new ServiceInstallationCycleTester(
+            getInstaller(),
+            getUninstaller());
+
+        tester.testServiceInstallationCycle();
     }
 
     @Test

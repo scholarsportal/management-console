@@ -1,5 +1,12 @@
 package org.duracloud.servicesutil.osgi;
 
+import static junit.framework.Assert.assertEquals;
+import org.duracloud.services.common.util.BundleHome;
+import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -8,20 +15,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
 import java.util.Enumeration;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.junit.Assert;
-import static org.junit.Assert.assertTrue;
-
-import static junit.framework.Assert.assertEquals;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Andrew Woods
- * Date: Oct 1, 2009
+ *         Date: Oct 1, 2009
  */
 public class ServiceInstallTestBase {
 
@@ -31,8 +31,9 @@ public class ServiceInstallTestBase {
 
     protected final static String DUMMY_BUNDLE_FILE_NAME = "junk-bundle.jar";
 
-    protected final static String DUMMY_BUNDLE_TEXT =
-            "normally-bundle-is-a-jar-not-text";
+    protected final static String DUMMY_BUNDLE_TEXT = "normally-bundle-is-a-jar-not-text";
+
+    protected final static String BUNDLE_JAR_FILE_NAME = "helloservice-1.0.0.jar";
 
     protected final static String ZIP_BAG_FILE_NAME = "replicationservice-1.0.0.zip";
 
@@ -42,33 +43,52 @@ public class ServiceInstallTestBase {
         return new ByteArrayInputStream(DUMMY_BUNDLE_TEXT.getBytes());
     }
 
+    protected InputStream getBundleJar() throws FileNotFoundException {
+        File bundleFile = new File(getResourceDir(), BUNDLE_JAR_FILE_NAME);
+        return new FileInputStream(bundleFile);
+    }
+
     protected InputStream getZipBag() throws FileNotFoundException {
-        String baseDir = System.getProperty(BASE_DIR_PROP);
-        Assert.assertNotNull(baseDir);
-
-        String resourceDir = baseDir + sep + "src/test/resources/";
-        File zipBagFile = new File(resourceDir + ZIP_BAG_FILE_NAME);
-
+        File zipBagFile = new File(getResourceDir(), ZIP_BAG_FILE_NAME);
         return new FileInputStream(zipBagFile);
     }
 
-    protected void verifyDummyBundleInstalled(String home, boolean exists)
-            throws FileNotFoundException, IOException {
-        File file = new File(home + sep + DUMMY_BUNDLE_FILE_NAME);
+    private String getResourceDir() {
+        String baseDir = System.getProperty(BASE_DIR_PROP);
+        Assert.assertNotNull(baseDir);
+
+        return baseDir + sep + "src/test/resources/";
+    }
+
+    protected void verifyDummyBundleInstalled(File dir, boolean exists)
+        throws IOException {
+        File file = new File(dir, DUMMY_BUNDLE_FILE_NAME);
         assertEquals(exists, file.exists());
 
         if (exists) {
-            BufferedReader br =
-                    new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(
+                file)));
             String line = br.readLine();
             assertEquals(DUMMY_BUNDLE_TEXT, line);
             br.close();
         }
     }
 
-    protected void verifyZipBagInstalled(String home, boolean exists)
-            throws FileNotFoundException, IOException {
-        File file = new File(getAttic(home) + sep + ZIP_BAG_FILE_NAME);
+    protected void verifyJarInstalled(BundleHome home, boolean exists) {
+        File file = home.getFromContainer(BUNDLE_JAR_FILE_NAME);
+        assertEquals(exists, file.exists());
+    }
+
+    protected void verifyZipBagInstalled(BundleHome home, boolean exists)
+        throws IOException {
+        verifyZipBagInstalled(home, ZIP_BAG_FILE_NAME, exists);
+    }
+
+    protected void verifyZipBagInstalled(BundleHome home,
+                                         String name,
+                                         boolean exists)
+        throws IOException {
+        File file = home.getFromAttic(name);
         assertEquals("file: " + file.getAbsoluteFile(), exists, file.exists());
 
         if (exists) {
@@ -78,22 +98,35 @@ public class ServiceInstallTestBase {
             Enumeration entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                File entryBundle = new File(home + sep + entry.getName());
+                File entryBundle = home.getFromContainer(entry.getName());
                 assertTrue(entryBundle.exists());
             }
         }
     }
 
-    protected void deleteDummyBundle(String home) {
-        File file = new File(home + sep + DUMMY_BUNDLE_FILE_NAME);
+    protected void deleteDummyBundle(BundleHome home) {
+        File file = home.getFromContainer(DUMMY_BUNDLE_FILE_NAME);
         file.delete();
 
-        File atticFile = new File(getAttic(home) + sep + DUMMY_BUNDLE_FILE_NAME);
+        File atticFile = home.getFromAttic(DUMMY_BUNDLE_FILE_NAME);
         atticFile.delete();
     }
 
-    protected void deleteZipBagBundles(String home) throws IOException {
-        File file = new File(getAttic(home) + sep + ZIP_BAG_FILE_NAME);
+    protected void deleteJarBundle(BundleHome home) {
+        File file = home.getFromContainer(BUNDLE_JAR_FILE_NAME);
+        file.delete();
+
+        File atticFile = home.getFromAttic(BUNDLE_JAR_FILE_NAME);
+        atticFile.delete();
+    }
+
+    protected void deleteZipBagBundles(BundleHome home) throws IOException {
+        deleteZipBagBundles(home, ZIP_BAG_FILE_NAME);
+    }
+
+    protected void deleteZipBagBundles(BundleHome home, String name)
+        throws IOException {
+        File file = home.getFromAttic(name);
 
         if (file.exists()) {
             ZipFile zip = new ZipFile(file);
@@ -101,14 +134,11 @@ public class ServiceInstallTestBase {
             Enumeration entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                File entryBundle = new File(home + sep + entry.getName());
+                File entryBundle = home.getFromContainer(entry.getName());
                 entryBundle.delete();
             }
             file.delete();
         }
     }
 
-    protected File getAttic(String home) {
-        return new File(home + sep + "attic");
-    }
 }

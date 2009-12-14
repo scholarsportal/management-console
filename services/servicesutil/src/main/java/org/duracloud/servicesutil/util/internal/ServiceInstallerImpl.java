@@ -1,28 +1,28 @@
 package org.duracloud.servicesutil.util.internal;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.duracloud.services.common.error.ServiceException;
+import org.duracloud.servicesutil.util.ServiceInstaller;
+import org.duracloud.servicesutil.util.catalog.BundleCatalog;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
-import org.duracloud.services.common.error.ServiceException;
-import org.duracloud.servicesutil.util.ServiceInstaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Andrew Woods
  */
-public class ServiceInstallerImpl extends ServiceInstallBase
-        implements ServiceInstaller {
+public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceInstaller {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -31,12 +31,40 @@ public class ServiceInstallerImpl extends ServiceInstallBase
         createHoldingDirs();
     }
 
+    private void createHoldingDirs() throws ServiceException {
+        File home = getBundleHome().getHome();
+        if (!home.exists() && !home.mkdirs()) {
+            throwServiceException(home);
+        }
+
+        File attic = getBundleHome().getAttic();
+        if (!attic.exists() && !attic.mkdir()) {
+            throwServiceException(attic);
+        }
+
+        File container = getBundleHome().getContainer();
+        if (!container.exists() && !container.mkdir()) {
+            throwServiceException(container);
+        }
+
+        File work = getBundleHome().getWork();
+        if (!work.exists() && !work.mkdir()) {
+            throwServiceException(work);
+        }
+    }
+
+    private void throwServiceException(File dir) throws ServiceException {
+        String msg = "Unable to find/create dir: " + dir.getAbsolutePath();
+        log.error(msg);
+        throwServiceException(msg);
+    }
+
     public void install(String name, InputStream bundle)
-            throws ServiceException {
-        log.info("bundleHome: '" + getBundleHome() + "'");
+        throws ServiceException {
+        log.info("bundleHome: '" + getBundleHome().getBaseDir() + "'");
 
         ensureFileTypeSupported(name);
-        storeBundle(name, bundle);
+        storeInAttic(name, bundle);
 
         if (isJar(name)) {
             installBundleFromAttic(name);
@@ -47,78 +75,103 @@ public class ServiceInstallerImpl extends ServiceInstallBase
         }
     }
 
-    private void createHoldingDirs() {
-        File home = getHome();
-        if (!home.exists()) {
-            home.mkdir();
-        }
-
-        File attic = getAttic();
-        if (!attic.exists()) {
-            attic.mkdir();
-        }
-    }
-
     private void ensureFileTypeSupported(String name) throws ServiceException {
         if (!isJar(name) && !isZip(name)) {
             throwServiceException("Extension not supported: '" + name + "'");
         }
     }
 
-    private void storeBundle(String name, InputStream bundle) {
-        FileOutputStream atticFile = null;
-        try {
-            atticFile = FileUtils.openOutputStream(getFromAttic(name));
-            IOUtils.copy(bundle, atticFile);
+    private void storeInAttic(String name, InputStream bundle) {
+        storeInDir(getBundleHome().getAttic(), name, bundle);
+    }
 
-            log.debug("bundle name  : " + getFromAttic(name).getName());
-            log.debug("bundle length: " + getFromAttic(name).length());
+    private void storeInDir(File dir, String name, InputStream bundle) {
+        FileOutputStream fileOutput = null;
+        try {
+            File file = new File(dir, name);
+            fileOutput = FileUtils.openOutputStream(file);
+            IOUtils.copy(bundle, fileOutput);
+
+            log.debug("bundle name  : " + file.getName());
+            log.debug("bundle length: " + file.length());
 
         } catch (IOException e) {
-            throwRuntimeException("storeBundle(): '" + name + "'", e);
+            throwRuntimeException("storeInAttic(): '" + name + "'", e);
 
         } finally {
-            if (atticFile != null) {
-                try {
-                    atticFile.close();
-                } catch (IOException e) {
-                }
-            }
+            IOUtils.closeQuietly(fileOutput);
         }
     }
 
     private void installBundleFromAttic(String name) {
-        try {
-            FileUtils.copyFileToDirectory(getFromAttic(name), getHome());
+        if (BundleCatalog.register(name)) {
+            File atticFile = getBundleHome().getFromAttic(name);
+            File container = getBundleHome().getContainer();
 
-        } catch (IOException e) {
-            throwRuntimeException("installBundle(): '" + name + "'", e);
+            try {
+                FileUtils.copyFileToDirectory(atticFile, container);
+            } catch (IOException e) {
+                throwRuntimeException("installBundle(): '" + name + "'", e);
+            }
         }
     }
 
     @SuppressWarnings("unchecked")
     private void explodeAndInstall(String name) throws ServiceException {
-        try {
-            ZipFile zip = new ZipFile(getFromAttic(name));
-            Enumeration entries = zip.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = (ZipEntry) entries.nextElement();
-                String entryName = entry.getName();
-                if (isJar(entryName)) {
-                    InputStream entryStream = zip.getInputStream(entry);
-                    installBundleFromStream(entryName, entryStream);
-                } else {
-                    log.info("Not installing non-jars: " + entryName);
-                }
-            }
+        File atticFile = getBundleHome().getFromAttic(name);
+        ZipFile zip = getZipFile(atticFile);
 
-        } catch (IOException e) {
-            throwRuntimeException("explodeAndInstall(): '" + name + "'", e);
+        Enumeration entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            String entryName = entry.getName();
+
+            if (isJar(entryName) && BundleCatalog.register(entryName)) {
+                InputStream entryStream = getZipEntryStream(zip, entry);
+                installBundleFromStream(entryName, entryStream);
+
+            } else if (isWar(entryName) || isZip(entryName)) {
+                InputStream entryStream = getZipEntryStream(zip, entry);
+                String serviceId = FilenameUtils.getBaseName(name);
+                storeInWorkDir(serviceId, entryName, entryStream);
+
+            } else {
+                log.info("Not installing non-[j|w]ars: " + entryName);
+            }
         }
+
+    }
+
+    private ZipFile getZipFile(File atticFile) {
+        ZipFile zip = null;
+        try {
+            zip = new ZipFile(atticFile);
+        } catch (IOException e) {
+            throwRuntimeException("Getting zip: " + atticFile.getName(), e);
+        }
+        return zip;
+    }
+
+    private InputStream getZipEntryStream(ZipFile zip, ZipEntry entry) {
+        InputStream entryStream = null;
+        try {
+            entryStream = zip.getInputStream(entry);
+        } catch (IOException e) {
+            throwRuntimeException("Getting zip stream: " + entry.getName(), e);
+        }
+        return entryStream;
+    }
+
+    private void storeInWorkDir(String serviceId,
+                                String name,
+                                InputStream stream) {
+        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);
+        storeInDir(serviceWorkDir, name, stream);
     }
 
     private void installBundleFromStream(String name, InputStream inStream) {
-        File installedBundleFile = new File(getBundleHome() + name);
+        File container = getBundleHome().getContainer();
+        File installedBundleFile = new File(container, name);
         OutputStream installedBundle = null;
         try {
             installedBundle = new FileOutputStream(installedBundleFile);
@@ -128,23 +181,14 @@ public class ServiceInstallerImpl extends ServiceInstallBase
             throwRuntimeException("installBundleFromStream(): " + name, e);
 
         } finally {
-            if (installedBundle != null) {
-                try {
-                    installedBundle.close();
-                    inStream.close();
-                } catch (IOException e) {
-                }
-            }
+            IOUtils.closeQuietly(installedBundle);
+            IOUtils.closeQuietly(inStream);
         }
     }
 
     private void throwRuntimeException(String msg, Throwable t) {
         log.error("Error: " + msg, t);
-        throw new RuntimeException(msg, t);
-    }
-
-    public void setBundleHome(String bundleHome) {
-        this.bundleHome = bundleHome;
+        throw new DuraCloudRuntimeException(msg, t);
     }
 
 }

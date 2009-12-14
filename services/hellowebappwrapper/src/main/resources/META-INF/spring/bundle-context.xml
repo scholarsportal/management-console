@@ -16,7 +16,7 @@
     <property name="serviceId" value="hellowebappwrapper-1.0.0" />
     <property name="serviceStatus" value="INSTALLED" />
     <property name="url" value="http://example.org" />
-    <property name="workDir" value="${bundle.home}/work" />
+    <property name="bundleHomeDir" value="${bundle.home}" />
     <property name="webappWarName" value="hellowebapp-1.0.0.war" />
     <property name="webappUtil" ref="osgiWebappUtilSrv" />
   </bean>
