@@ -1,6 +1,7 @@
 package org.duracloud.common.error;
 
 import java.text.MessageFormat;
+import java.io.Serializable;
 
 
 /**
@@ -10,7 +11,7 @@ import java.text.MessageFormat;
  * @author Andrew Woods
  *         Date: Nov 20, 2009
  */
-public class DuraCloudExceptionCore implements MessageFormattable {
+public class DuraCloudExceptionCore implements MessageFormattable, Serializable {
 
     private String key = "duracloud.error.general";
     private String[] args;

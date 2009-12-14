@@ -6,6 +6,7 @@ import static org.duracloud.common.web.NetworkUtil.waitForStartup;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.duracloud.services.common.error.ServiceRuntimeException;
+import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.hellowebappwrapper.error.WebappWrapperException;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.osgi.service.cm.ConfigurationException;
@@ -33,7 +34,7 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private String webappWarName;
-    private String workDir;
+    private BundleHome bundleHome;
     private URL url; // of running webapp
     private WebAppUtil webappUtil;
     private static final String DEFAULT_URL = "http://example.org";
@@ -62,10 +63,9 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
     }
 
     private File getServiceWorkDir() {
-        File work = new File(getWorkDir());
+        File work = getBundleHome().getWork();
         if (!work.exists()) {
-            String msg =
-                "Error finding/creating work dir:" + work.getAbsolutePath();
+            String msg = "Error finding work dir:" + work.getAbsolutePath();
             log.error(msg);
             throw new WebappWrapperException(msg);
         }
@@ -124,7 +124,7 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
         sb.append(":\n\t");
         sb.append("webappWarName: " + webappWarName);
         sb.append("\n\t");
-        sb.append("workDir: " + workDir);
+        sb.append("workDir: " + getBundleHome().getWork());
         sb.append("\n\t");
         String wau = webappUtil == null ? "null" : webappUtil.toString();
         sb.append("webappUtil: " + wau);
@@ -163,11 +163,15 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
         this.webappWarName = webappWarName;
     }
 
-    public String getWorkDir() {
-        return workDir;
+    public BundleHome getBundleHome() {
+        return bundleHome;
     }
 
-    public void setWorkDir(String workDir) {
-        this.workDir = workDir;
+    public String getBundleHomeDir() {
+        return getBundleHome().getBaseDir();
+    }
+
+    public void setBundleHomeDir(String bundleHomeDir) {
+        this.bundleHome = new BundleHome(bundleHomeDir);
     }
 }

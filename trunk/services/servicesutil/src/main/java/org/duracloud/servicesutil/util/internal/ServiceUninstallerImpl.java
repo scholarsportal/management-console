@@ -1,15 +1,17 @@
 package org.duracloud.servicesutil.util.internal;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
-import java.util.Enumeration;
-
-import org.duracloud.servicesutil.util.ServiceUninstaller;
 import org.duracloud.services.common.error.ServiceException;
+import org.duracloud.servicesutil.util.ServiceUninstaller;
+import org.duracloud.servicesutil.util.catalog.BundleCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Andrew Woods
@@ -21,7 +23,7 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
 
 
     public void uninstall(String name) throws Exception {
-        log.info("bundleHome: '" + getBundleHome() + "'");
+        log.info("bundleHome: '" + getBundleHome().getBaseDir() + "'");
 
         if (isJar(name)) {
             uninstallBundleFromHomeAndAttic(name);
@@ -32,20 +34,33 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
         }
     }
 
-    private void uninstallBundleFromHomeAndAttic(String name) throws ServiceException {
-        delete(getHome(), name);
-        delete(getAttic(), name);
+    private void uninstallBundleFromHomeAndAttic(String name)
+        throws ServiceException {
+        if (BundleCatalog.unRegister(name)) {
+            delete(getBundleHome().getContainer(), name);
+            delete(getBundleHome().getAttic(), name);
+        }
     }
 
-    private void uninstallBagAndBundles(String zipName) throws IOException, ServiceException {
-        ZipFile zip = new ZipFile(getFromAttic(zipName));
+    private void uninstallBagAndBundles(String zipName)
+        throws IOException, ServiceException {
+        ZipFile zip = new ZipFile(getBundleHome().getFromAttic(zipName));
         Enumeration entries = zip.entries();
+
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            delete(getHome(), entry.getName());
+            String entryName = entry.getName();
+
+            if (isJar(entryName) && BundleCatalog.unRegister(entryName)) {
+                delete(getBundleHome().getContainer(), entryName);
+
+            } else if (isWar(entryName)) {                
+                String serviceId = FilenameUtils.getBaseName(zipName);
+                delete(getBundleHome().getServiceWork(serviceId), entryName);
+            }
         }
 
-        delete(getAttic(), zipName);
+        delete(getBundleHome().getAttic(), zipName);
     }
 
     private void delete(File dir, String name) throws ServiceException {
@@ -68,8 +83,7 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
         }
     }
 
-    public void setBundleHome(String bundleHome) {
-        this.bundleHome = bundleHome;
+    protected void init() throws Exception {
+        // do nothing.
     }
-
 }

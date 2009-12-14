@@ -1,13 +1,12 @@
 
 package org.duracloud.servicesutil.util;
 
+import org.duracloud.services.common.util.BundleHome;
+
 public interface ServiceUninstaller {
 
-    /**
-     * {@inheritDoc}
-     */
     public abstract void uninstall(String serviceId) throws Exception;
 
-    public abstract String getBundleHome();
+    public abstract BundleHome getBundleHome();
 
 }

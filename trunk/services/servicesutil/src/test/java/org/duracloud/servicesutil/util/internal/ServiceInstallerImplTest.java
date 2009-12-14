@@ -1,56 +1,32 @@
 
 package org.duracloud.servicesutil.util.internal;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
+import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
-
+import org.duracloud.services.common.error.ServiceException;
+import org.duracloud.services.common.util.BundleHome;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.services.common.error.ServiceException;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import junit.framework.Assert;
-
-public class ServiceInstallerImplTest {
+public class ServiceInstallerImplTest extends ServiceInstallImplTestBase {
 
     private ServiceInstallerImpl installer;
-
-    private final String ATTIC = "attic" + File.separator;
-
-    private final String name = "service-x";
-
-    private final String nameTxt = name + ".txt";
-
-    private final String nameJar = name + ".jar";
-
-    private final String nameZip = name + ".zip";
-
-    private final String serviceContent0 = "not-much-content";
-
-    private final String serviceContent1 = "not-much-more-content";
-
-    private final String entryName0 = "entry-name.jar";
-
-    private final String entryName1 = "entry-name.txt";
 
     private final InputStream bagTxt =
             new ByteArrayInputStream(serviceContent0.getBytes());
 
     private InputStream bagJar;
-
     private InputStream bagZip;
 
     @Before
@@ -58,18 +34,10 @@ public class ServiceInstallerImplTest {
         String tmpHome = createBundleHome();
 
         installer = new ServiceInstallerImpl();
-        installer.setBundleHome(tmpHome);
+        installer.setBundleHome(new BundleHome(tmpHome));
 
         bagJar = createBagJar();
         bagZip = createBagZip();
-    }
-
-    private String createBundleHome() {
-        String tmp = System.getProperty("java.io.tmpdir");
-        Assert.assertNotNull(tmp);
-
-        String tmpHome = tmp + File.separator + "bundle-home" + File.separator;
-        return tmpHome;
     }
 
     private InputStream createBagZip() throws Exception {
@@ -80,31 +48,11 @@ public class ServiceInstallerImplTest {
         return createBagArchive(File.createTempFile(name, ".jar"));
     }
 
-    private InputStream createBagArchive(File file) throws Exception {
-        file.deleteOnExit();
-
-        ZipOutputStream zipOutput =
-                new ZipOutputStream(new FileOutputStream(file));
-        addEntry(zipOutput, entryName0, serviceContent0);
-        addEntry(zipOutput, entryName1, serviceContent1);
-
-        zipOutput.close();
-
-        return new FileInputStream(file.getPath());
-    }
-
-    private void addEntry(ZipOutputStream zipOutput,
-                          String entryName,
-                          String content) throws IOException {
-        ZipEntry entry = new ZipEntry(entryName);
-        zipOutput.putNextEntry(entry);
-        zipOutput.write(content.getBytes());
-        zipOutput.closeEntry();
-    }
-
     @After
     public void tearDown() throws Exception {
-        FileUtils.deleteQuietly(new File(installer.getBundleHome()));
+        super.tearDown();
+        
+        FileUtils.deleteQuietly(installer.getBundleHome().getHome());
 
         if (bagTxt != null) {
             bagTxt.close();
@@ -119,9 +67,15 @@ public class ServiceInstallerImplTest {
 
     @Test
     public void testInit() throws Exception {
-        File attic = new File(installer.getBundleHome() + ATTIC);
+        String home = installer.getBundleHome().getBaseDir();
+        File container = new File(home, CONTAINER);
+        File attic = new File(home, ATTIC);
+        File work = new File(home, WORK);
+        
         installer.init();
+        Assert.assertTrue(container.exists());
         Assert.assertTrue(attic.exists());
+        Assert.assertTrue(work.exists());
     }
 
     @Test
@@ -132,39 +86,42 @@ public class ServiceInstallerImplTest {
         } catch (ServiceException e) {
         }
 
-        verifyExists(false, new File(installer.getBundleHome() + nameTxt));
+        File container = installer.getBundleHome().getContainer();
+        verifyExists(false, new File(container, nameTxt));
     }
 
     @Test
     public void testZipInstall() throws Exception {
         installer.install(nameZip, bagZip);
 
-        String atticNameZip = installer.getBundleHome() + ATTIC + nameZip;
-        File atticBag = new File(atticNameZip);
+        File container = installer.getBundleHome().getContainer();
+        File attic = installer.getBundleHome().getAttic();
+        File workDir = installer.getBundleHome().getWork();
+
+        File atticBag = new File(attic, nameZip);
         verifyBag(atticBag);
 
-        File bundle = new File(installer.getBundleHome() + entryName0);
+        File bundle = new File(container, entryName0);
         verifyBundle(bundle, serviceContent0);
 
-        File noBundle = new File(installer.getBundleHome() + entryName1);
+        File noBundle = new File(container, entryName1);
         verifyExists(false, noBundle);
+
+        File serviceWorkDir = new File(workDir, name); // no extension
+        File war = new File(serviceWorkDir, entryName2);
+        verifyBundle(war, serviceContent2);
     }
 
     @Test
     public void testJarInstall() throws Exception {
         installer.install(nameJar, bagJar);
 
-        String atticNameJar = installer.getBundleHome() + ATTIC + nameJar;
-        File installedBundle = new File(atticNameJar);
+        BundleHome bundleHome = installer.getBundleHome();
+        File installedBundle = bundleHome.getFromAttic(nameJar);
         verifyBag(installedBundle);
 
-        File bundle = new File(installer.getBundleHome() + nameJar);
+        File bundle = bundleHome.getFromContainer(nameJar);
         verifyExists(true, bundle);
-    }
-
-    private void verifyExists(boolean exists, File file) {
-        Assert.assertNotNull(file);
-        Assert.assertEquals(exists, file.exists());
     }
 
     private void verifyBag(File bundle) throws Exception {

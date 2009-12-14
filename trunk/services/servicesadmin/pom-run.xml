@@ -79,7 +79,7 @@
           <provision>
             <param>mvn:org.springframework.osgi/spring-osgi-web-extender/1.2.0@6</param>
             <param>--executor=script</param>
-            <param>--vmOptions=-Dfelix.fileinstall.dir=${duracloud.home}/osgi-bundles</param>
+            <param>--vmOptions=-Dfelix.fileinstall.dir=${duracloud.home}/osgi-bundles/container</param>
           </provision>
         </configuration>
       </plugin>
