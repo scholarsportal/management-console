@@ -20,10 +20,10 @@ public class NoopServiceListerImpl implements ServiceLister {
         this.duraServices = new ArrayList<ComputeService>();
 
         for (String srv : argServices) {
-            final String name = "service-" + srv;
+            final String name = srv;
             this.duraServices.add(new ComputeService() {
 
-                private ServiceStatus status = ServiceStatus.STOPPED;
+                private ServiceStatus status = ServiceStatus.INSTALLED;
 
                 public String describe() throws Exception {
                     return name;

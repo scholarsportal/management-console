@@ -1,16 +1,15 @@
 
 package org.duracloud.servicesadmin.util;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 public class HttpRequestHelper {
 
@@ -19,25 +18,35 @@ public class HttpRequestHelper {
 
     private ServiceSerializer serializer;
 
-    private static final String SERVLET_PREFIX = "configure/";
+    public String getServiceIdFromStatusURL(HttpServletRequest request)
+        throws Exception {
+        String prefix = "status/";
+        return getSuffixFromURL(request, prefix);
+    }
 
     public String getConfigIdFromRestURL(HttpServletRequest request)
-            throws Exception {
-        String pathInfo = request.getPathInfo();
-        log.debug("getConfigIdFromRestURL, pathInfo: '" + pathInfo + "'");
+        throws Exception {
+        String prefix = "configure/";
+        return getSuffixFromURL(request, prefix);
+    }
 
-        int index = pathInfo.indexOf(SERVLET_PREFIX);
+    private String getSuffixFromURL(HttpServletRequest request, String prefix)
+        throws Exception {
+        String pathInfo = request.getPathInfo();
+        log.debug("getSuffixFromURL, pathInfo: '" + pathInfo + "'");
+
+        int index = pathInfo.indexOf(prefix);
         if (index == -1) {
             StringBuilder msg = new StringBuilder();
-            msg.append("Unable to find SERVLET_PREFIX [");
-            msg.append(SERVLET_PREFIX + "]");
+            msg.append("Unable to find prefix [");
+            msg.append(prefix + "]");
             msg.append("in URL [" + pathInfo + "]");
             log.error(msg.toString());
             throw new Exception(msg.toString());
         }
-        String configId = pathInfo.substring(index + SERVLET_PREFIX.length());
-        log.debug("getConfigIdFromRestURL, found configId: '" + configId + "'");
-        return configId;
+        String suffix = pathInfo.substring(index + prefix.length());
+        log.debug("getSuffixFromURL, found suffix: '" + suffix + "'");
+        return suffix;
     }
 
     public Map<String, String> getConfigProps(HttpServletRequest request)

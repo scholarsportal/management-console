@@ -3,6 +3,7 @@ package org.duracloud.servicesadminclient;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.services.ComputeService;
 import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
@@ -84,6 +85,16 @@ public class ServicesAdminClient {
         return SerializationUtil.deserializeMap(body);
     }
 
+    public ComputeService.ServiceStatus getServiceStatus(String serviceId)
+        throws Exception {
+        HttpResponse response = getRester().get(getServiceStatusURL(serviceId));
+        // TODO: process erroneous responses
+
+        String body = response.getResponseBody();
+        log.debug("status for '" + serviceId + "': " + body);
+        return ComputeService.ServiceStatus.valueOf(body.trim());
+    }
+
     public HttpResponse postServiceConfig(String configId, Map<String, String> config)
             throws Exception {
         if (log.isDebugEnabled()) {
@@ -148,6 +159,10 @@ public class ServicesAdminClient {
 
     private String getStopURL() {
         return this.baseURL + "/services/stop";
+    }
+
+    private String getServiceStatusURL(String serviceId) {
+        return this.baseURL + "/services/status/" + serviceId;
     }
 
     private String getConfigureURL(String configId) {

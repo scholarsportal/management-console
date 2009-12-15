@@ -23,6 +23,8 @@
 
   <osgi:service id="osgiStopperService" ref="srvStopper" interface="org.duracloud.servicesutil.util.ServiceStopper" />
 
+  <osgi:service id="osgiStatusService" ref="srvStatusReporter" interface="org.duracloud.servicesutil.util.ServiceStatusReporter" />
+
   <!-- 
     OSGi services which are used by this bundle are defined here. 
   -->

@@ -4,8 +4,6 @@ package org.duracloud.servicesadminclient.webapp;
 import junit.framework.Assert;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,7 @@ public class TestServiceAdminWepApp {
     private final static Logger log =
             LoggerFactory.getLogger(TestServiceAdminWepApp.class);
 
-    private static final String FILE_INSTALL_PROP = "felix.fileinstall.dir";
     protected static final String BASE_DIR_PROP = "base.dir";
-
-    private final static String CONTAINER = "container";
 
     // Port:8089 is defined in the 'tomcatconfig' project
     private final static String BASE_URL =
@@ -33,26 +28,20 @@ public class TestServiceAdminWepApp {
 
     private ServicesAdminClient client;
 
-    @Before
-    public void setUp() throws Exception {
-        deleteInstalledBundle();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        deleteInstalledBundle();
-    }
-
-    private void deleteInstalledBundle() throws Exception {
-        new File(getContainer(), TEST_BUNDLE_FILE_NAME).delete();
-    }
-
     @Test
     public void testServiceInstallUninstallFlow() throws Exception {
         ServiceInstallUninstallFlowTester tester =
                 new ServiceInstallUninstallFlowTester(getTestBundleFromResourceDir(),
                                                       getClient());
         tester.testNewServiceFlow();
+    }
+
+    @Test
+    public void testServiceStatus() throws Exception {
+        ServiceStatusReporterTester tester = new ServiceStatusReporterTester(
+            getTestBundleFromResourceDir(),
+            getClient());
+        tester.testGetStatus();
     }
 
     @Test
@@ -69,13 +58,6 @@ public class TestServiceAdminWepApp {
         String resourceDir = baseDir + File.separator + "src/test/resources/";
 
         return new File(resourceDir, TEST_BUNDLE_FILE_NAME);
-    }
-
-    private File getContainer() throws Exception {
-        String bundleHome = System.getProperty(FILE_INSTALL_PROP);
-        Assert.assertNotNull(bundleHome);
-        log.debug("serviceadmin bundle-home: '" + bundleHome + "'");
-        return new File(bundleHome, CONTAINER);
     }
 
     private ServicesAdminClient getClient() {

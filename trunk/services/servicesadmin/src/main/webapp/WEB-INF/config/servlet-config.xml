@@ -16,6 +16,7 @@
         <prop key="uninstall">uninstallController</prop>
         <prop key="start">startController</prop>
         <prop key="stop">stopController</prop>
+        <prop key="status/*">statusController</prop>
         <prop key="configure/*">configureController</prop>
         <prop key="showConfig">showConfigController</prop>
       </props>
@@ -48,6 +49,11 @@
     <property name="serviceStopper" ref="srvStopper" />
     <property name="requestHelper" ref="httpRequestHelper" />
   </bean>
+
+  <bean id="statusController" class="org.duracloud.servicesadmin.control.StatusController" >
+    <property name="serviceStatusReporter" ref="srvStatusReporter" />
+    <property name="requestHelper" ref="httpRequestHelper" />
+  </bean>
   
   <bean id="configureController" class="org.duracloud.servicesadmin.control.ConfigureController" >
     <property name="configAdmin" ref="srvConfigAdmin" />
@@ -72,6 +78,7 @@
   <osgi:reference id="srvUninstaller" interface="org.duracloud.servicesutil.util.ServiceUninstaller" />
   <osgi:reference id="srvStarter" interface="org.duracloud.servicesutil.util.ServiceStarter" />
   <osgi:reference id="srvStopper" interface="org.duracloud.servicesutil.util.ServiceStopper" />
+  <osgi:reference id="srvStatusReporter" interface="org.duracloud.servicesutil.util.ServiceStatusReporter" />
   <osgi:reference id="srvConfigAdmin" interface="org.duracloud.servicesutil.util.DuraConfigAdmin" />
     
 </beans>
