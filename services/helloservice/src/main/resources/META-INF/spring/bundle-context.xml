@@ -14,6 +14,7 @@
     <osgix:managed-properties persistent-id="helloservice-1.0.0.jar" 
         update-strategy="container-managed"/>
     <property name="serviceId" value="helloservice-1.0.0" />
+    <property name="serviceStatus" value="INSTALLED" />
     <property name="text" value="joe" />
   </bean>
   
