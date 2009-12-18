@@ -34,19 +34,20 @@ public class HelloWebappWrapperTest {
     private int port = 38080;
 
     private TomcatUtil tomcatUtil;
-    private String resourceDir = "src/test/resources";
+    private File resourceDir = new File("src/test/resources");
     private String binariesZipName = "apache-tomcat-6.0.20.zip";
 
 
     @Before
     public void setUp() throws IOException {
         tomcatUtil = new TomcatUtil();
-        tomcatUtil.setResourceDir(resourceDir);
         tomcatUtil.setBinariesZipName(binariesZipName);
 
         webappUtil = new WebAppUtilImpl();
+        webappUtil.setServiceId("webapputilservice-1.0.0");
         webappUtil.setBaseInstallDir(baseInstallDir);
         webappUtil.setNextPort(port);
+        webappUtil.setBundleHome(bundleHome);
         webappUtil.setTomcatUtil(tomcatUtil);
 
         wrapper = new HelloWebappWrapper();
@@ -57,11 +58,13 @@ public class HelloWebappWrapperTest {
         wrapper.setWebappUtil(webappUtil);
         wrapper.setBundleHomeDir(bundleHome.getBaseDir());
 
-        File war = new File(resourceDir, warName);
-        File serviceWorkDir = new File(bundleHome.getWork(), serviceId);
-        serviceWorkDir.mkdirs();
+        File binaries = new File(resourceDir, binariesZipName);
+        File webappWork = bundleHome.getServiceWork(webappUtil.getServiceId());
+        FileUtils.copyFileToDirectory(binaries, webappWork);
 
-        FileUtils.copyFileToDirectory(war, serviceWorkDir);
+        File war = new File(resourceDir, warName);
+        File wrapperWork = bundleHome.getServiceWork(wrapper.getServiceId());
+        FileUtils.copyFileToDirectory(war, wrapperWork);
     }
 
     @After

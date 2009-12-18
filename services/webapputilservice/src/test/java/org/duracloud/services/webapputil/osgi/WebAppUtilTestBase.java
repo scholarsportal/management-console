@@ -1,5 +1,6 @@
 package org.duracloud.services.webapputil.osgi;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.webapputil.WebAppUtil;
@@ -27,6 +28,12 @@ public class WebAppUtilTestBase {
             util.unDeploy(url);
         } catch (Exception e) {
         }
+
+        try {
+            FileUtils.deleteDirectory(util.getWorkDir());
+        } catch (Exception e) {            
+        }
+
         util = null;
         IOUtils.closeQuietly(war);
     }

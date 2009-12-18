@@ -1,6 +1,8 @@
 package org.duracloud.services.webapputil.internal;
 
 import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.services.BaseService;
+import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.duracloud.services.webapputil.error.WebAppDeployerException;
 import org.duracloud.services.webapputil.tomcat.TomcatInstance;
@@ -22,12 +24,13 @@ import java.net.UnknownHostException;
  * @author Andrew Woods
  *         Date: Nov 30, 2009
  */
-public class WebAppUtilImpl implements WebAppUtil {
+public class WebAppUtilImpl extends BaseService implements WebAppUtil {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private int nextPort;
     private String baseInstallDir;
+    private BundleHome bundleHome;
     private TomcatUtil tomcatUtil;
 
     private static final String AMAZON_HOST_QUERY = "http://169.254.169.254/2009-08-15//meta-data/public-ipv4";
@@ -168,7 +171,23 @@ public class WebAppUtilImpl implements WebAppUtil {
         this.baseInstallDir = baseInstallDir;
     }
 
+    private BundleHome getBundleHome() {
+        return bundleHome;
+    }
+
+    public void setBundleHome(BundleHome bundleHome) {
+        this.bundleHome = bundleHome;
+    }
+
+    public File getWorkDir() {
+        return getBundleHome().getServiceWork(getServiceId());
+    }
+
     private TomcatUtil getTomcatUtil() {
+        if (tomcatUtil != null) {
+            File resourceDir = getBundleHome().getServiceWork(getServiceId());
+            tomcatUtil.setResourceDir(resourceDir);
+        }
         return tomcatUtil;
     }
 

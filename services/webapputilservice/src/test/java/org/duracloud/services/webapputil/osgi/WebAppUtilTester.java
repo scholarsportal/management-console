@@ -1,5 +1,6 @@
 package org.duracloud.services.webapputil.osgi;
 
+import org.apache.commons.io.FileUtils;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.junit.Assert;
 
@@ -17,12 +18,21 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
     private WebAppUtil webappUtil;
     private String SERVICE_ID = "howdy";
     private String WAR_FILE_NAME = "hellowebapp-1.0.0.war";
+    private String BINARIES_FILE_NAME = "apache-tomcat-6.0.20.zip";
 
     private final static String BASE_DIR_PROP = "base.dir";
-    private final static String sep = File.separator;
 
-    public WebAppUtilTester(WebAppUtil webappUtil) {
+    public WebAppUtilTester(WebAppUtil webappUtil) throws Exception {
         this.webappUtil = webappUtil;
+
+        populateBundleHome();
+    }
+
+    private void populateBundleHome() throws Exception {
+        File serviceWork = webappUtil.getWorkDir();
+        File tomcatBinaries = new File(getResourceDir(), BINARIES_FILE_NAME);
+
+        FileUtils.copyFileToDirectory(tomcatBinaries, serviceWork);
     }
 
     public void testWebAppUtil() {
@@ -49,12 +59,14 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
     }
 
     protected InputStream getWar() throws FileNotFoundException {
+        File zipBagFile = new File(getResourceDir(), WAR_FILE_NAME);
+        return new FileInputStream(zipBagFile);
+    }
+
+    private String getResourceDir() {
         String baseDir = System.getProperty(BASE_DIR_PROP);
         Assert.assertNotNull(baseDir);
 
-        String resourceDir = baseDir + sep + "src/test/resources/";
-        File zipBagFile = new File(resourceDir + WAR_FILE_NAME);
-
-        return new FileInputStream(zipBagFile);
+        return baseDir + File.separator + "src/test/resources/";
     }
 }

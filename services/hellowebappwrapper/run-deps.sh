@@ -9,7 +9,7 @@ pax-import-bundle -g org.duracloud -a common -v 1.0.0 -- -DimportTransitive -Dwi
 pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope
 pax-import-bundle -g com.thoughtworks.xstream -a com.springsource.com.thoughtworks.xstream -v 1.3.0 -- -DimportTransitive -DwidenScope
 
-mvn clean pax:provision -Dmaven.test.skip=true
+mvn pax:provision -DskipTests
 chmod +x runner/run.sh
 
 cp pom.xml pom-run.xml

@@ -22,7 +22,7 @@ public class TomcatUtilTest extends TomcatTestBase {
         installDir = getInstallDir("install");
 
         tomcatUtil = new TomcatUtil();
-        tomcatUtil.setResourceDir(getResourceDir().getAbsolutePath());
+        tomcatUtil.setResourceDir(getResourceDir());
         tomcatUtil.setBinariesZipName(tomcatZipName);
     }
 
