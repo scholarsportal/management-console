@@ -29,6 +29,7 @@
     <module>servicesadmin</module>
     <module>webapputilservice</module>
     <module>hellowebappwrapper</module>
+    <module>scriptservice</module>
   </modules>
 
   <build>
