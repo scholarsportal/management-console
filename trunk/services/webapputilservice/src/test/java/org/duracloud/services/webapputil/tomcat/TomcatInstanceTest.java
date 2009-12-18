@@ -29,7 +29,7 @@ public class TomcatInstanceTest extends TomcatTestBase {
     @Before
     public void setUp() throws IOException {
         tomcatUtil = new TomcatUtil();
-        tomcatUtil.setResourceDir(getResourceDir().getAbsolutePath());
+        tomcatUtil.setResourceDir(getResourceDir());
         tomcatUtil.setBinariesZipName("apache-tomcat-6.0.20.zip");
 
         // Install required before tomcatUtil can be started.

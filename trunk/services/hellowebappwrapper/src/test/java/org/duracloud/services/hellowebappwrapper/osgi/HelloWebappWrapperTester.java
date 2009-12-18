@@ -32,12 +32,10 @@ public class HelloWebappWrapperTester {
 
         // set up war to deploy
         File war = getWar();
-        File workDir = wrapper.getBundleHome().getWork();
         String serviceId = wrapper.getServiceId();
-        File serviceWorkDir = new File(workDir, serviceId);
-        serviceWorkDir.mkdirs();
+        File workDir = wrapper.getBundleHome().getServiceWork(serviceId);
 
-        FileUtils.copyFileToDirectory(war, serviceWorkDir);
+        FileUtils.copyFileToDirectory(war, workDir);
     }
 
       protected File getWar() throws FileNotFoundException {

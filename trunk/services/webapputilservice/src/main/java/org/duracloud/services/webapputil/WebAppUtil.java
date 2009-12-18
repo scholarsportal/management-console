@@ -1,7 +1,10 @@
 package org.duracloud.services.webapputil;
 
-import java.net.URL;
+import org.duracloud.services.ComputeService;
+
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * This interface abstracts the ability to (un)deploy a webapp to/from an
@@ -10,7 +13,7 @@ import java.io.InputStream;
  * @author Andrew Woods
  *         Date: Dec 7, 2009
  */
-public interface WebAppUtil {
+public interface WebAppUtil extends ComputeService {
 
     /**
      * This method deploys the arg war to a new application server under the
@@ -29,4 +32,12 @@ public interface WebAppUtil {
      * @param url of webapp to undeploy
      */
     public void unDeploy(URL url);
+
+    /**
+     * This method returns the directory in which this service stores its
+     * internal resources.
+     *
+     * @return directory of resources.
+     */
+    public File getWorkDir();
 }

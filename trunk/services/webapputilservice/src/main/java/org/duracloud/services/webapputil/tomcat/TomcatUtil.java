@@ -28,7 +28,7 @@ public class TomcatUtil {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private File binaries;
-    private String resourceDir;
+    private File resourceDir;
     private String binariesZipName;
 
     /**
@@ -136,7 +136,7 @@ public class TomcatUtil {
         }
     }
 
-    public void setResourceDir(String resourceDir) {
+    public void setResourceDir(File resourceDir) {
         this.resourceDir = resourceDir;
     }
 

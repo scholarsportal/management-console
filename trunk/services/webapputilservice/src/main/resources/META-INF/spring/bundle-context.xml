@@ -6,14 +6,15 @@
 
   <!-- Spring beans which are used by the bundle are defined here. -->
   <bean id="webAppUtil" class="org.duracloud.services.webapputil.internal.WebAppUtilImpl">
+    <property name="serviceId" value="webapputilservice-1.0.0" />
     <property name="baseInstallDir" value="${tomcat.install.dir}" />
     <property name="nextPort" ref="tomcat.port" />
+    <property name="bundleHome" ref="bundleHome" />
     <property name="tomcatUtil" ref="tomcatUtility" />
   </bean>
 
   <!-- Spring beans which are used by this bundle. -->
   <bean id="tomcatUtility" class="org.duracloud.services.webapputil.tomcat.TomcatUtil">
-    <property name="resourceDir" value="${osgi.resource.dir}" />
     <property name="binariesZipName" value="${tomcat.binary.name}" />
   </bean>
 
@@ -22,7 +23,7 @@
     <property name="location" value="osgi-config.properties" />
   </bean>
 
-  <bean id="bundleHome" class="java.lang.String" >
+  <bean id="bundleHome" class="org.duracloud.services.common.util.BundleHome" >
     <constructor-arg value="${bundle.home}/"/>
   </bean>
 

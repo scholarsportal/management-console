@@ -29,19 +29,35 @@ public class BundleHome {
     }
 
     public File getServiceWork(String serviceId) {
-        return new File(getWork(), serviceId);
+        File serviceWork = new File(getWork(), serviceId);
+        if (!serviceWork.exists()) {
+            serviceWork.mkdir();
+        }
+        return serviceWork;
     }
 
     public File getContainer() {
-        return new File(getBaseDir(), CONTAINER);
+        File container = new File(getBaseDir(), CONTAINER);
+        if (!container.exists()) {
+            container.mkdir();
+        }
+        return container;
     }
 
     public File getAttic() {
-        return new File(getBaseDir(), ATTIC);
+        File attic = new File(getBaseDir(), ATTIC);
+        if (!attic.exists()) {
+            attic.mkdir();
+        }
+        return attic;
     }
 
     public File getWork() {
-        return new File(getBaseDir(), WORK);
+        File work = new File(getBaseDir(), WORK);
+        if (!work.exists()) {
+            work.mkdir();
+        }
+        return work;
     }
 
     public File getHome() {
