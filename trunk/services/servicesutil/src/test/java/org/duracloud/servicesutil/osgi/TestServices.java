@@ -162,67 +162,51 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
     }
 
     public ServiceInstaller getInstaller() throws Exception {
-        if (installer == null) {
-            installer = (ServiceInstaller) getService(ServiceInstaller.class.getName());
-        }
+        installer = (ServiceInstaller) getService(ServiceInstaller.class.getName());
         Assert.assertNotNull(installer);
         return installer;
     }
 
     public ServiceUninstaller getUninstaller() throws Exception {
-        if (uninstaller == null) {
-            uninstaller = (ServiceUninstaller) getService(ServiceUninstaller.class.getName());
-        }
+        uninstaller = (ServiceUninstaller) getService(ServiceUninstaller.class.getName());
         Assert.assertNotNull(uninstaller);
         return uninstaller;
     }
 
     public ServiceLister getLister() throws Exception {
-        if (lister == null) {
-            lister = (ServiceLister) getService(ServiceLister.class.getName());
-        }
+        lister = (ServiceLister) getService(ServiceLister.class.getName());
         Assert.assertNotNull(lister);
         return lister;
     }
 
     public ServiceStarter getStarter() throws Exception {
-        if (starter == null) {
-            starter = (ServiceStarter) getService(ServiceStarter.class.getName());
-        }
+        starter = (ServiceStarter) getService(ServiceStarter.class.getName());
         Assert.assertNotNull(starter);
         return starter;
     }
 
     public ServiceStopper getStopper() throws Exception {
-        if (stopper == null) {
-            stopper = (ServiceStopper) getService(ServiceStopper.class.getName());
-        }
+        stopper = (ServiceStopper) getService(ServiceStopper.class.getName());
         Assert.assertNotNull(stopper);
         return stopper;
     }
 
     private ServiceStatusReporter getStatusReporter() throws Exception {
-        if (statusReporter == null) {
-            statusReporter = (ServiceStatusReporter) getService(
-                ServiceStatusReporter.class.getName());
-        }
+        statusReporter = (ServiceStatusReporter) getService(
+            ServiceStatusReporter.class.getName());
         Assert.assertNotNull(statusReporter);
         return statusReporter;
     }
 
     public DuraConfigAdmin getConfigAdmin() throws Exception {
-        if (configAdmin == null) {
-            configAdmin = (DuraConfigAdmin) getService(DuraConfigAdmin.class.getName());
-        }
+        configAdmin = (DuraConfigAdmin) getService(DuraConfigAdmin.class.getName());
         Assert.assertNotNull(configAdmin);
         return configAdmin;
     }
 
     public ComputeService getHelloService() throws Exception {
-        if (helloService == null) {
-            helloService = (ComputeService) getService(ComputeService.class.getName(),
-                                                       HELLOSERVICE_FILTER);
-        }
+        helloService = (ComputeService) getService(ComputeService.class.getName(),
+                                                   HELLOSERVICE_FILTER);
         return helloService;
     }
 
