@@ -1,11 +1,11 @@
 package org.duracloud.servicesutil.util.internal;
 
+import org.apache.commons.io.FilenameUtils;
 import org.duracloud.services.common.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceUninstaller;
 import org.duracloud.servicesutil.util.catalog.BundleCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
 
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            String entryName = entry.getName();
+            String entryName = FilenameUtils.getName(entry.getName());
 
             if (isJar(entryName) && BundleCatalog.unRegister(entryName)) {
                 delete(getBundleHome().getContainer(), entryName);

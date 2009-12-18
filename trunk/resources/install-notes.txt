@@ -101,10 +101,6 @@ http://wiki.ops4j.org/display/paxconstruct/Pax+Construct
 In order to persist services deployed into the services-framework, please make sure the following directory exists:
  ${duracloud.home}/osgi-bundles
 
-Additionally, the service that deploys webapp "services" into external an external tomcat needs to have access to
- the tomcat binaries. The need to be stored in the following directory:
- ${duracloud.home}/osgi-bundles/resources/apache-tomcat-6.0.20.zip
-
 ..where ${duracloud.home} is already defined in settings.xml
 
 :: BagIt Manifest Verifier Utility ::

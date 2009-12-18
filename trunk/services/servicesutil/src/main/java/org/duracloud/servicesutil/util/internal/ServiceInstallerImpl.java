@@ -3,10 +3,10 @@ package org.duracloud.servicesutil.util.internal;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.services.common.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.catalog.BundleCatalog;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +124,7 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
         Enumeration entries = zip.entries();
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            String entryName = entry.getName();
+            String entryName = FilenameUtils.getName(entry.getName());
 
             if (isJar(entryName) && BundleCatalog.register(entryName)) {
                 InputStream entryStream = getZipEntryStream(zip, entry);
