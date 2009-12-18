@@ -54,6 +54,7 @@ public class ScriptServiceTester {
             scriptLines.add("#!/bin/bash");
             scriptLines.add("touch " + SCRIPT_CREATED_FILE);
             FileUtils.writeLines(startScript, scriptLines);
+            startScript.setExecutable(true);
 
             // Stop script
             File stopScript = new File(workDir, "stop.sh");
@@ -62,6 +63,7 @@ public class ScriptServiceTester {
             scriptLines.add("#!/bin/bash");
             scriptLines.add("rm " + SCRIPT_CREATED_FILE);
             FileUtils.writeLines(stopScript, scriptLines);
+            stopScript.setExecutable(true);
         } else { // Windows
             // Start script
             File startScript = new File(workDir, "start.bat");
