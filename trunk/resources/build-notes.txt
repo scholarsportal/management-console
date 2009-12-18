@@ -56,3 +56,9 @@ In order for log4j to know the base directory in which to write logs,
     <duracloud.home>[location-of-writable-duracloud-directory]</duracloud.home>
     ...
 
+::ServicesAdmin CLI::
+
+To build and run the cli,
+ [from services/servicesadminclient]
+ mvn assembly:assembly
+ java -cp target/servicesadminclient-1.0.0-cli.jar org.duracloud.servicesadminclient.ServicesAdminClientCLI
