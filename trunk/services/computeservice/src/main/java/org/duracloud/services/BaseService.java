@@ -11,7 +11,7 @@ public abstract class BaseService implements ComputeService {
 
     private String serviceId;
 
-    private ServiceStatus serviceStatus;
+    private ServiceStatus serviceStatus = ServiceStatus.INSTALLED;
 
     public void start() throws Exception {
         setServiceStatus(ServiceStatus.STARTED);
