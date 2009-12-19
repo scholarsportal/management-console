@@ -1,4 +1,3 @@
-
 package org.duracloud.servicesadmin.util;
 
 import org.duracloud.common.util.SerializationUtil;
@@ -13,14 +12,19 @@ import java.util.Map;
 
 public class HttpRequestHelper {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(HttpRequestHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestHelper.class);
 
     private ServiceSerializer serializer;
 
     public String getServiceIdFromStatusURL(HttpServletRequest request)
         throws Exception {
         String prefix = "status/";
+        return getSuffixFromURL(request, prefix);
+    }
+
+    public String getServiceIdFromPropsURL(HttpServletRequest request)
+        throws Exception {
+        String prefix = "props/";
         return getSuffixFromURL(request, prefix);
     }
 
@@ -50,7 +54,7 @@ public class HttpRequestHelper {
     }
 
     public Map<String, String> getConfigProps(HttpServletRequest request)
-            throws Exception {
+        throws Exception {
 
         String content = getRequestContent(request);
         log.debug("getConfigProps(request) content: '" + content + "'");
@@ -60,7 +64,7 @@ public class HttpRequestHelper {
     }
 
     public String getServiceIdParameter(HttpServletRequest request)
-            throws Exception {
+        throws Exception {
 
         String content = getRequestContent(request);
         log.debug("getServiceIdParameter(request) content: '" + content + "'");
@@ -69,7 +73,7 @@ public class HttpRequestHelper {
     }
 
     private String getRequestContent(HttpServletRequest request)
-            throws Exception {
+        throws Exception {
         int len = request.getContentLength();
         if (len < 1) {
             String msg = "Error: No request content was provided.";
@@ -80,8 +84,9 @@ public class HttpRequestHelper {
         byte[] buffer = new byte[len];
         int bytesRead = 0;
         while (bytesRead != -1) {
-            bytesRead +=
-                    request.getInputStream().readLine(buffer, bytesRead, len);
+            bytesRead += request.getInputStream().readLine(buffer,
+                                                           bytesRead,
+                                                           len);
         }
         return new String(buffer);
     }

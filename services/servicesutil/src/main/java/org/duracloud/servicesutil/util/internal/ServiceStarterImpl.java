@@ -1,37 +1,40 @@
-
 package org.duracloud.servicesutil.util.internal;
 
 import org.duracloud.services.ComputeService;
+import org.duracloud.services.common.error.ServiceRuntimeException;
 import org.duracloud.servicesutil.util.ServiceStarter;
+import org.duracloud.servicesutil.util.internal.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ServiceStarterImpl
-        implements ServiceStarter {
+public class ServiceStarterImpl implements ServiceStarter {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private List<ComputeService> duraServices;   
+    private List<ComputeService> duraServices;
+    private ServiceHelper helper = new ServiceHelper();
 
     /**
      * {@inheritDoc}
      */
     public void start(String serviceId) {
-        for(ComputeService service : duraServices) {
-            try {
-                String id = service.getServiceId();
-                if(serviceId.equals(id) || serviceId.contains(id)) {
-                    log.info("Starting Service: " + serviceId);
-                    service.start();
-                    break;
-                }
-            } catch(Exception e) {
-                log.error("Error starting service: " + service.toString());
-            }
+        log.info("Starting Service: " + serviceId);
+        ComputeService service = helper.findService(serviceId, duraServices);
+        doStart(service);
+    }
+
+    private void doStart(ComputeService service) {
+        try {
+            service.start();
+        } catch (Exception e) {
+            String msg = "Error starting service: " + service.getServiceId();
+            log.error(msg);
+            throw new ServiceRuntimeException(msg, e);
         }
     }
+
 
     public List<ComputeService> getDuraServices() {
         return duraServices;

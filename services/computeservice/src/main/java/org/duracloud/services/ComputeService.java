@@ -15,7 +15,7 @@ public interface ComputeService {
 
     public String describe() throws Exception;
 
-    public String getServiceId() throws Exception;
+    public String getServiceId();
 
     public ServiceStatus getServiceStatus() throws Exception;
 }

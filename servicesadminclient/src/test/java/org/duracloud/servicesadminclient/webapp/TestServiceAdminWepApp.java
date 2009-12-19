@@ -1,4 +1,3 @@
-
 package org.duracloud.servicesadminclient.webapp;
 
 import junit.framework.Assert;
@@ -12,17 +11,15 @@ import java.io.File;
 
 public class TestServiceAdminWepApp {
 
-    private final static Logger log =
-            LoggerFactory.getLogger(TestServiceAdminWepApp.class);
+    private final static Logger log = LoggerFactory.getLogger(
+        TestServiceAdminWepApp.class);
 
     protected static final String BASE_DIR_PROP = "base.dir";
 
     // Port:8089 is defined in the 'tomcatconfig' project
-    private final static String BASE_URL =
-            "http://localhost:8089/org.duracloud.services.admin_1.0.0";
+    private final static String BASE_URL = "http://localhost:8089/org.duracloud.services.admin_1.0.0";
 
-    private final static String TEST_BUNDLE_FILE_NAME =
-            "helloservice-1.0.0.jar";
+    private final static String TEST_BUNDLE_FILE_NAME = "helloservice-1.0.0.jar";
 
     private final static String TEST_SERVICE_NAME = "HelloService";
 
@@ -30,9 +27,9 @@ public class TestServiceAdminWepApp {
 
     @Test
     public void testServiceInstallUninstallFlow() throws Exception {
-        ServiceInstallUninstallFlowTester tester =
-                new ServiceInstallUninstallFlowTester(getTestBundleFromResourceDir(),
-                                                      getClient());
+        ServiceInstallUninstallFlowTester tester = new ServiceInstallUninstallFlowTester(
+            getTestBundleFromResourceDir(),
+            getClient());
         tester.testNewServiceFlow();
     }
 
@@ -45,9 +42,17 @@ public class TestServiceAdminWepApp {
     }
 
     @Test
+    public void testServiceProps() throws Exception {
+        ServicePropsFinderTester tester = new ServicePropsFinderTester(
+            getTestBundleFromResourceDir(),
+            getClient());
+        tester.testGetProps();
+    }
+
+    @Test
     public void testServiceConfiguration() throws Exception {
-        ServiceConfigurationTester tester =
-                new ServiceConfigurationTester(getClient());
+        ServiceConfigurationTester tester = new ServiceConfigurationTester(
+            getClient());
         tester.testServiceConfiguration();
     }
 

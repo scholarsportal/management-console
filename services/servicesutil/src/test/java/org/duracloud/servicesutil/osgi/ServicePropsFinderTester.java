@@ -4,31 +4,31 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.ServiceLister;
-import org.duracloud.servicesutil.util.ServiceStatusReporter;
+import org.duracloud.servicesutil.util.ServicePropsFinder;
 import org.junit.Assert;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andrew Woods
- *         Date: Dec 14, 2009
+ *         Date: Dec 18, 2009
  */
-public class ServiceStatusReporterTester {
+public class ServicePropsFinderTester {
 
-    private final ServiceStatusReporter statusReporter;
-    private final ServiceLister lister;
+    private ServicePropsFinder propsFinder;
+    private ServiceLister lister;
 
-    public ServiceStatusReporterTester(ServiceStatusReporter statusReporter,
-                                       ServiceLister lister) {
-        Assert.assertNotNull(statusReporter);
+    public ServicePropsFinderTester(ServicePropsFinder propsFinder,
+                                    ServiceLister lister) {
+        Assert.assertNotNull(propsFinder);
         Assert.assertNotNull(lister);
 
-        this.statusReporter = statusReporter;
+        this.propsFinder = propsFinder;
         this.lister = lister;
     }
 
-    public void testServiceStatusReporter() throws Exception {
-
+    public void testServicePropsFinder() {
         List<ComputeService> duraServices = lister.getDuraServices();
         assertNotNull(duraServices);
         assertFalse("There must be at least one service available to test",
@@ -36,12 +36,16 @@ public class ServiceStatusReporterTester {
 
         for (ComputeService service : duraServices) {
             String serviceId = service.getServiceId();
-            Assert.assertNotNull(serviceId,
-                                 statusReporter.getStatus(serviceId));
+            Map<String, String> props = propsFinder.getProps(serviceId);
+            Assert.assertNotNull(serviceId, props);
+
+            String value = props.get("serviceId");
+            Assert.assertNotNull(serviceId, value);
+            Assert.assertEquals(serviceId, value);
         }
 
         try {
-            statusReporter.getStatus("no-service");
+            propsFinder.getProps("no-service");
             Assert.fail("Exception expected.");
         } catch (Exception e) {
             // do nothing.

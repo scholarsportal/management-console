@@ -3,10 +3,10 @@ package org.duracloud.servicesadminclient;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.services.ComputeService;
 import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
+import org.duracloud.services.ComputeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +29,14 @@ public class ServicesAdminClient {
 
     private String baseURL;
 
-    public HttpResponse postServiceBundle(String fileName, InputStream stream,
-                                          long length)
-            throws Exception {
+    public HttpResponse postServiceBundle(String fileName,
+                                          InputStream stream,
+                                          long length) throws Exception {
         log.debug("FILENAME: " + fileName + "\nSTREAM: " + stream);
         return getRester().multipartFileStreamPost(getInstallURL(),
                                                    fileName,
-                                                   stream, length);
+                                                   stream,
+                                                   length);
     }
 
     public HttpResponse postServiceBundle(File file) throws Exception {
@@ -68,7 +69,7 @@ public class ServicesAdminClient {
         Map<String, String> headers = null;
 
         return getRester().post(getStopURL(), requestContent, headers);
-    }    
+    }
 
     public HttpResponse getServiceListing() throws Exception {
         log.debug("Listing");
@@ -76,13 +77,27 @@ public class ServicesAdminClient {
     }
 
     public Map<String, String> getServiceConfig(String configId)
-            throws Exception {
+        throws Exception {
         HttpResponse response = getRester().get(getConfigureURL(configId));
         // TODO: process erroneous responses
 
         String body = response.getResponseBody();
         log.debug("config for '" + configId + "': " + body);
         return SerializationUtil.deserializeMap(body);
+    }
+
+    public HttpResponse postServiceConfig(String configId,
+                                          Map<String, String> config)
+        throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug(postServiceConfigText(configId, config));
+        }
+        String body = SerializationUtil.serializeMap(config);
+        Map<String, String> headers = null;
+
+        log.debug("POST url: " + getConfigureURL(configId));
+
+        return getRester().post(getConfigureURL(configId), body, headers);
     }
 
     public ComputeService.ServiceStatus getServiceStatus(String serviceId)
@@ -95,30 +110,27 @@ public class ServicesAdminClient {
         return ComputeService.ServiceStatus.valueOf(body.trim());
     }
 
-    public HttpResponse postServiceConfig(String configId, Map<String, String> config)
-            throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug(postServiceConfigText(configId, config));
-        }
-        String body = SerializationUtil.serializeMap(config);
-        Map<String, String> headers = null;
+    public Map<String, String> getServiceProps(String serviceId)
+        throws Exception {
+        HttpResponse response = getRester().get(getServicePropsURL(serviceId));
+        // TODO: process erroneous responses
 
-        log.debug("POST url: " + getConfigureURL(configId));
-
-        return getRester().post(getConfigureURL(configId), body, headers);
+        String body = response.getResponseBody();
+        log.debug("props for '" + serviceId + "': " + body);
+        return SerializationUtil.deserializeMap(body);
     }
 
     public boolean isServiceDeployed(String bundleId) throws Exception {
         boolean deployed = false;
         HttpResponse response = getServiceListing();
-        if(response != null &&
-           HttpURLConnection.HTTP_OK == response.getStatusCode()) {
+        if (response != null &&
+            HttpURLConnection.HTTP_OK == response.getStatusCode()) {
             String body = response.getResponseBody();
-            List<ComputeServiceBean> beans =
-                getSerializer().deserializeList(body);
+            List<ComputeServiceBean> beans = getSerializer().deserializeList(
+                body);
 
             for (ComputeServiceBean bean : beans) {
-                if(bundleId.equals(bean.getServiceName())) {
+                if (bundleId.equals(bean.getServiceName())) {
                     deployed = true;
                 }
             }
@@ -163,6 +175,10 @@ public class ServicesAdminClient {
 
     private String getServiceStatusURL(String serviceId) {
         return this.baseURL + "/services/status/" + serviceId;
+    }
+
+    private String getServicePropsURL(String serviceId) {
+        return this.baseURL + "/services/props/" + serviceId;
     }
 
     private String getConfigureURL(String configId) {

@@ -25,6 +25,8 @@
 
   <osgi:service id="osgiStatusService" ref="srvStatusReporter" interface="org.duracloud.servicesutil.util.ServiceStatusReporter" />
 
+  <osgi:service id="osgiPropsService" ref="srvPropsFinder" interface="org.duracloud.servicesutil.util.ServicePropsFinder" />
+
   <!-- 
     OSGi services which are used by this bundle are defined here. 
   -->

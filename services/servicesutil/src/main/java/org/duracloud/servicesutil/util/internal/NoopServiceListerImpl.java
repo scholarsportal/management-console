@@ -29,7 +29,7 @@ public class NoopServiceListerImpl implements ServiceLister {
                     return name;
                 }
 
-                public String getServiceId() throws Exception {
+                public String getServiceId() {
                     return name;
                 }
 
@@ -46,7 +46,9 @@ public class NoopServiceListerImpl implements ServiceLister {
                 }
 
                 public Map<String, String> getServiceProps() {
-                    return new HashMap<String, String>();
+                    Map<String, String> props = new HashMap<String, String>();
+                    props.put("serviceId", name);
+                    return props;
                 }
             });
         }
