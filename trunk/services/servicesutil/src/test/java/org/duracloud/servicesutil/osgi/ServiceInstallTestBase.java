@@ -101,6 +101,7 @@ public class ServiceInstallTestBase {
                 File entryBundle = home.getFromContainer(entry.getName());
                 assertTrue(entryBundle.exists());
             }
+            zip.close();
         }
     }
 
