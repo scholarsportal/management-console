@@ -32,6 +32,10 @@
   <bean id="srvStatusReporter" class="org.duracloud.servicesutil.util.internal.ServiceStatusReporterImpl">
     <property name="duraServices" ref="duraServices" />
   </bean>
+
+  <bean id="srvPropsFinder" class="org.duracloud.servicesutil.util.internal.ServicePropsFinderImpl">
+    <property name="duraServices" ref="duraServices" />
+  </bean>
   
   <!-- Properties config -->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >

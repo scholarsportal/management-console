@@ -18,7 +18,7 @@
         <prop key="stop">stopController</prop>
         <prop key="status/*">statusController</prop>
         <prop key="configure/*">configureController</prop>
-        <prop key="showConfig">showConfigController</prop>
+        <prop key="props/*">propsController</prop>
       </props>
     </property>
     <property name="order" value="1" />
@@ -60,7 +60,10 @@
     <property name="requestHelper" ref="httpRequestHelper" />
   </bean>
     
-  <bean id="showConfigController" class="org.duracloud.servicesadmin.control.ShowConfigController"/>
+  <bean id="propsController" class="org.duracloud.servicesadmin.control.PropsController" >
+    <property name="servicePropsFinder" ref="srvPropsFinder" />
+    <property name="requestHelper" ref="httpRequestHelper" />
+  </bean>
 
   <bean id="httpRequestHelper" class="org.duracloud.servicesadmin.util.HttpRequestHelper" />
   
@@ -79,6 +82,7 @@
   <osgi:reference id="srvStarter" interface="org.duracloud.servicesutil.util.ServiceStarter" />
   <osgi:reference id="srvStopper" interface="org.duracloud.servicesutil.util.ServiceStopper" />
   <osgi:reference id="srvStatusReporter" interface="org.duracloud.servicesutil.util.ServiceStatusReporter" />
+  <osgi:reference id="srvPropsFinder" interface="org.duracloud.servicesutil.util.ServicePropsFinder" />
   <osgi:reference id="srvConfigAdmin" interface="org.duracloud.servicesutil.util.DuraConfigAdmin" />
     
 </beans>

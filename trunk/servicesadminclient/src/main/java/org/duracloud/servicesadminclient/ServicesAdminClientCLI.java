@@ -5,6 +5,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -19,6 +20,7 @@ public class ServicesAdminClientCLI {
     public static enum ADMIN_OPTION {
         INSTALL("i", "[i]nstall"),
         START("a", "st[a]rt"),
+        PROPS("p", "[p]rops"),
         STOP("o", "st[o]p"),
         UNINSTALL("u", "[u]ninstall"),
         QUIT("q", "[q]uit"),
@@ -117,6 +119,8 @@ public class ServicesAdminClientCLI {
                 installService(inputService());
             } else if (option.equals(ADMIN_OPTION.START)) {
                 startService(inputService());
+            } else if (option.equals(ADMIN_OPTION.PROPS)) {
+                getProps(inputService());
             } else if (option.equals(ADMIN_OPTION.STOP)) {
                 stopService(inputService());
             } else if (option.equals(ADMIN_OPTION.UNINSTALL)) {
@@ -159,7 +163,21 @@ public class ServicesAdminClientCLI {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
 
+    private void getProps(SERVICE service) {
+        Map<String, String> props = null;
+        try {
+            props = client.getServiceProps(service.getServiceId());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        if (null == props) {
+            System.out.println("Error: props is null.");
+        } else {
+            System.out.println(props.toString());
+        }
     }
 
     private void stopService(SERVICE service) {
@@ -168,7 +186,6 @@ public class ServicesAdminClientCLI {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     private void uninstallService(SERVICE service) {

@@ -5,6 +5,7 @@ import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.ServiceLister;
+import org.duracloud.servicesutil.util.ServicePropsFinder;
 import org.duracloud.servicesutil.util.ServiceStarter;
 import org.duracloud.servicesutil.util.ServiceStatusReporter;
 import org.duracloud.servicesutil.util.ServiceStopper;
@@ -37,6 +38,8 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     private ServiceStatusReporter statusReporter;
 
+    private ServicePropsFinder propsFinder;
+
     private DuraConfigAdmin configAdmin;
 
     private ComputeService helloService;
@@ -44,7 +47,7 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
     @Before
     public void setUp() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
         }
     }
@@ -119,6 +122,15 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
         tester.testServiceStatusReporter();
     }
 
+    @Test
+    public void testServicePropsFinder() throws Exception {
+        log.debug("testing ServicePropsFinder");
+
+        ServicePropsFinderTester tester = new ServicePropsFinderTester(
+            getPropsFinder(),
+            getLister());
+        tester.testServicePropsFinder();
+    }
 
     @Test
     public void testConfigAdmin() throws Exception {
@@ -196,6 +208,12 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
             ServiceStatusReporter.class.getName());
         Assert.assertNotNull(statusReporter);
         return statusReporter;
+    }
+
+    private ServicePropsFinder getPropsFinder() throws Exception {
+        propsFinder = (ServicePropsFinder) getService(ServicePropsFinder.class.getName());
+        Assert.assertNotNull(propsFinder);
+        return propsFinder;
     }
 
     public DuraConfigAdmin getConfigAdmin() throws Exception {
