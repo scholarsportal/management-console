@@ -99,6 +99,7 @@ public class ServiceUninstallerTester
         }
 
         atticStream.close();
+        zip.close();
     }
 
 }

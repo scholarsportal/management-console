@@ -1,7 +1,9 @@
 package org.duracloud.servicesutil.osgi;
 
 import junit.framework.Assert;
+import org.apache.commons.io.FileUtils;
 import org.duracloud.services.ComputeService;
+import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.ServiceLister;
@@ -45,7 +47,12 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
     private ComputeService helloService;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        BundleHome bundleHome = getInstaller().getBundleHome();
+        FileUtils.cleanDirectory(bundleHome.getAttic());
+        FileUtils.cleanDirectory(bundleHome.getWork());
+        FileUtils.cleanDirectory(bundleHome.getContainer());
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

@@ -140,6 +140,12 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
             }
         }
 
+        try {
+            zip.close();
+        } catch(IOException e) {
+            throwRuntimeException("Could not close zip file: " + zip.getName(),
+                                  e);
+        }
     }
 
     private ZipFile getZipFile(File atticFile) {

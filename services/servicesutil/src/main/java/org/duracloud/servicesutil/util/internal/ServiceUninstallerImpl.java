@@ -60,6 +60,13 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
             }
         }
 
+        try {
+            zip.close();
+        } catch(IOException e) {
+            throw new RuntimeException("Could not close zip file: " +
+                                       zip.getName(), e);
+        }
+
         delete(getBundleHome().getAttic(), zipName);
     }
 
