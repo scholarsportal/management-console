@@ -1,16 +1,15 @@
 package org.duracloud.services.replication;
 
-import java.io.InputStream;
-import java.util.Map;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.domain.Content;
-import org.duracloud.domain.Space;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Performs replication activities
@@ -58,8 +57,8 @@ public class Replicator {
         //TODO: -- Remove once logging works
 
         try {
-            Space space = fromStore.getSpace(spaceId);
-            toStore.createSpace(spaceId, space.getMetadata());
+            Map<String, String> spaceMeta = fromStore.getSpaceMetadata(spaceId);
+            toStore.createSpace(spaceId, spaceMeta);
         } catch (ContentStoreException cse) {
             String error = "Unable to replicate space " + spaceId +
                            " due to error: " + cse.getMessage();
@@ -82,8 +81,8 @@ public class Replicator {
         //TODO: -- Remove once logging works
 
         try {
-            Space toSpace = toStore.getSpace(spaceId);
-            System.out.println("toSpace: " + toSpace); //TODO: Remove
+            toStore.getSpaceMetadata(spaceId);
+            System.out.println("toSpace: " + spaceId); //TODO: Remove
         } catch(ContentStoreException cse) {
             System.out.println("Space " + spaceId + " does not exist at " +
                                toStore.getStorageProviderType()); //TODO: Remove

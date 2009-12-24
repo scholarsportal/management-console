@@ -16,7 +16,7 @@ public interface Scrollable<E> {
      * 
      * @return
      */
-    public int getMaxResultsPerPage();
+    public long getMaxResultsPerPage();
 
     public void setMaxResultsPerPage(int maxResults);
 

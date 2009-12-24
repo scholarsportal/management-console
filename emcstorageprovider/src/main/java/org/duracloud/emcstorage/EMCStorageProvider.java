@@ -10,6 +10,7 @@ import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.StorageProviderUtil;
+import org.duracloud.storage.domain.ContentIterator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -106,18 +107,37 @@ public class EMCStorageProvider implements StorageProvider {
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId) {
+    public Iterator<String> getSpaceContents(String spaceId,
+                                             String prefix) {
+        return new ContentIterator(this, spaceId, prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Note that EMC does not support chunked directory listings.
+     * The first listing call (where marker is null) will include
+     * the entire directory listing (which may be larger than
+     * maxResults), and any followup call (marker is not null)
+     * will be returned an empty list.
+     * TODO: Inform EMC of their need to implement chunked directory listings
+     */
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker) {
         log.debug("getSpaceContents(" + spaceId + ")");
 
         throwIfSpaceNotExist(spaceId);
 
         List<String> contentNames = new ArrayList<String>();
-        List<Identifier> spaceContents = getCompleteSpaceContents(spaceId);
-        for (Identifier objId : spaceContents) {
-            contentNames.add(getContentNameForContentObject(objId, spaceId));
+        if(marker == null) {
+            List<Identifier> spaceContents = getCompleteSpaceContents(spaceId);
+            for (Identifier objId : spaceContents) {
+                contentNames.add(getContentNameForContentObject(objId, spaceId));
+            }
         }
-
-        return contentNames.iterator();
+        return contentNames;
     }
 
     private List<Identifier> getCompleteSpaceContents(String spaceId) {

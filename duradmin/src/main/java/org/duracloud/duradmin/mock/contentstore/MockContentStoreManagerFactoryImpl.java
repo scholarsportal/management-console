@@ -1,13 +1,6 @@
 
 package org.duracloud.duradmin.mock.contentstore;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.codec.binary.Hex;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
@@ -15,6 +8,14 @@ import org.duracloud.client.ContentStoreManager;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class MockContentStoreManagerFactoryImpl
         implements ContentStoreManagerFactory {
@@ -205,16 +206,22 @@ public class MockContentStoreManagerFactoryImpl
             return getContentInternal(spaceId, contentId).getMetadata();
         }
 
-        public Space getSpace(String spaceId) throws ContentStoreException {
-            return spaceMap.get(spaceId);
+        public Iterator<String> getSpaceContents(String spaceId)
+            throws ContentStoreException {
+            return null;
+        }
+
+        public Iterator<String> getSpaceContents(String spaceId, String prefix)
+            throws ContentStoreException {
+            return null;
         }
 
         public Space getSpace(String spaceId,
                               String contentIdFilter,
-                              String marker,
-                              Integer maxResultSize)
+                              long maxResultSize,
+                              String marker)
                 throws ContentStoreException {
-            Space space = getSpace(spaceId);
+            Space space = spaceMap.get(spaceId);
             return space;
         }
 

@@ -8,7 +8,7 @@ import java.util.Queue;
 public abstract class ScrollableList<E>
         implements Scrollable<E> {
 
-    private int maxResultsPerPage = 10;
+    private long maxResultsPerPage = 10;
 
     private List<E> resultList;
 
@@ -23,7 +23,7 @@ public abstract class ScrollableList<E>
      */
     private Queue<E> markers = new LinkedList<E>();
 
-    public int getMaxResultsPerPage() {
+    public long getMaxResultsPerPage() {
         return this.maxResultsPerPage;
     }
 

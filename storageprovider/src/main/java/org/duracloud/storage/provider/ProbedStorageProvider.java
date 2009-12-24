@@ -1,16 +1,16 @@
 
 package org.duracloud.storage.provider;
 
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricException;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsTable;
 import org.duracloud.storage.error.StorageException;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class wraps a StorageProvider implementation, collecting timing metrics
@@ -125,10 +125,25 @@ public abstract class ProbedStorageProvider
         return result;
     }
 
-    public Iterator<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
             throws StorageException {
         startMetric("getSpaceContents");
-        Iterator<String> result = storageProvider.getSpaceContents(spaceId);
+        Iterator<String> result =
+            storageProvider.getSpaceContents(spaceId, prefix);
+        stopMetric("getSpaceContents");
+        return result;
+    }
+
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker)
+        throws StorageException {
+        startMetric("getSpaceContents");
+        List<String> result = storageProvider.getSpaceContentsChunked(spaceId,
+                                                                      prefix,
+                                                                      maxResults,
+                                                                      marker);
         stopMetric("getSpaceContents");
         return result;
     }

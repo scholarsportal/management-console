@@ -1,43 +1,38 @@
 package org.duracloud.rackspacestorage;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
-
 import com.mosso.client.cloudfiles.FilesCDNContainer;
 import com.mosso.client.cloudfiles.FilesClient;
-
-import org.apache.log4j.Logger;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.duracloud.common.model.Credential;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
-import org.duracloud.storage.provider.StorageProvider;
-import org.duracloud.storage.provider.StorageProvider.AccessType;
-
 import junit.framework.Assert;
-
-import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
-import static org.duracloud.storage.util.StorageProviderUtil.contains;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import org.apache.log4j.Logger;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.provider.StorageProvider.AccessType;
+import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
+import static org.duracloud.storage.util.StorageProviderUtil.contains;
+import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.List;
 
 /**
  * Tests the Rackspace Storage Provider. This test is run via the command line
@@ -138,7 +133,7 @@ public class RackspaceStorageProviderTest {
 
         log.debug("Test getSpaceContents() with invalid spaceId");
         try {
-            rackspaceProvider.getSpaceContents(SPACE_ID+"-invalid");
+            rackspaceProvider.getSpaceContents(SPACE_ID+"-invalid", null);
             fail("getSpaceContents() should throw an exception with an invalid spaceId");
         } catch(StorageException expected) {
             assertNotNull(expected);
@@ -167,15 +162,7 @@ public class RackspaceStorageProviderTest {
 
         // test addContent()
         log.debug("Test addContent()");
-        byte[] content = CONTENT_DATA.getBytes();
-        int contentSize = content.length;
-        ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
-        String checksum = rackspaceProvider.addContent(SPACE_ID,
-                                                       CONTENT_ID,
-                                                       CONTENT_MIME_VALUE,
-                                                       contentSize,
-                                                       contentStream);
-        compareChecksum(rackspaceProvider, SPACE_ID, CONTENT_ID, checksum);
+        addContent(SPACE_ID, CONTENT_ID);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
@@ -202,17 +189,48 @@ public class RackspaceStorageProviderTest {
         // after it is made available, even if the container has been
         // set to private access or the content has been deleted.
 
+        // add additional content for getContents tests
+        String testContent2 = "test-content-2";
+        addContent(SPACE_ID, testContent2);
+        String testContent3 = "test-content-3";
+        addContent(SPACE_ID, testContent3);
+
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
         Iterator<String> spaceContents =
-                rackspaceProvider.getSpaceContents(SPACE_ID);
+            rackspaceProvider.getSpaceContents(SPACE_ID, null);
         assertNotNull(spaceContents);
-        assertTrue(contains(spaceContents, CONTENT_ID));
+        assertEquals(3, count(spaceContents));
         // Ensure that space metadata is not included in contents list
-        spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID);
+        spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID, null);
         String containerName = rackspaceProvider.getContainerName(SPACE_ID);
         String spaceMetaSuffix = RackspaceStorageProvider.SPACE_METADATA_SUFFIX;
         assertFalse(contains(spaceContents, containerName + spaceMetaSuffix));
+
+        // test getSpaceContentsChunked() maxLimit
+        log.debug("Test getSpaceContentsChunked() maxLimit");
+        List<String> spaceContentList =
+            rackspaceProvider.getSpaceContentsChunked(SPACE_ID,
+                                                      null,
+                                                      2,
+                                                      null);
+        assertNotNull(spaceContentList);
+        assertEquals(2, spaceContentList.size());
+        String lastItem = spaceContentList.get(spaceContentList.size() - 1);
+        spaceContentList = rackspaceProvider.getSpaceContentsChunked(SPACE_ID,
+                                                                     null,
+                                                                     2,
+                                                                     lastItem);
+        assertNotNull(spaceContentList);
+        assertEquals(1, spaceContentList.size());
+
+        // test getSpaceContentsChunked() prefix
+        log.debug("Test getSpaceContentsChunked() prefix");
+        spaceContentList = rackspaceProvider.getSpaceContentsChunked(SPACE_ID,
+                                                                     "test",
+                                                                     10,
+                                                                     null);
+        assertEquals(2, spaceContentList.size());
 
         // test getContent()
         log.debug("Test getContent()");
@@ -248,7 +266,7 @@ public class RackspaceStorageProviderTest {
         // test deleteContent()
         log.debug("Test deleteContent()");
         rackspaceProvider.deleteContent(SPACE_ID, CONTENT_ID);
-        spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID);
+        spaceContents = rackspaceProvider.getSpaceContents(SPACE_ID, null);
         assertFalse(contains(spaceContents, CONTENT_ID));
 
         // test deleteSpace()
@@ -258,4 +276,15 @@ public class RackspaceStorageProviderTest {
         assertFalse(contains(spaces, SPACE_ID));
     }
 
+    private void addContent(String spaceId, String contentId) {
+        byte[] content = CONTENT_DATA.getBytes();
+        int contentSize = content.length;
+        ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
+        String checksum = rackspaceProvider.addContent(spaceId,
+                                                       contentId,
+                                                       CONTENT_MIME_VALUE,
+                                                       contentSize,
+                                                       contentStream);
+        compareChecksum(rackspaceProvider, spaceId, contentId, checksum);
+    }
 }

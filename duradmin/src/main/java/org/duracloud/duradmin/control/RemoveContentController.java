@@ -1,9 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
@@ -14,6 +11,9 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.Message;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class RemoveContentController
         extends BaseCommandController {
@@ -38,7 +38,7 @@ public class RemoveContentController
         store.deleteContent(spaceId, contentId);
         Space space = new Space();
         space.setSpaceId(spaceId);
-        SpaceUtil.populateSpace(space, store.getSpace(spaceId));
+        SpaceUtil.populateSpace(space, store.getSpace(spaceId, null, 0, null));
         Message message =
                 MessageUtils.createMessage("Successfully removed content item");
         return setView(request, new ModelAndView(), message);

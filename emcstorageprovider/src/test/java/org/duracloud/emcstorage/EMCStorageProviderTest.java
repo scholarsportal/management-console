@@ -145,7 +145,7 @@ public class EMCStorageProviderTest {
 
         Iterator<String> spaceContents;
         try {
-            emcProvider.getSpaceContents(spaceId0);
+            emcProvider.getSpaceContents(spaceId0, null);
             fail("Exception expected since space does not exist.");
         } catch (Exception e) {
             // do nothing
@@ -161,18 +161,53 @@ public class EMCStorageProviderTest {
         byte[] content1 = "<a>hello</a>".getBytes();
         addContent(spaceId0, contentId1, mimeXml, content1);
 
-        spaceContents = emcProvider.getSpaceContents(spaceId0);
+        spaceContents = emcProvider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertEquals(2, count(spaceContents));
 
-        spaceContents = emcProvider.getSpaceContents(spaceId0);
+        spaceContents = emcProvider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertTrue(contains(spaceContents, contentId0));
 
-        spaceContents = emcProvider.getSpaceContents(spaceId0);
+        spaceContents = emcProvider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertTrue(contains(spaceContents, contentId1));
+    }
 
+    @Test
+    public void testGetSpaceContentsChunked() throws StorageException {
+        String spaceId0 = getNewSpaceId();
+
+        List<String> spaceContents;
+        try {
+            emcProvider.getSpaceContentsChunked(spaceId0, null, 10, null);
+            fail("Exception expected since space does not exist.");
+        } catch (Exception e) {
+            // do nothing
+        }
+
+        emcProvider.createSpace(spaceId0);
+
+        // First content to add
+        byte[] content0 = "hello world.".getBytes();
+        addContent(spaceId0, contentId0, mimeText, content0);
+
+        // Second content to add
+        byte[] content1 = "<a>hello</a>".getBytes();
+        addContent(spaceId0, contentId1, mimeXml, content1);
+
+        spaceContents =
+            emcProvider.getSpaceContentsChunked(spaceId0, null, 10, null);
+        assertNotNull(spaceContents);
+        assertEquals(2, spaceContents.size());
+
+        spaceContents =
+            emcProvider.getSpaceContentsChunked(spaceId0, null, 10, null);
+        assertNotNull(spaceContents);
+        assertTrue(spaceContents.contains(contentId0));
+        assertTrue(spaceContents.contains(contentId1));
+
+        // TODO: Implement further tests once EMC supports list chunking
     }
 
     private void addContent(String spaceKey,
@@ -536,7 +571,8 @@ public class EMCStorageProviderTest {
         }
 
         emcProvider.createSpace(spaceId);
-        Iterator<String> spaceContents = emcProvider.getSpaceContents(spaceId);
+        Iterator<String> spaceContents =
+            emcProvider.getSpaceContents(spaceId, null);
         verifyContentListing(spaceContents);
 
         try {
@@ -549,22 +585,22 @@ public class EMCStorageProviderTest {
         byte[] data = "sample-text".getBytes();
         addContent(spaceId, contentId, mimeText, data);
 
-        spaceContents = emcProvider.getSpaceContents(spaceId);
+        spaceContents = emcProvider.getSpaceContents(spaceId, null);
         verifyContentListing(spaceContents, contentId);
 
         // Add more content.
         addContent(spaceId, contentId0, mimeText, data);
 
-        spaceContents = emcProvider.getSpaceContents(spaceId);
+        spaceContents = emcProvider.getSpaceContents(spaceId, null);
         verifyContentListing(spaceContents, contentId, contentId0);
 
         // Delete content
         emcProvider.deleteContent(spaceId, contentId0);
-        spaceContents = emcProvider.getSpaceContents(spaceId);
+        spaceContents = emcProvider.getSpaceContents(spaceId, null);
         verifyContentListing(spaceContents, contentId);
 
         emcProvider.deleteContent(spaceId, contentId);
-        spaceContents = emcProvider.getSpaceContents(spaceId);
+        spaceContents = emcProvider.getSpaceContents(spaceId, null);
         verifyContentListing(spaceContents);
 
     }

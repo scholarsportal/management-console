@@ -11,6 +11,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,9 +83,16 @@ public class SpaceResource {
      *
      * @param spaceID
      * @param storeID
+     * @param prefix
+     * @param maxResults
+     * @param marker
      * @return XML listing of space contents
      */
-    public static String getSpaceContents(String spaceID, String storeID)
+    public static String getSpaceContents(String spaceID,
+                                          String storeID,
+                                          String prefix,
+                                          long maxResults,
+                                          String marker)
     throws RestResourceException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
@@ -98,10 +106,12 @@ public class SpaceResource {
                 // TODO: Check user permissions
             }
 
-            Iterator<String> contents = storage.getSpaceContents(spaceID);
+            List<String> contents = storage.getSpaceContentsChunked(spaceID,
+                                                                    prefix,
+                                                                    maxResults,
+                                                                    marker);
             if(contents != null) {
-                while(contents.hasNext()) {
-                    String contentItem = contents.next();
+                for(String contentItem : contents) {
                     Element contentElem = new Element("item");
                     contentElem.setText(contentItem);
                     spaceElem.addContent(contentElem);

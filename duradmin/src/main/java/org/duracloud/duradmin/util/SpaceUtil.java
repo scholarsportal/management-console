@@ -19,18 +19,6 @@ import org.duracloud.duradmin.domain.SpaceMetadata;
  */
 public class SpaceUtil {
 
-    public static List<Space> getSpacesList(List<org.duracloud.domain.Space> cloudSpaces)
-            throws Exception {
-        List<Space> spaces = new ArrayList<Space>();
-        for (org.duracloud.domain.Space cloudSpace : cloudSpaces) {
-            Space space = new Space();
-            space.setSpaceId(cloudSpace.getId());
-            populateSpace(space, cloudSpace);
-            spaces.add(space);
-        }
-        return spaces;
-    }
-
     public static Space populateSpace(Space space,
                                       org.duracloud.domain.Space cloudSpace) {
         space.setSpaceId(cloudSpace.getId());

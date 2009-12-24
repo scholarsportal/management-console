@@ -1,9 +1,6 @@
 package org.duracloud.durastore.rest;
 
-import java.net.URI;
-
-import java.util.Iterator;
-import java.util.Map;
+import org.duracloud.common.web.RestResourceException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,8 +14,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.duracloud.common.web.RestResourceException;
+import java.net.URI;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides interaction with spaces via REST
@@ -57,9 +55,19 @@ public class SpaceRest extends BaseRest {
     public Response getSpace(@PathParam("spaceID")
                              String spaceID,
                              @QueryParam("storeID")
-                             String storeID){
+                             String storeID,
+                             @QueryParam("prefix")
+                             String prefix,
+                             @QueryParam("maxResults")
+                             long maxResults,
+                             @QueryParam("marker")
+                             String marker) {
         try {
-            String xml = SpaceResource.getSpaceContents(spaceID, storeID);
+            String xml = SpaceResource.getSpaceContents(spaceID,
+                                                        storeID,
+                                                        prefix,
+                                                        maxResults,
+                                                        marker);
             return addSpaceMetadataToResponse(Response.ok(xml, TEXT_XML),
                                               spaceID,
                                               storeID);

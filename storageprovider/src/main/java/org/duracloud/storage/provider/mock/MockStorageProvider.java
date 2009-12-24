@@ -1,14 +1,13 @@
 package org.duracloud.storage.provider.mock;
 
-import java.io.InputStream;
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.provider.StorageProvider;
 
 public class MockStorageProvider
         implements StorageProvider {
@@ -27,7 +26,7 @@ public class MockStorageProvider
 
     private AccessType access;
 
-    private Iterator<String> spaceContents;
+    private List<String> spaceContents;
 
     private Map<String, String> spaceMetadata;
 
@@ -43,9 +42,8 @@ public class MockStorageProvider
         this.contentMimeType = contentMimeType;
         this.contentSize = contentSize;
         this.content = content;
-        List<String> contentsList = new ArrayList<String>();
-        contentsList.add(content.toString());
-        spaceContents = contentsList.iterator();
+        this.spaceContents = new ArrayList<String>();
+        spaceContents.add(content.toString());
         return new String();
     }
 
@@ -80,8 +78,16 @@ public class MockStorageProvider
         return access;
     }
 
-    public Iterator<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
             throws StorageException {
+        return spaceContents.iterator();
+    }
+
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker)
+        throws StorageException {
         return spaceContents;
     }
 
@@ -183,10 +189,5 @@ public class MockStorageProvider
     public void setSpaces(Iterator<String> spaces) {
         this.spaces = spaces;
     }
-
-    public Iterator<String> getSpaceContents() {
-        return spaceContents;
-    }
-
 
 }

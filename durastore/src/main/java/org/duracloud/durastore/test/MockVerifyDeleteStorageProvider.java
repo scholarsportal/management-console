@@ -1,12 +1,12 @@
 package org.duracloud.durastore.test;
 
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Storage Provider implementation used for testing verify deletion AOP
@@ -24,7 +24,15 @@ public class MockVerifyDeleteStorageProvider implements StorageProvider {
         return null;
     }
 
-    public Iterator<String> getSpaceContents(String spaceId) {
+    public Iterator<String> getSpaceContents(String spaceId, String prefix) {
+        // Default method body
+        return null;
+    }
+
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker) {
         // Default method body
         return null;
     }

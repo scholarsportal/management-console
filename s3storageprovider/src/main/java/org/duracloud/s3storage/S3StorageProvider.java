@@ -2,6 +2,7 @@ package org.duracloud.s3storage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
@@ -97,34 +98,72 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId) {
-        log.debug("getSpaceContents(" + spaceId + ")");
+    public Iterator<String> getSpaceContents(String spaceId,
+                                             String prefix) {
+        return new ContentIterator(this, spaceId, prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker) {
+        log.debug("getSpaceContents(" + spaceId + ", " + prefix + ", " +
+                                    maxResults + ", " + marker + ")");
 
         throwIfSpaceNotExist(spaceId);
 
         String bucketName = getBucketName(spaceId);
         String bucketMetadata = bucketName + SPACE_METADATA_SUFFIX;
-        List<String> spaceContents = getCompleteSpaceContents(spaceId);
-        spaceContents.remove(bucketMetadata);
 
-        return spaceContents.iterator();
+        if(maxResults <= 0) {
+            maxResults = StorageProvider.DEFAULT_MAX_RESULTS;
+        }
+
+        // Queries for maxResults +1 to account for the possibility of needing
+        // to remove the space metadata but still maintain a full result
+        // set (size == maxResults).
+        List<String> spaceContents =
+            getCompleteSpaceContents(spaceId, prefix, maxResults + 1, marker);
+
+        if(spaceContents.contains(bucketMetadata)) {
+            // Remove space metadata
+            spaceContents.remove(bucketMetadata);
+        } else if(spaceContents.size() > maxResults) {
+            // Remove extra content item
+            spaceContents.remove(spaceContents.size()-1);
+        }
+
+        return spaceContents;
     }
 
-    private List<String> getCompleteSpaceContents(String spaceId) {
+    private List<String> getCompleteSpaceContents(String spaceId,
+                                                  String prefix,
+                                                  long maxResults,
+                                                  String marker) {
         List<String> contentItems = new ArrayList<String>();
 
-        S3Object[] objects = listObjects(spaceId);
+        S3Object[] objects = listObjects(spaceId, prefix, maxResults, marker);
         for (S3Object object : objects) {
             contentItems.add(object.getKey());
         }
         return contentItems;
     }
 
-    private S3Object[] listObjects(String spaceId) {
+    private S3Object[] listObjects(String spaceId,
+                                   String prefix,
+                                   long maxResults,
+                                   String marker) {
         String bucketName = getBucketName(spaceId);
-        S3Bucket bucket = new S3Bucket(bucketName);
+
         try {
-            return s3Service.listObjects(bucket);
+            return s3Service.listObjectsChunked(bucketName,
+                                                prefix,
+                                                null,
+                                                maxResults,
+                                                marker).getObjects();
         } catch (S3ServiceException e) {
             String err = "Could not get contents of S3 bucket " + bucketName
                     + " due to error: " + e.getMessage();
@@ -152,6 +191,7 @@ public class S3StorageProvider
         try {
             exists = s3Service.isBucketAccessible(bucketName);
         } catch (S3ServiceException e) {
+            exists = false;
         }
         return exists;
     }
@@ -175,8 +215,6 @@ public class S3StorageProvider
     private S3Bucket createBucket(String spaceId) {
         String bucketName = getBucketName(spaceId);
         try {
-            // TODO: Convert to using getOrCreateBucket() with JetS3t 0.7.x
-            // or not :)
             return s3Service.createBucket(bucketName);
         } catch (S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName
@@ -197,10 +235,14 @@ public class S3StorageProvider
         log.debug("deleteSpace(" + spaceId + ")");
         throwIfSpaceNotExist(spaceId);
 
-        List<String> contents = getCompleteSpaceContents(spaceId);
-        for (String contentItem : contents) {
-            deleteContent(spaceId, contentItem);
+        Iterator<String> contents = getSpaceContents(spaceId, null);
+        while(contents.hasNext()) {
+            deleteContent(spaceId, contents.next());
         }
+
+        String bucketMetadata = getBucketName(spaceId) + SPACE_METADATA_SUFFIX;
+        deleteContent(spaceId, bucketMetadata);
+
         deleteBucket(spaceId);
     }
 
@@ -233,7 +275,7 @@ public class S3StorageProvider
             spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         }
 
-        long count = StorageProviderUtil.count(getSpaceContents(spaceId));
+        long count = StorageProviderUtil.count(getSpaceContents(spaceId, null));
         spaceMetadata.put(METADATA_SPACE_COUNT, String.valueOf(count));
 
         AccessType access = getSpaceAccess(spaceId);
@@ -343,13 +385,12 @@ public class S3StorageProvider
         bucket.setAcl(bucketAcl);
         putBucketAcl(bucket);
 
-        // Set ACL for all objects contained in the bucket
-        S3Object[] objects = listObjects(spaceId);
-        for (S3Object object : objects) {
-            object.setAcl(bucketAcl);
-            putObjectAcl(bucket, object);
+        // Set ACL for all objects contained in the bucket (except space metadata)
+        Iterator<String> contentIds = getSpaceContents(spaceId, null);
+        while(contentIds.hasNext()) {
+            String contentId = contentIds.next();
+            putObjectAcl(bucketName, contentId, bucketAcl);
         }
-
     }
 
     private void putBucketAcl(S3Bucket bucket) {
@@ -362,13 +403,14 @@ public class S3StorageProvider
         }
     }
 
-    private void putObjectAcl(S3Bucket bucket,
-                              S3Object object) {
+    private void putObjectAcl(String bucketName,
+                              String contentName,
+                              AccessControlList acl) {
         try {
-            s3Service.putObjectAcl(bucket, object);
+            s3Service.putObjectAcl(bucketName, contentName, acl);
         } catch (S3ServiceException e) {
-            String err = "Could not set S3 object " + bucket.getName() +
-                    ":" + object.getKey()
+            String err = "Could not set S3 object " + bucketName +
+                    ":" + contentName
                     + " ACL due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }

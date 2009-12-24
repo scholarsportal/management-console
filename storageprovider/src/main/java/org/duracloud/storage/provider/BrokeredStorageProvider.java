@@ -1,11 +1,11 @@
 package org.duracloud.storage.provider;
 
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import org.duracloud.storage.error.StorageException;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class BrokeredStorageProvider
         implements StorageProvider {
@@ -72,9 +72,22 @@ public class BrokeredStorageProvider
         return dispatchProvider.getSpaceAccess(targetProvider, storeId, spaceId);
     }
 
-    public Iterator<String> getSpaceContents(String spaceId)
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
             throws StorageException {
-        return dispatchProvider.getSpaceContents(targetProvider, storeId, spaceId);
+        return dispatchProvider.getSpaceContents(targetProvider, storeId, spaceId, prefix);
+    }
+
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker)
+        throws StorageException {
+        return dispatchProvider.getSpaceContentsChunked(targetProvider,
+                                                        storeId,
+                                                        spaceId,
+                                                        prefix,
+                                                        maxResults,
+                                                        marker);
     }
 
     public Map<String, String> getSpaceMetadata(String spaceId) throws StorageException {
