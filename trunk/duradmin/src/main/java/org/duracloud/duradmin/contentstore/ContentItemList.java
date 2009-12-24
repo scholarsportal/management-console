@@ -1,17 +1,14 @@
 
 package org.duracloud.duradmin.contentstore;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.DataRetrievalException;
 import org.duracloud.duradmin.util.ScrollableList;
 import org.duracloud.duradmin.util.SpaceUtil;
+
+import java.util.List;
 
 public class ContentItemList
         extends ScrollableList<String> {
@@ -54,8 +51,8 @@ public class ContentItemList
             org.duracloud.domain.Space cloudSpace =
                     contentStore.getSpace(spaceId,
                                           contentIdFilterString,
-                                          currentMarker,
-                                          getMaxResultsPerPage());
+                                          getMaxResultsPerPage(),
+                                          currentMarker);
 
             SpaceUtil.populateSpace(space, cloudSpace);
 

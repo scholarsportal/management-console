@@ -40,7 +40,9 @@ public class TestRetryAdvice extends TestCase {
 
             assertEquals(200, response.getStatusCode());
             // The item number signifies the number of retries before success
-            assertTrue(responseText.contains("<item>"+i+"</item>"));
+            String errText = "Response Text (" + responseText +
+                             ") did not contain <item>"+i+"</item>";
+            assertTrue(errText, responseText.contains("<item>"+i+"</item>"));
         }
 
         // Tests the retries limit

@@ -36,9 +36,6 @@ public class StorageProvidersTest {
     private final static StorageProvidersTestInterface tester =
             new StorageProvidersTestProxyPipe();
 
-    private final static StorageProvidersTestCore testCore =
-            new StorageProvidersTestCore();
-
     private final static List<StorageProvider> storageProviders =
             new ArrayList<StorageProvider>();
 

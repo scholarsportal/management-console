@@ -11,6 +11,7 @@ import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
+import org.duracloud.storage.domain.ContentIterator;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -88,22 +89,57 @@ public class RackspaceStorageProvider
     /**
      * {@inheritDoc}
      */
-    public Iterator<String> getSpaceContents(String spaceId) {
-        log.debug("getSpaceContents(" + spaceId + ")");
+    public Iterator<String> getSpaceContents(String spaceId,
+                                             String prefix) {
+        return new ContentIterator(this, spaceId, prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker) {
+        log.debug("getSpaceContents(" + spaceId + ", " + prefix + ", " +
+                                    maxResults + ", " + marker + ")");
 
         throwIfSpaceNotExist(spaceId);
 
-        String containerName = getContainerName(spaceId);
-        String spaceMetadata = containerName + SPACE_METADATA_SUFFIX;
-        List<String> spaceContents = getCompleteSpaceContents(spaceId);
-        spaceContents.remove(spaceMetadata);
-        return spaceContents.iterator();
+        String bucketName = getContainerName(spaceId);
+        String bucketMetadata = bucketName + SPACE_METADATA_SUFFIX;
+
+        if(maxResults <= 0) {
+            maxResults = StorageProvider.DEFAULT_MAX_RESULTS;
+        }
+
+        // Queries for maxResults +1 to account for the possibility of needing
+        // to remove the space metadata but still maintain a full result
+        // set (size == maxResults).
+        List<String> spaceContents =
+            getCompleteSpaceContents(spaceId, prefix, maxResults + 1, marker);
+
+        if(spaceContents.contains(bucketMetadata)) {
+            // Remove space metadata
+            spaceContents.remove(bucketMetadata);
+        } else if(spaceContents.size() > maxResults) {
+            // Remove extra content item
+            spaceContents.remove(spaceContents.size()-1);
+        }
+
+        return spaceContents;
     }
 
-    private List<String> getCompleteSpaceContents(String spaceId) {
+    private List<String> getCompleteSpaceContents(String spaceId,
+                                                  String prefix,
+                                                  long maxResults,
+                                                  String marker) {
         String containerName = getContainerName(spaceId);
 
-        List<FilesObject> objects = listObjects(containerName);
+        List<FilesObject> objects = listObjects(containerName,
+                                                prefix,
+                                                maxResults,
+                                                marker);
         List<String> contentItems = new ArrayList<String>();
         for (FilesObject object : objects) {
             contentItems.add(object.getName());
@@ -111,12 +147,26 @@ public class RackspaceStorageProvider
         return contentItems;
     }
 
-    private List<FilesObject> listObjects(String containerName) {
+    private List<FilesObject> listObjects(String containerName,
+                                          String prefix,
+                                          long maxResults,
+                                          String marker) {
         StringBuilder err = new StringBuilder("Could not get contents of " +
                 "Rackspace container " + containerName + " due to error: ");
         try {
-            return filesClient.listObjects(containerName);
-
+            int limit = new Long(maxResults).intValue();
+            if (prefix != null) {
+                return filesClient.listObjectsStaringWith(containerName,
+                                                          prefix,
+                                                          null,
+                                                          limit,
+                                                          marker);
+            } else {
+                return filesClient.listObjects(containerName,
+                                               null,
+                                               limit,
+                                               marker);
+            }
         } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
@@ -197,10 +247,15 @@ public class RackspaceStorageProvider
         log.debug("deleteSpace(" + spaceId + ")");
         throwIfSpaceNotExist(spaceId);
 
-        List<String> contents = getCompleteSpaceContents(spaceId);
-        for (String contentItem : contents) {
-            deleteContent(spaceId, contentItem);
+        Iterator<String> contents = getSpaceContents(spaceId, null);
+        while(contents.hasNext()) {
+            deleteContent(spaceId, contents.next());
         }
+
+        String bucketMetadata =
+            getContainerName(spaceId) + SPACE_METADATA_SUFFIX;
+        deleteContent(spaceId, bucketMetadata);
+
         deleteContainer(spaceId);
     }
 

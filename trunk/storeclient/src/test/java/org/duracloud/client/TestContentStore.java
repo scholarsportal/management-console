@@ -2,12 +2,10 @@ package org.duracloud.client;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
-import org.duracloud.domain.Space;
 import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -126,14 +124,14 @@ public class TestContentStore
     }
 
     @Test
-    public void testSpaces() throws Exception {
+    public void testSpaceMetadata() throws Exception {
         String metaName = "test-metadata";
         String metaValue = "test-value";
 
         // Create space
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         spaceMetadata.put(ContentStore.SPACE_ACCESS,
-                          AccessType.OPEN.name());
+                          ContentStore.AccessType.OPEN.name());
         spaceMetadata.put(metaName, metaValue);
         store.createSpace(spaceId, spaceMetadata);
 
@@ -143,48 +141,45 @@ public class TestContentStore
         assertTrue(spaces.size() >= 1);
         assertTrue(spaces.contains(spaceId));
 
-        Space space = store.getSpace(spaceId);
-        assertNotNull(space);
-        assertNotNull(space.getId());
-        assertEquals(spaceId, space.getId());
-        assertNotNull(space.getContentIds());
+        Map<String, String> responseMetadata = store.getSpaceMetadata(spaceId);
+        assertNotNull(responseMetadata);
 
         // Check space metadata
-        Map<String, String> responseMetadata = space.getMetadata();
         assertNotNull(responseMetadata);
-        assertEquals(AccessType.OPEN.name(),
+        assertEquals(ContentStore.AccessType.OPEN.name(),
                      responseMetadata.get(ContentStore.SPACE_ACCESS));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
-        assertEquals(AccessType.OPEN, store.getSpaceAccess(spaceId));
+        assertEquals(ContentStore.AccessType.OPEN, store.getSpaceAccess(spaceId));
 
         // Set space metadata
         metaValue = "Testing Metadata Value";
         spaceMetadata = new HashMap<String, String>();
         spaceMetadata.put(ContentStore.SPACE_ACCESS,
-                          AccessType.CLOSED.name());
+                          ContentStore.AccessType.CLOSED.name());
         spaceMetadata.put(metaName, metaValue);
         store.setSpaceMetadata(spaceId, spaceMetadata);
 
         // Check space metadata
         responseMetadata = store.getSpaceMetadata(spaceId);
         assertNotNull(responseMetadata);
-        assertEquals(AccessType.CLOSED.name(),
+        assertEquals(ContentStore.AccessType.CLOSED.name(),
                      responseMetadata.get(ContentStore.SPACE_ACCESS));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
         assertEquals(metaValue, responseMetadata.get(metaName));
-        assertEquals(AccessType.CLOSED, store.getSpaceAccess(spaceId));
+        assertEquals(ContentStore.AccessType.CLOSED,
+                     store.getSpaceAccess(spaceId));
 
         // Set space access
-        store.setSpaceAccess(spaceId, AccessType.OPEN);
-        assertEquals(AccessType.OPEN, store.getSpaceAccess(spaceId));
+        store.setSpaceAccess(spaceId, ContentStore.AccessType.OPEN);
+        assertEquals(ContentStore.AccessType.OPEN, store.getSpaceAccess(spaceId));
 
         // Delete space
         store.deleteSpace(spaceId);
         try {
-            store.getSpace(spaceId);
+            store.getSpaceMetadata(spaceId);
             fail("Exception should be thrown attempting to retrieve deleted space");
         } catch(ContentStoreException cse) {
             assertNotNull(cse.getMessage());
@@ -194,7 +189,7 @@ public class TestContentStore
     @Test
     public void testInvalidSpace() throws Exception {
         String invalidSpaceId = "invalid-space-id";
-        Map emptyMap = new HashMap<String, String>();
+        Map<String, String> emptyMap = new HashMap<String, String>();
 
         // Ensure invalid space is not in spaces listing
         List<String> spaces = store.getSpaces();
@@ -209,7 +204,7 @@ public class TestContentStore
         }
 
         try {
-            store.getSpace(invalidSpaceId);
+            store.getSpaceMetadata(invalidSpaceId);
             fail("Exception expected on getSpace(invalidSpaceId)");
         } catch(ContentStoreException expected) {
         }
@@ -221,7 +216,7 @@ public class TestContentStore
         }
 
         try {
-            store.setSpaceAccess(invalidSpaceId, AccessType.OPEN);
+            store.setSpaceAccess(invalidSpaceId, ContentStore.AccessType.OPEN);
             fail("Exception expected on setSpaceAccess(invalidSpaceId)");
         } catch(ContentStoreException expected) {
         }
@@ -276,6 +271,54 @@ public class TestContentStore
             fail("Exception expected on setContentMetadata(invalidSpaceId, ...)");
         } catch(ContentStoreException expected) {
         }
+    }
+
+    @Test
+    public void testSpaceContents() throws Exception {
+        String mime = "text/plain";
+
+        // Add content
+        store.createSpace(spaceId, null);
+        String c1 = "test-content-1";
+        InputStream stream = IOUtil.writeStringToStream(c1);
+        store.addContent(spaceId, c1, stream, c1.length(), mime, null);
+        String c2 = "test-content-2";
+        stream = IOUtil.writeStringToStream(c2);
+        store.addContent(spaceId, c2, stream, c2.length(), mime, null);
+        String c3 = "content-3";
+        stream = IOUtil.writeStringToStream(c3);
+        store.addContent(spaceId, c3, stream, c3.length(), mime, null);
+
+        // Get all content
+        Iterator<String> contentIds = store.getSpaceContents(spaceId);
+        int count = 0;
+        while(contentIds.hasNext()) {
+            String contentId = contentIds.next();
+            assertTrue(contentId.equals(c1) ||
+                       contentId.equals(c2) ||
+                       contentId.equals(c3));
+            count++;
+        }
+        assertEquals(3, count);
+
+        // Get content with prefix
+        contentIds = store.getSpaceContents(spaceId, "test");
+        count = 0;
+        while(contentIds.hasNext()) {
+            String contentId = contentIds.next();
+            assertTrue(contentId.equals(c1) ||
+                       contentId.equals(c2));
+            count++;
+        }
+        assertEquals(2, count);
+
+        // Chunk content list
+        List<String> idList =
+            store.getSpace(spaceId, null, 2, null).getContentIds();
+        assertEquals(2, idList.size());
+        String lastItem = idList.get(idList.size()-1);
+        idList = store.getSpace(spaceId, null, 2, lastItem).getContentIds();
+        assertEquals(1, idList.size());
     }
 
     @Test
@@ -351,12 +394,12 @@ public class TestContentStore
     @Test
     public void testInvalidContent() throws Exception {
         String invalidContentId = "invalid-content-id";
-        Map emptyMap = new HashMap<String, String>();
+        Map<String, String> emptyMap = new HashMap<String, String>();
 
         // Create space
         store.createSpace(spaceId, null);
-        Space space = store.getSpace(spaceId);
-        assertNotNull(space);
+        Map<String, String> spaceMetadata = store.getSpaceMetadata(spaceId);
+        assertNotNull(spaceMetadata);
 
         try {
             store.deleteContent(spaceId, invalidContentId);

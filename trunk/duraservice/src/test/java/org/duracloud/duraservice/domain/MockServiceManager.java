@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 
 /**
@@ -209,21 +210,29 @@ public class MockServiceManager extends ServiceManager {
 
     private class MockContentStore implements ContentStore {
 
-        public Space getSpace(String spaceId) throws ContentStoreException {
+        public Space getSpace(String spaceId,
+                              String prefix,
+                              long maxResults,
+                              String marker)
+            throws ContentStoreException {
             Space mockSpace = new Space();
             mockSpace.addContentId("service1.zip");
             mockSpace.addContentId("service2.zip");
             return mockSpace;
         }
 
-        public Space getSpace(String spaceId,
-                              String prefix,
-                              String marker,
-                              Integer maxResults) throws ContentStoreException {
+        public Iterator<String> getSpaceContents(String spaceId)
+            throws ContentStoreException {
             // Auto-generated method stub
             return null;
         }
-        
+
+        public Iterator<String> getSpaceContents(String spaceId, String prefix)
+            throws ContentStoreException {
+            // Auto-generated method stub
+            return null;
+        }       
+
         public Content getContent(String spaceId, String contentId) {
             Content mockContent = new Content();
             mockContent.setStream(new ByteArrayInputStream("servicePackage".getBytes()));

@@ -1,18 +1,18 @@
 
 package org.duracloud.duradmin.webflow.space;
 
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStore.AccessType;
+import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+
+import java.io.Serializable;
 
 public class AddSpaceAction
         implements Serializable {
@@ -46,7 +46,10 @@ public class AddSpaceAction
             contentStore.createSpace(spaceId, null);
             contentStore.setSpaceAccess(spaceId, AccessType.valueOf(space
                     .getAccess()));
-            SpaceUtil.populateSpace(space, contentStore.getSpace(spaceId));
+            SpaceUtil.populateSpace(space, contentStore.getSpace(spaceId,
+                                                                 null,
+                                                                 0,
+                                                                 null));
             return true;
         } catch (ContentStoreException e) {
             log.error(e);

@@ -16,6 +16,7 @@ import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
+import static org.duracloud.storage.util.StorageProviderUtil.count;
 import org.jets3t.service.model.S3Object;
 import org.junit.After;
 import org.junit.Before;
@@ -201,15 +202,40 @@ public class S3StorageProviderTest {
         spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
         assertEquals(403, spaceResponse.getStatusCode());
 
+        // add additional content for getContents tests
+        String testContent2 = "test-content-2";
+        addContent(spaceId, testContent2);
+        String testContent3 = "test-content-3";
+        addContent(spaceId, testContent3);
+
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
-        Iterator<String> spaceContents = s3Provider.getSpaceContents(spaceId);
+        Iterator<String> spaceContents =
+            s3Provider.getSpaceContents(spaceId, null);
         assertNotNull(spaceContents);
-        assertTrue(contains(spaceContents, contentId));
+        assertEquals(3, count(spaceContents));
         // Ensure that space metadata is not included in contents list
-        spaceContents = s3Provider.getSpaceContents(spaceId);
+        spaceContents = s3Provider.getSpaceContents(spaceId, null);
         String spaceMetaSuffix = S3StorageProvider.SPACE_METADATA_SUFFIX;
         assertFalse(contains(spaceContents, bucketName + spaceMetaSuffix));
+
+        // test getSpaceContentsChunked() maxLimit
+        log.debug("Test getSpaceContentsChunked() maxLimit");
+        List<String> spaceContentList =
+            s3Provider.getSpaceContentsChunked(spaceId, null, 2, null);
+        assertNotNull(spaceContentList);
+        assertEquals(2, spaceContentList.size());
+        String lastItem = spaceContentList.get(spaceContentList.size()-1);
+        spaceContentList =
+            s3Provider.getSpaceContentsChunked(spaceId, null, 2, lastItem);
+        assertNotNull(spaceContentList);
+        assertEquals(1, spaceContentList.size());
+
+        // test getSpaceContentsChunked() prefix
+        log.debug("Test getSpaceContentsChunked() prefix");
+        spaceContentList =
+            s3Provider.getSpaceContentsChunked(spaceId, "test", 10, null);
+        assertEquals(2, spaceContentList.size());
 
         // test getContent()
         log.debug("Test getContent()");
@@ -249,7 +275,7 @@ public class S3StorageProviderTest {
         // test deleteContent()
         log.debug("Test deleteContent()");
         s3Provider.deleteContent(spaceId, contentId);
-        spaceContents = s3Provider.getSpaceContents(spaceId);
+        spaceContents = s3Provider.getSpaceContents(spaceId, null);
         assertFalse(contains(spaceContents, contentId));
 
         // test deleteSpace()

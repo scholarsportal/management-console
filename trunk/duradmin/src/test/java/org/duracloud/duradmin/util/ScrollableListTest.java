@@ -1,14 +1,15 @@
 
 package org.duracloud.duradmin.util;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.After;
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class ScrollableListTest {
 
@@ -84,7 +85,7 @@ public class ScrollableListTest {
                 list.add("list-value-" + i);
             }
 
-            int maxResults = getMaxResultsPerPage();
+            int maxResults = new Long(getMaxResultsPerPage()).intValue();
             if (currentMarker != null) {
                 int index = list.indexOf(currentMarker);
                 //if last element in list

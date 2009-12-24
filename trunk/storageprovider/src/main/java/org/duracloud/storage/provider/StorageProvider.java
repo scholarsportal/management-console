@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 
 /**
  * A Storage Provider provides services which allow content to be
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public interface StorageProvider {
 
-    public enum AccessType {OPEN, CLOSED};
+    public enum AccessType {OPEN, CLOSED}
 
     /* Names for space metadata properties */
     public static final String METADATA_SPACE_CREATED = "space-created";
@@ -43,6 +44,8 @@ public interface StorageProvider {
 
     public static final int HTTP_NOT_FOUND = 404;
 
+    public static final long DEFAULT_MAX_RESULTS = 1000;
+
     /**
      * Provides a listing of all spaces owned by a customer.
      *
@@ -51,12 +54,36 @@ public interface StorageProvider {
     public Iterator<String> getSpaces();
 
     /**
-     * Provides a listing of all of the content files within a space.
+     * Provides access to the content files within a space. Chunking of the
+     * list is handled internally. Prefix can be set to return only content
+     * IDs starting with the prefix value.
      *
-     * @return Iterator listing contentIds
+     * @param spaceId
+     * @param prefix - The prefix of the content id (null for no constraints)
+     * @return Iterator of contentIds
      * @throws StorageException if space with ID spaceId does not exist
      */
-    public Iterator<String> getSpaceContents(String spaceId);
+    public Iterator<String> getSpaceContents(String spaceId,
+                                             String prefix);
+
+    /**
+     * Provides a listing of the content files within a space. The number of
+     * items returned is limited to maxResults (default is 1000). Retrieve
+     * further results by including the last content ID in the previous list
+     * as the marker. Set prefix to return only content IDs starting with the
+     * prefix value.
+     *
+     * @param spaceId
+     * @param prefix - Only retrieve content IDs with this prefix (null for all content ids)
+     * @param maxResults - The maximum number of content IDs to return in the list (0 indicates default (1000))
+     * @param marker - The content ID marking the last item in the previous set (null indicates the first set of ids)
+     * @return List of contentIds
+     * @throws StorageException if space with ID spaceId does not exist
+     */
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker);
 
     /**
      * Creates a new space.

@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public class ContentStoreImpl implements ContentStore{
 
-
     private String storeId = null;
 
     private StorageProviderType type = null;
@@ -71,9 +70,7 @@ public class ContentStoreImpl implements ContentStore{
 
     private String buildURL(String relativeURL) {
         String url = baseURL + relativeURL;
-        if (storeId != null && !storeId.equals("")) {
-            url += ("?storeID=" + storeId);
-        }
+        addQueryParameter(url, "storeID", storeId);
         return url;
     }
 
@@ -84,7 +81,34 @@ public class ContentStoreImpl implements ContentStore{
     private String buildContentURL(String spaceId, String contentId) {
         return buildURL("/" + spaceId + "/" + contentId);
     }
-    
+
+    private String buildSpaceURL(String spaceId,
+                                 String prefix,
+                                 long maxResults,
+                                 String marker) {
+        String url = buildURL("/" + spaceId);
+        url = addQueryParameter(url, "prefix", prefix);
+        String max = null;
+        if (maxResults > 0) {
+            max = String.valueOf(maxResults);
+        }
+        url = addQueryParameter(url, "maxResults", max);
+        url = addQueryParameter(url, "marker", marker);
+        return url;
+    }
+
+    private String addQueryParameter(String url, String name, String value) {
+        if (value != null && !value.equals("")) {
+            if (url.contains("?")) {
+                url += "&";
+            } else {
+                url += "?";
+            }
+            url += (name + "=" + value);
+        }
+        return url;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -104,7 +128,7 @@ public class ContentStoreImpl implements ContentStore{
                 Iterator<?> spaceList = spacesElem.getChildren().iterator();
                 while (spaceList.hasNext()) {
                     Element spaceElem = (Element) spaceList.next();
-                    spaceIds.add((String)(spaceElem.getAttributeValue("id")));
+                    spaceIds.add((spaceElem.getAttributeValue("id")));
                 }
                 return spaceIds;
             } else {
@@ -119,8 +143,28 @@ public class ContentStoreImpl implements ContentStore{
     /**
      * {@inheritDoc}
      */
-    public Space getSpace(String spaceId) throws ContentStoreException {
-        String url = buildSpaceURL(spaceId);
+    public Iterator<String> getSpaceContents(String spaceId)
+        throws ContentStoreException {
+        return getSpaceContents(spaceId, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
+        throws ContentStoreException {
+        return new ContentIterator(this, spaceId, prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Space getSpace(String spaceId,
+                          String prefix,
+                          long maxResults,
+                          String marker)
+        throws ContentStoreException {
+        String url = buildSpaceURL(spaceId, prefix, maxResults, marker);
         try {
             HttpResponse response = restHelper.get(url);
             checkResponse(response, 200);
@@ -144,7 +188,7 @@ public class ContentStoreImpl implements ContentStore{
             } else {
                 throw new ContentStoreException("Response body is empty");
             }
-
+            
             return space;
         } catch (Exception e) {
             throw new ContentStoreException("Could not get space " + spaceId +
@@ -152,42 +196,6 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public Space getSpace(String spaceId,
-                          String prefix,
-                          String marker,
-                          Integer maxResults) throws ContentStoreException {
-        // TODO THIS IS JUST A PLACEHOLDER IMPLEMENTATION
-        Space space = getSpace(spaceId);
-        if(maxResults == null){
-            maxResults = 0;
-        }
-
-        List<String> ids = space.getContentIds();
-        
-        int beginIndex = 0;
-        
-        if(marker != null && marker.length() > 0){
-            beginIndex = ids.indexOf(marker)+1;
-        }
-
-        if(beginIndex == ids.size()){
-            ids.clear();
-        }else if(maxResults == 0){
-            space.setContentIds(ids.subList(beginIndex, ids.size()));
-        }else{
-            int lastIndex = Math.min(beginIndex+maxResults, ids.size());
-            space.setContentIds(ids.subList(beginIndex, lastIndex));
-        }
-        return space;
-    }
-    
-    
-    
     /**
      * {@inheritDoc}
      */
@@ -227,8 +235,7 @@ public class ContentStoreImpl implements ContentStore{
         try {
             HttpResponse response = restHelper.head(url);
             checkResponse(response, 200);
-            Map<String, String> metadata = extractMetadataFromHeaders(response);
-            return metadata;
+            return extractMetadataFromHeaders(response);
         } catch (Exception e) {
             throw new ContentStoreException("Could not get space metadata for space " +
                                             spaceId + " due to: " + e.getMessage(), e);
@@ -418,9 +425,7 @@ public class ContentStoreImpl implements ContentStore{
         }
 
         Map<String, String> headers = new HashMap<String, String>();
-        Iterator<String> metaNames = metadata.keySet().iterator();
-        while(metaNames.hasNext()) {
-            String metaName = metaNames.next();
+        for (String metaName : metadata.keySet()) {
             headers.put(HEADER_PREFIX + metaName, metadata.get(metaName));
         }
         return headers;
@@ -459,7 +464,7 @@ public class ContentStoreImpl implements ContentStore{
         return headers;
     }
 
-    /**
+    /*
      * Adds all mappings from map1 into map2. In the case of a conflict the
      * values from map1 will win.
      */

@@ -1,14 +1,13 @@
 package org.duracloud.durastore.test;
 
-import java.io.InputStream;
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.provider.StorageProvider;
 
 /**
  * Storage Provider implementation used for testing retry AOP
@@ -25,7 +24,14 @@ public class MockRetryStorageProvider implements StorageProvider {
                                    StorageException.NO_RETRY);
     }
 
-    public Iterator<String> getSpaceContents(String spaceId) {
+    public Iterator<String> getSpaceContents(String spaceId, String prefix) {
+        return getSpaceContentsChunked(spaceId, prefix, 0, null).iterator();
+    }
+
+    public List<String> getSpaceContentsChunked(String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker) {
         // spaceId indicates the number of tries until success
         int attemptsBeforeSuccess = Integer.valueOf(spaceId);
         if(getSpaceContentsAttempts < attemptsBeforeSuccess) {
@@ -37,7 +43,7 @@ public class MockRetryStorageProvider implements StorageProvider {
             List<String> retries = new ArrayList<String>();
             retries.add(String.valueOf(getSpaceContentsAttempts));
             getSpaceContentsAttempts = 0;
-            return retries.iterator();
+            return retries;
         }
     }
 

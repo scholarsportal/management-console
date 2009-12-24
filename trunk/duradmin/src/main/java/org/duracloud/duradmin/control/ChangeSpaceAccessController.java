@@ -1,11 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import java.text.MessageFormat;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStore.AccessType;
@@ -16,6 +11,10 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.binding.message.Message;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.MessageFormat;
 
 public class ChangeSpaceAccessController
         extends BaseCommandController {
@@ -35,13 +34,13 @@ public class ChangeSpaceAccessController
         Space space = (Space) command;
 
         ContentStore store = getContentStore();
-        SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId()));
+        SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId(), null, 0, null));
         AccessType access = AccessType.valueOf(space.getMetadata().getAccess());
         AccessType newAccess =
                 access.equals(AccessType.OPEN) ? AccessType.CLOSED
                         : AccessType.OPEN;
         store.setSpaceAccess(space.getSpaceId(), newAccess);
-        SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId()));
+        SpaceUtil.populateSpace(space, store.getSpace(space.getSpaceId(), null, 0, null));
         ContentItemListCache.refresh(request, space.getSpaceId(), getContentStoreProvider());
         
         ModelAndView mav = new ModelAndView();

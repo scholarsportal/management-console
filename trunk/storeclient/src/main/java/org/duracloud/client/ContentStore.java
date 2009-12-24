@@ -5,6 +5,7 @@ import org.duracloud.domain.Space;
 import org.duracloud.storage.provider.StorageProvider;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -70,27 +71,51 @@ public interface ContentStore {
     public List<String> getSpaces() throws ContentStoreException;
 
     /**
-     * Provides a Space, including a listing of all of the content files within
-     * a space and the metadata associated with the space.
+     * Retrieves the complete list of content items within a space. For spaces
+     * with many content items, the list is paged and updated automatically in
+     * order to retrieve the entire list.
+     *
+     * This method is equivalent to getSpaceContents(spaceId, null)
      *
      * @param spaceId the identifier of the DuraCloud Space
+     * @return Iterator for content IDs
+     * @throws ContentStoreException if the space does not exist or cannot be retrieved
+     */
+    public Iterator<String> getSpaceContents(String spaceId)
+        throws ContentStoreException;
+
+    /**
+     * Retrieves the complete list of content items within a space. For spaces
+     * with many content items, the list is paged and updated automatically in
+     * order to retrieve the entire list. Allows for limiting the content id
+     * list to items which start with a given prefix.
+     *
+     * @param spaceId the identifier of the DuraCloud Space
+     * @param prefix only retrieve content ids with this prefix (null for all content ids)
+     * @return Iterator for content IDs
+     * @throws ContentStoreException if the space does not exist or cannot be retrieved
+     */
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
+        throws ContentStoreException;
+
+    /**
+     * Provides a space, including the id and metadata of the space as well as
+     * a limited list of the content items within a space. This call allows for
+     * manual paging of content IDs using the maxResults and marker parameters.
+     *
+     * @param spaceId the identifier of the DuraCloud Space
+     * @param prefix only retrieve content ids with this prefix (null for all content ids)
+     * @param maxResults the maximum number of content ids to return in the list (0 indicates default - which is 1000)
+     * @param marker the content id marking the last item in the previous set (null to specify first set of ids)
      * @return Space
      * @throws ContentStoreException if the space does not exist or cannot be retrieved
      */
-    public Space getSpace(String spaceId) throws ContentStoreException;
-
-    /**
-     * Provides a Space as above, but with a constrained list of content files
-     * based on the parameters.
-     * @param spaceId 
-     * @param prefix The prefix of the content id - null for no constraints.
-     * @param marker The content id marking the last item in the previous set - null to specify first set of ids
-     * @param maxResults The maximum number of content ids to return in the list - null means no limit
-     * @return
-     * @throws ContentStoreException
-     */
-    public Space getSpace(String spaceId, String prefix, String marker, Integer maxResults) 
+    public Space getSpace(String spaceId,
+                          String prefix,
+                          long maxResults,
+                          String marker)
         throws ContentStoreException;
+
     /**
      * Creates a new space. Depending on the storage implementation, the spaceId
      * may be changed somewhat to comply with the naming rules of the underlying

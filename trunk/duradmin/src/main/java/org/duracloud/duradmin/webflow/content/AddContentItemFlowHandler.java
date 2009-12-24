@@ -1,11 +1,6 @@
 
 package org.duracloud.duradmin.webflow.content;
 
-import java.text.MessageFormat;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
@@ -20,6 +15,10 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.servlet.AbstractFlowHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.MessageFormat;
 
 public class AddContentItemFlowHandler
         extends AbstractFlowHandler {
@@ -49,7 +48,7 @@ public class AddContentItemFlowHandler
     private Space getSpace(String spaceId) throws Exception {
         Space space = new Space();
         org.duracloud.domain.Space cloudSpace =
-                getContentStore().getSpace(spaceId);
+                getContentStore().getSpace(spaceId, null, 0, null);
         SpaceUtil.populateSpace(space, cloudSpace);
         return space;
     }

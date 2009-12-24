@@ -66,7 +66,7 @@ public class StorageProvidersTestCore
                                      String contentId1) throws StorageException {
         Iterator<String> spaceContents = null;
         try {
-            spaceContents = provider.getSpaceContents(spaceId0);
+            spaceContents = provider.getSpaceContents(spaceId0, null);
             Assert.fail("Exception should be thrown if space does not exist.");
         } catch (Exception e) {
         }
@@ -81,18 +81,24 @@ public class StorageProvidersTestCore
         byte[] content1 = "<a>hello</a>".getBytes();
         addContent(provider, spaceId0, contentId1, mimeXml, content1);
 
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertEquals(2, count(spaceContents));
 
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertTrue(contains(spaceContents, contentId0));
 
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         assertNotNull(spaceContents);
         assertTrue(contains(spaceContents, contentId1));
+    }
 
+    public void testGetSpaceContentsChunked(StorageProvider provider,
+                                     String spaceId0,
+                                     String contentId0,
+                                     String contentId1) throws StorageException {
+        // TODO: EMC does not support chunked content listing yet
     }
 
     private void addContent(StorageProvider provider,
@@ -453,7 +459,8 @@ public class StorageProvidersTestCore
         provider.createSpace(spaceId0);
         // TODO: EMCStorageProvider does not always register the creation of
         //       the new spaceId0 right away.
-        Iterator<String> spaceContents = provider.getSpaceContents(spaceId0);
+        Iterator<String> spaceContents =
+            provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents);
 
         // Test with valid space, non-existant content
@@ -467,24 +474,23 @@ public class StorageProvidersTestCore
         byte[] data = "sample-text".getBytes();
         addContent(provider, spaceId0, contentId0, mimeText, data);
 
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents, contentId0);
 
         // Add more content.
         addContent(provider, spaceId0, contentId1, mimeText, data);
 
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents, contentId0, contentId1);
 
         // Delete content
         provider.deleteContent(spaceId0, contentId1);
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents, contentId0);
 
         provider.deleteContent(spaceId0, contentId0);
-        spaceContents = provider.getSpaceContents(spaceId0);
+        spaceContents = provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents);
-
     }
 
     private void verifyContentListing(Iterator<String> listing,

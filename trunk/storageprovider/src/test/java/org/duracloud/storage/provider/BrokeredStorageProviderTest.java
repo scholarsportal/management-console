@@ -1,20 +1,19 @@
 package org.duracloud.storage.provider;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.provider.StorageProvider.AccessType;
+import org.duracloud.storage.provider.mock.MockStorageProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.provider.StorageProvider.AccessType;
-import org.duracloud.storage.provider.mock.MockStorageProvider;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class BrokeredStorageProviderTest {
 
@@ -148,10 +147,23 @@ public class BrokeredStorageProviderTest {
     public void getSpaceContents() throws StorageException {
         directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, content);
         broker.addContent(spaceId, contentId, contentMimeType, contentSize, content);
-        Iterator<String> spaceContents0 = directProvider.getSpaceContents(spaceId);
-        Iterator<String> spaceContents1 = broker.getSpaceContents(spaceId);
+        Iterator<String> spaceContents0 = directProvider.getSpaceContents(spaceId, null);
+        Iterator<String> spaceContents1 = broker.getSpaceContents(spaceId, null);
 
         verifyIteratorContents(spaceContents0, spaceContents1);
+    }
+
+    @Test
+    public void getSpaceContentsChunked() throws StorageException {
+        directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, content);
+        broker.addContent(spaceId, contentId, contentMimeType, contentSize, content);
+        List<String> spaceContents0 =
+            directProvider.getSpaceContentsChunked(spaceId, null, 0, null);
+        List<String> spaceContents1 =
+            broker.getSpaceContentsChunked(spaceId, null, 0, null);
+
+        verifyIteratorContents(spaceContents0.iterator(),
+                               spaceContents1.iterator());
     }
 
     @Test

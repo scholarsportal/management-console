@@ -1,17 +1,18 @@
 
 package org.duracloud.duradmin.cache;
 
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
+
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ContentStoreCache
         implements ContentStore {
@@ -60,14 +61,25 @@ public class ContentStoreCache
     }
 
     /**
-     * Provides a Space, including a listing of all of the content files within
-     * a space and the metadata associated with the space.
-     * 
-     * @return Space
+     * Provides a list of space contents.
+     *
+     * @return Iterator of content Ids
      * @throws ContentStoreException
      */
-    public Space getSpace(String spaceId) throws ContentStoreException {
-        return this.backendStore.getSpace(spaceId);
+    public Iterator<String> getSpaceContents(String spaceId)
+        throws ContentStoreException {
+        return this.backendStore.getSpaceContents(spaceId);
+    }
+
+    /**
+     * Provides a list of space contents.
+     *
+     * @return Iterator of content Ids
+     * @throws ContentStoreException
+     */
+    public Iterator<String> getSpaceContents(String spaceId, String prefix)
+        throws ContentStoreException {
+        return this.backendStore.getSpaceContents(spaceId, prefix);
     }
 
     /**
@@ -75,9 +87,9 @@ public class ContentStoreCache
      */
     public Space getSpace(String spaceId,
                           String prefix,
-                          String marker,
-                          Integer maxResults) throws ContentStoreException {
-        return this.backendStore.getSpace(spaceId, prefix, marker, maxResults);
+                          long maxResults,
+                          String marker) throws ContentStoreException {
+        return this.backendStore.getSpace(spaceId, prefix, maxResults, marker);
     }
 
     /**

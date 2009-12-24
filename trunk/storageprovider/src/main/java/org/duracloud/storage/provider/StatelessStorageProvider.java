@@ -1,12 +1,12 @@
 package org.duracloud.storage.provider;
 
-import java.io.InputStream;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.List;
 
 public interface StatelessStorageProvider {
 
@@ -54,7 +54,16 @@ public interface StatelessStorageProvider {
 
     public abstract Iterator<String> getSpaceContents(StorageProvider targetProvider,
                                                       String storeId,
-                                                      String spaceId)
+                                                      String spaceId,
+                                                      String prefix)
+            throws StorageException;
+
+    public List<String> getSpaceContentsChunked(StorageProvider targetProvider,
+                                                String storeId,
+                                                String spaceId,
+                                                String prefix,
+                                                long maxResults,
+                                                String marker)
             throws StorageException;
 
     public abstract Map<String, String> getSpaceMetadata(StorageProvider targetProvider,
