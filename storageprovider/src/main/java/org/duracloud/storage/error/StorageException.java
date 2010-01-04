@@ -1,11 +1,13 @@
 package org.duracloud.storage.error;
 
+import org.duracloud.common.error.DuraCloudRuntimeException;
+
 /**
  * Exception thrown by StorageProvider implementations.
  *
  * @author Bill Branan
  */
-public class StorageException extends RuntimeException {
+public class StorageException extends DuraCloudRuntimeException {
 
     private static final long serialVersionUID = 1L;
 

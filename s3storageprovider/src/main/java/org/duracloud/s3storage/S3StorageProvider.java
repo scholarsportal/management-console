@@ -3,6 +3,7 @@ package org.duracloud.s3storage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.storage.domain.ContentIterator;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
@@ -181,7 +182,7 @@ public class S3StorageProvider
     private void throwIfSpaceNotExist(String spaceId) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
-            throw new StorageException(msg, NO_RETRY);
+            throw new NotFoundException(msg);
         }
     }
 
@@ -493,6 +494,7 @@ public class S3StorageProvider
         try {
             return s3Service.getObject(new S3Bucket(bucketName), contentId);
         } catch (S3ServiceException e) {
+            throwIfContentNotExist(bucketName, contentId);
             String err = "Could not retrieve content " + contentId
                     + " in S3 bucket " + bucketName + " due to error: "
                     + e.getMessage();
@@ -530,6 +532,7 @@ public class S3StorageProvider
             // Delete content
             s3Service.deleteObject(bucketName, contentId);
         } catch (S3ServiceException e) {
+            throwIfContentNotExist(bucketName, contentId);
             String err = "Could not delete content " + contentId
                     + " from S3 bucket " + bucketName
                     + " due to error: " + e.getMessage();
@@ -574,12 +577,22 @@ public class S3StorageProvider
         contentItem.replaceAllMetadata(contentMetadata);
 
         // Update Content-Type to the new mime type
-        if (newMimeType != null && newMimeType != "") {
+        if (newMimeType != null && !newMimeType.equals("")) {
             contentItem.addMetadata(S3Object.METADATA_HEADER_CONTENT_TYPE,
                                     newMimeType);
         }
 
-        updateObjectMetadata(bucketName, contentItem);
+        updateObjectMetadata(bucketName, contentId, contentItem);
+    }
+
+    private void throwIfContentNotExist(String bucketName, String contentId) {
+        try {
+             s3Service.getObjectDetails(new S3Bucket(bucketName), contentId);
+        } catch(S3ServiceException e) {
+            String err = "Could not find content item with ID " + contentId +
+                " in S3 bucket " + bucketName + ". S3 error: " + e.getMessage();
+            throw new NotFoundException(err);
+        }
     }
 
     private S3Object getObjectDetails(S3Bucket bucket, String contentId,
@@ -587,6 +600,7 @@ public class S3StorageProvider
         try {
             return s3Service.getObjectDetails(bucket, contentId);
         } catch (S3ServiceException e) {
+            throwIfContentNotExist(bucket.getName(), contentId);
             String err = "Could not get details for content " + contentId
                     + " in S3 bucket " + bucket.getName() + " due to error: "
                     + e.getMessage();
@@ -607,10 +621,12 @@ public class S3StorageProvider
     }
 
     private void updateObjectMetadata(String bucketName,
+                                      String contentId,
                                       S3Object contentItem) {
         try {
             s3Service.updateObjectMetadata(bucketName, contentItem);
         } catch (S3ServiceException e) {
+            throwIfContentNotExist(bucketName, contentId);
             String err = "Could not update metadata for content "
                     + contentItem.getKey() + " in S3 bucket " + bucketName
                     + " due to error: " + e.getMessage();
