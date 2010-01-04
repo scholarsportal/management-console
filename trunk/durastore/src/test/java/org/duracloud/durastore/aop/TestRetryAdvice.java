@@ -38,10 +38,13 @@ public class TestRetryAdvice extends TestCase {
             HttpResponse response = restHelper.get(url);
             String responseText = response.getResponseBody();
 
-            assertEquals(200, response.getStatusCode());
+            String errText = "Response code was " + response.getStatusCode() +
+                             " but the expected code was 200. On retry " + i +
+                             ". Response text: " + responseText;
+            assertEquals(errText, 200, response.getStatusCode());
             // The item number signifies the number of retries before success
-            String errText = "Response Text (" + responseText +
-                             ") did not contain <item>"+i+"</item>";
+            errText = "Response Text (" + responseText +
+                      ") did not contain <item>"+i+"</item>";
             assertTrue(errText, responseText.contains("<item>"+i+"</item>"));
         }
 

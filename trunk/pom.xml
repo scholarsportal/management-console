@@ -186,6 +186,7 @@
       <integrationTests>**/Test*.class</integrationTests>
       <instrumentedTests>**/*Test*__*.class</instrumentedTests>
       <log.level.default>INFO</log.level.default>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <distributionManagement>
