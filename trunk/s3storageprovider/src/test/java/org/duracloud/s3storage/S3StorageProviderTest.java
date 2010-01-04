@@ -12,6 +12,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
@@ -26,12 +27,12 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Tests the S3 Storage Provider. This test is run via the command line in order
@@ -108,10 +109,6 @@ public class S3StorageProviderTest {
         // test createSpace()
         log.debug("Test createSpace()");
         s3Provider.createSpace(spaceId);
-
-        // test getSpaceMetadata()
-        log.debug("Test getSpaceMetadata()");
-
 
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
@@ -295,6 +292,147 @@ public class S3StorageProviderTest {
                                                 contentSize,
                                                 contentStream);
         compareChecksum(s3Provider, spaceId, contentId, checksum);
+    }
+
+    @Test
+    public void testNotFound() {
+        String spaceId = "NonExistantSpace";
+        String contentId = "NonExistantContent";
+        String failMsg = "Should throw NotFoundException attempting to " +
+                         "access a space which does not exist";
+        byte[] content = CONTENT_DATA.getBytes();
+
+        // Space Not Found
+
+        try {
+            s3Provider.getSpaceMetadata(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.setSpaceMetadata(spaceId, new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getSpaceContents(spaceId, null);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getSpaceContentsChunked(spaceId, null, 100, null);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getSpaceAccess(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.setSpaceAccess(spaceId, AccessType.CLOSED);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.deleteSpace(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            int contentSize = content.length;
+            ByteArrayInputStream contentStream = new ByteArrayInputStream(
+                content);
+            s3Provider.addContent(spaceId,
+                                  contentId,
+                                  "text/plain",
+                                  contentSize,
+                                  contentStream);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getContentMetadata(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.setContentMetadata(spaceId,
+                                          contentId,
+                                          new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.deleteContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        // Content Not Found
+
+        spaceId = getNewSpaceId();
+        s3Provider.createSpace(spaceId);
+        failMsg = "Should throw NotFoundException attempting to " +
+                  "access content which does not exist";        
+
+        try {
+            s3Provider.getContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.getContentMetadata(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.setContentMetadata(spaceId,
+                                          contentId,
+                                          new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            s3Provider.deleteContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
     }
 
     @Test
