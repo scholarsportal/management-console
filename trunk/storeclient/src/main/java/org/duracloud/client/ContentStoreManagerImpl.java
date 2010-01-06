@@ -5,6 +5,7 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.error.StorageException;
+import org.apache.commons.httpclient.HttpStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -105,7 +106,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         String error = "Error retrieving content stores. ";
         try {
             response = restHelper.get(url);
-            if (response.getStatusCode() == 200) {
+            if (response.getStatusCode() == HttpStatus.SC_OK) {
                 String storesXML = response.getResponseBody();
                 if (storesXML != null) {
                     InputStream is = new ByteArrayInputStream(storesXML.getBytes());
@@ -116,7 +117,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
             } else {
                 throw new StorageException("Response code was "
                                            + response.getStatusCode() +
-                                           ", expected value was 200." + 
+                                           ", expected value was HttpStatus.SC_OK." + 
                                            "Response Body: " + response.getResponseBody());
             }
         } catch (Exception e) {

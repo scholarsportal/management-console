@@ -6,6 +6,7 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.rest.RestTestHelper;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.commons.httpclient.HttpStatus;
 
 /**
  * Tests the Retry AOP over storage providers
@@ -27,7 +28,7 @@ public class TestRetryAdvice extends TestCase {
 
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
     @Test
@@ -41,7 +42,7 @@ public class TestRetryAdvice extends TestCase {
             String errText = "Response code was " + response.getStatusCode() +
                              " but the expected code was 200. On retry " + i +
                              ". Response text: " + responseText;
-            assertEquals(errText, 200, response.getStatusCode());
+            assertEquals(errText, HttpStatus.SC_OK, response.getStatusCode());
             // The item number signifies the number of retries before success
             errText = "Response Text (" + responseText +
                       ") did not contain <item>"+i+"</item>";

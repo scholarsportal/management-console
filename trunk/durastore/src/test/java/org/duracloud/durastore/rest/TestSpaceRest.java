@@ -1,6 +1,7 @@
 package org.duracloud.durastore.rest;
 
 import junit.framework.TestCase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.jdom.Document;
@@ -46,11 +47,11 @@ public class TestSpaceRest
 
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         // Add space
         response = RestTestHelper.addSpace(spaceId);
-        assertEquals(201, response.getStatusCode());
+        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class TestSpaceRest
         HttpResponse response =
             RestTestHelper.deleteSpace(spaceId);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
@@ -72,7 +73,7 @@ public class TestSpaceRest
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         assertTrue(responseText.contains("<spaces>"));
     }
 
@@ -80,7 +81,7 @@ public class TestSpaceRest
     public void testGetSpaceMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId;
         HttpResponse response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         testMetadata(response,
                      BaseRest.SPACE_ACCESS_HEADER,
@@ -100,7 +101,7 @@ public class TestSpaceRest
         String url = spaceUrl;
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         List<String> contentIds = parseContentList(responseText);
         assertEquals(3, contentIds.size());
 
@@ -108,7 +109,7 @@ public class TestSpaceRest
         url = spaceUrl + "?maxResults=2";
         response = restHelper.get(url);
         responseText = response.getResponseBody();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         contentIds = parseContentList(responseText);
         assertEquals(2, contentIds.size());
 
@@ -116,7 +117,7 @@ public class TestSpaceRest
         url = spaceUrl + "?maxResults=2&marker=" + lastContentId;
         response = restHelper.get(url);
         responseText = response.getResponseBody();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         contentIds = parseContentList(responseText);
         assertEquals(1, contentIds.size());
 
@@ -124,7 +125,7 @@ public class TestSpaceRest
         url = spaceUrl + "?prefix=test";
         response = restHelper.get(url);
         responseText = response.getResponseBody();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         contentIds = parseContentList(responseText);
         assertEquals(2, contentIds.size());
         for(String contentId : contentIds) {
@@ -141,7 +142,7 @@ public class TestSpaceRest
             String url = baseUrl + "/" + spaceId + "/" + contentId;
             HttpResponse response = restHelper.put(url, content, null);
             int statusCode = response.getStatusCode();
-            assertEquals(201, statusCode);
+            assertEquals(HttpStatus.SC_CREATED, statusCode);
         }
     }
 
@@ -174,7 +175,7 @@ public class TestSpaceRest
         headers.put(RestTestHelper.METADATA_NAME, newSpaceMetadata);
         HttpResponse response = restHelper.post(url, null, headers);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
@@ -182,7 +183,7 @@ public class TestSpaceRest
 
         // Make sure the changes were saved
         response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         testMetadata(response, BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         testMetadata(response, RestTestHelper.METADATA_NAME, newSpaceMetadata);
@@ -191,14 +192,14 @@ public class TestSpaceRest
         headers.remove(RestTestHelper.METADATA_NAME);
         response = restHelper.post(url, null, headers);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
         assertTrue(responseText.contains("updated"));
 
         response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         testNoMetadata(response, RestTestHelper.METADATA_NAME);
     }

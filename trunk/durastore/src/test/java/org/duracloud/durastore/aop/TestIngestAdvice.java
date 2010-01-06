@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.commons.httpclient.HttpStatus;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -63,12 +64,12 @@ public class TestIngestAdvice
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        Assert.assertEquals(200, statusCode);
+        Assert.assertEquals(HttpStatus.SC_OK, statusCode);
 
         // Add space
         response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
-        Assert.assertEquals(201, statusCode);
+        Assert.assertEquals(HttpStatus.SC_CREATED, statusCode);
 
     }
 
@@ -87,7 +88,7 @@ public class TestIngestAdvice
 
         // Delete space
         HttpResponse response = RestTestHelper.deleteSpace(spaceId);
-        Assert.assertEquals(200, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));

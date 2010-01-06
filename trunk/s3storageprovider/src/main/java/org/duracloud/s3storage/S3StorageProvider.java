@@ -101,6 +101,9 @@ public class S3StorageProvider
      */
     public Iterator<String> getSpaceContents(String spaceId,
                                              String prefix) {
+        log.debug("getSpaceContents(" + spaceId + ", " + prefix);
+
+        throwIfSpaceNotExist(spaceId);
         return new ContentIterator(this, spaceId, prefix);
     }
 
@@ -111,8 +114,8 @@ public class S3StorageProvider
                                                 String prefix,
                                                 long maxResults,
                                                 String marker) {
-        log.debug("getSpaceContents(" + spaceId + ", " + prefix + ", " +
-                                    maxResults + ", " + marker + ")");
+        log.debug("getSpaceContentsChunked(" + spaceId + ", " + prefix + ", " +
+                                           maxResults + ", " + marker + ")");
 
         throwIfSpaceNotExist(spaceId);
 

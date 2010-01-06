@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.rest.RestTestHelper;
+import org.apache.commons.httpclient.HttpStatus;
 
 import junit.framework.TestCase;
 
@@ -20,6 +21,6 @@ public class Init
     @Test
     public void testInit() throws Exception {
         HttpResponse response = RestTestHelper.initialize();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
  }

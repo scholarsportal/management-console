@@ -1,13 +1,14 @@
 package org.duracloud.durastore.rest;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class TestContentRest {
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        assertEquals(200, statusCode);
+        assertEquals(HttpStatus.SC_OK, statusCode);
 
         // Add space
         response = RestTestHelper.addSpace(spaceId);
@@ -93,7 +94,7 @@ public class TestContentRest {
         String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.delete(url);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
 
@@ -111,7 +112,7 @@ public class TestContentRest {
     public static void afterClass() throws Exception {
         // Delete space
         HttpResponse response = RestTestHelper.deleteSpace(spaceId);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
     @Test
@@ -125,7 +126,7 @@ public class TestContentRest {
         String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.get(url);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String content = response.getResponseBody();
         assertNotNull(content);
         assertEquals(CONTENT, content);
@@ -146,7 +147,7 @@ public class TestContentRest {
     private void doTestGetContentMetadata(String contentId) throws Exception {
         String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         verifyMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
@@ -196,7 +197,7 @@ public class TestContentRest {
 
         // Make sure the changes were saved
         response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         verifyMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
         verifyMetadata(response, newMetaName, newMetaValue);
@@ -206,7 +207,7 @@ public class TestContentRest {
         response = postMetadataUpdate(url, contentId, headers);
 
         response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         // New metadata items should be gone, mimetype should be unchanged
         verifyNoMetadata(response, newMetaName);
@@ -219,7 +220,7 @@ public class TestContentRest {
         response = postMetadataUpdate(url, contentId, headers);
 
         response = restHelper.head(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         // Metadata should be updated
         verifyMetadata(response, HttpHeaders.CONTENT_TYPE, testMime);
@@ -231,7 +232,7 @@ public class TestContentRest {
         throws Exception {
         HttpResponse response = restHelper.post(url, null, headers);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains(removeParams(contentId)));

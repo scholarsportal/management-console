@@ -1,6 +1,7 @@
 package org.duracloud.durastore.rest;
 
 import junit.framework.TestCase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -52,12 +53,12 @@ public class TestStoreRest
         // Initialize the stores listing
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
-        assertEquals(200, statusCode);
+        assertEquals(HttpStatus.SC_OK, statusCode);
 
         // Retrieve the stores listing
         String url = baseUrl + "/stores";
         response = restHelper.get(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         storesXML = response.getResponseBody();
         assertNotNull(storesXML);
         assertTrue(storesXML.contains("<storageProviderAccounts>"));
@@ -116,18 +117,18 @@ public class TestStoreRest
         // Add space1
         HttpResponse response = RestTestHelper.addSpace(spaceId, acctId);
         int statusCode = response.getStatusCode();
-        assertEquals(201, statusCode);
+        assertEquals(HttpStatus.SC_CREATED, statusCode);
 
         // Add content1 to space1
         String url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.put(url, CONTENT, null);
         statusCode = response.getStatusCode();
-        assertEquals(201, statusCode);
+        assertEquals(HttpStatus.SC_CREATED, statusCode);
 
         // Delete content1 from space1
         url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.delete(url);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         String responseText = response.getResponseBody();
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
@@ -135,6 +136,6 @@ public class TestStoreRest
 
         // Delete space1
         response = RestTestHelper.deleteSpace(spaceId, acctId);
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 }

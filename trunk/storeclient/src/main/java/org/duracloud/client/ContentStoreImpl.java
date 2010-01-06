@@ -1,6 +1,7 @@
 package org.duracloud.client;
 
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
@@ -116,7 +117,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildURL("/spaces");
         try {
             HttpResponse response = restHelper.get(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
             String responseText = response.getResponseBody();
             if (responseText != null) {
                 List<String> spaceIds = new ArrayList<String>();
@@ -167,7 +168,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildSpaceURL(spaceId, prefix, maxResults, marker);
         try {
             HttpResponse response = restHelper.get(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
             Space space = new Space();
             space.setMetadata(extractMetadataFromHeaders(response));
 
@@ -205,7 +206,7 @@ public class ContentStoreImpl implements ContentStore{
         try {
             HttpResponse response =
                 restHelper.put(url, null, convertMetadataToHeaders(spaceMetadata));
-            checkResponse(response, 201);
+            checkResponse(response, HttpStatus.SC_CREATED);
         } catch (Exception e) {
             throw new ContentStoreException("Could not create space " + spaceId +
                                             " due to: " + e.getMessage(), e);
@@ -219,7 +220,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.delete(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
         } catch (Exception e) {
             throw new ContentStoreException("Could not delete space " + spaceId +
                                             " due to: " + e.getMessage(), e);
@@ -234,7 +235,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.head(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
             return extractMetadataFromHeaders(response);
         } catch (Exception e) {
             throw new ContentStoreException("Could not get space metadata for space " +
@@ -252,7 +253,7 @@ public class ContentStoreImpl implements ContentStore{
         Map<String, String> headers = convertMetadataToHeaders(spaceMetadata);
         try {
             HttpResponse response = restHelper.post(url, null, headers);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
         } catch (Exception e) {
             throw new ContentStoreException("Could not create space " + spaceId +
                                             " due to: " + e.getMessage(), e);
@@ -312,7 +313,7 @@ public class ContentStoreImpl implements ContentStore{
                                                    String.valueOf(contentSize),
                                                    contentMimeType,
                                                    headers);
-            checkResponse(response, 201);
+            checkResponse(response, HttpStatus.SC_CREATED);
             Header checksum = response.getResponseHeader("Content-MD5");
             if(checksum == null) {
                 checksum = response.getResponseHeader("ETag");
@@ -333,7 +334,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
             Content content = new Content();
             content.setId(contentId);
             content.setStream(response.getResponseStream());
@@ -356,7 +357,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.delete(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
         } catch (Exception e) {
             throw new ContentStoreException("Could not delete content " + contentId +
                                             " from space " + spaceId +
@@ -378,7 +379,7 @@ public class ContentStoreImpl implements ContentStore{
             HttpResponse response = restHelper.post(url,
                                                     null,
                                                     headers);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
         } catch (Exception e) {
             throw new ContentStoreException("Could not udpate content metadata for " +
                                             contentId + " in space " + spaceId +
@@ -395,7 +396,7 @@ public class ContentStoreImpl implements ContentStore{
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
-            checkResponse(response, 200);
+            checkResponse(response, HttpStatus.SC_OK);
             return mergeMaps(extractMetadataFromHeaders(response),
                              extractNonMetadataHeaders(response));
         } catch (Exception e) {

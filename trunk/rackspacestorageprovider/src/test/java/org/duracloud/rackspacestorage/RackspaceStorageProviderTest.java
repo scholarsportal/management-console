@@ -1,19 +1,21 @@
 package org.duracloud.rackspacestorage;
 
-import com.mosso.client.cloudfiles.FilesCDNContainer;
-import com.mosso.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesCDNContainer;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
 import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
@@ -30,9 +32,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.List;
 
 /**
  * Tests the Rackspace Storage Provider. This test is run via the command line
@@ -79,6 +81,11 @@ public class RackspaceStorageProviderTest {
 
     @After
     public void tearDown() {
+        try {
+            rackspaceProvider.deleteSpace(SPACE_ID);
+        } catch(Exception e) {
+            // Ignore, the space has likely already been deleted
+        }
         rackspaceProvider = null;
         filesClient = null;
     }
@@ -180,7 +187,7 @@ public class RackspaceStorageProviderTest {
         String contentUrl = spaceUrl + "/" + CONTENT_ID;
         RestHttpHelper restHelper = new RestHttpHelper();
         HttpResponse httpResponse = restHelper.get(contentUrl);
-        assertEquals(200, httpResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, httpResponse.getStatusCode());
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(CLOSED)");
@@ -240,9 +247,15 @@ public class RackspaceStorageProviderTest {
         assertTrue(contentLine.equals(CONTENT_DATA));
 
         // test invalid content
-        log.debug("Test getContent() with invalid content ID");
-        is = rackspaceProvider.getContent(SPACE_ID, "non-existant-content");
-        assertTrue(is == null);
+        log.debug("Test getContent() with invalid content ID");       
+        log.debug("-- Begin expected error log -- ");
+        try {
+            is = rackspaceProvider.getContent(SPACE_ID, "non-existant-content");
+            fail("Exception expected");
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+        log.debug("-- End expected error log --");
 
         // test setContentMetadata()
         log.debug("Test setContentMetadata()");
@@ -260,9 +273,22 @@ public class RackspaceStorageProviderTest {
         //assertEquals(CONTENT_META_VALUE, CONTENT_META_NAME);
 
         // Mime type was not included when setting content metadata
-        // so it should have been reset to a default value
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(CONTENT_MIME_NAME));
+        // so its value should have been maintained
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
 
+        // test setContentMetadata() - mimetype
+        log.debug("Test setContentMetadata() - mimetype");
+        contentMetadata = new HashMap<String, String>();
+        contentMetadata.put(CONTENT_MIME_NAME,
+                            StorageProvider.DEFAULT_MIMETYPE);
+        rackspaceProvider.setContentMetadata(SPACE_ID,
+                                             CONTENT_ID,
+                                             contentMetadata);
+        cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
+        assertNotNull(cMetadata);
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(CONTENT_MIME_NAME));
+                
         // test deleteContent()
         log.debug("Test deleteContent()");
         rackspaceProvider.deleteContent(SPACE_ID, CONTENT_ID);
@@ -287,4 +313,146 @@ public class RackspaceStorageProviderTest {
                                                        contentStream);
         compareChecksum(rackspaceProvider, spaceId, contentId, checksum);
     }
+
+    @Test
+    public void testNotFound() {
+        String spaceId = SPACE_ID;
+        String contentId = "NonExistantContent";
+        String failMsg = "Should throw NotFoundException attempting to " +
+                         "access a space which does not exist";
+        byte[] content = CONTENT_DATA.getBytes();
+
+        // Space Not Found
+
+        try {
+            rackspaceProvider.getSpaceMetadata(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.setSpaceMetadata(spaceId,
+                                               new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getSpaceContents(spaceId, null);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getSpaceContentsChunked(spaceId, null, 100, null);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getSpaceAccess(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.setSpaceAccess(spaceId, AccessType.CLOSED);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.deleteSpace(spaceId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            int contentSize = content.length;
+            ByteArrayInputStream contentStream = new ByteArrayInputStream(
+                content);
+            rackspaceProvider.addContent(spaceId,
+                                         contentId,
+                                         "text/plain",
+                                         contentSize,
+                                         contentStream);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getContentMetadata(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.setContentMetadata(spaceId,
+                                                 contentId,
+                                                 new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.deleteContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        // Content Not Found
+
+        rackspaceProvider.createSpace(spaceId);
+        failMsg = "Should throw NotFoundException attempting to " +
+                  "access content which does not exist";
+
+        try {
+            rackspaceProvider.getContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.getContentMetadata(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.setContentMetadata(spaceId,
+                                                 contentId,
+                                                 new HashMap<String, String>());
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            rackspaceProvider.deleteContent(spaceId, contentId);
+            fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+    }
+
 }

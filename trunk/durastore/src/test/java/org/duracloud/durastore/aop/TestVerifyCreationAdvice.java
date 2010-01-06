@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.rest.RestTestHelper;
+import org.apache.commons.httpclient.HttpStatus;
 
 import junit.framework.TestCase;
 
@@ -29,7 +30,7 @@ public class TestVerifyCreationAdvice extends TestCase {
 
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
     @Test
@@ -38,7 +39,7 @@ public class TestVerifyCreationAdvice extends TestCase {
         for(int i=0; i<MAX_RETRIES; i++) {
             String url = baseUrl + "/" + i + "?storeID=7";
             HttpResponse response = restHelper.put(url, null, null);
-            assertEquals(201, response.getStatusCode());
+            assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
         }
 
         // Not testing at max retries because that begins to overlap with retry advice
