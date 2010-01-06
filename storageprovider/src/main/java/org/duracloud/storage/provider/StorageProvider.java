@@ -1,6 +1,7 @@
 package org.duracloud.storage.provider;
 
 import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.error.NotFoundException;
 
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -58,10 +59,11 @@ public interface StorageProvider {
      * list is handled internally. Prefix can be set to return only content
      * IDs starting with the prefix value.
      *
-     * @param spaceId
+     * @param spaceId - ID of the space
      * @param prefix - The prefix of the content id (null for no constraints)
      * @return Iterator of contentIds
-     * @throws StorageException if space with ID spaceId does not exist
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public Iterator<String> getSpaceContents(String spaceId,
                                              String prefix);
@@ -73,12 +75,13 @@ public interface StorageProvider {
      * as the marker. Set prefix to return only content IDs starting with the
      * prefix value.
      *
-     * @param spaceId
+     * @param spaceId - ID of the space
      * @param prefix - Only retrieve content IDs with this prefix (null for all content ids)
      * @param maxResults - The maximum number of content IDs to return in the list (0 indicates default (1000))
      * @param marker - The content ID marking the last item in the previous set (null indicates the first set of ids)
      * @return List of contentIds
-     * @throws StorageException if space with ID spaceId does not exist
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public List<String> getSpaceContentsChunked(String spaceId,
                                                 String prefix,
@@ -95,7 +98,7 @@ public interface StorageProvider {
      * will be applied internally, however a call to getSpaces()
      * may not include a space with exactly this same name.
      *
-     * @param spaceId
+     * @param spaceId - ID of the space
      * @throws StorageException if space with ID spaceId already exists
      */
     public void createSpace(String spaceId);
@@ -103,26 +106,29 @@ public interface StorageProvider {
     /**
      * Deletes a space.
      *
-     * @param spaceId
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public void deleteSpace(String spaceId);
 
     /**
      * Retrieves the metadata associated with a space.
      *
-     * @param spaceId
+     * @param spaceId - ID of the space
      * @return Map of space metadata or null if no metadata exists
-     * @throws StorageException if space with ID spaceId does not exist
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public Map<String, String> getSpaceMetadata(String spaceId);
 
     /**
      * Sets the metadata associated with a space.
      *
-     * @param spaceId
-     * @param spaceMetadata
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param spaceMetadata - Updated space metadata
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata);
@@ -132,18 +138,20 @@ public interface StorageProvider {
      * available for public viewing. A CLOSED space requires authentication prior to
      * viewing any of the contents.
      *
-     * @param spaceId
+     * @param spaceId - ID of the space
      * @return the access type of the space, OPEN or CLOSED
-     * @throws StorageException if space with ID spaceId does not exist
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public AccessType getSpaceAccess(String spaceId);
 
     /**
      * Sets the accessibility of a space to either OPEN or CLOSED.
      *
-     * @param spaceId
-     * @param access
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param access - New space access value
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public void setSpaceAccess(String spaceId,
                                AccessType access);
@@ -154,11 +162,14 @@ public interface StorageProvider {
      * of the uploaded content to protect against loss or
      * corruption during transfer.
      *
-     * @param spaceId
-     * @param contentId
-     * @param content
+     * @param spaceId - ID of the space
+     * @param contentId - ID of the content in the space
+     * @param contentMimeType - the MIME type of the content being added
+     * @param contentSize - the file size (in bytes) of the content being added
+     * @param content - content to add
      * @return The checksum of the provided content
-     * @throws StorageException if space with ID spaceId does not exist
+     * @throws NotFoundException if space with ID spaceId does not exist
+     * @throws StorageException if errors occur
      */
     public String addContent(String spaceId,
                              String contentId,
@@ -169,10 +180,12 @@ public interface StorageProvider {
     /**
      * Gets content from a space.
      *
-     * @param spaceId
-     * @param contentId
-     * @return the content stream or null if the content does not exist
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param contentId - ID of the content in the space
+     * @return the content stream
+     * @throws NotFoundException if space with ID spaceId does not exist or the
+     *                           content item with ID contentId does not exist
+     * @throws StorageException if errors occur
      */
     public InputStream getContent(String spaceId,
                                   String contentId);
@@ -180,9 +193,11 @@ public interface StorageProvider {
     /**
      * Removes content from a space.
      *
-     * @param spaceId
-     * @param contentId
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param contentId - ID of the content in the space
+     * @throws NotFoundException if space with ID spaceId does not exist or the
+     *                           content item with ID contentId does not exist
+     * @throws StorageException if errors occur
      */
     public void deleteContent(String spaceId,
                               String contentId);
@@ -201,10 +216,12 @@ public interface StorageProvider {
      *
      * Content-Type cannot be removed, but it can be updated
      *
-     * @param spaceId
-     * @param contentId
-     * @param contentMetadata
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param contentId - ID of the content in the space
+     * @param contentMetadata - new content metadata
+     * @throws NotFoundException if space with ID spaceId does not exist or the
+     *                           content item with ID contentId does not exist
+     * @throws StorageException if errors occur
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
@@ -215,10 +232,12 @@ public interface StorageProvider {
      * both metadata generated by the underlying storage system as
      * well as
      *
-     * @param spaceId
-     * @param contentId
-     * @return
-     * @throws StorageException if space with ID spaceId does not exist
+     * @param spaceId - ID of the space
+     * @param contentId - ID of the content in the space
+     * @return content metadata
+     * @throws NotFoundException if space with ID spaceId does not exist or the
+     *                           content item with ID contentId does not exist
+     * @throws StorageException if errors occur
      */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId);

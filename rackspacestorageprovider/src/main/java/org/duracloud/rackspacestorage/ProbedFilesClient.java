@@ -1,34 +1,19 @@
 
 package org.duracloud.rackspacestorage;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.util.List;
-import java.util.Map;
-
-import com.mosso.client.cloudfiles.FilesAccountInfo;
-import com.mosso.client.cloudfiles.FilesAuthorizationException;
-import com.mosso.client.cloudfiles.FilesCDNContainer;
-import com.mosso.client.cloudfiles.FilesClient;
-import com.mosso.client.cloudfiles.FilesContainer;
-import com.mosso.client.cloudfiles.FilesContainerInfo;
-import com.mosso.client.cloudfiles.FilesContainerNotEmptyException;
-import com.mosso.client.cloudfiles.FilesException;
-import com.mosso.client.cloudfiles.FilesInvalidNameException;
-import com.mosso.client.cloudfiles.FilesNotFoundException;
-import com.mosso.client.cloudfiles.FilesObject;
-import com.mosso.client.cloudfiles.FilesObjectMetaData;
-import com.mosso.client.cloudfiles.IFilesTransferCallback;
-
+import com.rackspacecloud.client.cloudfiles.*;
 import org.apache.commons.httpclient.HttpException;
-
 import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricException;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsTable;
 import org.duracloud.storage.error.StorageException;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class wraps a Rackspace FilesClient implementation, collecting timing
@@ -158,7 +143,7 @@ public class ProbedFilesClient
     }
 
     @Override
-    public List<FilesObject> listObjectsStaringWith(String container,
+    public List<FilesObject> listObjectsStartingWith(String container,
                                                     String startsWith,
                                                     String path,
                                                     int limit,
@@ -166,11 +151,11 @@ public class ProbedFilesClient
             throws IOException, HttpException, FilesException {
         startMetric("listObjectsStaringWith");
         List<FilesObject> result =
-                super.listObjectsStaringWith(container,
-                                             startsWith,
-                                             path,
-                                             limit,
-                                             marker);
+                super.listObjectsStartingWith(container,
+                                              startsWith,
+                                              path,
+                                              limit,
+                                              marker);
         stopMetric("listObjectsStaringWith");
         return result;
     }
@@ -275,10 +260,10 @@ public class ProbedFilesClient
     }
 
     @Override
-    public boolean deleteContainer(String name) throws IOException,
-            HttpException, FilesAuthorizationException,
-            FilesInvalidNameException, FilesNotFoundException,
-            FilesContainerNotEmptyException {
+    public boolean deleteContainer(String name)
+        throws IOException, HttpException, FilesAuthorizationException,
+               FilesInvalidNameException, FilesNotFoundException,
+               FilesContainerNotEmptyException {
         startMetric("deleteContainer");
         boolean result = super.deleteContainer(name);
         stopMetric("deleteContainer");
@@ -295,10 +280,13 @@ public class ProbedFilesClient
     }
 
     @Override
-    public String cdnUpdateContainer(String name, int ttl, boolean enabled)
+    public String cdnUpdateContainer(String name,
+                                     int ttl,
+                                     boolean enabled,
+                                     boolean retainLogs)
             throws IOException, HttpException, FilesException {
         startMetric("cdnUpdateContainer");
-        String result = super.cdnUpdateContainer(name, ttl, enabled);
+        String result = super.cdnUpdateContainer(name, ttl, enabled, retainLogs);
         stopMetric("cdnUpdateContainer");
         return result;
     }
@@ -515,13 +503,12 @@ public class ProbedFilesClient
     }
 
     @Override
-    public int deleteObject(String container, String objName)
+    public void deleteObject(String container, String objName)
             throws IOException, HttpException, FilesAuthorizationException,
             FilesInvalidNameException {
         startMetric("deleteObject");
-        int result = super.deleteObject(container, objName);
+        super.deleteObject(container, objName);
         stopMetric("deleteObject");
-        return result;
     }
 
     @Override

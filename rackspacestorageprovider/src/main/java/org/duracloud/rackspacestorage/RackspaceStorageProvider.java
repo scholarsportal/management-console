@@ -1,22 +1,25 @@
 
 package org.duracloud.rackspacestorage;
 
-import com.mosso.client.cloudfiles.*;
+import com.rackspacecloud.client.cloudfiles.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.duracloud.storage.domain.ContentIterator;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
-import static org.duracloud.storage.error.StorageException.*;
+import static org.duracloud.storage.error.StorageException.NO_RETRY;
+import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
-import org.duracloud.storage.domain.ContentIterator;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.DigestInputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.text.ParseException;
 
 /**
  * Provides content storage backed by Rackspace's Cloud Files service.
@@ -33,6 +35,8 @@ import java.text.ParseException;
  */
 public class RackspaceStorageProvider
         implements StorageProvider {
+
+    public static final String CONTENT_TYPE = "Content-Type";
 
     private final Log log = LogFactory.getLog(this.getClass());
 
@@ -75,12 +79,10 @@ public class RackspaceStorageProvider
                 "Rackspace containers due to error: ");
         try {
             return filesClient.listContainers();
-
-        } catch (IOException e) {
+        } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
+            throw new StorageException(err.toString(), e, NO_RETRY);
+        } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -91,6 +93,9 @@ public class RackspaceStorageProvider
      */
     public Iterator<String> getSpaceContents(String spaceId,
                                              String prefix) {
+        log.debug("getSpaceContents(" + spaceId + ", " + prefix);        
+
+        throwIfSpaceNotExist(spaceId);
         return new ContentIterator(this, spaceId, prefix);
     }
 
@@ -101,8 +106,8 @@ public class RackspaceStorageProvider
                                                 String prefix,
                                                 long maxResults,
                                                 String marker) {
-        log.debug("getSpaceContents(" + spaceId + ", " + prefix + ", " +
-                                    maxResults + ", " + marker + ")");
+        log.debug("getSpaceContentsChunked(" + spaceId + ", " + prefix + ", " +
+                                           maxResults + ", " + marker + ")");
 
         throwIfSpaceNotExist(spaceId);
 
@@ -156,22 +161,21 @@ public class RackspaceStorageProvider
         try {
             int limit = new Long(maxResults).intValue();
             if (prefix != null) {
-                return filesClient.listObjectsStaringWith(containerName,
-                                                          prefix,
-                                                          null,
-                                                          limit,
-                                                          marker);
+                return filesClient.listObjectsStartingWith(containerName,
+                                                           prefix,
+                                                           null,
+                                                           limit,
+                                                           marker);
             } else {
                 return filesClient.listObjects(containerName,
                                                null,
                                                limit,
                                                marker);
             }
-        } catch (IOException e) {
+        } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
+            throw new StorageException(err.toString(), e, NO_RETRY);
+        } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -187,18 +191,22 @@ public class RackspaceStorageProvider
     private void throwIfSpaceNotExist(String spaceId) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
-            throw new StorageException(msg, NO_RETRY);
+            throw new NotFoundException(msg);
         }
+    }
+
+    private void throwIfContentNotExist(String spaceId, String contentId) {
+        // Attempt to get content metadata, which throws if content does not exist
+        getObjectMetadata(spaceId, contentId);
     }
 
     private boolean spaceExists(String spaceId) {
         String containerName = getContainerName(spaceId);
-        boolean exists = false;
         try {
-            exists = filesClient.containerExists(containerName);
+            return filesClient.containerExists(containerName);
         } catch (IOException e) {
+            return false;
         }
-        return exists;
     }
 
     /**
@@ -229,12 +237,10 @@ public class RackspaceStorageProvider
                 "container with name " + containerName + " due to error: ");
         try {
             filesClient.createContainer(containerName);
-
-        } catch (IOException e) {
+        } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
+            throw new StorageException(err.toString(), e, NO_RETRY);
+        } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -266,24 +272,13 @@ public class RackspaceStorageProvider
 
         try {
             filesClient.deleteContainer(containerName);
-
-        } catch (IOException e) {
+        } catch (FilesNotFoundException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
+            throw new NotFoundException(err.toString(), e);
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesInvalidNameException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesNotFoundException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesContainerNotEmptyException e) {
+        } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -326,12 +321,13 @@ public class RackspaceStorageProvider
 
         try {
             return filesClient.getContainerInfo(containerName);
-
-        } catch (IOException e) {
+        } catch (FilesNotFoundException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
+            throw new NotFoundException(err.toString(), e);
+        } catch (FilesAuthorizationException e) {
+            err.append(e.getMessage());
+            throw new StorageException(err.toString(), e, NO_RETRY);
+        } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -384,8 +380,8 @@ public class RackspaceStorageProvider
 
         if (creationTime == null) {
             StringBuffer msg = new StringBuffer("Error: ");
-            msg.append("No " + METADATA_SPACE_CREATED + " found ");
-            msg.append("for spaceId: " + spaceId);
+            msg.append("No ").append(METADATA_SPACE_CREATED).append(" found ");
+            msg.append("for spaceId: ").append(spaceId);
             log.error(msg.toString());
             throw new StorageException(msg.toString());
         }
@@ -426,12 +422,7 @@ public class RackspaceStorageProvider
 
         try {
             return filesClient.getCDNContainerInfo(containerName);
-
         } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -448,16 +439,13 @@ public class RackspaceStorageProvider
         String containerName = getContainerName(spaceId);
         AccessType currentAccess = getSpaceAccess(spaceId);
         if (!currentAccess.equals(access)) {
-            boolean cdnEnabled = false;
             if (access.equals(AccessType.OPEN)) {
-                cdnEnabled = true;
                 cdnEnableContainer(containerName);
             } else {
-                cdnUpdateContainer(containerName, cdnEnabled);
+                cdnDisableContainer(containerName);
             }
         }
     }
-
 
     private void cdnEnableContainer(String containerName) {
         StringBuilder err = new StringBuilder("Could not set Rackspace "
@@ -466,30 +454,20 @@ public class RackspaceStorageProvider
 
         try {
             filesClient.cdnEnableContainer(containerName);
-
         } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
-    private void cdnUpdateContainer(String containerName, boolean cdnEnabled) {
+    private void cdnDisableContainer(String containerName) {
         StringBuilder err = new StringBuilder("Could not set Rackspace "
                 + "container " + containerName
-                + " ACL to access enabled: " + cdnEnabled + " due to error: ");
+                + " ACL to access disabled due to error: ");
 
         try {
-            filesClient.cdnUpdateContainer(containerName, -1, cdnEnabled);
-
+            filesClient.cdnUpdateContainer(containerName, -1, false, true);
         } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
@@ -510,7 +488,7 @@ public class RackspaceStorageProvider
 
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
-        // TODO: Determine how to set Rackspace object mimetype.
+        metadata.put(CONTENT_TYPE, contentMimeType);
 
         // Wrap the content to be able to compute a checksum during transfer
         DigestInputStream wrappedContent = wrapStream(content);
@@ -544,10 +522,6 @@ public class RackspaceStorageProvider
         } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
         }
     }
 
@@ -565,20 +539,32 @@ public class RackspaceStorageProvider
                 + contentId + " from Rackspace container " + containerName
                 + " due to error: ");
         try {
-            return filesClient.getObjectAsStream(containerName, contentId);
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
+            InputStream content =
+                filesClient.getObjectAsStream(containerName, contentId);
 
+            if(content == null) {        
+                String errMsg = createNotFoundMsg(spaceId, contentId);
+                throw new NotFoundException(errMsg);
+            }
+
+            return content;
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesInvalidNameException e) {
+        } catch (IOException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
-            
+            throw new StorageException(err.toString(), e, RETRY);
         }
+    }
+
+    private String createNotFoundMsg(String spaceId,
+                                     String contentId) {
+        StringBuilder msg = new StringBuilder();
+        msg.append("Could not find content item with ID ");
+        msg.append(contentId);
+        msg.append(" in space ");
+        msg.append(spaceId);
+        return msg.toString();
     }
 
     /**
@@ -589,35 +575,27 @@ public class RackspaceStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
-        int statusCode = deleteObject(contentId, spaceId);
-        if (statusCode == HTTP_NOT_FOUND) {
-            String err = "Object to delete not found: " + spaceId + ":" + contentId;
-            log.error(err);
-            throw new StorageException(err, RETRY);
-        }
+        deleteObject(contentId, spaceId);
     }
 
-    private int deleteObject(String contentId,
-                             String spaceId) {
+    private void deleteObject(String contentId,
+                              String spaceId) {
         String containerName = getContainerName(spaceId);
         StringBuilder err = new StringBuilder("Could not delete content " + contentId
                     + " from Rackspace container " + containerName
                     + " due to error: ");
 
         try {
-            return filesClient.deleteObject(containerName, contentId);
-        } catch (IOException e) {
+            filesClient.deleteObject(containerName, contentId);
+        } catch (FilesNotFoundException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
+            throw new NotFoundException(err.toString(), e);
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesInvalidNameException e) {
+        } catch (IOException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
-
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -630,83 +608,41 @@ public class RackspaceStorageProvider
         log.debug("setContentMetadata(" + spaceId + ", " + contentId + ")");
 
         throwIfSpaceNotExist(spaceId);
+        throwIfContentNotExist(spaceId, contentId);
 
         // Remove calculated properties
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
         contentMetadata.remove(METADATA_CONTENT_MODIFIED);
         contentMetadata.remove(METADATA_CONTENT_SIZE);
 
-        String containerName = getContainerName(spaceId);
-
-        // Set a default mime type value if one is not set
-        if (!contentMetadata.containsKey(METADATA_CONTENT_MIMETYPE)) {
-            contentMetadata.put(METADATA_CONTENT_MIMETYPE, DEFAULT_MIMETYPE);
+        // Update Content-Type
+        String newMimeType = contentMetadata.get(METADATA_CONTENT_MIMETYPE);
+        if (newMimeType != null && !newMimeType.equals("")) {
+            contentMetadata.put(CONTENT_TYPE, newMimeType);
         }
-        // TODO: Determine how to update Rackspace-specific object mimetype
 
-        // Get the object and replace its metadata
-        // TODO: Determine how to update object metadata directly.
-        // This doesn't actually push the object metadata to the store.
-        //             FilesObjectMetaData objMetadata =
-        //              filesClient.getObjectMetaData(containerName, contentId);
-        //             objMetadata.setMetaData(contentMetadata);
-
-        // In the meantime, replace the object. This is terribly inefficient
-        // and will only work for small files. Remove ASAP.
-        byte[] content = getObject(contentId, containerName);
-        storeObject(contentId, contentMetadata, containerName, content);
-
+        updateContentMetadata(spaceId, contentId, contentMetadata);
     }
 
-    private byte[] getObject(String contentId, String containerName) {
-        StringBuilder err = new StringBuilder("Could not get object for "
-                + contentId + " in Rackspace container "
-                + containerName + " due to error: ");
+    private void updateContentMetadata(String spaceId,
+                                       String contentId,
+                                       Map<String, String> contentMetadata) {
+        String containerName = getContainerName(spaceId);
+
+        StringBuilder err = new StringBuilder("Could not update metadata " +
+            "for content " + contentId + " in Rackspace container " +
+            containerName + " due to error: ");
 
         try {
-            return filesClient.getObject(containerName, contentId);
-
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
+            filesClient.updateObjectMetadata(containerName,
+                                             contentId,
+                                             contentMetadata);
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesInvalidNameException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesNotFoundException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
-        }
-    }
-
-    private void storeObject(String contentId,
-                             Map<String, String> contentMetadata,
-                             String containerName,
-                             byte[] content) {
-        StringBuilder err = new StringBuilder("Could not update metadata "
-                + "for content " + contentId + " in Rackspace container "
-                + containerName + " due to error: ");
-
-        try {
-            filesClient.storeObject(containerName,
-                                    content,
-                                    contentMetadata.get(METADATA_CONTENT_MIMETYPE),
-                                    contentId,
-                                    contentMetadata);
         } catch (IOException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
-
-        } catch (FilesException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-
         }
     }
 
@@ -729,13 +665,13 @@ public class RackspaceStorageProvider
         Map<String, String> metadataMap = metadata.getMetaData();
 
         // Set expected metadata values
+
         // MIMETYPE
-        if (!metadataMap.containsKey(METADATA_CONTENT_MIMETYPE)) {
-            String mimetype = metadata.getMimeType();
-            if (mimetype != null) {
-                metadataMap.put(METADATA_CONTENT_MIMETYPE, mimetype);
-            }
+        String mimetype = metadata.getMimeType();
+        if (mimetype != null) {
+            metadataMap.put(METADATA_CONTENT_MIMETYPE, mimetype);
         }
+
         // SIZE
         String contentLength = metadata.getContentLength();
         if (contentLength != null) {
@@ -774,19 +710,21 @@ public class RackspaceStorageProvider
                 + " due to error: ");
 
         try {
-            return filesClient.getObjectMetaData(containerName, contentId);
+            FilesObjectMetaData metadata =
+                filesClient.getObjectMetaData(containerName, contentId);
 
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
+            if(metadata == null) {
+                String errMsg = createNotFoundMsg(spaceId, contentId);
+                throw new NotFoundException(errMsg);
+            }
 
+            return metadata;
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
-
-        } catch (FilesInvalidNameException e) {
+        } catch (IOException e) {
             err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, NO_RETRY);
+            throw new StorageException(err.toString(), e, RETRY);
         }
     }
 
@@ -797,8 +735,8 @@ public class RackspaceStorageProvider
      * character and they must be less than 64 characters in length (after URL
      * encoding).
      *
-     * @param spaceId
-     * @return
+     * @param spaceId user preferred ID of the space
+     * @return spaceId converted to valid Rackspace container name
      */
     protected String getContainerName(String spaceId) {
         String containerName = spaceId;

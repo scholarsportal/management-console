@@ -7,6 +7,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -145,7 +146,7 @@ public class S3StorageProviderTest {
         RestHttpHelper restHelper = new RestHttpHelper();
         HttpResponse spaceResponse = restHelper.get(spaceUrl);
         // Expect a 403 forbidden error because the Space Access is closed by default
-        assertEquals(403, spaceResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(OPEN)");
@@ -159,7 +160,7 @@ public class S3StorageProviderTest {
         // Check space access
         log.debug("Check space access");
         spaceResponse = restHelper.get(spaceUrl);
-        assertEquals(200, spaceResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, spaceResponse.getStatusCode());
 
         // test addContent()
         log.debug("Test addContent()");
@@ -183,7 +184,7 @@ public class S3StorageProviderTest {
         // Check content access
         log.debug("Check content access");
         spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
-        assertEquals(200, spaceResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_OK, spaceResponse.getStatusCode());
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(CLOSED)");
@@ -192,12 +193,12 @@ public class S3StorageProviderTest {
         // Check space access
         log.debug("Check space access");
         spaceResponse = restHelper.get(spaceUrl);
-        assertEquals(403, spaceResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
 
         // Check content access
         log.debug("Check content access");
         spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
-        assertEquals(403, spaceResponse.getStatusCode());
+        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
