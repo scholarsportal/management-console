@@ -729,10 +729,21 @@ public class EMCStorageProviderTest {
         assertTrue(metadata.containsKey(modifiedKey));
         assertTrue(metadata.containsKey(cksumKey));
 
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, metadata.get(mimeKey));
+        assertEquals(mimeText, metadata.get(mimeKey));
         assertEquals(data.length, Integer.parseInt(metadata.get(sizeKey)));
         assertNotNull(metadata.get(modifiedKey));
         assertEquals(digest, metadata.get(cksumKey));
+
+        // Set mimetype and check again.
+        Map<String, String> newMeta = new HashMap<String, String>();
+        newMeta.put(mimeKey, mimeXml);
+        emcProvider.setContentMetadata(spaceId0,
+                                       contentId0,
+                                       newMeta);
+        metadata = emcProvider.getContentMetadata(spaceId0, contentId0);
+        assertNotNull(metadata);
+        assertTrue(metadata.containsKey(mimeKey));
+        assertEquals(mimeXml, metadata.get(mimeKey));
     }
 
     @Test

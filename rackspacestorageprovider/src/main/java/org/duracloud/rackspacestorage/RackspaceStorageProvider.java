@@ -36,8 +36,6 @@ import java.util.TimeZone;
 public class RackspaceStorageProvider
         implements StorageProvider {
 
-    public static final String CONTENT_TYPE = "Content-Type";
-
     private final Log log = LogFactory.getLog(this.getClass());
 
     private FilesClient filesClient = null;
@@ -408,8 +406,12 @@ public class RackspaceStorageProvider
         } catch (StorageException e) {
             // While a bug in the Rackspace SDK is being ironed out
             // just return CLOSED when an exception is thrown
-            // TODO: Return to above code after SDK has been fixed
-            log.warn("Return temp error access: "+AccessType.CLOSED, e);
+            // TODO: Remove try/catch after Rackspace SDK has been fixed
+            String notice = "Calling RackspaceProvider.getCDNContainerInfo() " +
+                "currently throws an exception in all cases. Returning CLOSED " +
+                "access value in the meantime. Rackspace Error message: " +
+                e.getMessage();
+            log.warn(notice);
             spaceAccess = AccessType.CLOSED;
         }
 
@@ -486,9 +488,12 @@ public class RackspaceStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
+        if(contentMimeType == null || contentMimeType.equals("")) {
+            contentMimeType = DEFAULT_MIMETYPE;
+        }        
+
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
-        metadata.put(CONTENT_TYPE, contentMimeType);
 
         // Wrap the content to be able to compute a checksum during transfer
         DigestInputStream wrappedContent = wrapStream(content);
@@ -615,12 +620,15 @@ public class RackspaceStorageProvider
         contentMetadata.remove(METADATA_CONTENT_MODIFIED);
         contentMetadata.remove(METADATA_CONTENT_SIZE);
 
-        // Update Content-Type
-        String newMimeType = contentMetadata.get(METADATA_CONTENT_MIMETYPE);
-        if (newMimeType != null && !newMimeType.equals("")) {
-            contentMetadata.put(CONTENT_TYPE, newMimeType);
+        // Set mimetype
+        String contentMimeType =
+            contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
+        if(contentMimeType == null || contentMimeType.equals("")) {
+            contentMimeType = getObjectMetadata(spaceId, contentId).getMimeType();
         }
-
+        // TODO: Determine how to set MIME type on a Rackspace object directly
+        contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
+        
         updateContentMetadata(spaceId, contentId, contentMetadata);
     }
 
@@ -667,11 +675,7 @@ public class RackspaceStorageProvider
         // Set expected metadata values
 
         // MIMETYPE
-        String mimetype = metadata.getMimeType();
-        if (mimetype != null) {
-            metadataMap.put(METADATA_CONTENT_MIMETYPE, mimetype);
-        }
-
+        // METADATA_CONTENT_MIMETYPE value is set directly by add/update content
         // SIZE
         String contentLength = metadata.getContentLength();
         if (contentLength != null) {

@@ -574,11 +574,6 @@ public class EMCStorageProvider implements StorageProvider {
     }
 
     private MetadataList createRequiredContentMetadata(String spaceId,
-                                                       String contentId) {
-        return createRequiredContentMetadata(spaceId, contentId, null);
-    }
-
-    private MetadataList createRequiredContentMetadata(String spaceId,
                                                        String contentId,
                                                        String mimeType) {
         boolean isIndexed = true;
@@ -655,15 +650,24 @@ public class EMCStorageProvider implements StorageProvider {
 
         throwIfSpaceNotExist(spaceId);
 
-        Identifier objectPath = getObjectPath(spaceId, contentId);
+        // Determine mimetype
+        String contentMimeType =
+            contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
+        if(contentMimeType == null || contentMimeType.equals("")) {
+            Map<String, String> contentMeta =
+                getContentMetadata(spaceId, contentId);
+            contentMimeType = contentMeta.get(METADATA_CONTENT_MIMETYPE);
+        }
 
         // Remove existing user metadata.
+        Identifier objectPath = getObjectPath(spaceId, contentId);
         MetadataTags existingTags = listUserMetadataTags(objectPath);
         deleteUserMetadata(objectPath, existingTags);
 
         // Start with required metadata.
         MetadataList metadatas = createRequiredContentMetadata(spaceId,
-                                                               contentId);
+                                                               contentId,
+                                                               contentMimeType);
 
         // Start adding arg user metadata.
         final boolean isIndexed = false;
