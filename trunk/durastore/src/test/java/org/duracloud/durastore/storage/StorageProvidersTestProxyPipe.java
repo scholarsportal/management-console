@@ -1,10 +1,10 @@
 
 package org.duracloud.durastore.storage;
 
-import java.io.IOException;
-
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
+
+import java.io.IOException;
 
 /**
  * This class applies a list of proxies the the StorageProvidersTest suite.
@@ -115,9 +115,14 @@ public class StorageProvidersTestProxyPipe
     public void testSetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String spaceId1,
-                                       String contentId0)
+                                       String contentId0,
+                                       String contentId1)
             throws StorageException {
-        proxy.testSetContentMetadata(provider, spaceId0, spaceId1, contentId0);
+        proxy.testSetContentMetadata(provider,
+                                     spaceId0,
+                                     spaceId1,
+                                     contentId0,
+                                     contentId1);
     }
 
     public void testSetSpaceMetadata(StorageProvider provider, String spaceId0)

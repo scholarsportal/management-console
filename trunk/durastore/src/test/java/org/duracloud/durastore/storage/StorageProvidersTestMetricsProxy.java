@@ -1,16 +1,15 @@
 
 package org.duracloud.durastore.storage;
 
-import java.io.IOException;
-
 import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsReport;
 import org.duracloud.common.util.metrics.MetricsTable;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
-
 import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
 
 /**
  * This class captures timing metrics for each executed method of the
@@ -181,10 +180,15 @@ public class StorageProvidersTestMetricsProxy
     public void testSetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String spaceId1,
-                                       String contentId0)
+                                       String contentId0,
+                                       String contentId1)
             throws StorageException {
         startMetric("testSetContentMetadata", provider);
-        tester.testSetContentMetadata(provider, spaceId0, spaceId1, contentId0);
+        tester.testSetContentMetadata(provider,
+                                      spaceId0,
+                                      spaceId1,
+                                      contentId0,
+                                      contentId1);
         stopMetric(provider);
     }
 

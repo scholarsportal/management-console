@@ -5,6 +5,7 @@ import com.rackspacecloud.client.cloudfiles.FilesClient;
 import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
@@ -169,7 +170,7 @@ public class RackspaceStorageProviderTest {
 
         // test addContent()
         log.debug("Test addContent()");
-        addContent(SPACE_ID, CONTENT_ID);
+        addContent(SPACE_ID, CONTENT_ID, CONTENT_MIME_VALUE);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
@@ -198,9 +199,9 @@ public class RackspaceStorageProviderTest {
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
-        addContent(SPACE_ID, testContent2);
+        addContent(SPACE_ID, testContent2, CONTENT_MIME_VALUE);
         String testContent3 = "test-content-3";
-        addContent(SPACE_ID, testContent3);
+        addContent(SPACE_ID, testContent3, null);
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
@@ -269,26 +270,31 @@ public class RackspaceStorageProviderTest {
         log.debug("Test getContentMetadata()");
         cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
-        // TODO: Determine how to handle metadata name case change (metadata-name becomes Metadata-Name)
-        //assertEquals(CONTENT_META_VALUE, CONTENT_META_NAME);
-
+        assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
         // Mime type was not included when setting content metadata
         // so its value should have been maintained
         assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
 
         // test setContentMetadata() - mimetype
         log.debug("Test setContentMetadata() - mimetype");
+        String newMime = "image/bmp";
         contentMetadata = new HashMap<String, String>();
-        contentMetadata.put(CONTENT_MIME_NAME,
-                            StorageProvider.DEFAULT_MIMETYPE);
+        contentMetadata.put(CONTENT_MIME_NAME, newMime);
         rackspaceProvider.setContentMetadata(SPACE_ID,
                                              CONTENT_ID,
                                              contentMetadata);
         cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, CONTENT_ID);
         assertNotNull(cMetadata);
+        assertEquals(newMime, cMetadata.get(CONTENT_MIME_NAME));
+        // Custom metadata was not included in update, it should be removed
+        assertNull(cMetadata.get(CONTENT_META_NAME));
+
+        log.debug("Test getContentMetadata() - mimetype default");
+        cMetadata = rackspaceProvider.getContentMetadata(SPACE_ID, testContent3);
+        assertNotNull(cMetadata);
         assertEquals(StorageProvider.DEFAULT_MIMETYPE,
-                     cMetadata.get(CONTENT_MIME_NAME));
-                
+                     cMetadata.get(CONTENT_MIME_NAME));     
+
         // test deleteContent()
         log.debug("Test deleteContent()");
         rackspaceProvider.deleteContent(SPACE_ID, CONTENT_ID);
@@ -302,13 +308,13 @@ public class RackspaceStorageProviderTest {
         assertFalse(contains(spaces, SPACE_ID));
     }
 
-    private void addContent(String spaceId, String contentId) {
+    private void addContent(String spaceId, String contentId, String mimeType) {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
         String checksum = rackspaceProvider.addContent(spaceId,
                                                        contentId,
-                                                       CONTENT_MIME_VALUE,
+                                                       mimeType,
                                                        contentSize,
                                                        contentStream);
         compareChecksum(rackspaceProvider, spaceId, contentId, checksum);

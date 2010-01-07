@@ -39,6 +39,14 @@ public class StorageProvidersTestCore
 
     private final String mimeXml = "text/xml";
 
+    private void sleep(long milliseconds) {
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void testGetSpaces(StorageProvider provider,
                               String spaceId0,
                               String spaceId1) throws StorageException {
@@ -49,6 +57,8 @@ public class StorageProvidersTestCore
 
         provider.createSpace(spaceId0);
         provider.createSpace(spaceId1);
+
+        sleep(1000);
 
         spaces = provider.getSpaces();
         assertNotNull(spaces);
@@ -181,6 +191,7 @@ public class StorageProvidersTestCore
         // Add some spaces.
         provider.createSpace(spaceId0);
         provider.createSpace(spaceId1);
+        sleep(1000);
         spaces = provider.getSpaces();
         assertNotNull(spaces);
         assertEquals(numInitialSpaces + 2, count(spaces));
@@ -196,6 +207,7 @@ public class StorageProvidersTestCore
         // Now check deletions.
         // ...first.
         provider.deleteSpace(spaceId1);
+        sleep(1000);
         spaces = provider.getSpaces();
         assertNotNull(spaces);
         assertEquals(numInitialSpaces + 1, count(spaces));
@@ -210,6 +222,7 @@ public class StorageProvidersTestCore
 
         // ...second.
         provider.deleteSpace(spaceId0);
+        sleep(1000);
         spaces = provider.getSpaces();
         assertNotNull(spaces);
         assertEquals(numInitialSpaces, count(spaces));
@@ -514,7 +527,8 @@ public class StorageProvidersTestCore
     public void testSetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String spaceId1,
-                                       String contentId0)
+                                       String contentId0,
+                                       String contentId1)
             throws StorageException {
 
         Map<String, String> contentMetadata = new HashMap<String, String>();
@@ -540,6 +554,8 @@ public class StorageProvidersTestCore
         assertNotNull(initialMeta);
         int initialSize = initialMeta.size();
         assertTrue(initialSize > 0);
+        assertEquals(mimeText,
+                     initialMeta.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
 
         // Set and check.
         provider.setContentMetadata(spaceId1, contentId0, contentMetadata);
@@ -564,6 +580,18 @@ public class StorageProvidersTestCore
 
         assertTrue(metadata.containsKey(key1.toLowerCase()));
         assertEquals(val1, metadata.get(key1.toLowerCase()));
+        assertEquals(mimeText,
+                     metadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
+
+        // Set MIME and check.
+        contentMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
+                            StorageProvider.DEFAULT_MIMETYPE);
+        provider.setContentMetadata(spaceId1, contentId0, contentMetadata);
+        metadata = provider.getContentMetadata(spaceId1, contentId0);
+        assertNotNull(metadata);
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     metadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
+
 
         // Clear properties.
         provider.setContentMetadata(spaceId1,
@@ -574,6 +602,13 @@ public class StorageProvidersTestCore
         assertEquals(initialSize, metadata.size());
         assertFalse(metadata.containsKey(key0));
         assertFalse(metadata.containsKey(key1));
+
+        // Add content with null mimetype, should resolve to default
+        addContent(provider, spaceId1, contentId1, null, "hello".getBytes());
+        metadata = provider.getContentMetadata(spaceId1, contentId1);
+        assertNotNull(metadata);
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE, 
+                     metadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
     }
 
     public void testGetContentMetadata(StorageProvider provider,
@@ -616,11 +651,23 @@ public class StorageProvidersTestCore
         assertTrue(metadata.containsKey(modifiedKey));
         assertTrue(metadata.containsKey(cksumKey));
 
-        // Mimetype is reset to default value.
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, metadata.get(mimeKey));
+        // Mimetype value is unchanged.
+        assertEquals(mimeText, metadata.get(mimeKey));
         assertEquals(data.length, Integer.parseInt(metadata.get(sizeKey)));
         assertNotNull(metadata.get(modifiedKey));
         assertEquals(digest, metadata.get(cksumKey));
+
+        // Set and check again.
+        metadata = new HashMap<String, String>();
+        metadata.put(mimeKey, mimeXml);
+        provider.setContentMetadata(spaceId0,
+                                    contentId0,
+                                    metadata);
+        metadata = provider.getContentMetadata(spaceId0, contentId0);
+        assertNotNull(metadata);
+       
+        // Mimetype value is updated
+        assertEquals(mimeXml, metadata.get(mimeKey));
     }
 
     public void close() {

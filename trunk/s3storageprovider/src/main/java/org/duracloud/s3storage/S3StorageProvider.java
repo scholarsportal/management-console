@@ -436,6 +436,10 @@ public class S3StorageProvider
         // Wrap the content to be able to compute a checksum during transfer
         DigestInputStream wrappedContent = wrapStream(content);
 
+        if(contentMimeType == null || contentMimeType.equals("")) {
+            contentMimeType = DEFAULT_MIMETYPE;
+        }
+
         S3Object contentItem = new S3Object(contentId);
         contentItem.setContentType(contentMimeType);
         contentItem.setDataInputStream(wrappedContent);
@@ -563,8 +567,17 @@ public class S3StorageProvider
         contentMetadata.remove(S3Object.METADATA_HEADER_DATE);
         contentMetadata.remove(S3Object.METADATA_HEADER_ETAG);
 
-        // Remove mimetype to set later
-        String newMimeType = contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
+        // Determine mimetype, from metadata list or existing value
+        String mimeType = contentMetadata.remove(METADATA_CONTENT_MIMETYPE);
+        if (mimeType == null || mimeType.equals("")) {
+            Map<String, String> existingMeta =
+                getContentMetadata(spaceId, contentId);
+            String existingMime =
+                existingMeta.get(StorageProvider.METADATA_CONTENT_MIMETYPE);
+            if (existingMime != null) {
+                mimeType = existingMime;
+            }
+        }
 
         if (log.isDebugEnabled()) {
             for (String key : contentMetadata.keySet()) {
@@ -579,10 +592,10 @@ public class S3StorageProvider
         contentItem.setAcl(getObjectAcl(contentId, bucket));
         contentItem.replaceAllMetadata(contentMetadata);
 
-        // Update Content-Type to the new mime type
-        if (newMimeType != null && !newMimeType.equals("")) {
+        // Set Content-Type
+        if (mimeType != null && !mimeType.equals("")) {
             contentItem.addMetadata(S3Object.METADATA_HEADER_CONTENT_TYPE,
-                                    newMimeType);
+                                    mimeType);
         }
 
         updateObjectMetadata(bucketName, contentId, contentItem);

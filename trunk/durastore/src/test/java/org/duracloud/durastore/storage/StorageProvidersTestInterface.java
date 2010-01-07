@@ -62,7 +62,8 @@ public interface StorageProvidersTestInterface {
     public void testSetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String spaceId1,
-                                       String contentId0)
+                                       String contentId0,
+                                       String contentId1)
             throws StorageException;
 
     public void testGetContentMetadata(StorageProvider provider,

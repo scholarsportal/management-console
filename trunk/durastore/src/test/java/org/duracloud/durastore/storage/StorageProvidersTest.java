@@ -291,12 +291,14 @@ public class StorageProvidersTest {
         String spaceId0 = getNewSpaceId();
         String spaceId1 = getNewSpaceId();
         String contentId0 = getNewContentId();
+        String contentId1 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {
             tester.testSetContentMetadata(provider,
                                           spaceId0,
                                           spaceId1,
-                                          contentId0);
+                                          contentId0,
+                                          contentId1);
         }
     }
 

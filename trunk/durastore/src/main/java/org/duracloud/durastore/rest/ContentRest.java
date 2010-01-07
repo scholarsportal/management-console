@@ -162,8 +162,12 @@ public class ContentRest extends BaseRest {
                                           @QueryParam("storeID")
                                           String storeID) {
         try {
-            MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
+            MultivaluedMap<String, String> rHeaders =
+                headers.getRequestHeaders();
+            Map<String, String> userMetadata =
+                getUserMetadata(CONTENT_MIMETYPE_HEADER);
 
+            // Set mimetype in metadata if it was provided
             String contentMimeType = null;
             if(rHeaders.containsKey(CONTENT_MIMETYPE_HEADER)) {
                 contentMimeType = rHeaders.getFirst(CONTENT_MIMETYPE_HEADER);
@@ -171,8 +175,11 @@ public class ContentRest extends BaseRest {
             if(contentMimeType == null && rHeaders.containsKey(HttpHeaders.CONTENT_TYPE)) {
                 contentMimeType = rHeaders.getFirst(HttpHeaders.CONTENT_TYPE);
             }
+            if(contentMimeType != null && !contentMimeType.equals("")) {
+                userMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
+                                 contentMimeType);
+            }
 
-            Map<String, String> userMetadata = getUserMetadata(CONTENT_MIMETYPE_HEADER);
             ContentResource.updateContentMetadata(spaceID,
                                                   contentID,
                                                   contentMimeType,

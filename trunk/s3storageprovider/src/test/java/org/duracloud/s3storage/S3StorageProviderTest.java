@@ -165,7 +165,7 @@ public class S3StorageProviderTest {
         // test addContent()
         log.debug("Test addContent()");
         String contentId = getNewContentId();
-        addContent(spaceId, contentId);
+        addContent(spaceId, contentId, CONTENT_MIME_VALUE);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
@@ -202,9 +202,9 @@ public class S3StorageProviderTest {
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
-        addContent(spaceId, testContent2);
+        addContent(spaceId, testContent2, CONTENT_MIME_VALUE);
         String testContent3 = "test-content-3";
-        addContent(spaceId, testContent3);
+        addContent(spaceId, testContent3, null);
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
@@ -264,9 +264,29 @@ public class S3StorageProviderTest {
         assertNotNull(cMetadata);
         assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
         // Mime type was not included when setting content metadata
-        // so it should have been reset to a default value
-        assertEquals(StorageProvider.DEFAULT_MIMETYPE, cMetadata.get(
-            CONTENT_MIME_NAME));
+        // so its value should have been maintained
+        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(CONTENT_MIME_VALUE,
+                     cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
+
+        // test setContentMetadata() - mimetype
+        log.debug("Test setContentMetadata() - mimetype");
+        contentMetadata = new HashMap<String, String>();
+        contentMetadata.put(CONTENT_MIME_NAME,
+                            StorageProvider.DEFAULT_MIMETYPE);
+        s3Provider.setContentMetadata(spaceId, contentId, contentMetadata);
+        cMetadata = s3Provider.getContentMetadata(spaceId, contentId);
+        assertNotNull(cMetadata);
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(CONTENT_MIME_NAME));
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
+
+        log.debug("Test getContentMetadata() - mimetype default");
+        cMetadata = s3Provider.getContentMetadata(spaceId, testContent3);
+        assertNotNull(cMetadata);
+        assertEquals(StorageProvider.DEFAULT_MIMETYPE,
+                     cMetadata.get(CONTENT_MIME_NAME));
         assertEquals(StorageProvider.DEFAULT_MIMETYPE,
                      cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
 
@@ -283,13 +303,13 @@ public class S3StorageProviderTest {
         assertFalse(contains(spaces, spaceId));
     }
 
-    private void addContent(String spaceId, String contentId) {
+    private void addContent(String spaceId, String contentId, String mimeType) {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
         String checksum = s3Provider.addContent(spaceId,
                                                 contentId,
-                                                CONTENT_MIME_VALUE,
+                                                mimeType,
                                                 contentSize,
                                                 contentStream);
         compareChecksum(s3Provider, spaceId, contentId, checksum);
@@ -360,7 +380,7 @@ public class S3StorageProviderTest {
                 content);
             s3Provider.addContent(spaceId,
                                   contentId,
-                                  "text/plain",
+                                  CONTENT_MIME_VALUE,
                                   contentSize,
                                   contentStream);
             fail(failMsg);
@@ -489,7 +509,7 @@ public class S3StorageProviderTest {
         String contentId = getNewContentId();
 
         s3Provider.createSpace(spaceId);
-        addContent(spaceId, contentId);
+        addContent(spaceId, contentId, CONTENT_MIME_VALUE);
 
         // This is the method under test.
         s3Provider.setContentMetadata(spaceId, contentId, contentMetadata);

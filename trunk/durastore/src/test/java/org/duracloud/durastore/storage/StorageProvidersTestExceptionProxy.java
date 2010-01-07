@@ -167,13 +167,15 @@ public class StorageProvidersTestExceptionProxy
     public void testSetContentMetadata(StorageProvider provider,
                                        String spaceId0,
                                        String spaceId1,
-                                       String contentId0)
+                                       String contentId0,
+                                       String contentId1)
             throws StorageException {
         try {
             tester.testSetContentMetadata(provider,
                                           spaceId0,
                                           spaceId1,
-                                          contentId0);
+                                          contentId0,
+                                          contentId1);
         } catch (AssertionError e) {
             throwRuntime(provider, e);
         }
