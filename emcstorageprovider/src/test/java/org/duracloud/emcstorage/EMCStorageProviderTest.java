@@ -8,12 +8,14 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import junit.framework.Assert;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ChecksumUtil.Algorithm;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
@@ -834,6 +836,148 @@ public class EMCStorageProviderTest {
         assertNotNull(username);
         assertNotNull(password);
         return new EsuRestApi(ESU_HOST, ESU_PORT, username, password);
+    }
+
+    @Test
+    public void testNotFound() {
+        String spaceId = "NonExistantSpace";
+        String contentId = "NonExistantContent";
+        String failMsg = "Should throw NotFoundException attempting to " +
+                         "access a space which does not exist";
+        byte[] content = "test-content".getBytes();
+
+        // Space Not Found
+
+        try {
+            emcProvider.getSpaceMetadata(spaceId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.setSpaceMetadata(spaceId,
+                                         new HashMap<String, String>());
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getSpaceContents(spaceId, null);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getSpaceContentsChunked(spaceId, null, 100, null);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getSpaceAccess(spaceId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.setSpaceAccess(spaceId, AccessType.CLOSED);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.deleteSpace(spaceId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            int contentSize = content.length;
+            ByteArrayInputStream contentStream =
+                new ByteArrayInputStream(content);
+            emcProvider.addContent(spaceId,
+                                   contentId,
+                                   mimeText,
+                                   contentSize,
+                                   contentStream);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getContent(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getContentMetadata(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.setContentMetadata(spaceId,
+                                           contentId,
+                                           new HashMap<String, String>());
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.deleteContent(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        // Content Not Found
+
+        spaceId = getNewSpaceId();
+        emcProvider.createSpace(spaceId);
+        failMsg = "Should throw NotFoundException attempting to " +
+            "access content which does not exist";
+
+        try {
+            emcProvider.getContent(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.getContentMetadata(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.setContentMetadata(spaceId,
+                                           contentId,
+                                           new HashMap<String, String>());
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            emcProvider.deleteContent(spaceId, contentId);
+            Assert.fail(failMsg);
+        } catch (NotFoundException expected) {
+            assertNotNull(expected);
+        }
     }
 
 }
