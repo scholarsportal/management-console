@@ -614,7 +614,6 @@ public class RackspaceStorageProvider
         log.debug("setContentMetadata(" + spaceId + ", " + contentId + ")");
 
         throwIfSpaceNotExist(spaceId);
-        throwIfContentNotExist(spaceId, contentId);
 
         // Remove calculated properties
         contentMetadata.remove(METADATA_CONTENT_CHECKSUM);
@@ -650,6 +649,7 @@ public class RackspaceStorageProvider
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
         } catch (IOException e) {
+            throwIfContentNotExist(spaceId, contentId);
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }

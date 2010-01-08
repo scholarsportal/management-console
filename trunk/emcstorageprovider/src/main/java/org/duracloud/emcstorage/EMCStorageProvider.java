@@ -5,12 +5,13 @@ import com.emc.esu.api.rest.EsuRestApi;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.storage.domain.ContentIterator;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.StorageProviderUtil;
-import org.duracloud.storage.domain.ContentIterator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -109,6 +110,9 @@ public class EMCStorageProvider implements StorageProvider {
      */
     public Iterator<String> getSpaceContents(String spaceId,
                                              String prefix) {
+        log.debug("getSpaceContents(" + spaceId + ", " + prefix);
+
+        throwIfSpaceNotExist(spaceId);        
         return new ContentIterator(this, spaceId, prefix);
     }
 
@@ -126,7 +130,8 @@ public class EMCStorageProvider implements StorageProvider {
                                                 String prefix,
                                                 long maxResults,
                                                 String marker) {
-        log.debug("getSpaceContents(" + spaceId + ")");
+        log.debug("getSpaceContentsChunked(" + spaceId + ", " + prefix + ", " +
+                                           maxResults + ", " + marker + ")");
 
         throwIfSpaceNotExist(spaceId);
 
@@ -188,7 +193,18 @@ public class EMCStorageProvider implements StorageProvider {
     private void throwIfSpaceNotExist(String spaceId) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
-            throw new StorageException(msg, NO_RETRY);
+            throw new NotFoundException(msg);
+        }
+    }
+    
+    private void throwIfContentNotExist(String spaceId, String contentId) {
+        try {
+            Identifier objectPath = getObjectPath(spaceId, contentId);
+            emcService.getSystemMetadata(objectPath, null);
+        } catch(EsuException e) {
+            String err = "Could not find content [" + spaceId + ":" +
+                         contentId + "], due to error: " + e.getMessage();
+            throw new NotFoundException(err);
         }
     }
 
@@ -517,6 +533,8 @@ public class EMCStorageProvider implements StorageProvider {
                                 mimeType,
                                 contentSize,
                                 content);
+        } catch (NotFoundException e) {
+            throw e;
         } catch (StorageException e) {
             throw new StorageException(e, NO_RETRY);
         }
@@ -603,10 +621,14 @@ public class EMCStorageProvider implements StorageProvider {
         log.debug("getContent(" + spaceId + ", " + contentId + ")");
         throwIfSpaceNotExist(spaceId);
 
-        return doGetContent(getObjectPath(spaceId, contentId));
+        return doGetContent(spaceId,
+                            contentId,
+                            getObjectPath(spaceId, contentId));
     }
 
-    private InputStream doGetContent(Identifier contentObjId) {
+    private InputStream doGetContent(String spaceId,
+                                     String contentId,
+                                     Identifier contentObjId) {
         log.debug("doGetContent(" + contentObjId + ")");
 
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -614,7 +636,14 @@ public class EMCStorageProvider implements StorageProvider {
         boolean close = false;
 
         DownloadHelper helper = new DownloadHelper(emcService, buffer);
-        helper.readObject(contentObjId, outStream, close);
+        try {
+            helper.readObject(contentObjId, outStream, close);
+        } catch(EsuException e) {
+            throwIfContentNotExist(spaceId, contentId);
+            String err = "Error retrieving content [" + spaceId + ":" +
+                         contentId + "], due to error: " + e.getMessage();
+            throw new StorageException(err, e, RETRY);
+        }
 
         while (!helper.isComplete() && !helper.isFailed()) {
             log.debug("blocking...");
@@ -633,6 +662,7 @@ public class EMCStorageProvider implements StorageProvider {
         try {
             emcService.deleteObject(getObjectPath(spaceId, contentId));
         } catch (Exception e) {
+            throwIfContentNotExist(spaceId, contentId);
             String err =
                 "Error deleting: [" + spaceId + ":" + contentId + "], " +
                     "due to error: " + e.getMessage();
@@ -677,7 +707,12 @@ public class EMCStorageProvider implements StorageProvider {
             metadatas.addMetadata(new Metadata(key, val, isIndexed));
         }
 
-        setUserMetadata(objectPath, metadatas);
+        try {
+            setUserMetadata(objectPath, metadatas);
+        } catch(StorageException e) {
+            throwIfContentNotExist(spaceId, contentId);
+            throw e;
+        }
     }
 
     /**
@@ -688,6 +723,7 @@ public class EMCStorageProvider implements StorageProvider {
         log.debug("getContentMetadata(" + spaceId + ", " + contentId + ")");
 
         throwIfSpaceNotExist(spaceId);
+        throwIfContentNotExist(spaceId, contentId);
 
         Identifier objectPath = getObjectPath(spaceId, contentId);
 
@@ -701,7 +737,9 @@ public class EMCStorageProvider implements StorageProvider {
         }
 
         Map<String, String> metadata = getExistingUserMetadata(objectPath);
-        metadata.putAll(generateManagedContentMetadata(objectPath));
+        metadata.putAll(generateManagedContentMetadata(spaceId,
+                                                       contentId,
+                                                       objectPath));
 
         // Normalize metadata keys to lowercase.
         Map<String, String> resultMap = new HashMap<String, String>();
@@ -731,7 +769,9 @@ public class EMCStorageProvider implements StorageProvider {
         return metadata;
     }
 
-    private Map<String, String> generateManagedContentMetadata(Identifier objId) {
+    private Map<String, String> generateManagedContentMetadata(String spaceId,
+                                                               String contentId,
+                                                               Identifier objId) {
         MetadataList sysMd = getSystemMetadata(objId);
 
         // Content size
@@ -750,7 +790,8 @@ public class EMCStorageProvider implements StorageProvider {
 
         // Checksum
         ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
-        String cksum = cksumUtil.generateChecksum(doGetContent(objId));
+        String cksum =
+            cksumUtil.generateChecksum(doGetContent(spaceId, contentId, objId));
 
         Map<String, String> metadata = new HashMap<String, String>();
         if (StringUtils.isNotBlank(size)) {
