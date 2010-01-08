@@ -408,8 +408,9 @@ public class RackspaceStorageProvider
             // just return CLOSED when an exception is thrown
             // TODO: Remove try/catch after Rackspace SDK has been fixed
             String notice = "Calling RackspaceProvider.getCDNContainerInfo() " +
-                "currently throws an exception in all cases. Returning CLOSED " +
-                "access value in the meantime. Rackspace Error message: " +
+                "currently throws an exception when a container has not been " +
+                "CDN enabled. Returning CLOSED as the AccessType whenever an" +
+                "exception is thrown in the meantime. Rackspace Error message: " +
                 e.getMessage();
             log.warn(notice);
             spaceAccess = AccessType.CLOSED;
