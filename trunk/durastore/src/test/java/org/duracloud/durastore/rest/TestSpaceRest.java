@@ -216,4 +216,26 @@ public class TestSpaceRest
         assertNull(response.getResponseHeader(name));
     }
 
+    @Test
+    public void testNotFound() throws Exception {
+        String invalidSpaceId = "non-existant-space";
+        String url = baseUrl + "/" + invalidSpaceId;
+
+        // Get Space
+        HttpResponse response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Get Space Metadata
+        response = restHelper.head(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Set Space Metadata
+        response = restHelper.post(url, null, null);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Delete Space
+        response = restHelper.delete(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());        
+    }
+
  }

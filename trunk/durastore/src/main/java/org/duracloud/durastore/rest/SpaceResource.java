@@ -1,9 +1,11 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.log4j.Logger;
-import org.duracloud.common.web.RestResourceException;
+import org.duracloud.durastore.error.ResourceException;
+import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
 import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.jdom.Document;
@@ -32,7 +34,7 @@ public class SpaceResource {
      * @return XML listing of spaces
      */
     public static String getSpaces(String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         Element spacesElem = new Element("spaces");
 
         try {
@@ -47,9 +49,8 @@ public class SpaceResource {
                 spacesElem.addContent(spaceElem);
             }
         } catch (StorageException e) {
-            String error = "Error attempting to build spaces XML: " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("Error attempting to build spaces XML",
+                                        e);
         }
 
         Document doc = new Document(spacesElem);
@@ -65,16 +66,19 @@ public class SpaceResource {
      * @return Map of space metadata
      */
     public static Map<String, String> getSpaceMetadata(String spaceID, String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
             return storage.getSpaceMetadata(spaceID);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("retrieve space metadata for",
+                                                spaceID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to retrieve space metadata for '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("retrieve space metadata for",
+                                        spaceID,
+                                        e);
         }
     }
 
@@ -93,7 +97,7 @@ public class SpaceResource {
                                           String prefix,
                                           long maxResults,
                                           String marker)
-    throws RestResourceException {
+    throws ResourceException {
         Element spaceElem = new Element("space");
         spaceElem.setAttribute("id", spaceID);
 
@@ -117,11 +121,12 @@ public class SpaceResource {
                     spaceElem.addContent(contentElem);
                 }
             }
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("build space XML for",
+                                                spaceID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to build space XML for '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("build space XML for", spaceID, e);
         }
 
         Document doc = new Document(spaceElem);
@@ -141,7 +146,7 @@ public class SpaceResource {
                                 String spaceAccess,
                                 Map<String, String> userMetadata,
                                 String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
 
         try {
@@ -153,10 +158,7 @@ public class SpaceResource {
                                 userMetadata,
                                 storeID);
         } catch (StorageException e) {
-            String error = "Error attempting to add space '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("add space", spaceID, e);
         }
     }
 
@@ -172,7 +174,7 @@ public class SpaceResource {
                                            String spaceAccess,
                                            Map<String, String> userMetadata,
                                            String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
         try {
             StorageProvider storage =
@@ -194,20 +196,24 @@ public class SpaceResource {
                 }
 
                 if(null == newAccessType) {
-                    String error = "Space Access must be set to either OPEN or CLOSED. '" +
-                                    spaceAccess +"' is not a valid access setting";
-                    throw new RestResourceException(error);
+                    String error =
+                        "Space Access must be set to either OPEN or CLOSED. '" +
+                        spaceAccess +"' is not a valid access setting";
+                    throw new ResourceException(error);
                 } else {
                     if(!access.equals(newAccessType)) {
                         storage.setSpaceAccess(spaceID, newAccessType);
                     }
                 }
             }
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("update space metadata for",
+                                                spaceID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to update space metadata for '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("update space metadata fort",
+                                        spaceID,
+                                        e);
         }
     }
 
@@ -218,18 +224,17 @@ public class SpaceResource {
      * @param storeID
      */
     public static void deleteSpace(String spaceID, String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
 
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
             storage.deleteSpace(spaceID);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("delete space", spaceID, e);
         } catch (StorageException e) {
-            String error = "Error attempting to delete space '" +
-                           spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("delete space", spaceID, e);
         }
     }
 

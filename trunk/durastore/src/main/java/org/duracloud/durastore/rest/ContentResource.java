@@ -1,8 +1,10 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.log4j.Logger;
-import org.duracloud.common.web.RestResourceException;
+import org.duracloud.durastore.error.ResourceException;
+import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
@@ -29,7 +31,7 @@ public class ContentResource {
     public static InputStream getContent(String spaceID,
                                          String contentID,
                                          String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
@@ -40,11 +42,13 @@ public class ContentResource {
             }
 
             return storage.getContent(spaceID, contentID);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("get content",
+                                                spaceID,
+                                                contentID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to get content '" + contentID +
-                           "' in '" + spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("get content", spaceID, contentID, e);
         }
     }
 
@@ -58,7 +62,7 @@ public class ContentResource {
     public static Map<String, String> getContentMetadata(String spaceID,
                                                          String contentID,
                                                          String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
@@ -69,11 +73,16 @@ public class ContentResource {
             }
 
             return storage.getContentMetadata(spaceID, contentID);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("get metadata for content",
+                                                spaceID,
+                                                contentID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to get metadata for content '" +
-                           contentID + "' in '" + spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("get metadata for content",
+                                        spaceID,
+                                        contentID,
+                                        e);
         }
     }
 
@@ -87,7 +96,7 @@ public class ContentResource {
                                              String contentMimeType,
                                              Map<String, String> userMetadata,
                                              String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
         try {
             StorageProvider storage =
@@ -97,11 +106,16 @@ public class ContentResource {
             if(userMetadata != null) {
                 storage.setContentMetadata(spaceID, contentID, userMetadata);
             }
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("update metadata for content",
+                                                spaceID,
+                                                contentID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to update metadata for content '" +
-                           contentID + "' in '" + spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("update metadata for content",
+                                        spaceID,
+                                        contentID,
+                                        e);
         }
     }
 
@@ -116,7 +130,7 @@ public class ContentResource {
                                     String contentMimeType,
                                     int contentSize,
                                     String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
 
         try {
@@ -128,11 +142,13 @@ public class ContentResource {
                                       contentMimeType,
                                       contentSize,
                                       content);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("add content",
+                                                spaceID,
+                                                contentID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to add content '" + contentID +
-                           "' in '" + spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("add content", spaceID, contentID, e);
         }
     }
 
@@ -146,7 +162,7 @@ public class ContentResource {
     public static void deleteContent(String spaceID,
                                      String contentID,
                                      String storeID)
-    throws RestResourceException {
+    throws ResourceException {
         // TODO: Check user permissions
 
         try {
@@ -154,12 +170,13 @@ public class ContentResource {
                 StorageProviderFactory.getStorageProvider(storeID);
 
             storage.deleteContent(spaceID, contentID);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("delete content",
+                                                spaceID,
+                                                contentID,
+                                                e);
         } catch (StorageException e) {
-            String error = "Error attempting to delete content '" + contentID +
-                           "' in '" + spaceID + "': " + e.getMessage();
-            log.error(error, e);
-            throw new RestResourceException(error);
+            throw new ResourceException("delete content", spaceID, contentID, e);
         }
     }
-
 }
