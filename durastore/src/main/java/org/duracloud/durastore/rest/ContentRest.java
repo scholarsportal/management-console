@@ -1,12 +1,10 @@
 package org.duracloud.durastore.rest;
 
-import java.io.InputStream;
-
-import java.net.URI;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.durastore.error.ResourceException;
+import org.duracloud.durastore.error.ResourceNotFoundException;
+import org.duracloud.durastore.rest.RestUtil.RequestContent;
+import org.duracloud.storage.provider.StorageProvider;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,10 +18,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.duracloud.common.web.RestResourceException;
-import org.duracloud.durastore.rest.RestUtil.RequestContent;
-import org.duracloud.storage.provider.StorageProvider;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides interaction with content via REST
@@ -34,8 +33,8 @@ import org.duracloud.storage.provider.StorageProvider;
 public class ContentRest extends BaseRest {
 
     /**
-     * @see ContentResource.getContent()
-     * @see ContentResource.getContentMetadata()
+     * see ContentResource.getContent()
+     * see ContentResource.getContentMetadata()
      * @return 200 response with content stream as body and content metadata as headers
      */
     @GET
@@ -57,13 +56,17 @@ public class ContentRest extends BaseRest {
                 ContentResource.getContent(spaceID, contentID, storeID);
             return addContentMetadataToResponse(Response.ok(content, mimetype),
                                                 metadata);
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see ContentResource.getContentMetadata()
+     * see ContentResource.getContentMetadata()
      * @return 200 response with content metadata as headers
      */
     @HEAD
@@ -77,7 +80,11 @@ public class ContentRest extends BaseRest {
             Map<String, String> metadata =
                 ContentResource.getContentMetadata(spaceID, contentID, storeID);
             return addContentMetadataToResponse(Response.ok(), metadata);
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
@@ -151,7 +158,7 @@ public class ContentRest extends BaseRest {
     }
 
     /**
-     * @see ContentResource.updateContentMetadata()
+     * see ContentResource.updateContentMetadata()
      * @return 200 response indicating content metadata updated successfully
      */
     @POST
@@ -187,13 +194,17 @@ public class ContentRest extends BaseRest {
                                                   storeID);
             String responseText = "Content " + contentID + " updated successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see ContentResource.addContent()
+     * see ContentResource.addContent()
      * @return 201 response indicating content added successfully
      */
     @PUT
@@ -226,7 +237,11 @@ public class ContentRest extends BaseRest {
                 metadata.put(StorageProvider.METADATA_CONTENT_CHECKSUM, checksum);
                 return addContentMetadataToResponse(Response.created(location),
                                                     metadata);
-            } catch(RestResourceException e) {
+            } catch(ResourceNotFoundException e) {
+                return Response.status(HttpStatus.SC_NOT_FOUND)
+                    .entity(e.getMessage())
+                    .build();
+            } catch(ResourceException e) {
                 return Response.serverError().entity(e.getMessage()).build();
             }
         } else {
@@ -236,7 +251,7 @@ public class ContentRest extends BaseRest {
     }
 
     /**
-     * @see ContentResource.removeContent()
+     * see ContentResource.removeContent()
      * @return 200 response indicating content removed successfully
      */
     @DELETE
@@ -250,7 +265,11 @@ public class ContentRest extends BaseRest {
             ContentResource.deleteContent(spaceID, contentID, storeID);
             String responseText = "Content " + contentID + " deleted successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }

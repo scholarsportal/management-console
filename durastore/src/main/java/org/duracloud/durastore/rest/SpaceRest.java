@@ -1,6 +1,8 @@
 package org.duracloud.durastore.rest;
 
-import org.duracloud.common.web.RestResourceException;
+import org.duracloud.durastore.error.ResourceException;
+import org.duracloud.durastore.error.ResourceNotFoundException;
+import org.apache.commons.httpclient.HttpStatus;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,7 +29,7 @@ import java.util.Map;
 public class SpaceRest extends BaseRest {
 
     /**
-     * @see SpaceResource.getSpaces()
+     * see SpaceResource.getSpaces()
      * @return 200 response with XML listing of spaces
      */
     @Path("/spaces")
@@ -38,14 +40,14 @@ public class SpaceRest extends BaseRest {
         try {
             String xml = SpaceResource.getSpaces(storeID);
             return Response.ok(xml, TEXT_XML).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see SpaceResource.getSpaceMetadata(String, String);
-     * @see SpaceResource.getSpaceContents(String, String);
+     * see SpaceResource.getSpaceMetadata(String, String);
+     * see SpaceResource.getSpaceContents(String, String);
      * @return 200 response with XML listing of space content and
      *         space metadata included as header values
      */
@@ -71,14 +73,17 @@ public class SpaceRest extends BaseRest {
             return addSpaceMetadataToResponse(Response.ok(xml, TEXT_XML),
                                               spaceID,
                                               storeID);
-
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see SpaceResource.getSpaceMetadata(String, String);
+     * see SpaceResource.getSpaceMetadata(String, String);
      * @return 200 response with space metadata included as header values
      */
     @Path("/{spaceID}")
@@ -108,13 +113,17 @@ public class SpaceRest extends BaseRest {
                 }
             }
             return response.build();
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see SpaceResource.addSpace(String, String, String, String)
+     * see SpaceResource.addSpace(String, String, String, String)
      * @return 201 response with request URI
      */
     @Path("/{spaceID}")
@@ -138,13 +147,13 @@ public class SpaceRest extends BaseRest {
                                    storeID);
             URI location = uriInfo.getRequestUri();
             return Response.created(location).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see SpaceResource.updateSpaceMetadata(String, String, String, String);
+     * see SpaceResource.updateSpaceMetadata(String, String, String, String);
      * @return 200 response with XML listing of space metadata
      */
     @Path("/{spaceID}")
@@ -166,13 +175,17 @@ public class SpaceRest extends BaseRest {
                                               storeID);
             String responseText = "Space " + spaceID + " updated successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }
 
     /**
-     * @see SpaceResource.deleteSpace(String, String);
+     * see SpaceResource.deleteSpace(String, String);
      * @return 200 response indicating space deleted successfully
      */
     @Path("/{spaceID}")
@@ -185,7 +198,11 @@ public class SpaceRest extends BaseRest {
             SpaceResource.deleteSpace(spaceID, storeID);
             String responseText = "Space " + spaceID + " deleted successfully";
             return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch(RestResourceException e) {
+        } catch(ResourceNotFoundException e) {
+            return Response.status(HttpStatus.SC_NOT_FOUND)
+                .entity(e.getMessage())
+                .build();
+        } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
     }

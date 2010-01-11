@@ -34,7 +34,7 @@ public class TestRetryAdvice extends TestCase {
     @Test
     public void testRetry() throws Exception {
         // Tests for retries up to the maximum
-        for(int i=0; i<MAX_RETRIES; i++) {
+        for(int i=0; i<=MAX_RETRIES; i++) {
             String url = baseUrl + "/" + i + "?storeID=6";
             HttpResponse response = restHelper.get(url);
             String responseText = response.getResponseBody();
@@ -50,10 +50,13 @@ public class TestRetryAdvice extends TestCase {
         }
 
         // Tests the retries limit
-        String url = baseUrl + "/" + MAX_RETRIES;
+        String url = baseUrl + "/" + MAX_RETRIES+1 + "?storeID=6";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
-        assertEquals(500, response.getStatusCode());        
+        int statusCode = response.getStatusCode();
+        String errMsg = "Expected 500 response, instead response code was " +
+                        statusCode + ". Response text: " + responseText;
+        assertEquals(errMsg, HttpStatus.SC_INTERNAL_SERVER_ERROR, statusCode);
     }
 
     @Test
@@ -61,7 +64,10 @@ public class TestRetryAdvice extends TestCase {
         String url = baseUrl + "/spaces?storeID=6";
         HttpResponse response = restHelper.get(url);
         String responseText = response.getResponseBody();
-        assertEquals(500, response.getStatusCode());
+        int statusCode = response.getStatusCode();
+        String errMsg = "Expected 500 response, instead response code was " +
+                        statusCode + ". Response text: " + responseText;
+        assertEquals(errMsg, HttpStatus.SC_INTERNAL_SERVER_ERROR, statusCode);
     }
 
 

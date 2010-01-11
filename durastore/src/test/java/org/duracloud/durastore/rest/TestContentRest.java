@@ -254,4 +254,33 @@ public class TestContentRest {
         assertNull(response.getResponseHeader(name));
     }
 
+    @Test
+    public void testNotFound() throws Exception {
+        String invalidSpaceId = "non-existant-space";
+        String invalidContentId = "non-existant-content";
+        String url = baseUrl + "/" + invalidSpaceId + "/" + invalidContentId;
+
+        // Add Content
+        HttpResponse response = restHelper.put(url, "test-content", null);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        url = baseUrl + "/" + spaceId + "/" + invalidContentId;
+
+        // Get Content
+        response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Get Content Metadata
+        response = restHelper.head(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Set Content Metadata
+        response = restHelper.post(url, null, null);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+
+        // Delete Content
+        response = restHelper.delete(url);
+        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+    }
+
 }
