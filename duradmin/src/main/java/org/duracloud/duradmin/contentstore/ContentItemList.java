@@ -2,7 +2,7 @@
 package org.duracloud.duradmin.contentstore;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.DataRetrievalException;
 import org.duracloud.duradmin.util.ScrollableList;

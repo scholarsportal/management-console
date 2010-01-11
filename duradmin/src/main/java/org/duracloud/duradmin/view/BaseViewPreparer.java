@@ -7,7 +7,7 @@ import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 
 /**

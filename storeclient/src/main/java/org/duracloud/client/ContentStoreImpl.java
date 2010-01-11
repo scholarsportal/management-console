@@ -6,6 +6,8 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
+import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
 import org.jdom.Document;
@@ -13,6 +15,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,8 +139,8 @@ public class ContentStoreImpl implements ContentStore{
                 throw new ContentStoreException("Response body is empty");
             }
         } catch (Exception e) {
-            throw new ContentStoreException("Could not get spaces due to: " +
-                                            e.getMessage(), e);
+            throw new ContentStoreException("Error attempting to get spaces " +
+                                            "due to: " + e.getMessage(), e);
         }
     }
 
@@ -165,6 +168,7 @@ public class ContentStoreImpl implements ContentStore{
                           long maxResults,
                           String marker)
         throws ContentStoreException {
+        String task = "get space";
         String url = buildSpaceURL(spaceId, prefix, maxResults, marker);
         try {
             HttpResponse response = restHelper.get(url);
@@ -191,9 +195,10 @@ public class ContentStoreImpl implements ContentStore{
             }
             
             return space;
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not get space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, e);
         }
     }
 
@@ -208,8 +213,8 @@ public class ContentStoreImpl implements ContentStore{
                 restHelper.put(url, null, convertMetadataToHeaders(spaceMetadata));
             checkResponse(response, HttpStatus.SC_CREATED);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not create space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            String task = "create space";
+            throw new ContentStoreException(task, spaceId, e);
         }
     }
 
@@ -217,13 +222,15 @@ public class ContentStoreImpl implements ContentStore{
      * {@inheritDoc}
      */
     public void deleteSpace(String spaceId) throws ContentStoreException {
+        String task = "delete space";
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.delete(url);
             checkResponse(response, HttpStatus.SC_OK);
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not delete space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, e);
         }
     }
 
@@ -232,14 +239,16 @@ public class ContentStoreImpl implements ContentStore{
      */
     public Map<String, String> getSpaceMetadata(String spaceId)
             throws ContentStoreException {
+        String task = "get space metadata";
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response = restHelper.head(url);
             checkResponse(response, HttpStatus.SC_OK);
             return extractMetadataFromHeaders(response);
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not get space metadata for space " +
-                                            spaceId + " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, e);
         }
     }
 
@@ -249,14 +258,16 @@ public class ContentStoreImpl implements ContentStore{
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata)
             throws ContentStoreException {
+        String task = "create space";
         String url = buildSpaceURL(spaceId);
         Map<String, String> headers = convertMetadataToHeaders(spaceMetadata);
         try {
             HttpResponse response = restHelper.post(url, null, headers);
             checkResponse(response, HttpStatus.SC_OK);
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not create space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, e);
         }
     }
 
@@ -273,14 +284,14 @@ public class ContentStoreImpl implements ContentStore{
             } else if(spaceAccess.equals(AccessType.CLOSED.name())) {
                 return AccessType.CLOSED;
             } else {
-                String error = "Could not determine access type for space " +
+                String errMsg = "Could not determine access type for space " +
                     spaceId + ". Value of access metadata is " + spaceAccess;
-                throw new ContentStoreException(error);
+                throw new ContentStoreException(errMsg);
             }
         } else {
-            throw new ContentStoreException("Could not determine access type for space " +
-                                            spaceId +
-                                            ". No access type metadata is available.");
+            String errMsg = "Could not determine access type for space " +
+                            spaceId + ". No access type metadata is available.";
+            throw new ContentStoreException(errMsg);
         }
     }
 
@@ -304,6 +315,7 @@ public class ContentStoreImpl implements ContentStore{
                              String contentMimeType,
                              Map<String, String> contentMetadata)
             throws ContentStoreException {
+        String task = "add content";
         String url = buildContentURL(spaceId, contentId);
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
@@ -319,10 +331,10 @@ public class ContentStoreImpl implements ContentStore{
                 checksum = response.getResponseHeader("ETag");
             }
             return checksum.getValue();
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not add content " + contentId +
-                                            " in space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
@@ -331,6 +343,7 @@ public class ContentStoreImpl implements ContentStore{
      */
     public Content getContent(String spaceId, String contentId)
             throws ContentStoreException {
+        String task = "get content";
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
@@ -342,10 +355,10 @@ public class ContentStoreImpl implements ContentStore{
                 mergeMaps(extractMetadataFromHeaders(response),
                           extractNonMetadataHeaders(response)));
             return content;
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, contentId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not get content " + contentId +
-                                            " from space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
@@ -354,14 +367,15 @@ public class ContentStoreImpl implements ContentStore{
      */
     public void deleteContent(String spaceId, String contentId)
             throws ContentStoreException {
+        String task = "delete content";
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.delete(url);
             checkResponse(response, HttpStatus.SC_OK);
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, contentId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not delete content " + contentId +
-                                            " from space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
@@ -372,6 +386,7 @@ public class ContentStoreImpl implements ContentStore{
                                    String contentId,
                                    Map<String, String> contentMetadata)
             throws ContentStoreException {
+        String task = "udpate content metadata";
         String url = buildContentURL(spaceId, contentId);
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
@@ -380,10 +395,10 @@ public class ContentStoreImpl implements ContentStore{
                                                     null,
                                                     headers);
             checkResponse(response, HttpStatus.SC_OK);
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, contentId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not udpate content metadata for " +
-                                            contentId + " in space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
@@ -393,16 +408,17 @@ public class ContentStoreImpl implements ContentStore{
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId)
             throws ContentStoreException {
+        String task = "get metadata";
         String url = buildContentURL(spaceId, contentId);
         try {
             HttpResponse response = restHelper.get(url);
             checkResponse(response, HttpStatus.SC_OK);
             return mergeMaps(extractMetadataFromHeaders(response),
                              extractNonMetadataHeaders(response));
+        } catch(NotFoundException e) {
+            throw new NotFoundException(task, spaceId, contentId, e);
         } catch (Exception e) {
-            throw new ContentStoreException("Could not get metadata for content " +
-                                            contentId + " from space " + spaceId +
-                                            " due to: " + e.getMessage(), e);
+            throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
@@ -412,11 +428,21 @@ public class ContentStoreImpl implements ContentStore{
         if (response == null) {
             throw new ContentStoreException(error + "Response content was null.");
         }
-        if (response.getStatusCode() != expectedCode) {
-            throw new ContentStoreException(error + "Response code was " +
-                                            response.getStatusCode() +
-                                            ", expected value was " +
-                                            expectedCode);
+        int responseCode = response.getStatusCode();
+        if (responseCode != expectedCode) {
+            String errMsg = error + "Response code was " + responseCode +
+                            ", expected value was " + expectedCode + ". ";
+            try {
+                String responseBody = response.getResponseBody();
+                errMsg += ("Response body value: " + responseBody);
+            } catch(IOException e) {
+                // Do not included response body in error
+            }
+            if(responseCode == HttpStatus.SC_NOT_FOUND) {
+                throw new NotFoundException(errMsg);
+            } else {
+                throw new ContentStoreException(errMsg);                
+            }
         }
     }
 

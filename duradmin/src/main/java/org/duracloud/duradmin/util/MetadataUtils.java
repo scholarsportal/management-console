@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.springframework.util.StringUtils;
 
 public class MetadataUtils {

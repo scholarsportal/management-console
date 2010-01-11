@@ -1,6 +1,7 @@
 package org.duracloud.client;
 
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.error.ContentStoreException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,14 +23,14 @@ public class ContentIterator implements Iterator<String> {
 
     public ContentIterator(ContentStore store,
                            String spaceId,
-                           String prefix) {
+                           String prefix) throws ContentStoreException {
         this(store, spaceId, prefix, StorageProvider.DEFAULT_MAX_RESULTS);
     }
 
     public ContentIterator(ContentStore store,
                            String spaceId,
                            String prefix,
-                           long maxResults) {
+                           long maxResults) throws ContentStoreException {
         index = 0;
         this.store = store;
         this.spaceId = spaceId;
@@ -67,17 +68,18 @@ public class ContentIterator implements Iterator<String> {
 
     private void updateList() {
         String lastItem = contentList.get(contentList.size()-1);
-        contentList = buildContentList(lastItem);
+        try {
+            contentList = buildContentList(lastItem);
+        } catch(ContentStoreException e) {
+            throw new RuntimeException(e);
+        }
         index = 0;
     }
 
-    private List<String> buildContentList(String lastItem) {
-        try {
-            return store.getSpace(spaceId, prefix, maxResults, lastItem)
-                .getContentIds();
-        } catch (ContentStoreException e) {
-            throw new RuntimeException(e);
-        }
+    private List<String> buildContentList(String lastItem)
+        throws ContentStoreException {
+        return store.getSpace(spaceId, prefix, maxResults, lastItem)
+            .getContentIds();
     }
 
 }

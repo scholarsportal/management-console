@@ -1,5 +1,7 @@
 package org.duracloud.client;
 
+import org.duracloud.error.ContentStoreException;
+
 import java.util.Map;
 
 /**

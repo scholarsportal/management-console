@@ -2,7 +2,7 @@
 package org.duracloud.duradmin.contentstore;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 
 public class ContentStoreProvider {

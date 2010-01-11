@@ -2,7 +2,7 @@
 package org.duracloud.duradmin.webflow.content;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.domain.Content;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;

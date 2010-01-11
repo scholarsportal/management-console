@@ -2,7 +2,7 @@ package org.duracloud.duraservice.mgmt;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.duraservice.domain.ServiceComputeInstance;

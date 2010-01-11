@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.domain.MetadataItem;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MetadataUtils;

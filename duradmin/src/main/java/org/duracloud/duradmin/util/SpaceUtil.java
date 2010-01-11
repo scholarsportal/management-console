@@ -1,12 +1,10 @@
 
 package org.duracloud.duradmin.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.domain.Space;
