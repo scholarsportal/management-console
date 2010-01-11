@@ -3,6 +3,8 @@ package org.duracloud.client;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -66,7 +68,7 @@ public interface ContentStore {
      * Provides a listing of all spaces IDs.
      *
      * @return Iterator listing spaceIds
-     * @throws ContentStoreException if space IDs cannot be retrieved
+     * @throws ContentStoreException if an error occurs
      */
     public List<String> getSpaces() throws ContentStoreException;
 
@@ -79,7 +81,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @return Iterator for content IDs
-     * @throws ContentStoreException if the space does not exist or cannot be retrieved
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public Iterator<String> getSpaceContents(String spaceId)
         throws ContentStoreException;
@@ -93,7 +96,8 @@ public interface ContentStore {
      * @param spaceId the identifier of the DuraCloud Space
      * @param prefix only retrieve content ids with this prefix (null for all content ids)
      * @return Iterator for content IDs
-     * @throws ContentStoreException if the space does not exist or cannot be retrieved
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public Iterator<String> getSpaceContents(String spaceId, String prefix)
         throws ContentStoreException;
@@ -108,7 +112,8 @@ public interface ContentStore {
      * @param maxResults the maximum number of content ids to return in the list (0 indicates default - which is 1000)
      * @param marker the content id marking the last item in the previous set (null to specify first set of ids)
      * @return Space
-     * @throws ContentStoreException if the space does not exist or cannot be retrieved
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public Space getSpace(String spaceId,
                           String prefix,
@@ -134,7 +139,8 @@ public interface ContentStore {
      * Deletes a space.
      *
      * @param spaceId the identifier of the DuraCloud Space
-     * @throws ContentStoreException if the space does not exist or cannot be deleted
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public void deleteSpace(String spaceId) throws ContentStoreException;
     
@@ -143,7 +149,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @return Map of space metadata or null if no metadata exists
-     * @throws ContentStoreException if the space does not exist or the metadata cannot be retrieved
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public Map<String, String> getSpaceMetadata(String spaceId)
             throws ContentStoreException;
@@ -154,7 +161,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @param spaceMetadata a map of metadata entries for the space
-     * @throws ContentStoreException if the space does not exist or the metadata cannot be set
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public void setSpaceMetadata(String spaceId,
                                  Map<String, String> spaceMetadata)
@@ -167,7 +175,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @return AccessType - OPEN or CLOSED
-     * @throws ContentStoreException if the space does not exist or access cannot be retrieved
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public AccessType getSpaceAccess(String spaceId) throws ContentStoreException;
     
@@ -176,7 +185,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @param spaceAccess the access setting for this space - OPEN or CLOSED
-     * @throws ContentStoreException if the space does not exist or access cannot be set
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)
             throws ContentStoreException;
@@ -193,7 +203,8 @@ public interface ContentStore {
      * @param contentMimeType the MIME type of the content
      * @param contentSize the size of the content
      * @param contentMetadata a map of metadata values to be linked to this content
-     * @throws ContentStoreException if the space does not exist or content cannot be added
+     * @throws NotFoundException if the space does not exist
+     * @throws ContentStoreException if an error occurs
      * @return content checksum
      */
     public String addContent(String spaceId,
@@ -210,7 +221,8 @@ public interface ContentStore {
      * @param spaceId the identifier of the DuraCloud Space
      * @param contentId the identifier of the content item
      * @return the content stream
-     * @throws ContentStoreException if the space or content does not exist or the content cannot be retrieved
+     * @throws NotFoundException if the space or content does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public Content getContent(String spaceId, String contentId)
             throws ContentStoreException;
@@ -220,7 +232,8 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @param contentId the identifier of the content item
-     * @throws ContentStoreException if the space or content does not exist or the content cannot be deleted
+     * @throws NotFoundException if the space or content does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public void deleteContent(String spaceId, String contentId)
             throws ContentStoreException;
@@ -235,7 +248,8 @@ public interface ContentStore {
      * @param spaceId the identifier of the DuraCloud Space
      * @param contentId the identifier of the content item
      * @param contentMetadata a map of metadata values to be linked to this content
-     * @throws ContentStoreException if the space or content does not exist or the content metadata cannot be set
+     * @throws NotFoundException if the space or content does not exist
+     * @throws ContentStoreException if an error occurs
      */
     public void setContentMetadata(String spaceId,
                                    String contentId,
@@ -248,8 +262,9 @@ public interface ContentStore {
      *
      * @param spaceId the identifier of the DuraCloud Space
      * @param contentId the identifier of the content item
-     * @throws ContentStoreException if the space or content does not exist or the content metadata cannot be retrieved
      * @return the map of metadata values linked to the given contentId
+     * @throws NotFoundException if the space or content does not exist
+     * @throws ContentStoreException if an error occurs 
      */
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId)

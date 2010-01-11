@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.domain.Tag;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MetadataUtils;

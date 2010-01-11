@@ -1,20 +1,15 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 public class ContentItemDataController

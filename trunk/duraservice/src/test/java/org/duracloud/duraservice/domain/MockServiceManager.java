@@ -2,7 +2,7 @@ package org.duracloud.duraservice.domain;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;

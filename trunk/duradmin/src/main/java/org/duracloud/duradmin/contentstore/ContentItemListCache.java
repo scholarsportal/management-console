@@ -4,7 +4,7 @@ package org.duracloud.duradmin.contentstore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 
 public class ContentItemListCache {
 

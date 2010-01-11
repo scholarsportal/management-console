@@ -5,6 +5,7 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.error.StorageException;
+import org.duracloud.error.ContentStoreException;
 import org.apache.commons.httpclient.HttpStatus;
 
 import java.io.ByteArrayInputStream;

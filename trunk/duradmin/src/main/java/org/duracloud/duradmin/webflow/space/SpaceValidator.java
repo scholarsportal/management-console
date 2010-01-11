@@ -1,7 +1,7 @@
 
 package org.duracloud.duradmin.webflow.space;
 
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.springframework.binding.message.MessageBuilder;

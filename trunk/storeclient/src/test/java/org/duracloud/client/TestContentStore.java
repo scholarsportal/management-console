@@ -6,6 +6,8 @@ import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
+import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -200,37 +202,37 @@ public class TestContentStore
         try {
             store.deleteSpace(invalidSpaceId);
             fail("Exception expected on deleteSpace(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.getSpaceMetadata(invalidSpaceId);
             fail("Exception expected on getSpace(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.getSpaceAccess(invalidSpaceId);
             fail("Exception expected on getSpaceAccess(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.setSpaceAccess(invalidSpaceId, ContentStore.AccessType.OPEN);
             fail("Exception expected on setSpaceAccess(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.getSpaceMetadata(invalidSpaceId);
             fail("Exception expected on getSpaceMetadata(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.setSpaceMetadata(invalidSpaceId, emptyMap);
             fail("Exception expected on setSpaceMetadata(invalidSpaceId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
@@ -241,35 +243,35 @@ public class TestContentStore
             store.addContent(invalidSpaceId, contentId, contentStream,
                              content.length(), contentMimeType, emptyMap);
             fail("Exception expected on addContent(invalidSpaceId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             String contentId = "test-content";
             store.getContent(invalidSpaceId, contentId);
             fail("Exception expected on getContent(invalidSpaceId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             String contentId = "test-content";
             store.deleteContent(invalidSpaceId, contentId);
             fail("Exception expected on deleteContent(invalidSpaceId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             String contentId = "test-content";
             store.getContentMetadata(invalidSpaceId, contentId);
             fail("Exception expected on getContentMetadata(invalidSpaceId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             String contentId = "test-content";
             store.setContentMetadata(invalidSpaceId, contentId, emptyMap);
             fail("Exception expected on setContentMetadata(invalidSpaceId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
     }
 
@@ -404,25 +406,25 @@ public class TestContentStore
         try {
             store.deleteContent(spaceId, invalidContentId);
             fail("Exception expected on deleteContent(spaceId, invalidContentId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.getContent(spaceId, invalidContentId);
             fail("Exception expected on getContent(spaceId, invalidContentId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.getContentMetadata(spaceId, invalidContentId);
             fail("Exception expected on getContentMetadata(spaceId, invalidContentId)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
 
         try {
             store.setContentMetadata(spaceId, invalidContentId, emptyMap);
             fail("Exception expected on setContentMetadata(spaceId, invalidContentId, ...)");
-        } catch(ContentStoreException expected) {
+        } catch(NotFoundException expected) {
         }
     }
 
