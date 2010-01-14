@@ -4,10 +4,12 @@ import org.apache.log4j.Logger;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
+import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
+import org.duracloud.storage.util.IdUtil;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -130,8 +132,9 @@ public class ContentResource {
                                     String contentMimeType,
                                     int contentSize,
                                     String storeID)
-    throws ResourceException {
+    throws ResourceException, InvalidIdException {
         // TODO: Check user permissions
+        IdUtil.validateContentId(contentID);
 
         try {
             StorageProvider storage =

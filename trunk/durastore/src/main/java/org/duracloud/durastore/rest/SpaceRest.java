@@ -1,8 +1,9 @@
 package org.duracloud.durastore.rest;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
-import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.storage.error.InvalidIdException;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -132,7 +133,7 @@ public class SpaceRest extends BaseRest {
                              String spaceID,
                              @QueryParam("storeID")
                              String storeID){
-        try {
+        try {            
             MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
 
             String spaceAccess = "CLOSED";
@@ -147,6 +148,10 @@ public class SpaceRest extends BaseRest {
                                    storeID);
             URI location = uriInfo.getRequestUri();
             return Response.created(location).build();
+        } catch(InvalidIdException e) {
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                .entity(e.getMessage())
+                .build();
         } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }

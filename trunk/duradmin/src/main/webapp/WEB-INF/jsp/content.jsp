@@ -27,8 +27,12 @@
 
 		<div class="sidebar-actions">
 		<h4><spring:message code="form.contentItem.modifyProperties" /></h4>
-		<form:form commandName="contentItem"
-			action="content.htm?spaceId=${contentItem.spaceId}&contentId=${contentItem.contentId}"
+		<c:url value="content.htm" var="modifyPropertiesUrl">
+            <c:param name="spaceId" value="${contentItem.spaceId}"/>
+            <c:param name="contentId" value="${contentItem.contentId}"/>
+        </c:url>
+        <form:form commandName="contentItem"
+			action="${modifyPropertiesUrl}"
 			method="post">
 			<input type="hidden" name="action" value="update" />
 			<p><label for="mimetype"><spring:message code="mimetype" /></label>
@@ -69,7 +73,7 @@
 										code="add.contentItem" /></a></li>
 									<li>|</li>
 									<li><a
-										href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${contentStore.storeId}"><spring:message
+										href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.encodedContentId}?storeID=${contentStore.storeId}"><spring:message
 										code="download" /></a></li>
 								</ul>
 
@@ -91,7 +95,7 @@
 							<tr>
 								<td class="label"><spring:message code="contentItem.id" /></td>
 								<td class="value"><a
-									href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.contentId}?storeID=${contentStore.storeId}">${contentItem.contentId}</a></td>
+									href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.encodedContentId}?storeID=${contentStore.storeId}">${contentItem.contentId}</a></td>
 							</tr>
 							<tr>
 								<td class="label"><spring:message code="size" /></td>

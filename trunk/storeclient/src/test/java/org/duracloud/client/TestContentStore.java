@@ -7,6 +7,7 @@ import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 import org.junit.After;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +49,8 @@ public class TestContentStore
 
     private static String spaceId;
 
+    private static List<String> spaces;
+
     static {
         String random = String.valueOf(new Random().nextInt(99999));
         spaceId = "space" + random;
@@ -66,6 +70,8 @@ public class TestContentStore
         assertNotNull(storeManager);
 
         store = storeManager.getPrimaryContentStore();
+
+        spaces = new ArrayList<String>();
     }
 
     private static String getPort() throws Exception {
@@ -88,7 +94,9 @@ public class TestContentStore
     public void tearDown() throws Exception {
         // Make sure the space is deleted
         try {
-            store.deleteSpace(spaceId);
+            for(String spaceId : spaces) {
+                store.deleteSpace(spaceId);
+            }
         } catch(ContentStoreException cse) {
             // Ignore, the space was likely already removed
         }
@@ -126,6 +134,59 @@ public class TestContentStore
     }
 
     @Test
+    public void testAddSpace() throws Exception {
+        // Test invalid space names
+
+        List<String> invalidIds = new ArrayList<String>();
+
+        invalidIds.add("Test-Space");  // Uppercase
+        invalidIds.add("test-space!"); // Special character
+        invalidIds.add("test..space"); // Multiple periods
+        invalidIds.add("-test-space"); // Starting with a dash
+        invalidIds.add("test-space-"); // Ending with a dash
+        invalidIds.add("test-.space"); // Dash next to a period
+        invalidIds.add("te");          // Too short
+        invalidIds.add("test-space-test-space-test-space-" +
+                       "test-space-test-space-test-spac)"); // Too long
+        invalidIds.add("127.0.0.1");   // Formatted as an IP address
+
+        for(String id : invalidIds) {
+            checkInvalidSpaceId(id);
+        }
+
+        // Test valid space names
+
+        String id = "test-space.test.space";
+        checkValidSpaceId(id);
+
+        id = "tes";
+        checkValidSpaceId(id);
+
+        id = "test-space-test-space-test-space-test-space-test-space-test-spa";
+        checkValidSpaceId(id);
+    }
+
+    private void checkInvalidSpaceId(String id) throws Exception {
+        try {
+            createSpace(id, null);
+            fail("Exception expected attempting to add " +
+                 "a space with an invalid id");
+        } catch(InvalidIdException e) {
+            assertNotNull(e);
+        }
+    }
+
+    private void checkValidSpaceId(String id) throws Exception {
+        createSpace(id, null);
+    }
+
+    private void createSpace(String spaceId, Map<String, String> spaceMetadata)
+        throws Exception {
+        store.createSpace(spaceId, spaceMetadata);
+        spaces.add(spaceId);
+    }
+
+    @Test
     public void testSpaceMetadata() throws Exception {
         String metaName = "test-metadata";
         String metaValue = "test-value";
@@ -135,7 +196,7 @@ public class TestContentStore
         spaceMetadata.put(ContentStore.SPACE_ACCESS,
                           ContentStore.AccessType.OPEN.name());
         spaceMetadata.put(metaName, metaValue);
-        store.createSpace(spaceId, spaceMetadata);
+        createSpace(spaceId, spaceMetadata);
 
         // Check space
         List<String> spaces = store.getSpaces();
@@ -280,7 +341,7 @@ public class TestContentStore
         String mime = "text/plain";
 
         // Add content
-        store.createSpace(spaceId, null);
+        createSpace(spaceId, null);
         String c1 = "test-content-1";
         InputStream stream = IOUtil.writeStringToStream(c1);
         store.addContent(spaceId, c1, stream, c1.length(), mime, null);
@@ -324,6 +385,69 @@ public class TestContentStore
     }
 
     @Test
+    public void testAddContent() throws Exception {
+        createSpace(spaceId, null);
+        // Test invalid content IDs
+
+        // Question mark
+        String id = "test?content";
+        testInvalidContentItem(id);
+
+        // Backslash
+        id = "test\\content";
+        testInvalidContentItem(id);
+
+        // Too long
+        id = "test-content";
+        while(id.getBytes().length <= 1024) {
+            id += "test-content";
+        }
+        testInvalidContentItem(id);
+
+        // Test valid content IDs
+
+        // Test Special characters
+        char[] specialChars = {'~','`','!','@','$','^','&','*','(',')','_','-',
+                               '+','=','\'',':','.',',','<','>','"','[',']',
+                               '{','}','#','%',';','|',' ','/'};
+        for(char character : specialChars) {
+            testCharacterInContentId(character);
+        }
+    }
+
+    private void testInvalidContentItem(String contentId) throws Exception {
+        try {
+            addContentItem(contentId);
+            fail("Exception expected attempting to add " +
+                 "content with an invalid id");
+        } catch (InvalidIdException e) {
+            assertNotNull(e);
+        }
+    }
+
+    private String addContentItem(String contentId) throws Exception {
+        String content = "Test content";
+        InputStream contentStream = IOUtil.writeStringToStream(content);
+        String contentMimeType = "text/plain";
+        return store.addContent(spaceId,
+                                contentId,
+                                contentStream,
+                                content.length(),
+                                contentMimeType,
+                                null);
+    }
+
+    private void testCharacterInContentId(char character) throws Exception {
+        String contentId = "test-" + String.valueOf(character) + "-content";
+        String checksum = addContentItem(contentId);
+        assertNotNull(checksum);
+        
+        Content content = store.getContent(spaceId, contentId);
+        assertNotNull(content);
+        assertEquals(contentId, content.getId());
+    }
+
+    @Test
     public void testContent() throws Exception {
         String contentId = "test-content";
         String content = "This is the information stored as content";
@@ -335,7 +459,7 @@ public class TestContentStore
         contentMetadata.put(metaName, metaValue);
 
         // Add content
-        store.createSpace(spaceId, null);
+        createSpace(spaceId, null);
         String checksum = store.addContent(spaceId,
                                            contentId,
                                            contentStream,
@@ -399,7 +523,7 @@ public class TestContentStore
         Map<String, String> emptyMap = new HashMap<String, String>();
 
         // Create space
-        store.createSpace(spaceId, null);
+        createSpace(spaceId, null);
         Map<String, String> spaceMetadata = store.getSpaceMetadata(spaceId);
         assertNotNull(spaceMetadata);
 

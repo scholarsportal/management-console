@@ -3,6 +3,7 @@ package org.duracloud.duradmin.cache;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 
@@ -163,7 +164,7 @@ public class ContentStoreCache
      * Sets the accessibility of a space to either OPEN or CLOSED.
      * 
      * @param spaceId
-     * @param access
+     * @param spaceAccess
      * @throws ContentStoreException
      */
     public void setSpaceAccess(String spaceId, AccessType spaceAccess)
@@ -254,5 +255,13 @@ public class ContentStoreCache
                                                   String contentId)
             throws ContentStoreException {
         return null;
+    }
+
+    public void validateSpaceId(String spaceId) throws InvalidIdException {
+        this.backendStore.validateSpaceId(spaceId);
+    }
+
+    public void validateContentId(String contentId) throws InvalidIdException {
+        this.backendStore.validateContentId(contentId);
     }
 }

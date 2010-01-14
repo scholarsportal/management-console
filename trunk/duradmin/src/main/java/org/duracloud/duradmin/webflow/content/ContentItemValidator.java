@@ -6,6 +6,8 @@ import org.duracloud.error.ContentStoreException;
 import org.duracloud.domain.Content;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
+import org.duracloud.storage.util.IdUtil;
+import org.duracloud.storage.error.InvalidIdException;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
@@ -38,16 +40,12 @@ public class ContentItemValidator {
             messages.addMessage(new MessageBuilder().error()
                                 .source("contentId").code("required").build());
         }else{
-            //from http://docs.amazonwebservices.com/AmazonS3/2006-03-01/gsg/
-            //The key may be any UTF-8 string
-            //no validation required for a string > in length;
-            //
-            //right now spaces are breaking durastore - therefore 
-            //I'm adding in the whitespace checker
-            if (contentId.matches("^.*[?].*$")
-                    || contentId.getBytes().length > 1024) {
+            try {
+                IdUtil.validateContentId(contentId);
+            } catch(InvalidIdException e) {
                 messages.addMessage(new MessageBuilder().error()
-                        .source("contentId").code("contentId.invalid").build());
+                    .source("contentId")
+                    .defaultText(e.getMessage()).build());
             }
         }
         //how about mimetype validation?
