@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.rest.RestUtil.RequestContent;
+import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.provider.StorageProvider;
 
 import javax.ws.rs.DELETE;
@@ -237,6 +238,10 @@ public class ContentRest extends BaseRest {
                 metadata.put(StorageProvider.METADATA_CONTENT_CHECKSUM, checksum);
                 return addContentMetadataToResponse(Response.created(location),
                                                     metadata);
+            } catch (InvalidIdException e) {
+                return Response.status(HttpStatus.SC_BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
             } catch(ResourceNotFoundException e) {
                 return Response.status(HttpStatus.SC_NOT_FOUND)
                     .entity(e.getMessage())
@@ -246,7 +251,9 @@ public class ContentRest extends BaseRest {
             }
         } else {
             String error = "Content must be included as part of the request.";
-            return Response.status(400).entity(error).build();
+            return Response.status(HttpStatus.SC_BAD_REQUEST)
+                .entity(error)
+                .build();
         }
     }
 

@@ -2,14 +2,17 @@ package org.duracloud.client;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.util.IdUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -83,6 +86,7 @@ public class ContentStoreImpl implements ContentStore{
     }
 
     private String buildContentURL(String spaceId, String contentId) {
+        contentId = EncodeUtil.urlEncode(contentId);
         return buildURL("/" + spaceId + "/" + contentId);
     }
 
@@ -207,13 +211,16 @@ public class ContentStoreImpl implements ContentStore{
      */
     public void createSpace(String spaceId, Map<String, String> spaceMetadata)
             throws ContentStoreException {
+        validateSpaceId(spaceId);
+        String task = "create space";
         String url = buildSpaceURL(spaceId);
         try {
             HttpResponse response =
                 restHelper.put(url, null, convertMetadataToHeaders(spaceMetadata));
             checkResponse(response, HttpStatus.SC_CREATED);
+        } catch (InvalidIdException e) {
+            throw new InvalidIdException(task, spaceId, e);
         } catch (Exception e) {
-            String task = "create space";
             throw new ContentStoreException(task, spaceId, e);
         }
     }
@@ -315,6 +322,7 @@ public class ContentStoreImpl implements ContentStore{
                              String contentMimeType,
                              Map<String, String> contentMetadata)
             throws ContentStoreException {
+        validateContentId(contentId);
         String task = "add content";
         String url = buildContentURL(spaceId, contentId);
         Map<String, String> headers =
@@ -331,6 +339,8 @@ public class ContentStoreImpl implements ContentStore{
                 checksum = response.getResponseHeader("ETag");
             }
             return checksum.getValue();
+        } catch (InvalidIdException e) {
+            throw new InvalidIdException(task, spaceId, contentId, e);            
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, e);
         } catch (Exception e) {
@@ -423,14 +433,13 @@ public class ContentStoreImpl implements ContentStore{
     }
 
     private void checkResponse(HttpResponse response, int expectedCode)
-            throws ContentStoreException {
-        String error = "Could not complete request due to error: ";
+            throws ContentStoreException, InvalidIdException {
         if (response == null) {
-            throw new ContentStoreException(error + "Response content was null.");
+            throw new ContentStoreException("Response content was null.");
         }
         int responseCode = response.getStatusCode();
         if (responseCode != expectedCode) {
-            String errMsg = error + "Response code was " + responseCode +
+            String errMsg = "Response code was " + responseCode +
                             ", expected value was " + expectedCode + ". ";
             try {
                 String responseBody = response.getResponseBody();
@@ -440,6 +449,8 @@ public class ContentStoreImpl implements ContentStore{
             }
             if(responseCode == HttpStatus.SC_NOT_FOUND) {
                 throw new NotFoundException(errMsg);
+            } else if (responseCode == HttpStatus.SC_BAD_REQUEST) {
+                throw new InvalidIdException(errMsg);
             } else {
                 throw new ContentStoreException(errMsg);                
             }
@@ -502,6 +513,28 @@ public class ContentStoreImpl implements ContentStore{
             map2.put(name, map1.get(name));
         }
         return map2;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void validateSpaceId(String spaceId) throws InvalidIdException {
+        try {
+            IdUtil.validateSpaceId(spaceId);
+        } catch(org.duracloud.storage.error.InvalidIdException e) {
+            throw new InvalidIdException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void validateContentId(String contentId) throws InvalidIdException {
+        try {
+            IdUtil.validateContentId(contentId);
+        } catch(org.duracloud.storage.error.InvalidIdException e) {
+            throw new InvalidIdException(e.getMessage());
+        }
     }
 
 }

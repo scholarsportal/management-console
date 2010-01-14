@@ -35,6 +35,8 @@ public class TestSpaceRest
 
     private static String spaceId;
 
+    private static List<String> spaces;
+
     static {
         String random = String.valueOf(new Random().nextInt(99999));
         spaceId = "space" + random;
@@ -52,19 +54,67 @@ public class TestSpaceRest
         // Add space
         response = RestTestHelper.addSpace(spaceId);
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+
+        spaces = new ArrayList<String>();
+        spaces.add(spaceId);
+
     }
 
     @Override
     @After
     protected void tearDown() throws Exception {
-        HttpResponse response =
-            RestTestHelper.deleteSpace(spaceId);
+        for(String spaceId : spaces) {
+            HttpResponse response =
+                RestTestHelper.deleteSpace(spaceId);
 
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        String responseText = response.getResponseBody();
-        assertNotNull(responseText);
-        assertTrue(responseText.contains(spaceId));
-        assertTrue(responseText.contains("deleted"));
+            assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+            String responseText = response.getResponseBody();
+            assertNotNull(responseText);
+        }
+    }
+
+    @Test
+    public void testAddSpace() throws Exception {
+        // Test invalid space names
+        
+        List<String> invalidIds = new ArrayList<String>();
+
+        invalidIds.add("Test-Space");  // Uppercase
+        invalidIds.add("test-space!"); // Special character
+        invalidIds.add("test..space"); // Multiple periods
+        invalidIds.add("-test-space"); // Starting with a dash
+        invalidIds.add("test-space-"); // Ending with a dash
+        invalidIds.add("test-.space"); // Dash next to a period
+        invalidIds.add("te");          // Too short
+        invalidIds.add("test-space-test-space-test-space-" +
+                       "test-space-test-space-test-spac)"); // Too long
+        invalidIds.add("127.0.0.1");   // Formatted as an IP address
+
+        for(String id : invalidIds) {
+            checkInvalidSpaceId(id);
+        }
+
+        // Test valid space names
+
+        String id = "test-space.test.space";
+        checkValidSpaceId(id);
+
+        id = "tes";
+        checkValidSpaceId(id);
+
+        id = "test-space-test-space-test-space-test-space-test-space-test-spa";
+        checkValidSpaceId(id);
+    }
+
+    private void checkInvalidSpaceId(String id) throws Exception {
+        HttpResponse response = RestTestHelper.addSpace(id);
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
+    }
+
+    private void checkValidSpaceId(String id) throws Exception {
+        HttpResponse response = RestTestHelper.addSpace(id);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+        spaces.add(id);
     }
 
     @Test

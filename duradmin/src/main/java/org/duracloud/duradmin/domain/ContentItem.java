@@ -1,16 +1,17 @@
 
 package org.duracloud.duradmin.domain;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
+import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.duradmin.util.FileData;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.NameValuePair;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class ContentItem
         implements Serializable {
@@ -62,6 +63,11 @@ public class ContentItem
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
+    }
+
+    public String getEncodedContentId() {
+        String contentId = getContentId();
+        return EncodeUtil.urlEncode(contentId);
     }
 
     public String getContentMimetype() {

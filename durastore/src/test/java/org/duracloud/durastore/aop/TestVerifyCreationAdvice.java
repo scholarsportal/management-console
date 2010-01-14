@@ -37,7 +37,7 @@ public class TestVerifyCreationAdvice extends TestCase {
     public void testVerifySpaceCreation() throws Exception {
         // Tests for verification checks up to the maximum number of failures
         for(int i=0; i<MAX_RETRIES; i++) {
-            String url = baseUrl + "/" + i + "?storeID=7";
+            String url = baseUrl + "/00" + i + "?storeID=7";
             HttpResponse response = restHelper.put(url, null, null);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
         }

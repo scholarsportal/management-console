@@ -4,10 +4,12 @@ import org.apache.log4j.Logger;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
-import org.duracloud.storage.error.StorageException;
+import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.error.NotFoundException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
+import org.duracloud.storage.util.IdUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -146,8 +148,9 @@ public class SpaceResource {
                                 String spaceAccess,
                                 Map<String, String> userMetadata,
                                 String storeID)
-    throws ResourceException {
+    throws ResourceException, InvalidIdException {
         // TODO: Check user permissions
+        IdUtil.validateSpaceId(spaceID);
 
         try {
             StorageProvider storage =

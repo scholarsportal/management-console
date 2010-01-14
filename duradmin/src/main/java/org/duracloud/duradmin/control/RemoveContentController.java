@@ -41,7 +41,10 @@ public class RemoveContentController
         SpaceUtil.populateSpace(space, store.getSpace(spaceId, null, 0, null));
         Message message =
                 MessageUtils.createMessage("Successfully removed content item");
-        return setView(request, new ModelAndView(), message);
+
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("space", space);
+        return setView(request, mav, message);
     }
 
 }

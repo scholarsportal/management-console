@@ -3,6 +3,7 @@ package org.duracloud.duraservice.domain;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
@@ -319,6 +320,16 @@ public class MockServiceManager extends ServiceManager {
         public void setSpaceMetadata(String spaceId,
                                      Map<String, String> spaceMetadata)
             throws ContentStoreException {
+            // Auto-generated method stub
+        }
+
+        public void validateSpaceId(String spaceId) throws InvalidIdException {
+            // Auto-generated method stub
+
+        }
+
+        public void validateContentId(String contentId)
+            throws InvalidIdException {
             // Auto-generated method stub
         }
     }

@@ -139,21 +139,25 @@
 							<th><spring:message code="metadata" /></th>
 						</tr>
 						<tbody>
-							<c:forEach items="${contentItemList.resultList}" var="content"
+							<c:forEach items="${contentItemList.contentItemList}" var="content"
 								varStatus="status">
-								<tr id="${content}"
-									onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content}');">
+								<tr id="${content.contentId}"
+									onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content.encodedContentId}');">
 									<td id="actionColumn"><b><a
-										href="content.htm?spaceId=${space.spaceId}&contentId=${content}">${content}</a></b>
+										href="<c:url value="content.htm">
+									              <c:param name="spaceId" value="${space.spaceId}"/>
+											   	  <c:param name="contentId" value="${content.contentId}"/>
+										      </c:url>">${content.contentId}</a></b>
 									<div id="actionDiv" class="actions">
 									<ul>
 										<li><a
-											href="${contentStore.baseURL}/${space.spaceId}/${content}?storeID=${contentStore.storeId}"><spring:message
-											code="download" /></a></li>
+											href="<c:url value="${contentStore.baseURL}/${space.spaceId}/${content.encodedContentId}" >
+											   		  <c:param name="storeID" value="${contentStore.storeId}"/>
+											      </c:url>"><spring:message	code="download" /></a></li>
 										<li><a
 											href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
-											   		<c:param name="contentId" value="${content}"/>
+											   		<c:param name="contentId" value="${content.contentId}"/>
 											   		<c:param name="returnTo" value="${currentUrl}"/>
 											    </c:url>"
 											onclick="return confirmDeleteOperation();"><spring:message

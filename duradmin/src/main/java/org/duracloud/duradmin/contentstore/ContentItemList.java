@@ -2,12 +2,14 @@
 package org.duracloud.duradmin.contentstore;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
+import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.DataRetrievalException;
 import org.duracloud.duradmin.util.ScrollableList;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.duracloud.error.ContentStoreException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContentItemList
@@ -65,7 +67,17 @@ public class ContentItemList
     public String getContentIdFilterString() {
         return contentIdFilterString;
     }
-    
 
+    public List<ContentItem> getContentItemList() {
+        List<String> resultList = super.getResultList();
+        List<ContentItem> contentItemList = new ArrayList<ContentItem>();
+        for(String result : resultList) {
+            ContentItem contentItem = new ContentItem();
+            contentItem.setSpaceId(spaceId);
+            contentItem.setContentId(result);
+            contentItemList.add(contentItem);
+        }
+        return contentItemList;
+    }
 
 }

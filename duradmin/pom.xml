@@ -95,6 +95,11 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
+      <artifactId>storageprovider</artifactId>
+      <version>1.0.0</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.duracloud</groupId>
       <artifactId>serviceconfig</artifactId>
       <version>1.0.0</version>
     </dependency>
