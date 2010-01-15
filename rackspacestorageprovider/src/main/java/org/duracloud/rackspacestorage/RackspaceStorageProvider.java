@@ -217,6 +217,8 @@ public class RackspaceStorageProvider
         createContainer(spaceId);
 
         // Add space metadata
+        // Note: According to Rackspace support (ticket #13597) there are no
+        // dates recorded for containers, so store our own created date        
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = new Date(System.currentTimeMillis());
         spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
@@ -626,7 +628,8 @@ public class RackspaceStorageProvider
         if(contentMimeType == null || contentMimeType.equals("")) {
             contentMimeType = getObjectMetadata(spaceId, contentId).getMimeType();
         }
-        // TODO: Determine how to set MIME type on a Rackspace object directly
+        // Note: It is not currently possible to set MIME type on a
+        // Rackspace object directly, so setting a custom field instead.
         contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         
         updateContentMetadata(spaceId, contentId, contentMetadata);

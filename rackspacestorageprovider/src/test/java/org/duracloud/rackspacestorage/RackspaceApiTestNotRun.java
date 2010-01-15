@@ -130,6 +130,10 @@ public class RackspaceApiTestNotRun {
      * When setting metadata on a Rackspace object the name of the
      * metadata is being changed to camel case (i.e. test-meta becomes
      * Test-Meta). This method shows that behavior.
+     *
+     * Note that according to Rackspace support (ticket #13594) this
+     * is expected behavior. All metadata names are converted to camel
+     * case for transfer and so are returned that way when retrieved.
      */
     @Test
     public void testSetMetadataLowercase() throws Exception {
