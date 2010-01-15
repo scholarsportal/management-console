@@ -1,8 +1,8 @@
 package org.duracloud.durastore.config;
 
-import java.util.Properties;
-
 import org.duracloud.common.util.ApplicationConfig;
+
+import java.util.Properties;
 
 /**
  * This class provides configuration properties associated with the duracloud
@@ -14,17 +14,17 @@ public class DuraStoreConfig
         extends ApplicationConfig {
 
     private static String DURASTORE_PROPERTIES_NAME =
-            "durastore.properties";
+            "test-durastore.properties";
 
     private static String configFileName;
 
     private static String portKey = "port";
 
-    private static Properties getProps() throws Exception {
+    private static Properties getProps() {
         return getPropsFromResource(getConfigFileName());
     }
 
-    public static String getPort() throws Exception {
+    public static String getPort() {
         return getProps().getProperty(portKey);
     }
 

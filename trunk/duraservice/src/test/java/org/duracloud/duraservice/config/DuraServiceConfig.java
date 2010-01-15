@@ -14,27 +14,22 @@ public class DuraServiceConfig
         extends ApplicationConfig {
 
     private static final String DURASERVICE_PROPERTIES_NAME =
-        "duraservice.properties";
+        "test-duraservice.properties";
     
-    private static final String HOST_KEY = "host";
     private static final String PORT_KEY = "port";
     private static final String SERVICES_ADMIN_URL_KEY = "servicesAdminURL";
 
     private String configFileName = null;
 
-    private Properties getProps() throws Exception {
+    private Properties getProps() {
         return getPropsFromResource(getConfigFileName());
     }
 
-    public String getHost() throws Exception {
-        return getProps().getProperty(HOST_KEY);
-    }
-
-    public String getPort() throws Exception {
+    public String getPort() {
         return getProps().getProperty(PORT_KEY);
     }
 
-    public String getServicesAdminUrl() throws Exception {
+    public String getServicesAdminUrl() {
         return getProps().getProperty(SERVICES_ADMIN_URL_KEY);
     }
 

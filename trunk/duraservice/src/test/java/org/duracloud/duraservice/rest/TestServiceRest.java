@@ -39,11 +39,8 @@ public class TestServiceRest
         DuraServiceConfig config = new DuraServiceConfig();
         config.setConfigFileName(configFileName);
         String servicesAdminBaseURL;
-        try {
             servicesAdminBaseURL = config.getServicesAdminUrl();
-        } catch(Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
         servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(servicesAdminBaseURL);
         servicesAdmin.setRester(new RestHttpHelper());

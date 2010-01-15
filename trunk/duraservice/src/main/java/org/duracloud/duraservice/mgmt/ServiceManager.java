@@ -3,14 +3,12 @@ package org.duracloud.duraservice.mgmt;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Content;
-import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.duraservice.domain.ServiceCompute;
 import org.duracloud.duraservice.domain.ServiceComputeInstance;
 import org.duracloud.duraservice.domain.ServiceStore;
@@ -19,6 +17,7 @@ import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
 import org.duracloud.duraservice.error.ServiceException;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
@@ -56,7 +55,11 @@ public class ServiceManager {
     // The primary services host, generally deployed on the primary user instance
     protected static String primaryHost;
 
-    private String localServicesAdminBaseURL;
+    // Port for connection to the services admin at the primary service instance
+    private String primaryServicesAdminPort;
+
+    // Context for connection to the services admin at the primary service instance
+    private String primaryServicesAdminContext;
 
     // List of all services from services config file
     private List<ServiceInfo> services = null;
@@ -105,7 +108,6 @@ public class ServiceManager {
         } catch (ContentStoreException cse) {
             String error = "Could not build services list due " +
             		       "to exception: " + cse.getMessage();
-            log.error(error);
             throw new ServiceException(error, cse);
         }
 
@@ -114,20 +116,24 @@ public class ServiceManager {
         } catch (ContentStoreException cse) {
             String error = "Could not create connection to user storage " +
                            "list due to exception: " + cse.getMessage();
-            log.error(error);
             throw new ServiceException(error, cse);
         }
 
-        try {
-            DuraServiceConfig duraServiceConfig = new DuraServiceConfig();
-            localServicesAdminBaseURL = duraServiceConfig.getServicesAdminUrl();
-            primaryHost = duraServiceConfig.getHost();
-            addServiceComputeInstance(primaryHost, PRIMARY_HOST_DISPLAY);
-        } catch (Exception e) {
-            String error = "Could not retrieve local servicesAdmin " +
-            		       "URL due to error: " + e.getMessage();
-            log.error(error);
-            throw new ServiceException(error, e);
+        if(primaryHost != null &&
+           !primaryHost.equals("") &&
+           primaryServicesAdminPort != null &&
+           !primaryServicesAdminPort.equals("") &&
+           primaryServicesAdminContext != null &&
+           !primaryServicesAdminContext.equals("")) {
+            addServiceComputeInstance(primaryHost,
+                                      primaryServicesAdminPort,
+                                      primaryServicesAdminContext,
+                                      PRIMARY_HOST_DISPLAY);
+        } else {
+            String error = "Could not create primary compute instance, " +
+                "values for primaryServiceInstance must be included in the " +
+                "DuraService configuration XML";
+            throw new ServiceException(error);
         }
     }
 
@@ -149,6 +155,14 @@ public class ServiceManager {
             SAXBuilder builder = new SAXBuilder();
             Document doc = builder.build(xml);
             Element servicesConfig = doc.getRootElement();
+
+            Element primaryInstance =
+                servicesConfig.getChild("primaryServiceInstance");
+            primaryHost = primaryInstance.getChildText("host");
+            primaryServicesAdminPort =
+                primaryInstance.getChildText("servicesAdminPort");
+            primaryServicesAdminContext =
+                primaryInstance.getChildText("servicesAdminContext");
 
             Element userStorage = servicesConfig.getChild("userStorage");
             userStore = new UserStore();
@@ -1004,9 +1018,13 @@ public class ServiceManager {
      * Adds a new service compute instance to the internal list.
      */
     private void addServiceComputeInstance(String hostName,
+                                           String servicesAdminPort,
+                                           String servicesAdminContext,
                                            String displayName) {
         ServicesAdminClient servicesAdmin =
-            createServicesAdminClient(hostName);
+            createServicesAdminClient(hostName,
+                                      servicesAdminPort,
+                                      servicesAdminContext);
         ServiceComputeInstance instance =
             new ServiceComputeInstance(hostName, displayName, servicesAdmin);
         serviceComputeInstances.add(instance);
@@ -1016,9 +1034,11 @@ public class ServiceManager {
      * Creates a new object capable of making connection to a services
      * administrator at a given host
      */
-    private ServicesAdminClient createServicesAdminClient(String instanceHost) {
-        String baseUrl =
-            localServicesAdminBaseURL.replace(primaryHost, instanceHost);
+    private ServicesAdminClient createServicesAdminClient(String instanceHost,
+                                                          String servicesAdminPort,
+                                                          String servicesAdminContext) {
+        String baseUrl = "http://" + instanceHost + ":" +
+            servicesAdminPort + "/" + servicesAdminContext;
         ServicesAdminClient servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(baseUrl);
         servicesAdmin.setRester(new RestHttpHelper());
@@ -1034,9 +1054,12 @@ public class ServiceManager {
     public String createServiceInstance(String displayName) {
         checkConfigured();
         //TODO: Make call to start services instance through compute manager
-        //String hostName = startNewServiceInstance();
-        //addServiceComputeInstance(hostName, displayName);
-        //return hostName;
+        //ServiceInstance serviceInstance = startNewServiceInstance();
+        //addServiceComputeInstance(serviceInstance.getHostName(),
+        //                          serviceInstance.getServicesAdminPort(),
+        //                          serviceInstance.getServicesAdminContext(),
+        //                          displayName);
+        //return serviceInstance.getHostName();
         return primaryHost;
     }
 
