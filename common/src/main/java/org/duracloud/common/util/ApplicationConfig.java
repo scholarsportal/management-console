@@ -1,17 +1,15 @@
 
 package org.duracloud.common.util;
 
+import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.log4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import org.apache.commons.io.input.AutoCloseInputStream;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrew Woods
@@ -21,8 +19,7 @@ public class ApplicationConfig {
     protected static final Logger log =
             Logger.getLogger(ApplicationConfig.class);
 
-    protected static Properties getPropsFromResource(String resourceName)
-            throws Exception {
+    protected static Properties getPropsFromResource(String resourceName) {
         Properties props = new Properties();
         AutoCloseInputStream in =
                 new AutoCloseInputStream(ApplicationConfig.class
@@ -30,14 +27,14 @@ public class ApplicationConfig {
         try {
             props.load(in);
         } catch (Exception e) {
-            log.warn("Unable to find resource: '" + resourceName + "': "
-                    + e.getMessage());
-            throw e;
+            String error = "Unable to find resource: '" + resourceName + "': "
+                    + e.getMessage();
+            throw new RuntimeException(error, e);
         }
         return props;
     }
 
-    public static Properties getPropsFromXml(String propsXml) throws Exception {
+    public static Properties getPropsFromXml(String propsXml) {
         AutoCloseInputStream in =
                 new AutoCloseInputStream(new ByteArrayInputStream(propsXml
                         .getBytes()));
@@ -45,30 +42,34 @@ public class ApplicationConfig {
         return getPropsFromXmlStream(in);
     }
 
-    public static Properties getPropsFromXmlStream(InputStream propsXmlStream)
-            throws Exception {
+    public static Properties getPropsFromXmlStream(InputStream propsXmlStream) {
         Properties props = new Properties();
         try {
             props.loadFromXML(propsXmlStream);
         } catch (InvalidPropertiesFormatException e) {
             log.error(e.getMessage());
             log.error(ExceptionUtil.getStackTraceAsString(e));
-            throw e;
+            throw new RuntimeException(e);
         } catch (IOException e) {
             log.error(e.getMessage());
             log.error(ExceptionUtil.getStackTraceAsString(e));
-            throw e;
+            throw new RuntimeException(e);
         } finally {
             if (propsXmlStream != null) {
-                propsXmlStream.close();
+                try {
+                    propsXmlStream.close();
+                } catch(IOException e) {
+                    String error =
+                        "Error closing properties stream: " + e.getMessage();
+                    throw new RuntimeException(error, e);
+                }
             }
         }
 
         return props;
     }
 
-    public static Properties getPropsFromXmlResource(String resourceName)
-            throws Exception {
+    public static Properties getPropsFromXmlResource(String resourceName) {
         Properties props = new Properties();
         AutoCloseInputStream in =
                 new AutoCloseInputStream(ApplicationConfig.class
@@ -76,14 +77,14 @@ public class ApplicationConfig {
         try {
             props.loadFromXML(in);
         } catch (Exception e) {
-            log.warn("Unable to find resource: '" + resourceName + "': "
-                    + e.getMessage());
-            throw e;
+            String error = "Unable to find resource: '" + resourceName + "': "
+                    + e.getMessage();
+            throw new RuntimeException(error);
         }
         return props;
     }
 
-    public static String getXmlFromProps(Properties props) throws Exception {
+    public static String getXmlFromProps(Properties props) {
         String comment = null;
         String xml = new String();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -92,13 +93,20 @@ public class ApplicationConfig {
             os.flush();
             xml = os.toString();
         } catch (IOException e) {
-            log.error("IO exception for props: '" + props + "'");
-            log.error(e.getMessage());
+            String error = "IO exception for props: '" + props + "':" +
+                e.getMessage();
+            log.error(error);
             log.error(ExceptionUtil.getStackTraceAsString(e));
-            throw e;
+            throw new RuntimeException(error, e);
         } finally {
             if (os != null) {
-                os.close();
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    String error =
+                        "Error closing xml stream: " + e.getMessage();
+                    throw new RuntimeException(error, e);
+                }
             }
         }
 

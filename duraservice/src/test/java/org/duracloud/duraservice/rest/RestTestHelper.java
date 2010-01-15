@@ -59,6 +59,11 @@ public class RestTestHelper {
     }
 
     public static String buildTestInitXml() throws Exception {
+        String primaryHost = "localhost";
+        String primaryServicesAdminPort = "8089";
+        String primaryServicesAdminContext =
+            "org.duracloud.services.admin_1.0.0";
+
         String userStorageHost = "localhost";
         String userStoragePort = getPort();
         String userStorageContext = "durastore";
@@ -76,6 +81,13 @@ public class RestTestHelper {
 
         StringBuilder xml = new StringBuilder();
         xml.append("<servicesConfig>");
+          xml.append("<primaryServiceInstance>");
+          xml.append("<host>"+primaryHost+"</host>");
+          xml.append("<servicesAdminPort>"+primaryServicesAdminPort +
+              "</servicesAdminPort>");
+          xml.append("<servicesAdminContext>"+primaryServicesAdminContext +
+              "</servicesAdminContext>");
+          xml.append("</primaryServiceInstance>");
           xml.append("<userStorage>");
             xml.append("<host>"+userStorageHost+"</host>");
             xml.append("<port>"+userStoragePort+"</port>");
