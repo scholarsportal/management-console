@@ -112,11 +112,10 @@ public class RackspaceStorageProviderTest {
         log.debug("Test getSpaceMetadata()");
         Map<String, String> sMetadata = rackspaceProvider.getSpaceMetadata(SPACE_ID);
 
-        // TODO: Determine if there is a way to get Last-Modified from Rackspace container
-        //assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
+        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
         assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_COUNT));
         assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
-        //assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
         assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
         assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS));
 
@@ -251,7 +250,7 @@ public class RackspaceStorageProviderTest {
         log.debug("Test getContent() with invalid content ID");       
         log.debug("-- Begin expected error log -- ");
         try {
-            is = rackspaceProvider.getContent(SPACE_ID, "non-existant-content");
+            rackspaceProvider.getContent(SPACE_ID, "non-existant-content");
             fail("Exception expected");
         } catch (Exception e) {
             assertNotNull(e);
