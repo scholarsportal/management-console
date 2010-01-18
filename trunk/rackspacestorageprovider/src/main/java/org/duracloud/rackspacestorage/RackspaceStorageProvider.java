@@ -159,11 +159,10 @@ public class RackspaceStorageProvider
         try {
             int limit = new Long(maxResults).intValue();
             if (prefix != null) {
-                return filesClient.listObjectsStartingWith(containerName,
-                                                           prefix,
-                                                           null,
-                                                           limit,
-                                                           marker);
+                return listObjectsStartingWith(containerName,
+                                               prefix,
+                                               limit,
+                                               marker);
             } else {
                 return filesClient.listObjects(containerName,
                                                null,
@@ -177,6 +176,39 @@ public class RackspaceStorageProvider
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, RETRY);
         }
+    }
+
+    /*
+     * The listObjectsStartingWith() call has a particularly high failure rate,
+     * this method handles the call with a built in retry (up to 10 attempts).
+     * TODO: Call listObjectsStartingWith() directly once it no longer fails regularly
+     */
+    private List<FilesObject> listObjectsStartingWith(String containerName,
+                                                      String prefix,
+                                                      int limit,
+                                                      String marker)
+        throws IOException {
+        int retryLimit = 10;
+        int retries = 0;
+        List<FilesObject> objectList = null;
+        while(objectList == null) {
+            try {
+                objectList = filesClient.listObjectsStartingWith(containerName,
+                                                                 prefix,
+                                                                 null,
+                                                                 limit,
+                                                                 marker);
+            } catch(IOException e) {
+                log.error(e);
+                objectList = null;                
+                if(retries < retryLimit) {
+                    retries++;
+                } else {
+                    throw e;
+                }
+            }
+        }
+        return objectList;
     }
 
     private void throwIfSpaceExists(String spaceId) {
