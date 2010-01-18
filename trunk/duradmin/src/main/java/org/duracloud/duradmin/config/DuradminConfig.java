@@ -1,9 +1,10 @@
 
 package org.duracloud.duradmin.config;
 
-import java.util.Properties;
-
 import org.duracloud.common.util.ApplicationConfig;
+import org.duracloud.duradmin.domain.AdminInit;
+
+import java.util.Properties;
 
 /**
  * This class provides configuration properties associated with the duracloud
@@ -14,6 +15,8 @@ import org.duracloud.common.util.ApplicationConfig;
 public class DuradminConfig
         extends ApplicationConfig {
 
+    private static AdminInit config = null;
+
     private static String DURADMIN_PROPERTIES_NAME = "duradmin.properties";
 
     private static String configFileName;
@@ -22,16 +25,28 @@ public class DuradminConfig
 
     private static String portKey = "port";
 
-    private static Properties getProps() throws Exception {
+    private static String durastoreContextKey = "durastoreContext";
+
+    private static String duraserviceContextKey = "duraserviceContext";
+
+    private static Properties getProps() {
         return getPropsFromResource(getConfigFileName());
     }
 
-    public static String getHost() throws Exception {
+    public static String getPropsHost() {
         return getProps().getProperty(hostKey);
     }
 
-    public static String getPort() throws Exception {
+    public static String getPropsPort() {
         return getProps().getProperty(portKey);
+    }
+
+    public static String getPropsDuraStoreContext() {
+        return getProps().getProperty(durastoreContextKey);
+    }
+
+    public static String getPropsDuraServiceContext() {
+        return getProps().getProperty(duraserviceContextKey);
     }
 
     public static void setConfigFileName(String name) {
@@ -43,6 +58,56 @@ public class DuradminConfig
             configFileName = DURADMIN_PROPERTIES_NAME;
         }
         return configFileName;
+    }
+
+    public static void setConfig(AdminInit init) {
+        config = init;
+    }
+
+    public static String getDuraStoreHost() {
+        checkInitialized();
+        return config.getDuraStoreHost();
+    }
+
+    public static String getDuraStorePort() {
+        checkInitialized();
+        return config.getDuraStorePort();
+    }
+
+    public static String getDuraStoreContext() {
+        checkInitialized();
+        return config.getDuraStoreContext();
+    }
+
+    public static String getDuraServiceHost() {
+        checkInitialized();
+        return config.getDuraServiceHost();
+    }
+
+    public static String getDuraServicePort() {
+        checkInitialized();
+        return config.getDuraServicePort();
+    }
+
+    public static String getDuraServiceContext() {
+        checkInitialized();
+        return config.getDuraServiceContext();
+    }
+
+    private static void checkInitialized() {
+        if(config == null) {
+            initFromProperties();
+        }
+    }
+
+    private static void initFromProperties() {
+        config = new AdminInit();
+        config.setDuraStoreHost(getPropsHost());
+        config.setDuraStorePort(getPropsPort());
+        config.setDuraStoreContext(getPropsDuraStoreContext());
+        config.setDuraServiceHost(getPropsHost());
+        config.setDuraServicePort(getPropsPort());
+        config.setDuraServiceContext(getPropsDuraServiceContext());
     }
 
 }
