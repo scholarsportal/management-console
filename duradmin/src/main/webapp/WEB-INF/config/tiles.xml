@@ -30,6 +30,7 @@
 		<put-attribute name="body" />	
 	</definition>
 
+	<definition name="init" template="/WEB-INF/jsp/init.jsp"/>
 
 	<definition name="home" template="/WEB-INF/jsp/home.jsp"/>
 	

@@ -23,6 +23,7 @@
   <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
+        <prop key="/init.htm">initController</prop>
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
         <prop key="/removeSpace.htm">removeSpaceController</prop>
@@ -49,6 +50,10 @@
   </bean>
   
   <!-- Request Controllers - processes request -->
+  <bean id="initController" class="org.duracloud.duradmin.control.InitController">
+    <property name="contentStoreProvider" ref="contentStoreProvider"/>  
+  </bean>
+
   <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
   </bean>
 

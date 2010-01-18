@@ -31,8 +31,8 @@ public class TestDuradmin
     @Override
     @Before
     protected void setUp() throws Exception {
-        String host = DuradminConfig.getHost();
-        String port = DuradminConfig.getPort();
+        String host = DuradminConfig.getPropsHost();
+        String port = DuradminConfig.getPropsPort();
         baseUrl = "http://" + host + ":" + port + "/duradmin";
     }
 

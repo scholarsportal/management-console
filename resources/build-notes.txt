@@ -24,6 +24,10 @@ http://localhost:8080/duradmin
 http://localhost:8080/durastore
 http://localhost:8080/duraservice
 
+::URL to update DurAdmin initialization after deployment::
+
+http://localhost:8080/duradmin/init.htm
+
 ::clover::
 If you plan on using clover, the following element needs to be added to your maven 'settings.xml' (see resources/conf/settings.xml):
 

@@ -116,10 +116,10 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
                     throw new StorageException(error + "Response content was null");
                 }
             } else {
-                throw new StorageException("Response code was "
-                                           + response.getStatusCode() +
-                                           ", expected value was HttpStatus.SC_OK." + 
-                                           "Response Body: " + response.getResponseBody());
+                error += "Response code was " + response.getStatusCode() +
+                    ", expected value was " + HttpStatus.SC_OK +
+                    ". Response Body: " + response.getResponseBody();
+                throw new StorageException(error);
             }
         } catch (Exception e) {
             throw new ContentStoreException(error + e.getMessage(), e);
