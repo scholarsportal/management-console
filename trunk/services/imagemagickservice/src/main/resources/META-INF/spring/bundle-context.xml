@@ -8,12 +8,12 @@
       http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
 
   <!-- Spring beans which are used by the bundle are defined here. -->
-  <bean id="scriptService" class="org.duracloud.services.script.ScriptService"
+  <bean id="imageMagickService" class="org.duracloud.services.script.ScriptService"
    destroy-method="stop">
-    <osgix:managed-properties persistent-id="scriptservice-1.0.0.zip"
+    <osgix:managed-properties persistent-id="imagemagickservice-1.0.0.zip"
         update-strategy="container-managed"/>
-    <property name="serviceId" value="scriptservice-1.0.0" />
-    <property name="workDir" value="${bundle.home}/work/scriptservice-1.0.0" />
+    <property name="serviceId" value="imagemagickservice-1.0.0" />
+    <property name="workDir" value="${bundle.home}/work/imagemagickservice-1.0.0" />
   </bean>
   
   <!-- Properties config -->
