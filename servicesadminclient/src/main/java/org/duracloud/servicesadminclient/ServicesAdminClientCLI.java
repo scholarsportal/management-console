@@ -59,6 +59,7 @@ public class ServicesAdminClientCLI {
                     "replicationservice-1.0.0",
                     "zip"),
         WEBAPPUTIL("util", "webapp[util]", "webapputilservice-1.0.0", "zip"),
+        IMAGEMAGICK("magick", "image[magick]", "imagemagickservice-1.0.0", "zip"),
         UNKNOWN("?", "unknown", "unknown-id", "no-ext");
 
         private File basePackageRepository = new File("../services/packages");

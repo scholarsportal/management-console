@@ -30,6 +30,7 @@
     <module>webapputilservice</module>
     <module>hellowebappwrapper</module>
     <module>scriptservice</module>
+    <module>imagemagickservice</module>
   </modules>
 
   <build>

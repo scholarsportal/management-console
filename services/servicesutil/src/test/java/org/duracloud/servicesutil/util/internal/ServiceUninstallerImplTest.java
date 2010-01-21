@@ -67,6 +67,7 @@ public class ServiceUninstallerImplTest extends ServiceInstallImplTestBase {
         verifyExists(false, noBundle);
 
         File serviceWorkDir = new File(workDir, name); // no extension
+        verifyExists(true, serviceWorkDir);
         File war = new File(serviceWorkDir, entryName2);
         verifyExists(true, war);
 
@@ -76,6 +77,7 @@ public class ServiceUninstallerImplTest extends ServiceInstallImplTestBase {
         verifyExists(false, atticBag);
         verifyExists(false, bundle);
         verifyExists(false, noBundle);
+        verifyExists(false, serviceWorkDir);
         verifyExists(false, war);
     }
 

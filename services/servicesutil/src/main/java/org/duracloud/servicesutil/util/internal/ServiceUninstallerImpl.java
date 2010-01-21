@@ -1,5 +1,6 @@
 package org.duracloud.servicesutil.util.internal;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.duracloud.services.common.error.ServiceException;
 import org.duracloud.servicesutil.util.ServiceUninstaller;
@@ -29,6 +30,7 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
             uninstallBundleFromHomeAndAttic(name);
         } else if (isZip(name)) {
             uninstallBagAndBundles(name);
+            removeWorkDir(name);
         } else {
             throwServiceException("Unsupported filetype: '" + name + "'");
         }
@@ -68,6 +70,14 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
         }
 
         delete(getBundleHome().getAttic(), zipName);
+    }
+
+    private void removeWorkDir(String name) throws IOException, ServiceException {
+        String serviceId = FilenameUtils.getBaseName(name);
+        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);     
+        if(serviceWorkDir.exists()) {
+            FileUtils.deleteDirectory(serviceWorkDir);
+        }
     }
 
     private void delete(File dir, String name) throws ServiceException {

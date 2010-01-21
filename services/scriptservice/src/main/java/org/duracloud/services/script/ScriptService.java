@@ -36,11 +36,12 @@ public class ScriptService extends BaseService implements ComputeService, Manage
 
     @Override
     public void start() throws Exception {
-        log.debug("ScriptService is Starting");
         this.setServiceStatus(ServiceStatus.STARTING);
 
         String startScriptName = getScriptName(START_SCRIPT);
         checkScriptExists(startScriptName);
+
+        log.info("Running start script: " + startScriptName);
 
         File workDir = new File(getWorkDir());
         String script = new File(workDir, startScriptName).getAbsolutePath();
@@ -54,12 +55,13 @@ public class ScriptService extends BaseService implements ComputeService, Manage
 
     @Override
     public void stop() throws Exception {
-        log.debug("ScriptService is Stopping");
         this.setServiceStatus(ServiceStatus.STOPPING);
 
         String stopScriptName = getScriptName(STOP_SCRIPT);
         checkScriptExists(stopScriptName);
-        
+
+        log.info("Running stop script: " + stopScriptName);
+
         File workDir = new File(getWorkDir());
         String script = new File(workDir, stopScriptName).getAbsolutePath();
 

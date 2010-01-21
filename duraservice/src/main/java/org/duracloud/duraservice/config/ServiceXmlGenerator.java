@@ -30,6 +30,7 @@ public class ServiceXmlGenerator {
         List<ServiceInfo> servicesList = new ArrayList<ServiceInfo>();
         servicesList.add(buildHelloService());
         servicesList.add(buildReplicationService());
+        servicesList.add(buildImageMagickService());
         return servicesList;
     }
 
@@ -45,25 +46,7 @@ public class ServiceXmlGenerator {
         helloService.setServiceVersion("1.0.0");
         helloService.setMaxDeploymentsAllowed(-1);
 
-        // Deployment Options
-        DeploymentOption depPrimary = new DeploymentOption();
-        depPrimary.setLocation(DeploymentOption.Location.PRIMARY);
-        depPrimary.setState(DeploymentOption.State.AVAILABLE);
-
-        DeploymentOption depNew = new DeploymentOption();
-        depNew.setLocation(DeploymentOption.Location.NEW);
-        depNew.setState(DeploymentOption.State.UNAVAILABLE);
-
-        DeploymentOption depExisting = new DeploymentOption();
-        depExisting.setLocation(DeploymentOption.Location.EXISTING);
-        depExisting.setState(DeploymentOption.State.UNAVAILABLE);
-        
-        List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
-        depOptions.add(depPrimary);
-        depOptions.add(depNew);
-        depOptions.add(depExisting);
-
-        helloService.setDeploymentOptions(depOptions);
+        helloService.setDeploymentOptions(getSimpleDeploymentOptions());
 
         return helloService;
     }
@@ -166,6 +149,30 @@ public class ServiceXmlGenerator {
 
         repService.setSystemConfigs(systemConfig);
 
+        repService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return repService;
+    }
+
+    private ServiceInfo buildImageMagickService() {
+        ServiceInfo imService = new ServiceInfo();
+        imService.setId(2);
+        imService.setContentId("imagemagickservice-1.0.0.zip");
+        String desc = "The ImageMagick service deploys the ImageMagick " +
+            "application which allows other services to take advantage of " +
+            "its features.";
+        imService.setDescription(desc);
+        imService.setDisplayName("ImageMagick Service");
+        imService.setUserConfigVersion("1.0");
+        imService.setServiceVersion("1.0.0");
+        imService.setMaxDeploymentsAllowed(-1);
+
+        imService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return imService;
+    }
+
+    private List<DeploymentOption> getSimpleDeploymentOptions() {
         // Deployment Options
         DeploymentOption depPrimary = new DeploymentOption();
         depPrimary.setLocation(DeploymentOption.Location.PRIMARY);
@@ -178,15 +185,13 @@ public class ServiceXmlGenerator {
         DeploymentOption depExisting = new DeploymentOption();
         depExisting.setLocation(DeploymentOption.Location.EXISTING);
         depExisting.setState(DeploymentOption.State.UNAVAILABLE);
-        
+
         List<DeploymentOption> depOptions = new ArrayList<DeploymentOption>();
         depOptions.add(depPrimary);
         depOptions.add(depNew);
         depOptions.add(depExisting);
 
-        repService.setDeploymentOptions(depOptions);
-
-        return repService;
+        return depOptions;
     }
 
     private String getServicesListAsXml() {

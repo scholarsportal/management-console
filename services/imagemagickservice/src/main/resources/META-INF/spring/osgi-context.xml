@@ -11,13 +11,13 @@
     OSGi services which are available to external bundles are defined
     here.
   -->
-  <osgi:service id="osgiScriptService" ref="scriptService" >
+  <osgi:service id="osgiImageMagickService" ref="imageMagickService" >
     <osgi:interfaces>
       <value>org.osgi.service.cm.ManagedService</value>
       <value>org.duracloud.services.ComputeService</value>
     </osgi:interfaces>
     <osgi:service-properties>
-      <entry key="duraService" value="script"/>
+      <entry key="duraService" value="imagemagick"/>
     </osgi:service-properties>  
   </osgi:service>
   

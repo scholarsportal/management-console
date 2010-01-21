@@ -130,13 +130,11 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
                 InputStream entryStream = getZipEntryStream(zip, entry);
                 installBundleFromStream(entryName, entryStream);
 
-            } else if (isWar(entryName) || isZip(entryName)) {
+            } else {
                 InputStream entryStream = getZipEntryStream(zip, entry);
                 String serviceId = FilenameUtils.getBaseName(name);
                 storeInWorkDir(serviceId, entryName, entryStream);
 
-            } else {
-                log.info("Not installing non-[j|w]ars: " + entryName);
             }
         }
 
@@ -171,7 +169,7 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
     private void storeInWorkDir(String serviceId,
                                 String name,
                                 InputStream stream) {
-        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);
+        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);    
         storeInDir(serviceWorkDir, name, stream);
     }
 
