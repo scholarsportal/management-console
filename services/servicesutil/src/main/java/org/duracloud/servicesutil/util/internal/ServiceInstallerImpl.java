@@ -169,7 +169,7 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
     private void storeInWorkDir(String serviceId,
                                 String name,
                                 InputStream stream) {
-        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);    
+        File serviceWorkDir = getBundleHome().getServiceWork(serviceId);    
         storeInDir(serviceWorkDir, name, stream);
     }
 

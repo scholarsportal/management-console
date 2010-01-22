@@ -1,6 +1,8 @@
 package org.duracloud.services.script.osgi;
 
-import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.services.script.ScriptService;
 
@@ -25,12 +27,15 @@ public class ScriptServiceTester {
         throws IOException {
         this.scriptService = service;
 
-        File workDir = new File(service.getWorkDir());
+        File workDir = new File(service.getServiceWorkDir());
         workDir.mkdirs();
         this.workDir = workDir.getAbsolutePath();
     }
 
     public void testScriptService() throws Exception {
+        String serviceWorkDir = scriptService.getServiceWorkDir();
+        assertNotNull(serviceWorkDir);
+        assertTrue(new File(serviceWorkDir).exists());
         testStartStopCycle();
     }
 
@@ -83,6 +88,6 @@ public class ScriptServiceTester {
 
     private void testScriptCreatedFiles(boolean shouldExist) throws Exception {
         File file = new File(workDir, SCRIPT_CREATED_FILE);
-        Assert.assertEquals(shouldExist, file.exists());
+        assertEquals(shouldExist, file.exists());
     }
 }

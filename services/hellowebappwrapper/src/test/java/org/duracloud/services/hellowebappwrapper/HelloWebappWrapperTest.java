@@ -56,7 +56,8 @@ public class HelloWebappWrapperTest {
         wrapper.setUrl(url);
         wrapper.setWebappWarName(warName);
         wrapper.setWebappUtil(webappUtil);
-        wrapper.setBundleHomeDir(bundleHome.getBaseDir());
+        wrapper.setServiceWorkDir(bundleHome.getServiceWork(serviceId).
+            getAbsolutePath());
 
         File binaries = new File(resourceDir, binariesZipName);
         File webappWork = bundleHome.getServiceWork(webappUtil.getServiceId());

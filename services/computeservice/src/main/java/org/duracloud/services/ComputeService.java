@@ -18,4 +18,8 @@ public interface ComputeService {
     public String getServiceId();
 
     public ServiceStatus getServiceStatus() throws Exception;
+
+    public String getServiceWorkDir();
+
+    public void setServiceWorkDir(String serviceWorkDir);
 }

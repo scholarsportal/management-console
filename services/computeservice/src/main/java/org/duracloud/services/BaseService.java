@@ -11,6 +11,8 @@ public abstract class BaseService implements ComputeService {
 
     private String serviceId;
 
+    private String serviceWorkDir;
+
     private ServiceStatus serviceStatus = ServiceStatus.INSTALLED;
 
     public void start() throws Exception {
@@ -54,4 +56,11 @@ public abstract class BaseService implements ComputeService {
         this.serviceId = serviceId;
     }
 
+    public String getServiceWorkDir() {
+        return serviceWorkDir;
+    }
+
+    public void setServiceWorkDir(String serviceWorkDir) {
+        this.serviceWorkDir = serviceWorkDir;
+    }
 }

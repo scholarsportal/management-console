@@ -74,7 +74,7 @@ public class ServiceUninstallerImpl extends ServiceInstallBase
 
     private void removeWorkDir(String name) throws IOException, ServiceException {
         String serviceId = FilenameUtils.getBaseName(name);
-        File serviceWorkDir = new File(getBundleHome().getWork(), serviceId);     
+        File serviceWorkDir = getBundleHome().getServiceWork(serviceId);  
         if(serviceWorkDir.exists()) {
             FileUtils.deleteDirectory(serviceWorkDir);
         }

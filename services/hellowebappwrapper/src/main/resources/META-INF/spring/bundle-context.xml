@@ -16,16 +16,8 @@
     <property name="serviceId" value="hellowebappwrapper-1.0.0" />
     <property name="serviceStatus" value="INSTALLED" />
     <property name="url" value="http://example.org" />
-    <property name="bundleHomeDir" value="${bundle.home}" />
     <property name="webappWarName" value="hellowebapp-1.0.0.war" />
     <property name="webappUtil" ref="osgiWebappUtilSrv" />
   </bean>
-  
-  <!-- Properties config -->
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
-    <property name="location" value="osgi-config.properties" />
-  </bean>
-
-
 
 </beans> 

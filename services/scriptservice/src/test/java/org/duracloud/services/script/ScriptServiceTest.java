@@ -29,7 +29,7 @@ public class ScriptServiceTest extends TestCase {
         serviceWorkDir.mkdirs();
 
         ScriptService scriptService = new ScriptService();
-        scriptService.setWorkDir(workDir);
+        scriptService.setServiceWorkDir(workDir);
         setScriptService(scriptService);
     }
 
