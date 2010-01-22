@@ -13,12 +13,6 @@
     <osgix:managed-properties persistent-id="imagemagickservice-1.0.0.zip"
         update-strategy="container-managed"/>
     <property name="serviceId" value="imagemagickservice-1.0.0" />
-    <property name="workDir" value="${bundle.home}/work/imagemagickservice-1.0.0" />
-  </bean>
-  
-  <!-- Properties config -->
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
-    <property name="location" value="osgi-config.properties" />
   </bean>
 
 </beans> 

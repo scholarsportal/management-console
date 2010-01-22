@@ -62,17 +62,6 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
         return warFile;
     }
 
-    private File getServiceWorkDir() {
-        File work = getBundleHome().getWork();
-        if (!work.exists()) {
-            String msg = "Error finding work dir:" + work.getAbsolutePath();
-            log.error(msg);
-            throw new WebappWrapperException(msg);
-        }
-
-        return new File(work, getServiceId());
-    }
-
     @Override
     public void stop() throws Exception {
         log.debug("HelloWebappWrapper is Stopping");
@@ -167,11 +156,4 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
         return bundleHome;
     }
 
-    public String getBundleHomeDir() {
-        return getBundleHome().getBaseDir();
-    }
-
-    public void setBundleHomeDir(String bundleHomeDir) {
-        this.bundleHome = new BundleHome(bundleHomeDir);
-    }
 }

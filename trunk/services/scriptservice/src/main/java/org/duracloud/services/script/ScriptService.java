@@ -32,20 +32,18 @@ public class ScriptService extends BaseService implements ComputeService, Manage
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private String workDir;
-
     @Override
     public void start() throws Exception {
+        File workDir = new File(getServiceWorkDir());
+        System.out.println("Starting Script Service: " + workDir.getName());
+
         this.setServiceStatus(ServiceStatus.STARTING);
 
         String startScriptName = getScriptName(START_SCRIPT);
         checkScriptExists(startScriptName);
-
-        log.info("Running start script: " + startScriptName);
-
-        File workDir = new File(getWorkDir());
         String script = new File(workDir, startScriptName).getAbsolutePath();
-        
+        System.out.println("Running Script: " + script);
+
         ProcessBuilder pb = new ProcessBuilder(script);
         pb.directory(workDir);
         Process p = pb.start();
@@ -55,15 +53,15 @@ public class ScriptService extends BaseService implements ComputeService, Manage
 
     @Override
     public void stop() throws Exception {
+        File workDir = new File(getServiceWorkDir());
+        System.out.println("Stopping Script Service: " + workDir.getName());
+
         this.setServiceStatus(ServiceStatus.STOPPING);
 
         String stopScriptName = getScriptName(STOP_SCRIPT);
         checkScriptExists(stopScriptName);
-
-        log.info("Running stop script: " + stopScriptName);
-
-        File workDir = new File(getWorkDir());
         String script = new File(workDir, stopScriptName).getAbsolutePath();
+        System.out.println("Running Script: " + script);
 
         ProcessBuilder pb = new ProcessBuilder(script);
         pb.directory(workDir);
@@ -86,11 +84,13 @@ public class ScriptService extends BaseService implements ComputeService, Manage
     }
 
     private void checkScriptExists(String scriptName) {
-        File scriptFile = new File(getWorkDir(), scriptName);
+        File scriptFile = new File(getServiceWorkDir(), scriptName);
         if (!scriptFile.exists()) {
             String error =
                 "No script available at: " + scriptFile.getAbsolutePath();
             throw new ScriptServiceException(error);
+        } else {
+            scriptFile.setExecutable(true);
         }
     }
 
@@ -117,11 +117,4 @@ public class ScriptService extends BaseService implements ComputeService, Manage
         // Implementation not needed. Update performed through setters.
     }
 
-    public String getWorkDir() {
-        return workDir;
-    }
-
-    public void setWorkDir(String workDir) {
-        this.workDir = workDir;
-    }
 }

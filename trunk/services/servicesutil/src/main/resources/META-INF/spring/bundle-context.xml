@@ -23,6 +23,7 @@
   
   <bean id="srvStarter" class="org.duracloud.servicesutil.util.internal.ServiceStarterImpl">
     <property name="duraServices" ref="duraServices" />
+    <property name="bundleHome" ref="bundleHome" />
   </bean>
   
   <bean id="srvStopper" class="org.duracloud.servicesutil.util.internal.ServiceStopperImpl">

@@ -1,8 +1,5 @@
 package org.duracloud.services.script;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Installs ImageMagick for use by other services
  *
@@ -11,17 +8,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageMagickService extends ScriptService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    // All of the work is done in ScriptService, this class is a placeholder
+    // to encourage bundle creation to include the correct packages.
 
-    @Override
-    public void start() throws Exception {
-        log.info("Starting ImageMagick Service");
-        super.start();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        log.info("Stopping ImageMagick Service");
-        super.stop();
-    }
 }

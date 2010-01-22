@@ -2,11 +2,13 @@ package org.duracloud.servicesutil.util.internal;
 
 import org.duracloud.services.ComputeService;
 import org.duracloud.services.common.error.ServiceRuntimeException;
+import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.servicesutil.util.ServiceStarter;
 import org.duracloud.servicesutil.util.internal.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 
 public class ServiceStarterImpl implements ServiceStarter {
@@ -15,6 +17,7 @@ public class ServiceStarterImpl implements ServiceStarter {
 
     private List<ComputeService> duraServices;
     private ServiceHelper helper = new ServiceHelper();
+    private BundleHome bundleHome;
 
     /**
      * {@inheritDoc}
@@ -22,7 +25,17 @@ public class ServiceStarterImpl implements ServiceStarter {
     public void start(String serviceId) {
         log.info("Starting Service: " + serviceId);
         ComputeService service = helper.findService(serviceId, duraServices);
+        doSetWorkDir(service);
         doStart(service);
+    }
+
+    private void doSetWorkDir(ComputeService service) {
+        File serviceWorkDir =
+            getBundleHome().getServiceWork(service.getServiceId());
+        if(!serviceWorkDir.exists()) {
+            serviceWorkDir.mkdir();
+        }
+        service.setServiceWorkDir(serviceWorkDir.getAbsolutePath());
     }
 
     private void doStart(ComputeService service) {
@@ -42,6 +55,14 @@ public class ServiceStarterImpl implements ServiceStarter {
 
     public void setDuraServices(List<ComputeService> duraServices) {
         this.duraServices = duraServices;
+    }
+
+    public BundleHome getBundleHome() {
+        return bundleHome;
+    }
+
+    public void setBundleHome(BundleHome bundleHome) throws Exception {
+        this.bundleHome = bundleHome;
     }
 
 }

@@ -1,10 +1,9 @@
 package org.duracloud.services.script.osgi;
 
-import junit.framework.Assert;
+import static junit.framework.Assert.assertNotNull;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.services.ComputeService;
 import org.duracloud.services.script.ScriptService;
-import org.duracloud.services.script.osgi.ScriptServiceTester;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,12 +27,17 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     @Before
     public void setUp() throws Exception {
+        String workDir = "target/script-test";
+        File serviceWorkDir = new File(workDir);
+        serviceWorkDir.mkdirs();
+
+        getScriptService().setServiceWorkDir(workDir);        
     }
 
     @After
     public void tearDown() throws Exception {
         String scriptServiceId = getScriptService().getServiceId();
-        File workDir = new File(getScriptService().getWorkDir());
+        File workDir = new File(getScriptService().getServiceWorkDir());
         FileUtils.deleteDirectory(workDir);
     }
 
@@ -64,7 +68,7 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
             refs = getBundleContext().getServiceReferences(serviceInterface,
                                                            filter);
         }
-        Assert.assertNotNull("service not found: " + serviceInterface, refs[0]);
+        assertNotNull("service not found: " + serviceInterface, refs[0]);
         log.debug(getPropsText(refs[0]));
         return getBundleContext().getService(refs[0]);
     }
@@ -84,7 +88,7 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
                 (ScriptService) getService(ComputeService.class.getName(),
                                            "(duraService=script)");
         }
-        Assert.assertNotNull(scriptService);
+        assertNotNull(scriptService);
         return scriptService;
     }
 

@@ -24,6 +24,7 @@ public class NoopServiceListerImpl implements ServiceLister {
             this.duraServices.add(new ComputeService() {
 
                 private ServiceStatus status = ServiceStatus.INSTALLED;
+                private String serviceWorkDir;
 
                 public String describe() throws Exception {
                     return name;
@@ -49,6 +50,14 @@ public class NoopServiceListerImpl implements ServiceLister {
                     Map<String, String> props = new HashMap<String, String>();
                     props.put("serviceId", name);
                     return props;
+                }
+
+                public String getServiceWorkDir() {
+                    return serviceWorkDir;
+                }
+
+                public void setServiceWorkDir(String serviceWorkDir) {
+                    this.serviceWorkDir = serviceWorkDir;
                 }
             });
         }
