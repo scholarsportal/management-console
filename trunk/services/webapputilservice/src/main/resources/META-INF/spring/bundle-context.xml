@@ -9,7 +9,6 @@
     <property name="serviceId" value="webapputilservice-1.0.0" />
     <property name="baseInstallDir" value="${tomcat.install.dir}" />
     <property name="nextPort" ref="tomcat.port" />
-    <property name="bundleHome" ref="bundleHome" />
     <property name="tomcatUtil" ref="tomcatUtility" />
   </bean>
 
@@ -21,10 +20,6 @@
   <!-- Properties config -->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"  >
     <property name="location" value="osgi-config.properties" />
-  </bean>
-
-  <bean id="bundleHome" class="org.duracloud.services.common.util.BundleHome" >
-    <constructor-arg value="${bundle.home}/"/>
   </bean>
 
   <bean id="tomcat.port" class="java.lang.Integer" >

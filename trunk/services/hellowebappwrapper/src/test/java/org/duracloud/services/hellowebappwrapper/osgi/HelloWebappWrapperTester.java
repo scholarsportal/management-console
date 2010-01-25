@@ -33,7 +33,7 @@ public class HelloWebappWrapperTester {
         // set up war to deploy
         File war = getWar();
         String serviceId = wrapper.getServiceId();
-        File workDir = wrapper.getBundleHome().getServiceWork(serviceId);
+        File workDir = new File(wrapper.getServiceWorkDir());
 
         FileUtils.copyFileToDirectory(war, workDir);
     }

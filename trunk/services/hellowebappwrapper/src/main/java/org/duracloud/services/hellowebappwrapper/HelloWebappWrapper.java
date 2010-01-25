@@ -6,7 +6,6 @@ import static org.duracloud.common.web.NetworkUtil.waitForStartup;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.duracloud.services.common.error.ServiceRuntimeException;
-import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.hellowebappwrapper.error.WebappWrapperException;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.osgi.service.cm.ConfigurationException;
@@ -34,7 +33,6 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private String webappWarName;
-    private BundleHome bundleHome;
     private URL url; // of running webapp
     private WebAppUtil webappUtil;
     private static final String DEFAULT_URL = "http://example.org";
@@ -113,7 +111,7 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
         sb.append(":\n\t");
         sb.append("webappWarName: " + webappWarName);
         sb.append("\n\t");
-        sb.append("workDir: " + getBundleHome().getWork());
+        sb.append("workDir: " + getServiceWorkDir());
         sb.append("\n\t");
         String wau = webappUtil == null ? "null" : webappUtil.toString();
         sb.append("webappUtil: " + wau);
@@ -150,10 +148,6 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
 
     public void setWebappWarName(String webappWarName) {
         this.webappWarName = webappWarName;
-    }
-
-    public BundleHome getBundleHome() {
-        return bundleHome;
     }
 
 }

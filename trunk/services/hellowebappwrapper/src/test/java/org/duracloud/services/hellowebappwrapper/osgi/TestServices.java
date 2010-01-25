@@ -3,7 +3,6 @@ package org.duracloud.services.hellowebappwrapper.osgi;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.services.ComputeService;
-import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.hellowebappwrapper.HelloWebappWrapper;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.junit.After;
@@ -36,11 +35,21 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
         } catch (InterruptedException e) {
         }
 
+        String workDir = "target/hellowebappwrapper-test";
+        File serviceWorkDir = new File(workDir);
+        serviceWorkDir.mkdirs();
+        getHelloWebappWrapper().setServiceWorkDir(workDir);
+
+        workDir = "target/webapputil-test";
+        serviceWorkDir = new File(workDir);
+        serviceWorkDir.mkdirs();
+        getWebappUtil().setServiceWorkDir(workDir);
+
         populateWebappUtilResources();
     }
 
     private void populateWebappUtilResources() throws Exception {
-        File serviceWork = getWebappUtil().getWorkDir();
+        File serviceWork = new File(getWebappUtil().getServiceWorkDir());
         File tomcatBinaries = new File(getResourceDir(), BINARIES_FILE_NAME);
 
         FileUtils.copyFileToDirectory(tomcatBinaries, serviceWork);
@@ -55,13 +64,16 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     @After
     public void tearDown() throws Exception {
-        String helloServiceId = getHelloWebappWrapper().getServiceId();
-        String utilServiceId = getWebappUtil().getServiceId();
+        File helloWebappWorkDir =
+            new File(getHelloWebappWrapper().getServiceWorkDir());
+        if(helloWebappWorkDir.exists()) {
+            FileUtils.deleteDirectory(helloWebappWorkDir);
+        }
 
-        BundleHome bundleHome = getHelloWebappWrapper().getBundleHome();
-
-        FileUtils.deleteDirectory(bundleHome.getServiceWork(helloServiceId));
-        FileUtils.deleteDirectory(bundleHome.getServiceWork(utilServiceId));
+        File utilWorkDir = new File(getWebappUtil().getServiceWorkDir());
+        if(utilWorkDir.exists()) {
+            FileUtils.deleteDirectory(utilWorkDir);
+        }
     }
 
     @Test

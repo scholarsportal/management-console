@@ -6,6 +6,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.junit.Assert;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -30,8 +31,11 @@ public class WebAppUtilTestBase {
         }
 
         try {
-            FileUtils.deleteDirectory(util.getWorkDir());
-        } catch (Exception e) {            
+            File workDir = new File(util.getServiceWorkDir());
+            if(workDir.exists()) {
+                FileUtils.deleteDirectory(workDir);
+            }
+        } catch (Exception e) {
         }
 
         util = null;
