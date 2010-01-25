@@ -2,7 +2,6 @@ package org.duracloud.services.webapputil.internal;
 
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.BaseService;
-import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.duracloud.services.webapputil.error.WebAppDeployerException;
 import org.duracloud.services.webapputil.tomcat.TomcatInstance;
@@ -30,7 +29,6 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil {
 
     private int nextPort;
     private String baseInstallDir;
-    private BundleHome bundleHome;
     private TomcatUtil tomcatUtil;
 
     private static final String AMAZON_HOST_QUERY = "http://169.254.169.254/2009-08-15//meta-data/public-ipv4";
@@ -171,21 +169,9 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil {
         this.baseInstallDir = baseInstallDir;
     }
 
-    private BundleHome getBundleHome() {
-        return bundleHome;
-    }
-
-    public void setBundleHome(BundleHome bundleHome) {
-        this.bundleHome = bundleHome;
-    }
-
-    public File getWorkDir() {
-        return getBundleHome().getServiceWork(getServiceId());
-    }
-
     private TomcatUtil getTomcatUtil() {
         if (tomcatUtil != null) {
-            File resourceDir = getBundleHome().getServiceWork(getServiceId());
+            File resourceDir = new File(getServiceWorkDir());
             tomcatUtil.setResourceDir(resourceDir);
         }
         return tomcatUtil;

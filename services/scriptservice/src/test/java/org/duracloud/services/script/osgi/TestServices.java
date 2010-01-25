@@ -36,7 +36,6 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     @After
     public void tearDown() throws Exception {
-        String scriptServiceId = getScriptService().getServiceId();
         File workDir = new File(getScriptService().getServiceWorkDir());
         FileUtils.deleteDirectory(workDir);
     }

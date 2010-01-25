@@ -2,7 +2,6 @@ package org.duracloud.services.webapputil;
 
 import org.duracloud.services.ComputeService;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -33,11 +32,4 @@ public interface WebAppUtil extends ComputeService {
      */
     public void unDeploy(URL url);
 
-    /**
-     * This method returns the directory in which this service stores its
-     * internal resources.
-     *
-     * @return directory of resources.
-     */
-    public File getWorkDir();
 }

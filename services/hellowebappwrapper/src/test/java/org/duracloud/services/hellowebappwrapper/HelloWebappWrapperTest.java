@@ -43,11 +43,13 @@ public class HelloWebappWrapperTest {
         tomcatUtil = new TomcatUtil();
         tomcatUtil.setBinariesZipName(binariesZipName);
 
+        String webappUtilServiceId = "webapputilservice-1.0.0";
         webappUtil = new WebAppUtilImpl();
-        webappUtil.setServiceId("webapputilservice-1.0.0");
+        webappUtil.setServiceId(webappUtilServiceId);
         webappUtil.setBaseInstallDir(baseInstallDir);
         webappUtil.setNextPort(port);
-        webappUtil.setBundleHome(bundleHome);
+        webappUtil.setServiceWorkDir(
+            bundleHome.getServiceWork(webappUtilServiceId).getAbsolutePath());
         webappUtil.setTomcatUtil(tomcatUtil);
 
         wrapper = new HelloWebappWrapper();
@@ -56,8 +58,8 @@ public class HelloWebappWrapperTest {
         wrapper.setUrl(url);
         wrapper.setWebappWarName(warName);
         wrapper.setWebappUtil(webappUtil);
-        wrapper.setServiceWorkDir(bundleHome.getServiceWork(serviceId).
-            getAbsolutePath());
+        wrapper.setServiceWorkDir(
+            bundleHome.getServiceWork(serviceId).getAbsolutePath());
 
         File binaries = new File(resourceDir, binariesZipName);
         File webappWork = bundleHome.getServiceWork(webappUtil.getServiceId());

@@ -8,6 +8,8 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * @author Andrew Woods
  *         Date: Dec 7, 2009
@@ -20,11 +22,16 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
     private WebAppUtil webappUtil;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
         }
+
+        String workDir = "target/webapputil-test";
+        File serviceWorkDir = new File(workDir);
+        serviceWorkDir.mkdirs();
+        getWebappUtil().setServiceWorkDir(workDir);
     }
 
     @Test

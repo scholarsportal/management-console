@@ -1,7 +1,6 @@
 package org.duracloud.services.webapputil;
 
 import org.apache.commons.io.FileUtils;
-import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.services.webapputil.internal.WebAppUtilImpl;
 import org.duracloud.services.webapputil.osgi.WebAppUtilTestBase;
 import org.duracloud.services.webapputil.tomcat.TomcatUtil;
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class WebAppUtilTest extends WebAppUtilTestBase {
 
     private WebAppUtilImpl webappUtil;
-    private String bundleHomePath = "target/webapputil-test";
+    private String serviceWorkPath = "target/webapputil-test";
     private String testResourcesPath = "src/test/resources";
     private String serviceId = "hello";
     private String binariesName = "apache-tomcat-6.0.20.zip";
@@ -29,7 +28,7 @@ public class WebAppUtilTest extends WebAppUtilTestBase {
 
     @Before
     public void setUp() throws IOException {
-        BundleHome bundleHome = populateBundleHome();
+        File serviceWorkDir = populateServiceWork();
 
         TomcatUtil tomcatUtil = new TomcatUtil();
         tomcatUtil.setBinariesZipName(binariesName);
@@ -38,25 +37,24 @@ public class WebAppUtilTest extends WebAppUtilTestBase {
         webappUtil.setServiceId(serviceId);
         webappUtil.setBaseInstallDir(System.getProperty("java.io.tmpdir"));
         webappUtil.setNextPort(port);
-        webappUtil.setBundleHome(bundleHome);
+        webappUtil.setServiceWorkDir(serviceWorkDir.getAbsolutePath());
         webappUtil.setTomcatUtil(tomcatUtil);
 
-        File resourceDir = bundleHome.getServiceWork(serviceId);
-        war = new FileInputStream(new File(resourceDir, warName));
+        war = new FileInputStream(new File(serviceWorkDir, warName));
     }
 
-    private BundleHome populateBundleHome() throws IOException {
-        BundleHome bundleHome = new BundleHome(bundleHomePath);
+    private File populateServiceWork() throws IOException {
+        File serviceWorkDir = new File(serviceWorkPath);
+        serviceWorkDir.mkdirs();
 
         File testResources = new File(testResourcesPath);
         File binaries = new File(testResources, binariesName);
         File warFile = new File(testResources, warName);
 
-        File resourceDir = bundleHome.getServiceWork(serviceId);
-        FileUtils.copyFileToDirectory(binaries, resourceDir);
-        FileUtils.copyFileToDirectory(warFile, resourceDir);
+        FileUtils.copyFileToDirectory(binaries, serviceWorkDir);
+        FileUtils.copyFileToDirectory(warFile, serviceWorkDir);
 
-        return bundleHome;
+        return serviceWorkDir;
     }
 
     @After

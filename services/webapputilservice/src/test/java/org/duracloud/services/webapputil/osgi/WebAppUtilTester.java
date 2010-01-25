@@ -29,7 +29,7 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
     }
 
     private void populateBundleHome() throws Exception {
-        File serviceWork = webappUtil.getWorkDir();
+        File serviceWork = new File(webappUtil.getServiceWorkDir());
         File tomcatBinaries = new File(getResourceDir(), BINARIES_FILE_NAME);
 
         FileUtils.copyFileToDirectory(tomcatBinaries, serviceWork);
