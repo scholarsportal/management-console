@@ -1,4 +1,4 @@
 #!/bin/bash
 
-apt-get update
-apt-get install imagemagick --yes
+sudo apt-get update
+sudo apt-get install imagemagick --yes
