@@ -1,10 +1,11 @@
 package org.duracloud.common.util;
 
-import java.security.Key;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.security.Key;
 
 /**
  * Encryption utilities.
@@ -19,6 +20,7 @@ public class EncryptionUtil {
 
     /**
      * Initializes EncryptionUtil
+     *
      * @throws Exception
      */
     public EncryptionUtil() throws Exception {
@@ -56,9 +58,9 @@ public class EncryptionUtil {
      */
     private String encodeBytes(byte[] cipherText) {
         StringBuffer cipherStringBuffer = new StringBuffer();
-        for(int i=0; i<cipherText.length; i++){
+        for (int i = 0; i < cipherText.length; i++) {
             byte b = cipherText[i];
-            cipherStringBuffer.append(Byte.toString(b)+":");
+            cipherStringBuffer.append(Byte.toString(b) + ":");
         }
         return cipherStringBuffer.toString();
     }
@@ -69,10 +71,27 @@ public class EncryptionUtil {
     private byte[] decodeBytes(String cipherString) {
         String[] cipherStringBytes = cipherString.split(":");
         byte[] cipherBytes = new byte[cipherStringBytes.length];
-        for(int i=0; i<cipherStringBytes.length; i++){
+        for (int i = 0; i < cipherStringBytes.length; i++) {
             cipherBytes[i] = Byte.parseByte(cipherStringBytes[i]);
         }
         return cipherBytes;
+    }
+
+    /**
+     * This main prompts the user to input a string to be encrypted.
+     *
+     * @param args none
+     * @throws Exception on error
+     */
+    public static void main(String[] args) throws Exception {
+        EncryptionUtil util = new EncryptionUtil();
+
+        System.out.println("Enter text to encrypt: ");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String input = reader.readLine();
+        if (null != input && !"".equals(input)) {
+            System.out.println("'" + util.encrypt(input) + "'");
+        }
     }
 
 }

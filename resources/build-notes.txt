@@ -66,3 +66,8 @@ To build and run the cli,
  [from services/servicesadminclient]
  mvn assembly:assembly
  java -cp target/servicesadminclient-1.0.0-cli.jar org.duracloud.servicesadminclient.ServicesAdminClientCLI
+
+::Encryption Utility::
+ This utility takes a string as input and generates its encrypted version.
+ [from common/]
+ java -cp target/common-1.0.0.jar org.duracloud.common.util.EncryptionUtil
