@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +43,11 @@ public class TomcatInstance {
      * i.e. ./bin/startup.[sh|bat]
      */
     public void start() {
-        runScript(getStartUpScript());
+        this.start(new HashMap<String, String>());
+    }
+
+    public void start(Map<String, String> env) {
+        runScript(getStartUpScript(), env);
         try {
             waitForStartup(getLocalUrl());
         } catch (DuraCloudCheckedException e) {
@@ -68,6 +73,10 @@ public class TomcatInstance {
     }
 
     private void runScript(File script) {
+        this.runScript(script, new HashMap<String, String>());
+    }
+
+    private void runScript(File script, Map<String, String> env) {
         String catalina = catalinaHome.getAbsolutePath();
         String java = System.getProperty("java.home");
         if (java.endsWith("jre")) {
@@ -76,9 +85,13 @@ public class TomcatInstance {
         String scriptPath = script.getAbsolutePath();
 
         ProcessBuilder pb = new ProcessBuilder(scriptPath);
-        Map<String, String> env = pb.environment();
-        env.put("CATALINA_HOME", catalina);
-        env.put("JAVA_HOME", java);
+        Map<String, String> tomcatEnv = pb.environment();
+        tomcatEnv.put("CATALINA_HOME", catalina);
+        tomcatEnv.put("JAVA_HOME", java);
+
+        for (String key : env.keySet()) {
+            tomcatEnv.put(key, env.get(key));
+        }
 
         try {
             // Caution: Attempting to use the process object returned
@@ -131,7 +144,8 @@ public class TomcatInstance {
     }
 
     /**
-     * This method deploys the arg war into the appserver under the arg context
+     * This method deploys the arg war into the appserver under the arg context.
+     * The arg war inputstream is closed by this method.
      *
      * @param context of deployed webapp
      * @param war     to be deployed

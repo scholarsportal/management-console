@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -65,6 +67,16 @@ public class WebAppUtilTest extends WebAppUtilTestBase {
     @Test
     public void testDeploy() throws Exception {
         url = webappUtil.deploy(serviceId, war);
+        Thread.sleep(3000);
+
+        verifyDeployment(url, true);
+    }
+
+    @Test
+    public void testDeployEnv() throws Exception {
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("argEnv", "argVal");
+        url = webappUtil.deploy(serviceId, war, env);
         Thread.sleep(3000);
 
         verifyDeployment(url, true);

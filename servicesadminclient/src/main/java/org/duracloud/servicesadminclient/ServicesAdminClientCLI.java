@@ -59,6 +59,7 @@ public class ServicesAdminClientCLI {
                     "replicationservice-1.0.0",
                     "zip"),
         WEBAPPUTIL("util", "webapp[util]", "webapputilservice-1.0.0", "zip"),
+        J2K("j", "[j]2k", "j2kservice-1.0.0", "zip"),
         IMAGEMAGICK("magick", "image[magick]", "imagemagickservice-1.0.0", "zip"),
         UNKNOWN("?", "unknown", "unknown-id", "no-ext");
 

@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -85,6 +87,14 @@ public class TomcatInstanceTest extends TomcatTestBase {
         if (expected) {
             Assert.assertEquals(200, response.getStatusCode());
         }
+    }
+
+    @Test
+    public void testStartEnv() throws Exception {
+        Map<String, String> env = new HashMap<String, String>();
+        env.put("argEnv", "valEnv");
+        tomcatInstance.start(env);
+        verifyStarted(true);
     }
 
     @Test
