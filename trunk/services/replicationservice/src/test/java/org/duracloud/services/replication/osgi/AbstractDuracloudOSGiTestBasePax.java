@@ -34,10 +34,11 @@ public class AbstractDuracloudOSGiTestBasePax {
         Option bundles =
                 provision(bundle("file:target/replicationservice-1.0.0.jar"));
 
-        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
+        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox());
         // Knopflerfish does not like the felix.configadmin bundle
                                                    //  CoreOptions.knopflerfish(),
-                                                   CoreOptions.felix());
+        // Felix began failing 26Jan2010.
+                                                   //  CoreOptions.felix());
 
         return options(bundles,
                        mavenConfiguration(),

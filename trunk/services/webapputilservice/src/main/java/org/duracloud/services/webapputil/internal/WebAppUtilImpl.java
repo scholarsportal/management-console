@@ -15,6 +15,8 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class abstracts the details of managing appservers used to host
@@ -42,11 +44,26 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil {
      * @return URL of deployed webapp
      */
     public URL deploy(String serviceId, InputStream war) {
+        return this.deploy(serviceId, war, new HashMap<String, String>());
+    }
+
+    /**
+     * This method deploys the arg war to a newly created appserver under the
+     * arg serviceId context.
+     *
+     * @param serviceId is the name of the context of deployed webapp
+     * @param war       to be deployed
+     * @param env       of tomcat that will be installed/started
+     * @return URL of deployed webapp
+     */
+    public URL deploy(String serviceId,
+                      InputStream war,
+                      Map<String, String> env) {
         int port = getNextPort();
         File installDir = getInstallDir(serviceId, port);
 
         TomcatInstance tomcat = getTomcatUtil().installTomcat(installDir, port);
-        tomcat.start();
+        tomcat.start(env);
         tomcat.deploy(serviceId, war);
 
         return buildURL(port, serviceId);
