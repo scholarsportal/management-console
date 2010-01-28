@@ -62,6 +62,11 @@ public class DuraCloudBlobStoreTest {
         parse("http://host/test-context");
     }
 
+    @Test(expectedExceptions=IllegalArgumentException.class)
+    public void spaceURLBadSpaceId() {
+        parse("http://host/test-context/bad-spaceid-");
+    }
+
     private static String[] parse(String spaceURL) {
         return DuraCloudBlobStore.parseSpaceURL(URI.create(spaceURL));
     }

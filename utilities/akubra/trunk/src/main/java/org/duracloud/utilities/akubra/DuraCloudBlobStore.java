@@ -15,6 +15,8 @@ import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.storage.error.InvalidIdException;
+import org.duracloud.storage.util.IdUtil;
 
 /**
  * DuraCloud-backed Akubra implementation.
@@ -102,6 +104,12 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
             throw new IllegalArgumentException(ePfx + "too few path segments");
         } else if (p.length > 3) {
             throw new IllegalArgumentException(ePfx + "too many path segments");
+        }
+        try {
+            IdUtil.validateSpaceId(p[2]);
+        } catch (InvalidIdException e) {
+            throw new IllegalArgumentException(ePfx + "bad space id ("
+                    + e.getMessage() + ")", e);
         }
         return new String[] { spaceURL.getHost(), port, p[1], p[2] };
     }

@@ -22,6 +22,8 @@ import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.storage.error.InvalidIdException;
+import org.duracloud.storage.util.IdUtil;
 
 /**
  * DuraCloud-backed Blob implementation.
@@ -185,6 +187,12 @@ class DuraCloudBlob
                     "Unsupported blob id: " + blobId.toString()
                     + " (ids for this store should begin "
                     + "with " + uriPrefix + ")");
+        }
+        try {
+            IdUtil.validateContentId(getContentId(blobId));
+        } catch (InvalidIdException e) {
+            throw new UnsupportedIdException(blobId, "Unsupported blob id: "
+                    + blobId.toString() + "(" + e.getMessage() + ")", e);
         }
     }
 

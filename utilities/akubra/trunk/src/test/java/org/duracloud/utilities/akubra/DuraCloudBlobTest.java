@@ -38,11 +38,13 @@ public class DuraCloudBlobTest {
     static final String spaceId = "test-space";
     static final String uriPrefix = baseURL + "/" + spaceId + "/";
 
+    static final String badContentId = "bad?Content";
     static final String existingContentId = "existingContent";
     static final String sizeUnknownContentId = "sizeUnknownContent";
     static final String nonExistingContentId = "nonExistingContent";
     static final String faultContentId = "faultContent";
 
+    static final URI badBlobId = URI.create(uriPrefix + badContentId);
     static final URI existingBlobId = URI.create(uriPrefix + existingContentId);
     static final URI sizeUnknownBlobId = URI.create(uriPrefix + sizeUnknownContentId);
     static final URI nonExistingBlobId = URI.create(uriPrefix + nonExistingContentId);
@@ -112,9 +114,15 @@ public class DuraCloudBlobTest {
     }
 
     @Test(expectedExceptions=UnsupportedIdException.class)
-    public void unsupportedId() throws UnsupportedIdException {
+    public void unsupportedIdBadPrefix() throws UnsupportedIdException {
         EasyMock.replay(contentStore);
         getBlob(URI.create("urn:test:wrong-prefix:"));
+    }
+
+    @Test(expectedExceptions=UnsupportedIdException.class)
+    public void unsupportedIdBadContentId() throws UnsupportedIdException {
+        EasyMock.replay(contentStore);
+        getBlob(badBlobId);
     }
 
     @Test(expectedExceptions=NullPointerException.class)
