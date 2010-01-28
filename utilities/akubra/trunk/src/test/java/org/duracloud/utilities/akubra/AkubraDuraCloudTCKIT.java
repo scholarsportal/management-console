@@ -6,7 +6,6 @@ import java.net.URI;
 
 import org.akubraproject.BlobStore;
 import org.akubraproject.tck.TCKTestSuite;
-import org.duracloud.client.ContentStoreException;
 
 /**
  * Akubra-DuraCloud TCK Integration Tests.
@@ -17,7 +16,7 @@ public class AkubraDuraCloudTCKIT extends TCKTestSuite {
 
     static URI spaceURL;
 
-    public AkubraDuraCloudTCKIT() throws IOException, ContentStoreException {
+    public AkubraDuraCloudTCKIT() throws Exception {
         super(getStore(), getSpaceURL(), false, false);
     }
 

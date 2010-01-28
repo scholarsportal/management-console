@@ -13,8 +13,8 @@ import org.akubraproject.BlobStoreConnection;
 import org.akubraproject.impl.AbstractBlobStore;
 import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.error.ContentStoreException;
 
 /**
  * DuraCloud-backed Akubra implementation.
@@ -63,7 +63,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
             this.contentStore = new ContentStoreManagerImpl(p[0], p[1], p[2])
                     .getPrimaryContentStore();
             this.spaceId = p[3];
-            contentStore.getSpace(spaceId);
+            contentStore.getSpace(spaceId, null, 0, null);
         } catch (ContentStoreException e) {
             IOException ioe = new IOException(
                     "Error initializing ContentStore");

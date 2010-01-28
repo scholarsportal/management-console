@@ -20,8 +20,8 @@ import org.akubraproject.UnsupportedIdException;
 import org.akubraproject.impl.AbstractBlob;
 import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Content;
+import org.duracloud.error.ContentStoreException;
 
 /**
  * DuraCloud-backed Blob implementation.

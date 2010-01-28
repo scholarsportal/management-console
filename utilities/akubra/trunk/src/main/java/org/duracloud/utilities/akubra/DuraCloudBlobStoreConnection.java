@@ -13,7 +13,7 @@ import org.akubraproject.UnsupportedIdException;
 import org.akubraproject.impl.AbstractBlobStoreConnection;
 import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
+import org.duracloud.error.ContentStoreException;
 
 /**
  * DuraCloud-backed BlobStoreConnection implementation.
@@ -54,7 +54,7 @@ class DuraCloudBlobStoreConnection
             //        large spaces.
             return new DuraCloudBlobIdIterator(
                     DuraCloudBlob.getURIPrefix(contentStore, spaceId),
-                    contentStore.getSpace(spaceId).getContentIds().iterator(),
+                    contentStore.getSpace(spaceId, null, 0, null).getContentIds().iterator(),
                     filterPrefix);
         } catch (ContentStoreException e) {
             IOException ioe = new IOException();

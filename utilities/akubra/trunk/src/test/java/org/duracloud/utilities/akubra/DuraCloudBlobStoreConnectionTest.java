@@ -8,8 +8,8 @@ import org.akubraproject.BlobStore;
 import org.akubraproject.BlobStoreConnection;
 import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreException;
 import org.duracloud.domain.Space;
+import org.duracloud.error.ContentStoreException;
 import org.easymock.classextension.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -77,11 +77,11 @@ public class DuraCloudBlobStoreConnectionTest {
         EasyMock.expect(contentStore.getBaseURL()).andReturn(baseURL).anyTimes();
         try {
             if (exceptionOnGetSpace) {
-                EasyMock.expect(contentStore.getSpace(spaceId)).andThrow(
+                EasyMock.expect(contentStore.getSpace(spaceId, null, 0, null)).andThrow(
                         new ContentStoreException(""));
             } else {
                 Space space = new Space();
-                EasyMock.expect(contentStore.getSpace(spaceId)).andReturn(
+                EasyMock.expect(contentStore.getSpace(spaceId, null, 0, null)).andReturn(
                         space).anyTimes();
             }
         } catch (ContentStoreException e) {
