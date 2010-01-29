@@ -19,6 +19,7 @@ import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 import org.easymock.EasyMock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -78,8 +79,7 @@ public class DuraCloudBlobTest {
                 .andReturn(new HashMap<String, String>()).anyTimes();
 
         // non-existing content
-        ContentStoreException notFound =
-                new ContentStoreException("Response code was 404");
+        NotFoundException notFound = new NotFoundException("");
         EasyMock.expect(contentStore.getContent(spaceId, nonExistingContentId))
                 .andThrow(notFound).anyTimes();
         contentStore.deleteContent(spaceId, nonExistingContentId);

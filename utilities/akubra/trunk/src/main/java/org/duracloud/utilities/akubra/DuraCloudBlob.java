@@ -22,6 +22,7 @@ import org.akubraproject.impl.StreamManager;
 import org.duracloud.client.ContentStore;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.util.IdUtil;
 
@@ -60,14 +61,13 @@ class DuraCloudBlob
         ensureOpen();
         try {
             contentStore.deleteContent(spaceId, contentId);
-        } catch (ContentStoreException e) {
+        } catch (NotFoundException e) {
             // Blob.delete is idempotent; it shouldn't fail if the content
             // doesn't exist.
-            if (!is404(e)) {
-                IOException ioe = new IOException("Error deleting blob: " + id);
-                ioe.initCause(e);
-                throw ioe;
-            }
+        } catch (ContentStoreException e) {
+            IOException ioe = new IOException("Error deleting blob: " + id);
+            ioe.initCause(e);
+            throw ioe;
         }
     }
 
@@ -111,15 +111,13 @@ class DuraCloudBlob
         try {
             Content content = contentStore.getContent(spaceId, contentId);
             return streamManager.manageInputStream(owner, content.getStream());
+        } catch (NotFoundException e) {
+            throw new MissingBlobException(id);
         } catch (ContentStoreException e) {
-            if (is404(e)) {
-                throw new MissingBlobException(id);
-            } else {
-                IOException ioe = new IOException("Error getting input stream "
-                        + "for blob: " + id);
-                ioe.initCause(e);
-                throw ioe;
-            }
+            IOException ioe = new IOException("Error getting input stream "
+                    + "for blob: " + id);
+            ioe.initCause(e);
+            throw ioe;
         }
     }
 
@@ -214,26 +212,14 @@ class DuraCloudBlob
     private Map<String, String> getMetadata() throws IOException {
         try {
             return contentStore.getContentMetadata(spaceId, contentId);
+        } catch (NotFoundException e) {
+            return null;
         } catch (ContentStoreException e) {
-            if (is404(e)) {
-                return null;
-            }
             IOException ioe = new IOException("Error getting metadata for "
                     + "blob: " + id);
             ioe.initCause(e);
             throw ioe;
         }
-    }
-
-    /**
-     * Returns true if the exception appears to have resulted from an HTTP 404
-     * (Not Found) response.
-     */
-    private boolean is404(ContentStoreException e) {
-        // ISSUE: This technique is brittle, but it's the best we can do for
-        // now; ContentStore does not currently provide a way of determining
-        // this kind of error without resorting to string matching.
-        return e.getMessage().indexOf("Response code was 404") != -1;
     }
 
     /**
