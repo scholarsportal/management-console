@@ -2,6 +2,7 @@ package org.duracloud.services.webapputil.osgi;
 
 import junit.framework.Assert;
 import org.duracloud.services.webapputil.WebAppUtil;
+import org.duracloud.services.ComputeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.ServiceReference;
@@ -77,7 +78,8 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     public WebAppUtil getWebappUtil() throws Exception {
         if (webappUtil == null) {
-            webappUtil = (WebAppUtil) getService(WebAppUtil.class.getName());
+            webappUtil = (WebAppUtil) getService(ComputeService.class.getName(),
+                                                 "(duraService=webapputilservice)");
         }
         Assert.assertNotNull(webappUtil);
         return webappUtil;

@@ -22,6 +22,6 @@
   </osgi:service>
 
   <!-- OSGi below -->
-  <osgi:reference id="osgiWebappUtilSrv" interface="org.duracloud.services.webapputil.WebAppUtil" />    
+  <osgi:reference id="osgiWebappUtilSrv" interface="org.duracloud.services.webapputil.WebAppUtil" />
   
 </beans>
