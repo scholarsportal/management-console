@@ -17,8 +17,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,10 +58,21 @@ public class J2kWebappWrapper extends BaseService implements ComputeService, Man
         war = helper.getWarFile(getWarName());
 
         String context = FilenameUtils.getBaseName(war.getName());
-        url = getWebappUtil().deploy(context, new FileInputStream(war), env);
+        List<String> filterNames = getFilterNames();
+        url = getWebappUtil().filteredDeploy(context,
+                                             new FileInputStream(war),
+                                             env,
+                                             filterNames);
 
         waitForStartup(url.toString());
         this.setServiceStatus(ServiceStatus.STARTED);
+    }
+
+    private List<String> getFilterNames() {
+        List<String> filterNames = new ArrayList<String>();
+        filterNames.add("test.html");
+        filterNames.add("viewer.html");
+        return filterNames;
     }
 
     private File getWorkDir() {

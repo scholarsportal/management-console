@@ -2,12 +2,15 @@ package org.duracloud.services.webapputil.internal;
 
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.services.BaseService;
+import org.duracloud.services.common.model.NamedFilterList;
 import org.duracloud.services.webapputil.WebAppUtil;
 import org.duracloud.services.webapputil.error.WebAppDeployerException;
 import org.duracloud.services.webapputil.tomcat.TomcatInstance;
 import org.duracloud.services.webapputil.tomcat.TomcatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.osgi.service.cm.ManagedService;
+import org.osgi.service.cm.ConfigurationException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,8 +18,12 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 /**
  * This class abstracts the details of managing appservers used to host
@@ -25,7 +32,7 @@ import java.util.Map;
  * @author Andrew Woods
  *         Date: Nov 30, 2009
  */
-public class WebAppUtilImpl extends BaseService implements WebAppUtil {
+public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -60,6 +67,54 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil {
                       InputStream war,
                       Map<String, String> env) {
         int port = getNextPort();
+        return doDeploy(serviceId, war, env, port);
+    }
+
+    /**
+     * This method deploys the arg war to a newly created appserver under the
+     * arg serviceId context.
+     *
+     * @param serviceId   is the name of the context of deployed webapp
+     * @param war         to be deployed
+     * @param env         of tomcat that will be installed/started
+     * @param filterNames are names of files in the arg war to be filtered with
+     *                    host and port. Any text in the named files with the
+     *                    Strings $DURA_HOST$ or $DURA_PORT$ will be swapped
+     *                    with the host and port of the compute instance.
+     * @return URL of deployed webapp
+     */
+    public URL filteredDeploy(String serviceId,
+                              InputStream war,
+                              Map<String, String> env,
+                              List<String> filterNames) {
+        Integer port = getNextPort();
+        NamedFilterList filterList = createFilters(filterNames, port);
+        InputStream filteredWar = new FilteredWar(war, filterList);
+
+        return doDeploy(serviceId, filteredWar, env, port);
+    }
+
+    private NamedFilterList createFilters(List<String> filterNames,
+                                          Integer port) {
+        String host = getHost();
+        List<NamedFilterList.NamedFilter> namedFilters = new ArrayList<NamedFilterList.NamedFilter>();
+
+        for (String filterName : filterNames) {
+            Map<String, String> filters = new HashMap<String, String>();
+            filters.put("$DURA_HOST$", host);
+            filters.put("$DURA_PORT$", port.toString());
+
+            namedFilters.add(new NamedFilterList.NamedFilter(filterName,
+                                                             filters));
+        }
+
+        return new NamedFilterList(namedFilters);
+    }
+
+    private URL doDeploy(String serviceId,
+                         InputStream war,
+                         Map<String, String> env,
+                         int port) {
         File installDir = getInstallDir(serviceId, port);
 
         TomcatInstance tomcat = getTomcatUtil().installTomcat(installDir, port);
@@ -198,4 +253,20 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil {
         this.tomcatUtil = tomcatUtil;
     }
 
+    public void updated(Dictionary config) throws ConfigurationException {
+        log.debug("WebAppUtilImpl updating config: ");
+        if (config != null) {
+            Enumeration keys = config.keys();
+            {
+                while (keys.hasMoreElements()) {
+                    String key = (String) keys.nextElement();
+                    String val = (String) config.get(key);
+                    System.out.print(" [" + key + "|" + val + "] ");
+                }
+            }
+        } else {
+            System.out.print("config is null.");
+        }
+        System.out.println();
+    }
 }

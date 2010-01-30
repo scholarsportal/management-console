@@ -131,7 +131,8 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     private WebAppUtil getWebappUtil() throws Exception {
         if (webappUtil == null) {
-            webappUtil = (WebAppUtil) getService(WebAppUtil.class.getName());
+            webappUtil = (WebAppUtil) getService(ComputeService.class.getName(),
+                                                 "(duraService=webapputilservice)");
         }
         Assert.assertNotNull(webappUtil);
         return webappUtil;

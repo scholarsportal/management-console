@@ -11,7 +11,15 @@
     OSGi services which are available to external bundles are defined
     here.
   -->
-  <osgi:service id="osgiWebAppUtilService" ref="webAppUtil"
-                interface="org.duracloud.services.webapputil.WebAppUtil" />
+  <osgi:service id="osgiWebAppUtilService" ref="webAppUtil">
+    <osgi:interfaces>
+      <value>org.osgi.service.cm.ManagedService</value>
+      <value>org.duracloud.services.ComputeService</value>
+      <value>org.duracloud.services.webapputil.WebAppUtil</value>
+    </osgi:interfaces>
+    <osgi:service-properties>
+      <entry key="duraService" value="webapputilservice"/>
+    </osgi:service-properties>
+  </osgi:service>
 
 </beans>
