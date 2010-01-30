@@ -65,7 +65,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
             this.contentStore = new ContentStoreManagerImpl(p[0], p[1], p[2])
                     .getPrimaryContentStore();
             this.spaceId = p[3];
-            contentStore.getSpace(spaceId, null, 0, null);
+            contentStore.getSpaceAccess(spaceId);
         } catch (ContentStoreException e) {
             IOException ioe = new IOException(
                     "Error initializing ContentStore");

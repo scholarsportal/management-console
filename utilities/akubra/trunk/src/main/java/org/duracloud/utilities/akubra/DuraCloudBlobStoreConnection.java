@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import java.net.URI;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -49,13 +50,19 @@ class DuraCloudBlobStoreConnection
     public Iterator<URI> listBlobIds(String filterPrefix) throws IOException {
         ensureOpen();
         try {
-            // ISSUE: Space.getContentIds() appears to be memory-bound; this
-            //        will cause OOM exceptions when trying to iterate over
-            //        large spaces.
-            return new DuraCloudBlobIdIterator(
-                    DuraCloudBlob.getURIPrefix(contentStore, spaceId),
-                    contentStore.getSpace(spaceId, null, 0, null).getContentIds().iterator(),
-                    filterPrefix);
+            String uPrefix = DuraCloudBlob.getURIPrefix(contentStore, spaceId);
+            String cPrefix = null; // iterate all unless filterPrefix is defined
+            if (filterPrefix != null) {
+                if (filterPrefix.startsWith(uPrefix)) {
+                    // translate filterPrefix to content id prefix
+                    cPrefix = filterPrefix.substring(uPrefix.length());
+                } else {
+                    // no possible matches
+                    return new ArrayList<URI>().iterator();
+                }
+            }
+            return new DuraCloudBlobIdIterator(uPrefix,
+                    contentStore.getSpaceContents(spaceId, cPrefix));
         } catch (ContentStoreException e) {
             IOException ioe = new IOException();
             ioe.initCause(e);

@@ -20,34 +20,19 @@ public class DuraCloudBlobIdIteratorTest {
     static final String uriPrefix = "urn:test:";
 
     static final String[] allIds     = new String[] { "foo", "bar", "baz", "qux" };
-    static final String[] fPrefixIds = new String[] { "foo" };
-    static final String[] bPrefixIds = new String[] { "bar", "baz" };
 
     @Test
     public void withoutPrefix() {
-        compare(null, urisFor(allIds));
+        compare(urisFor(allIds));
     }
 
-    @Test
-    public void fPrefix() {
-        compare("f", urisFor(fPrefixIds));
-    }
-
-    @Test
-    public void bPrefix() {
-        compare("b", urisFor(bPrefixIds));
-    }
-
-    void compare(String idPrefix, Set<URI> expected) {
-        String filterPrefix = null;
-        if (idPrefix != null) filterPrefix = uriPrefix + idPrefix;
+    void compare(Set<URI> expected) {
         Set<String> ids = new HashSet<String>();
         for (String id: allIds) {
             ids.add(id);
         }
         Iterator<URI> uriIter = new DuraCloudBlobIdIterator(uriPrefix,
-                                                            ids.iterator(),
-                                                            filterPrefix);
+                                                            ids.iterator());
         Set<URI> got = new HashSet<URI>();
         while (uriIter.hasNext()) {
             got.add(uriIter.next());
