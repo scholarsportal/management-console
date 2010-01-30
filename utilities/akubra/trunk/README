@@ -45,7 +45,7 @@ Starting/Stopping a DuraCloud Instance
 To start:
   [Launch a DuraCloud instance]
     Login to the AWS Management Console: https://console.aws.amazon.com/
-    Launch a small-CPU instance of the private AMI: ami-3333d05a
+    Launch a small-CPU instance of the private AMI: ami-6c58ba05
     Choose the "default" security group (allows connections to port 8080)
     Use your own keypair (allows you to ssh in if you want to look at logs, etc)
   [Wait for it to start]

@@ -48,7 +48,7 @@ public class AkubraDuraCloudIT {
 
     @Test(expectedExceptions=IOException.class)
     public void nonExistingSpace() throws IOException {
-        new DuraCloudBlobStore(URI.create(spaceURL + "-nonExistingSpace"));
+        new DuraCloudBlobStore(URI.create(spaceURL + "-nonexistingspace"));
     }
 
     @Test
