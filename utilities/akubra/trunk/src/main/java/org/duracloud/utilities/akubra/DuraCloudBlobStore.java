@@ -39,11 +39,31 @@ import org.duracloud.storage.util.IdUtil;
  */
 public class DuraCloudBlobStore extends AbstractBlobStore {
 
+    /**
+     * Connection hint indicating that the caller requires "read-after-write"
+     * consistency, yet the underlying storage provider does not provide it.
+     * <p>
+     * If "true", an effort will be made to wait before returning from each
+     * successful write-oriented operation until a subsequent read is likely
+     * to reflect the state change.
+     * <p>
+     * This option can introduce significant performance overhead in a
+     * write-heavy environment, so it should only be used when a stronger than
+     * "eventual" guarantee of consistency is desired and the underlying storage
+     * provider (e.g. S3) does not provide it.
+     *
+     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/ConsistencyModel.html">
+     *      Amazon S3 Consistency Model</a>
+     */
+    public static final String READ_AFTER_WRITE = "org.akubraproject.read_after_write";
+
     private final StreamManager streamManager = new StreamManager();
 
     private final ContentStore contentStore;
 
     private final String spaceId;
+
+    private boolean readAfterWriteDefault;
 
     /**
      * Creates an instance for the given DuraCloud space URL.
@@ -80,6 +100,11 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
         super(URI.create(contentStore.getBaseURL() + "/" + spaceId));
         this.contentStore = contentStore;
         this.spaceId = spaceId;
+    }
+
+    // Set read after write default, for testing
+    void setReadAfterWriteDefault(boolean readAfterWriteDefault) {
+        this.readAfterWriteDefault = readAfterWriteDefault;
     }
 
     // Validates spaceURL and returns { host, port, context, spaceId }.
@@ -121,8 +146,17 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
         if (tx != null) {
             throw new UnsupportedOperationException();
         }
+        boolean readAfterWrite = readAfterWriteDefault;
+        if (hints != null && hints.containsKey(READ_AFTER_WRITE)) {
+            if (hints.get(READ_AFTER_WRITE).equalsIgnoreCase("true")) {
+                readAfterWrite = true;
+            } else if (hints.get(READ_AFTER_WRITE).equalsIgnoreCase("false")) {
+                readAfterWrite = false;
+            }
+        }
         return new DuraCloudBlobStoreConnection(this, streamManager,
-                                                contentStore, spaceId);
+                                                contentStore, spaceId,
+                                                readAfterWrite);
     }
 
 }

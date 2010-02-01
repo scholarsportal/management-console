@@ -5,8 +5,10 @@ import java.io.OutputStream;
 
 import java.net.URI;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -29,6 +31,7 @@ public class AkubraDuraCloudIT {
 
     // test value for content
     private static final String VALUE = "value";
+    private static final String VALUE2 = "value2";
 
     static URI spaceURL;
     static BlobStore store;
@@ -42,7 +45,9 @@ public class AkubraDuraCloudIT {
         }
         spaceURL = URI.create(url);
         store = new DuraCloudBlobStore(spaceURL);
-        connection = store.openConnection(null, null);
+        Map<String, String> hints = new HashMap<String, String>();
+        hints.put(DuraCloudBlobStore.READ_AFTER_WRITE, "true");
+        connection = store.openConnection(null, hints);
         clear();
     }
 
@@ -57,11 +62,21 @@ public class AkubraDuraCloudIT {
     }
 
     @Test
-    public void createReadDelete() throws IOException {
-        Blob blob = getBlob("createReadDelete");
-        putContent(blob, VALUE, true);
+    public void createReadUpdateDelete() throws IOException {
+        Blob blob = getBlob("createReadUpdateDelete");
+        putContent(blob, VALUE, false);
         assertEquals(getContent(blob), VALUE);
+        putContent(blob, VALUE2, true);
+        assertEquals(getContent(blob), VALUE2);
         blob.delete();
+    }
+
+    @Test
+    public void createEmpty() throws IOException {
+        Blob blob = getBlob("createEmpty");
+        putContent(blob, "", false);
+        assertEquals(getContent(blob), "");
+//        blob.delete();
     }
 
     // gets all blobIds in the test store, filtered by prefix, if given

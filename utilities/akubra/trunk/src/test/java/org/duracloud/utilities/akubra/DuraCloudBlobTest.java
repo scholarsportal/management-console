@@ -110,7 +110,8 @@ public class DuraCloudBlobTest {
                 EasyMock.createMock(BlobStore.class),
                 new StreamManager(),
                 contentStore,
-                spaceId);
+                spaceId,
+                false);
     }
 
     @Test(expectedExceptions=UnsupportedIdException.class)
@@ -262,7 +263,8 @@ public class DuraCloudBlobTest {
                                  blobId,
                                  new StreamManager(),
                                  contentStore,
-                                 spaceId);
+                                 spaceId,
+                                 false);
     }
 
 }

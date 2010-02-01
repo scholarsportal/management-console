@@ -22,7 +22,9 @@ public class AkubraDuraCloudTCKIT extends TCKTestSuite {
 
     private static BlobStore getStore()
             throws IOException {
-        return new DuraCloudBlobStore(getSpaceURL());
+        DuraCloudBlobStore store = new DuraCloudBlobStore(getSpaceURL());
+        store.setReadAfterWriteDefault(true);
+        return store;
     }
 
     @Override

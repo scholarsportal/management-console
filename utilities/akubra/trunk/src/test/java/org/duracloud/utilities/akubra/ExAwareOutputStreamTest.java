@@ -17,7 +17,7 @@ public class ExAwareOutputStreamTest {
     private ExAwareOutputStream out;
 
     private void init(boolean setException) {
-        out = new ExAwareOutputStream(new ByteArrayOutputStream());
+        out = new ExAwareOutputStream(new ByteArrayOutputStream(), null);
         if (setException) {
             out.setException(new IOException());
         }

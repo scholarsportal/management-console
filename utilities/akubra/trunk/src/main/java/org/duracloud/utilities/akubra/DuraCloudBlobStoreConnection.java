@@ -28,13 +28,17 @@ class DuraCloudBlobStoreConnection
 
     private final String spaceId;
 
+    private final boolean readAfterWrite;
+
     DuraCloudBlobStoreConnection(BlobStore blobStore,
                                  StreamManager streamManager,
                                  ContentStore contentStore,
-                                 String spaceId) {
+                                 String spaceId,
+                                 boolean readAfterWrite) {
         super(blobStore, streamManager);
         this.contentStore = contentStore;
         this.spaceId = spaceId;
+        this.readAfterWrite = readAfterWrite;
     }
 
     //@Override
@@ -43,7 +47,7 @@ class DuraCloudBlobStoreConnection
             UnsupportedIdException, UnsupportedOperationException {
         ensureOpen();
         return new DuraCloudBlob(this, blobId, streamManager, contentStore,
-                                 spaceId);
+                                 spaceId, readAfterWrite);
     }
 
     //@Override

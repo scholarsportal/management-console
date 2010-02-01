@@ -8,15 +8,29 @@ import java.io.OutputStream;
  * Wraps a given OutputStream, overriding all methods to check whether
  * an exception has been externally signaled after the underlying call
  * is made, and throwing that exception if so.
+ * <p>
+ * Instances of this class will also optionally notify a constructor-provided
+ * listener when successfully closed.
  *
  * @author Chris Wilper
  */
 class ExAwareOutputStream extends FilterOutputStream {
 
+    private final ContentWriteListener listener;
+
     private IOException exception;
 
-    ExAwareOutputStream(OutputStream sink) {
+    /**
+     * Creates an instance.
+     *
+     * @param sink the underlying stream to write to.
+     * @param listener the listener to notify when the output stream is
+     *                 successfully closed (null if notification is not needed).
+     */
+    ExAwareOutputStream(OutputStream sink,
+                        ContentWriteListener listener) {
         super(sink);
+        this.listener = listener;
     }
 
     void setException(IOException exception) {
@@ -51,6 +65,7 @@ class ExAwareOutputStream extends FilterOutputStream {
     public void close() throws IOException {
         super.close();
         if (exception != null) throw exception;
+        if (listener != null) listener.contentWritten();
     }
 
 }

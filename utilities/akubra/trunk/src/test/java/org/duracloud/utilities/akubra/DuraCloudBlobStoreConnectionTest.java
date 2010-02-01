@@ -104,7 +104,8 @@ public class DuraCloudBlobStoreConnectionTest {
         return new DuraCloudBlobStoreConnection(blobStore,
                                                 new StreamManager(),
                                                 contentStore,
-                                                spaceId);
+                                                spaceId,
+                                                false);
     }
 
 }

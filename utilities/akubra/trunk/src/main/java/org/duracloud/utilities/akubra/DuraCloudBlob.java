@@ -25,6 +25,8 @@ import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.NotFoundException;
 import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.util.IdUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DuraCloud-backed Blob implementation.
@@ -34,6 +36,8 @@ import org.duracloud.storage.util.IdUtil;
 class DuraCloudBlob
         extends AbstractBlob {
 
+    private static final Logger logger = LoggerFactory.getLogger(DuraCloudBlob.class);
+
     private final StreamManager streamManager;
 
     private final ContentStore contentStore;
@@ -42,11 +46,14 @@ class DuraCloudBlob
 
     private final String contentId;
 
+    private final boolean readAfterWrite;
+
     DuraCloudBlob(BlobStoreConnection owner,
                   URI blobId,
                   StreamManager streamManager,
                   ContentStore contentStore,
-                  String spaceId)
+                  String spaceId,
+                  boolean readAfterWrite)
               throws UnsupportedIdException {
         super(owner, blobId);
         this.streamManager = streamManager;
@@ -54,6 +61,7 @@ class DuraCloudBlob
         this.spaceId = spaceId;
         validateId(blobId);
         this.contentId = getContentId(blobId);
+        this.readAfterWrite = readAfterWrite;
     }
 
     //@Override
@@ -61,6 +69,17 @@ class DuraCloudBlob
         ensureOpen();
         try {
             contentStore.deleteContent(spaceId, contentId);
+            if (readAfterWrite) {
+                // wait until !this.exists() or timeout
+                checkTillTrueOrTimeout(new Checker() {
+                    public String getOperation() {
+                        return "Delete of " + id;
+                    }
+                    public boolean check() throws Exception {
+                        return !exists();
+                    }
+                });
+            }
         } catch (NotFoundException e) {
             // Blob.delete is idempotent; it shouldn't fail if the content
             // doesn't exist.
@@ -127,8 +146,49 @@ class DuraCloudBlob
             throws IOException, DuplicateBlobException {
         ensureOpen();
 
-        if (!overwrite && exists()) {
+        final Map<String, String> origMeta = getMetadata();
+        if (!overwrite && origMeta != null) {
             throw new DuplicateBlobException(id);
+        }
+
+        // if needed, set up a listener to wait until the content write
+        // is visible to subsequent readers.
+        ContentWriteListener listener = null;
+        if (readAfterWrite) {
+            final DuraCloudBlob blob = this;
+            listener = new ContentWriteListener() {
+                public void contentWritten() {
+                    if (origMeta == null) {
+                        // wait until blob.exists() or timeout
+                        blob.checkTillTrueOrTimeout(new Checker() {
+                            public String getOperation() {
+                                return "Create of " + blob.id;
+                            }
+                            public boolean check() throws Exception {
+                                return blob.exists();
+                            }
+                        });
+                    } else {
+                        // wait until modify date differs or timeout
+                        final String origModDate = origMeta.get(ContentStore.CONTENT_MODIFIED);
+                        blob.checkTillTrueOrTimeout(new Checker() {
+                            public String getOperation() {
+                                return "Replace of " + blob.id;
+                            }
+                            public boolean check() throws Exception {
+                                Map<String, String> meta = getMetadata();
+                                if (meta != null) {
+                                    String modDate = meta.get(ContentStore.CONTENT_MODIFIED);
+                                    return modDate != null
+                                            && !modDate.equals(origModDate);
+                                } else {
+                                    return false;
+                                }
+                            }
+                        });
+                    }
+                }
+            };
         }
 
         // Since contentStore expects an InputStream from which it can
@@ -144,7 +204,8 @@ class DuraCloudBlob
         // attempts a write or close on the returned output stream.
 
         PipedOutputStream pipedOut = new PipedOutputStream();
-        final ExAwareOutputStream eaOut = new ExAwareOutputStream(pipedOut);
+        final ExAwareOutputStream eaOut = new ExAwareOutputStream(pipedOut,
+                                                                  listener);
         final PipedInputStream pipedIn = new PipedInputStream(pipedOut);
 
         Runnable invoker = new Runnable() {
@@ -168,6 +229,29 @@ class DuraCloudBlob
         new Thread(invoker).start();
 
         return eaOut;
+    }
+
+    private void checkTillTrueOrTimeout(Checker checker) {
+        try {
+            // check/sleep.2sec/check/sleep.6sec/check/sleep 1.8sec/check/warn
+            long sleptMillis = 0;
+            long sleepMillis = 200;
+            while (!checker.check() && sleptMillis < 2000) {
+                Thread.sleep(sleepMillis);
+                sleptMillis += sleepMillis;
+                sleepMillis = sleepMillis * 3;
+            }
+            if (sleptMillis >= 2000 && !checker.check()) {
+                logger.warn(checker.getOperation() + " committed, but may not "
+                        + "yet be visible (read-after-write polling timed out "
+                        + "after " + sleptMillis + "ms)");
+            } else {
+                logger.info(checker.getOperation() + " checked successfully after {}ms", sleptMillis);
+            }
+        } catch (Exception e) {
+            logger.warn(checker.getOperation() + " committed, but may not yet "
+                    + "be visible (read-after-write polling failed)", e);
+        }
     }
 
     /**
@@ -229,6 +313,11 @@ class DuraCloudBlob
     static String getURIPrefix(ContentStore contentStore,
                                String spaceId) {
         return contentStore.getBaseURL() + "/" + spaceId + "/";
+    }
+
+    interface Checker {
+        String getOperation();
+        boolean check() throws Exception;
     }
 
 }
