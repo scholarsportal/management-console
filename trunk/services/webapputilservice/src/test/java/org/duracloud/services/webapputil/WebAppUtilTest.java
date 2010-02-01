@@ -37,7 +37,6 @@ public class WebAppUtilTest extends WebAppUtilTestBase {
 
         webappUtil = new WebAppUtilImpl();
         webappUtil.setServiceId(serviceId);
-        webappUtil.setBaseInstallDir(System.getProperty("java.io.tmpdir"));
         webappUtil.setNextPort(port);
         webappUtil.setServiceWorkDir(serviceWorkDir.getAbsolutePath());
         webappUtil.setTomcatUtil(tomcatUtil);

@@ -37,10 +37,9 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private int nextPort;
-    private String baseInstallDir;
     private TomcatUtil tomcatUtil;
 
-    private static final String AMAZON_HOST_QUERY = "http://169.254.169.254/2009-08-15//meta-data/public-ipv4";
+    private static final String AMAZON_HOST_QUERY = "http://169.254.169.254/2009-04-04/meta-data/public-ipv4";
 
     /**
      * This method deploys the arg war to a newly created appserver under the
@@ -126,12 +125,16 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
 
     private File getInstallDir(String serviceId, int port) {
         String dirName = serviceId + "-" + port;
-        File installDir = new File(getBaseInstallDir(), dirName);
+        File installDir = new File(getTomcatInstallDir(), dirName);
         if (!installDir.exists() && !installDir.mkdirs()) {
             throw new WebAppDeployerException("Error creating: " + installDir);
         }
 
         return installDir;
+    }
+
+    private File getTomcatInstallDir() {
+        return new File(getServiceWorkDir(), "tomcat");
     }
 
     private URL buildURL(int port, String contextPath) {
@@ -146,7 +149,9 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
     }
 
     private String getBaseURL(int port) {
-        return "http://" + getHost() + ":" + port;
+        String url = "http://" + getHost() + ":" + port;
+        log.debug("webapputil url: '" + url + "'");
+        return url;
     }
 
     private String getHost() {
@@ -159,7 +164,6 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
         if (null != host) {
             return host;
         }
-
         throw new WebAppDeployerException("Unable to find host ip.");
     }
 
@@ -231,14 +235,6 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
 
     public void setNextPort(int nextPort) {
         this.nextPort = nextPort;
-    }
-
-    private String getBaseInstallDir() {
-        return baseInstallDir;
-    }
-
-    public void setBaseInstallDir(String baseInstallDir) {
-        this.baseInstallDir = baseInstallDir;
     }
 
     private TomcatUtil getTomcatUtil() {

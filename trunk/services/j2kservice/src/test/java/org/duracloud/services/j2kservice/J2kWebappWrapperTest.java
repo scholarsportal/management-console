@@ -19,8 +19,7 @@ import java.io.IOException;
  */
 public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
 
-    private String testDir = "target/wrapper-test/";
-    private String baseInstallDir = testDir + "tomcat";
+    private String testDir = "target/test-wrapper/";
     private File resourceDir = new File("src/test/resources");
 
     private BundleHome bundleHome = new BundleHome(testDir);
@@ -41,7 +40,6 @@ public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
 
         webappUtil = new WebAppUtilImpl();
         webappUtil.setServiceId(webappId);
-        webappUtil.setBaseInstallDir(baseInstallDir);
         webappUtil.setNextPort(port);
         webappUtil.setTomcatUtil(tomcatUtil);
         webappUtil.setServiceWorkDir(bundleHome.getServiceWork(webappId).getAbsolutePath());

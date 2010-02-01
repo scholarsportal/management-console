@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class HelloWebappWrapperTest {
 
-    private String testDir = "target/wrapper-test/";
+    private String testDir = "target/test-wrapper/";
 
     private HelloWebappWrapper wrapper;
     private String serviceId = "howdywrapper";
@@ -30,7 +30,6 @@ public class HelloWebappWrapperTest {
     private String warName = "hellowebapp-1.0.0.war";
 
     private WebAppUtilImpl webappUtil;
-    private String baseInstallDir = testDir + "tomcat";
     private int port = 38080;
 
     private TomcatUtil tomcatUtil;
@@ -46,7 +45,6 @@ public class HelloWebappWrapperTest {
         String webappUtilServiceId = "webapputilservice-1.0.0";
         webappUtil = new WebAppUtilImpl();
         webappUtil.setServiceId(webappUtilServiceId);
-        webappUtil.setBaseInstallDir(baseInstallDir);
         webappUtil.setNextPort(port);
         webappUtil.setServiceWorkDir(
             bundleHome.getServiceWork(webappUtilServiceId).getAbsolutePath());
