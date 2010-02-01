@@ -13,8 +13,6 @@ import java.util.Map;
  */
 public class ServicesAdminClientCLI {
 
-    // Port:8089 is defined in the 'tomcatconfig' project
-    private String baseURL = "http://localhost:8089/org.duracloud.services.admin_1.0.0";
     private ServicesAdminClient client;
 
     public static enum ADMIN_OPTION {
@@ -60,7 +58,10 @@ public class ServicesAdminClientCLI {
                     "zip"),
         WEBAPPUTIL("util", "webapp[util]", "webapputilservice-1.0.0", "zip"),
         J2K("j", "[j]2k", "j2kservice-1.0.0", "zip"),
-        IMAGEMAGICK("magick", "image[magick]", "imagemagickservice-1.0.0", "zip"),
+        IMAGEMAGICK("magick",
+                    "image[magick]",
+                    "imagemagickservice-1.0.0",
+                    "zip"),
         UNKNOWN("?", "unknown", "unknown-id", "no-ext");
 
         private File basePackageRepository = new File("../services/packages");
@@ -108,10 +109,18 @@ public class ServicesAdminClientCLI {
 
     }
 
-    public ServicesAdminClientCLI() {
+    public ServicesAdminClientCLI(String host) {
         client = new ServicesAdminClient();
-        client.setBaseURL(baseURL);
+        client.setBaseURL(createBaseUrl(host));
         client.setRester(new RestHttpHelper());
+    }
+
+    private String createBaseUrl(String host) {
+        // Port:8089 is defined in the 'tomcatconfig' project
+        StringBuilder url = new StringBuilder("http://" + host);
+        url.append(":8089/org.duracloud.services.admin_1.0.0");
+        System.out.println("Using url: '" + url.toString() + "'");
+        return url.toString();
     }
 
     private void inputCommands() {
@@ -229,8 +238,26 @@ public class ServicesAdminClientCLI {
         }
     }
 
+    private static void usage() {
+        StringBuilder sb = new StringBuilder("Usage:");
+        sb.append("ServicesAdminClientCLI [host]\n");
+        sb.append("\twhere [host] is optional");
+        System.out.println(sb.toString());
+    }
+
     public static void main(String[] args) {
-        ServicesAdminClientCLI cli = new ServicesAdminClientCLI();
+        if (args.length > 1 || (args.length == 1 &&
+            (args[0].equals("help") || args[0].equals("-h")))) {
+            usage();
+            System.exit(1);
+        }
+
+        String host = "localhost";
+        if (args.length == 1) {
+            host = args[0];
+        }
+
+        ServicesAdminClientCLI cli = new ServicesAdminClientCLI(host);
         cli.inputCommands();
     }
 

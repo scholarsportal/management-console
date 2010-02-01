@@ -12,7 +12,6 @@
     <osgix:managed-properties persistent-id="helloservice-1.0.0.jar"
         update-strategy="container-managed"/>
     <property name="serviceId" value="webapputilservice-1.0.0" />
-    <property name="baseInstallDir" value="${tomcat.install.dir}" />
     <property name="nextPort" ref="tomcat.port" />
     <property name="tomcatUtil" ref="tomcatUtility" />
   </bean>

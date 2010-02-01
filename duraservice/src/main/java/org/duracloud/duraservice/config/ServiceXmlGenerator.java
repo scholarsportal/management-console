@@ -31,6 +31,9 @@ public class ServiceXmlGenerator {
         servicesList.add(buildHelloService());
         servicesList.add(buildReplicationService());
         servicesList.add(buildImageMagickService());
+        servicesList.add(buildWebappUtilService());
+        servicesList.add(buildHelloWebappWrapper());
+        servicesList.add(buildJ2kService());
         return servicesList;
     }
 
@@ -172,6 +175,61 @@ public class ServiceXmlGenerator {
         return imService;
     }
 
+    private ServiceInfo buildWebappUtilService() {
+        ServiceInfo hellowebappService = new ServiceInfo();
+        hellowebappService.setId(3);
+        hellowebappService.setContentId("webapputilservice-1.0.0.zip");
+        String desc = "The Web App Utility service coordinates the " +
+            "(de)installation and startup/shutdown of Apache Tomcat instances" +
+            "that are created to run web application services that deployed " +
+            "externally to the hosting OSGi container.";
+        hellowebappService.setDescription(desc);
+        hellowebappService.setDisplayName("Web App Utility Service");
+        hellowebappService.setUserConfigVersion("1.0");
+        hellowebappService.setServiceVersion("1.0.0");
+        hellowebappService.setMaxDeploymentsAllowed(1);
+
+        hellowebappService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return hellowebappService;
+    }
+    
+    private ServiceInfo buildHelloWebappWrapper() {
+        ServiceInfo hellowebapp = new ServiceInfo();
+        hellowebapp.setId(4);
+        hellowebapp.setContentId("hellowebappwrapper-1.0.0.zip");
+        String desc = "The HelloWebApp wrapper deploys a simple web " +
+            "application which prints a pleasant greeting.";
+        hellowebapp.setDescription(desc);
+        hellowebapp.setDisplayName("Hello WebApp Wrapper");
+        hellowebapp.setUserConfigVersion("1.0");
+        hellowebapp.setServiceVersion("1.0.0");
+        hellowebapp.setMaxDeploymentsAllowed(1);
+
+        hellowebapp.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return hellowebapp;
+    }
+
+    private ServiceInfo buildJ2kService() {
+        ServiceInfo j2kService = new ServiceInfo();
+        j2kService.setId(5);
+        j2kService.setContentId("j2kservice-1.0.0.zip");
+        String desc =
+            "The J2K service deploys an instance of the Adore Djatoka web " +
+                "application which provides for serving and viewing JPEG2000 " +
+                "images.";
+        j2kService.setDescription(desc);
+        j2kService.setDisplayName("J2K Service");
+        j2kService.setUserConfigVersion("1.0");
+        j2kService.setServiceVersion("1.0.0");
+        j2kService.setMaxDeploymentsAllowed(1);
+
+        j2kService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return j2kService;
+    }
+
     private List<DeploymentOption> getSimpleDeploymentOptions() {
         // Deployment Options
         DeploymentOption depPrimary = new DeploymentOption();
@@ -215,7 +273,7 @@ public class ServiceXmlGenerator {
                                     getServicesListAsXml(),
                                     "UTF-8");
     }
-    
+
     public static void main(String[] args) throws Exception {
         String currentDir = new File(".").getCanonicalPath();
         ServiceXmlGenerator xmlGenerator = new ServiceXmlGenerator();
