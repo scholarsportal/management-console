@@ -52,7 +52,7 @@ public class DuraCloudIdMapper implements IdMapper {
         return internalPrefix + encode(externalPrefix);
     }
 
-    // escape '?' as '~3F' and '~' as '%7E'
+    // escape '?' as '~3F' and '~' as '~7E'
     static String encode(String externalString) {
         StringBuilder builder = new StringBuilder(externalString.length());
         for (int i = 0; i < externalString.length(); i++) {
