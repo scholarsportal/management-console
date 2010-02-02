@@ -246,7 +246,8 @@ class DuraCloudBlob
                         + "yet be visible (read-after-write polling timed out "
                         + "after " + sleptMillis + "ms)");
             } else {
-                logger.info(checker.getOperation() + " checked successfully after {}ms", sleptMillis);
+                logger.debug("{} checked successfully after {}ms",
+                        checker.getOperation(), sleptMillis);
             }
         } catch (Exception e) {
             logger.warn(checker.getOperation() + " committed, but may not yet "
@@ -261,7 +262,7 @@ class DuraCloudBlob
     private void validateId(URI blobId)
             throws UnsupportedIdException {
         if (blobId == null) {
-            throw new NullPointerException("Id cannot be null");
+            throw new UnsupportedOperationException("Id cannot be null");
         }
         String uriPrefix = getURIPrefix(contentStore, spaceId);
         if (!blobId.toString().startsWith(uriPrefix)) {

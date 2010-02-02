@@ -126,7 +126,7 @@ public class DuraCloudBlobTest {
         getBlob(badBlobId);
     }
 
-    @Test(expectedExceptions=NullPointerException.class)
+    @Test(expectedExceptions=UnsupportedOperationException.class)
     public void nullId() throws UnsupportedIdException {
         EasyMock.replay(contentStore);
         getBlob(null);
