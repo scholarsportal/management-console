@@ -44,7 +44,7 @@ public class AkubraDuraCloudTCKIT extends TCKTestSuite {
 
     @Override
     protected URI[] getAliases(URI uri) {
-      return new URI[] { uri };
+      return null;
     }
 
     private static URI getSpaceURL() {

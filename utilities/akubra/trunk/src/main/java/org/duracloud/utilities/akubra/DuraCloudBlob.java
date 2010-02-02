@@ -118,8 +118,15 @@ class DuraCloudBlob
 
         // ContentStore has no atomic move function, so we copy-then-delete.
         Blob dest = owner.getBlob(blobId, hints);
-        IOUtils.copyLarge(openInputStream(), dest.openOutputStream(-1, false));
-        delete();
+        InputStream in = openInputStream();
+        OutputStream out = dest.openOutputStream(-1, false);
+        try {
+            IOUtils.copyLarge(in, out);
+            delete();
+        } finally {
+            IOUtils.closeQuietly(in);
+            out.close();
+        }
         return dest;
     }
 
@@ -214,7 +221,7 @@ class DuraCloudBlob
                     contentStore.addContent(spaceId,
                                             contentId,
                                             pipedIn,
-                                            estimatedSize,
+                                            -1,
                                             "application/octet-stream",
                                             null);
                 } catch (ContentStoreException e) {

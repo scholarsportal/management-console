@@ -76,7 +76,7 @@ public class AkubraDuraCloudIT {
         Blob blob = getBlob("createEmpty");
         putContent(blob, "", false);
         assertEquals(getContent(blob), "");
-//        blob.delete();
+        blob.delete();
     }
 
     // gets all blobIds in the test store, filtered by prefix, if given
