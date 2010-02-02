@@ -86,6 +86,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.akubraproject</groupId>  
+      <artifactId>akubra-map</artifactId>  
+      <version>0.2</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>storeclient</artifactId>
       <version>1.0.0</version>
