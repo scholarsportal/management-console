@@ -73,7 +73,7 @@ public class DuraCloudBlobStoreTest {
 
     private static DuraCloudBlobStore getInstance() throws IOException {
         return new DuraCloudBlobStore(EasyMock.createMock(ContentStore.class),
-                                      "test-space");
+                                      "test-space", false);
     }
 
 }

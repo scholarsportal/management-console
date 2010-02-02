@@ -44,7 +44,7 @@ public class AkubraDuraCloudIT {
             throw new Error("System property, spaceURL, is not defined");
         }
         spaceURL = URI.create(url);
-        store = new DuraCloudBlobStore(spaceURL);
+        store = new DuraCloudBlobStore(spaceURL, true);
         Map<String, String> hints = new HashMap<String, String>();
         hints.put(DuraCloudBlobStore.READ_AFTER_WRITE, "true");
         connection = store.openConnection(null, hints);
@@ -53,7 +53,7 @@ public class AkubraDuraCloudIT {
 
     @Test(expectedExceptions=IOException.class)
     public void nonExistingSpace() throws IOException {
-        new DuraCloudBlobStore(URI.create(spaceURL + "-nonexistingspace"));
+        new DuraCloudBlobStore(URI.create(spaceURL + "-nonexistingspace"), true);
     }
 
     @Test

@@ -63,7 +63,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
 
     private final String spaceId;
 
-    private boolean readAfterWriteDefault;
+    private final boolean readAfterWriteDefault;
 
     /**
      * Creates an instance for the given DuraCloud space URL.
@@ -72,12 +72,16 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
      * of the form: <code>http://host[:port]/context/spaceId</code>.
      *
      * @param spaceURL the url of the space.
+     * @param readAfterWriteDefault whether to use READ_AFTER_WRITE
+     *        behavior for all connections, unless otherwise specified
+     *        in hints.
      * @throws IOException if the space does not exist or there is an error
      *         connecting to the content store.
      * @throws IllegalArgumentException if the spaceURL is not in the
      *         expected form.
      */
-    public DuraCloudBlobStore(URI spaceURL)
+    public DuraCloudBlobStore(URI spaceURL,
+                              boolean readAfterWriteDefault)
             throws IOException, IllegalArgumentException {
         super(spaceURL);
         try {
@@ -85,6 +89,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
             this.contentStore = new ContentStoreManagerImpl(p[0], p[1], p[2])
                     .getPrimaryContentStore();
             this.spaceId = p[3];
+            this.readAfterWriteDefault = readAfterWriteDefault;
             contentStore.getSpaceAccess(spaceId);
         } catch (ContentStoreException e) {
             IOException ioe = new IOException(
@@ -96,14 +101,11 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
 
     // Package-visible constructor for testing.
     DuraCloudBlobStore(ContentStore contentStore,
-                       String spaceId) {
+                       String spaceId,
+                       boolean readAfterWriteDefault) {
         super(URI.create(contentStore.getBaseURL() + "/" + spaceId));
         this.contentStore = contentStore;
         this.spaceId = spaceId;
-    }
-
-    // Set read after write default, for testing
-    void setReadAfterWriteDefault(boolean readAfterWriteDefault) {
         this.readAfterWriteDefault = readAfterWriteDefault;
     }
 
