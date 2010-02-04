@@ -26,6 +26,7 @@ public abstract class BaseService implements ComputeService {
     public Map<String, String> getServiceProps() {
         Map<String, String> props = new HashMap<String, String>();
         props.put("serviceId", getServiceId());
+        props.put("serviceStatus", getServiceStatus().name());
         return props;
     }
 
