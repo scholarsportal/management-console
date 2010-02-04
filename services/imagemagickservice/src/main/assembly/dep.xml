@@ -8,22 +8,16 @@
     <fileSet>
       <outputDirectory>/</outputDirectory>
       <directory>src/main/resources/scripts</directory>
-    </fileSet>
-    <fileSet>
-      <directory>../scriptservice/target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>scriptservice-1.0.0.jar</include>
-      </includes>
-    </fileSet>    
+    </fileSet>   
   </fileSets>  
 
   <dependencySets>
     <dependencySet>
-      <unpack>false</unpack>
-      <excludes>
-        <exclude>log4j:log4j</exclude>
-      </excludes>
+      <scope>provided</scope>
+      <includes>
+        <include>org.duracloud.services:imagemagickservice</include>
+        <include>org.duracloud.services:scriptservice</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 
