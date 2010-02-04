@@ -13,7 +13,9 @@ import org.duracloud.serviceconfig.user.UserConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows for communication with DuraService
@@ -177,6 +179,22 @@ public class ServicesManager {
                 " for service " + serviceId + " due to: " + e.getMessage();
             throw new ServicesException(error, e);
         }
+    }
+
+    /**
+     * Gets runtime properties from a deployed service.
+     *
+     * @param serviceId the ID of the service to retrieve
+     * @param deploymentId the ID of the service deployment to retrieve
+     * @return a map of service properties
+     * @throws NotFoundException if either the service or deployment cannot be found
+     * @throws ServicesException if the service properties cannot be retrieved
+     */
+    public Map<String, String> getDeployedServiceProperties(int serviceId, int deploymentId) {
+        Map<String, String> testMap = new HashMap<String, String>();
+        testMap.put("propertyOne", "Service Property One");
+        testMap.put("propertyTwo", "Service Property Two");
+        return testMap;
     }
 
     /**
