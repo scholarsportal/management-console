@@ -211,6 +211,19 @@ public class ServiceManagerTest
     }
 
     @Test
+    public void testGetDeployedServiceProps() throws Exception {
+        int serviceId = 1;
+        ServiceInfo service1 = serviceManager.getService(serviceId);
+        List<UserConfig> userConfigs = service1.getUserConfigs();
+        int deploymentId =
+            serviceManager.deployService(serviceId, null, "1.0", userConfigs);
+
+        Map<String, String> serviceProps =
+            serviceManager.getDeployedServiceProps(serviceId, deploymentId);
+        assertNotNull(serviceProps);
+    }
+
+    @Test
     public void testDeployService() throws Exception {
         int serviceId = 1;
         ServiceInfo service1 = serviceManager.getService(serviceId);

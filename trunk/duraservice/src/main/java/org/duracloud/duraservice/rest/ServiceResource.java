@@ -1,14 +1,16 @@
 package org.duracloud.duraservice.rest;
 
-import org.duracloud.duraservice.mgmt.ServiceManager;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
+import org.duracloud.duraservice.mgmt.ServiceManager;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.ServicesConfigDocument;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides interaction with content
@@ -48,6 +50,16 @@ public class ServiceResource {
             serviceManager.getDeployedService(serviceId, deploymentId);
         ServicesConfigDocument configDoc = new ServicesConfigDocument();
         return configDoc.getServiceAsXML(service);
+    }
+
+    public static String getDeployedServiceProps(int serviceId,
+                                                 int deploymentId)
+        throws NoSuchDeployedServiceException {
+        Map<String, String> serviceProperties =
+            serviceManager.getDeployedServiceProps(serviceId, deploymentId);
+
+        //TODO: Update to use a more well structure serialization
+        return SerializationUtil.serializeMap(serviceProperties);
     }
 
     public static int deployService(int serviceId,

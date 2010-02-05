@@ -711,6 +711,50 @@ public class ServiceManager {
         return populatedDepService;
     }
 
+    /**
+     * Gets the properties of a service which has been deployed.
+     *
+     * @param serviceId the ID of the service to retrieve
+     * @param deploymentId the ID of the service deployment to retrieve
+     * @return the properties of the service
+     * @throws NoSuchDeployedServiceException if either service or deployment does not exist
+     */
+    public Map<String, String> getDeployedServiceProps(int serviceId,
+                                                       int deploymentId)
+        throws NoSuchDeployedServiceException {
+        checkConfigured();
+
+        ServiceInfo deployedService =
+            findDeployedService(serviceId, deploymentId);
+        Deployment serviceDeployment =
+            findServiceDeployment(deployedService, deploymentId);
+        String hostName = serviceDeployment.getHostname();
+
+        ServiceComputeInstance serviceCompute;
+        try {
+            serviceCompute = getServiceComputeInstanceByHostName(hostName);
+        } catch (NoSuchServiceComputeInstanceException e) {
+            String error = "Host name " + hostName +
+                " is not valid for deployment " + deploymentId +
+                " of service " + serviceId;
+            throw new ServiceException(error);
+        }
+
+        ServicesAdminClient servicesAdmin = serviceCompute.getServicesAdmin();
+        Map<String, String> serviceProps;
+        try {
+            serviceProps =
+                servicesAdmin.getServiceProps(deployedService.getContentId());
+        } catch(Exception e) {
+            String error = "Could not get properties for deployment " +
+                deploymentId + " of service " + serviceId +
+                " due to error: " + e.getMessage();
+            throw new ServiceException(error);
+        }
+
+        return serviceProps;
+    }
+
     /*
      * Finds a deployed service in the list based on the service
      * and deployment IDs

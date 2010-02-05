@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Runtime test of DuraService java client. DuraService must
@@ -127,8 +128,22 @@ public class TestServicesManager
                              ((TextUserConfig)config).getValue());
             }
         }
-
     }
+
+    /*
+     * Tests getting deployed service properties
+     */
+    @Test
+    public void testGetDeployedServiceProps() throws Exception {
+        deployService();
+
+        Map<String, String> serviceProps =
+            servicesManager.getDeployedServiceProps(testServiceId,
+                                                    testDeploymentId);
+        assertNotNull(serviceProps);
+        assertTrue(serviceProps.size() >= 1);
+    }
+
 
     /*
      * Tests both undeployService and getDeployedService
