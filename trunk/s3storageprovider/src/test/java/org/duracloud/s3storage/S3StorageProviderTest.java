@@ -92,14 +92,14 @@ public class S3StorageProviderTest {
 
     private String getNewSpaceId() {
         String random = String.valueOf(new Random().nextInt(99999));
-        String spaceId = "duracloud-test-space." + random;
+        String spaceId = "durastore-test-space-" + random;
         spaceIds.add(spaceId);
         return spaceId;
     }
 
     private String getNewContentId() {
         String random = String.valueOf(new Random().nextInt(99999));
-        String contentId = "duracloud-test-content." + random;
+        String contentId = "durastore-test-content-" + random;
         return contentId;
     }
 
