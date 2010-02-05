@@ -1,6 +1,14 @@
 
 package org.duracloud.duradmin.webflow.content;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
@@ -15,10 +23,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.servlet.AbstractFlowHandler;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.text.MessageFormat;
 
 public class AddContentItemFlowHandler
         extends AbstractFlowHandler {
@@ -83,11 +87,12 @@ public class AddContentItemFlowHandler
         String outcomeUrl = null;
 
         if (outcome.getId().equals(SUCCESS_OUTCOME)) {
+            
             outcomeUrl =
                     MessageFormat
                             .format("contextRelative:/content.htm?spaceId={0}&contentId={1}",
                                     space.getSpaceId(),
-                                    contentItem.getContentId());
+                                    urlEncode(contentItem.getContentId()));
             outcomeUrl =
                     MessageUtils
                             .appendRedirectMessage(outcomeUrl,
@@ -105,6 +110,16 @@ public class AddContentItemFlowHandler
         }
 
         return outcomeUrl;
+    }
+
+    private Object urlEncode(String value) {
+        try{
+            return URLEncoder.encode(value,CharEncoding.UTF_8);
+            
+        }catch(UnsupportedEncodingException ex){
+            throw new RuntimeException("this should never happen");
+        }
+
     }
 
 }
