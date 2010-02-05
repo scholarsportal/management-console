@@ -139,7 +139,11 @@ class DuraCloudBlob
                 hints.put(CONTENT_TYPE, blobHints.get(CONTENT_TYPE));
             } else {
                 md = getMetadata();
-                hints.put(CONTENT_TYPE, md.get(ContentStore.CONTENT_MIMETYPE));
+                if (md != null && md.containsKey(ContentStore.CONTENT_MIMETYPE)) {
+                    hints.put(CONTENT_TYPE, md.get(ContentStore.CONTENT_MIMETYPE));
+                } else {
+                    hints.put(CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
+                }
             }
         }
         if (!hints.containsKey(CONTENT_LENGTH)) {
@@ -147,13 +151,17 @@ class DuraCloudBlob
                 hints.put(CONTENT_LENGTH, blobHints.get(CONTENT_LENGTH));
             } else {
                 if (md == null) md = getMetadata();
-                hints.put(CONTENT_LENGTH, md.get(ContentStore.CONTENT_SIZE));
+                if (md != null && md.containsKey(ContentStore.CONTENT_SIZE)) {
+                    hints.put(CONTENT_LENGTH, md.get(ContentStore.CONTENT_SIZE));
+                } else {
+                    hints.put(CONTENT_LENGTH, "-1");
+                }
             }
         }
 
         // ContentStore has no atomic move function, so we copy-then-delete.
-        Blob dest = owner.getBlob(blobId, hints);
         InputStream in = openInputStream();
+        Blob dest = owner.getBlob(blobId, hints);
         OutputStream out = dest.openOutputStream(-1, false);
         try {
             IOUtils.copyLarge(in, out);
