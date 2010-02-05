@@ -70,7 +70,7 @@ public class DuraCloudBlobTest {
                 .andReturn(emptyContent).anyTimes();
 
         Map<String, String> md = new HashMap<String, String>();
-        md.put("Content-Length", "1024");
+        md.put(ContentStore.CONTENT_SIZE, "1024");
         EasyMock.expect(contentStore.getContentMetadata(spaceId, existingContentId))
                 .andReturn(md).anyTimes();
 
@@ -257,10 +257,10 @@ public class DuraCloudBlobTest {
         out.close();
     }
 
-    private DuraCloudBlob getBlob(URI blobId)
-            throws UnsupportedIdException {
+    private DuraCloudBlob getBlob(URI blobId) throws UnsupportedIdException {
         return new DuraCloudBlob(connection,
                                  blobId,
+                                 null,
                                  new StreamManager(),
                                  contentStore,
                                  spaceId,

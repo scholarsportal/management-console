@@ -8,6 +8,7 @@ import java.io.PipedOutputStream;
 
 import java.net.URI;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -36,7 +37,15 @@ import org.slf4j.LoggerFactory;
 class DuraCloudBlob
         extends AbstractBlob {
 
+    static final String CONTENT_TYPE = "Content-Type";
+
+    static final String CONTENT_LENGTH = "Content-Length";
+
+    static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
     private static final Logger logger = LoggerFactory.getLogger(DuraCloudBlob.class);
+
+    private final Map<String, String> blobHints;
 
     private final StreamManager streamManager;
 
@@ -50,12 +59,14 @@ class DuraCloudBlob
 
     DuraCloudBlob(BlobStoreConnection owner,
                   URI blobId,
+                  Map<String, String> hints,
                   StreamManager streamManager,
                   ContentStore contentStore,
                   String spaceId,
                   boolean readAfterWrite)
               throws UnsupportedIdException {
         super(owner, blobId);
+        this.blobHints = hints;
         this.streamManager = streamManager;
         this.contentStore = contentStore;
         this.spaceId = spaceId;
@@ -103,7 +114,7 @@ class DuraCloudBlob
         if (md == null) {
             throw new MissingBlobException(id);
         }
-        String length = md.get("Content-Length");
+        String length = md.get(ContentStore.CONTENT_SIZE);
         if (length == null) {
             return -1;
         }
@@ -115,6 +126,30 @@ class DuraCloudBlob
             throws DuplicateBlobException, IOException, MissingBlobException,
             NullPointerException, IllegalArgumentException {
         ensureOpen();
+
+        // if Content-Type or Content-Length are undefined in given hints,
+        // attempt to use the values from this blob's hints, if defined.
+        // otherwise, use the stored values for this blob
+        if (hints == null) {
+            hints = new HashMap<String, String>();
+        }
+        Map<String, String> md = null;
+        if (!hints.containsKey(CONTENT_TYPE)) {
+            if (blobHints != null && blobHints.containsKey(CONTENT_TYPE)) {
+                hints.put(CONTENT_TYPE, blobHints.get(CONTENT_TYPE));
+            } else {
+                md = getMetadata();
+                hints.put(CONTENT_TYPE, md.get(ContentStore.CONTENT_MIMETYPE));
+            }
+        }
+        if (!hints.containsKey(CONTENT_LENGTH)) {
+            if (blobHints != null && blobHints.containsKey(CONTENT_LENGTH)) {
+                hints.put(CONTENT_LENGTH, blobHints.get(CONTENT_LENGTH));
+            } else {
+                if (md == null) md = getMetadata();
+                hints.put(CONTENT_LENGTH, md.get(ContentStore.CONTENT_SIZE));
+            }
+        }
 
         // ContentStore has no atomic move function, so we copy-then-delete.
         Blob dest = owner.getBlob(blobId, hints);
@@ -221,8 +256,8 @@ class DuraCloudBlob
                     contentStore.addContent(spaceId,
                                             contentId,
                                             pipedIn,
-                                            -1,
-                                            "application/octet-stream",
+                                            contentLengthFromHints(),
+                                            contentTypeFromHints(),
                                             null);
                 } catch (ContentStoreException e) {
                     IOException ioe = new IOException("Error writing to store");
@@ -236,6 +271,32 @@ class DuraCloudBlob
         new Thread(invoker).start();
 
         return eaOut;
+    }
+
+    private String contentTypeFromHints() {
+        if (blobHints != null && blobHints.containsKey(CONTENT_TYPE)) {
+            return blobHints.get(CONTENT_TYPE).trim();
+        } else {
+            return DEFAULT_CONTENT_TYPE;
+        }
+    }
+
+    private long contentLengthFromHints() {
+        if (blobHints != null && blobHints.containsKey(CONTENT_LENGTH)) {
+            try {
+                return Long.parseLong(blobHints.get(CONTENT_LENGTH).trim());
+            } catch (NumberFormatException e) {
+                logger.warn("Malformed Content-Length hint; using -1");
+            }
+        }
+        return -1;
+    }
+
+    // for testing: get the stored Content-Type if this blob exists, else null
+    String getContentType() throws IOException {
+        Map<String, String> md = getMetadata();
+        if (md == null) return null;
+        return md.get(ContentStore.CONTENT_MIMETYPE);
     }
 
     private void checkTillTrueOrTimeout(Checker checker) {

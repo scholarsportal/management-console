@@ -46,8 +46,8 @@ class DuraCloudBlobStoreConnection
             throws IOException,
             UnsupportedIdException, UnsupportedOperationException {
         ensureOpen();
-        return new DuraCloudBlob(this, blobId, streamManager, contentStore,
-                                 spaceId, readAfterWrite);
+        return new DuraCloudBlob(this, blobId, hints, streamManager,
+                                 contentStore, spaceId, readAfterWrite);
     }
 
     //@Override

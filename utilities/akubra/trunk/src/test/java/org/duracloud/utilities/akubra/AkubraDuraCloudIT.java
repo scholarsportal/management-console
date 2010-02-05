@@ -20,6 +20,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -63,7 +64,7 @@ public class AkubraDuraCloudIT {
 
     @Test
     public void createReadUpdateDelete() throws IOException {
-        Blob blob = getBlob("createReadUpdateDelete");
+        Blob blob = getBlob("createReadUpdateDelete", null);
         putContent(blob, VALUE, false);
         assertEquals(getContent(blob), VALUE);
         putContent(blob, VALUE2, true);
@@ -72,8 +73,90 @@ public class AkubraDuraCloudIT {
     }
 
     @Test
+    public void getSize() throws IOException {
+        Blob blob = getBlob("getSize", null);
+        putContent(blob, VALUE, false);
+        assertEquals(blob.getSize(), VALUE.length());
+        putContent(blob, VALUE2, true);
+        assertEquals(blob.getSize(), VALUE2.length());
+        blob.delete();
+    }
+
+    @Test
+    public void contentTypeDefault() throws IOException {
+        contentTypeTest("getContentTypeDefault", null);
+    }
+
+    @Test
+    public void contentTypeTextPlain() throws IOException {
+        contentTypeTest("getContentTypeTextPlain", "text/plain");
+    }
+
+    @Test
+    public void contentTypeTextPlainUTF8() throws IOException {
+        contentTypeTest("getContentTypeTextPlainUTF8", "text/plain;charset=utf-8");
+    }
+
+    @Test
+    public void moveWithOrigContentType() throws IOException {
+        moveTest(null);
+    }
+
+    @Test
+    public void moveWithNewContentType() throws IOException {
+        moveTest("text/plain;charset=utf-8");
+    }
+
+    private void moveTest(String newContentType) throws IOException {
+        // setup
+        String src = "moveTestSrc";
+        String dst = "moveTestDst";
+        Map<String, String> hints = new HashMap<String, String>();
+        hints.put(DuraCloudBlob.CONTENT_TYPE, "text/plain");
+        Blob srcBlob = getBlob(src, hints);
+        putContent(srcBlob, VALUE, false);
+
+        // do the move; afterward, src should not exist and dst should
+        Map<String, String> dstHints = null;
+        if (newContentType != null) {
+            dstHints = new HashMap<String, String>();
+            dstHints.put(DuraCloudBlob.CONTENT_TYPE, newContentType);
+        }
+        Blob dstBlob = srcBlob.moveTo(URI.create(spaceURL + "/" + dst), dstHints);
+        assertTrue(dstBlob.exists());
+        assertFalse(srcBlob.exists());
+
+        // also, dst's content type should be what we expect
+        String dstContentType = ((DuraCloudBlob) dstBlob).getContentType();
+        if (newContentType == null) {
+            assertEquals(dstContentType, "text/plain");
+        } else {
+            assertEquals(dstContentType, newContentType);
+        }
+
+        dstBlob.delete();
+    }
+
+    private void contentTypeTest(String name, String type) throws IOException {
+        Map<String, String> hints = null;
+        if (type != null) {
+            hints = new HashMap<String, String>();
+            hints.put(DuraCloudBlob.CONTENT_TYPE, type);
+        } else {
+            type = DuraCloudBlob.DEFAULT_CONTENT_TYPE;
+        }
+        Blob blob = getBlob(name, hints);
+        try {
+            putContent(blob, VALUE, false);
+            assertEquals(((DuraCloudBlob) blob).getContentType(), type);
+        } finally {
+            blob.delete();
+        }
+    }
+
+    @Test
     public void createEmpty() throws IOException {
-        Blob blob = getBlob("createEmpty");
+        Blob blob = getBlob("createEmpty", null);
         putContent(blob, "", false);
         assertEquals(getContent(blob), "");
         blob.delete();
@@ -93,7 +176,7 @@ public class AkubraDuraCloudIT {
     private static int clear() throws IOException {
         int deletedCount = 0;
         for (URI blobId: list(null)) {
-            getBlob(blobId).delete();
+            connection.getBlob(blobId, null).delete();
             deletedCount++;
         }
         return deletedCount;
@@ -112,14 +195,10 @@ public class AkubraDuraCloudIT {
         return IOUtils.toString(blob.openInputStream());
     }
 
-    // gets a blob from the test store, by blobId
-    private static Blob getBlob(URI blobId) throws IOException {
-        return connection.getBlob(blobId, null);
-    }
-
     // gets a blob from the test store, by contentId
-    private static Blob getBlob(String contentId) throws IOException {
-        return getBlob(URI.create(spaceURL + "/" + contentId));
+    private static Blob getBlob(String contentId, Map<String, String> hints)
+            throws IOException {
+        return connection.getBlob(URI.create(spaceURL + "/" + contentId), hints);
     }
 
 }
