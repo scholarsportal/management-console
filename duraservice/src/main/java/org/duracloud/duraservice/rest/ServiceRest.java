@@ -199,6 +199,41 @@ public class ServiceRest extends BaseRest {
     }
 
     /**
+     * Gets the runtime properties of a deployed service.
+     *
+     * @param serviceId the ID of the service to retrieve
+     * @param deploymentId the ID of the deployment to retrieve
+     * @return 200 on success with serialized service properties
+     */
+    @Path("/services/{serviceId}/{deploymentId}/properties")
+    @GET
+    @Produces(XML)
+    public Response getDeployedServiceProperties(@PathParam("serviceId")
+                                                 int serviceId,
+                                                 @PathParam("deploymentId")
+                                                 int deploymentId) {
+        ResponseBuilder response = Response.ok();
+        String servicePropertiesXml;
+        try {
+            servicePropertiesXml =
+                ServiceResource.getDeployedServiceProps(serviceId, deploymentId);
+        } catch(NoSuchDeployedServiceException e) {
+            return buildNotFoundResponse(e);
+        }
+
+        if(servicePropertiesXml != null) {
+            response.entity(servicePropertiesXml);
+        } else {
+            response = Response.serverError();
+            response.entity("Unable to retrieve properties for" +
+                             " service " + serviceId +
+                            " with deployment " + deploymentId);
+        }
+
+        return response.build();
+    }
+
+    /**
      * Deploys, Configures, and Starts a service.
      * It is expected that a call to get the configuration options
      * will be made prior to this call and selections/inputs will

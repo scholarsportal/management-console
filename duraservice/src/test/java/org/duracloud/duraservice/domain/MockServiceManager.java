@@ -2,8 +2,6 @@ package org.duracloud.duraservice.domain;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
-import org.duracloud.error.InvalidIdException;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.domain.Content;
@@ -11,6 +9,8 @@ import org.duracloud.domain.Space;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.mgmt.ServiceConfigUtil;
 import org.duracloud.duraservice.mgmt.ServiceManager;
+import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.SystemConfig;
@@ -25,9 +25,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
 
 /**
@@ -379,6 +380,11 @@ public class MockServiceManager extends ServiceManager {
         @Override
         public boolean isServiceDeployed(String bundleId) throws Exception {
             return true;
+        }
+
+        @Override
+        public Map<String, String> getServiceProps(String serviceId) {
+            return new HashMap<String, String>();
         }
     }
 }

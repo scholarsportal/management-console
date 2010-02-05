@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.client.error.ServicesException;
 import org.duracloud.client.error.UnexpectedResponseException;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.serviceconfig.DeploymentOption;
@@ -13,7 +14,6 @@ import org.duracloud.serviceconfig.user.UserConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +84,12 @@ public class ServicesManager {
     private String buildDeployedServiceURL(int serviceId,
                                            int deploymentId) {
         return buildURL("/services/" + serviceId + "/" + deploymentId);
+    }
+
+    private String buildDeployedServicePropsURL(int serviceId,
+                                                int deploymentId) {
+        return buildURL("/services/" + serviceId + "/" + deploymentId +
+            "/properties");
     }
 
     /**
@@ -182,7 +188,7 @@ public class ServicesManager {
     }
 
     /**
-     * Gets runtime properties from a deployed service.
+     * Gets runtime properties for a deployed service.
      *
      * @param serviceId the ID of the service to retrieve
      * @param deploymentId the ID of the service deployment to retrieve
@@ -190,11 +196,23 @@ public class ServicesManager {
      * @throws NotFoundException if either the service or deployment cannot be found
      * @throws ServicesException if the service properties cannot be retrieved
      */
-    public Map<String, String> getDeployedServiceProperties(int serviceId, int deploymentId) {
-        Map<String, String> testMap = new HashMap<String, String>();
-        testMap.put("propertyOne", "Service Property One");
-        testMap.put("propertyTwo", "Service Property Two");
-        return testMap;
+    public Map<String, String> getDeployedServiceProps(int serviceId,
+                                                       int deploymentId)
+        throws NotFoundException, ServicesException {
+        String url = buildDeployedServicePropsURL(serviceId, deploymentId);
+        try {
+            HttpResponse response = restHelper.get(url);
+            checkResponse(response, HttpStatus.SC_OK);
+            String responseBody = response.getResponseBody();
+            return SerializationUtil.deserializeMap(responseBody);
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            String error = "Could not get properties for deployment " +
+                deploymentId + " of service " + serviceId +
+                " due to: " + e.getMessage();
+            throw new ServicesException(error, e);
+        }
     }
 
     /**

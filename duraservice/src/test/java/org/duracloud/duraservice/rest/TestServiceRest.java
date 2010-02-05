@@ -2,6 +2,7 @@ package org.duracloud.duraservice.rest;
 
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.duraservice.config.DuraServiceConfig;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Runtime test of service REST API. The duraservice and durastore web
@@ -122,6 +124,20 @@ public class TestServiceRest
     }
 
     @Test
+    public void testGetDeployedServiceProps() throws Exception {
+        deploymentId = deployService();
+        String url = servicesUrl + "/" + testServiceId + "/" +
+            deploymentId + "/properties";
+
+        HttpResponse response = restHelper.get(url);
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        String responseBody = response.getResponseBody();
+        Map<String, String> serviceProps =
+            SerializationUtil.deserializeMap(responseBody);
+        assertNotNull(serviceProps);
+    }
+
+    @Test
     public void testConfigureService() throws Exception {
         deploymentId = deployService();
 
@@ -217,7 +233,7 @@ public class TestServiceRest
             ServicesConfigDocument.getServiceList(response.getResponseStream());
         assertNotNull(servicesEnd);
         assertNotNull(findService(servicesEnd, testServiceId));
-    }   
+    }
 
     private ServiceInfo findService(List<ServiceInfo> services,
                                     String serviceId) {
