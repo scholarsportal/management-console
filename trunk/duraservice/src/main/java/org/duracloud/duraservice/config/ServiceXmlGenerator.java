@@ -34,6 +34,7 @@ public class ServiceXmlGenerator {
         servicesList.add(buildWebappUtilService());
         servicesList.add(buildHelloWebappWrapper());
         servicesList.add(buildJ2kService());
+        servicesList.add(buildImageConversionService());
         return servicesList;
     }
 
@@ -229,6 +230,111 @@ public class ServiceXmlGenerator {
 
         return j2kService;
     }
+
+    private ServiceInfo buildImageConversionService() {
+        ServiceInfo icService = new ServiceInfo();
+        icService.setId(6);
+        icService.setContentId("imageconversionservice-1.0.0.zip");
+        String desc = "The Image Conversion service provides a simple way to " +
+            "convert image files from one format to another. A space is " +
+            "selected from which image files will be read and converted to " +
+            "the chosen format. The converted image files will be stored in " +
+            "the destination space along with a file which details the " +
+            "results of the conversion process. Note that the ImageMagick " +
+            "service must be deployed prior to using the Image Conversion " +
+            "service";
+        icService.setDescription(desc);
+        icService.setDisplayName("Image Conversion Service");
+        icService.setUserConfigVersion("1.0");
+        icService.setServiceVersion("1.0.0");
+        icService.setMaxDeploymentsAllowed(-1);
+
+        // User Configs
+        List<UserConfig> icServiceUserConfig = new ArrayList<UserConfig>();
+
+        // Source space
+        List<Option> spaceOptions = new ArrayList<Option>();
+        Option spaces =
+            new Option("Spaces", ServiceConfigUtil.SPACES_VAR, false);
+        spaceOptions.add(spaces);
+
+        SingleSelectUserConfig sourceSpace =
+            new SingleSelectUserConfig("sourceSpaceId",
+                                       "Source Space",
+                                       spaceOptions);
+
+        TextUserConfig destSpace =
+            new TextUserConfig("destSpaceId",
+                               "Destination Space, a space which does not " +
+                                   "already exist will be created.", "");
+
+        // To Format
+        List<Option> toFormatOptions = new ArrayList<Option>();
+        Option gif =  new Option("GIF", "gif", false);
+        Option jpg =  new Option("JPG", "jpg", false);
+        Option png =  new Option("PNG", "png", false);
+        Option tiff =  new Option("TIFF", "tiff", false);
+        Option jp2 =  new Option("JP2", "jp2", false);
+        Option bmp =  new Option("BMP", "bmp", false);
+        Option pdf =  new Option("PDF", "pdf", false);
+        Option psd =  new Option("PSD", "psd", false);
+        toFormatOptions.add(gif);
+        toFormatOptions.add(jpg);
+        toFormatOptions.add(png);
+        toFormatOptions.add(tiff);
+        toFormatOptions.add(jp2);
+        toFormatOptions.add(bmp);
+        toFormatOptions.add(pdf);
+        toFormatOptions.add(psd);
+
+        SingleSelectUserConfig toFormat =
+            new SingleSelectUserConfig("toFormat",
+                                       "Destination Format",
+                                       toFormatOptions);
+
+        // Name Prefix
+        TextUserConfig namePrefix =
+            new TextUserConfig("namePrefix",
+                               "Source file name prefix, only files " +
+                               "beginning with this value will be converted.",
+                               "");
+
+        // Name Suffix
+        TextUserConfig nameSuffix =
+            new TextUserConfig("nameSuffix",
+                               "Source file name suffix, only files ending " +
+                               "with this value will be converted.",
+                               "");
+
+        icServiceUserConfig.add(sourceSpace);
+        icServiceUserConfig.add(destSpace);
+        icServiceUserConfig.add(toFormat);
+        icServiceUserConfig.add(namePrefix);
+        icServiceUserConfig.add(nameSuffix);
+
+        icService.setUserConfigs(icServiceUserConfig);
+
+        // System Configs
+        List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
+
+        SystemConfig host =
+            new SystemConfig("duraStoreHost", "$DURASTORE-HOST", "localhost");
+        SystemConfig port =
+            new SystemConfig("duraStorePort", "$DURASTORE-PORT", "8080");
+        SystemConfig context =
+            new SystemConfig("duraStoreContext", "$DURASTORE-CONTEXT", "durastore");
+
+        systemConfig.add(host);
+        systemConfig.add(port);
+        systemConfig.add(context);
+
+        icService.setSystemConfigs(systemConfig);
+
+        icService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return icService;
+    }
+
 
     private List<DeploymentOption> getSimpleDeploymentOptions() {
         // Deployment Options

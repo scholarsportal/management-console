@@ -325,6 +325,15 @@ public class ContentStoreImpl implements ContentStore{
         validateContentId(contentId);
         String task = "add content";
         String url = buildContentURL(spaceId, contentId);
+
+        // Include mimetype as metadata
+        if(contentMimeType != null && !contentMimeType.equals("")) {
+            if(contentMetadata == null) {
+                contentMetadata = new HashMap<String, String>();
+            }
+            contentMetadata.put(CONTENT_MIMETYPE, contentMimeType);
+        }
+
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
         try {
