@@ -200,6 +200,18 @@ public class S3StorageProvider
         return exists;
     }
 
+    private void waitForSpaceAvailable(String spaceId) {
+        int maxLoops = 10;
+        for (int loops = 0;
+             !spaceExists(spaceId) && loops < maxLoops;
+             loops++) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -208,6 +220,9 @@ public class S3StorageProvider
         throwIfSpaceExists(spaceId);
 
         S3Bucket bucket = createBucket(spaceId);
+
+        // Wait for the bucket to be available before adding metadata
+        waitForSpaceAvailable(spaceId);
 
         // Add space metadata
         Map<String, String> spaceMetadata = new HashMap<String, String>();
@@ -245,7 +260,11 @@ public class S3StorageProvider
         }
 
         String bucketMetadata = getBucketName(spaceId) + SPACE_METADATA_SUFFIX;
-        deleteContent(spaceId, bucketMetadata);
+        try {
+            deleteContent(spaceId, bucketMetadata);
+        } catch(NotFoundException e) {
+            // Metadata has already been removed. Continue deleting space.
+        }
 
         deleteBucket(spaceId);
     }

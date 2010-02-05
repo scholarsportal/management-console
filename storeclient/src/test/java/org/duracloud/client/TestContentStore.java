@@ -53,7 +53,7 @@ public class TestContentStore
 
     static {
         String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "storeclient-test-space" + random;
+        spaceId = "storeclient-test-space-" + random;
     }
 
     @Override
@@ -93,12 +93,17 @@ public class TestContentStore
     @After
     public void tearDown() throws Exception {
         // Make sure the space is deleted
-        try {
-            for(String spaceId : spaces) {
+        for(String spaceId : spaces) {
+            if(spaceExists(spaceId)) {
                 store.deleteSpace(spaceId);
             }
-        } catch(ContentStoreException cse) {
-            // Ignore, the space was likely already removed
+
+            int maxLoops = 10;
+            for (int loops = 0;
+                 spaceExists(spaceId) && loops < maxLoops;
+                 loops++) {
+                Thread.sleep(1000);
+            }
         }
     }
 
@@ -182,8 +187,27 @@ public class TestContentStore
 
     private void createSpace(String spaceId, Map<String, String> spaceMetadata)
         throws Exception {
-        store.createSpace(spaceId, spaceMetadata);
+        if(!spaceExists(spaceId)) {
+            store.createSpace(spaceId, spaceMetadata);           
+
+            int maxLoops = 10;
+            for (int loops = 0;
+                 !spaceExists(spaceId) && loops < maxLoops;
+                 loops++) {
+                Thread.sleep(1000);
+            }
+        }
+
         spaces.add(spaceId);
+    }
+
+    private boolean spaceExists(String spaceId) throws Exception {
+        try {
+            store.getSpaceMetadata(spaceId);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
     }
 
     @Test
