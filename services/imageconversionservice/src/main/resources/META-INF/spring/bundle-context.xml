@@ -17,10 +17,10 @@
     <property name="duraStorePort" value="8080"/>
     <property name="duraStoreContext" value="durastore"/>
     <property name="toFormat" value="jp2"/>
-    <property name="sourceSpaceId" value="conversion-test-source"/>
-    <property name="destSpaceId" value="conversion-test-dest"/>
+    <property name="sourceSpaceId" value="image-conversion-source"/>
+    <property name="destSpaceId" value="image-conversion-dest"/>
     <property name="namePrefix" value=""/>
-    <property name="nameSuffix" value=".tiff"/>
+    <property name="nameSuffix" value=""/>
   </bean>
 
 </beans>

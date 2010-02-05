@@ -53,7 +53,7 @@ public class TestContentStore
 
     static {
         String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "space" + random;
+        spaceId = "storeclient-test-space" + random;
     }
 
     @Override

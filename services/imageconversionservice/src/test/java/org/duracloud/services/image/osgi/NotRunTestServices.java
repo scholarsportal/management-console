@@ -18,6 +18,8 @@ import java.io.File;
  * ImageMagick be installed on the host machine. This is why the test is
  * not included in the standard build.
  *
+ * To run this test use: mvn clean install -P profile-systest
+ *
  * @author Bill Branan
  *         Date: Jan 27, 2010
  */
