@@ -236,24 +236,31 @@ dojo.addOnLoad(function(){
 
 
 dojo.addOnLoad(function(){
-	/*adds mouse listeners on spaces table rows*/
+	//adds mouse listeners on spaces table rows
+	//will throw an error if spaces table is not found
+	try{
+		
 	dojo.query("#spacesTable > tbody > tr",document).forEach(
-	    function(row) {
-	    	dojo.connect(row, 'onmouseover', function() {
-				dojo.addClass(row,"hover");
-				dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'visible'});
-	    	});
+		    function(row) {
+		    	dojo.connect(row, 'onmouseover', function() {
+					dojo.addClass(row,"hover");
+					dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'visible'});
+		    	});
+	
+	           	dojo.connect(row, 'onmouseout', 
+					function(){
+						dojo.removeClass(row,"hover");
+						dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'hidden'});
+	      		});
+		    }
+		);	
+	}catch(err){
+	}
 
-           	dojo.connect(row, 'onmouseout', 
-				function(){
-					dojo.removeClass(row,"hover");
-					dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'hidden'});
-      		});
-	    }
-	);		
 });
 
 dojo.addOnLoad(function(){
+	
 	dojo.query(".boxcontrol .miniform-button").forEach(
 		    function(element) {
 		    	dojo.connect(element, 'onclick', function(evt) {

@@ -8,6 +8,13 @@
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
 
+		<div><tiles:insertTemplate
+			template="/WEB-INF/jsp/layout/metadata-control.jsp">
+			<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
+			<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
+			<tiles:putAttribute name="metadata"
+				value="${contentItem.extendedMetadata}" />
+		</tiles:insertTemplate></div>
 
 		<div><tiles:insertTemplate
 			template="/WEB-INF/jsp/layout/tag-control.jsp">
@@ -16,13 +23,7 @@
 			<tiles:putAttribute name="tags" value="${contentItem.metadata.tags}" />
 		</tiles:insertTemplate></div>
 
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/metadata-control.jsp">
-			<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
-			<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
-			<tiles:putAttribute name="metadata"
-				value="${contentItem.extendedMetadata}" />
-		</tiles:insertTemplate></div>
+
 
 
 		<div class="sidebar-actions">
