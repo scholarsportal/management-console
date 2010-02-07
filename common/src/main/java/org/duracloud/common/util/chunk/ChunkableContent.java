@@ -1,6 +1,8 @@
 package org.duracloud.common.util.chunk;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CountingInputStream;
+import org.apache.log4j.Logger;
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -13,6 +15,8 @@ import java.util.Iterator;
  *         Date: Feb 2, 2010
  */
 public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<ChunkInputStream> {
+
+    private final Logger log = Logger.getLogger(getClass());
 
     private CountingInputStream largeStream;
     private String contentId;
@@ -61,5 +65,14 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
 
     public Iterator<ChunkInputStream> iterator() {
         return this;
+    }
+
+    public long getMaxChunkSize() {
+        return maxChunkSize;
+    }
+
+    public void close() {
+        log.debug("ChunkableContent.close()");
+        IOUtils.closeQuietly(largeStream);
     }
 }
