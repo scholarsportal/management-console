@@ -21,6 +21,7 @@
         <include>org.duracloud:common:bundle:1.0.0</include>
         <include>org.apache.commons:com.springsource.org.apache.commons.io:jar:1.4.0</include>
         <include>log4j:log4j:jar:1.2.13</include>
+        <include>commons-cli:commons-cli:jar:1.2</include>
       </includes>
     </dependencySet>
   </dependencySets>
