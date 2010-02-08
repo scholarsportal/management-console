@@ -42,6 +42,21 @@ public abstract class SelectableUserConfig extends UserConfig {
             }
         }
     }
+    
+    @Override
+    public String getDisplayValue() {
+        StringBuffer b = new StringBuffer();
+        int count = 0;
+        for(Option o : options){
+            if(o.isSelected()){
+                if(count > 0) b.append(", "); 
+                b.append(o.getDisplayName());
+                count++;
+            }
+        }
+        
+        return b.toString();
+    }
 
     @Override
     public boolean equals(Object o) {

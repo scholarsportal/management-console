@@ -16,5 +16,6 @@ public class MultiSelectUserConfig extends SelectableUserConfig {
     public InputType getInputType() {
         return InputType.MULTISELECT;
     }
+    
 
 }

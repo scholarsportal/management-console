@@ -431,3 +431,8 @@ table.extended-metadata > tbody > tr {
 	background-color: pink;
 }
 
+.details table {
+	margin-top:0.5em;
+	border:1px dashed #DDD;
+}
+
