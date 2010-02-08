@@ -1,5 +1,10 @@
 package org.duracloud.utilities.akubra;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -203,7 +208,7 @@ class DuraCloudBlob
 
         // if needed, set up a listener to wait until the content write
         // is visible to subsequent readers.
-        ContentWriteListener listener = null;
+        final ContentWriteListener listener;
         if (readAfterWrite) {
             final DuraCloudBlob blob = this;
             listener = new ContentWriteListener() {
@@ -239,46 +244,98 @@ class DuraCloudBlob
                     }
                 }
             };
+        } else {
+            listener = null;
         }
 
-        // Since contentStore expects an InputStream from which it can
-        // read the bytes to be read, but the Blob interface needs to
-        // return an OutputStream to which bytes can be written, we
-        // need to set up a pipe and invoke addContent in a separate
-        // thread.
-        //
-        // ExAwareOutputStream is used in conjunction with this pipe
-        // in order to facilitate exception-passing; if an exception occurs
-        // within contentStore.addContent, the original thread that called
-        // openOutputStream will receive that exception the next time it
-        // attempts a write or close on the returned output stream.
+        final long length = contentLengthFromHints();
 
-        PipedOutputStream pipedOut = new PipedOutputStream();
-        final ExAwareOutputStream eaOut = new ExAwareOutputStream(pipedOut,
-                                                                  listener);
-        final PipedInputStream pipedIn = new PipedInputStream(pipedOut);
-
-        Runnable invoker = new Runnable() {
-            public void run() {
-                try {
-                    contentStore.addContent(spaceId,
-                                            contentId,
-                                            pipedIn,
-                                            contentLengthFromHints(),
-                                            contentTypeFromHints(),
-                                            null);
-                } catch (ContentStoreException e) {
-                    IOException ioe = new IOException("Error writing to store");
-                    ioe.initCause(e);
-                    eaOut.setException(ioe);
-                } finally {
-                    IOUtils.closeQuietly(pipedIn);
+        if (length < 0) {
+            // If Content-Length is not provided, we must compute it before
+            // the stream is written to contentStore because contentStore will
+            // attempt to compute the length in memory if we don't provide
+            // it, which can result in memory exhaustion for large files.
+            //
+            // Here, we take the safe, but slow approach of writing to a
+            // temporary local file in order to get the size, then sending
+            // the content of that file to contentStore.
+            logger.info("Content-Length unspecified; will compute it by "
+                    + "writing to temp file before sending to DuraCloud");
+            final File tempFile = File.createTempFile("duracloud", null);
+            final OutputStream tempFileOut = new BufferedOutputStream(new FileOutputStream(tempFile));
+            return new FilterOutputStream(tempFileOut) {
+                boolean finished = false;
+                @Override
+                public void close() throws IOException {
+                    if (finished) return;
+                    super.close();
+                    InputStream in = new FileInputStream(tempFile);
+                    try {
+                        contentStore.addContent(spaceId,
+                                                contentId,
+                                                in,
+                                                tempFile.length(),
+                                                contentTypeFromHints(),
+                                                null);
+                        if (listener != null) {
+                            listener.contentWritten();
+                        }
+                    } catch (ContentStoreException e) {
+                        IOException ioe = new IOException("Error writing to store");
+                        ioe.initCause(e);
+                        throw ioe;
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                        if (tempFile.delete()) finished = true;
+                    }
                 }
-            }
-        };
-        new Thread(invoker).start();
+                @Override
+                public void finalize() {
+                    if (!finished) {
+                        IOUtils.closeQuietly(tempFileOut);
+                        tempFile.delete();
+                    }
+                }
+            };
+        } else {
+            // Since contentStore expects an InputStream from which it can
+            // read the bytes to be read, but the Blob interface needs to
+            // return an OutputStream to which bytes can be written, we
+            // need to set up a pipe and invoke addContent in a separate
+            // thread.
+            //
+            // ExAwareOutputStream is used in conjunction with this pipe
+            // in order to facilitate exception-passing; if an exception occurs
+            // within contentStore.addContent, the original thread that called
+            // openOutputStream will receive that exception the next time it
+            // attempts a write or close on the returned output stream.
+            PipedOutputStream pipedOut = new PipedOutputStream();
+            final ExAwareOutputStream eaOut = new ExAwareOutputStream(pipedOut,
+                                                                  listener);
+            final PipedInputStream pipedIn = new PipedInputStream(pipedOut);
 
-        return eaOut;
+            Runnable invoker = new Runnable() {
+                public void run() {
+                    try {
+                        contentStore.addContent(spaceId,
+                                                contentId,
+                                                pipedIn,
+                                                length,
+                                                contentTypeFromHints(),
+                                                null);
+                    } catch (ContentStoreException e) {
+                        IOException ioe = new IOException("Error writing to store");
+                        ioe.initCause(e);
+                        eaOut.setException(ioe);
+                    } finally {
+                        IOUtils.closeQuietly(pipedIn);
+                    }
+                }
+            };
+            new Thread(invoker).start();
+
+            return eaOut;
+        }
     }
 
     private String contentTypeFromHints() {
@@ -309,15 +366,16 @@ class DuraCloudBlob
 
     private void checkTillTrueOrTimeout(Checker checker) {
         try {
-            // check/sleep.2sec/check/sleep.6sec/check/sleep 1.8sec/check/warn
+            // check/sleep.2sec/check/sleep.6sec/
+            // check/sleep 1.8sec/check/sleep5.4/check/warn
             long sleptMillis = 0;
             long sleepMillis = 200;
-            while (!checker.check() && sleptMillis < 2000) {
+            while (!checker.check() && sleptMillis < 5000) {
                 Thread.sleep(sleepMillis);
                 sleptMillis += sleepMillis;
                 sleepMillis = sleepMillis * 3;
             }
-            if (sleptMillis >= 2000 && !checker.check()) {
+            if (sleptMillis >= 5000 && !checker.check()) {
                 logger.warn(checker.getOperation() + " committed, but may not "
                         + "yet be visible (read-after-write polling timed out "
                         + "after " + sleptMillis + "ms)");
