@@ -1,7 +1,7 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="base-service" >
 	<tiles:putAttribute name="title">
-		<spring:message code="services" />:: Available	
+		<spring:message code="services" />:: <spring:message code="available"/>	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="mainTab" value="services"/>
 	<tiles:putAttribute name="menu">
@@ -12,10 +12,10 @@
 			<tiles:putAttribute name="header">
 				<tiles:insertDefinition name="base-content-header">
 					<tiles:putAttribute name="title">
-						Available Services
+						<spring:message code="available.services"/>
 					</tiles:putAttribute>	
 					<tiles:putAttribute name="subtitle">
-						<a id="deployedServicesLink" href="<c:url value="/services/deployed.htm"/>">Deployed</a>
+						<a id="deployedServicesLink" href="<c:url value="/services/deployed.htm"/>"><spring:message code="deployed"/></a>
 					</tiles:putAttribute>	
 
 				</tiles:insertDefinition>
@@ -35,7 +35,7 @@
 							<a href="<c:url value="/services/deploy">
 								<c:param name="serviceId" value="${serviceInfo.id}"/>
 								<c:param name="returnTo" value="${currentUrl}"/>
-								</c:url>">Deploy New Instance</a>							
+								</c:url>"><spring:message code="deploy.new"/></a>							
 							</td>
 						</tr>
 					</table>

@@ -42,6 +42,7 @@
         <prop key="/services/deployed.htm">deployedServicesController</prop>
         <prop key="/services/available.htm">availableServicesController</prop>
         <prop key="/services/undeploy">undeployServiceController</prop>
+        <prop key="/data/services/deployment/properties">serviceDeploymentPropertiesController</prop>
         
 
       </props>
@@ -121,6 +122,9 @@
   </bean>  
   <bean id="undeployServiceController" class="org.duracloud.duradmin.control.UndeployServiceController">
   </bean>
+  
+  <bean id="serviceDeploymentPropertiesController" class="org.duracloud.duradmin.control.ServiceDeploymentPropertiesController"/>
+  
   
     <bean id="tilesConfigurer"
           class="org.duracloud.duradmin.view.tiles2.TilesConfigurer" >
