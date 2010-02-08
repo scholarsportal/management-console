@@ -271,6 +271,9 @@ class DuraCloudBlob
                     super.close();
                     InputStream in = new FileInputStream(tempFile);
                     try {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Sending {} bytes to DuraCloud", tempFile.length());
+                        }
                         contentStore.addContent(spaceId,
                                                 contentId,
                                                 in,
@@ -290,10 +293,13 @@ class DuraCloudBlob
                     }
                 }
                 @Override
-                public void finalize() {
+                protected void finalize() {
                     if (!finished) {
                         IOUtils.closeQuietly(tempFileOut);
-                        tempFile.delete();
+                        if (!tempFile.delete()) {
+                            logger.warn("Unable to delete temp file: "
+                                    + tempFile.getPath());
+                        }
                     }
                 }
             };
@@ -317,6 +323,9 @@ class DuraCloudBlob
             Runnable invoker = new Runnable() {
                 public void run() {
                     try {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Sending {} bytes to DuraCloud", length);
+                        }
                         contentStore.addContent(spaceId,
                                                 contentId,
                                                 pipedIn,
