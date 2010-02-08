@@ -37,10 +37,25 @@ public class ScrollableListTest {
     public void testNextPrevious() {
         assertEquals(false, scrollableList.isPreviousAvailable());
         assertEquals(true, scrollableList.isNextAvailable());
+        assertEquals(false, scrollableList.isPreviousAvailable());
+
         scrollableList.next();
         assertEquals("list-value-10", scrollableList.getResultList().get(0));
 
+        scrollableList.next();
+        assertEquals("list-value-20", scrollableList.getResultList().get(0));
+
+        scrollableList.next();
+        assertEquals("list-value-30", scrollableList.getResultList().get(0));
+
+        scrollableList.previous();
+        assertEquals("list-value-20", scrollableList.getResultList().get(0));
+        
         assertEquals(true, scrollableList.isPreviousAvailable());
+        scrollableList.previous();
+        assertEquals("list-value-10", scrollableList.getResultList().get(0));
+        assertEquals(true, scrollableList.isPreviousAvailable());
+
         scrollableList.previous();
         assertEquals("list-value-0", scrollableList.getResultList().get(0));
         assertEquals(false, scrollableList.isPreviousAvailable());
@@ -96,11 +111,7 @@ public class ScrollableListTest {
                             + maxResults, list.size()));
                 }
             } else {
-                if (isPreviousAvailable()) {
-                    return new LinkedList<String>();
-                } else {
-                    return list.subList(0, Math.min(maxResults, list.size()));
-                }
+                return list.subList(0, Math.min(maxResults, list.size()));
             }
         }
 
