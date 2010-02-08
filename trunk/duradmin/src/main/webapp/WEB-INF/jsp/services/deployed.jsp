@@ -25,17 +25,18 @@
 					<table >
 						<tr>
 							<td>
-								${serviceInfo.displayName}
+								<span title="${serviceInfo.description}">${serviceInfo.displayName}</span>
 							</td>
 							<td style="text-align:right">
 								<c:if test="${serviceInfo.newDeploymentAllowed}">
 									<a href="<c:url value="/services/deploy">
 									<c:param name="serviceId" value="${serviceInfo.id}"/>
 									<c:param name="returnTo" value="${currentUrl}"/>
-									</c:url>">Deploy New Instance</a>
+									</c:url>"><spring:message code="deploy.new"/></a>
 								</c:if>
 							</td>
 						</tr>
+						<!-- 
 						<tr>
 							<td colspan="2">
 								<p style="margin-left:3em">
@@ -43,6 +44,8 @@
 								</p>
 							</td>
 						</tr>
+						 -->
+						
 					</table>
 					<table>
 						<tr >
@@ -51,12 +54,12 @@
 									<tbody>
 									<tr>
 										<th>
-											Hostname
+											<spring:message code="hostname"/>
 										</th>
 										<th>
-											Status
+											<spring:message code="status"/>
 										</th>
-										<th style="text-align:right">Configuration</th>
+										<th style="text-align:right"><spring:message code="configuration"/></th>
 									</tr>
 									<c:forEach items="${serviceInfo.deployments}" var="deployment" varStatus="status">
 									<tr id="deployment-${serviceInfo.id}-${deployment.id}">
@@ -70,16 +73,39 @@
 
 										<td style="text-align:right">
 											<div  id="actionDiv">
-												View | 
+												<a onclick="showConfigurationDetails(event, '${serviceInfo.id}','${deployment.id}')"><spring:message code="view"/></a> | 
 												<a href="<c:url value="/services/deploy">
 													<c:param name="serviceId" value="${serviceInfo.id}"/>
 													<c:param name="deploymentId" value="${deployment.id}"/>
 													<c:param name="returnTo" value="${currentUrl}"/>
-													</c:url>">Reconfigure</a> |
+													</c:url>"><spring:message code="reconfigure"/></a> |
 												
 												<input type="button" 
 													   onclick="undeployService('${serviceInfo.id}','${deployment.id}')" 
 													   value="Undeploy"/>
+											</div>
+											<div id="configurationDetails" class="details" style="display:none;">
+												
+													<table>
+														<tr>
+															<th colspan="2">User Configuration</th>
+														</tr>
+														<c:forEach items="${deployment.userConfigs}" var="uc">
+														<tr>
+															<td>${uc.displayName}</td>
+															<td>${uc.displayValue}</td>
+														</tr>												
+														</c:forEach>
+														<tr>
+															<td colspan="2">
+																<c:if test="${empty deployment.userConfigs}">
+																	This deployed service does not support user configuration.
+																</c:if>
+															</td>
+														</tr>
+													</table>
+
+													<!-- properties table gets inserted here by javascript  -->													
 											</div>
 										</td>
 									</tr>
