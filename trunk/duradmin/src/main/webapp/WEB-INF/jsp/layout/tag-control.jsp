@@ -36,7 +36,7 @@
 					<c:forEach items="${tags}" var="tag" varStatus="status">
 						<div class="small tag">
 							${tag}  
-							<input style="visibility:hidden" type="button"  class="small minibutton"  value="x" onclick="removeTag('${spaceId}', '${tag}','${contentId}', this.parentNode);"/>
+							<input style="visibility:hidden" type="button"  class="small minibutton"  value="x" onclick="removeTag('<c:out value="${spaceId}"/>', '<c:out value="${tag}"/>','<c:out value="${contentId}"/>', this.parentNode);"/>
 						</div>
 					</c:forEach>					
 			</c:when>
