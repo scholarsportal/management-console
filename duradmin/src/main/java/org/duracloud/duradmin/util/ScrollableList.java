@@ -1,9 +1,8 @@
 
 package org.duracloud.duradmin.util;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Stack;
 
 public abstract class ScrollableList<E>
         implements Scrollable<E> {
@@ -21,7 +20,8 @@ public abstract class ScrollableList<E>
      * The markers represent the last item in each previous "page" of results.
      * The last element in the list refers to the marker for the current page.
      */
-    private Queue<E> markers = new LinkedList<E>();
+    //private Queue<E> markers = new LinkedList<E>();
+    private Stack<E> markers = new Stack<E>();
 
     public long getMaxResultsPerPage() {
         return this.maxResultsPerPage;
@@ -52,10 +52,10 @@ public abstract class ScrollableList<E>
         if (!isNextAvailable()) {
             return;
         }
-        //put curent marker in the previous queue.
+        //put current marker in the marker stack.
         E previousMarker = this.currentMarker;
         if (previousMarker != null) {
-            this.markers.add(previousMarker);
+            this.markers.push(previousMarker);
         }
 
         //set the currentMarker
@@ -69,7 +69,7 @@ public abstract class ScrollableList<E>
         } catch (DataRetrievalException ex) {
             //rollback state
             if (previousMarker != null) {
-                this.markers.remove();
+                this.markers.pop();
             }
             this.currentMarker = previousMarker;
             throw new RuntimeException(ex);
@@ -85,10 +85,8 @@ public abstract class ScrollableList<E>
 
     public void previous() {
         if (isPreviousAvailable()) {
-            //pop the "current" marker off the queue
-            this.markers.remove();
             if (this.markers.size() > 0) {
-                this.currentMarker = this.markers.remove();
+                this.currentMarker = this.markers.pop();
             } else {
                 this.currentMarker = null;
             }
@@ -98,7 +96,7 @@ public abstract class ScrollableList<E>
     }
 
     public boolean isPreviousAvailable() {
-        return this.markers.size() > 0;
+        return this.markers.size() > 0 || this.currentMarker != null ;
     }
 
     public boolean isNextAvailable() {
@@ -125,8 +123,7 @@ public abstract class ScrollableList<E>
 
     protected final void update() throws DataRetrievalException {
         if (markedForUpdate) {
-            this.resultList = getData(isPreviousAvailable()? this.currentMarker : null);
-            this.currentMarker = getLastResultInCurrentList();
+            this.resultList = getData(isPreviousAvailable() || this.currentMarker != null? this.currentMarker : null);
             markedForUpdate = false;
         }
     }
