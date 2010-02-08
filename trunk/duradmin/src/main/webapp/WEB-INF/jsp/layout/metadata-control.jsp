@@ -13,9 +13,9 @@
 
 	<tiles:putAttribute name="miniform">
 		<form action="<c:url value="/spaces/metadata/add"/>" method="post" >
-			<input type="hidden" name="spaceId" value="${spaceId}"/>
-			<input type="hidden" name="contentId" value="${contentId}"/>
-			<input type="hidden" name="returnTo" value="${currentUrl}"/>
+			<input type="hidden" name="spaceId" value="<c:out value="${spaceId}"/>"/>
+			<input type="hidden" name="contentId" value="<c:out value="${contentId}"/>"/>
+			<input type="hidden" name="returnTo" value="<c:out value="${currentUrl}"/>"/>
 			<div>
 				<input style="min-width:10em" name="name" type="text" />
 				<textarea style="min-width:15em" name="value" rows="3" cols="10"></textarea>

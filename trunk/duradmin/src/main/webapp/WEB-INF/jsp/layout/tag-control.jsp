@@ -19,9 +19,9 @@
 				To add multiple tags at a time, separate the values with a "|" (pipe) character.
 			</p>
 			<div>
-				<input type="hidden" name="spaceId" value="${spaceId}"/>
-				<input type="hidden" name="contentId" value="${contentId}"/>
-				<input type="hidden" name="returnTo" value="${currentUrl}"/>
+			<input type="hidden" name="spaceId" value="<c:out value="${spaceId}"/>"/>
+			<input type="hidden" name="contentId" value="<c:out value="${contentId}"/>"/>
+			<input type="hidden" name="returnTo" value="<c:out value="${currentUrl}"/>"/>
 				<input type="text" name="tag" type="text" size="13"/> 
 			</div>
 			<div class="miniform-buttons">
