@@ -112,7 +112,8 @@ public class ContentStoreImpl implements ContentStore{
             } else {
                 url += "?";
             }
-            url += (name + "=" + value);
+            
+            url += (name + "=" + EncodeUtil.urlEncode(value));
         }
         return url;
     }
