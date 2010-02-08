@@ -27,6 +27,10 @@ public class TextUserConfig extends UserConfig {
         this.value = value;
     }
 
+    public String getDisplayValue(){
+        return this.value;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {

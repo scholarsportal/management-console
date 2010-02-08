@@ -71,6 +71,8 @@ public abstract class UserConfig implements Serializable {
         return true;
     }
 
+    public abstract String getDisplayValue();
+    
     @Override
     public int hashCode() {
         int result = id;

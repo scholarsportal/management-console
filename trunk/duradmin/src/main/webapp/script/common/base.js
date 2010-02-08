@@ -330,3 +330,48 @@ function makeVisible(root,visible){
 function hide(event){
 	makeVisible(event.target,false);
 }
+
+function showConfigurationDetails(event, serviceId, deploymentId){
+	var root = event.target.parentNode.parentNode;
+	var configNodeQuery = "[id='configurationDetails']";
+	dojo.query(configNodeQuery,root).style("display","inline");
+	dojo.query(configNodeQuery,root).forEach(function (configNode) {
+		//remove property table if it exists.
+		dojo.query("[id='propertyTable']", root).forEach(function(node){
+			dojo.destroy(node);
+		});
+		
+		var table = dojo.create("table", {id:"propertyTable"}, configNode);
+		var header = dojo.create("tr",null, table);
+		dojo.create("th", {colspan: 2, innerHTML:'Properties'}, header);
+
+		dojo.xhrGet( {
+		    // The following URL must match that used to test the server.
+		    url: "/duradmin/data/services/deployment/properties?serviceInfoId="+serviceId + "&deploymentId="+deploymentId,
+		    handleAs: "json",
+		    load: function(responseObject, ioArgs) {
+			console.debug(responseObject);
+			  var properties = responseObject.properties;
+			  var data = new Array();
+			  for(i = 0; i < properties.length; i++){
+				  data[i] = [properties[i].name, properties[i].value];
+			  }
+			  populateTable(table, data);
+			},
+			error: function(responseObject, ioArgs){
+		          console.error("HTTP status code: ", ioArgs.xhr.status); 
+				  var data = new Array(['unable to load properties:', "HTTP status code: "+ ioArgs.xhr.status]);
+				  populateTable(table, data);
+			}
+		});
+	});
+}
+
+function populateTable(table, data) {
+	for(i = 0; i < data.length; i++){
+		var row = dojo.create("tr",null,table);
+		for(j = 0; j < data[i].length; j++){
+			dojo.create("td", {innerHTML: data[i][j]}, row);
+		}
+	}
+}
