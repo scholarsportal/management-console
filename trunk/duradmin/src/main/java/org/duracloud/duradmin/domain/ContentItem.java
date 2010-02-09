@@ -25,6 +25,8 @@ public class ContentItem
     private String contentId;
 
     private String contentMimetype;
+    
+    private String downloadURL;
 
     private List<NameValuePair> extendedMetadata;
 
@@ -65,6 +67,7 @@ public class ContentItem
         this.contentId = contentId;
     }
 
+    
     public String getEncodedContentId() {
         String contentId = getContentId();
         return EncodeUtil.urlEncode(contentId);
@@ -114,6 +117,16 @@ public class ContentItem
     public void setExtendedMetadata(Map<String, String> extendedMetadata) {
         this.extendedMetadata =
                 MetadataUtils.convertExtendedMetadata(extendedMetadata);
+    }
+
+    
+    public String getDownloadURL() {
+        return downloadURL;
+    }
+
+    
+    public void setDownloadURL(String downloadURL) {
+        this.downloadURL = downloadURL;
     }
 
 }

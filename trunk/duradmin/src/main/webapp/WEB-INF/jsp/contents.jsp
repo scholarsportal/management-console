@@ -150,10 +150,12 @@
 										      </c:url>">${content.contentId}</a></b>
 									<div id="actionDiv" class="actions">
 									<ul>
-										<li><a
-											href="<c:url value="${contentStore.baseURL}/${space.spaceId}/${content.encodedContentId}" >
-											   		  <c:param name="storeID" value="${contentStore.storeId}"/>
-											      </c:url>"><spring:message	code="download" /></a></li>
+										<!-- 
+										<li>
+										<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
+											      
+											      </li>
+										-->
 										<li><a
 											href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
