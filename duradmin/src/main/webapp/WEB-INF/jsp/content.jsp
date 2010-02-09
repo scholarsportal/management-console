@@ -73,9 +73,9 @@
 				    </c:url>"><spring:message
 										code="add.contentItem" /></a></li>
 									<li>|</li>
-									<li><a
-										href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.encodedContentId}?storeID=${contentStore.storeId}"><spring:message
-										code="download" /></a></li>
+									<li>
+										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
+									</li>
 								</ul>
 
 								</td>
@@ -95,8 +95,9 @@
 						<table class="property-list">
 							<tr>
 								<td class="label"><spring:message code="contentItem.id" /></td>
-								<td class="value"><a
-									href="${contentStore.baseURL}/${contentItem.spaceId}/${contentItem.encodedContentId}?storeID=${contentStore.storeId}">${contentItem.contentId}</a></td>
+								<td class="value">
+									<a href="<c:url value="${contentItem.downloadURL}"></c:url>">${contentItem.contentId}</a>
+								</td>
 							</tr>
 							<tr>
 								<td class="label"><spring:message code="size" /></td>
