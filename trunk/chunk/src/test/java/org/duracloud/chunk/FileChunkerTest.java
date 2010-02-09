@@ -1,4 +1,4 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -7,6 +7,9 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.duracloud.chunk.writer.ContentWriter;
+import org.duracloud.chunk.writer.FilesystemContentWriter;
+import org.duracloud.chunk.error.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +67,7 @@ public class FileChunkerTest {
     }
 
     @Test
-    public void testLoadContent() throws IOException {
+    public void testLoadContent() throws IOException, NotFoundException {
         long chunkSize = 16384;
         long contentSize = chunkSize * 4 + chunkSize / 2;
 
@@ -83,7 +86,8 @@ public class FileChunkerTest {
 
     private IOFileFilter doTestLoadContent(int runNumber,
                                            long contentSize,
-                                           long chunkSize) throws IOException {
+                                           long chunkSize)
+        throws IOException, NotFoundException {
         String prefix = "load-test";
         String ext = ".txt";
 
@@ -101,7 +105,12 @@ public class FileChunkerTest {
         Collection<File> files = FileUtils.listFiles(destDir, filter, all);
 
         Assert.assertNotNull(files);
-        Assert.assertEquals(contentSize / chunkSize + 1, files.size());
+
+        int partial = 1;
+        if (contentSize % chunkSize == 0) {
+            partial = 0;
+        }
+        Assert.assertEquals(contentSize / chunkSize + partial, files.size());
 
         long totalChunksSize = 0;
         for (File file : files) {

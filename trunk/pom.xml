@@ -53,6 +53,7 @@
       <module>common</module>
       <module>common-db</module>
       <module>serviceconfig</module>
+      <module>chunk</module>
       <module>computeprovider</module>
 <!--      <module>ec2computeprovider</module>-->
       <module>ec2typicacomputeprovider</module>
