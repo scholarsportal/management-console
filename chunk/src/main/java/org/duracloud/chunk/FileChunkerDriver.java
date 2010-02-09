@@ -1,4 +1,4 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -7,10 +7,17 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.writer.ContentWriter;
+import org.duracloud.chunk.writer.DuracloudContentWriter;
+import org.duracloud.chunk.writer.FilesystemContentWriter;
+import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.error.ContentStoreException;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,22 +32,17 @@ import java.io.IOException;
 public class FileChunkerDriver {
 
     private static void chunk(File fromDir,
-                              File toDir,
+                              File toSpace,
                               Long chunkSize,
-                              IOFileFilter filter) {
+                              IOFileFilter filter,
+                              ContentWriter writer) throws NotFoundException {
 
         if (!fromDir.isDirectory()) {
             throw new DuraCloudRuntimeException("Invalid dir: " + fromDir);
         }
 
-        if (!toDir.exists()) {
-            toDir.mkdirs();
-        }
-
-        ContentWriter writer = new FilesystemContentWriter();
         FileChunker chunker = new FileChunker(writer, chunkSize);
-        chunker.addContentFrom(fromDir, toDir.getPath(), filter);
-
+        chunker.addContentFrom(fromDir, toSpace.getPath(), filter);
     }
 
     private static Long getChunkSize(String arg) {
@@ -85,29 +87,39 @@ public class FileChunkerDriver {
         Option add = new Option("a",
                                 "add",
                                 true,
-                                "add content from <fromDir> to <toDir> " +
+                                "add content from <fromDir> to <space> " +
                                     "of max chunk size <chunkSize>" +
                                     "in units of K,M,G");
         add.setArgs(3);
-        add.setArgName("fromDir toDir chunkSize[K|M|G]");
+        add.setArgName("fromDir space chunkSize[K|M|G]");
         add.setValueSeparator(' ');
 
         Option filteredAdd = new Option("A",
                                         "filteredadd",
                                         true,
                                         "add content from " +
-                                            "<fromDir> to <toDir> " +
+                                            "<fromDir> to <space> " +
                                             "of max chunk size <chunkSize> " +
                                             "in units of K,M,G " +
                                             "with <filenameFilter>");
         filteredAdd.setArgs(4);
-        filteredAdd.setArgName("fromDir toDir chunkSize[K|M|G] filenameFilter");
+        filteredAdd.setArgName("fromDir space chunkSize[K|M|G] filenameFilter");
         filteredAdd.setValueSeparator(' ');
+
+        Option cloud = new Option("c",
+                                  "cloudstore",
+                                  true,
+                                  "use cloud store found at <host>:<port> " +
+                                      "as content dest");
+        cloud.setArgs(2);
+        cloud.setArgName("host:port");
+        cloud.setValueSeparator(':');
 
         Options options = new Options();
         options.addOption(create);
         options.addOption(add);
         options.addOption(filteredAdd);
+        options.addOption(cloud);
 
         return options;
     }
@@ -141,9 +153,22 @@ public class FileChunkerDriver {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)
+        throws IOException, NotFoundException, ContentStoreException {
 
         CommandLine cmd = parseArgs(args);
+
+        ContentWriter writer;
+        if (cmd.hasOption("cloudstore")) {
+            String[] vals = cmd.getOptionValues("cloudstore");
+            String host = vals[0];
+            String port = vals[1];
+            ContentStoreManager mgr = new ContentStoreManagerImpl(host, port);
+
+            writer = new DuracloudContentWriter(mgr.getPrimaryContentStore());
+        } else {
+            writer = new FilesystemContentWriter();
+        }
 
         if (cmd.hasOption("add")) {
             String[] vals = cmd.getOptionValues("add");
@@ -152,7 +177,7 @@ public class FileChunkerDriver {
             Long chunkSize = getChunkSize(vals[2]);
 
             IOFileFilter filter = FileFilterUtils.trueFileFilter();
-            chunk(fromDir, toDir, chunkSize, filter);
+            chunk(fromDir, toDir, chunkSize, filter, writer);
 
         } else if (cmd.hasOption("filteredadd")) {
             String[] vals = cmd.getOptionValues("filteredadd");
@@ -161,7 +186,7 @@ public class FileChunkerDriver {
             Long chunkSize = getChunkSize(vals[2]);
             IOFileFilter filter = new RegexFileFilter(".*" + vals[3] + ".*");
 
-            chunk(fromDir, toDir, chunkSize, filter);
+            chunk(fromDir, toDir, chunkSize, filter, writer);
 
         } else if (cmd.hasOption("generate")) {
             String[] vals = cmd.getOptionValues("generate");
@@ -173,6 +198,7 @@ public class FileChunkerDriver {
         } else {
             usage();
         }
+
     }
 
 }

@@ -1,4 +1,4 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -7,6 +7,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.chunk.writer.ContentWriter;
+import org.duracloud.chunk.error.NotFoundException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,7 +49,8 @@ public class FileChunker {
      * @param baseDir     of content to push to DataStore
      * @param destSpaceId of content destination
      */
-    protected void addContentFrom(File baseDir, String destSpaceId) {
+    protected void addContentFrom(File baseDir, String destSpaceId)
+        throws NotFoundException {
         this.addContentFrom(baseDir, destSpaceId, TrueFileFilter.TRUE);
     }
 
@@ -61,7 +64,8 @@ public class FileChunker {
      */
     protected void addContentFrom(File baseDir,
                                   String destSpaceId,
-                                  IOFileFilter includes) {
+                                  IOFileFilter includes)
+        throws NotFoundException {
         String contentId;
         InputStream stream;
         ChunkableContent chunkable;
@@ -70,9 +74,12 @@ public class FileChunker {
         for (File file : files) {
             contentId = getContentId(baseDir, file);
             stream = getInputStream(file);
-            chunkable = new ChunkableContent(contentId, stream, maxChunkSize);
+            chunkable = new ChunkableContent(contentId,
+                                             stream,
+                                             file.length(),
+                                             maxChunkSize);
 
-            contentWriter.write(destSpaceId, file.length(), chunkable);
+            contentWriter.write(destSpaceId, chunkable);
         }
     }
 

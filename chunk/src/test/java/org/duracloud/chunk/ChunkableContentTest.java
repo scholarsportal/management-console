@@ -1,4 +1,4 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,6 +47,7 @@ public class ChunkableContentTest {
         chunkFiles = new ArrayList<File>();
         chunkable = new ChunkableContent(contentId,
                                          contentInputStream,
+                                         contentSize,
                                          MAX_CHUNK_SIZE);
     }
 

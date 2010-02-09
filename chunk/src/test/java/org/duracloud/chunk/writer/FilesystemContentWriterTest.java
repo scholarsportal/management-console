@@ -1,8 +1,9 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk.writer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.duracloud.chunk.ChunkableContent;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,8 +58,9 @@ public class FilesystemContentWriterTest {
         long maxChunkSize = 1024;
         ChunkableContent chunkable = new ChunkableContent(contentId,
                                                           contentStream,
+                                                          contentSize,
                                                           maxChunkSize);
-        writer.write(spaceId, contentSize, chunkable);
+        writer.write(spaceId, chunkable);
 
         IOFileFilter all = FileFilterUtils.trueFileFilter();
         Collection<File> files = FileUtils.listFiles(destDir, all, all);

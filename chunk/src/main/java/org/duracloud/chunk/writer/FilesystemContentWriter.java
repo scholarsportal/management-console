@@ -1,8 +1,11 @@
-package org.duracloud.common.util.chunk;
+package org.duracloud.chunk.writer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.chunk.ChunkInputStream;
+import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.ChunksManifest;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,13 +31,10 @@ public class FilesystemContentWriter implements ContentWriter {
      * to a DataStore. In this case, the DataStore is a local filesystem.
      * The arg spaceId is the path to the destination directory.
      *
-     * @param spaceId     destination where arg chunkable content will be written
-     * @param contentSize of arg content
-     * @param chunkable   content to be written
+     * @param spaceId   destination where arg chunkable content will be written
+     * @param chunkable content to be written
      */
-    public void write(String spaceId,
-                      long contentSize,
-                      ChunkableContent chunkable) {
+    public ChunksManifest write(String spaceId, ChunkableContent chunkable) {
         File spaceDir = getSpaceDir(spaceId);
 
         File outFile;
@@ -51,10 +51,8 @@ public class FilesystemContentWriter implements ContentWriter {
 
             flushAndClose(outStream);
         }
-        chunkable.close();
-
+        return chunkable.finalizeManifest();
     }
-
 
     private void copyLarge(OutputStream outStream, ChunkInputStream chunk) {
         try {
