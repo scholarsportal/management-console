@@ -6,7 +6,6 @@ import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.ServicesConfigDocument;
 import org.duracloud.serviceconfig.SystemConfig;
-import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
 import org.duracloud.serviceconfig.user.Option;
 import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
 import org.duracloud.serviceconfig.user.TextUserConfig;
@@ -88,6 +87,7 @@ public class ServiceXmlGenerator {
                                        "Replicate to this store",
                                        storeOptions);
 
+        /* These features have not been implemented as part of the service yet.         
         // Replication Type
         List<Option> repTypeOptions = new ArrayList<Option>();
         Option repType1 =
@@ -123,12 +123,15 @@ public class ServiceXmlGenerator {
             new TextUserConfig("replicateMimetypes",
                                "Only replicate content with these MIME " +
                                    "types (separate with commas)", "");
+        */
 
         repServiceUserConfig.add(fromStoreId);
         repServiceUserConfig.add(toStoreId);
+        /*
         repServiceUserConfig.add(repType);
         repServiceUserConfig.add(repSpaces);
         repServiceUserConfig.add(repMimeTypes);
+        */
 
         repService.setUserConfigs(repServiceUserConfig);
 
@@ -169,7 +172,7 @@ public class ServiceXmlGenerator {
         imService.setDisplayName("ImageMagick Service");
         imService.setUserConfigVersion("1.0");
         imService.setServiceVersion("1.0.0");
-        imService.setMaxDeploymentsAllowed(-1);
+        imService.setMaxDeploymentsAllowed(1);
 
         imService.setDeploymentOptions(getSimpleDeploymentOptions());
 
@@ -182,7 +185,7 @@ public class ServiceXmlGenerator {
         hellowebappService.setContentId("webapputilservice-1.0.0.zip");
         String desc = "The Web App Utility service coordinates the " +
             "(de)installation and startup/shutdown of Apache Tomcat instances" +
-            "that are created to run web application services that deployed " +
+            " that are created to run web application services that deployed " +
             "externally to the hosting OSGi container.";
         hellowebappService.setDescription(desc);
         hellowebappService.setDisplayName("Web App Utility Service");
