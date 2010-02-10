@@ -3,7 +3,7 @@ package org.duracloud.chunk.writer;
 import org.apache.log4j.Logger;
 import org.duracloud.chunk.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
-import org.duracloud.chunk.ChunksManifest;
+import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
@@ -36,51 +36,58 @@ public class DuracloudContentWriter implements ContentWriter {
      */
     public ChunksManifest write(String spaceId, ChunkableContent chunkable)
         throws NotFoundException {
-
         createSpaceIfNotExist(spaceId);
 
-        Map<String, String> metadata = null;
         for (ChunkInputStream chunk : chunkable) {
-            try {
-                contentStore.addContent(spaceId,
-                                        chunk.getChunkId(),
-                                        chunk,
-                                        chunk.getChunkSize(),
-                                        chunk.getMimetype(),
-                                        metadata);
-            } catch (ContentStoreException e) {
-                log.error(e.getFormattedMessage(), e);
-                break;
-            } catch (Exception ex) {
-                log.error("Error adding content:" + ex.getMessage(), ex);
-                break;
+            int tries = 0;
+            while (!addContent(spaceId, chunk) && tries++ < 5) {
+                sleep(1000);
             }
         }
         return chunkable.finalizeManifest();
     }
 
+    private boolean addContent(String spaceId, ChunkInputStream chunk) {
+        Map<String, String> metadata = null;
+        try {
+            contentStore.addContent(spaceId,
+                                    chunk.getChunkId(),
+                                    chunk,
+                                    chunk.getChunkSize(),
+                                    chunk.getMimetype(),
+                                    metadata);
+        } catch (ContentStoreException e) {
+            log.error(e.getFormattedMessage(), e);
+            return false;
+        } catch (Exception ex) {
+            log.error("Error adding content:" + ex.getMessage(), ex);
+            return false;
+        }
+        return true;
+    }
+
     private void createSpaceIfNotExist(String spaceId)
         throws NotFoundException {
         // If space already exists, will not be recreated
+        createSpace(spaceId);
+
+        int tries = 0;
+        boolean exists;
+        while (!(exists = spaceExists(spaceId)) && tries++ < 10) {
+            sleep(1000);
+        }
+
+        if (!exists) {
+            throw new NotFoundException("Space not found: " + spaceId);
+        }
+    }
+
+    private void createSpace(String spaceId) {
         Map<String, String> metadata = null;
         try {
             contentStore.createSpace(spaceId, metadata);
         } catch (ContentStoreException e) {
             // do nothing.
-        }
-
-        int tries = 0;
-        boolean exists;
-        while (!(exists = spaceExists(spaceId)) && tries++ < 10) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // do nothing.
-            }
-        }
-
-        if (!exists) {
-            throw new NotFoundException("Space not found: " + spaceId);
         }
     }
 
@@ -89,6 +96,14 @@ public class DuracloudContentWriter implements ContentWriter {
             return null != contentStore.getSpaceAccess(spaceId);
         } catch (ContentStoreException e) {
             return false;
+        }
+    }
+
+    private void sleep(long napTime) {
+        try {
+            Thread.sleep(napTime);
+        } catch (InterruptedException e) {
+            // do nothing
         }
     }
 
