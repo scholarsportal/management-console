@@ -61,11 +61,9 @@ public class SpaceUtil {
     public static void populateURLs(ContentItem contentItem, ContentStore store){
         String mimetype = contentItem.getMetadata().getMimetype();
         String j2KBaseURL = null;
-        if(IMAGE_J2K_MIME_TYPE.equals(mimetype)){
-            j2KBaseURL = resolveJ2KServiceBaseURL();
-            if(j2KBaseURL != null && mimetype.toLowerCase().contains("image")){
-                contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL));
-            }
+        j2KBaseURL = resolveJ2KServiceBaseURL();
+        if(j2KBaseURL != null && mimetype.toLowerCase().startsWith("image/")){
+            contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL));
         }
 
         contentItem.setDownloadURL(resolveContentDownloadURL(contentItem,store, j2KBaseURL));
