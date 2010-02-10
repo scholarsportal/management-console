@@ -75,19 +75,25 @@ public class ContentStoreImpl implements ContentStore{
         return type.name();
     }
 
-    private String buildURL(String relativeURL) {
-        String url = baseURL + relativeURL;
-        addQueryParameter(url, "storeID", storeId);
-        return url;
+    private String addStoreIdQueryParameter(String url){
+        return addQueryParameter(url, "storeID", storeId);
     }
 
+    private String buildURL(String relativeURL) {
+        String url = baseURL + relativeURL;
+        return url;
+    }
+    
     private String buildSpaceURL(String spaceId) {
-        return buildURL("/" + spaceId);
+        String url = buildURL("/" + spaceId);
+        return addStoreIdQueryParameter(url);
     }
 
     private String buildContentURL(String spaceId, String contentId) {
         contentId = EncodeUtil.urlEncode(contentId);
-        return buildURL("/" + spaceId + "/" + contentId);
+        String url = buildURL("/" + spaceId + "/" + contentId);
+        return addStoreIdQueryParameter(url);
+
     }
 
     private String buildSpaceURL(String spaceId,
@@ -102,7 +108,7 @@ public class ContentStoreImpl implements ContentStore{
         }
         url = addQueryParameter(url, "maxResults", max);
         url = addQueryParameter(url, "marker", marker);
-        return url;
+        return addStoreIdQueryParameter(url);
     }
 
     private String addQueryParameter(String url, String name, String value) {
@@ -123,6 +129,8 @@ public class ContentStoreImpl implements ContentStore{
      */
     public List<String> getSpaces() throws ContentStoreException {
         String url = buildURL("/spaces");
+        url = addStoreIdQueryParameter(url);
+
         try {
             HttpResponse response = restHelper.get(url);
             checkResponse(response, HttpStatus.SC_OK);
