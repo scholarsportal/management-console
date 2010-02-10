@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.chunk.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
-import org.duracloud.chunk.ChunksManifest;
+import org.duracloud.chunk.manifest.ChunksManifest;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

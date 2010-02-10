@@ -1,7 +1,7 @@
 package org.duracloud.chunk.writer;
 
 import org.duracloud.chunk.ChunkableContent;
-import org.duracloud.chunk.ChunksManifest;
+import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.error.NotFoundException;
 
 /**

@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.log4j.Logger;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.chunk.manifest.ChunksManifest;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -51,7 +52,9 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
         this.maxChunkSize = maxChunkSize;
         this.contentSize = contentSize;
         this.currentChunk = null;
-        this.manifest = new ChunksManifest(this.contentId, contentMimetype);
+        this.manifest = new ChunksManifest(this.contentId,
+                                           contentMimetype,
+                                           contentSize);
     }
 
     /**
@@ -154,7 +157,7 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
     }
 
     public ChunksManifest finalizeManifest() {
-//      todo:  manifest.setMD5OfFullContent(largeStream.getDigest());
+//      todo:  manifest.setMD5OfSourceContent(largeStream.getDigest());
         IOUtils.closeQuietly(largeStream);
         return manifest;
     }
