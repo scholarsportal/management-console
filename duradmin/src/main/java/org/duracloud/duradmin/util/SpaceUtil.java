@@ -1,11 +1,14 @@
 
 package org.duracloud.duradmin.util;
 
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.duradmin.control.ControllerSupport;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
@@ -51,20 +54,24 @@ public class SpaceUtil {
         ContentMetadata metadata = populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
         contentItem.setExtendedMetadata(contentMetadata);
-        populateDownloadURL(contentItem, store);
+        populateURLs(contentItem, store);
         
     }
     
-    public static void populateDownloadURL(ContentItem contentItem, ContentStore store){
+    public static void populateURLs(ContentItem contentItem, ContentStore store){
         String mimetype = contentItem.getMetadata().getMimetype();
         String j2KBaseURL = null;
         if(IMAGE_J2K_MIME_TYPE.equals(mimetype)){
             j2KBaseURL = resolveJ2KServiceBaseURL();
+            if(j2KBaseURL != null && mimetype.toLowerCase().contains("image")){
+                contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL));
+            }
         }
+
         contentItem.setDownloadURL(resolveContentDownloadURL(contentItem,store, j2KBaseURL));
     }
-    
-    public static void populateDownloadURL(List<ContentItem> contentItems, ContentStore store){
+    /*
+    public static void populateDownloadURLs(List<ContentItem> contentItems, ContentStore store){
         boolean hasJ2K = false;
         for(ContentItem contentItem : contentItems){
             if(contentItem.getMetadata().getMimetype().equals(IMAGE_J2K_MIME_TYPE)){
@@ -82,21 +89,44 @@ public class SpaceUtil {
             contentItem.setDownloadURL(resolveContentDownloadURL(contentItem,store, j2KBaseURL));
         }
     }
-
+    */
     
     private static String resolveContentDownloadURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
-        StringBuffer buf = new StringBuffer();
-
-        buf.append(j2KBaseURL != null && contentItem.getContentMimetype().equals(IMAGE_J2K_MIME_TYPE) ? j2KBaseURL : store.getBaseURL());
-        buf.append("/");
-        buf.append(contentItem.getSpaceId());
-        buf.append("/");
-        buf.append(contentItem.getEncodedContentId());
-        buf.append("?");
-        buf.append("storeID=");
-        buf.append(store.getStoreId());
-        return buf.toString();
+        String standardURL = formatStandardDownloadURL(contentItem,store);
+        
+        if(j2KBaseURL == null || !contentItem.getMetadata().getMimetype().equals(IMAGE_J2K_MIME_TYPE)){
+            return standardURL;
+        }else{
+            return MessageFormat.format(
+                                        "{0}/viewer.html?rft_id={1}", 
+                                        j2KBaseURL, 
+                                        EncodeUtil.urlEncode(standardURL));
+        }
     }
+    
+
+    private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
+        String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
+                            "svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&" +
+                            "svc.format=image/jpeg&svc.level=1&svc.rotate=0&svc.region=0,0,500,500";
+
+        return MessageFormat.format(
+                                    pattern, 
+                                    j2KBaseURL, 
+                                    EncodeUtil.urlEncode(formatStandardDownloadURL(contentItem, store)));
+
+    }
+    
+    private static String formatStandardDownloadURL(ContentItem contentItem, ContentStore store) {
+        String pattern = "{0}/{1}/{2}?storeID={3}";
+ 
+        return MessageFormat.format(pattern,
+                                    store.getBaseURL(),
+                                    contentItem.getSpaceId(),
+                                    EncodeUtil.urlEncode(contentItem.getContentId()),
+                                    store.getStoreId());
+    }
+
     /**
      * Returns the j2k service base URL if the service is running
      * @return null if the J2K Service is not running
