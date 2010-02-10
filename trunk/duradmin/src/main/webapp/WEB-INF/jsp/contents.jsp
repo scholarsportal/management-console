@@ -7,7 +7,7 @@
 		<div><tiles:insertTemplate
 			template="/WEB-INF/jsp/layout/box-control.jsp">
 			<tiles:putAttribute name="title">
-				Space Details
+				<spring:message code="space.details"/>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="miniform" value="" />
 			<tiles:putAttribute name="body">

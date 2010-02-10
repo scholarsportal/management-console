@@ -27,6 +27,8 @@ public class ContentItem
     private String contentMimetype;
     
     private String downloadURL;
+    
+    private String thumbnailURL;
 
     private List<NameValuePair> extendedMetadata;
 
@@ -127,6 +129,16 @@ public class ContentItem
     
     public void setDownloadURL(String downloadURL) {
         this.downloadURL = downloadURL;
+    }
+
+    
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 
 }

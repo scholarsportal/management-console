@@ -125,7 +125,16 @@
 						<td>
 						<div class="content-preview-div"
 							style="border: 1px dashed #999; min-height: 10.5em; padding: 0.25em">
-						<p>Content Item Preview/Thumbnail</p>
+							<c:choose>
+								<c:when test="${not empty contentItem.thumbnailURL}">
+									<a href="${contentItem.downloadURL}">
+										<img src="${contentItem.thumbnailURL}"/>
+									</a>
+								</c:when>
+								<c:otherwise>
+									<p>Preview not available.</p>
+								</c:otherwise>
+							</c:choose>
 						</div>
 						</td>
 
