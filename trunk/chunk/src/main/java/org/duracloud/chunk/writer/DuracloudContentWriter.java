@@ -1,10 +1,11 @@
 package org.duracloud.chunk.writer;
 
 import org.apache.log4j.Logger;
-import org.duracloud.chunk.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
-import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 
@@ -38,13 +39,40 @@ public class DuracloudContentWriter implements ContentWriter {
         throws NotFoundException {
         createSpaceIfNotExist(spaceId);
 
+        int tries;
         for (ChunkInputStream chunk : chunkable) {
-            int tries = 0;
+            tries = 0;
             while (!addContent(spaceId, chunk) && tries++ < 5) {
                 sleep(1000);
             }
         }
-        return chunkable.finalizeManifest();
+
+        ChunksManifest manifest = chunkable.finalizeManifest();
+        tries = 0;
+        while (!addContent(spaceId, manifest) && tries++ < 5) {
+            sleep(1000);
+        }
+        return manifest;
+    }
+
+    private boolean addContent(String spaceId, ChunksManifest manifest) {
+        KnownLengthInputStream manifestBody = manifest.getBody();
+        Map<String, String> metadata = null;
+        try {
+            contentStore.addContent(spaceId,
+                                    manifest.getManifestId(),
+                                    manifestBody,
+                                    manifestBody.getLength(),
+                                    manifest.getMimetype(),
+                                    metadata);
+        } catch (ContentStoreException e) {
+            log.error(e.getFormattedMessage(), e);
+            return false;
+        } catch (Exception ex) {
+            log.error("Error adding content:" + ex.getMessage(), ex);
+            return false;
+        }
+        return true;
     }
 
     private boolean addContent(String spaceId, ChunkInputStream chunk) {

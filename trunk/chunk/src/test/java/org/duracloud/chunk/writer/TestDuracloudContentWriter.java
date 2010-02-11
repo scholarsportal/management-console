@@ -121,6 +121,8 @@ public class TestDuracloudContentWriter {
         }
 
         Assert.assertNotNull(contents);
+        boolean manifestFound = false;
+        long manifestSize = 0;
         long totalSize = 0;
         int itemCount = 0;
         while (contents.hasNext()) {
@@ -134,18 +136,27 @@ public class TestDuracloudContentWriter {
                 content = getContent(id);
             }
             Assert.assertNotNull(content);
-            itemCount++;
+
 
             Map<String, String> metadata = content.getMetadata();
             Assert.assertNotNull(metadata);
 
             String size = metadata.get("content-size");
             Assert.assertNotNull(size);
-            totalSize += Long.parseLong(size);
+            if (id.contains("manifest")) {
+                manifestFound = true;
+                manifestSize = Long.parseLong(size);
+            } else {
+                itemCount++;
+                totalSize += Long.parseLong(size);
+            }
         }
 
         Assert.assertEquals(numChunks, itemCount);
         Assert.assertEquals(contentSize, totalSize);
+
+        Assert.assertTrue(manifestFound);
+        Assert.assertTrue(manifestSize > 0);
     }
 
     private Content getContent(String id) {

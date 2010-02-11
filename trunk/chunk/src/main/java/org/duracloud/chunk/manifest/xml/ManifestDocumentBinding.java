@@ -1,6 +1,7 @@
 package org.duracloud.chunk.manifest.xml;
 
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.duracloud.ChunksManifestDocument;
 import org.duracloud.ChunksManifestType;
 import org.duracloud.chunk.manifest.ChunksManifest;
@@ -9,6 +10,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 
 
 /**
@@ -52,7 +54,24 @@ public class ManifestDocumentBinding {
                 manifest);
             doc.setChunksManifest(manifestType);
         }
-        return doc.toString();
+        return docToString(doc);
+    }
+
+    private static String docToString(XmlObject doc) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            doc.save(outputStream);
+        } catch (IOException e) {
+            throw new DuraCloudRuntimeException(e);
+        } finally {
+            try {
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                throw new DuraCloudRuntimeException(e);
+            }
+        }
+        return outputStream.toString();
     }
 
 }

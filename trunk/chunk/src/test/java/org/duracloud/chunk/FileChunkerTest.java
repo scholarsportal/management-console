@@ -84,12 +84,15 @@ public class FileChunkerTest {
         doTestLoadContent(runNumber, contentSize, chunkSize / 16);
     }
 
-    private IOFileFilter doTestLoadContent(int runNumber,
+    private void doTestLoadContent(int runNumber,
                                            long contentSize,
                                            long chunkSize)
         throws IOException, NotFoundException {
         String prefix = "load-test";
         String ext = ".txt";
+        String suffix = ext + ".dura-chunk-\\d+";
+
+        boolean preserveChunkMD5 = true;
 
         FileChunker chunker = new FileChunker(writer, chunkSize);
 
@@ -97,9 +100,10 @@ public class FileChunkerTest {
         File content = createAndVerifyContent(chunker, name, contentSize);
         chunker.addContentFrom(srcDir,
                                destDir.getPath(),
-                               FileFilterUtils.nameFileFilter(name));
+                               FileFilterUtils.nameFileFilter(name),
+                               preserveChunkMD5);
 
-        Pattern p = Pattern.compile(".*" + prefix + runNumber + ext + "-\\d+");
+        Pattern p = Pattern.compile(".*" + prefix + runNumber + suffix);
         IOFileFilter filter = new RegexFileFilter(p);
         IOFileFilter all = FileFilterUtils.trueFileFilter();
         Collection<File> files = FileUtils.listFiles(destDir, filter, all);
@@ -117,7 +121,7 @@ public class FileChunkerTest {
             totalChunksSize += file.length();
         }
         Assert.assertEquals(content.length(), totalChunksSize);
-        return all;
+        
     }
 
 }
