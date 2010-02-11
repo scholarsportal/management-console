@@ -76,7 +76,19 @@
 									<li>
 										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
+									<li>|</li>
+
+									<li><a
+										href="<c:url value="removeContent.htm" >
+										   		<c:param name="spaceId" value="${contentItem.spaceId}"/>
+										   		<c:param name="contentId" value="${contentItem.contentId}"/>
+										   		<c:param name="returnTo" value="${pageContext.request.contextPath}/contents.htm?spaceId=${contentItem.spaceId}"/>
+										    </c:url>"
+										onclick="return confirmDeleteOperation();"><spring:message
+										code="remove" /></a></li>
+
 								</ul>
+
 
 								</td>
 							</tr>
