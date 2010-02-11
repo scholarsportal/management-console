@@ -43,9 +43,9 @@ public class FilesystemContentWriter implements ContentWriter {
             outStream = getOutputStream(spaceDir, chunk.getChunkId());
 
             if (chunkable.getMaxChunkSize() > TWO_GB) {
-                copyLarge(outStream, chunk);
+                copyLarge(chunk, outStream);
             } else {
-                copy(outStream, chunk);
+                copy(chunk, outStream);
             }
 
             flushAndClose(outStream);
@@ -53,13 +53,13 @@ public class FilesystemContentWriter implements ContentWriter {
 
         ChunksManifest manifest = chunkable.finalizeManifest();
         outStream = getOutputStream(spaceDir, manifest.getManifestId());
-        copy(outStream, manifest.getBody());
+        copy(manifest.getBody(), outStream);
         flushAndClose(outStream);
         
         return manifest;
     }
 
-    private void copyLarge(OutputStream outStream, InputStream chunk) {
+    private void copyLarge(InputStream chunk, OutputStream outStream) {
         try {
             IOUtils.copyLarge(chunk, outStream);
         } catch (IOException e) {
@@ -69,7 +69,7 @@ public class FilesystemContentWriter implements ContentWriter {
         }
     }
 
-    private void copy(OutputStream outStream, InputStream chunk) {
+    private void copy(InputStream chunk, OutputStream outStream) {
         try {
             IOUtils.copy(chunk, outStream);
         } catch (IOException e) {
