@@ -424,7 +424,9 @@ table.extended-metadata > tbody > tr {
 
 }
 
-
+.disabled{
+	color: #DDD;
+}
 
 
 .removing-element {
