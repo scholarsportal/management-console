@@ -1,7 +1,6 @@
 
 package org.duracloud.duradmin.util;
 
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -106,12 +105,13 @@ public class SpaceUtil {
     private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
         String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
                             "svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&" +
-                            "svc.format=image/jpeg&svc.level=1&svc.rotate=0&svc.region=0,0,500,500";
+                            "svc.format={2}&svc.level=2&svc.rotate=0&svc.region=0,0,500,500";
 
         return MessageFormat.format(
                                     pattern, 
-                                    j2KBaseURL, 
-                                    EncodeUtil.urlEncode(formatStandardDownloadURL(contentItem, store)));
+                                    j2KBaseURL,
+                                    EncodeUtil.urlEncode(formatStandardDownloadURL(contentItem, store)),
+                                    contentItem.getMetadata().getMimetype());
 
     }
     
