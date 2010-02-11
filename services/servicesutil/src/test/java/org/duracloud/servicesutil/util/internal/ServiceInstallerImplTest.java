@@ -31,10 +31,8 @@ public class ServiceInstallerImplTest extends ServiceInstallImplTestBase {
 
     @Before
     public void setUp() throws Exception {
-        String tmpHome = createBundleHome();
-
         installer = new ServiceInstallerImpl();
-        installer.setBundleHome(new BundleHome(tmpHome));
+        installer.setBundleHome(new BundleHome());
 
         bagJar = createBagJar();
         bagZip = createBagZip();

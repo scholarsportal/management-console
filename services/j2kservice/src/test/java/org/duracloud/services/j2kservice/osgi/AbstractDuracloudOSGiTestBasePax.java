@@ -25,7 +25,7 @@ public class AbstractDuracloudOSGiTestBasePax {
     private BundleContext bundleContext;
 
     protected static final String BASE_DIR_PROP = "base.dir";
-    protected static final String BUNDLE_DIR_PROP = "bundle.home.dir";
+    protected static final String BUNDLE_HOME_PROP = "BUNDLE_HOME";
 
     @Before
     public void setUp() throws Exception {
@@ -53,12 +53,12 @@ public class AbstractDuracloudOSGiTestBasePax {
         String baseDir = System.getProperty(BASE_DIR_PROP);
         Assert.assertNotNull(baseDir);
 
-        String bundleDir = System.getProperty(BUNDLE_DIR_PROP);
+        String bundleDir = System.getProperty(BUNDLE_HOME_PROP);
         Assert.assertNotNull(bundleDir);
 
         return CoreOptions.systemProperties(CoreOptions.systemProperty(
             BASE_DIR_PROP).value(baseDir), CoreOptions.systemProperty(
-            BUNDLE_DIR_PROP).value(bundleDir));
+            BUNDLE_HOME_PROP).value(bundleDir));
     }
 
     protected BundleContext getBundleContext() {

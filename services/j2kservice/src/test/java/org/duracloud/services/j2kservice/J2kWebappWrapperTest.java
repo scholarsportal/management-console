@@ -19,10 +19,9 @@ import java.io.IOException;
  */
 public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
 
-    private String testDir = "target/test-wrapper/";
     private File resourceDir = new File("src/test/resources");
 
-    private BundleHome bundleHome = new BundleHome(testDir);
+    private BundleHome bundleHome = new BundleHome();
 
     private String serviceId = "j2k-wrapper";
     private String webappId = "webapputilservice-1.0.0";

@@ -1,5 +1,7 @@
 package org.duracloud.services.common.util;
 
+import org.duracloud.services.common.error.ServiceRuntimeException;
+
 import java.io.File;
 
 /**
@@ -7,6 +9,8 @@ import java.io.File;
  *         Date: Dec 13, 2009
  */
 public class BundleHome {
+
+    private static final String BUNDLE_HOME_PROP = "BUNDLE_HOME";
     protected String baseDir;
 
     /**
@@ -16,8 +20,14 @@ public class BundleHome {
     private final String ATTIC = "attic";
     private final String WORK = "work";
 
-    public BundleHome(String baseDir) {
-        this.baseDir = baseDir;
+    public BundleHome() {        
+        String home = System.getProperty(BUNDLE_HOME_PROP);
+        if (null == home || home.length() == 0) {
+            String s = "System property: ${" + BUNDLE_HOME_PROP + "} not found";
+            System.err.println(s);
+            throw new ServiceRuntimeException(s);
+        }
+        this.baseDir = home;
     }
 
     public File getFromContainer(String name) {

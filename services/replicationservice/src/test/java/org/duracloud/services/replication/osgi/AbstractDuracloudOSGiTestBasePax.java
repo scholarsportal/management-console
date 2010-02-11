@@ -16,9 +16,12 @@ import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import junit.framework.Assert;
 
 @RunWith(JUnit4TestRunner.class)
 public class AbstractDuracloudOSGiTestBasePax {
+
+    private static final String BUNDLE_HOME_PROP = "BUNDLE_HOME";
 
     @Inject
     protected BundleContext bundleContext;
@@ -42,9 +45,17 @@ public class AbstractDuracloudOSGiTestBasePax {
 
         return options(bundles,
                        mavenConfiguration(),
+                       systemProperties(),
                        frameworks,
                        profile("spring.dm"),
                        profile("log"));
+    }
+
+    private static Option systemProperties() {
+        String home = System.getProperty(BUNDLE_HOME_PROP);
+        Assert.assertNotNull(home);
+
+        return CoreOptions.systemProperty(BUNDLE_HOME_PROP).value(home);
     }
 
 }
