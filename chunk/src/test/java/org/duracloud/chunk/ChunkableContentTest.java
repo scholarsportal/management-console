@@ -2,6 +2,10 @@ package org.duracloud.chunk;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.manifest.ChunksManifestBean;
+import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.common.util.ChecksumUtil;
 import static org.duracloud.common.util.ChecksumUtil.Algorithm;
 import org.junit.After;
@@ -26,7 +30,7 @@ import java.util.Random;
 public class ChunkableContentTest {
 
     private ChunkableContent chunkable;
-    private String contentId;
+    private String contentId = "contentId";
     private final long MAX_CHUNK_SIZE = 10240;
 
     private DigestInputStream contentInputStream;
@@ -141,5 +145,62 @@ public class ChunkableContentTest {
 
         return ChecksumUtil.wrapStream(new FileInputStream(contentFile),
                                        Algorithm.MD5);
+    }
+
+    @Test
+    public void testNext() throws IOException {
+        ChunkInputStream chunk = chunkable.next();
+        Assert.assertNotNull(chunk);
+
+        verifyThrow(true);
+
+        int bytesRead = 0;
+
+        // Read less than a full chunk.
+        while (bytesRead < MAX_CHUNK_SIZE - 10) {
+            chunk.read();
+            bytesRead++;
+        }
+
+        verifyThrow(true);
+
+        // Rest of chunk.
+        while (bytesRead < MAX_CHUNK_SIZE) {
+            chunk.read();
+            bytesRead++;
+        }
+
+        verifyThrow(false);
+        Assert.assertEquals(bytesRead, MAX_CHUNK_SIZE);
+
+    }
+
+    private void verifyThrow(boolean expected) {
+        boolean exceptionThrown = false;
+        try {
+            chunkable.next();
+            Assert.assertEquals(false, expected);
+        } catch (Exception e) {
+            exceptionThrown = true;
+        }
+        Assert.assertEquals(expected, exceptionThrown);
+    }
+
+    @Test
+    public void testManifest() throws Exception {
+        doChunking();
+        ChunksManifest manifest = chunkable.finalizeManifest();
+        Assert.assertNotNull(manifest);
+
+        ChunksManifestBean.ManifestHeader header = manifest.getHeader();
+        Assert.assertNotNull(header);
+
+        List<ChunksManifestBean.ManifestEntry> entries = manifest.getEntries();
+        Assert.assertNotNull(entries);
+        Assert.assertEquals(chunkFiles.size(), entries.size());
+
+        KnownLengthInputStream body = manifest.getBody();
+        Assert.assertNotNull(body);
+        Assert.assertTrue(body.getLength() > 0);
     }
 }

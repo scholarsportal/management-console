@@ -40,7 +40,7 @@ public class DuracloudContentWriterTest {
                                                 EasyMock.isA(String.class),
                                                 (Map) EasyMock.anyObject()))
             .andReturn("")
-            .times(4);
+            .times(5);
 
         contentStore.createSpace(EasyMock.isA(String.class),
                                  (Map) EasyMock.anyObject());

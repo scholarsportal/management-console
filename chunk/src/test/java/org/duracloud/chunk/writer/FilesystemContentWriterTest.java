@@ -4,6 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.manifest.ChunksManifestBean;
+import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Andrew Woods
@@ -60,17 +64,33 @@ public class FilesystemContentWriterTest {
                                                           contentStream,
                                                           contentSize,
                                                           maxChunkSize);
-        writer.write(spaceId, chunkable);
+        ChunksManifest manifest = writer.write(spaceId, chunkable);
 
+        // check files
         IOFileFilter all = FileFilterUtils.trueFileFilter();
         Collection<File> files = FileUtils.listFiles(destDir, all, all);
         Assert.assertNotNull(files);
-        Assert.assertEquals(numChunks, files.size());
+
+        Assert.assertEquals(numChunks + 1/*manifest*/, files.size());
 
         for (File file : files) {
             String filePath = file.getPath();
             Assert.assertTrue(filePath, filePath.indexOf(contentId) != -1);
         }
+
+        // check manifest
+        Assert.assertNotNull(manifest);
+
+        ChunksManifestBean.ManifestHeader header = manifest.getHeader();
+        Assert.assertNotNull(header);
+
+        List<ChunksManifestBean.ManifestEntry> entries = manifest.getEntries();
+        Assert.assertNotNull(entries);
+        Assert.assertEquals(numChunks, entries.size());
+
+        KnownLengthInputStream body = manifest.getBody();
+        Assert.assertNotNull(body);
+        Assert.assertTrue(body.getLength() > 0);
     }
 
     private InputStream createContentStream(long size) {

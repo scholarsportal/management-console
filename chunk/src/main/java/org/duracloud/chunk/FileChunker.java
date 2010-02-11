@@ -49,9 +49,14 @@ public class FileChunker {
      * @param baseDir     of content to push to DataStore
      * @param destSpaceId of content destination
      */
-    protected void addContentFrom(File baseDir, String destSpaceId)
+    protected void addContentFrom(File baseDir,
+                                  String destSpaceId,
+                                  boolean preserveChunkMD5s)
         throws NotFoundException {
-        this.addContentFrom(baseDir, destSpaceId, TrueFileFilter.TRUE);
+        this.addContentFrom(baseDir,
+                            destSpaceId,
+                            TrueFileFilter.TRUE,
+                            preserveChunkMD5s);
     }
 
     /**
@@ -64,7 +69,8 @@ public class FileChunker {
      */
     protected void addContentFrom(File baseDir,
                                   String destSpaceId,
-                                  IOFileFilter includes)
+                                  IOFileFilter includes,
+                                  boolean preserveChunkMD5s)
         throws NotFoundException {
         String contentId;
         InputStream stream;
@@ -78,6 +84,7 @@ public class FileChunker {
                                              stream,
                                              file.length(),
                                              maxChunkSize);
+            chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
 
             contentWriter.write(destSpaceId, chunkable);
         }

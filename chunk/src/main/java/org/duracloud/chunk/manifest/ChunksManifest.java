@@ -1,12 +1,10 @@
 package org.duracloud.chunk.manifest;
 
-import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
-import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.chunk.manifest.xml.ManifestDocumentBinding;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +16,7 @@ public class ChunksManifest extends ChunksManifestBean {
     private final Logger log = Logger.getLogger(getClass());
 
     public static final String SCHEMA_VERSION = "0.2";
-    
+
     private int chunkIndex = -1;
     private final static String mimetype = "application/xml";
     private final static String chunkSuffix = ".dura-chunk-";
@@ -70,15 +68,26 @@ public class ChunksManifest extends ChunksManifestBean {
     private int parseIndex(String chunkId) {
         String prefix = getHeader().getSourceContentId() + chunkSuffix;
         String num = chunkId.substring(prefix.length());
-        return Integer.parseInt(num);
+        try {
+            return Integer.parseInt(num);
+
+        } catch (NumberFormatException e) {
+            StringBuilder msg = new StringBuilder("ChunkId's must be");
+            msg.append("formatted with trailing index: " + chunkId + ", ");
+            msg.append(e.getMessage());
+            log.error(msg, e);
+            throw new DuraCloudRuntimeException(msg.toString(), e);
+        }
     }
 
-    public InputStream getBody() {
+    public KnownLengthInputStream getBody() {
         String xml = ManifestDocumentBinding.createDocumentFrom(this);
-        log.debug("Manifest body: '"+xml+"'");
-        
-        return new AutoCloseInputStream(new ByteArrayInputStream(xml.getBytes()));
+        log.debug("Manifest body: '" + xml + "'");
+
+        return new KnownLengthInputStream(xml);
     }
 
-
+    public String getMimetype() {
+        return mimetype;
+    }
 }

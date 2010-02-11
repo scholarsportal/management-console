@@ -1,10 +1,11 @@
 package org.duracloud.chunk;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.CountingInputStream;
 import org.apache.log4j.Logger;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.stream.CountingDigestInputStream;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -21,13 +22,16 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
 
     private final Logger log = Logger.getLogger(getClass());
 
-    private CountingInputStream largeStream;
+    private CountingDigestInputStream largeStream;
     private String contentId;
     private long maxChunkSize;
     private long contentSize;
 
     private ChunkInputStream currentChunk;
     private ChunksManifest manifest;
+
+    private long bytesRead;
+    private boolean preserveChunkMD5s = false;
 
     private static final String DEFAULT_MIME = "application/octet-stream";
     private final int BUFFER_SIZE;
@@ -48,10 +52,11 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
         BUFFER_SIZE = calculateBufferSize(maxChunkSize);
 
         this.contentId = contentId;
-        this.largeStream = new CountingInputStream(largeStream);
+        this.largeStream = new CountingDigestInputStream(largeStream, true);
         this.maxChunkSize = maxChunkSize;
         this.contentSize = contentSize;
         this.currentChunk = null;
+        this.bytesRead = 0;
         this.manifest = new ChunksManifest(this.contentId,
                                            contentMimetype,
                                            contentSize);
@@ -96,7 +101,8 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
      * @return true if more chunks are available.
      */
     public boolean hasNext() {
-        return null == currentChunk || largeStream.getByteCount() < contentSize;
+        return null == currentChunk ||
+            (currentChunk.numBytesRead() + bytesRead) < contentSize;
     }
 
     /**
@@ -107,23 +113,36 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
      *
      * @return next chunk as InputStream
      */
-    private int indexRemoveMe = 0;
-
     public ChunkInputStream next() {
         throwIfChunkNotFullyRead();
 
+        // Before return next chunk, catalog current chunk in manifest.
+        addEntry();
+
         long chunkSize = calculateNextChunkSize();
+        String chunkId = manifest.nextChunkId();
 
-        //todo: manifest.addEntry()
-        //todo: manifest.getNextChunkId()
-
-        String chunkId = contentId + "-" + indexRemoveMe++;
         InputStream buffIS = new BufferedInputStream(largeStream, BUFFER_SIZE);
-        return currentChunk = new ChunkInputStream(chunkId, buffIS, chunkSize);
+        return currentChunk = new ChunkInputStream(chunkId,
+                                                   buffIS,
+                                                   chunkSize,
+                                                   preserveChunkMD5s);
+    }
+
+    private void addEntry() {
+        if (null != currentChunk) {
+            manifest.addEntry(currentChunk.getChunkId(),
+                              currentChunk.getMD5(),
+                              currentChunk.numBytesRead());
+
+            // Keep running tally of total bytes read.
+            bytesRead += currentChunk.numBytesRead();
+        } else {
+            log.debug("currentChunk is null. No entry added.");
+        }
     }
 
     private long calculateNextChunkSize() {
-        long bytesRead = largeStream.getByteCount();
         long nextSize = contentSize - bytesRead;
         if (nextSize > maxChunkSize) {
             nextSize = maxChunkSize;
@@ -133,8 +152,7 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
 
     private void throwIfChunkNotFullyRead() {
         if (null != currentChunk &&
-            currentChunk.numBytesRead() != maxChunkSize &&
-            largeStream.getByteCount() < maxChunkSize) {
+            currentChunk.numBytesRead() < currentChunk.getChunkSize()) {
 
             StringBuilder sb = new StringBuilder("Error: ");
             sb.append("Previous chunk not fully read: ");
@@ -152,12 +170,18 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
         return this;
     }
 
+    public void setPreserveChunkMD5s(boolean preserveChunkMD5s) {
+        this.preserveChunkMD5s = preserveChunkMD5s;
+    }
+
     public long getMaxChunkSize() {
         return maxChunkSize;
     }
 
     public ChunksManifest finalizeManifest() {
-//      todo:  manifest.setMD5OfSourceContent(largeStream.getDigest());
+        addEntry();
+        
+        manifest.setMD5OfSourceContent(largeStream.getMD5());
         IOUtils.closeQuietly(largeStream);
         return manifest;
     }

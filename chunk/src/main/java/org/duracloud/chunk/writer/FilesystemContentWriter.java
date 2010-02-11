@@ -2,16 +2,17 @@ package org.duracloud.chunk.writer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.chunk.ChunkInputStream;
+import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -37,11 +38,9 @@ public class FilesystemContentWriter implements ContentWriter {
     public ChunksManifest write(String spaceId, ChunkableContent chunkable) {
         File spaceDir = getSpaceDir(spaceId);
 
-        File outFile;
         OutputStream outStream;
         for (ChunkInputStream chunk : chunkable) {
-            outFile = getContentFile(spaceDir, chunk.getChunkId());
-            outStream = getOutputStream(outFile);
+            outStream = getOutputStream(spaceDir, chunk.getChunkId());
 
             if (chunkable.getMaxChunkSize() > TWO_GB) {
                 copyLarge(outStream, chunk);
@@ -51,27 +50,38 @@ public class FilesystemContentWriter implements ContentWriter {
 
             flushAndClose(outStream);
         }
-        return chunkable.finalizeManifest();
+
+        ChunksManifest manifest = chunkable.finalizeManifest();
+        outStream = getOutputStream(spaceDir, manifest.getManifestId());
+        copy(outStream, manifest.getBody());
+        flushAndClose(outStream);
+        
+        return manifest;
     }
 
-    private void copyLarge(OutputStream outStream, ChunkInputStream chunk) {
+    private void copyLarge(OutputStream outStream, InputStream chunk) {
         try {
             IOUtils.copyLarge(chunk, outStream);
         } catch (IOException e) {
-            String msg = "Error in copy: " + chunk.getChunkId() + ": ";
+            String msg = "Error in copy: " + chunk.toString() + ": ";
             log.error(msg, e);
             throw new DuraCloudRuntimeException(msg + e.getMessage(), e);
         }
     }
 
-    private void copy(OutputStream outStream, ChunkInputStream chunk) {
+    private void copy(OutputStream outStream, InputStream chunk) {
         try {
             IOUtils.copy(chunk, outStream);
         } catch (IOException e) {
-            String msg = "Error in copy: " + chunk.getChunkId() + ": ";
+            String msg = "Error in copy: " + chunk.toString() + ": ";
             log.error(msg, e);
             throw new DuraCloudRuntimeException(msg + e.getMessage(), e);
         }
+    }
+
+    private OutputStream getOutputStream(File spaceDir, String contentId) {
+        File outFile = getContentFile(spaceDir, contentId);
+        return getOutputStream(outFile);
     }
 
     private OutputStream getOutputStream(File outFile) {

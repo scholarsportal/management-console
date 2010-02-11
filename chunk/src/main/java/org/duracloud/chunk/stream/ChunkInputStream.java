@@ -1,6 +1,5 @@
-package org.duracloud.chunk;
+package org.duracloud.chunk.stream;
 
-import org.apache.commons.io.input.CountingInputStream;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -17,29 +16,22 @@ public class ChunkInputStream extends InputStream {
     private final Logger log = Logger.getLogger(getClass());
 
     private String chunkId;
-    private CountingInputStream stream;
+    private CountingDigestInputStream stream;
     private long chunkSize;
-    private String mimetype;
-
-    public ChunkInputStream(String chunkId,
-                            InputStream inputStream,
-                            long chunkSize) {
-        this(chunkId, inputStream, chunkSize, "application/octet-stream");
-    }
+    private String mimetype = "application/octet-stream";
 
     public ChunkInputStream(String chunkId,
                             InputStream inputStream,
                             long chunkSize,
-                            String mimetype) {
-        this.stream = new CountingInputStream(inputStream);
+                            boolean preserveMD5) {
+        this.stream = new CountingDigestInputStream(inputStream, preserveMD5);
         this.chunkId = chunkId;
-        this.mimetype = mimetype;
         this.chunkSize = chunkSize;
     }
 
     /**
-     * This method reads up to maxChunkSize number of bytes from the stream.
-     * When either maxChunkSize bytes have been read, or the end of the stream
+     * This method reads up to chunkSize number of bytes from the stream.
+     * When either chunkSize bytes have been read, or the end of the stream
      * is reached, -1 is return.
      *
      * @return current byte or -1 if eof reached
@@ -55,6 +47,10 @@ public class ChunkInputStream extends InputStream {
 
     public void close() throws IOException {
         // do not allow the wrapped stream to be closed.
+    }
+
+    public String getMD5() {
+        return stream.getMD5();
     }
 
     public long numBytesRead() {
