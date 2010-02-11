@@ -70,6 +70,15 @@
 									<spring:message
 										code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}" />
 									</a></li>
+									<li>|</li>
+									<li><a id="removeSpaceLink" href="<c:url value="removeSpace.htm">
+											   		<c:param name="spaceId" value="${space.spaceId}"/>
+											   		<c:param name="returnTo" value="${pageContext.request.contextPath}/spaces.htm"/>
+											    </c:url>" onclick="return confirmDeleteOperation();">
+											<spring:message code="remove"/>
+										</a>
+									</li>
+
 								</ul>
 
 								</td>
