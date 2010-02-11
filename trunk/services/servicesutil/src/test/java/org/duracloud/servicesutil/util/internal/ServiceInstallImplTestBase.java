@@ -39,14 +39,6 @@ public class ServiceInstallImplTestBase {
         BundleCatalog.clearCatalog();
     }
 
-    protected String createBundleHome() {
-        String tmp = System.getProperty("java.io.tmpdir");
-        Assert.assertNotNull(tmp);
-
-        File tmpHome = new File(tmp, "bundle-home");
-        return tmpHome.getAbsolutePath();
-    }
-
     protected InputStream createBagArchive(File file) throws Exception {
         file.deleteOnExit();
 

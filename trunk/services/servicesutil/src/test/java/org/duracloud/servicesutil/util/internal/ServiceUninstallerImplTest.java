@@ -22,13 +22,11 @@ public class ServiceUninstallerImplTest extends ServiceInstallImplTestBase {
 
     @Before
     public void setUp() throws Exception {
-        String tmpHome = createBundleHome();
-
         installer = new ServiceInstallerImpl();
-        installer.setBundleHome(new BundleHome(tmpHome));
+        installer.setBundleHome(new BundleHome());
 
         uninstaller = new ServiceUninstallerImpl();
-        uninstaller.setBundleHome(new BundleHome(tmpHome));
+        uninstaller.setBundleHome(new BundleHome());
 
         bagZip = createBagZip();
     }

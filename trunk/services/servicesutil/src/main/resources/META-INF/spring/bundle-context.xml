@@ -43,9 +43,7 @@
     <property name="location" value="osgi-config.properties" />
   </bean>
 
-  <bean id="bundleHome" class="org.duracloud.services.common.util.BundleHome" >
-    <constructor-arg value="${bundle.home}/"/>
-  </bean>
+  <bean id="bundleHome" class="org.duracloud.services.common.util.BundleHome" />
 
  
 </beans> 

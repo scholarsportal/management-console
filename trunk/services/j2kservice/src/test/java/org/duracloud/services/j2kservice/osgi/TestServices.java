@@ -64,10 +64,10 @@ public class TestServices extends AbstractDuracloudOSGiTestBasePax {
     }
 
     private BundleHome getBundleHome() {
-        String home = System.getProperty(BUNDLE_DIR_PROP);
+        String home = System.getProperty(BUNDLE_HOME_PROP);
         Assert.assertNotNull(home);
 
-        return new BundleHome(home);
+        return new BundleHome();
     }
 
     @After

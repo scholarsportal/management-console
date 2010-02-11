@@ -21,12 +21,10 @@ import java.util.Map;
  */
 public class HelloWebappWrapperTest {
 
-    private String testDir = "target/test-wrapper/";
-
     private HelloWebappWrapper wrapper;
     private String serviceId = "howdywrapper";
     private String url = "http://example.org";
-    private BundleHome bundleHome = new BundleHome(testDir);
+    private BundleHome bundleHome = new BundleHome();
     private String warName = "hellowebapp-1.0.0.war";
 
     private WebAppUtilImpl webappUtil;
