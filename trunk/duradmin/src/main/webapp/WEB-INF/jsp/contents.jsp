@@ -91,14 +91,13 @@
 				<tiles:importAttribute name="contentStoreProvider" />
 				<c:set var="contentStore"
 					value="${contentStoreProvider.contentStore}" />
-				<c:if test="${empty space.contents}">
+				<c:choose>
+				<c:when test="${space.metadata.count == 0}">
 					<p>This space is empty. <a
 						href="contents/add?spaceId=${space.spaceId}"><spring:message
 						code="add.contentItem" /> >></a></p>
-				</c:if>
-
-
-				<c:if test="${not empty space.contents}">
+				</c:when>
+				<c:otherwise>
 					<table class="small">
 						<tr>
 							<td><input type="text" name="filter" /> <spring:message
@@ -123,20 +122,35 @@
 									test="${contentItemList.previousAvailable or contentItemList.nextAvailable}">
 
 							<ul class="horizontal-list">
-								<c:if
-									test="${contentItemList.previousAvailable}">
 
-									<a title="first page"
-										href="contents.htm?action=f&spaceId=${space.spaceId}">first</a>
-									<a title="next page"
-										href="contents.htm?action=p&spaceId=${space.spaceId}">previous</a>
-								</c:if>
+								<c:choose>
+									<c:when test="${contentItemList.previousAvailable}">
+										<a title="first page"
+											href="contents.htm?action=f&spaceId=${space.spaceId}">[first]</a>
+	
+										<a title="previous page"
+											href="contents.htm?action=p&spaceId=${space.spaceId}">[previous]</a>
+									</c:when>
+									<c:otherwise>
+										<span class="disabled">
+											[first] [previous]
+										</span>
+									</c:otherwise>
+								</c:choose>
 
-								<c:if
-									test="${contentItemList.nextAvailable}">
-									<a title="next"
-										href="contents.htm?action=n&spaceId=${space.spaceId}">next</a>
-								</c:if>
+
+								<c:choose>
+									<c:when test="${contentItemList.nextAvailable}">
+										<a title="next"
+											href="contents.htm?action=n&spaceId=${space.spaceId}">[next]</a>
+									</c:when>
+									<c:otherwise>
+										<span class="disabled">
+											[next]
+										</span>
+
+									</c:otherwise>
+								</c:choose>
 							</ul>
 								</c:if>
 							</td>
@@ -185,8 +199,8 @@
 							</c:forEach>
 						</tbody>
 					</table>
-				</c:if>
-
+				</c:otherwise>
+				</c:choose>
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
 	</tiles:putAttribute>
