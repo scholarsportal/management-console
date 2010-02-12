@@ -25,6 +25,8 @@ public class ContentItem
     private String contentId;
 
     private String contentMimetype;
+
+    private String viewerURL;
     
     private String downloadURL;
     
@@ -139,6 +141,16 @@ public class ContentItem
     
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
+    }
+
+    
+    public String getViewerURL() {
+        return viewerURL;
+    }
+
+    
+    public void setViewerURL(String viewerURL) {
+        this.viewerURL = viewerURL;
     }
 
 }

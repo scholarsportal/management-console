@@ -73,6 +73,15 @@
 				    </c:url>"><spring:message
 										code="add.contentItem" /></a></li>
 									<li>|</li>
+									
+									<c:if test="${contentItem.viewerURL != null}">
+										<li>
+											<a target = "viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>"><spring:message code="view" /></a>
+										</li>
+										<li>|</li>
+
+									</c:if>
+									
 									<li>
 										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
@@ -108,7 +117,7 @@
 							<tr>
 								<td class="label"><spring:message code="contentItem.id" /></td>
 								<td class="value">
-									<a href="<c:url value="${contentItem.downloadURL}"></c:url>">${contentItem.contentId}</a>
+									<a target="viewer" href="<c:url value="${contentItem.viewerURL != null ? contentItem.viewerURL : contentItem.downloadURL}"></c:url>">${contentItem.contentId}</a>
 								</td>
 							</tr>
 							<tr>
@@ -139,7 +148,7 @@
 							style="border: 1px dashed #999; min-height: 10.5em; padding: 0.25em">
 							<c:choose>
 								<c:when test="${not empty contentItem.thumbnailURL}">
-									<a href="${contentItem.downloadURL}">
+									<a href="${contentItem.viewerURL !=null ? contentItem.viewerURL : contentItem.downloadURL}">
 										<img src="${contentItem.thumbnailURL}"/>
 									</a>
 								</c:when>
