@@ -2,7 +2,6 @@ package org.duracloud.durastore.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.EncodeUtil;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -10,13 +9,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Runtime test of content REST API. The durastore web application must be
@@ -25,41 +22,20 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class TestContentRest {
-
-    private static RestHttpHelper restHelper = new RestHttpHelper();
-
-    private static String baseUrl;
+public class TestContentRest extends BaseRestTester {
 
     private static final String CONTENT = "<content />";
-
-    private static String spaceId;
 
     private static String[] contentIds = {"content1",
                                           "dir0/dir1/content2",
                                           "dir0/dir1/content3?storeID=0"};
 
-    static {
-        String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "space" + random;
-    }
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        baseUrl = RestTestHelper.getBaseUrl();
-
-        // Initialize the Instance
-        HttpResponse response = RestTestHelper.initialize();
-        int statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_OK, statusCode);
-    }
-
     @Before
     public void setUp() throws Exception {
         // Add space
+        setNewSpaceId();
         HttpResponse response = RestTestHelper.addSpace(spaceId);
-        int statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_CREATED, statusCode);
+        checkResponse(response, HttpStatus.SC_CREATED);
 
         for (String contentId : contentIds) {
             setUpContent(contentId);
@@ -68,7 +44,6 @@ public class TestContentRest {
 
     private void setUpContent(String contentId) throws Exception {
         HttpResponse response;
-        int statusCode;
 
         // Add content to space
         String url = baseUrl + "/" + spaceId + "/" + contentId;
@@ -76,16 +51,14 @@ public class TestContentRest {
         headers.put(RestTestHelper.METADATA_NAME,
                     RestTestHelper.METADATA_VALUE);
         response = restHelper.put(url, CONTENT, headers);
-        statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_CREATED, statusCode);
+        checkResponse(response, HttpStatus.SC_CREATED);
     }
 
     @After
     public void tearDown() throws Exception {
         // Delete space
         HttpResponse response = RestTestHelper.deleteSpace(spaceId);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        String responseText = response.getResponseBody();
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(responseText);
     }
 
@@ -103,13 +76,13 @@ public class TestContentRest {
         String id = "test?content";
         id = EncodeUtil.urlEncode(id);
         HttpResponse response = addContentItem(id);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_BAD_REQUEST);
 
         // Backslash
         id = "test\\content";
         id = EncodeUtil.urlEncode(id);
         response = addContentItem(id);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_BAD_REQUEST);
 
         // Too long
         id = "test-content";
@@ -117,7 +90,7 @@ public class TestContentRest {
             id += "test-content";
         }
         response = addContentItem(id);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_BAD_REQUEST);
 
         // Test valid content IDs
 
@@ -144,7 +117,7 @@ public class TestContentRest {
                      HttpStatus.SC_CREATED,
                      response.getStatusCode());
         response = getContentItem(contentId);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
     }
 
     private HttpResponse getContentItem(String contentId) throws Exception {
@@ -161,14 +134,12 @@ public class TestContentRest {
 
     private void doTestGetContent(String contentId) throws Exception {
         HttpResponse response = getContentItem(contentId);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
+        assertNotNull(responseText);
+        assertEquals(CONTENT, responseText);
 
-        String content = response.getResponseBody();
-        assertNotNull(content);
-        assertEquals(CONTENT, content);
-
-        String contentType = response.getResponseHeader(HttpHeaders.CONTENT_TYPE)
-            .getValue();
+        String contentType =
+            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
         assertNotNull(contentType);
         assertTrue(contentType.contains("text/xml"));
     }
@@ -183,26 +154,26 @@ public class TestContentRest {
     private void doTestGetContentMetadata(String contentId) throws Exception {
         String url = baseUrl + "/" + spaceId + "/" + contentId;
         HttpResponse response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         verifyMetadata(response, HttpHeaders.CONTENT_LENGTH, "11");
 
-        String contentType = response.getResponseHeader(HttpHeaders.CONTENT_TYPE)
-            .getValue();
+        String contentType =
+            response.getResponseHeader(HttpHeaders.CONTENT_TYPE).getValue();
         assertNotNull(contentType);
         assertTrue(contentType.contains("text/xml"));
 
-        String contentChecksum = response.getResponseHeader("Content-MD5")
-            .getValue();
+        String contentChecksum =
+            response.getResponseHeader("Content-MD5").getValue();
         assertNotNull(contentChecksum);
 
-        String contentETag = response.getResponseHeader(HttpHeaders.ETAG)
-            .getValue();
+        String contentETag =
+            response.getResponseHeader(HttpHeaders.ETAG).getValue();
         assertNotNull(contentETag);
         assertEquals(contentChecksum, contentETag);
 
-        String contentModified = response.getResponseHeader(HttpHeaders.LAST_MODIFIED)
-            .getValue();
+        String contentModified =
+            response.getResponseHeader(HttpHeaders.LAST_MODIFIED).getValue();
         assertNotNull(contentModified);
 
         verifyMetadata(response,
@@ -233,7 +204,7 @@ public class TestContentRest {
 
         // Make sure the changes were saved
         HttpResponse response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         verifyMetadata(response, HttpHeaders.CONTENT_TYPE, newContentMime);
         verifyMetadata(response, newMetaName, newMetaValue);
@@ -243,7 +214,7 @@ public class TestContentRest {
         postMetadataUpdate(url, contentId, headers);
 
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         // New metadata items should be gone, mimetype should be unchanged
         verifyNoMetadata(response, newMetaName);
@@ -256,7 +227,7 @@ public class TestContentRest {
         postMetadataUpdate(url, contentId, headers);
 
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         // Metadata should be updated
         verifyMetadata(response, HttpHeaders.CONTENT_TYPE, testMime);
@@ -267,9 +238,7 @@ public class TestContentRest {
                                             Map<String, String> headers)
         throws Exception {
         HttpResponse response = restHelper.post(url, null, headers);
-
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        String responseText = response.getResponseBody();
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(responseText);
         assertTrue(responseText.contains(removeParams(contentId)));
         assertTrue(responseText.contains("updated"));
@@ -298,25 +267,25 @@ public class TestContentRest {
 
         // Add Content
         HttpResponse response = restHelper.put(url, "test-content", null);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         url = baseUrl + "/" + spaceId + "/" + invalidContentId;
 
         // Get Content
         response = restHelper.get(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Get Content Metadata
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Set Content Metadata
         response = restHelper.post(url, null, null);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Delete Content
         response = restHelper.delete(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
-    }
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
+    } 
 
 }

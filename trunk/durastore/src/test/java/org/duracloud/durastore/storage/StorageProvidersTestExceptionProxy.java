@@ -29,7 +29,8 @@ public class StorageProvidersTestExceptionProxy
      * @param e
      */
     private void throwRuntime(StorageProvider provider, AssertionError e) {
-        throw new RuntimeException(provider.getClass().getName(), e);
+        throw new RuntimeException(provider.getClass().getName() +
+            " exception: " + e.getMessage(), e);
     }
 
     public void testAddAndGetContent(StorageProvider provider,
@@ -77,10 +78,10 @@ public class StorageProvidersTestExceptionProxy
         }
     }
 
-    public void testCreateSpace(StorageProvider provider, String spaceId0)
+    public void testCreateSpace(StorageProvider provider, String spaceId)
             throws StorageException {
         try {
-            tester.testCreateSpace(provider, spaceId0);
+            tester.testCreateSpace(provider, spaceId);
         } catch (AssertionError e) {
             throwRuntime(provider, e);
         }
@@ -102,10 +103,9 @@ public class StorageProvidersTestExceptionProxy
     }
 
     public void testDeleteSpace(StorageProvider provider,
-                                String spaceId0,
-                                String spaceId1) throws StorageException {
+                                String spaceId) throws StorageException {
         try {
-            tester.testDeleteSpace(provider, spaceId0, spaceId1);
+            tester.testDeleteSpace(provider, spaceId);
         } catch (AssertionError e) {
             throwRuntime(provider, e);
         }

@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +41,10 @@ public class StorageProvidersTest {
     private final static List<StorageProvider> storageProviders =
             new ArrayList<StorageProvider>();
 
-    private final List<String> spaceIds = new ArrayList<String>();
+    private final static List<String> spaceIds = new ArrayList<String>();
+
+    private static String spaceId0;
+    private static String spaceId1;
 
     @BeforeClass
     public static void beforeClass() throws StorageException {
@@ -95,17 +100,36 @@ public class StorageProvidersTest {
 
     @Before
     public void setUp() {
+        checkSpacesCreated();
         try {
-            clean();
+            cleanSpaces();
         } catch (Exception e) {
             log.info(e);
+        }
+    }
+
+    private void checkSpacesCreated() {
+        if(spaceIds.size() <= 0) {
+            spaceId0 = getNewSpaceId();
+            spaceId1 = getNewSpaceId();
+            spaceIds.add(spaceId0);
+            spaceIds.add(spaceId1);
+
+            for (StorageProvider provider : storageProviders) {
+                log.info("Creating spaces for provider " + provider.getClass());
+                for (String spaceId : spaceIds) {
+                    log.info("Creating space: " + spaceId);
+                    tester.testCreateSpace(provider, spaceId);
+                }
+                log.info("Creating spaces complete for " + provider.getClass());
+            }
         }
     }
 
     @After
     public void tearDown() throws Exception {
         try {
-            clean();
+            cleanSpaces();
         } catch (Exception e) {
             log.info(e);
         }
@@ -113,45 +137,58 @@ public class StorageProvidersTest {
 
     @AfterClass
     public static void afterClass() {
+        try {
+            removeSpaces();
+        } catch (Exception e) {
+            log.info(e);
+        }
+
         tester.close();
     }
 
-    private void clean() {
+    private static void cleanSpaces() {
         for (StorageProvider provider : storageProviders) {
             assertNotNull(provider);
-
-            for (String spaceId : spaceIds) {
-                deleteSpace(provider, spaceId);
+            for(String spaceId : spaceIds) {
+                Iterator<String> contentIds =
+                    provider.getSpaceContents(spaceId, null);
+                while(contentIds.hasNext()) {
+                    String contentId = contentIds.next();
+                    provider.deleteContent(spaceId, contentId);
+                }
+                provider.setSpaceMetadata(spaceId,
+                                          new HashMap<String, String>());
+                provider.setSpaceAccess(spaceId,
+                                        StorageProvider.AccessType.CLOSED);
             }
         }
     }
 
-    private void deleteSpace(StorageProvider provider, String spaceId) {
-        try {
-            log.debug(provider.getClass().getName() + " delete: " + spaceId);
-            provider.deleteSpace(spaceId);
-        } catch (Exception e) {
+    private static void removeSpaces() {
+        for (StorageProvider provider : storageProviders) {
+            assertNotNull(provider);
+            log.info("Removing spaces for provider " + provider.getClass());
+            for(String spaceId : spaceIds) {
+                log.info("Removing space: " + spaceId);
+                tester.testDeleteSpace(provider, spaceId);
+            }
+            log.info("Removing spaces complete for " + provider.getClass());
         }
     }
 
-    private String getNewSpaceId() {
+    private static String getNewSpaceId() {
         String random = String.valueOf(new Random().nextInt(99999));
-        String spaceId = "duracloud-test-space." + random;
-        spaceIds.add(spaceId);
-        return spaceId;
+        return "storage-providers-test-space-" + random;
     }
 
     private String getNewContentId() {
         String random = String.valueOf(new Random().nextInt(99999));
-        String contentId = "duracloud-test-content." + random;
-        return contentId;
+        return "storage-providers-test-content-" + random;
     }
 
     @Test
     public void testGetSpaces() throws StorageException {
-        log.debug("testGetSpaces()");
-        String spaceId0 = getNewSpaceId();
-        String spaceId1 = getNewSpaceId();
+        log.info("testGetSpaces()");
         for (StorageProvider provider : storageProviders) {
             tester.testGetSpaces(provider, spaceId0, spaceId1);
         }
@@ -159,8 +196,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetSpaceContents() throws StorageException {
-        log.debug("testGetSpaceContents()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testGetSpaceContents()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
@@ -173,30 +209,8 @@ public class StorageProvidersTest {
     }
 
     @Test
-    public void testCreateSpace() throws StorageException {
-        log.debug("testCreateSpace()");
-        String spaceId0 = getNewSpaceId();
-
-        for (StorageProvider provider : storageProviders) {
-            tester.testCreateSpace(provider, spaceId0);
-        }
-    }
-
-    @Test
-    public void testDeleteSpace() throws StorageException {
-        log.debug("testDeleteSpace()");
-        String spaceId0 = getNewSpaceId();
-        String spaceId1 = getNewSpaceId();
-
-        for (StorageProvider provider : storageProviders) {
-            tester.testDeleteSpace(provider, spaceId0, spaceId1);
-        }
-    }
-
-    @Test
     public void testGetSpaceMetadata() throws StorageException {
-        log.debug("testGetSpaceMetadata()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testGetSpaceMetadata()");
 
         for (StorageProvider provider : storageProviders) {
             tester.testGetSpaceMetadata(provider, spaceId0);
@@ -205,8 +219,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testSetSpaceMetadata() throws StorageException {
-        log.debug("testSetSpaceMetadata()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testSetSpaceMetadata()");
 
         for (StorageProvider provider : storageProviders) {
             tester.testSetSpaceMetadata(provider, spaceId0);
@@ -215,8 +228,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetSpaceAccess() throws StorageException {
-        log.debug("testGetSpaceAccess()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testGetSpaceAccess()");
 
         for (StorageProvider provider : storageProviders) {
             tester.testGetSpaceAccess(provider, spaceId0);
@@ -225,8 +237,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testAddAndGetContent() throws Exception {
-        log.debug("testAddAndGetContent()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testAddAndGetContent()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
         String contentId2 = getNewContentId();
@@ -242,8 +253,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testAddAndGetContentOverwrite() throws Exception {
-        log.debug("testAddAndGetContentOverwrite()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testAddAndGetContentOverwrite()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
@@ -257,8 +267,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testAddContentLarge() throws Exception {
-        log.debug("testAddContentLarge()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testAddContentLarge()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
@@ -272,8 +281,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testDeleteContent() throws StorageException {
-        log.debug("testDeleteContent()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testDeleteContent()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
@@ -287,9 +295,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testSetContentMetadata() throws StorageException {
-        log.debug("testSetContentMetadata()");
-        String spaceId0 = getNewSpaceId();
-        String spaceId1 = getNewSpaceId();
+        log.info("testSetContentMetadata()");
         String contentId0 = getNewContentId();
         String contentId1 = getNewContentId();
 
@@ -304,8 +310,7 @@ public class StorageProvidersTest {
 
     @Test
     public void testGetContentMetadata() throws StorageException {
-        log.debug("testGetContentMetadata()");
-        String spaceId0 = getNewSpaceId();
+        log.info("testGetContentMetadata()");
         String contentId0 = getNewContentId();
 
         for (StorageProvider provider : storageProviders) {

@@ -1,13 +1,15 @@
 package org.duracloud.durastore.rest;
 
-import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpStatus;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Runtime test of space REST API. The durastore
@@ -27,48 +28,28 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class TestSpaceRest
-        extends TestCase {
-
-    private static RestHttpHelper restHelper = new RestHttpHelper();
-    private static String baseUrl;
-
-    private static String spaceId;
+public class TestSpaceRest extends BaseRestTester {
 
     private static List<String> spaces;
 
-    static {
-        String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "space" + random;
-    }
-
-    @Override
     @Before
-    protected void setUp() throws Exception {
-        baseUrl = RestTestHelper.getBaseUrl();
-
-        // Initialize the Instance
-        HttpResponse response = RestTestHelper.initialize();
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-
+    public void setUp() throws Exception {
         // Add space
-        response = RestTestHelper.addSpace(spaceId);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+        setNewSpaceId();
+        HttpResponse response = RestTestHelper.addSpace(spaceId);
+        String responseText = checkResponse(response, HttpStatus.SC_CREATED);
 
         spaces = new ArrayList<String>();
         spaces.add(spaceId);
-
     }
 
-    @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         for(String spaceId : spaces) {
             HttpResponse response =
                 RestTestHelper.deleteSpace(spaceId);
 
-            assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-            String responseText = response.getResponseBody();
+            String responseText = checkResponse(response, HttpStatus.SC_OK);
             assertNotNull(responseText);
         }
     }
@@ -108,12 +89,12 @@ public class TestSpaceRest
 
     private void checkInvalidSpaceId(String id) throws Exception {
         HttpResponse response = RestTestHelper.addSpace(id);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_BAD_REQUEST);
     }
 
     private void checkValidSpaceId(String id) throws Exception {
         HttpResponse response = RestTestHelper.addSpace(id);
-        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_CREATED);
         spaces.add(id);
     }
 
@@ -121,9 +102,7 @@ public class TestSpaceRest
     public void testGetSpaces() throws Exception {
         String url = baseUrl + "/spaces";
         HttpResponse response = restHelper.get(url);
-        String responseText = response.getResponseBody();
-
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         assertTrue(responseText.contains("<spaces>"));
     }
 
@@ -131,7 +110,7 @@ public class TestSpaceRest
     public void testGetSpaceMetadata() throws Exception {
         String url = baseUrl + "/" + spaceId;
         HttpResponse response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         testMetadata(response,
                      BaseRest.SPACE_ACCESS_HEADER,
@@ -150,32 +129,28 @@ public class TestSpaceRest
         // Get complete list
         String url = spaceUrl;
         HttpResponse response = restHelper.get(url);
-        String responseText = response.getResponseBody();
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         List<String> contentIds = parseContentList(responseText);
         assertEquals(3, contentIds.size());
 
         // MaxResults + Marker test
         url = spaceUrl + "?maxResults=2";
         response = restHelper.get(url);
-        responseText = response.getResponseBody();
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        responseText = checkResponse(response, HttpStatus.SC_OK);
         contentIds = parseContentList(responseText);
         assertEquals(2, contentIds.size());
 
         String lastContentId = contentIds.get(contentIds.size() - 1);
         url = spaceUrl + "?maxResults=2&marker=" + lastContentId;
         response = restHelper.get(url);
-        responseText = response.getResponseBody();
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        responseText = checkResponse(response, HttpStatus.SC_OK);
         contentIds = parseContentList(responseText);
         assertEquals(1, contentIds.size());
 
         // Prefix test
         url = spaceUrl + "?prefix=test";
         response = restHelper.get(url);
-        responseText = response.getResponseBody();
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        responseText = checkResponse(response, HttpStatus.SC_OK);
         contentIds = parseContentList(responseText);
         assertEquals(2, contentIds.size());
         for(String contentId : contentIds) {
@@ -191,8 +166,7 @@ public class TestSpaceRest
         for(String contentId : contentIds) {
             String url = baseUrl + "/" + spaceId + "/" + contentId;
             HttpResponse response = restHelper.put(url, content, null);
-            int statusCode = response.getStatusCode();
-            assertEquals(HttpStatus.SC_CREATED, statusCode);
+            checkResponse(response, HttpStatus.SC_CREATED);
         }
     }
 
@@ -225,15 +199,14 @@ public class TestSpaceRest
         headers.put(RestTestHelper.METADATA_NAME, newSpaceMetadata);
         HttpResponse response = restHelper.post(url, null, headers);
 
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        String responseText = response.getResponseBody();
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
         assertTrue(responseText.contains("updated"));
 
         // Make sure the changes were saved
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         testMetadata(response, BaseRest.SPACE_ACCESS_HEADER, newSpaceAccess);
         testMetadata(response, RestTestHelper.METADATA_NAME, newSpaceMetadata);
@@ -242,14 +215,13 @@ public class TestSpaceRest
         headers.remove(RestTestHelper.METADATA_NAME);
         response = restHelper.post(url, null, headers);
 
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        responseText = response.getResponseBody();
+        responseText = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(responseText);
         assertTrue(responseText.contains(spaceId));
         assertTrue(responseText.contains("updated"));
 
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
 
         testNoMetadata(response, RestTestHelper.METADATA_NAME);
     }
@@ -273,19 +245,19 @@ public class TestSpaceRest
 
         // Get Space
         HttpResponse response = restHelper.get(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Get Space Metadata
         response = restHelper.head(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Set Space Metadata
         response = restHelper.post(url, null, null);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
 
         // Delete Space
         response = restHelper.delete(url);
-        assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());        
+        checkResponse(response, HttpStatus.SC_NOT_FOUND);
     }
 
  }

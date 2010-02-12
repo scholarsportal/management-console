@@ -183,9 +183,20 @@ public class S3StorageProvider
     }
 
     private void throwIfSpaceNotExist(String spaceId) {
+        throwIfSpaceNotExist(spaceId, true);
+    }
+
+    private void throwIfSpaceNotExist(String spaceId, boolean wait) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
-            throw new NotFoundException(msg);
+            if(wait) {
+                waitForSpaceAvailable(spaceId);
+                if (!spaceExists(spaceId)) {
+                    throw new NotFoundException(msg);
+                }
+            } else {
+                throw new NotFoundException(msg);
+            }
         }
     }
 
@@ -201,12 +212,14 @@ public class S3StorageProvider
     }
 
     private void waitForSpaceAvailable(String spaceId) {
-        int maxLoops = 10;
+        int maxLoops = 6;
         for (int loops = 0;
              !spaceExists(spaceId) && loops < maxLoops;
              loops++) {
             try {
-                Thread.sleep(1000);
+                log.debug("Waiting for space " + spaceId +
+                          " to be available, loop " + loops);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
             }
         }
@@ -220,9 +233,6 @@ public class S3StorageProvider
         throwIfSpaceExists(spaceId);
 
         S3Bucket bucket = createBucket(spaceId);
-
-        // Wait for the bucket to be available before adding metadata
-        waitForSpaceAvailable(spaceId);
 
         // Add space metadata
         Map<String, String> spaceMetadata = new HashMap<String, String>();

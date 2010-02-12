@@ -3,7 +3,7 @@ package org.duracloud.durastore.storage;
 
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ChecksumUtil.Algorithm;
-import org.duracloud.emcstorage.EMCStorageProvider;
+import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
@@ -39,9 +39,11 @@ public class StorageProvidersTestCore
 
     private final String mimeXml = "text/xml";
 
+    private final String spaceIdInvalid = "duracloud-invalid-space-id";
+
     private void sleep(long milliseconds) {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(milliseconds);
         } catch(InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -53,18 +55,8 @@ public class StorageProvidersTestCore
         Iterator<String> spaces = provider.getSpaces();
         assertNotNull(spaces);
 
-        long numInitialSpaces = count(spaces);
-
-        provider.createSpace(spaceId0);
-        provider.createSpace(spaceId1);
-
-        sleep(1000);
-
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-
         List<String> spaceList = StorageProviderUtil.getList(spaces);
-        assertEquals(numInitialSpaces + 2, spaceList.size());
+        assertTrue(spaceList.size() >= 2);
 
         assertTrue(spaceList.contains(spaceId0));
         assertTrue(spaceList.contains(spaceId1));
@@ -76,12 +68,10 @@ public class StorageProvidersTestCore
                                      String contentId1) throws StorageException {
         Iterator<String> spaceContents = null;
         try {
-            spaceContents = provider.getSpaceContents(spaceId0, null);
+            spaceContents = provider.getSpaceContents(spaceIdInvalid, null);
             Assert.fail("Exception should be thrown if space does not exist.");
         } catch (Exception e) {
         }
-
-        provider.createSpace(spaceId0);
 
         // First content to add
         byte[] content0 = "hello world.".getBytes();
@@ -126,119 +116,69 @@ public class StorageProvidersTestCore
         compareChecksum(provider, spaceKey, contentKey, checksum);
     }
 
-    public void testCreateSpace(StorageProvider provider, String spaceId0)
+    public void testCreateSpace(StorageProvider provider, String spaceId)
             throws StorageException {
-        final boolean isExpected = true;
-        verifySpaceExists(provider, spaceId0, !isExpected);
+        provider.createSpace(spaceId);
 
-        provider.createSpace(spaceId0);
-
-        verifySpaceExists(provider, spaceId0, isExpected);
-        verifySpaceMetadata(provider, spaceId0);
-
-        // TODO: Not all providers implement consistently
-        //       (S3 does not update quickly)
-        //        try {
-        //            provider.createSpace(spaceId0);
-        //            fail("Exception expected trying to create pre-existing space.");
-        //        } catch (Exception e) {
-        //        }
-    }
-
-    private void verifySpaceExists(StorageProvider provider,
-                                   String space,
-                                   boolean expected) throws StorageException {
-        boolean found = false;
-        try {
-            Iterator<String> spaces = provider.getSpaces();
-            assertNotNull(spaces);
-
-            while (spaces.hasNext()) {
-                String s = spaces.next();
-                if (space.equals(s)) {
-                    found = true;
-                }
-            }
-        } catch (StorageException e) {
+        int maxLoops = 20;
+        for (int loops = 0;
+             !spaceExists(provider, spaceId) && loops < maxLoops;
+             loops++) {
+            sleep(2000);
         }
-        assertEquals(expected, found);
+
+        verifySpaceMetadata(provider, spaceId);
     }
 
-    private void verifySpaceMetadata(StorageProvider provider, String space)
-            throws StorageException {
-        Map<String, String> metadata = provider.getSpaceMetadata(space);
+    private boolean spaceExists(StorageProvider provider, String spaceId) {
+        boolean exists;
+        try {
+            provider.getSpaceAccess(spaceId);
+            exists = true;
+        } catch (NotFoundException e) {
+            exists = false;
+        }
+
+        if(exists) {
+            try {
+                Iterator<String> spaces = provider.getSpaces();
+                assertNotNull(spaces);
+                exists = contains(spaces, spaceId);
+            } catch (StorageException e) {
+                exists = false;
+            }
+        }
+
+        return exists;
+    }
+
+    private void verifySpaceMetadata(StorageProvider provider,
+                                            String spaceId)
+        throws StorageException {
+        Map<String, String> metadata = provider.getSpaceMetadata(spaceId);
         assertNotNull(metadata);
 
         String created =
-                metadata.get(EMCStorageProvider.METADATA_SPACE_CREATED);
+                metadata.get(StorageProvider.METADATA_SPACE_CREATED);
         assertNotNull(created);
     }
 
     public void testDeleteSpace(StorageProvider provider,
-                                String spaceId0,
-                                String spaceId1) throws StorageException {
-        // Verify initial state.
-        Iterator<String> spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        long numInitialSpaces = count(spaces);
-
+                                String spaceId)
+        throws StorageException {
         try {
-            provider.deleteSpace(spaceId0);
-            fail("Exception expected.");
+            provider.deleteSpace(spaceId);
+
+            Iterator<String> spaces = provider.getSpaces();
+            assertNotNull(spaces);
+            assertFalse(contains(spaces, spaceId));
         } catch (Exception e) {
         }
-
-        // Add some spaces.
-        provider.createSpace(spaceId0);
-        provider.createSpace(spaceId1);
-        sleep(1000);
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertEquals(numInitialSpaces + 2, count(spaces));
-
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertTrue(contains(spaces, spaceId0));
-
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertTrue(contains(spaces, spaceId1));
-
-        // Now check deletions.
-        // ...first.
-        provider.deleteSpace(spaceId1);
-        sleep(1000);
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertEquals(numInitialSpaces + 1, count(spaces));
-
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertTrue(contains(spaces, spaceId0));
-
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertFalse(contains(spaces, spaceId1));
-
-        // ...second.
-        provider.deleteSpace(spaceId0);
-        sleep(1000);
-        spaces = provider.getSpaces();
-        assertNotNull(spaces);
-        assertEquals(numInitialSpaces, count(spaces));
-
     }
 
     public void testGetSpaceMetadata(StorageProvider provider, String spaceId0)
             throws StorageException {
         Map<String, String> spaceMd = null;
-        try {
-            spaceMd = provider.getSpaceMetadata(spaceId0);
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
-
-        provider.createSpace(spaceId0);
         spaceMd = provider.getSpaceMetadata(spaceId0);
         assertNotNull(spaceMd);
 
@@ -253,14 +193,6 @@ public class StorageProvidersTestCore
 
     public void testSetSpaceMetadata(StorageProvider provider, String spaceId0)
             throws StorageException {
-        try {
-            provider.setSpaceMetadata(spaceId0, new HashMap<String, String>());
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
-
-        provider.createSpace(spaceId0);
-
         final String key0 = "key0";
         final String key1 = "key1";
         final String key2 = "key2";
@@ -313,14 +245,8 @@ public class StorageProvidersTestCore
     public void testGetSpaceAccess(StorageProvider provider, String spaceId0)
             throws StorageException {
         AccessType access = null;
-        try {
-            access = provider.getSpaceAccess(spaceId0);
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
 
         // Test default access.
-        provider.createSpace(spaceId0);
         access = provider.getSpaceAccess(spaceId0);
         Assert.assertEquals(AccessType.CLOSED, access);
 
@@ -350,14 +276,6 @@ public class StorageProvidersTestCore
                                      String contentId1,
                                      String contentId2) throws Exception {
         byte[] content0 = "hello,world.".getBytes();
-        try {
-            addContent(provider, spaceId0, contentId0, mimeText, content0);
-            fail("Exception expected");
-        } catch (Exception e) {
-        }
-
-        // Need to have a space.
-        provider.createSpace(spaceId0);
 
         // First content to add
         addContent(provider, spaceId0, contentId1, mimeText, content0);
@@ -382,8 +300,6 @@ public class StorageProvidersTestCore
                                               String contentId0,
                                               String contentId1)
             throws Exception {
-        provider.createSpace(spaceId0);
-
         byte[] content0 = "hello,world.".getBytes();
 
         // First content to add
@@ -424,15 +340,6 @@ public class StorageProvidersTestCore
             }
             byte[] content0 = sb.toString().getBytes();
 
-            try {
-                addContent(provider, spaceId0, contentId0, mimeText, content0);
-                fail("Exception expected");
-            } catch (Exception e) {
-            }
-
-            // Need to have a space.
-            provider.createSpace(spaceId0);
-
             // First content to add
             addContent(provider, spaceId0, contentId1, mimeText, content0);
 
@@ -469,9 +376,6 @@ public class StorageProvidersTestCore
         } catch (Exception e) {
         }
 
-        provider.createSpace(spaceId0);
-        // TODO: EMCStorageProvider does not always register the creation of
-        //       the new spaceId0 right away.
         Iterator<String> spaceContents =
             provider.getSpaceContents(spaceId0, null);
         verifyContentListing(spaceContents);
@@ -536,16 +440,9 @@ public class StorageProvidersTestCore
         final String key1 = "KEY1";
         final String val0 = "val0";
         final String val1 = "val1";
-
         contentMetadata.put(key0, val0);
-        try {
-            provider.setContentMetadata(spaceId0, contentId0, contentMetadata);
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
 
         // Need to have a space and content.
-        provider.createSpace(spaceId1);
         addContent(provider, spaceId1, contentId0, mimeText, "hello".getBytes());
 
         // Check initial state of metadata.
@@ -620,7 +517,6 @@ public class StorageProvidersTestCore
         final String modifiedKey = StorageProvider.METADATA_CONTENT_MODIFIED;
         final String cksumKey = StorageProvider.METADATA_CONTENT_CHECKSUM;
 
-        provider.createSpace(spaceId0);
         byte[] data = "hello-friends".getBytes();
         ChecksumUtil chksum = new ChecksumUtil(Algorithm.MD5);
         String digest = chksum.generateChecksum(new ByteArrayInputStream(data));
@@ -675,7 +571,6 @@ public class StorageProvidersTestCore
 
     //
     //    public void testSpaceAccess() throws Exception {
-    //        provider.createSpace(spaceId1);
     //        Identifier rootId = provider.getRootId(spaceId1);
     //
     //        provider.setSpaceAccess(spaceId1, AccessType.OPEN);
@@ -711,7 +606,6 @@ public class StorageProvidersTestCore
     //
     //
     //    public void testContentAccess() throws Exception {
-    //        provider.createSpace(spaceId1);
     //        addContent(spaceId1, contentId1, mimeText, "testing-content".getBytes());
     //        Identifier objId = provider.getContentObjId(spaceId1, contentId1);
     //

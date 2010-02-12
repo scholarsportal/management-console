@@ -1,14 +1,15 @@
 package org.duracloud.durastore.aop;
 
+import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.jms.support.converter.MessageConverter;
+
 import javax.jms.Connection;
 import javax.jms.MapMessage;
 import javax.jms.Session;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.springframework.jms.support.converter.MessageConverter;
 
 public class TestIngestMessageConverter
         extends MessagingTestSupport {

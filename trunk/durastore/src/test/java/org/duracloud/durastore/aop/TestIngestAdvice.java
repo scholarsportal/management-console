@@ -1,13 +1,17 @@
 package org.duracloud.durastore.aop;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.rest.RestTestHelper;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.apache.commons.httpclient.HttpStatus;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -50,17 +54,11 @@ public class TestIngestAdvice
 
     static {
         String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "space" + random;
+        spaceId = "ingest-advice-test-space-" + random;
     }
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        conn = createConnection();
-        session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        destination = createDestination();
-        received = false;
-
+    @BeforeClass
+    public static void beforeClass() throws Exception {
         // Initialize the Instance
         HttpResponse response = RestTestHelper.initialize();
         int statusCode = response.getStatusCode();
@@ -69,11 +67,18 @@ public class TestIngestAdvice
         // Add space
         response = RestTestHelper.addSpace(spaceId);
         statusCode = response.getStatusCode();
-        Assert.assertEquals(HttpStatus.SC_CREATED, statusCode);
-
+        String responseText = response.getResponseBody();
+        Assert.assertEquals(responseText, HttpStatus.SC_CREATED, statusCode);
     }
 
-    @Override
+    @Before
+    public void setUp() throws Exception {
+        conn = createConnection();
+        session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        destination = createDestination();
+        received = false;
+    }    
+
     @After
     public void tearDown() throws Exception {
         if (conn != null) {
@@ -85,7 +90,10 @@ public class TestIngestAdvice
             session = null;
         }
         destination = null;
+    }
 
+    @AfterClass
+    public static void afterClass() throws Exception {
         // Delete space
         HttpResponse response = RestTestHelper.deleteSpace(spaceId);
         Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());

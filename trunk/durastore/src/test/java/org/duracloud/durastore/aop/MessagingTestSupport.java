@@ -1,14 +1,11 @@
 package org.duracloud.durastore.aop;
 
-import javax.jms.Connection;
-import javax.jms.Destination;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTopic;
-
 import org.junit.Assert;
 
-import junit.framework.TestCase;
+import javax.jms.Connection;
+import javax.jms.Destination;
 
 /**
  * This class provides some basic Messaging connectivity support used by
@@ -16,8 +13,7 @@ import junit.framework.TestCase;
  *
  * @author Andrew Woods
  */
-public class MessagingTestSupport
-        extends TestCase {
+public class MessagingTestSupport {
 
     protected ActiveMQConnectionFactory connectionFactory;
 
