@@ -37,7 +37,7 @@ echo "==============================================================="
 echo "Compiling & running unit & integration tests for DuraService..."
 echo "==============================================================="
 cd $BUILD_HOME/duraservice
-$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG -Dmaven.test.failure.ignore=true
 
 if [ $? -ne 0 ]; then
   echo ""
@@ -51,7 +51,7 @@ echo "=================================================================="
 echo "Compiling & running unit & integration tests for Service Client..."
 echo "=================================================================="
 cd $BUILD_HOME/serviceclient
-$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG -Dmaven.test.failure.ignore=true
 
 if [ $? -ne 0 ]; then
   echo ""
@@ -65,7 +65,7 @@ echo "========================================================================="
 echo "Compiling & running unit & integration tests for Services Admin Client..."
 echo "========================================================================="
 cd $BUILD_HOME/servicesadminclient
-$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG
+$MVN clean install -P profile-servicetest -Dtomcat.port.default=9090 -Dlog.level.default=DEBUG -Dmaven.test.failure.ignore=true
 
 if [ $? -ne 0 ]; then
   echo ""
