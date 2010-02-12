@@ -21,12 +21,11 @@ public interface StorageProvidersTestInterface {
                                      String contentId0,
                                      String contentId1) throws StorageException;
 
-    public void testCreateSpace(StorageProvider provider, String spaceId0)
+    public void testCreateSpace(StorageProvider provider, String spaceId)
             throws StorageException;
 
     public void testDeleteSpace(StorageProvider provider,
-                                String spaceId0,
-                                String spaceId1) throws StorageException;
+                                String spaceId) throws StorageException;
 
     public void testGetSpaceMetadata(StorageProvider provider, String spaceId0)
             throws StorageException;

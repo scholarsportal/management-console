@@ -1,21 +1,21 @@
 package org.duracloud.durastore.rest;
 
-import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * Runtime test of store REST API. The durastore web application must be
@@ -24,49 +24,28 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class TestStoreRest
-        extends TestCase {
+public class TestStoreRest extends BaseRestTester {
 
     protected static final Logger log =
         Logger.getLogger(TestStoreRest.class);
-
-    private static RestHttpHelper restHelper = new RestHttpHelper();
-
-    private static String baseUrl;
 
     private static final String CONTENT = "<content />";
 
     private String storesXML;
 
-    private static String spaceId;
-
-    static {
-        String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "space" + random;
-    }
-
-    @Override
     @Before
-    protected void setUp() throws Exception {
-        baseUrl = RestTestHelper.getBaseUrl();
-
-        // Initialize the stores listing
-        HttpResponse response = RestTestHelper.initialize();
-        int statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_OK, statusCode);
-
+    public void setUp() throws Exception {
         // Retrieve the stores listing
+        setNewSpaceId();
         String url = baseUrl + "/stores";
-        response = restHelper.get(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        storesXML = response.getResponseBody();
+        HttpResponse response = restHelper.get(url);
+        storesXML = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(storesXML);
         assertTrue(storesXML.contains("<storageProviderAccounts>"));
     }
 
-    @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
     }
 
     @Test
@@ -116,26 +95,23 @@ public class TestStoreRest
     private void testStore(String acctId) throws Exception {
         // Add space1
         HttpResponse response = RestTestHelper.addSpace(spaceId, acctId);
-        int statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_CREATED, statusCode);
+        checkResponse(response, HttpStatus.SC_CREATED);
 
         // Add content1 to space1
         String url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.put(url, CONTENT, null);
-        statusCode = response.getStatusCode();
-        assertEquals(HttpStatus.SC_CREATED, statusCode);
+        checkResponse(response, HttpStatus.SC_CREATED);
 
         // Delete content1 from space1
         url = baseUrl + "/" + spaceId + "/content1?storeID=" + acctId;
         response = restHelper.delete(url);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-        String responseText = response.getResponseBody();
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
         assertNotNull(responseText);
         assertTrue(responseText.contains("content1"));
         assertTrue(responseText.contains("deleted"));
 
         // Delete space1
         response = RestTestHelper.deleteSpace(spaceId, acctId);
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+        checkResponse(response, HttpStatus.SC_OK);
     }
 }

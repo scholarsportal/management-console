@@ -64,9 +64,9 @@ public class StorageProvidersTestProxyPipe
         proxy.testAddContentLarge(provider, spaceId0, contentId0, contentId1);
     }
 
-    public void testCreateSpace(StorageProvider provider, String spaceId0)
+    public void testCreateSpace(StorageProvider provider, String spaceId)
             throws StorageException {
-        proxy.testCreateSpace(provider, spaceId0);
+        proxy.testCreateSpace(provider, spaceId);
     }
 
     public void testDeleteContent(StorageProvider provider,
@@ -77,9 +77,8 @@ public class StorageProvidersTestProxyPipe
     }
 
     public void testDeleteSpace(StorageProvider provider,
-                                String spaceId0,
-                                String spaceId1) throws StorageException {
-        proxy.testDeleteSpace(provider, spaceId0, spaceId1);
+                                String spaceId) throws StorageException {
+        proxy.testDeleteSpace(provider, spaceId);
     }
 
     public void testGetContentMetadata(StorageProvider provider,

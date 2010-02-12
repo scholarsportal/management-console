@@ -6,8 +6,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -56,6 +56,8 @@ public class S3StorageProviderTest {
     private static final String CONTENT_MIME_VALUE = "text/plain";
     private static final String CONTENT_DATA = "Test Content";
 
+    private RestHttpHelper restHelper;
+
     @Before
     public void setUp() throws Exception {
         Credential s3Credential = getCredential();
@@ -67,6 +69,7 @@ public class S3StorageProviderTest {
         Assert.assertNotNull(password);
 
         s3Provider = new S3StorageProvider(username, password);
+        restHelper = new RestHttpHelper();
     }
 
     @After
@@ -143,7 +146,7 @@ public class S3StorageProviderTest {
         log.debug("Check space access");
         String bucketName = s3Provider.getBucketName(spaceId);
         String spaceUrl = "http://" + bucketName + ".s3.amazonaws.com";
-        RestHttpHelper restHelper = new RestHttpHelper();
+
         HttpResponse spaceResponse = restHelper.get(spaceUrl);
         // Expect a 403 forbidden error because the Space Access is closed by default
         assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
@@ -159,8 +162,7 @@ public class S3StorageProviderTest {
 
         // Check space access
         log.debug("Check space access");
-        spaceResponse = restHelper.get(spaceUrl);
-        assertEquals(HttpStatus.SC_OK, spaceResponse.getStatusCode());
+        testGetLooped(spaceUrl, HttpStatus.SC_OK);
 
         // test addContent()
         log.debug("Test addContent()");
@@ -183,22 +185,24 @@ public class S3StorageProviderTest {
 
         // Check content access
         log.debug("Check content access");
-        spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
-        assertEquals(HttpStatus.SC_OK, spaceResponse.getStatusCode());
+        testGetLooped(spaceUrl + "/" + contentId, HttpStatus.SC_OK);
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(CLOSED)");
         s3Provider.setSpaceAccess(spaceId, AccessType.CLOSED);
 
+        // test getSpaceAccess()
+        log.debug("Test getSpaceAccess()");
+        access = s3Provider.getSpaceAccess(spaceId);
+        assertEquals(access, AccessType.CLOSED);        
+
         // Check space access
         log.debug("Check space access");
-        spaceResponse = restHelper.get(spaceUrl);
-        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
+        testGetLooped(spaceUrl, HttpStatus.SC_FORBIDDEN);
 
         // Check content access
         log.debug("Check content access");
-        spaceResponse = restHelper.get(spaceUrl + "/" + contentId);
-        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
+        testGetLooped(spaceUrl + "/" + contentId, HttpStatus.SC_FORBIDDEN);
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
@@ -313,6 +317,35 @@ public class S3StorageProviderTest {
                                                 contentSize,
                                                 contentStream);
         compareChecksum(s3Provider, spaceId, contentId, checksum);
+    }
+
+    private void testGetLooped(String url, int expectedCode) throws Exception {
+        int maxLoops = 10;
+        for (int loops = 0;
+             !checkResponse(url, expectedCode) && loops < maxLoops;
+             loops++) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+        }
+        assertResponse(url, expectedCode);
+    }
+
+    private boolean checkResponse(String url, int expectedCode)
+        throws Exception {
+        HttpResponse response = restHelper.get(url);
+        assertNotNull(response);
+        return expectedCode == response.getStatusCode();
+    }
+
+    private String assertResponse(String url, int expectedCode)
+        throws Exception {
+        HttpResponse response = restHelper.get(url);
+        assertNotNull(response);
+        String responseText = response.getResponseBody();
+        assertEquals(responseText, expectedCode, response.getStatusCode());
+        return responseText;
     }
 
     @Test

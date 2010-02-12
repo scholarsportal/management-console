@@ -113,10 +113,10 @@ public class StorageProvidersTestMetricsProxy
         stopMetric(provider);
     }
 
-    public void testCreateSpace(StorageProvider provider, String spaceId0)
+    public void testCreateSpace(StorageProvider provider, String spaceId)
             throws StorageException {
         startMetric("testCreateSpace", provider);
-        tester.testCreateSpace(provider, spaceId0);
+        tester.testCreateSpace(provider, spaceId);
         stopMetric(provider);
     }
 
@@ -130,10 +130,9 @@ public class StorageProvidersTestMetricsProxy
     }
 
     public void testDeleteSpace(StorageProvider provider,
-                                String spaceId0,
-                                String spaceId1) throws StorageException {
+                                String spaceId) throws StorageException {
         startMetric("testDeleteSpace", provider);
-        tester.testDeleteSpace(provider, spaceId0, spaceId1);
+        tester.testDeleteSpace(provider, spaceId);
         stopMetric(provider);
     }
 

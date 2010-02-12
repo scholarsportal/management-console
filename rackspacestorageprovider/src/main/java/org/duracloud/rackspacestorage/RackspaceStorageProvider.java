@@ -292,7 +292,11 @@ public class RackspaceStorageProvider
 
         String bucketMetadata =
             getContainerName(spaceId) + SPACE_METADATA_SUFFIX;
-        deleteContent(spaceId, bucketMetadata);
+        try {
+            deleteContent(spaceId, bucketMetadata);
+        } catch(NotFoundException e) {
+            // Metadata has already been removed. Continue deleting space.
+        }
 
         deleteContainer(spaceId);
     }
