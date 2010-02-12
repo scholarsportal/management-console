@@ -238,6 +238,10 @@ div.space {
   margin-bottom: 20px;
 }
 
+.deployment tr {
+	border-bottom:0;	
+}
+
 
 #contents {
   float:left;

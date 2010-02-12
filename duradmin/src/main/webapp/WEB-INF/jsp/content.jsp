@@ -148,7 +148,7 @@
 							style="border: 1px dashed #999; min-height: 10.5em; padding: 0.25em">
 							<c:choose>
 								<c:when test="${not empty contentItem.thumbnailURL}">
-									<a href="${contentItem.viewerURL !=null ? contentItem.viewerURL : contentItem.downloadURL}">
+									<a target="viewer" href="${contentItem.viewerURL !=null ? contentItem.viewerURL : contentItem.downloadURL}">
 										<img src="${contentItem.thumbnailURL}"/>
 									</a>
 								</c:when>

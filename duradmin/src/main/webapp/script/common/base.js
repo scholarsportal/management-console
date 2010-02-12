@@ -332,7 +332,7 @@ function hide(event){
 }
 
 function showConfigurationDetails(event, serviceId, deploymentId){
-	var root = event.target.parentNode.parentNode;
+	var root = event.target.parentNode.parentNode.parentNode.parentNode;
 	var configNodeQuery = "[id='configurationDetails']";
 	dojo.query(configNodeQuery,root).style("display","inline");
 	dojo.query(configNodeQuery,root).forEach(function (configNode) {
