@@ -41,7 +41,7 @@
 				<c:set var="contentStoreSelector" value="${contentStoreProvider.contentStoreSelector}"/>
 
 				<form  action="<c:url value="/changeProvider"/>" method="POST">
-					<input type="hidden" name="returnTo" value="${currentUrl}"/>
+					<input type="hidden" name="returnTo" value="<c:url value="/spaces.htm"/>"/>
 					<spring:message code="storageProviders"/>:
 					<select name="storageProviderId" onchange="submit();">
 						<c:forEach var="storeOption" items="${contentStoreSelector.contentStores}">

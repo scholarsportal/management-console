@@ -50,7 +50,7 @@
 					<table>
 						<tr >
 							<td colspan="2">
-								<table id="deploymentsTable" class="deployment small standard">
+								<table id="deploymentsTable" class="small standard deployment">
 									<tbody>
 									<tr>
 										<th>
@@ -74,37 +74,35 @@
 										<td style="text-align:right">
 											<div  id="actionDiv">
 												<a onclick="showConfigurationDetails(event, '${serviceInfo.id}','${deployment.id}')"><spring:message code="view"/></a> | 
+												<c:if test="${not empty serviceInfo.userConfigs}">
 												<a href="<c:url value="/services/deploy">
 													<c:param name="serviceId" value="${serviceInfo.id}"/>
 													<c:param name="deploymentId" value="${deployment.id}"/>
 													<c:param name="returnTo" value="${currentUrl}"/>
 													</c:url>"><spring:message code="reconfigure"/></a> |
-												
+												</c:if>
 												<input type="button" 
 													   onclick="undeployService('${serviceInfo.id}','${deployment.id}')" 
 													   value="Undeploy"/>
 											</div>
+										</td>
+									</tr>
+									<tr><td colspan = "3">
 											<div id="configurationDetails" class="details" style="display:none;">
-												
-													<table>
-														<tr>
-															<th colspan="2">User Configuration</th>
-														</tr>
-														<c:forEach items="${deployment.userConfigs}" var="uc">
-														<tr>
-															<td>${uc.displayName}</td>
-															<td>${uc.displayValue}</td>
-														</tr>												
-														</c:forEach>
-														<tr>
-															<td colspan="2">
-																<c:if test="${empty deployment.userConfigs}">
-																	This deployed service does not support user configuration.
-																</c:if>
-															</td>
-														</tr>
-													</table>
-
+													<c:if test="${not empty deployment.userConfigs}">
+														<table>
+															<tr>
+																<th colspan="2">User Configuration</th>
+															</tr>
+															<c:forEach items="${deployment.userConfigs}" var="uc">
+															<tr>
+																<td>${uc.displayName}</td>
+																<td>${uc.displayValue}</td>
+															</tr>												
+															</c:forEach>
+														</table>
+													</c:if>
+													
 													<!-- properties table gets inserted here by javascript  -->													
 											</div>
 										</td>
