@@ -9,7 +9,7 @@
 			<tiles:putAttribute name="header">
 				<tiles:insertDefinition name="base-content-header">
 					<tiles:putAttribute name="title">
-						<spring:message code="add.contentItem"/>
+						${contentItem.spaceId} :: <spring:message code="add.contentItem"/>
 					</tiles:putAttribute>	
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
