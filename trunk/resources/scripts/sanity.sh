@@ -23,7 +23,7 @@ echo ""
 echo "==============================================="
 echo "Compiling & running unit & integration tests..."
 echo "==============================================="
-$MVN clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duracloud-home/derby/duracloudDB -Dlog.level.default=DEBUG
+$MVN clean install -Dtomcat.port.default=9090 -Ddatabase.home.default=/home/bamboo/duracloud-home/derby/duracloudDB -Dlog.level.default=DEBUG -Dmaven.test.failure.ignore=true
 
 if [ $? -ne 0 ]; then
   echo ""
