@@ -23,7 +23,7 @@ import org.duracloud.serviceconfig.ServiceInfo;
  */
 public class SpaceUtil {
 
-    private static final String IMAGE_J2K_MIME_TYPE = "image/j2k";
+    private static final String IMAGE_J2K_MIME_TYPE = "image/jp2";
 
     public static Space populateSpace(Space space,
                                       org.duracloud.domain.Space cloudSpace) {
@@ -63,42 +63,19 @@ public class SpaceUtil {
         j2KBaseURL = resolveJ2KServiceBaseURL();
         if(j2KBaseURL != null && mimetype.toLowerCase().startsWith("image/")){
             contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL));
+            contentItem.setViewerURL(formatViewerURL(contentItem, store, j2KBaseURL));
         }
 
-        contentItem.setDownloadURL(resolveContentDownloadURL(contentItem,store, j2KBaseURL));
+        contentItem.setDownloadURL(formatDownloadURL(contentItem,store));
     }
-    /*
-    public static void populateDownloadURLs(List<ContentItem> contentItems, ContentStore store){
-        boolean hasJ2K = false;
-        for(ContentItem contentItem : contentItems){
-            if(contentItem.getMetadata().getMimetype().equals(IMAGE_J2K_MIME_TYPE)){
-                hasJ2K = true;
-                break;
-            }
-        }
-        
-        String j2KBaseURL = null;
-        if(hasJ2K){
-            j2KBaseURL = resolveJ2KServiceBaseURL();
-        }
 
-        for(ContentItem contentItem : contentItems){
-            contentItem.setDownloadURL(resolveContentDownloadURL(contentItem,store, j2KBaseURL));
-        }
-    }
-    */
     
-    private static String resolveContentDownloadURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
-        String standardURL = formatStandardDownloadURL(contentItem,store);
-        
-        if(j2KBaseURL == null || !contentItem.getMetadata().getMimetype().equals(IMAGE_J2K_MIME_TYPE)){
-            return standardURL;
-        }else{
-            return MessageFormat.format(
-                                        "{0}/viewer.html?rft_id={1}", 
-                                        j2KBaseURL, 
-                                        EncodeUtil.urlEncode(standardURL));
-        }
+
+    private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
+         String standardURL = formatDownloadURL(contentItem,store);
+         return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
+                                     j2KBaseURL, 
+                                     EncodeUtil.urlEncode(standardURL));
     }
     
 
@@ -110,12 +87,12 @@ public class SpaceUtil {
         return MessageFormat.format(
                                     pattern, 
                                     j2KBaseURL,
-                                    EncodeUtil.urlEncode(formatStandardDownloadURL(contentItem, store)),
+                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store)),
                                     contentItem.getMetadata().getMimetype());
 
     }
     
-    private static String formatStandardDownloadURL(ContentItem contentItem, ContentStore store) {
+    private static String formatDownloadURL(ContentItem contentItem, ContentStore store) {
         String pattern = "{0}/{1}/{2}?storeID={3}";
  
         return MessageFormat.format(pattern,
