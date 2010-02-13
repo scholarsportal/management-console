@@ -1,6 +1,7 @@
 package org.duracloud.chunk.writer;
 
 import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.error.NotFoundException;
 
@@ -16,8 +17,22 @@ public interface ContentWriter {
      * @param spaceId   destination where arg chunkable content will be written
      * @param chunkable content to be written
      * @return ChunksManifest of written content
+     * @throws NotFoundException on error
      */
     public ChunksManifest write(String spaceId, ChunkableContent chunkable)
+        throws NotFoundException;
+
+    /**
+     * This method writes the arg Chunk to the arg space.
+     * It is intended for use when when the arg chunk is actually a complete
+     * piece of content
+     *
+     * @param spaceId destination where arg chunk content will be written
+     * @param chunk   content to be written
+     * @return MD5 of content
+     * @throws NotFoundException on error
+     */
+    public String writeSingle(String spaceId, ChunkInputStream chunk)
         throws NotFoundException;
 
 }

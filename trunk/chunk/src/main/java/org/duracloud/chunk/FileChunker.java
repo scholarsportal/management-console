@@ -5,10 +5,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.log4j.Logger;
+import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.chunk.writer.ContentWriter;
-import org.duracloud.chunk.error.NotFoundException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,6 +35,8 @@ import java.util.Random;
  *         Date: Feb 4, 2010
  */
 public class FileChunker {
+
+    private final Logger log = Logger.getLogger(getClass());
 
     private ContentWriter contentWriter;
     private final long maxChunkSize;
@@ -74,19 +78,36 @@ public class FileChunker {
         throws NotFoundException {
         String contentId;
         InputStream stream;
+        ChunkInputStream chunk;
         ChunkableContent chunkable;
 
         Collection<File> files = listFiles(baseDir, includes);
         for (File file : files) {
             contentId = getContentId(baseDir, file);
             stream = getInputStream(file);
-            chunkable = new ChunkableContent(contentId,
-                                             stream,
-                                             file.length(),
-                                             maxChunkSize);
-            chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
 
-            contentWriter.write(destSpaceId, chunkable);
+            long fileSize = file.length();
+
+            log.debug("loading file: "+contentId+"["+fileSize+"]");
+            if (fileSize <= maxChunkSize) {
+                chunk = new ChunkInputStream(contentId,
+                                             stream,
+                                             fileSize,
+                                             preserveChunkMD5s);
+
+                contentWriter.writeSingle(destSpaceId, chunk);
+
+            } else {
+                chunkable = new ChunkableContent(contentId,
+                                                 stream,
+                                                 file.length(),
+                                                 maxChunkSize);
+                chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
+
+                contentWriter.write(destSpaceId, chunkable);
+            }
+
+            IOUtils.closeQuietly(stream);
         }
     }
 
