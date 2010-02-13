@@ -87,12 +87,15 @@ pax-provision -f felix  (Felix)
 In order to deploy them independently, from the directory of the specific service use:
 
 run-deps.(sh|bat)
-mvn clean install -f pom-run.xml pax:provision
+(the run-deps script includes this line at the end, which creates the runner directory: mvn clean install -f pom-run.xml pax:provision)
+Note: It is necessary to set an environment variable named BUNDLE_HOME to the directory in which ServicesAdmin will do its work
+Note: On Windows the runner/run.bat script created includes a variable $BUNDLE_HOME which needs to be changed to %BUNDLE_HOME%
 
 Note: For 'services/servicesadmin', after running the pax:provision command above, 
 to start the osgi container run:
  cd services/servicesadmin/runner
  ./run.[sh|bat]
+
 
 The run-deps script creates pom-run.xml by importing the OSGi bundle dependencies necessary to run the service. 
 The run-deps script depends on pax-construct, which is available for download here: 

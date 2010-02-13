@@ -1,6 +1,5 @@
 package org.duracloud.client;
 
-import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
@@ -13,6 +12,13 @@ import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,8 +33,7 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class TestContentStore
-        extends TestCase {
+public class TestContentStore {
 
     protected static final Logger log =
         Logger.getLogger(TestContentStore.class);
@@ -43,9 +48,9 @@ public class TestContentStore
 
     private static String accountXml = null;
 
-    private ContentStoreManager storeManager;
+    private static ContentStoreManager storeManager;
 
-    private ContentStore store;
+    private static ContentStore store;
 
     private static String spaceId;
 
@@ -56,9 +61,8 @@ public class TestContentStore
         spaceId = "storeclient-test-space-" + random;
     }
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
         String url = "http://" + host + ":" + getPort() + "/" + context + "/stores";
         if(accountXml == null) {
             accountXml = StorageAccountTestUtil.buildTestAccountXml();
@@ -72,6 +76,17 @@ public class TestContentStore
         store = storeManager.getPrimaryContentStore();
 
         spaces = new ArrayList<String>();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        if(!spaceExists(spaceId)) {
+            // Create space
+            Map<String, String> spaceMetadata = new HashMap<String, String>();
+            spaceMetadata.put(ContentStore.SPACE_ACCESS,
+                              ContentStore.AccessType.OPEN.name());
+            createSpace(spaceId, spaceMetadata);
+        }
     }
 
     private static String getPort() throws Exception {
@@ -89,13 +104,25 @@ public class TestContentStore
         return port;
     }
 
-    @Override
     @After
     public void tearDown() throws Exception {
+        for(String spaceId : spaces) {
+            if(spaceExists(spaceId)) {
+                Iterator<String> contents = store.getSpaceContents(spaceId);
+                while(contents.hasNext()) {
+                    store.deleteContent(spaceId, contents.next());
+                }
+            }
+        }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
         // Make sure the space is deleted
         for(String spaceId : spaces) {
             if(spaceExists(spaceId)) {
                 store.deleteSpace(spaceId);
+                log.info("Removed Space " + spaceId);                
             }
 
             int maxLoops = 10;
@@ -187,23 +214,30 @@ public class TestContentStore
 
     private void createSpace(String spaceId, Map<String, String> spaceMetadata)
         throws Exception {
-        if(!spaceExists(spaceId)) {
-            store.createSpace(spaceId, spaceMetadata);           
+        boolean spaceExists = spaceExists(spaceId);
+        if(!spaceExists) {
+            store.createSpace(spaceId, spaceMetadata);
+            log.info("Created Space " + spaceId);
 
-            int maxLoops = 10;
+            int maxLoops = 20;
             for (int loops = 0;
-                 !spaceExists(spaceId) && loops < maxLoops;
+                 !spaceExists && loops < maxLoops;
                  loops++) {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
+                spaceExists = spaceExists(spaceId);
             }
+        }
+
+        if(!spaceExists) {
+            fail("Attempt to create space " + spaceId + " failed.");
         }
 
         spaces.add(spaceId);
     }
 
-    private boolean spaceExists(String spaceId) throws Exception {
+    private static boolean spaceExists(String spaceId) throws Exception {
         try {
-            store.getSpaceMetadata(spaceId);
+            store.getSpaceAccess(spaceId);
             return true;
         } catch (NotFoundException e) {
             return false;
@@ -214,13 +248,6 @@ public class TestContentStore
     public void testSpaceMetadata() throws Exception {
         String metaName = "test-metadata";
         String metaValue = "test-value";
-
-        // Create space
-        Map<String, String> spaceMetadata = new HashMap<String, String>();
-        spaceMetadata.put(ContentStore.SPACE_ACCESS,
-                          ContentStore.AccessType.OPEN.name());
-        spaceMetadata.put(metaName, metaValue);
-        createSpace(spaceId, spaceMetadata);
 
         // Check space
         List<String> spaces = store.getSpaces();
@@ -237,12 +264,11 @@ public class TestContentStore
                      responseMetadata.get(ContentStore.SPACE_ACCESS));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_COUNT));
         assertNotNull(responseMetadata.get(ContentStore.SPACE_CREATED));
-        assertEquals(metaValue, responseMetadata.get(metaName));
         assertEquals(ContentStore.AccessType.OPEN, store.getSpaceAccess(spaceId));
 
         // Set space metadata
         metaValue = "Testing Metadata Value";
-        spaceMetadata = new HashMap<String, String>();
+        Map<String, String> spaceMetadata = new HashMap<String, String>();
         spaceMetadata.put(ContentStore.SPACE_ACCESS,
                           ContentStore.AccessType.CLOSED.name());
         spaceMetadata.put(metaName, metaValue);
@@ -262,15 +288,6 @@ public class TestContentStore
         // Set space access
         store.setSpaceAccess(spaceId, ContentStore.AccessType.OPEN);
         assertEquals(ContentStore.AccessType.OPEN, store.getSpaceAccess(spaceId));
-
-        // Delete space
-        store.deleteSpace(spaceId);
-        try {
-            store.getSpaceMetadata(spaceId);
-            fail("Exception should be thrown attempting to retrieve deleted space");
-        } catch(ContentStoreException cse) {
-            assertNotNull(cse.getMessage());
-        }
     }
 
     @Test
@@ -365,7 +382,6 @@ public class TestContentStore
         String mime = "text/plain";
 
         // Add content
-        createSpace(spaceId, null);
         String c1 = "test-content-1";
         InputStream stream = IOUtil.writeStringToStream(c1);
         store.addContent(spaceId, c1, stream, c1.length(), mime, null);
@@ -410,7 +426,6 @@ public class TestContentStore
 
     @Test
     public void testAddContent() throws Exception {
-        createSpace(spaceId, null);
         // Test invalid content IDs
 
         // Question mark
@@ -483,7 +498,6 @@ public class TestContentStore
         contentMetadata.put(metaName, metaValue);
 
         // Add content
-        createSpace(spaceId, null);
         String checksum = store.addContent(spaceId,
                                            contentId,
                                            contentStream,
@@ -538,7 +552,6 @@ public class TestContentStore
         } catch(ContentStoreException cse) {
             assertNotNull(cse.getMessage());
         }
-        store.deleteSpace(spaceId);
     }
 
     @Test
@@ -547,7 +560,6 @@ public class TestContentStore
         Map<String, String> emptyMap = new HashMap<String, String>();
 
         // Create space
-        createSpace(spaceId, null);
         Map<String, String> spaceMetadata = store.getSpaceMetadata(spaceId);
         assertNotNull(spaceMetadata);
 
