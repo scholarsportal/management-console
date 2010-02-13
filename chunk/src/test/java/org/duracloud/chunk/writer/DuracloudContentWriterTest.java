@@ -2,6 +2,7 @@ package org.duracloud.chunk.writer;
 
 import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 import org.easymock.EasyMock;
@@ -13,8 +14,8 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -40,7 +41,7 @@ public class DuracloudContentWriterTest {
                                                 EasyMock.isA(String.class),
                                                 (Map) EasyMock.anyObject()))
             .andReturn("")
-            .times(5);
+            .anyTimes();
 
         contentStore.createSpace(EasyMock.isA(String.class),
                                  (Map) EasyMock.anyObject());
@@ -91,10 +92,29 @@ public class DuracloudContentWriterTest {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
+    @Test
+    public void testWriteSingle() throws NotFoundException {
+        long contentSize = 1000;
+        InputStream contentStream = createContentStream(contentSize);
+
+        String spaceId = "test-spaceId-1";
+        String contentId = "test-contentId-1";
+
+        boolean preserveMD5 = true;
+        ChunkInputStream chunk = new ChunkInputStream(contentId,
+                                                      contentStream,
+                                                      contentSize,
+                                                      preserveMD5);
+
+        String md5 = writer.writeSingle(spaceId, chunk);
+        Assert.assertNotNull(md5);
+
+    }
+
     /**
      * This class is an EasyMock helper.
      */
-    public static class ChunkInputsStreamMatcher implements IArgumentMatcher {
+    private static class ChunkInputsStreamMatcher implements IArgumentMatcher {
 
         public boolean matches(Object o) {
             if (null == o || !(o instanceof InputStream)) {
@@ -122,7 +142,7 @@ public class DuracloudContentWriterTest {
      *
      * @return
      */
-    public static InputStream isChunkInputStream() {
+    private static InputStream isChunkInputStream() {
         EasyMock.reportMatcher(new ChunkInputsStreamMatcher());
         return null;
     }

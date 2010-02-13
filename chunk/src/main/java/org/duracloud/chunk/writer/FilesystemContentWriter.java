@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
@@ -55,8 +56,33 @@ public class FilesystemContentWriter implements ContentWriter {
         outStream = getOutputStream(spaceDir, manifest.getManifestId());
         copy(manifest.getBody(), outStream);
         flushAndClose(outStream);
-        
+
         return manifest;
+    }
+
+    /**
+     * This method implements the ContentWriter interface for writing content
+     * to a DataStore. In this case, the DataStore is a local filesystem.
+     * The arg spaceId is the path to the destination directory.
+     *
+     * @param spaceId destination where arg chunk content will be written
+     * @param chunk   content to be written
+     * @return MD5 of content
+     * @throws NotFoundException
+     */
+    public String writeSingle(String spaceId, ChunkInputStream chunk)
+        throws NotFoundException {
+        File spaceDir = getSpaceDir(spaceId);
+        OutputStream outStream = getOutputStream(spaceDir, chunk.getChunkId());
+
+        if (chunk.getChunkSize() > TWO_GB) {
+            copyLarge(chunk, outStream);
+        } else {
+            copy(chunk, outStream);
+        }
+
+        flushAndClose(outStream);
+        return chunk.getMD5();
     }
 
     private void copyLarge(InputStream chunk, OutputStream outStream) {

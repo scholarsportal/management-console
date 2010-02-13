@@ -71,26 +71,34 @@ public class FileChunkerTest {
         long chunkSize = 16384;
         long contentSize = chunkSize * 4 + chunkSize / 2;
 
+        String suffix = ".dura-chunk-\\d+";
+
         // test 0
         int runNumber = 0;
-        doTestLoadContent(runNumber, contentSize, chunkSize);
+        doTestLoadContent(runNumber, suffix, contentSize, chunkSize);
 
         // test 1
         runNumber++;
-        doTestLoadContent(runNumber, contentSize, chunkSize / 2);
+        doTestLoadContent(runNumber, suffix, contentSize, chunkSize / 2);
 
         // test 2
         runNumber++;
-        doTestLoadContent(runNumber, contentSize, chunkSize / 16);
+        doTestLoadContent(runNumber, suffix, contentSize, chunkSize / 16);
+
+        // test 3 : single chunk
+        suffix = "";
+        runNumber++;
+        doTestLoadContent(runNumber, suffix, contentSize, contentSize * 2);
     }
 
     private void doTestLoadContent(int runNumber,
-                                           long contentSize,
-                                           long chunkSize)
+                                   String suffixPattern,
+                                   long contentSize,
+                                   long chunkSize)
         throws IOException, NotFoundException {
         String prefix = "load-test";
         String ext = ".txt";
-        String suffix = ext + ".dura-chunk-\\d+";
+        String suffix = ext + suffixPattern;
 
         boolean preserveChunkMD5 = true;
 
@@ -121,7 +129,7 @@ public class FileChunkerTest {
             totalChunksSize += file.length();
         }
         Assert.assertEquals(content.length(), totalChunksSize);
-        
+
     }
 
 }

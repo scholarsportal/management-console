@@ -2,6 +2,7 @@ package org.duracloud.chunk.writer;
 
 import org.duracloud.chunk.ChunkTestsConfig;
 import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
@@ -17,7 +18,9 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -39,11 +42,14 @@ public class TestDuracloudContentWriter {
     private ContentStoreManager storeManager;
     private ContentStore store;
 
-    private static String spaceId;
+    private static List<String> spaceIds = new ArrayList<String>();
 
-    static {
+    private static String getSpaceId() {
         String random = String.valueOf(new Random().nextInt(99999));
-        spaceId = "contentwriter-test-space-" + random;
+        String spaceId = "contentwriter-test-space-" + random;
+        spaceIds.add(spaceId);
+
+        return spaceId;
     }
 
     @Before
@@ -79,10 +85,12 @@ public class TestDuracloudContentWriter {
 
     @After
     public void tearDown() throws Exception {
-        try {
-            store.deleteSpace(spaceId);
-        } catch (ContentStoreException e) {
-            // do nothing.
+        for (String spaceId : spaceIds) {
+            try {
+                store.deleteSpace(spaceId);
+            } catch (ContentStoreException e) {
+                // do nothing.
+            }
         }
 
         store = null;
@@ -91,62 +99,55 @@ public class TestDuracloudContentWriter {
 
     @Test
     public void testWrite() throws Exception {
-        long contentSize = 4000;
-        InputStream contentStream = createContentStream(contentSize);
+        long contentLen = 4000;
+        InputStream contentStream = createContentStream(contentLen);
 
         String contentId = "test-contentId";
         String contentMimetype = "text/plain";
 
 
         long maxChunkSize = 1024;
-        int numChunks = (int) (contentSize / maxChunkSize + 1);
+        int numChunks = (int) (contentLen / maxChunkSize + 1);
         ChunkableContent chunkable = new ChunkableContent(contentId,
                                                           contentMimetype,
                                                           contentStream,
-                                                          contentSize,
+                                                          contentLen,
                                                           maxChunkSize);
+
+        String spaceId = getSpaceId();
         writer.write(spaceId, chunkable);
 
-        verifyContentAdded(contentId, contentSize, numChunks);
+        List<String> contents = getSpaceContents(spaceId, contentId);
+        verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
+        verifyManifestAdded(contents, spaceId, contentId);
     }
 
-    private void verifyContentAdded(String contentId,
+
+    private void verifyContentAdded(List<String> contents,
+                                    String spaceId,
+                                    String contentId,
                                     long contentSize,
                                     int numChunks) throws Exception {
-        int tries = 0;
-        Iterator<String> contents = getSpaceContents(contentId);
-        while (null == contents && tries++ < 10) {
-            Thread.sleep(1000);
-            contents = getSpaceContents(contentId);
-        }
-
-        Assert.assertNotNull(contents);
-        boolean manifestFound = false;
-        long manifestSize = 0;
         long totalSize = 0;
         int itemCount = 0;
-        while (contents.hasNext()) {
-            String id = contents.next();
+        for (String id : contents) {
             Assert.assertTrue(id.startsWith(contentId));
 
-            Content content = getContent(id);
-            tries = 0;
-            while (null == content && tries++ < 10) {
-                Thread.sleep(1000);
-                content = getContent(id);
-            }
-            Assert.assertNotNull(content);
+            if (!id.contains("manifest")) {
+                Content content = getContent(spaceId, id);
 
+                int tries = 0;
+                while (null == content && tries++ < 10) {
+                    Thread.sleep(1000);
+                    content = getContent(spaceId, id);
+                }
+                Assert.assertNotNull(content);
 
-            Map<String, String> metadata = content.getMetadata();
-            Assert.assertNotNull(metadata);
+                Map<String, String> metadata = content.getMetadata();
+                Assert.assertNotNull(metadata);
 
-            String size = metadata.get("content-size");
-            Assert.assertNotNull(size);
-            if (id.contains("manifest")) {
-                manifestFound = true;
-                manifestSize = Long.parseLong(size);
-            } else {
+                String size = metadata.get("content-size");
+                Assert.assertNotNull(size);
                 itemCount++;
                 totalSize += Long.parseLong(size);
             }
@@ -155,11 +156,65 @@ public class TestDuracloudContentWriter {
         Assert.assertEquals(numChunks, itemCount);
         Assert.assertEquals(contentSize, totalSize);
 
+    }
+
+    private void verifyManifestAdded(List<String> contents,
+                                     String spaceId,
+                                     String contentId)
+        throws InterruptedException {
+
+        boolean manifestFound = false;
+        long manifestSize = 0;
+        for (String id : contents) {
+            Assert.assertTrue(id.startsWith(contentId));
+
+            if (id.contains("manifest")) {
+                int tries = 0;
+                Content content = getContent(spaceId, id);
+                while (null == content && tries++ < 10) {
+                    Thread.sleep(1000);
+                    content = getContent(spaceId, id);
+                }
+                Assert.assertNotNull(content);
+
+                Map<String, String> metadata = content.getMetadata();
+                Assert.assertNotNull(metadata);
+
+                String size = metadata.get("content-size");
+                Assert.assertNotNull(size);
+
+                manifestFound = true;
+                manifestSize = Long.parseLong(size);
+            }
+        }
+
         Assert.assertTrue(manifestFound);
         Assert.assertTrue(manifestSize > 0);
     }
 
-    private Content getContent(String id) {
+    @Test
+    public void testWriteSingle() throws Exception {
+        long contentLen = 4000;
+        InputStream contentStream = createContentStream(contentLen);
+
+        String contentId = "test-contentId-1";
+        boolean preserveMD5 = true;
+        ChunkInputStream chunk = new ChunkInputStream(contentId,
+                                                      contentStream,
+                                                      contentLen,
+                                                      preserveMD5);
+
+        String spaceId = getSpaceId();
+        String md5 = writer.writeSingle(spaceId, chunk);
+        Assert.assertNotNull(md5);
+
+        List<String> contents = getSpaceContents(spaceId, contentId);
+
+        int numChunks = 1;
+        verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
+    }
+
+    private Content getContent(String spaceId, String id) {
         try {
             return store.getContent(spaceId, id);
         } catch (ContentStoreException e) {
@@ -167,7 +222,28 @@ public class TestDuracloudContentWriter {
         }
     }
 
-    private Iterator<String> getSpaceContents(String contentId) {
+    private List<String> getSpaceContents(String spaceId, String contentId)
+        throws InterruptedException {
+        int tries = 0;
+        Iterator<String> contents = doGetSpaceContents(spaceId, contentId);
+        while (null == contents && tries++ < 10) {
+            Thread.sleep(1000);
+            contents = doGetSpaceContents(spaceId, contentId);
+        }
+
+        Assert.assertNotNull(contents);
+
+        List<String> contentList = new ArrayList<String>();
+        while (contents.hasNext()) {
+            contentList.add(contents.next());
+        }
+
+        Assert.assertTrue(contentList.size() > 0);
+        return contentList;
+    }
+
+    private Iterator<String> doGetSpaceContents(String spaceId,
+                                                String contentId) {
         try {
             return store.getSpaceContents(spaceId, contentId);
         } catch (ContentStoreException e) {
