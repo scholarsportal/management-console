@@ -12,6 +12,7 @@ echo "========================="
 echo ""
 
 export PATH=$PATH:/opt/pax/pax-construct-1.4/bin
+export BUNDLE_HOME=$HOME/duracloud-home/osgi-bundles
 
 echo "=========================="
 echo "Starting Services Admin..."
