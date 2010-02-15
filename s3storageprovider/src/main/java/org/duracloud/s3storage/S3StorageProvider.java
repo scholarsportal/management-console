@@ -8,7 +8,6 @@ import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
-import org.duracloud.storage.util.StorageProviderUtil;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
@@ -308,13 +307,36 @@ public class S3StorageProvider
             spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
         }
 
-        long count = StorageProviderUtil.count(getSpaceContents(spaceId, null));
-        spaceMetadata.put(METADATA_SPACE_COUNT, String.valueOf(count));
+        spaceMetadata.put(METADATA_SPACE_COUNT, getSpaceCount(spaceId));
 
         AccessType access = getSpaceAccess(spaceId);
         spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
 
         return spaceMetadata;
+    }
+
+    /*
+     * Counts the number of items in a space.
+     *
+     * Note that anecdotal evidence shows that this method of counting
+     * (using size of chunked calls) is faster in most cases than enumerating
+     * the Iteration: StorageProviderUtil.count(getSpaceContents(spaceId, null))
+     */
+    private String getSpaceCount(String spaceId) {
+        List<String> spaceContentChunk = null;
+        long count = 0;
+        do {
+            String marker = null;
+            if (spaceContentChunk != null && spaceContentChunk.size() > 0) {
+                marker = spaceContentChunk.get(spaceContentChunk.size() - 1);
+            }
+            spaceContentChunk = getSpaceContentsChunked(spaceId,
+                                                        null,
+                                                        DEFAULT_MAX_RESULTS,
+                                                        marker);
+            count += spaceContentChunk.size();
+        } while (spaceContentChunk.size() > 0);
+        return String.valueOf(count);
     }
 
     private Date getCreationDate(String bucketName,
