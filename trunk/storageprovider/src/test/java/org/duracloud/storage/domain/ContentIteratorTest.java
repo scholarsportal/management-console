@@ -1,5 +1,6 @@
 package org.duracloud.storage.domain;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
@@ -17,13 +18,16 @@ public class ContentIteratorTest {
 
     @Test
     public void testIterator() throws Exception {
-        for(int i=0; i<30; i++) {
+        for(int i=0; i<31; i++) {
             StorageProvider testProvider = new MockProvider(i);
             ContentIterator iterator =
                 new ContentIterator(testProvider, "spaceId", "prefix", 10);
+            int count = 0;
             while(iterator.hasNext()) {
                 assertNotNull(iterator.next());
+                count++;            
             }
+            assertEquals(i, count);
         }
     }
 
@@ -46,10 +50,9 @@ public class ContentIteratorTest {
             if(contentItems > maxResults) {
                 listSize = maxResults;
                 contentItems -= maxResults;
-            } else if(contentItems == maxResults) {
-                listSize = 0;
             } else {
                 listSize = contentItems;
+                contentItems = 0;
             }
 
             List<String> contentList = new ArrayList<String>();
