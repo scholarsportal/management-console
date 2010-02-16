@@ -8,19 +8,15 @@ import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.writer.AddContentResult;
 import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.DigestInputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -44,6 +40,44 @@ public class FileChunker {
     public FileChunker(ContentWriter contentWriter, long maxChunkSize) {
         this.contentWriter = contentWriter;
         this.maxChunkSize = maxChunkSize;
+    }
+
+    protected void writeReport(File outputFile) {
+        StringBuilder sb = new StringBuilder();
+        if (!outputFile.exists()) {
+            sb.append("spaceId,contentId,md5,state\n");
+        }
+        
+        OutputStream outputStream = getOutputStream(outputFile);
+
+        List<AddContentResult> results = contentWriter.getResults();
+        for (AddContentResult result : results) {
+            sb.append(result.getSpaceId());
+            sb.append(",");
+            sb.append(result.getContentId());
+            sb.append(",");
+            sb.append(result.getMd5());
+            sb.append(",");
+            sb.append(result.getState().name());
+            sb.append("\n");
+        }
+
+        try {
+            outputStream.write(sb.toString().getBytes());
+        } catch (IOException e) {
+            throw new DuraCloudRuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+        }
+    }
+
+    private OutputStream getOutputStream(File outputFile) {
+        boolean append = true;
+        try {
+            return new FileOutputStream(outputFile, append);
+        } catch (IOException e) {
+            throw new DuraCloudRuntimeException(e);
+        }
     }
 
     /**
@@ -88,7 +122,7 @@ public class FileChunker {
 
             long fileSize = file.length();
 
-            log.debug("loading file: "+contentId+"["+fileSize+"]");
+            log.debug("loading file: " + contentId + "[" + fileSize + "]");
             if (fileSize <= maxChunkSize) {
                 chunk = new ChunkInputStream(contentId,
                                              stream,
@@ -117,7 +151,7 @@ public class FileChunker {
         }
 
         IOFileFilter all = TrueFileFilter.TRUE;
-        Collection files = FileUtils.listFiles(baseDir, includes, all);
+        Collection files = FileUtils.listFiles(baseDir, all, includes);
         if (null == files || files.size() == 0) {
             throw new DuraCloudRuntimeException("No files found: " + baseDir);
         }

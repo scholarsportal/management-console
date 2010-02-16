@@ -2,10 +2,11 @@ package org.duracloud.chunk.writer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.stream.ChunkInputStream;
+import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.io.BufferedOutputStream;
@@ -15,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class implements the ContentWriter interface to write the provided
@@ -28,6 +31,18 @@ public class FilesystemContentWriter implements ContentWriter {
     private final Logger log = Logger.getLogger(getClass());
     private static final long TWO_GB = 2000000000;
 
+    private List<AddContentResult> results = new ArrayList<AddContentResult>();
+
+
+    /**
+     * This method returns the results of the content write requests.
+     *
+     * @return List of results
+     */
+    public List<AddContentResult> getResults() {
+        return results;
+    }
+
     /**
      * This method implements the ContentWriter interface for writing content
      * to a DataStore. In this case, the DataStore is a local filesystem.
@@ -36,26 +51,20 @@ public class FilesystemContentWriter implements ContentWriter {
      * @param spaceId   destination where arg chunkable content will be written
      * @param chunkable content to be written
      */
-    public ChunksManifest write(String spaceId, ChunkableContent chunkable) {
-        File spaceDir = getSpaceDir(spaceId);
-
-        OutputStream outStream;
+    public ChunksManifest write(String spaceId, ChunkableContent chunkable)
+        throws NotFoundException {
         for (ChunkInputStream chunk : chunkable) {
-            outStream = getOutputStream(spaceDir, chunk.getChunkId());
-
-            if (chunkable.getMaxChunkSize() > TWO_GB) {
-                copyLarge(chunk, outStream);
-            } else {
-                copy(chunk, outStream);
-            }
-
-            flushAndClose(outStream);
+            writeSingle(spaceId, chunk);
         }
 
         ChunksManifest manifest = chunkable.finalizeManifest();
-        outStream = getOutputStream(spaceDir, manifest.getManifestId());
-        copy(manifest.getBody(), outStream);
-        flushAndClose(outStream);
+        KnownLengthInputStream manifestStream = manifest.getBody();
+
+        AddContentResult result = writeContent(spaceId,
+                                               manifest.getManifestId(),
+                                               manifestStream,
+                                               manifestStream.getLength());
+        result.setMd5("md5-not-collected-for-manifest");
 
         return manifest;
     }
@@ -72,17 +81,38 @@ public class FilesystemContentWriter implements ContentWriter {
      */
     public String writeSingle(String spaceId, ChunkInputStream chunk)
         throws NotFoundException {
-        File spaceDir = getSpaceDir(spaceId);
-        OutputStream outStream = getOutputStream(spaceDir, chunk.getChunkId());
+        AddContentResult result = writeContent(spaceId,
+                                               chunk.getChunkId(),
+                                               chunk,
+                                               chunk.getChunkSize());
+        result.setMd5(chunk.getMD5());
 
-        if (chunk.getChunkSize() > TWO_GB) {
-            copyLarge(chunk, outStream);
-        } else {
-            copy(chunk, outStream);
+        return result.getMd5();
+    }
+
+    private AddContentResult writeContent(String spaceId,
+                                          String contentId,
+                                          InputStream inputStream,
+                                          long contentSize) {
+        File spaceDir = getSpaceDir(spaceId);
+        OutputStream outStream = getOutputStream(spaceDir, contentId);
+
+        AddContentResult result = new AddContentResult(spaceId, contentId);
+        result.setState(AddContentResult.State.SUCCESS);
+        try {
+            if (contentSize > TWO_GB) {
+                copyLarge(inputStream, outStream);
+            } else {
+                copy(inputStream, outStream);
+            }
+        } catch (Exception e) {
+            result.setState(AddContentResult.State.ERROR);
         }
 
         flushAndClose(outStream);
-        return chunk.getMD5();
+
+        results.add(result);
+        return result;
     }
 
     private void copyLarge(InputStream chunk, OutputStream outStream) {

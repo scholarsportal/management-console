@@ -2,6 +2,7 @@ package org.duracloud.chunk.writer;
 
 import org.apache.log4j.Logger;
 import org.duracloud.chunk.ChunkableContent;
+import org.duracloud.chunk.error.ContentNotAddedException;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.stream.ChunkInputStream;
@@ -9,7 +10,10 @@ import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,9 +30,14 @@ public class DuracloudContentWriter implements ContentWriter {
 
     private ContentStore contentStore;
     private Set<String> existingSpaces = new HashSet<String>();
+    private List<AddContentResult> results = new ArrayList<AddContentResult>();
 
     public DuracloudContentWriter(ContentStore contentStore) {
         this.contentStore = contentStore;
+    }
+    
+    public List<AddContentResult> getResults() {
+        return results;
     }
 
     /**
@@ -37,83 +46,116 @@ public class DuracloudContentWriter implements ContentWriter {
      *
      * @param spaceId   destination space of arg chunkable content
      * @param chunkable content to be written
+     * @throws NotFoundException if space is not found
      */
     public ChunksManifest write(String spaceId, ChunkableContent chunkable)
         throws NotFoundException {
         log.debug("write: " + spaceId);
         createSpaceIfNotExist(spaceId);
 
-        int tries;
         for (ChunkInputStream chunk : chunkable) {
-            tries = 0;
-            while (!addContent(spaceId, chunk) && tries++ < 5) {
-                sleep(1000);
-            }
+            writeSingle(spaceId, chunk);
         }
 
         ChunksManifest manifest = chunkable.finalizeManifest();
-        tries = 0;
-        while (!addContent(spaceId, manifest) && tries++ < 5) {
-            sleep(1000);
-        }
+        addManifest(spaceId, manifest);
 
         log.debug("written: " + spaceId + ", " + manifest.getManifestId());
         return manifest;
     }
 
+    /**
+     * This method writes a single chunk to the DataStore.
+     *
+     * @param spaceId destination where arg chunk content will be written
+     * @param chunk   content to be written
+     * @return MD5 of written content
+     * @throws NotFoundException if space is not found
+     */
     public String writeSingle(String spaceId, ChunkInputStream chunk)
         throws NotFoundException {
         log.debug("writeSingle: " + spaceId + ", " + chunk.getChunkId());
         createSpaceIfNotExist(spaceId);
 
-        int tries = 0;
-        while (!addContent(spaceId, chunk) && tries++ < 5) {
-            sleep(1000);
-        }
+        addChunk(spaceId, chunk);
 
         log.debug("written: " + spaceId + ", " + chunk.getChunkId());
         return chunk.getMD5();
     }
 
-    private boolean addContent(String spaceId, ChunksManifest manifest) {
-        log.debug("addContent: " + spaceId + ", " + manifest.getManifestId());
-        KnownLengthInputStream manifestBody = manifest.getBody();
-        Map<String, String> metadata = null;
-        try {
-            contentStore.addContent(spaceId,
-                                    manifest.getManifestId(),
-                                    manifestBody,
-                                    manifestBody.getLength(),
-                                    manifest.getMimetype(),
-                                    metadata);
-        } catch (ContentStoreException e) {
-            log.error(e.getFormattedMessage(), e);
-            return false;
-        } catch (Exception ex) {
-            log.error("Error adding content:" + ex.getMessage(), ex);
-            return false;
-        }
-        return true;
+    private void addChunk(String spaceId, ChunkInputStream chunk) {
+        String chunkId = chunk.getChunkId();
+        log.debug("addChunk: " + spaceId + ", " + chunkId);
+
+        addContentThenReport(spaceId,
+                             chunkId,
+                             chunk,
+                             chunk.getChunkSize(),
+                             chunk.getMimetype());
     }
 
-    private boolean addContent(String spaceId, ChunkInputStream chunk) {
-        log.debug("addContent: " + spaceId + ", " + chunk.getChunkId());
+    private void addManifest(String spaceId, ChunksManifest manifest) {
+        String manifestId = manifest.getManifestId();
+        log.debug("addManifest: " + spaceId + ", " + manifestId);
+
+        KnownLengthInputStream manifestBody = manifest.getBody();
+        addContentThenReport(spaceId,
+                             manifestId,
+                             manifestBody,
+                             manifestBody.getLength(),
+                             manifest.getMimetype());
+    }
+
+    private void addContentThenReport(String spaceId,
+                                      String contentId,
+                                      InputStream contentStream,
+                                      long contentSize,
+                                      String contentMimetype) {
+        AddContentResult result = new AddContentResult(spaceId, contentId);
+        String md5 = null;
+        try {
+            md5 = addContent(spaceId,
+                             contentId,
+                             contentStream,
+                             contentSize,
+                             contentMimetype);
+        } catch (ContentNotAddedException e) {
+            result.setState(AddContentResult.State.ERROR);
+        }
+
+        if (md5 != null) {
+            result.setMd5(md5);
+        }
+        result.setState(AddContentResult.State.SUCCESS);
+
+        results.add(result);
+    }
+
+    /**
+     * @return MD5 of added content
+     * @throws ContentNotAddedException
+     */
+    private String addContent(String spaceId,
+                              String contentId,
+                              InputStream contentStream,
+                              long contentSize,
+                              String contentMimetype)
+        throws ContentNotAddedException {
         Map<String, String> metadata = null;
         try {
-            contentStore.addContent(spaceId,
-                                    chunk.getChunkId(),
-                                    chunk,
-                                    chunk.getChunkSize(),
-                                    chunk.getMimetype(),
-                                    metadata);
+            return contentStore.addContent(spaceId,
+                                           contentId,
+                                           contentStream,
+                                           contentSize,
+                                           contentMimetype,
+                                           metadata);
         } catch (ContentStoreException e) {
             log.error(e.getFormattedMessage(), e);
-            return false;
+            throw new ContentNotAddedException(spaceId, contentId, e);
         } catch (Exception ex) {
             log.error("Error adding content:" + ex.getMessage(), ex);
-            return false;
+            throw new ContentNotAddedException(spaceId, contentId, ex);
         }
-        return true;
     }
 
     private void createSpaceIfNotExist(String spaceId)
