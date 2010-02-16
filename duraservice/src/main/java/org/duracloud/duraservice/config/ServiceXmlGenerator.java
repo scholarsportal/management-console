@@ -47,7 +47,7 @@ public class ServiceXmlGenerator {
         helloService.setDisplayName("Hello Service");
         helloService.setUserConfigVersion("1.0");
         helloService.setServiceVersion("1.0.0");
-        helloService.setMaxDeploymentsAllowed(-1);
+        helloService.setMaxDeploymentsAllowed(1);
 
         helloService.setDeploymentOptions(getSimpleDeploymentOptions());
 
@@ -66,7 +66,7 @@ public class ServiceXmlGenerator {
         repService.setDisplayName("Replication Service");
         repService.setUserConfigVersion("1.0");
         repService.setServiceVersion("1.0.0");
-        repService.setMaxDeploymentsAllowed(-1);
+        repService.setMaxDeploymentsAllowed(1);
 
         // User Configs
         List<UserConfig> repServiceUserConfig = new ArrayList<UserConfig>();
@@ -250,7 +250,7 @@ public class ServiceXmlGenerator {
         icService.setDisplayName("Image Conversion Service");
         icService.setUserConfigVersion("1.0");
         icService.setServiceVersion("1.0.0");
-        icService.setMaxDeploymentsAllowed(-1);
+        icService.setMaxDeploymentsAllowed(1);
 
         // User Configs
         List<UserConfig> icServiceUserConfig = new ArrayList<UserConfig>();
