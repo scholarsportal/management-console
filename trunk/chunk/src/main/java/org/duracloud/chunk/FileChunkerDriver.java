@@ -9,7 +9,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.input.AutoCloseInputStream;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.chunk.writer.DuracloudContentWriter;
@@ -19,8 +21,15 @@ import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.error.ContentStoreException;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a commandline interface for initiating the read of local
@@ -44,6 +53,10 @@ public class FileChunkerDriver {
 
         FileChunker chunker = new FileChunker(writer, chunkSize);
         chunker.addContentFrom(fromDir, toSpace.getPath(), filter, saveMD5s);
+
+        File report = new File("chunker-report.csv");
+        chunker.writeReport(report);
+        System.out.println("see report at: " + report.getAbsolutePath());
     }
 
     private static Long getChunkSize(String arg) {
@@ -100,10 +113,11 @@ public class FileChunkerDriver {
                                         "add content from " +
                                             "dir:<f> to space:<t> " +
                                             "of max chunk size:<s> " +
-                                            "in units of K,M,G " +
-                                            "with filename <filter>");
+                                            "in units of K,M,G with content " +
+                                            "to add filtered by the partial" +
+                                            "subDir-name list file:<l>");
         filteredAdd.setArgs(4);
-        filteredAdd.setArgName("f t s{K|M|G} filter");
+        filteredAdd.setArgName("f t s{K|M|G} l");
         filteredAdd.setValueSeparator(' ');
 
         Option cloud = new Option("c",
@@ -199,7 +213,7 @@ public class FileChunkerDriver {
             File fromDir = new File(vals[0]);
             File toDir = new File(vals[1]);
             Long chunkSize = getChunkSize(vals[2]);
-            IOFileFilter filter = new RegexFileFilter(".*" + vals[3] + ".*");
+            IOFileFilter filter = buildFilter(new File(vals[3]));
 
             chunk(fromDir, toDir, chunkSize, filter, writer, chunkMD5);
 
@@ -214,6 +228,37 @@ public class FileChunkerDriver {
             usage();
         }
 
+    }
+
+    private static IOFileFilter buildFilter(File titlesFile) {
+        List<IOFileFilter> filters = new ArrayList<IOFileFilter>();
+
+        InputStream input = getInputStream(titlesFile);
+        BufferedReader br = new BufferedReader(new InputStreamReader(input));
+
+        String line = readLine(br);
+        while (line != null) {
+            filters.add(new RegexFileFilter(".*" + line.trim() + ".*"));
+            line = readLine(br);
+        }
+
+        return new OrFileFilter(filters);
+    }
+
+    private static InputStream getInputStream(File file) {
+        try {
+            return new AutoCloseInputStream(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String readLine(BufferedReader br) {
+        try {
+            return br.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

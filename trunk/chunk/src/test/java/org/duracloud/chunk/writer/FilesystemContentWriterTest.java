@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.duracloud.chunk.ChunkableContent;
+import static org.duracloud.chunk.writer.AddContentResult.State;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.manifest.ChunksManifestBean;
@@ -57,7 +58,7 @@ public class FilesystemContentWriterTest {
     }
 
     @Test
-    public void testWrite() {
+    public void testWrite() throws NotFoundException, IOException {
         long contentSize = 4000;
         InputStream contentStream = createContentStream(contentSize);
 
@@ -71,6 +72,7 @@ public class FilesystemContentWriterTest {
                                                           contentStream,
                                                           contentSize,
                                                           maxChunkSize);
+        chunkable.setPreserveChunkMD5s(true);
         ChunksManifest manifest = writer.write(spaceId, chunkable);
 
         // check files
@@ -98,6 +100,9 @@ public class FilesystemContentWriterTest {
         KnownLengthInputStream body = manifest.getBody();
         Assert.assertNotNull(body);
         Assert.assertTrue(body.getLength() > 0);
+
+        // check results
+        verifyResults(writer.getResults(), files);
     }
 
     private InputStream createContentStream(long size) {
@@ -115,6 +120,52 @@ public class FilesystemContentWriterTest {
         return new ByteArrayInputStream(out.toByteArray());
     }
 
+    private void verifyResults(List<AddContentResult> results,
+                               Collection<File> files) throws IOException {
+        Assert.assertNotNull(results);
+        Assert.assertEquals(files.size(), results.size());
+
+        for (File file : files) {
+            String path = file.getPath();
+            String md5 = calculateMD5(file);
+
+            Assert.assertNotNull(path);
+            Assert.assertNotNull(md5);
+
+            AddContentResult result = findResult(path, results);
+            Assert.assertNotNull("result not found: " + path, result);
+
+            String resultSpaceId = result.getSpaceId();
+            String resultContentId = result.getContentId();
+            String resultMD5 = result.getMd5();
+            State resultState = result.getState();
+
+            Assert.assertNotNull(resultSpaceId);
+            Assert.assertNotNull(resultContentId);
+            Assert.assertNotNull(resultMD5);
+            Assert.assertNotNull(resultState);
+
+            Assert.assertTrue(path.endsWith(resultContentId));
+            Assert.assertTrue(path.startsWith(resultSpaceId));
+
+            Assert.assertEquals(State.SUCCESS, resultState);
+
+            if (!resultContentId.contains("manifest")) {
+                Assert.assertEquals(md5, resultMD5);
+            }
+        }
+    }
+
+    private AddContentResult findResult(String path,
+                                        List<AddContentResult> results) {
+        for (AddContentResult result : results) {
+            if (path.endsWith(result.getContentId())) {
+                return result;
+            }
+        }
+        return null;
+    }
+
     @Test
     public void testWriteSingle() throws NotFoundException, IOException {
         long contentSize = 1500;
@@ -128,6 +179,7 @@ public class FilesystemContentWriterTest {
                                                       contentStream,
                                                       contentSize,
                                                       preserveMD5);
+        IOUtils.closeQuietly(contentStream);
 
         String md5 = writer.writeSingle(spaceId, chunk);
         Assert.assertNotNull(md5);
@@ -136,16 +188,19 @@ public class FilesystemContentWriterTest {
         File file = new File(spaceId, contentId);
         Assert.assertTrue(file.exists());
 
+        String md5Real = calculateMD5(file);
+        Assert.assertEquals(md5Real, md5);
+
+    }
+
+    private String calculateMD5(File file) throws IOException {
         FileInputStream fileStrm = new FileInputStream(file);
         DigestInputStream digestStrm = ChecksumUtil.wrapStream(fileStrm, MD5);
         read(digestStrm);
         String md5Real = ChecksumUtil.getChecksum(digestStrm);
 
         IOUtils.closeQuietly(digestStrm);
-        IOUtils.closeQuietly(contentStream);
-
-        Assert.assertEquals(md5Real, md5);
-
+        return md5Real;
     }
 
     private void read(InputStream stream) throws IOException {

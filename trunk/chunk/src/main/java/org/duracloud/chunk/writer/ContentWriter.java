@@ -1,9 +1,11 @@
 package org.duracloud.chunk.writer;
 
 import org.duracloud.chunk.ChunkableContent;
-import org.duracloud.chunk.stream.ChunkInputStream;
-import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.manifest.ChunksManifest;
+import org.duracloud.chunk.stream.ChunkInputStream;
+
+import java.util.List;
 
 /**
  * @author Andrew Woods
@@ -34,5 +36,14 @@ public interface ContentWriter {
      */
     public String writeSingle(String spaceId, ChunkInputStream chunk)
         throws NotFoundException;
+
+    /**
+     * This method returns an item-by-item list of results for the write
+     * requests.
+     *
+     * @return List of results
+     */
+    public List<AddContentResult> getResults();
+
 
 }

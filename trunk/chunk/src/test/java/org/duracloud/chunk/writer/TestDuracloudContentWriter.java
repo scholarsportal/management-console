@@ -120,8 +120,8 @@ public class TestDuracloudContentWriter {
         List<String> contents = getSpaceContents(spaceId, contentId);
         verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
         verifyManifestAdded(contents, spaceId, contentId);
+        verifyResults(writer.getResults(), contents, spaceId);
     }
-
 
     private void verifyContentAdded(List<String> contents,
                                     String spaceId,
@@ -190,6 +190,45 @@ public class TestDuracloudContentWriter {
 
         Assert.assertTrue(manifestFound);
         Assert.assertTrue(manifestSize > 0);
+    }
+
+    private void verifyResults(List<AddContentResult> results,
+                               List<String> contents,
+                               String spaceId) {
+        Assert.assertNotNull(results);
+        Assert.assertEquals(contents.size(), results.size());
+
+        for (String file : contents) {
+            AddContentResult result = findResult(file, results);
+            Assert.assertNotNull("result not found: " + file, result);
+
+            String resultSpaceId = result.getSpaceId();
+            String resultContentId = result.getContentId();
+            String resultMD5 = result.getMd5();
+            AddContentResult.State resultState = result.getState();
+
+            Assert.assertNotNull(resultSpaceId);
+            Assert.assertNotNull(resultContentId);
+            Assert.assertNotNull(resultMD5);
+            Assert.assertNotNull(resultState);
+
+            Assert.assertEquals(file, resultContentId);
+            Assert.assertEquals(spaceId, resultSpaceId);
+
+            Assert.assertEquals(AddContentResult.State.SUCCESS, resultState);
+            Assert.assertNotNull(resultContentId, resultMD5);
+        }
+
+    }
+
+    private AddContentResult findResult(String path,
+                                        List<AddContentResult> results) {
+        for (AddContentResult result : results) {
+            if (path.equals(result.getContentId())) {
+                return result;
+            }
+        }
+        return null;
     }
 
     @Test
