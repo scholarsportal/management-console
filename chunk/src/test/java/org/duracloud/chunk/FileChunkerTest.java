@@ -4,12 +4,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.duracloud.chunk.error.NotFoundException;
+import org.duracloud.chunk.writer.ContentWriter;
+import org.duracloud.chunk.writer.FilesystemContentWriter;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.duracloud.chunk.writer.ContentWriter;
-import org.duracloud.chunk.writer.FilesystemContentWriter;
-import org.duracloud.chunk.error.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +44,12 @@ public class FileChunkerTest {
         }
 
         writer = new FilesystemContentWriter();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        FileUtils.deleteDirectory(srcDir);
+        FileUtils.deleteDirectory(destDir);
     }
 
     @Test
