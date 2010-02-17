@@ -1,16 +1,14 @@
 
 package org.duracloud.duradmin.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class FileDataTest {
 
@@ -40,7 +38,7 @@ public class FileDataTest {
         fileData.setFile(multipart);
         Assert.assertEquals(multipart.getOriginalFilename(), fileData.getName());
         Assert.assertEquals(multipart.getContentType(), fileData.getMimetype());
-        Assert.assertEquals(contents.length,  fileData.getData().length);
+        Assert.assertEquals(contents.length,  fileData.getData().length());
         
     }
 }

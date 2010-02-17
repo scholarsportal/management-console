@@ -100,8 +100,8 @@
 				<c:otherwise>
 					<table class="small">
 						<tr>
-							<td><input type="text" name="filter" /> <spring:message
-								code="filterById" /></td>
+                            <!--<td><input type="text" name="filter" /> <spring:message
+								code="filterById" /></td>-->
 							<td>
 							<!-- ugly: should be cleaned up  -->
 							<form action="contents.htm?spaceId=${space.spaceId}"
