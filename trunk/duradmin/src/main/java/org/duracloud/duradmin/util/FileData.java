@@ -1,15 +1,12 @@
 
 package org.duracloud.duradmin.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 public class FileData
         implements Serializable {
@@ -47,24 +44,11 @@ public class FileData
      * @return null if the multipart file has not been set.
      * @throws IOException
      */
-    public byte[] getData() throws IOException{
+    public File getData() throws IOException{
       if(this.tempFileName == null){
           return null;
       }
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      InputStream is = new FileInputStream(new File(tempFileName));
-      int read = -1;
-      byte[] buf = new byte[1024];
-      try {
-          while ((read = is.read(buf)) > -1) {
-              os.write(buf, 0, read);
-          }
-          return os.toByteArray();
-      } finally {
-          os.close();
-          is.close();
-      }
-        
+      return new File(tempFileName);        
     }
 
     public void dereferenceFileData(){

@@ -1,9 +1,6 @@
 
 package org.duracloud.duradmin.webflow.content;
 
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
@@ -15,6 +12,10 @@ import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.error.ContentStoreException;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.Serializable;
 
 public class AddContentItemAction
         implements Serializable {
@@ -55,14 +56,12 @@ public class AddContentItemAction
 
             FileData fileData = contentItem.getFileData();
             
-            byte[] contents = fileData.getData();
-            
-            
+            File contents = fileData.getData();
             
             contentStore.addContent(spaceId,
                                     contentId,
-                                    new ByteArrayInputStream(contents),
-                                    contents.length,
+                                    new FileInputStream(contents),
+                                    contents.length(),
                                     contentMimeType,
                                     null);
             
