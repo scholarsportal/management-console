@@ -3,7 +3,6 @@ package org.duracloud.durastore.storage;
 
 import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
-import org.duracloud.emcstorage.ProbedEMCStorageProvider;
 import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
 import org.duracloud.s3storage.ProbedS3StorageProvider;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -49,7 +48,7 @@ public class StorageProvidersTest {
     @BeforeClass
     public static void beforeClass() throws StorageException {
 
-        final int NUM_PROVIDERS = 3;
+        final int NUM_PROVIDERS = 2;
         for (StorageProviderType providerType : StorageProviderType.values()) {
             Credential credential = getCredential(providerType);
             if (credential != null) {
@@ -59,8 +58,8 @@ public class StorageProvidersTest {
                 StorageProvider provider = null;
                 if (StorageProviderType.AMAZON_S3.equals(providerType)) {
                     provider = new ProbedS3StorageProvider(user, pass);
-                } else if (StorageProviderType.EMC.equals(providerType)) {
-                    provider = new ProbedEMCStorageProvider(user, pass);
+//                } else if (StorageProviderType.EMC.equals(providerType)) {
+//                    provider = new ProbedEMCStorageProvider(user, pass);
                 } else if (StorageProviderType.RACKSPACE.equals(providerType)) {
                     provider = new ProbedRackspaceStorageProvider(user, pass);
                 } else {
