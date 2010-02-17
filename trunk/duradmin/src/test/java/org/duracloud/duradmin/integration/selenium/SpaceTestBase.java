@@ -27,7 +27,7 @@ public class SpaceTestBase
         selenium.click("//tr[@id='"+ spaceId + "']//a[@id='removeSpaceLink']");
         assertTrue(selenium.isConfirmationPresent());
         selenium.getConfirmation();
-        selenium.waitForPageToLoad("10000");
+        selenium.waitForPageToLoad(String.valueOf(DEFAULT_SELENIUM_PAGE_WAIT_IN_MS));
         navigateToSpacesPage();
         assertFalse(selenium.isElementPresent("//tr[@id='" + spaceId + "']"));
     }
