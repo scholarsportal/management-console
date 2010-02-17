@@ -237,7 +237,34 @@ public class S3StorageProvider
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = bucket.getCreationDate();
         spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
-        setSpaceMetadata(spaceId, spaceMetadata);
+
+        try {
+            setNewSpaceMetadata(spaceId, spaceMetadata);
+        } catch(StorageException e) {
+            deleteBucket(spaceId);
+            String err = "Unable to create space due to: " + e.getMessage();
+            throw new StorageException(err, e, RETRY);
+        }
+    }
+
+    private void setNewSpaceMetadata (String spaceId,
+                                      Map<String, String> spaceMetadata) {
+        boolean success = false;
+        int maxLoops = 6;
+        for (int loops = 0; !success && loops < maxLoops; loops++) {
+            try {
+                setSpaceMetadata(spaceId, spaceMetadata);
+                success = true;
+            } catch (NotFoundException e) {
+                success = false;
+            }
+        }
+
+        if(!success) {
+            throw new StorageException("Metadata for space " +
+                                       spaceId + " could not be created. " +
+                                       "The space cannot be found.");
+        }
     }
 
     private S3Bucket createBucket(String spaceId) {
