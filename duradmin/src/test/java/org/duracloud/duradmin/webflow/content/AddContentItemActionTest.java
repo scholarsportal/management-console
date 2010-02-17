@@ -2,10 +2,12 @@
 package org.duracloud.duradmin.webflow.content;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import org.duracloud.duradmin.contentstore.ContentStoreProviderTestBase;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.FileDataTest;
 import org.duracloud.mock.MockMessageContext;
 import org.junit.After;
 import org.junit.Assert;
@@ -13,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 public class AddContentItemActionTest
         extends ContentStoreProviderTestBase {
@@ -36,14 +39,16 @@ public class AddContentItemActionTest
                 .getContentStoreProvider().getContentStore());
     }
 
+    private MultipartFile createFile() throws IOException {
+        return FileDataTest.createTestFile("test.jpg", "image/jpg", "test".getBytes());
+
+    }
     @Test
     public void testExecuteSuccess() throws Exception {
         ContentItem contentItem = new ContentItem();
-        MockMultipartFile file =
-                new MockMultipartFile("testcontent.jpg",
-                                      new ByteArrayInputStream("test"
-                                              .getBytes()));
+        MultipartFile file = createFile();
 
+        
         String spaceId =
                 this.contentStoreProvider.getContentStore().getSpaces().get(0);
         Space space = new Space();
@@ -60,10 +65,7 @@ public class AddContentItemActionTest
     @Test
     public void testExecuteFailure() throws Exception {
         ContentItem contentItem = new ContentItem();
-        MockMultipartFile file =
-                new MockMultipartFile("testcontent.jpg",
-                                      new ByteArrayInputStream("test"
-                                              .getBytes()));
+        MultipartFile file = createFile();
 
         String spaceId = "randomspaceid";
         Space space = new Space();
