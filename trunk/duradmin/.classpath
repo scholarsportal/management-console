@@ -65,5 +65,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/serviceclient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/servicescommon"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/storageprovider"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

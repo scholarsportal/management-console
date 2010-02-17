@@ -42,6 +42,15 @@ public class ContentItemValidator {
         }else{
             try {
                 IdUtil.validateContentId(contentId);
+
+                if (contentItemExists(contentItem)) {
+                    messages
+                            .addMessage(new MessageBuilder()
+                                    .error()
+                                    .defaultText("A content item with this ID already exists. Please try another.")
+                                    .build());
+                }
+            
             } catch(InvalidIdException e) {
                 messages.addMessage(new MessageBuilder().error()
                     .source("contentId")
@@ -50,15 +59,6 @@ public class ContentItemValidator {
         }
         //how about mimetype validation?
         //TODO Discuss any validation rules for mimetype.
-
-        //check if item already exists.
-        if (contentItemExists(contentItem)) {
-            messages
-                    .addMessage(new MessageBuilder()
-                            .error()
-                            .defaultText("A content item with this ID already exists. Please try another.")
-                            .build());
-        }
     }
 
     private boolean contentItemExists(ContentItem contentItem) {

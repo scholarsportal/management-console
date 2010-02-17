@@ -38,10 +38,6 @@ public class ContentItem
 
     private FileData fileData = new FileData();
 
-    public long getSize() {
-        return fileData.getSize();
-    }
-
     private ContentMetadata metadata;
 
     public String getAction() {
@@ -152,5 +148,6 @@ public class ContentItem
     public void setViewerURL(String viewerURL) {
         this.viewerURL = viewerURL;
     }
+
 
 }
