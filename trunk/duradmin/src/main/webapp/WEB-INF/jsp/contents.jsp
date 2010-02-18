@@ -173,10 +173,10 @@
 										      </c:url>">${content.contentId}</a></b>
 									<div id="actionDiv" class="actions">
 									<ul>
-										<li>
+										<!--<li>
 										<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
 								        </li>
-										<li>|</li>
+										<li>|</li>-->
 										<li>
 											<a
 										href="<c:url value="content.htm">
