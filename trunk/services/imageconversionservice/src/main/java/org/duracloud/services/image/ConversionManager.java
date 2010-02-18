@@ -286,7 +286,7 @@ public class ConversionManager {
         } else { // linux
             fileName = "convert.sh";
             scriptLines.add("#!/bin/bash");
-            scriptLines.add("mogrify -format $1 $2");            
+            scriptLines.add("sudo mogrify -format $1 $2");            
         }
 
         File scriptFile = new File(workDir, fileName);
