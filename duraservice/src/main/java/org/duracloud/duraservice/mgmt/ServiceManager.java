@@ -463,13 +463,18 @@ public class ServiceManager {
     }
 
     /*
-     * Removes null entries from a map, both keys and values
+     * Removes entries in the map with null keys.
+     * Updates map entries with null values to have an empty string value.
      */
     private Map<String, String> cleanMap(Map<String, String> map) {
         Map<String, String> cleanMap = new HashMap<String, String>();
         for(String key : map.keySet()) {
-            if(key != null && map.get(key) != null) {
-                cleanMap.put(key, map.get(key));
+            if(key != null) {
+                if(map.get(key) != null) {
+                    cleanMap.put(key, map.get(key));
+                } else {
+                    cleanMap.put(key, "");
+                }
             }
         }
         return cleanMap;

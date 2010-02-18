@@ -24,6 +24,15 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private static final String DEFAULT_DURASTORE_HOST = "localhost";
+    private static final String DEFAULT_DURASTORE_PORT = "8080";
+    private static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
+    private static final String DEFAULT_TO_FORMAT = "jp2";
+    private static final String DEFAULT_SOURCE_SPACE_ID = "image-conversion-source";
+    private static final String DEFAULT_DEST_SPACE_ID = "image-conversion-dest";
+    private static final String DEFAULT_NAME_PREFIX = "";
+    private static final String DEFAULT_NAME_SUFFIX = "";
+
     private ConversionThread conversionThread;
 
     private String duraStoreHost;
@@ -81,7 +90,8 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     @SuppressWarnings("unchecked")
     public void updated(Dictionary config) throws ConfigurationException {
-        // Implementation not needed. Update performed through setters.
+        log("Attempt made to update Image Conversion Service configuration " +
+            "via updated method. Updates should occur via class setters.");
     }
 
     public String getDuraStoreHost() {
@@ -89,7 +99,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setDuraStoreHost(String duraStoreHost) {
-        this.duraStoreHost = duraStoreHost;
+        if(duraStoreHost != null && !duraStoreHost.equals("") ) {
+            this.duraStoreHost = duraStoreHost;
+        } else {
+            log("Attempt made to set duraStoreHost to " + duraStoreHost +
+                ", which is not valid. Setting value to default: " +
+                DEFAULT_DURASTORE_HOST);
+            this.duraStoreHost = DEFAULT_DURASTORE_HOST;
+        }
     }
 
     public String getDuraStorePort() {
@@ -97,7 +114,13 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setDuraStorePort(String duraStorePort) {
-        this.duraStorePort = duraStorePort;
+        if(duraStorePort != null) {
+            this.duraStorePort = duraStorePort;
+        } else {
+            log("Attempt made to set duraStorePort to null, which is not " +
+                "valid. Setting value to default: " + DEFAULT_DURASTORE_PORT);
+            this.duraStorePort = DEFAULT_DURASTORE_PORT;
+        }
     }
 
     public String getDuraStoreContext() {
@@ -105,7 +128,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setDuraStoreContext(String duraStoreContext) {
-        this.duraStoreContext = duraStoreContext;
+        if(duraStoreContext != null && !duraStoreContext.equals("")) {
+            this.duraStoreContext = duraStoreContext;
+        } else {
+            log("Attempt made to set duraStoreContext to null or empty, " +
+                "which is not valid. Setting value to default: " +
+                DEFAULT_DURASTORE_CONTEXT);
+            this.duraStoreContext = DEFAULT_DURASTORE_CONTEXT;
+        }
     }
 
     public String getToFormat() {
@@ -113,7 +143,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setToFormat(String toFormat) {
-        this.toFormat = toFormat;
+        if(toFormat != null && !toFormat.equals("")) {
+            this.toFormat = toFormat;
+        } else {
+            log("Attempt made to set toFormat to null or empty, " +
+                ", which is not valid. Setting value to default: " +
+                DEFAULT_TO_FORMAT);
+            this.toFormat = DEFAULT_TO_FORMAT;
+        }
     }
 
     public String getSourceSpaceId() {
@@ -121,7 +158,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setSourceSpaceId(String sourceSpaceId) {
-        this.sourceSpaceId = sourceSpaceId;
+        if(sourceSpaceId != null && !sourceSpaceId.equals("")) {
+            this.sourceSpaceId = sourceSpaceId;
+        } else {
+            log("Attempt made to set sourceSpaceId to null or empty, " +
+                ", which is not valid. Setting value to default: " +
+                DEFAULT_SOURCE_SPACE_ID);
+            this.sourceSpaceId = DEFAULT_SOURCE_SPACE_ID;
+        }
     }
 
     public String getDestSpaceId() {
@@ -129,7 +173,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setDestSpaceId(String destSpaceId) {
-        this.destSpaceId = destSpaceId;
+        if(destSpaceId != null && !destSpaceId.equals("")) {
+            this.destSpaceId = destSpaceId;
+        } else {
+            log("Attempt made to set destSpaceId to to null or empty, " +
+                ", which is not valid. Setting value to default: " +
+                DEFAULT_DEST_SPACE_ID);
+            this.destSpaceId = DEFAULT_DEST_SPACE_ID;
+        }
     }
 
     public String getNamePrefix() {
@@ -137,7 +188,13 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setNamePrefix(String namePrefix) {
-        this.namePrefix = namePrefix;
+        if(namePrefix != null) {
+            this.namePrefix = namePrefix;
+        } else {
+            log("Attempt made to set namePrefix to null, which is not valid. " +
+                "Setting value to default: " + DEFAULT_NAME_PREFIX);
+            this.namePrefix = DEFAULT_NAME_PREFIX;
+        }
     }
 
     public String getNameSuffix() {
@@ -145,6 +202,17 @@ public class ImageConversionService extends BaseService implements ComputeServic
     }
 
     public void setNameSuffix(String nameSuffix) {
-        this.nameSuffix = nameSuffix;
+        if(nameSuffix != null) {
+            this.nameSuffix = nameSuffix;
+        } else {
+            log("Attempt made to set nameSuffix to null, which is not valid. " +
+                "Setting value to default: " + DEFAULT_NAME_SUFFIX);
+            this.nameSuffix = DEFAULT_NAME_SUFFIX;
+        }
+    }
+
+    private void log(String logMsg) {
+        log.warn(logMsg);
+        System.out.println(logMsg);
     }
 }
