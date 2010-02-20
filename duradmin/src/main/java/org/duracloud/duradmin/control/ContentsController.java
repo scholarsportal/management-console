@@ -43,7 +43,12 @@ public class ContentsController
         if (StringUtils.hasText(maxPerPage)) {
             contentItemList.setMaxResultsPerPage(Integer.parseInt(maxPerPage));
         }
-
+        
+        String viewFilter = request.getParameter("viewFilter");
+        if(viewFilter !=null){
+            contentItemList.setViewFilter(viewFilter);
+        }
+        
         String action = space.getAction();
         if (StringUtils.hasText(action)) {
             if (action.equals("n")) {

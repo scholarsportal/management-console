@@ -83,7 +83,7 @@
 									</c:if>
 									
 									<li>
-										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
+										<a target="_blank" href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
 									<li>|</li>
 

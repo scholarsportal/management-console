@@ -1,6 +1,7 @@
 
 package org.duracloud.duradmin.contentstore;
 
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
@@ -21,7 +22,7 @@ public class ContentItemList
 
     private Space space;
 
-    private String contentIdFilterString = null;
+    private String viewFilter = null;
 
     public ContentItemList(String spaceId,
                            ContentStore contentStore) {
@@ -37,6 +38,8 @@ public class ContentItemList
         this.spaceId = spaceId;
     }
 
+    
+    
     public Space getSpace() {
         try {
             update();
@@ -52,7 +55,7 @@ public class ContentItemList
             this.space = new Space();
             org.duracloud.domain.Space cloudSpace =
                     contentStore.getSpace(spaceId,
-                                          contentIdFilterString,
+                                          viewFilter,
                                           getMaxResultsPerPage(),
                                           currentMarker);
 
@@ -64,8 +67,8 @@ public class ContentItemList
         }
     }
 
-    public String getContentIdFilterString() {
-        return contentIdFilterString;
+    public String getViewFilter() {
+        return viewFilter;
     }
 
     public List<ContentItem> getContentItemList() {
@@ -78,6 +81,13 @@ public class ContentItemList
             contentItemList.add(contentItem);
         }
         return contentItemList;
+    }
+
+    public void setViewFilter(String viewFilter) {
+        if(!StringUtils.equals(viewFilter, this.viewFilter)){
+            this.viewFilter = viewFilter;
+            first();
+        }
     }
 
 }
