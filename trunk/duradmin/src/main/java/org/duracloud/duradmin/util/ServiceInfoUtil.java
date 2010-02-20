@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
 import org.duracloud.serviceconfig.user.Option;
 import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
@@ -24,7 +25,7 @@ public class ServiceInfoUtil {
         String oldValue = userConfig.getValue();
         userConfig.setValue(newValue);
 
-        return !isEquals(newValue, oldValue);
+        return !StringUtils.equals(newValue, oldValue);
     }
 
     /**
@@ -37,7 +38,7 @@ public class ServiceInfoUtil {
         String newValue = parameters.get(userConfig.getName());
         String oldValue = userConfig.getSelectedValue();
         userConfig.select(newValue);
-        return !isEquals(newValue, oldValue);
+        return !StringUtils.equals(newValue, oldValue);
     }
 
 
@@ -61,7 +62,7 @@ public class ServiceInfoUtil {
         
         String newValue = getValuesAsString(userConfig);
         
-        return !isEquals(newValue, oldValue);
+        return !StringUtils.equals(newValue, oldValue);
     }
     
     private static String getValuesAsString(MultiSelectUserConfig uc){
@@ -76,17 +77,6 @@ public class ServiceInfoUtil {
     }
 
     
-    private static boolean isEquals(String newValue, String oldValue) {
-        if((newValue == null && oldValue != null) || 
-                (newValue != null && oldValue == null)){
-            return false;
-        }else if(newValue == null && oldValue==null){
-            return true;
-        }else{
-            return newValue.equals(oldValue);
-        }
-    }
-
     public static void applyValues(List<UserConfig> userConfigs,
                                    Map<String, String> parameters) {
         for(UserConfig userConfig : userConfigs){

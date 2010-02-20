@@ -21,6 +21,11 @@
 						<td><spring:message code="created" /></td>
 						<td>${space.metadata.created}</td>
 					</tr>
+					<tr>
+						<td><spring:message code="contentItem.count" /></td>
+						<td>${space.metadata.count}</td>
+					</tr>
+
 				</table>
 			</tiles:putAttribute>
 		</tiles:insertTemplate></div>
@@ -98,11 +103,16 @@
 						code="add.contentItem" /> >></a></p>
 				</c:when>
 				<c:otherwise>
-					<table class="small">
+					<table class="small" >
 						<tr>
-                            <!--<td><input type="text" name="filter" /> <spring:message
-								code="filterById" /></td>-->
 							<td>
+								<form action="contents.htm?spaceId=${space.spaceId}" onchange="submit();"
+									method="post">
+									<input type="text" name="viewFilter"  value="${contentItemList.viewFilter}"/> 
+									<spring:message code="filterById" />
+								</form>
+							</td>
+							<td style="text-align:right">
 							<!-- ugly: should be cleaned up  -->
 							<form action="contents.htm?spaceId=${space.spaceId}"
 								method="post"><select id="mpp" name="mpp"
@@ -117,41 +127,40 @@
 							</select> <label for="mpp">items per page</label></form>
 
 							</td>
-							<td>
-								<c:if
-									test="${contentItemList.previousAvailable or contentItemList.nextAvailable}">
-
-							<ul class="horizontal-list">
-
-								<c:choose>
-									<c:when test="${contentItemList.previousAvailable}">
-										<a title="first page"
-											href="contents.htm?action=f&spaceId=${space.spaceId}">[first]</a>
-	
-										<a title="previous page"
-											href="contents.htm?action=p&spaceId=${space.spaceId}">[previous]</a>
-									</c:when>
-									<c:otherwise>
-										<span class="disabled">
-											[first] [previous]
-										</span>
-									</c:otherwise>
-								</c:choose>
-
-
-								<c:choose>
-									<c:when test="${contentItemList.nextAvailable}">
-										<a title="next"
-											href="contents.htm?action=n&spaceId=${space.spaceId}">[next]</a>
-									</c:when>
-									<c:otherwise>
-										<span class="disabled">
-											[next]
-										</span>
-
-									</c:otherwise>
-								</c:choose>
-							</ul>
+							<td style="text-align:right; vertical-align:middle">
+								<c:if test="${contentItemList.previousAvailable or contentItemList.nextAvailable}">
+									<ul class="horizontal-list">
+		
+										<c:choose>
+											<c:when test="${contentItemList.previousAvailable}">
+												<a title="first page"
+													href="contents.htm?action=f&spaceId=${space.spaceId}">[first]</a>
+			
+												<a title="previous page"
+													href="contents.htm?action=p&spaceId=${space.spaceId}">[previous]</a>
+											</c:when>
+											<c:otherwise>
+												<span class="disabled">
+													[first] [previous]
+												</span>
+											</c:otherwise>
+										</c:choose>
+		
+		
+										<c:choose>
+											<c:when test="${contentItemList.nextAvailable}">
+												<a title="next"
+													href="contents.htm?action=n&spaceId=${space.spaceId}">[next]</a>
+											</c:when>
+											<c:otherwise>
+												<span class="disabled">
+													[next]
+												</span>
+		
+											</c:otherwise>
+										</c:choose>
+										
+									</ul>
 								</c:if>
 							</td>
 						</tr>

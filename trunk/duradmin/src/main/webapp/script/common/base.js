@@ -165,7 +165,7 @@ function showWaitMessage(node, messageText){
 function showError(node, ioArgs){
 	node.innerHTML = "";
 	var div = dojo.create("div",null, node);
-	var img =  dojo.create("img", {src:"/duradmin/images/error.gif" },div);
+	var img =  dojo.create("img", {src:"/duradmin/images/error.png" },div);
 	var messageText = "Unable to complete request: status (" + ioArgs.xhr.status + ")";
 	dojo.create("span", {innerHTML: messageText},div);
 }

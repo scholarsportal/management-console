@@ -1,4 +1,3 @@
-
 package org.duracloud.duradmin.contentstore;
 
 import static org.junit.Assert.assertEquals;
