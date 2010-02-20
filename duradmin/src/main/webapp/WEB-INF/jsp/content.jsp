@@ -83,7 +83,7 @@
 									</c:if>
 									
 									<li>
-										<a target="_blank" href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
+										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
 									<li>|</li>
 
@@ -114,12 +114,6 @@
 					<tr>
 						<td style="width: 75%">
 						<table class="property-list">
-							<tr>
-								<td class="label"><spring:message code="contentItem.id" /></td>
-								<td class="value">
-									<a target="viewer" href="<c:url value="${contentItem.viewerURL != null ? contentItem.viewerURL : contentItem.downloadURL}"></c:url>">${contentItem.contentId}</a>
-								</td>
-							</tr>
 							<tr>
 								<td class="label"><spring:message code="size" /></td>
 								<td class="value"><c:out
