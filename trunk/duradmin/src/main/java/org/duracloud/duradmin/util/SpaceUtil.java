@@ -91,7 +91,7 @@ public class SpaceUtil {
     }
     
     private static String formatDownloadURL(ContentItem contentItem, ContentStore store) {
-        String pattern = "{0}/{1}/{2}?storeID={3}";
+        String pattern = "{0}/{1}/{2}?storeID={3}&attachment=true";
  
         return MessageFormat.format(pattern,
                                     store.getBaseURL(),

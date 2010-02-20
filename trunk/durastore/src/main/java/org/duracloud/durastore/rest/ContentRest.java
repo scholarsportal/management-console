@@ -44,7 +44,11 @@ public class ContentRest extends BaseRest {
                                @PathParam("contentID")
                                String contentID,
                                @QueryParam("storeID")
-                               String storeID) {
+                               String storeID, 
+                               @QueryParam("attachment")
+                               String attachment
+                                
+                               ) {
         try {
             Map<String, String> metadata =
                 ContentResource.getContentMetadata(spaceID, contentID, storeID);
@@ -55,7 +59,14 @@ public class ContentRest extends BaseRest {
             }
             InputStream content =
                 ContentResource.getContent(spaceID, contentID, storeID);
-            return addContentMetadataToResponse(Response.ok(content, mimetype),
+            
+            ResponseBuilder responseBuilder = Response.ok(content, mimetype);
+            if(attachment != null){
+                if(Boolean.parseBoolean(attachment)){
+                    addContentDispositionHeader(responseBuilder, contentID);
+                }
+            }
+            return addContentMetadataToResponse(responseBuilder,
                                                 metadata);
         } catch(ResourceNotFoundException e) {
             return Response.status(HttpStatus.SC_NOT_FOUND)
@@ -64,6 +75,15 @@ public class ContentRest extends BaseRest {
         } catch(ResourceException e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
+    }
+
+    private void addContentDispositionHeader(ResponseBuilder responseBuilder, String filename) {
+        StringBuffer contentDisposition = new StringBuffer();
+        contentDisposition.append("attachment;");
+        contentDisposition.append("filename=\"");
+        contentDisposition.append(filename);
+        contentDisposition.append("\"");
+        responseBuilder.header("Content-Disposition", contentDisposition.toString());
     }
 
     /**
