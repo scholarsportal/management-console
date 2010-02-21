@@ -78,8 +78,10 @@ public class ContentItemList
             ContentItem contentItem = new ContentItem();
             contentItem.setSpaceId(spaceId);
             contentItem.setContentId(result);
+            contentItem.setDownloadURL(SpaceUtil.formatDownloadURL(contentItem, contentStore));
             contentItemList.add(contentItem);
         }
+        
         return contentItemList;
     }
 

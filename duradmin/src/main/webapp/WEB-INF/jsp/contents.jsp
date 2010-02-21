@@ -75,7 +75,9 @@
 									<spring:message
 										code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}" />
 									</a></li>
+
 									<li>|</li>
+
 									<li><a id="removeSpaceLink" href="<c:url value="removeSpace.htm">
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
 											   		<c:param name="returnTo" value="${pageContext.request.contextPath}/spaces.htm"/>
@@ -182,10 +184,6 @@
 										      </c:url>">${content.contentId}</a></b>
 									<div id="actionDiv" class="actions">
 									<ul>
-										<!--<li>
-										<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
-								        </li>
-										<li>|</li>-->
 										<li>
 											<a
 										href="<c:url value="content.htm">
@@ -194,7 +192,10 @@
 										      </c:url>"><spring:message code="details" /></a>
 								        </li>
 										<li>|</li>
-
+										<li>
+											<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
+										</li>
+										<li>|</li>
 										<li><a
 											href="<c:url value="removeContent.htm" >
 											   		<c:param name="spaceId" value="${space.spaceId}"/>

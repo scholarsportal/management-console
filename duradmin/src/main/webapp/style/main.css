@@ -442,3 +442,7 @@ table.extended-metadata > tbody > tr {
 	border:1px dashed #DDD;
 }
 
+.content-item-metadata-summary td {
+	padding:0;	
+}
+
