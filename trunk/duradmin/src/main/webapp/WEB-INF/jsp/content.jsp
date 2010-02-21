@@ -79,7 +79,6 @@
 											<a target = "viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>"><spring:message code="view" /></a>
 										</li>
 										<li>|</li>
-
 									</c:if>
 									
 									<li>

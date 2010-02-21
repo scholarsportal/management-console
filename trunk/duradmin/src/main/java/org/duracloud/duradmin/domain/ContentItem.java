@@ -32,6 +32,9 @@ public class ContentItem
     
     private String thumbnailURL;
 
+    private String tinyThumbnailURL;
+
+    
     private List<NameValuePair> extendedMetadata;
 
     private transient MultipartFile file;
@@ -147,6 +150,16 @@ public class ContentItem
     
     public void setViewerURL(String viewerURL) {
         this.viewerURL = viewerURL;
+    }
+
+    
+    public String getTinyThumbnailURL() {
+        return tinyThumbnailURL;
+    }
+
+    
+    public void setTinyThumbnailURL(String tinyThumbnailURL) {
+        this.tinyThumbnailURL = tinyThumbnailURL;
     }
 
 

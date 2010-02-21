@@ -62,7 +62,8 @@ public class SpaceUtil {
         String j2KBaseURL = null;
         j2KBaseURL = resolveJ2KServiceBaseURL();
         if(j2KBaseURL != null && mimetype.toLowerCase().startsWith("image/")){
-            contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL));
+            contentItem.setTinyThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 1));
+            contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 2));
             contentItem.setViewerURL(formatViewerURL(contentItem, store, j2KBaseURL));
         }
 
@@ -70,6 +71,7 @@ public class SpaceUtil {
     }
 
     
+
 
     private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
          String standardURL = formatDownloadURL(contentItem,store);
@@ -79,18 +81,20 @@ public class SpaceUtil {
     }
     
 
-    private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
+    private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL, int size) {
         String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
                             "svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&" +
-                            "svc.format=image/png&svc.level=2&svc.rotate=0&svc.region=0,0,500,500";
+                            "svc.format=image/png&svc.level={2}&svc.rotate=0&svc.region=0,0,500,500";
 
         return MessageFormat.format(
                                     pattern, 
                                     j2KBaseURL,
-                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store)));
+                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store)),
+                                    size
+                                    );
     }
     
-    private static String formatDownloadURL(ContentItem contentItem, ContentStore store) {
+    public static String formatDownloadURL(ContentItem contentItem, ContentStore store) {
         String pattern = "{0}/{1}/{2}?storeID={3}&attachment=true";
  
         return MessageFormat.format(pattern,
@@ -126,10 +130,6 @@ public class SpaceUtil {
         
     }
 
-    private static boolean isJ2KServiceRunning() {
-        // TODO Auto-generated method stub
-        return true;
-    }
 
     private static ContentMetadata populateContentMetadata(Map<String, String> contentMetadata) {
         ContentMetadata metadata = new ContentMetadata();

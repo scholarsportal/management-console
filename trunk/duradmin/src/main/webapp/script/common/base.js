@@ -16,7 +16,9 @@ function loadContentItem(nodeId, spaceId, contentId){
 		  console.debug(responseObject);  // Dump it to the console
 		  var ci = responseObject.contentItem;
 		  var details = formatContentItemMetadataHtml(ci);
-	      dojo.byId(nodeId).innerHTML = details;
+		  var node = dojo.byId(nodeId);
+		  node.innerHTML = "";
+	      node.appendChild(details);
 	},
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
@@ -170,17 +172,50 @@ function showError(node, ioArgs){
 	dojo.create("span", {innerHTML: messageText},div);
 }
 
+function addRow(tableElement){
+	return dojo.create("tr", null, tableElement);
+}
+
+function addCell(contents, row){
+	if(typeof contents == "string"){
+		return dojo.create("td", {innerHTML: contents}, row);
+	}else{
+		var cell = dojo.create("td", null, row);
+		cell.appendChild(contents);
+		return cell;
+	}
+}
 
 function formatContentItemMetadataHtml(ci){
-      var contentId = ci.contentId;
-	  var spaceId = ci.spaceId;
-	  console.debug("contentId=" + contentId);
 	  var metadata = ci.metadata;
-	  var mimetype = metadata.mimetype;
-	  var size = metadata.size;
-	  var modified  = metadata.modified;
-	  var checksum  = metadata.checksum;
-      return "Modified on " +  modified + "<br/>" + mimetype + "<br/>" + size + " bytes<br/>checksum: " + checksum;
+	  
+	  var table = dojo.create("table", {class:"content-item-metadata-summary"});
+      var row = addRow(table);
+	  addCell("modified", row);
+      addCell(metadata.modified, row);
+
+      var tn = ci.tinyThumbnailURL;
+      if(tn != undefined && tn != null){
+    	  var thumblink = dojo.create("a", {target:"viewer", href: ci.viewerURL});
+    	  dojo.create("img", {src:tn, style:"height:75px;width:75px"}, thumblink);
+    	  var cell = addCell(thumblink, row);
+          dojo.attr(cell, "rowspan", "3");
+      }
+
+      
+      row = addRow(table);
+      addCell("mimetype", row);
+	  addCell(metadata.mimetype, row);
+	  row = addRow(table);
+	  addCell("size", row);
+	  addCell(metadata.size + " bytes", row);
+      
+	  row = addRow(table);
+	  addCell("checksum", row);
+	  addCell(metadata.checksum, row);
+
+	  
+      return table;
 }
 
 
