@@ -266,10 +266,10 @@ public class ServiceXmlGenerator {
                                        "Source Space",
                                        spaceOptions);
 
-        TextUserConfig destSpace =
-            new TextUserConfig("destSpaceId",
-                               "Destination Space, a space which does not " +
-                                   "already exist will be created.", "");
+        SingleSelectUserConfig destSpace =
+            new SingleSelectUserConfig("destSpaceId",
+                                       "Destination Space",
+                                       spaceOptions);
 
         // To Format
         List<Option> toFormatOptions = new ArrayList<Option>();
@@ -295,6 +295,17 @@ public class ServiceXmlGenerator {
                                        "Destination Format",
                                        toFormatOptions);
 
+        List<Option> colorSpaceOptions = new ArrayList<Option>();
+        colorSpaceOptions.add(new Option("Source Image Color Space",
+                                         "source",
+                                         true));
+        colorSpaceOptions.add(new Option("sRGB", "sRGB", false));
+
+        SingleSelectUserConfig colorSpace =
+            new SingleSelectUserConfig("colorSpace",
+                                       "Destination Color Space",
+                                       colorSpaceOptions);        
+
         // Name Prefix
         TextUserConfig namePrefix =
             new TextUserConfig("namePrefix",
@@ -312,6 +323,7 @@ public class ServiceXmlGenerator {
         icServiceUserConfig.add(sourceSpace);
         icServiceUserConfig.add(destSpace);
         icServiceUserConfig.add(toFormat);
+        icServiceUserConfig.add(colorSpace);        
         icServiceUserConfig.add(namePrefix);
         icServiceUserConfig.add(nameSuffix);
 

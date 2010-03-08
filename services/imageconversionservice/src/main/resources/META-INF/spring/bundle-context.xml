@@ -17,6 +17,7 @@
     <property name="duraStorePort" value="8080"/>
     <property name="duraStoreContext" value="durastore"/>
     <property name="toFormat" value="jp2"/>
+    <property name="colorSpace" value="source"/>
     <property name="sourceSpaceId" value="image-conversion-source"/>
     <property name="destSpaceId" value="image-conversion-dest"/>
     <property name="namePrefix" value=""/>

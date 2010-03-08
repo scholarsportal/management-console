@@ -46,9 +46,7 @@ public class ContentRest extends BaseRest {
                                @QueryParam("storeID")
                                String storeID, 
                                @QueryParam("attachment")
-                               String attachment
-                                
-                               ) {
+                               boolean attachment) {
         try {
             Map<String, String> metadata =
                 ContentResource.getContentMetadata(spaceID, contentID, storeID);
@@ -61,10 +59,8 @@ public class ContentRest extends BaseRest {
                 ContentResource.getContent(spaceID, contentID, storeID);
             
             ResponseBuilder responseBuilder = Response.ok(content, mimetype);
-            if(attachment != null){
-                if(Boolean.parseBoolean(attachment)){
-                    addContentDispositionHeader(responseBuilder, contentID);
-                }
+            if(attachment){
+                addContentDispositionHeader(responseBuilder, contentID);
             }
             return addContentMetadataToResponse(responseBuilder,
                                                 metadata);
@@ -77,7 +73,8 @@ public class ContentRest extends BaseRest {
         }
     }
 
-    private void addContentDispositionHeader(ResponseBuilder responseBuilder, String filename) {
+    private void addContentDispositionHeader(ResponseBuilder responseBuilder,
+                                             String filename) {
         StringBuffer contentDisposition = new StringBuffer();
         contentDisposition.append("attachment;");
         contentDisposition.append("filename=\"");

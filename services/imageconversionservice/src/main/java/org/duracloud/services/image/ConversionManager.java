@@ -42,6 +42,7 @@ public class ConversionManager {
     private ContentStore contentStore;
     private File workDir;
     private String toFormat;
+    private String colorSpace;
     private String sourceSpaceId;
     private String destSpaceId;
     private String namePrefix;
@@ -52,6 +53,7 @@ public class ConversionManager {
     public ConversionManager(ContentStore contentStore,
                              File workDir,
                              String toFormat,
+                             String colorSpace,
                              String sourceSpaceId,
                              String destSpaceId,
                              String namePrefix,
@@ -59,6 +61,7 @@ public class ConversionManager {
         this.contentStore = contentStore;
         this.workDir = workDir;
         this.toFormat = toFormat;
+        this.colorSpace = colorSpace;
         this.sourceSpaceId = sourceSpaceId;
         this.destSpaceId = destSpaceId;
         this.namePrefix = namePrefix;
@@ -181,30 +184,55 @@ public class ConversionManager {
         // Perform conversion
         File convertedFile = convertImage(sourceFile);
 
-        // Stream converted file to destination space
-        FileInputStream convertedFileStream =
-            new FileInputStream(convertedFile);
-        String mimetype = extMimeMap.get(toFormat);
-        if(mimetype == null) {
-            mimetype = extMimeMap.get("default");
+        try {
+            // Store the converted file in the destination space
+            storeConvertedContent(convertedFile,
+                                  sourceContent.getMetadata());
+        } finally {
+            // Delete source and converted files from work directory
+            if (!sourceFile.delete()) {
+                sourceFile.deleteOnExit();
+            }
+
+            if (!convertedFile.delete()) {
+                convertedFile.deleteOnExit();
+            }
         }
+    }
 
-        // Store the converted file in the destination space
-        contentStore.addContent(destSpaceId,
-                                convertedFile.getName(),
-                                convertedFileStream,
-                                convertedFile.length(),
-                                mimetype,
-                                sourceContent.getMetadata());
+    private void storeConvertedContent(File convertedFile,
+                                       Map<String, String> metadata)
+        throws IOException, ContentStoreException {
+        ContentStoreException exception = null;
 
-        // Delete source and converted files from work directory
-        if(!sourceFile.delete()) {
-            sourceFile.deleteOnExit();
-        }
+        boolean success = false;
+        int maxLoops = 4;
+        for (int loops = 0; !success && loops < maxLoops; loops++) {
+            FileInputStream convertedFileStream =
+                new FileInputStream(convertedFile);
+            String mimetype = extMimeMap.get(toFormat);
+            if(mimetype == null) {
+                mimetype = extMimeMap.get("default");
+            }
 
-        convertedFileStream.close();
-        if(!convertedFile.delete()) {
-            convertedFile.deleteOnExit();
+            try {
+                contentStore.addContent(destSpaceId,
+                                        convertedFile.getName(),
+                                        convertedFileStream,
+                                        convertedFile.length(),
+                                        mimetype,
+                                        metadata);
+                success = true;
+            } catch (ContentStoreException e) {
+                exception = e;
+                success = false;
+            } finally {
+                convertedFileStream.close();
+            }
+
+            if (!success) {
+                throw exception;
+            }
         }
     }
 
@@ -282,17 +310,33 @@ public class ConversionManager {
         String osName = System.getProperty("os.name");
         if (osName.toLowerCase().indexOf("windows") >= 0) { // windows
             fileName = "convert.bat";
+            if(includeColorspace()) {
+                scriptLines.add("mogrify -profile sRGB.icm %2");
+            }
             scriptLines.add("mogrify -format %1 %2");
         } else { // linux
             fileName = "convert.sh";
             scriptLines.add("#!/bin/bash");
-            scriptLines.add("sudo mogrify -format $1 $2");            
+            if(includeColorspace()) {
+                scriptLines.add("sudo mogrify -profile sRGB.icm $2");
+            }
+            scriptLines.add("sudo mogrify -format $1 $2");
         }
 
         File scriptFile = new File(workDir, fileName);
         FileUtils.writeLines(scriptFile, scriptLines);
         scriptFile.setExecutable(true);
         return scriptFile.getAbsolutePath();
+    }
+
+    private boolean includeColorspace() {
+        if(colorSpace != null &&
+           colorSpace.length() > 0 &&
+           colorSpace.equals("sRGB")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     protected void storeConversionResults() throws ContentStoreException {

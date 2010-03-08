@@ -4,6 +4,16 @@
     <format>zip</format>
   </formats>
 
+  <fileSets>
+    <fileSet>
+      <directory>/resources</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>*.icm</include>
+      </includes>
+    </fileSet>
+  </fileSets>  
+  
   <dependencySets>
     <dependencySet>
       <scope>provided</scope>
