@@ -28,6 +28,7 @@ public class ImageConversionService extends BaseService implements ComputeServic
     private static final String DEFAULT_DURASTORE_PORT = "8080";
     private static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
     private static final String DEFAULT_TO_FORMAT = "jp2";
+    private static final String DEFAULT_COLORSPACE = "source";
     private static final String DEFAULT_SOURCE_SPACE_ID = "image-conversion-source";
     private static final String DEFAULT_DEST_SPACE_ID = "image-conversion-dest";
     private static final String DEFAULT_NAME_PREFIX = "";
@@ -39,6 +40,7 @@ public class ImageConversionService extends BaseService implements ComputeServic
     private String duraStorePort;
     private String duraStoreContext;
     private String toFormat;
+    private String colorSpace;
     private String sourceSpaceId;
     private String destSpaceId;
     private String namePrefix;
@@ -59,6 +61,7 @@ public class ImageConversionService extends BaseService implements ComputeServic
         conversionThread = new ConversionThread(contentStore,
                                                 workDir,
                                                 toFormat,
+                                                colorSpace,
                                                 sourceSpaceId,
                                                 destSpaceId,
                                                 namePrefix,
@@ -150,6 +153,20 @@ public class ImageConversionService extends BaseService implements ComputeServic
                 ", which is not valid. Setting value to default: " +
                 DEFAULT_TO_FORMAT);
             this.toFormat = DEFAULT_TO_FORMAT;
+        }
+    }
+
+    public String getColorSpace() {
+        return colorSpace;
+    }
+
+    public void setColorSpace(String colorSpace) {
+        if(colorSpace != null && !colorSpace.equals("")) {
+            this.colorSpace = colorSpace;
+        } else {
+            log("Attempt made to set colorSpace to null, which is not valid. " +
+                "Setting value to default: " + DEFAULT_COLORSPACE);
+            this.colorSpace = DEFAULT_COLORSPACE;
         }
     }
 
