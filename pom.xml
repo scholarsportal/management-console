@@ -63,6 +63,7 @@
       <module>emcstorageprovider</module>
 <!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
+      <module>security</module>
       <module>durastore</module> 
       <module>duradavwebapp</module>
       <module>storeclient</module>

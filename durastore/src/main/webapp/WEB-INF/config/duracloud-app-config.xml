@@ -14,6 +14,7 @@
   <import resource="restapi-config.xml" />
   <import resource="aop-config.xml" />
   <import resource="messaging-config.xml" />
+  <import resource="security-config.xml" />
   
   <!-- Domain Beans -->
   <bean id="storageProviderFactory" class="org.duracloud.durastore.util.StorageProviderFactory">
