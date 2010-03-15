@@ -3,12 +3,12 @@ package org.duracloud.rackspacestorage;
 import com.rackspacecloud.client.cloudfiles.FilesCDNContainer;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertEquals;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class RackspaceApiTestNotRun {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForProvider(StorageProviderType.RACKSPACE);
+        return dbUtil.findCredentialForResource(StorageProviderType.RACKSPACE);
     }
 
     /*

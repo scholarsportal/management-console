@@ -60,6 +60,6 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-lang-2.4.jar
 export CLASSPATH=$CLASSPATH:$BUILD_HOME/durastore/target/classes
 
 # Just have this call here to ease the logical next action (without args it prints usage)
-java -Dunit.database.home=${UNIT_DATABASE_HOME} -Dunit.database.password=${UNIT_DATABASE_PASSWORD} org.duracloud.storage.domain.test.db.UnitTestDatabaseLoaderCLI 
+java -Dunit.database.home=${UNIT_DATABASE_HOME} -Dunit.database.password=${UNIT_DATABASE_PASSWORD} org.duracloud.unittestdb.UnitTestDatabaseLoaderCLI
 
 

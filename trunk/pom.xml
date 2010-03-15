@@ -55,9 +55,10 @@
       <module>serviceconfig</module>
       <module>chunk</module>
       <module>computeprovider</module>
+      <module>storageprovider</module>
+      <module>unit-test-db</module>
 <!--      <module>ec2computeprovider</module>-->
       <module>ec2typicacomputeprovider</module>
-      <module>storageprovider</module>
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
       <module>emcstorageprovider</module>

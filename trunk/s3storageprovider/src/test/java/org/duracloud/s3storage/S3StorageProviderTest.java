@@ -12,13 +12,13 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.jets3t.service.model.S3Object;
 import org.junit.After;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class S3StorageProviderTest {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForProvider(StorageProviderType.AMAZON_S3);
+        return dbUtil.findCredentialForResource(StorageProviderType.AMAZON_S3);
     }
 
     private String getNewSpaceId() {

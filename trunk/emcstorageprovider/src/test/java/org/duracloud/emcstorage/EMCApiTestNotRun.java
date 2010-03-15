@@ -5,7 +5,7 @@ import com.emc.esu.api.Grantee.GRANT_TYPE;
 import com.emc.esu.api.rest.EsuRestApi;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
@@ -60,7 +60,7 @@ public class EMCApiTestNotRun {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForProvider(StorageProviderType.EMC);
+        return dbUtil.findCredentialForResource(StorageProviderType.EMC);
     }
 
     @Test

@@ -1,12 +1,11 @@
-package org.duracloud.storage.domain.test.db;
+package org.duracloud.unittestdb;
+
+import org.apache.log4j.Logger;
+import org.duracloud.common.model.Credential;
+import org.duracloud.storage.domain.StorageProviderType;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
-import org.apache.log4j.Logger;
-
-import org.duracloud.common.model.Credential;
-import org.duracloud.storage.domain.StorageProviderType;
 
 public class UnitTestDatabaseLoaderCLI {
 
@@ -42,12 +41,12 @@ public class UnitTestDatabaseLoaderCLI {
 
     private void inputPasswords() {
         while (true) {
-            StorageProviderType type = inputProviderType();
+            StorageProviderType type = inputResourceType();
             String username = inputUsername();
             String password = inputPassword();
             if (isValid(username, password)) {
                 Credential cred = new Credential(username, password);
-                dbUtil.insertCredentialForProvider(type, cred);
+                dbUtil.insertCredentialForResource(type, cred);
             }
             if (inputFinished()) {
                 break;
@@ -55,9 +54,9 @@ public class UnitTestDatabaseLoaderCLI {
         }
     }
 
-    private StorageProviderType inputProviderType() {
+    private StorageProviderType inputResourceType() {
         StringBuilder sb =
-                new StringBuilder("Enter storage provider type from [");
+                new StringBuilder("Enter resource type from [");
 
         for (StorageProviderType type : StorageProviderType.values()) {
             sb.append(type + ", ");

@@ -6,9 +6,9 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
 import org.duracloud.s3storage.ProbedS3StorageProvider;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -83,7 +83,7 @@ public class StorageProvidersTest {
         Credential credential = null;
         try {
             UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-            credential = dbUtil.findCredentialForProvider(type);
+            credential = dbUtil.findCredentialForResource(type);
             assertNotNull(credential);
 
             String username = credential.getUsername();

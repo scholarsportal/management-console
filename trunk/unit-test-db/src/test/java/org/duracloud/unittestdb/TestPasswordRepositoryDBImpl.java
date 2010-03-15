@@ -1,19 +1,17 @@
-package org.duracloud.storage.domain.test.db;
-
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+package org.duracloud.unittestdb;
 
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.storage.domain.StorageProviderType;
-
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class TestPasswordRepositoryDBImpl {
 
@@ -30,7 +28,7 @@ public class TestPasswordRepositoryDBImpl {
     private final String tablename =
             PasswordRepositoryDBImpl.getTableSpec().getTableName();
 
-    private final StorageProviderType provider = StorageProviderType.EMC;
+    private final StorageProviderType resource = StorageProviderType.EMC;
 
     private final String username = "username";
 
@@ -60,12 +58,12 @@ public class TestPasswordRepositoryDBImpl {
         insertTestData(3);
         verifyTableSize(3);
 
-        repo.insertPassword(provider, username, password);
+        repo.insertPassword(resource, username, password);
 
         verifyTableSize(4);
 
         String pword =
-                repo.findPasswordByProviderTypeAndUsername(provider, username);
+                repo.findPasswordByResourceTypeAndUsername(resource, username);
         assertNotNull(pword);
         assertEquals(pword, password);
     }
@@ -84,33 +82,33 @@ public class TestPasswordRepositoryDBImpl {
                             bootPassword + 2);
         verifyTableSize(3);
 
-        repo.insertPassword(provider, username, password);
+        repo.insertPassword(resource, username, password);
         verifyTableSize(4);
 
-        Credential cred = repo.findCredentialByProviderType(provider);
+        Credential cred = repo.findCredentialByResourceType(resource);
         assertNotNull(cred);
-        assertEquals(cred.getUsername(), username);
-        assertEquals(cred.getPassword(), password);
+        Assert.assertEquals(cred.getUsername(), username);
+        Assert.assertEquals(cred.getPassword(), password);
     }
 
     @Test
     public void testDuplicateFindCredential() throws Exception {
         verifyTableSize(0);
-        repo.insertPassword(provider,
+        repo.insertPassword(resource,
                             username + 0,
                             bootPassword + 0);
-        repo.insertPassword(provider,
+        repo.insertPassword(resource,
                             username + 1,
                             bootPassword + 1);
         verifyTableSize(2);
 
         Credential cred = null;
         try {
-            cred = repo.findCredentialByProviderType(provider);
+            cred = repo.findCredentialByResourceType(resource);
             Assert.fail("Should have thrown exception.");
         } catch (Exception e) {
         }
-        assertEquals(cred, null);
+        Assert.assertEquals(cred, null);
     }
 
     @Test
@@ -129,11 +127,11 @@ public class TestPasswordRepositoryDBImpl {
 
         Credential cred = null;
         try {
-            cred = repo.findCredentialByProviderType(provider);
+            cred = repo.findCredentialByResourceType(resource);
             Assert.fail("Should have thrown exception.");
         } catch (Exception e) {
         }
-        assertEquals(cred, null);
+        Assert.assertEquals(cred, null);
     }
 
     @Test
@@ -145,7 +143,7 @@ public class TestPasswordRepositoryDBImpl {
         String pword = null;
         try {
             pword =
-                    repo.findPasswordByProviderTypeAndUsername(provider,
+                    repo.findPasswordByResourceTypeAndUsername(resource,
                                                                "bad-password");
             Assert.fail("Should throw exception.");
         } catch (Exception e) {
@@ -165,7 +163,7 @@ public class TestPasswordRepositoryDBImpl {
         for (int i = 0; i < size; ++i) {
             dbUtil.getOps().update("INSERT INTO " + tablename
                     + " (providerType,username,password) VALUES (" + "'"
-                    + provider + "','" + username + i + "','" + password + i
+                    + resource + "','" + username + i + "','" + password + i
                     + "')");
         }
     }
