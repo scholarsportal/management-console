@@ -26,6 +26,12 @@
       <artifactId>storageprovider</artifactId>
       <version>1.0.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>security</artifactId>
+      <version>1.0.0</version>
+    </dependency>
     
     <dependency>
       <groupId>org.duracloud</groupId>

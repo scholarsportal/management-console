@@ -21,6 +21,7 @@ import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -76,7 +77,8 @@ public class EMCStorageProviderTest {
     private Credential getCredential(StorageProviderType type)
         throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForResource(type);
+        return dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
+            type));
     }
 
     @After

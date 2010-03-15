@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.common.util.TableSpec;
-import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.unittestdb.domain.ResourceType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,12 +59,12 @@ public class UnitTestDatabaseUtil
         ensureTablesExist();
     }
 
-    public void insertCredentialForResource(StorageProviderType type,
+    public void insertCredentialForResource(ResourceType type,
                                             Credential cred) {
         repo.insertPassword(type, cred.getUsername(), cred.getPassword());
     }
 
-    public Credential findCredentialForResource(StorageProviderType resource)
+    public Credential findCredentialForResource(ResourceType resource)
             throws Exception {
         return repo.findCredentialByResourceType(resource);
     }

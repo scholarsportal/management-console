@@ -2,7 +2,7 @@ package org.duracloud.unittestdb;
 
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.TableSpec;
-import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
@@ -49,7 +49,7 @@ public class PasswordRepositoryDBImpl
                     + "username VARCHAR(64) NOT NULL,"
                     + "password VARCHAR(64) NOT NULL)";
 
-    public void insertPassword(StorageProviderType resource,
+    public void insertPassword(ResourceType resource,
                                String username,
                                String password) {
         Map<String, String> params = new HashMap<String, String>();
@@ -60,7 +60,7 @@ public class PasswordRepositoryDBImpl
         this.getSimpleJdbcTemplate().update(PASSWORD_INSERT, params);
     }
 
-    public Credential findCredentialByResourceType(StorageProviderType resourceType)
+    public Credential findCredentialByResourceType(ResourceType resourceType)
             throws Exception {
         List<Credential> credentials =
                 this.getSimpleJdbcTemplate()
@@ -91,7 +91,7 @@ public class PasswordRepositoryDBImpl
 
     }
 
-    public String findPasswordByResourceTypeAndUsername(StorageProviderType resourceType,
+    public String findPasswordByResourceTypeAndUsername(ResourceType resourceType,
                                                         String username)
             throws Exception {
         List<String> passwords =
