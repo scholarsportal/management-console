@@ -1,4 +1,4 @@
-package org.duracloud.storage.domain.test.db;
+package org.duracloud.unittestdb;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,14 +59,14 @@ public class UnitTestDatabaseUtil
         ensureTablesExist();
     }
 
-    public void insertCredentialForProvider(StorageProviderType type,
+    public void insertCredentialForResource(StorageProviderType type,
                                             Credential cred) {
         repo.insertPassword(type, cred.getUsername(), cred.getPassword());
     }
 
-    public Credential findCredentialForProvider(StorageProviderType providerType)
+    public Credential findCredentialForResource(StorageProviderType resource)
             throws Exception {
-        return repo.findCredentialByProviderType(providerType);
+        return repo.findCredentialByResourceType(resource);
     }
 
     public static boolean isValid(String... texts) {

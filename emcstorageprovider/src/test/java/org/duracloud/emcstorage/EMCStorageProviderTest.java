@@ -4,23 +4,23 @@ import com.emc.esu.api.EsuApi;
 import com.emc.esu.api.Identifier;
 import com.emc.esu.api.ObjectMetadata;
 import com.emc.esu.api.rest.EsuRestApi;
+import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import junit.framework.Assert;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ChecksumUtil.Algorithm;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
-import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.error.NotFoundException;
+import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -76,7 +76,7 @@ public class EMCStorageProviderTest {
     private Credential getCredential(StorageProviderType type)
         throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForProvider(type);
+        return dbUtil.findCredentialForResource(type);
     }
 
     @After

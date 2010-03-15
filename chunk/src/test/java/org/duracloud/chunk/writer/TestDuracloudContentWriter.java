@@ -9,7 +9,7 @@ import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
-import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
+import org.duracloud.unittestdb.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

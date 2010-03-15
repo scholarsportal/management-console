@@ -1,9 +1,9 @@
-package org.duracloud.storage.domain.test.db.util;
+package org.duracloud.unittestdb.util;
 
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.EncryptionUtil;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 
 /**
  * Provides utilities for testing with storage accounts.
@@ -21,7 +21,7 @@ public class StorageAccountTestUtil {
         for(StorageProviderType type : StorageProviderType.values()) {
             Credential cred = null;
             try {
-                 cred = dbUtil.findCredentialForProvider(type);
+                 cred = dbUtil.findCredentialForResource(type);
             } catch (Exception e) {
                 if(type.equals(StorageProviderType.TEST_RETRY) ||
                    type.equals(StorageProviderType.TEST_VERIFY_CREATE) ||

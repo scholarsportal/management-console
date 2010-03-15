@@ -5,8 +5,8 @@ import com.rackspacecloud.client.cloudfiles.FilesClient;
 import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import org.apache.commons.httpclient.HttpStatus;
@@ -15,7 +15,6 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.storage.domain.test.db.UnitTestDatabaseUtil;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
@@ -23,6 +22,7 @@ import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +93,7 @@ public class RackspaceStorageProviderTest {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForProvider(StorageProviderType.RACKSPACE);
+        return dbUtil.findCredentialForResource(StorageProviderType.RACKSPACE);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package org.duracloud.storage.domain.test.db;
+package org.duracloud.unittestdb;
 
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.TableSpec;
@@ -19,27 +19,28 @@ public class PasswordRepositoryDBImpl
 
     private final static String idCol = "id";
 
-    private static final String providerTypeCol = "providerType";
+    // TODO: Col name of actual table should be renamed 'resourceType'
+    private static final String resourceTypeCol = "providerType";
 
     private final static String usernameCol = "username";
 
     private final static String passwordCol = "password";
 
     private final String PASSWORD_INSERT =
-            "INSERT INTO " + tablename + " (" + providerTypeCol + ", "
+            "INSERT INTO " + tablename + " (" + resourceTypeCol + ", "
                     + usernameCol + ", " + passwordCol + ") " + "VALUES (:"
-                    + providerTypeCol + ", :" + usernameCol + ", :"
+                    + resourceTypeCol + ", :" + usernameCol + ", :"
                     + passwordCol + ")";
 
     private final String PASSWORD_SELECT =
             "SELECT " + passwordCol + " FROM " + tablename;
 
-    private final String CREDENTIAL_SELECT_BY_PROVIDER_TYPE =
+    private final String CREDENTIAL_SELECT_BY_RESOURCE_TYPE =
             "SELECT " + usernameCol + ", " + passwordCol + " FROM " + tablename
-                    + " WHERE " + providerTypeCol + " = ? ";
+                    + " WHERE " + resourceTypeCol + " = ? ";
 
-    private final String PASSWORD_SELECT_BY_PROVIDER_TYPE_AND_USERNAME =
-            PASSWORD_SELECT + " WHERE " + providerTypeCol + " = ? AND "
+    private final String PASSWORD_SELECT_BY_RESOURCE_TYPE_AND_USERNAME =
+            PASSWORD_SELECT + " WHERE " + resourceTypeCol + " = ? AND "
                     + usernameCol + " = ? ";
 
     private static final String ddl =
@@ -48,22 +49,22 @@ public class PasswordRepositoryDBImpl
                     + "username VARCHAR(64) NOT NULL,"
                     + "password VARCHAR(64) NOT NULL)";
 
-    public void insertPassword(StorageProviderType provider,
+    public void insertPassword(StorageProviderType resource,
                                String username,
                                String password) {
         Map<String, String> params = new HashMap<String, String>();
-        params.put(providerTypeCol, provider.toString());
+        params.put(resourceTypeCol, resource.toString());
         params.put(usernameCol, username);
         params.put(passwordCol, password);
 
         this.getSimpleJdbcTemplate().update(PASSWORD_INSERT, params);
     }
 
-    public Credential findCredentialByProviderType(StorageProviderType providerType)
+    public Credential findCredentialByResourceType(StorageProviderType resourceType)
             throws Exception {
         List<Credential> credentials =
                 this.getSimpleJdbcTemplate()
-                        .query(CREDENTIAL_SELECT_BY_PROVIDER_TYPE,
+                        .query(CREDENTIAL_SELECT_BY_RESOURCE_TYPE,
                                new ParameterizedRowMapper<Credential>() {
 
                                    public Credential mapRow(ResultSet rs,
@@ -76,26 +77,26 @@ public class PasswordRepositoryDBImpl
                                        return new Credential(username, password);
                                    }
                                },
-                               providerType.toString());
+                               resourceType.toString());
         if (credentials.size() == 0) {
             throw new Exception("Table is empty: '" + tablename + "'");
         }
         if (credentials.size() != 1) {
             throw new Exception(tablename
-                    + " contains more than one entry for providerType: "
-                    + providerType.toString());
+                    + " contains more than one entry for resourceType: "
+                    + resourceType.toString());
         }
 
         return credentials.get(0);
 
     }
 
-    public String findPasswordByProviderTypeAndUsername(StorageProviderType providerType,
+    public String findPasswordByResourceTypeAndUsername(StorageProviderType resourceType,
                                                         String username)
             throws Exception {
         List<String> passwords =
                 this.getSimpleJdbcTemplate()
-                        .query(PASSWORD_SELECT_BY_PROVIDER_TYPE_AND_USERNAME,
+                        .query(PASSWORD_SELECT_BY_RESOURCE_TYPE_AND_USERNAME,
                                new ParameterizedRowMapper<String>() {
 
                                    public String mapRow(ResultSet rs, int rowNum)
@@ -103,15 +104,15 @@ public class PasswordRepositoryDBImpl
                                        return rs.getString(passwordCol);
                                    }
                                },
-                               providerType.toString(),
+                               resourceType.toString(),
                                username);
         if (passwords.size() == 0) {
             throw new Exception("Table is empty: '" + tablename + "'");
         }
         if (passwords.size() != 1) {
             throw new Exception(tablename
-                    + " contains more than one entry for providerType and username : ["
-                    + providerType.toString() + "|" + username + "]");
+                    + " contains more than one entry for resourceType and username : ["
+                    + resourceType.toString() + "|" + username + "]");
         }
 
         return passwords.get(0);

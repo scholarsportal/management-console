@@ -1,12 +1,12 @@
 package org.duracloud.durastore.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.config.DuraStoreConfig;
-import org.duracloud.storage.domain.test.db.util.StorageAccountTestUtil;
+import org.duracloud.unittestdb.util.StorageAccountTestUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Bill Branan
