@@ -18,6 +18,7 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
+				<!-- 
 				<table class="standard" id="spacesTable">
 					<tbody>
 
@@ -29,43 +30,44 @@
 							<spring:message code="metadata"/>
 						</th>
 					</tr>
+					-->
 						<c:forEach items="${spaces}" var="spaceId" varStatus="status">
-							<tr id="${spaceId}" onmouseover="loadSpaceMetadata('metadata-div-${status.count}', '${spaceId}');">
-								<td id="actionColumn" >
-									<div>
-										<b><a href="contents.htm?spaceId=${spaceId}"><c:out value="${spaceId}" /></a></b>
-									</div>
-								
-									<div id="actionDiv" class="actions" >
-										<ul>
-										
-										
-											<li><a style="font-weight:bold" href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${currentUrl}"/>">
-													<spring:message code="add.contentItem"/>
-												</a>
-											</li>
-											
-											<li><a id="removeSpaceLink" href="<c:url value="removeSpace.htm">
-													   		<c:param name="spaceId" value="${spaceId}"/>
-													   		<c:param name="returnTo" value="${currentUrl}"/>
-													    </c:url>" onclick="return confirmDeleteOperation();">
-													<spring:message code="remove"/>
-												</a>
-											</li>
-										</ul>
-									</div>
-			
+							<div id="${spaceId}" class="space-list-item actionable-item" onmouseover="loadSpaceMetadata('metadata-div-${status.count}', '${spaceId}');">
+									<div class="list-item-header">
+										<div class="space-name">
+											<a href="contents.htm?spaceId=${spaceId}"><c:out value="${spaceId}" /></a>
+										</div>
 									
-								</td>					
-								<td >
-									<div id="metadata-div-${status.count}" style="min-height:2.0em; font-size:0.9em">
+										<div class="actions" >
+											<ul class="action-list">
+											
+											
+												<li><a style="font-weight:bold" href="<c:url value="contents/add?spaceId=${spaceId}&returnTo=${currentUrl}"/>">
+														<spring:message code="add.contentItem"/>
+													</a>
+												</li>
+												
+												<li><a id="removeSpaceLink" class="delete-action" href="<c:url value="removeSpace.htm">
+														   		<c:param name="spaceId" value="${spaceId}"/>
+														   		<c:param name="returnTo" value="${currentUrl}"/>
+														    </c:url>" >
+														<spring:message code="remove"/>
+													</a>
+												</li>
+											</ul>
+										</div>
+									</div>
+									
+									<div id="metadata-div-${status.count}" class="list-item-content">
 										<!--empty-->
 									</div>
-								</td>
-							</tr>
+							</div>
 						</c:forEach>
+				<!-- 
 					</tbody>
 				</table>
+				 -->
+
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
 	</tiles:putAttribute>

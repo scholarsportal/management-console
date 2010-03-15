@@ -91,7 +91,7 @@ public class DeployServiceFlowHandler
 
         String outcomeUrl = null;
 
-        outcomeUrl = ("contextRelative:/services/deployed.htm");
+        outcomeUrl = ("contextRelative:/services/");
 
         if (outcome.getId().equals("deployed")) {
             Message message = MessageUtils.createMessage("Successfully deployed service.");
@@ -103,7 +103,7 @@ public class DeployServiceFlowHandler
                     MessageUtils.appendRedirectMessage(outcomeUrl,message,request);
             
         } else if (returnTo == null) {
-            outcomeUrl = "contextRelative:/services/deployed.htm";
+            outcomeUrl = "contextRelative:/services/";
         } else {
             outcomeUrl = returnTo;
         }

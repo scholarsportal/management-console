@@ -33,14 +33,18 @@ function undeployService( serviceInfoId, deploymentId ){
 		return;
 	}
 	
-	var row = dojo.byId("deployment-"+serviceInfoId + "-" + deploymentId);
-	dojo.addClass(row, "deleting")
+	
+	var row = dojo.byId("dt-"+serviceInfoId + "-" + deploymentId);
+	dojo.addClass(row, "deleting");
+	clearFlashMessage();
 	dojo.xhrGet( {
 	    url: "/duradmin/services/undeploy?serviceInfoId="+serviceInfoId+"&deploymentId=" + deploymentId,
 	    handleAs: "json",
 	    load: function(responseObject, ioArgs) {
 		  console.debug(responseObject);  // Dump it to the console
-		  row.parentNode.removeChild(row);
+		  var tab = dijit.byId(row.id);
+		  tab.getParent().removeChild(tab);
+		  setFlashMessage("Successfully undeployed service");
 		},
 		error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 
@@ -57,7 +61,8 @@ function removeTag(spaceId,tag, contentId, element){
 
 function showInProcessOfDeletionFeedback(element){
 	clearFlashMessage();
-	dojo.addClass(element, "removing\-element");
+	dojo.addClass(element, "removing-element");
+	
     var animation = dojo.animateProperty({
         node : element,
         duration : 500,
@@ -115,35 +120,7 @@ function removeMetadataByKey(spaceId,key, contentId, element){
 function clearFlashMessage(){
 	dojo.byId("flashMessageDiv").innerHTML = "";
 }
-/*
- this doesn't work properly.  for some response, 
-function setOneSecondFloatingFlash(refElement, message){
-	var popup = dojo.create("div",{innerHTML: message},dojo.body()); //works if I substitute dojo.body() with refElement.parentNode. Not really what I want.
-	var coords = dojo.coords(refElement,true);
-	dojo.addClass(popup, "message-info");
-	document.body.appendChild(popup);
 
-	dojo.style(popup, 
-			   {"opacity" : 1.0, 
-				"visibility" : "visible", "z-index" : "16",  "top" : coords.y, "left": coords.x});
-	var fi = dojo.fadeIn({
-        node: popup,
-        duration : 250
-    });
-
-	var fo = dojo.fadeOut({
-        node: popup,
-        duration : 500,
-        delay: 2000,
-        onEnd: function () {
-			dojo.destroy(popup);
-		}
-    });
-	
-	dojo.fx.chain([fi,fo]).play(  );
-	
-}
-*/
 function setFlashInfoMessage(message){
 	setFlashMessage(message, "info");
 }
@@ -152,7 +129,7 @@ function setFlashMessage(message, type){
 	clearFlashMessage();
 	var div = dojo.byId("flashMessageDiv");
 	var span = dojo.create("span", {innerHTML: message}, div);
-	dojo.addClass(span, "message\-" + type);
+	dojo.addClass(span, "message-" + type);
 }
 
 
@@ -263,7 +240,7 @@ function formatSpaceMetadataHtml(space){
 
 /*zebra stripe standard tables*/	
 dojo.addOnLoad(function(){
-	dojo.query(".standard > tbody > tr:nth-child(even)").addClass("evenRow");
+	dojo.query(".standard > tbody > tr:nth-child(odd)").addClass("evenRow");
 	dojo.query(".extended-metadata tr:nth-child(even)").addClass("evenRow");
 
 });
@@ -275,23 +252,34 @@ dojo.addOnLoad(function(){
 	//will throw an error if spaces table is not found
 	try{
 		
-	dojo.query("#spacesTable > tbody > tr",document).forEach(
-		    function(row) {
-		    	dojo.connect(row, 'onmouseover', function() {
-					dojo.addClass(row,"hover");
-					dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'visible'});
+	dojo.query(".actionable-item",document).forEach(
+		    function(item) {
+		    	dojo.connect(item, 'onmouseover', function() {
+					dojo.query(".actions",item).attr('style', {visibility:'visible'});
 		    	});
 	
-	           	dojo.connect(row, 'onmouseout', 
+	           	dojo.connect(item, 'onmouseout', 
 					function(){
-						dojo.removeClass(row,"hover");
-						dojo.query("div[id=actionDiv]",row).attr('style', {visibility:'hidden'});
+						dojo.query(".actions",item).attr('style', {visibility:'hidden'});
 	      		});
 		    }
 		);	
+	
+	
 	}catch(err){
 	}
 
+	dojo.query(".delete-action",document).forEach(
+		    function(item) {
+		    	dojo.connect(item, 'onclick', function(e) {
+		    		if(!confirmDeleteOperation()){
+		    			e.stopPropagation();
+		    			e.preventDefault();
+		    			dojo.stopEven(e);
+		    		}
+		    	});
+		    });	
+	
 });
 
 dojo.addOnLoad(function(){
@@ -366,17 +354,14 @@ function hide(event){
 	makeVisible(event.target,false);
 }
 
-function showConfigurationDetails(event, serviceId, deploymentId){
-	var root = event.target.parentNode.parentNode.parentNode.parentNode;
-	var configNodeQuery = "[id='configurationDetails']";
-	dojo.query(configNodeQuery,root).style("display","inline");
-	dojo.query(configNodeQuery,root).forEach(function (configNode) {
+function loadConfigurationDetails(configNode, serviceId, deploymentId){
 		//remove property table if it exists.
-		dojo.query("[id='propertyTable']", root).forEach(function(node){
+		dojo.query("[id='propertyTable']", configNode).forEach(function(node){
 			dojo.destroy(node);
 		});
 		
 		var table = dojo.create("table", {id:"propertyTable"}, configNode);
+		dojo.addClass(table,"standard");
 		var header = dojo.create("tr",null, table);
 		dojo.create("th", {colspan: 2, innerHTML:'Properties'}, header);
 
@@ -399,7 +384,6 @@ function showConfigurationDetails(event, serviceId, deploymentId){
 				  populateTable(table, data);
 			}
 		});
-	});
 }
 
 function populateTable(table, data) {

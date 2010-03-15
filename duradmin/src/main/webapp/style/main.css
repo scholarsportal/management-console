@@ -26,8 +26,37 @@ table{
 	width:100%;	
 }
 
+.action-list li{
+	display: inline;
+}
 
-#header {
+.action-list li:before{
+	content: " | ";
+}
+
+.breadcrumb li:after {
+	content: " :: ";	
+}
+
+table.tooltipDialog-header {
+	background-color:#87CEFA;
+}
+table.tooltipDialog-header td {
+	vertical-align: middle;	
+}
+table.tooltipDialog-header td:last-child {
+	text-align:right;
+}
+
+.available-services td:first-child{
+	width:25%
+}
+.available-services td:last-child{
+	text-align:right;
+	width:25%
+	
+}
+#header{
 	width:100%;
 	/*deep sky blue*/
 	background-color:#00B2EE;
@@ -92,6 +121,7 @@ td#menu-div {
 }
 
 #main-content {
+	background-color: #FFF;
 }
 
 #menu-div, td#main-content  {
@@ -115,9 +145,13 @@ td#main-content{
 	font-size:0.9em;	
 	margin:0;
 	border-top:1px solid #EEE;
-	background-color: #FFFFCC;
 	
 }
+
+.highlight, .main-content-header div.subtitle{
+	background-color: #FFFFCC;
+}
+
 
 .main-content-header  .subtitle ul, ul.horizontal-list {
 	display: inline;
@@ -151,9 +185,6 @@ div.main-content-header{
 .main-content-header h2{
 	
 }
-
-
-
 
 .main-content-body {
 	padding:0.5em;
@@ -263,12 +294,12 @@ td, th {
 
 
 .standard > tbody > tr > th {
-  background-color:#EEE;	
+  background-color:#EEEEFF;	
 	
 }
 
 .standard > tbody > tr.evenRow {
-	background-color:#FFEEFF;	
+	background-color:#EEF;	
 }
 
 .standard > tbody > tr.hover {
@@ -328,16 +359,14 @@ div.actions {
 }
 
 .actions ul{
-	padding:0.25em;
-	background-color:#DDD;
+	margin:0;
 	list-style-type:square;
-	
+	padding:0.15em;	
 }
 
 .actions  li {
 	display: inline;
-	font-size:0.8em;	
-	margin-right:2.0em;
+	font-size:0.9em;	
 }
 
 #error {
@@ -346,14 +375,84 @@ div.actions {
   margin: 20px 0px; 
 }
 
-table#spacesTable > tbody > tr > td#actionColumn {
+/*
+table.contents-table > tbody > tr > td#actionColumn {
 	max-width:50%;
 	min-width:50%;
 }
+*/
 
-table#spacesTable > tbody > tr > td#contentId {
+.content-item-details {
+	min-height: 3.0em;
+	font-size: 0.8em;
+	float:left;
+	
+}
+
+.content-item-details td:first-child:after{
+	content: ": ";
+}
+
+.tiny-thumb {
+	background-color:#EEE;	
+	float:left;
+	margin-right:0.25em;
+}
+
+.tiny-thumb, .tiny-thumb img{
+	width:4.0em;
+	height:4.0em;
+}
+
+.space-list-item {
+	width:100%;
+}
+
+.actionable-item {
+	border: 1px solid white;
+}
+.actionable-item:hover {
+	/*sky blue*/
+	border:1px solid #00B2EE;	
+}
+
+
+
+.space-name {
+	font-size: 1.1em;
+	font-weight:bold;		
+	float:left;
+}
+
+
+.space-list-item .actions {
+	float:left;	
+}
+
+.space-name, .space-list-item .actions {
+	padding:0.25em;
+}
+
+.list-item-header {
+	width:100%;
+	background-color: #DDF;
+	min-height:2em;
+}
+
+.list-item-content {
+	min-height:4.0em; 
+	font-size:0.9em;
+	padding:0.25em;
+}
+
+table.contents-table > tbody > tr > td#contentId {
 	vertical-align: top;
 }
+
+table.contents-table > tbody > tr:hover {
+	background-color: #DDF;
+}
+
 
 .small {
 	font-size:0.8em;	
@@ -433,9 +532,10 @@ table.extended-metadata > tbody > tr {
 }
 
 
-.removing-element {
+.removing-element,  .removing-element:hover{
 	background-color: pink;
 }
+
 
 .details table {
 	margin-top:0.5em;
@@ -444,5 +544,11 @@ table.extended-metadata > tbody > tr {
 
 .content-item-metadata-summary td {
 	padding:0;	
+}
+
+.content-preview{
+	border: 1px dashed #999; 
+	min-height: 10.5em; 
+	padding: 0.25em;
 }
 

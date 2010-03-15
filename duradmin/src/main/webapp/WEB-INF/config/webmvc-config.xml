@@ -39,8 +39,7 @@
         <prop key="/spaces/metadata/remove">removeMetadataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
 		<prop key="/changeProvider">changeProviderController</prop>
-        <prop key="/services/deployed.htm">deployedServicesController</prop>
-        <prop key="/services/available.htm">availableServicesController</prop>
+        <prop key="/services/">servicesController</prop>
         <prop key="/services/undeploy">undeployServiceController</prop>
         <prop key="/data/services/deployment/properties">serviceDeploymentPropertiesController</prop>
         
@@ -116,9 +115,7 @@
   </bean>
 
 
-  <bean id="deployedServicesController" class="org.duracloud.duradmin.control.DeployedServicesController">
-  </bean>  
-  <bean id="availableServicesController" class="org.duracloud.duradmin.control.AvailableServicesController">
+  <bean id="servicesController" class="org.duracloud.duradmin.control.ServicesController">
   </bean>  
   <bean id="undeployServiceController" class="org.duracloud.duradmin.control.UndeployServiceController">
   </bean>

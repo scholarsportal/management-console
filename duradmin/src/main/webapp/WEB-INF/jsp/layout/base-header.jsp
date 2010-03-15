@@ -2,7 +2,7 @@
 
 
 <div id="top-header">
-	<img alt="<spring:message code="application.title"/>" height="25px" src="${pageContext.request.contextPath}/images/duraspace-logo.jpg">
+	<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_logo_horiz_100.png">
 	<strong>
 		<spring:message code="application.title"/>
 	</strong>

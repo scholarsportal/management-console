@@ -59,8 +59,7 @@
 
 
 
-  <definition name="availableServices" extends="base-service" template="/WEB-INF/jsp/services/available.jsp"/>
-  <definition name="deployedServices" extends="base-service" template="/WEB-INF/jsp/services/deployed.jsp"/>
+  <definition name="services" extends="base-service" template="/WEB-INF/jsp/services/services.jsp"/>
 
 	<definition name="error" extends="base" template="/WEB-INF/jsp/error.jsp">
 		<put-attribute name="mainTab" value="" />

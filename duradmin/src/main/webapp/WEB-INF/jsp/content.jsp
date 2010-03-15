@@ -55,45 +55,40 @@
 						<table style="margin: 0; padding: 0;">
 							<tr>
 								<td>
-								<ul>
+								<ul class="breadcrumb">
 									<li><a href="<c:url value="/spaces.htm"/>"><spring:message
-										code="spaces" /></a> <c:out value="::" /></li>
-									<li></li>
-									<li><a href="contents.htm?spaceId=${contentItem.spaceId}">${contentItem.spaceId}</a>
-									<c:out value="::" /></li>
+										code="spaces" /></a> </li>
+									<li>
+										<a href="contents.htm?spaceId=${contentItem.spaceId}">${contentItem.spaceId}</a>
+									</li>
 								</ul>
 
 								</td>
 								<td style="text-align: right">
-								<ul style="float: right">
+								<ul class="action-list" style="float: right">
 									<li><a
 										href="<c:url value="/contents/add" >
 				   		<c:param name="spaceId" value="${contentItem.spaceId}"/>
 				   		<c:param name="returnTo" value="${currentUrl}"/>
 				    </c:url>"><spring:message
 										code="add.contentItem" /></a></li>
-									<li>|</li>
 									
 									<c:if test="${contentItem.viewerURL != null}">
 										<li>
 											<a target = "viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>"><spring:message code="view" /></a>
 										</li>
-										<li>|</li>
 									</c:if>
 									
 									<li>
 										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
-									<li>|</li>
 
-									<li><a
+									<li><a class="delete-action"
 										href="<c:url value="removeContent.htm" >
 										   		<c:param name="spaceId" value="${contentItem.spaceId}"/>
 										   		<c:param name="contentId" value="${contentItem.contentId}"/>
 										   		<c:param name="returnTo" value="${pageContext.request.contextPath}/contents.htm?spaceId=${contentItem.spaceId}"/>
-										    </c:url>"
-										onclick="return confirmDeleteOperation();"><spring:message
-										code="remove" /></a></li>
+										    </c:url>"><spring:message code="remove" /></a></li>
 
 								</ul>
 
@@ -137,8 +132,7 @@
 
 						</td>
 						<td>
-						<div class="content-preview-div"
-							style="border: 1px dashed #999; min-height: 10.5em; padding: 0.25em">
+						<div class="content-preview">
 							<c:choose>
 								<c:when test="${not empty contentItem.thumbnailURL}">
 									<a target="viewer" href="${contentItem.viewerURL !=null ? contentItem.viewerURL : contentItem.downloadURL}">
