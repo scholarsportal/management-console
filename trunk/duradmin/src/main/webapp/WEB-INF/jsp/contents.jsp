@@ -54,34 +54,30 @@
 							<tr>
 								<td>
 
-								<ul>
+								<ul class="breadcrumb">
 									<li><a href="<c:url value="/spaces.htm"/>"><spring:message
-										code="spaces" /></a> <c:out value="::" /></li>
+										code="spaces" /></a> </li>
 								</ul>
 
 
 								</td>
 								<td style="text-align: right">
-								<ul>
+								<ul class="action-list">
 									<li><a
 										href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message
 										code="add.contentItem" /></a></li>
-									<li>|</li>
 									<li><a
 										href="<c:url value="/space/changeAccess">
-						<c:param name="spaceId" value="${space.spaceId}"/>
-						<c:param name="returnTo" value="${currentUrl}"/>
-					</c:url>">
-									<spring:message
-										code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}" />
+											<c:param name="spaceId" value="${space.spaceId}"/>
+											<c:param name="returnTo" value="${currentUrl}"/>
+										</c:url>">
+										<spring:message
+											code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}" />
 									</a></li>
-
-									<li>|</li>
-
-									<li><a id="removeSpaceLink" href="<c:url value="removeSpace.htm">
+									<li><a id="removeSpaceLink" class="delete-action" href="<c:url value="removeSpace.htm">
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
 											   		<c:param name="returnTo" value="${pageContext.request.contextPath}/spaces.htm"/>
-											    </c:url>" onclick="return confirmDeleteOperation();">
+											    </c:url>">
 											<spring:message code="remove"/>
 										</a>
 									</li>
@@ -167,56 +163,60 @@
 							</td>
 						</tr>
 					</table>
-					<table class="standard" id="spacesTable" style="margin-top: 0.25em">
-						<tr>
-							<th><spring:message code="contentItem.id" /></th>
-							<th><spring:message code="metadata" /></th>
-						</tr>
-						<tbody>
-							<c:forEach items="${contentItemList.contentItemList}" var="content"
-								varStatus="status">
-								<tr id="${content.contentId}"
-									onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content.encodedContentId}');">
-									<td id="actionColumn"><b><a
-										href="<c:url value="content.htm">
-									              <c:param name="spaceId" value="${space.spaceId}"/>
-											   	  <c:param name="contentId" value="${content.contentId}"/>
-										      </c:url>">${content.contentId}</a></b>
-									<div id="actionDiv" class="actions">
-									<ul>
-										<li>
-											<a
-										href="<c:url value="content.htm">
-									              <c:param name="spaceId" value="${space.spaceId}"/>
-											   	  <c:param name="contentId" value="${content.contentId}"/>
-										      </c:url>"><spring:message code="details" /></a>
-								        </li>
-										<li>|</li>
-										<li>
-											<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
-										</li>
-										<li>|</li>
-										<li><a
-											href="<c:url value="removeContent.htm" >
-											   		<c:param name="spaceId" value="${space.spaceId}"/>
-											   		<c:param name="contentId" value="${content.contentId}"/>
-											   		<c:param name="returnTo" value="${currentUrl}"/>
-											    </c:url>"
-											onclick="return confirmDeleteOperation();"><spring:message
-											code="remove" /></a></li>
-									</ul>
-									</div>
-									</td>
-									<td id="details">
-									<div id="metadata-div-${status.count}"
-										style="min-height: 3.0em; font-size: 0.9em"><!--empty-->
-									</div>
-									</td>
-								</tr>
+					<c:forEach items="${contentItemList.contentItemList}" var="content"
+						varStatus="status">
+						<div class="actionable-item">
+						<table id="${content.contentId}" 
+							onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content.encodedContentId}');">
+									<tr class="list-item-header">
+										<td colspan="2">
+											<a href="<c:url value="content.htm">
+										              <c:param name="spaceId" value="${space.spaceId}"/>
+												   	  <c:param name="contentId" value="${content.contentId}"/>
+											      </c:url>">${content.contentId}</a>
+										
+										</td>
+									</tr>
+
+									<tr>
+										<td  width="70%" id="details">
+											<div class="tiny-thumb">
+												<c:if test="${not empty content.tinyThumbnailURL}">
+													<img src="${content.tinyThumbnailURL}" />
+												</c:if>
+											</div>
+											<div id="metadata-div-${status.count}" class="content-item-details">
+												<!--empty-->
+											</div>
+										</td>
+
+										<td>
+											<div  class="actions highlight">
+												<ul class="action-list">
+													<li>
+														<a
+													href="<c:url value="content.htm">
+												              <c:param name="spaceId" value="${space.spaceId}"/>
+														   	  <c:param name="contentId" value="${content.contentId}"/>
+													      </c:url>"><spring:message code="details" /></a>
+											        </li>
+													<li>
+														<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
+													</li>
+													<li><a class="delete-action"
+														href="<c:url value="removeContent.htm"  >
+														   		<c:param name="spaceId" value="${space.spaceId}"/>
+														   		<c:param name="contentId" value="${content.contentId}"/>
+														   		<c:param name="returnTo" value="${currentUrl}"/>
+														    </c:url>" ><spring:message code="remove" /></a></li>
+												</ul>
+											</div>
+										</td>
+									</tr>
+								</table>
+								</div>
 							</c:forEach>
-						</tbody>
-					</table>
-				</c:otherwise>
+					</c:otherwise>
 				</c:choose>
 			</tiles:putAttribute>
 		</tiles:insertDefinition>

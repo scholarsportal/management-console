@@ -51,14 +51,22 @@ public class ContentStoreCache
      */
     public List<String> getSpaces() throws ContentStoreException {
         if (spaceIdCache == null) {
-            spaceIdCache = new HashSet<String>();
-            List<String> spaces = this.backendStore.getSpaces();
-            for (String space : spaces) {
-                spaceIdCache.add(space);
-            }
+            refreshCache();
         }
 
         return new LinkedList<String>(spaceIdCache);
+    }
+
+    private void refreshCache() throws ContentStoreException{
+        if(spaceIdCache == null){
+            spaceIdCache = new HashSet<String>();
+        }
+        
+        List<String> spaces = this.backendStore.getSpaces();
+        synchronized (spaceIdCache) {
+            spaceIdCache.clear();
+            spaceIdCache.addAll(spaces);
+        }
     }
 
     /**

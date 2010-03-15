@@ -1,7 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,7 @@ import org.duracloud.serviceconfig.ServiceInfo;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
-public class AvailableServicesController
+public class ServicesController
         extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
@@ -24,7 +23,7 @@ public class AvailableServicesController
         return controllerSupport.getServicesManager();
     }
 
-    public AvailableServicesController() {
+    public ServicesController() {
         setCommandClass(ServiceCommand.class);
         setCommandName("service");
     }
@@ -42,8 +41,10 @@ public class AvailableServicesController
 
     protected ModelAndView getServices() {
         try {
-            List<ServiceInfo> services = getAvailableServices();
-            return new ModelAndView("availableServices", "serviceInfos", services);
+            List<ServiceInfo> services = getDeployedServices();
+            ModelAndView mav =  new ModelAndView("services", "serviceInfos", services);
+            mav.addObject("availableServiceInfos", getServicesManager().getAvailableServices());
+            return mav;
         } catch (Exception se) {
             ModelAndView mav = new ModelAndView("error");
             mav.addObject("error", se.getMessage());
@@ -51,7 +52,7 @@ public class AvailableServicesController
         }
     }
 
-    private List<ServiceInfo> getAvailableServices() throws Exception {
-        return getServicesManager().getAvailableServices();
+    private List<ServiceInfo> getDeployedServices() throws Exception {
+        return getServicesManager().getDeployedServices();
     }
 }

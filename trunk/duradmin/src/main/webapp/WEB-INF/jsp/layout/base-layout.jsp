@@ -17,6 +17,7 @@
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/dijit/themes/tundra/tundra.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/main.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/menu.css" type="text/css" />
+
     <title>
     	<spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
     </title>
