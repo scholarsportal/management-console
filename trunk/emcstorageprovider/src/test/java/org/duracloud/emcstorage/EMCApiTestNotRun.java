@@ -6,6 +6,7 @@ import com.emc.esu.api.rest.EsuRestApi;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
@@ -60,7 +61,8 @@ public class EMCApiTestNotRun {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForResource(StorageProviderType.EMC);
+        return dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
+                                                StorageProviderType.EMC));
     }
 
     @Test

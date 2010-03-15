@@ -23,6 +23,7 @@ import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +94,8 @@ public class RackspaceStorageProviderTest {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForResource(StorageProviderType.RACKSPACE);
+        return dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
+                                                StorageProviderType.RACKSPACE));
     }
 
     @Test

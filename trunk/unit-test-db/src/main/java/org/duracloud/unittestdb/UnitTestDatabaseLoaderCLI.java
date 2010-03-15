@@ -2,7 +2,7 @@ package org.duracloud.unittestdb;
 
 import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
-import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.unittestdb.domain.ResourceType;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -41,7 +41,7 @@ public class UnitTestDatabaseLoaderCLI {
 
     private void inputPasswords() {
         while (true) {
-            StorageProviderType type = inputResourceType();
+            ResourceType type = inputResourceType();
             String username = inputUsername();
             String password = inputPassword();
             if (isValid(username, password)) {
@@ -54,22 +54,30 @@ public class UnitTestDatabaseLoaderCLI {
         }
     }
 
-    private StorageProviderType inputResourceType() {
+    private ResourceType inputResourceType() {
         StringBuilder sb =
                 new StringBuilder("Enter resource type from [");
 
-        for (StorageProviderType type : StorageProviderType.values()) {
+        for (ResourceType type : ResourceType.values()) {
             sb.append(type + ", ");
         }
         sb.replace(sb.length() - 2, sb.length(), "]");
         System.out.println(sb.toString());
         String type = readLine().trim();
-        while (StorageProviderType.fromString(type)
-                .equals(StorageProviderType.UNKNOWN)) {
+        while (unknownResourceType(type)) {
             System.out.println("Invalid entry: '" + type + "', try again.");
             type = readLine().trim();
         }
-        return StorageProviderType.fromString(type);
+        return ResourceType.fromString(type);
+    }
+
+    private boolean unknownResourceType(String type) {
+        try {
+            ResourceType.fromString(type);
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     private String inputUsername() {

@@ -3,6 +3,7 @@ package org.duracloud.unittestdb;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
@@ -28,7 +29,7 @@ public class TestPasswordRepositoryDBImpl {
     private final String tablename =
             PasswordRepositoryDBImpl.getTableSpec().getTableName();
 
-    private final StorageProviderType resource = StorageProviderType.EMC;
+    private ResourceType resource;
 
     private final String username = "username";
 
@@ -42,6 +43,8 @@ public class TestPasswordRepositoryDBImpl {
 
     @Before
     public void setUp() throws Exception {
+        resource = getResource(StorageProviderType.EMC);
+
         repo = new PasswordRepositoryDBImpl();
         repo.setDataSource(dbUtil.getDataSource());
     }
@@ -71,13 +74,13 @@ public class TestPasswordRepositoryDBImpl {
     @Test
     public void testFindCredential() throws Exception {
         verifyTableSize(0);
-        repo.insertPassword(StorageProviderType.AMAZON_S3,
+        repo.insertPassword(getResource(StorageProviderType.AMAZON_S3),
                             username + 0,
                             bootPassword + 0);
-        repo.insertPassword(StorageProviderType.MICROSOFT_AZURE,
+        repo.insertPassword(getResource(StorageProviderType.MICROSOFT_AZURE),
                             username + 1,
                             bootPassword + 1);
-        repo.insertPassword(StorageProviderType.RACKSPACE,
+        repo.insertPassword(getResource(StorageProviderType.RACKSPACE),
                             username + 2,
                             bootPassword + 2);
         verifyTableSize(3);
@@ -114,13 +117,13 @@ public class TestPasswordRepositoryDBImpl {
     @Test
     public void testMissingFindCredential() throws Exception {
         verifyTableSize(0);
-        repo.insertPassword(StorageProviderType.AMAZON_S3,
+        repo.insertPassword(getResource(StorageProviderType.AMAZON_S3),
                             username + 0,
                             bootPassword + 0);
-        repo.insertPassword(StorageProviderType.MICROSOFT_AZURE,
+        repo.insertPassword(getResource(StorageProviderType.MICROSOFT_AZURE),
                             username + 1,
                             bootPassword + 1);
-        repo.insertPassword(StorageProviderType.RACKSPACE,
+        repo.insertPassword(getResource(StorageProviderType.RACKSPACE),
                             username + 2,
                             bootPassword + 2);
         verifyTableSize(3);
@@ -166,6 +169,10 @@ public class TestPasswordRepositoryDBImpl {
                     + resource + "','" + username + i + "','" + password + i
                     + "')");
         }
+    }
+
+    private ResourceType getResource(StorageProviderType type) {
+        return ResourceType.fromStorageProviderType(type);
     }
 
 }

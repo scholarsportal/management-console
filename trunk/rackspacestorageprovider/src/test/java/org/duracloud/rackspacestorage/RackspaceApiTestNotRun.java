@@ -9,6 +9,7 @@ import static junit.framework.Assert.assertTrue;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +63,8 @@ public class RackspaceApiTestNotRun {
 
     private Credential getCredential() throws Exception {
         UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForResource(StorageProviderType.RACKSPACE);
+        return dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
+                                                StorageProviderType.RACKSPACE));
     }
 
     /*

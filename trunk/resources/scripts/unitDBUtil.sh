@@ -17,6 +17,7 @@ fi
 
 export CUSTOMER_LIB=${BUILD_HOME}/durastore/target/durastore-1.0.0/WEB-INF/lib
 export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-1.0.0/WEB-INF/lib
+export UNIT_DB_LIB=${BUILD_HOME}/unit-test-db/target
 
 # Set classpath to jars normally found in durastore war
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/aopalliance-1.0.jar
@@ -24,6 +25,7 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/asm-3.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/cglib-2.2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/cloudfiles-1.3.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/common-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-codec-1.3.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-fileupload-1.2.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-httpclient-3.1.jar
@@ -40,6 +42,7 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/log4j-1.2.13.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/ognl-2.7.2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/rackspacestorageprovider-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/s3storageprovider-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/security-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-aop-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-beans-2.5.6.jar
@@ -54,6 +57,7 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-web-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/standard-1.1.2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/stax-api-1.0-2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/storageprovider-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$UNIT_DB_LIB/unit-test-db-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/xbean-spring-3.5.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-lang-2.4.jar
 
