@@ -46,7 +46,7 @@ public class TestIngestAdvice
 
     private final long MAX_WAIT = 5000;
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private static RestHttpHelper restHelper = RestTestHelper.getAuthorizedRestHelper();
 
     private static final String CONTENT = "<junk/>";
 

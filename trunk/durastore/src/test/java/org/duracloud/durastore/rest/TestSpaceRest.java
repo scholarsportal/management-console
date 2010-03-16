@@ -46,11 +46,7 @@ public class TestSpaceRest extends BaseRestTester {
     @After
     public void tearDown() throws Exception {
         for(String spaceId : spaces) {
-            HttpResponse response =
-                RestTestHelper.deleteSpace(spaceId);
-
-            String responseText = checkResponse(response, HttpStatus.SC_OK);
-            assertNotNull(responseText);
+            RestTestHelper.deleteSpace(spaceId);
         }
     }
 
@@ -76,7 +72,6 @@ public class TestSpaceRest extends BaseRestTester {
         }
 
         // Test valid space names
-
         String id = "test-space.test.space";
         checkValidSpaceId(id);
 
@@ -93,9 +88,9 @@ public class TestSpaceRest extends BaseRestTester {
     }
 
     private void checkValidSpaceId(String id) throws Exception {
+        spaces.add(id);
         HttpResponse response = RestTestHelper.addSpace(id);
         checkResponse(response, HttpStatus.SC_CREATED);
-        spaces.add(id);
     }
 
     @Test

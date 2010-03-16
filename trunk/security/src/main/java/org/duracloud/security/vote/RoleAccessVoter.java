@@ -28,12 +28,12 @@ public class RoleAccessVoter extends RoleVoter {
                     Object resource,
                     ConfigAttributeDefinition config) {
         int decision = super.vote(authentication, resource, config);
-        log.info(VoterUtil.debugText("DuraRoleVoter",
-                                     authentication,
-                                     config,
-                                     decision));
+        log.debug(VoterUtil.debugText("RoleAccessVoter",
+                                      authentication,
+                                      config,
+                                      resource,
+                                      decision));
         return decision;
     }
-
 
 }
