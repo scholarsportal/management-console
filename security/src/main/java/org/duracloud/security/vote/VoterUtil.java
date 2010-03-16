@@ -18,6 +18,7 @@ public class VoterUtil {
     protected static String debugText(String heading,
                                       Authentication auth,
                                       ConfigAttributeDefinition config,
+                                      Object resource,
                                       int decision) {
         StringBuilder sb = new StringBuilder(heading);
         sb.append(": ");
@@ -34,6 +35,11 @@ public class VoterUtil {
                 }
                 sb.replace(sb.length() - 1, sb.length(), "]");
             }
+        }
+        if (resource != null) {
+            sb.append(" resource: [");
+            sb.append(resource.toString());
+            sb.append("]");
         }
         sb.append(" => decision: " + decision);
 

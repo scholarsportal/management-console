@@ -61,7 +61,11 @@ public class SpaceAccessVoter implements AccessDecisionVoter {
 
         HttpServletRequest httpRequest = getHttpServletRequest(resource);
         if (null == httpRequest) {
-            String msg = debugText("null request", auth, config, ACCESS_DENIED);
+            String msg = debugText("null request",
+                                   auth,
+                                   config,
+                                   "null",
+                                   ACCESS_DENIED);
             log.warn("HttpServletRequest was null!  " + msg);
             return ACCESS_DENIED;
         }
@@ -75,9 +79,9 @@ public class SpaceAccessVoter implements AccessDecisionVoter {
         String contextPath = httpRequest.getContextPath();
 
         // FIXME: check/cache space's access state
-        int decision = ACCESS_GRANTED;
-        log.info(debugText("SpaceAccessVoter", auth, config, decision));
-        return decision;
+        int grant = ACCESS_GRANTED;
+        log.info(debugText("SpaceAccessVoter", auth, config, resource, grant));
+        return grant;
     }
 
     private HttpServletRequest getHttpServletRequest(Object resource) {

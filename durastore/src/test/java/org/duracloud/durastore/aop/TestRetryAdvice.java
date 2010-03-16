@@ -15,7 +15,7 @@ import org.apache.commons.httpclient.HttpStatus;
  */
 public class TestRetryAdvice extends TestCase {
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private static RestHttpHelper restHelper = RestTestHelper.getAuthorizedRestHelper();
     private static String baseUrl;
 
     // Should be set to the same value as maxRetries in RetryAdvice

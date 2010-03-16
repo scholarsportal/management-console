@@ -5,18 +5,11 @@
 
 package org.duracloud.common.web;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.BasicScheme;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -29,10 +22,18 @@ import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.PartSource;
-
 import org.apache.log4j.Logger;
-
+import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.IOUtil;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides helper methods for REST tests
@@ -44,6 +45,23 @@ public class RestHttpHelper {
     protected final Logger log = Logger.getLogger(getClass());
 
     private static final String XML_MIMETYPE = "text/xml";
+
+    private Map<String, String> authHeaders = new HashMap<String, String>();
+
+    public RestHttpHelper() {
+        this(null);
+    }
+
+    public RestHttpHelper(Credential credential) {
+        if (credential != null) {
+            UsernamePasswordCredentials authCred = new UsernamePasswordCredentials(
+                credential.getUsername(),
+                credential.getPassword());
+            String authHeaderVal = BasicScheme.authenticate(authCred, "utf-8");
+            String authHeaderName = "Authorization";
+            authHeaders.put(authHeaderName, authHeaderVal);
+        }
+    }
 
     private enum Method {
         GET() {
@@ -284,6 +302,10 @@ public class RestHttpHelper {
         }
 
         HttpMethod httpMethod = method.getMethod(url, requestEntity);
+
+        if (authHeaders != null && authHeaders.size() > 0) {
+            addHeaders(httpMethod, authHeaders);
+        }
 
         if (headers != null && headers.size() > 0) {
             addHeaders(httpMethod, headers);

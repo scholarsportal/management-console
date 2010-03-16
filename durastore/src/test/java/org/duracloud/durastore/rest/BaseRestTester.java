@@ -16,7 +16,7 @@ import java.util.Random;
  */
 public abstract class BaseRestTester {
 
-    protected static RestHttpHelper restHelper = new RestHttpHelper();    
+    protected static RestHttpHelper restHelper = RestTestHelper.getAuthorizedRestHelper();    
 
     protected static String baseUrl;
 

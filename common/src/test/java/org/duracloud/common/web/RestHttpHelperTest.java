@@ -1,31 +1,27 @@
 package org.duracloud.common.web;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import java.net.HttpURLConnection;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
-
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RestHttpHelperTest {
 
@@ -72,7 +68,15 @@ public class RestHttpHelperTest {
     public void testGet() throws Exception {
         HttpResponse response = helper.get(getUrl());
         verifyResponse(response);
+    }
 
+    @Test
+    public void testGetBasicAuth() throws Exception {
+        Credential credential = new Credential("joeUser", "joesPassword");
+        helper = new RestHttpHelper(credential);
+
+        HttpResponse response = helper.get(getUrl());
+        verifyResponse(response);
     }
 
     @Test
