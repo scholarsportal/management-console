@@ -1,14 +1,16 @@
 
 package org.duracloud.common.util;
 
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.apache.log4j.Logger;
 
 public class ChecksumUtil {
 
@@ -23,6 +25,10 @@ public class ChecksumUtil {
             log.error(e);
             throw new RuntimeException(e);
         }
+    }
+
+    public String generateChecksum(File file) throws FileNotFoundException {
+        return generateChecksum(new FileInputStream(file));
     }
 
     /**
