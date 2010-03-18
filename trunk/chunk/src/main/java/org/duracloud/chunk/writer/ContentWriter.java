@@ -38,12 +38,20 @@ public interface ContentWriter {
         throws NotFoundException;
 
     /**
+     * This method helps with the book-keeping of which files are ignored.
+     *
+     * @param spaceId     destination where arg content was assigned to be written
+     * @param contentId   of content
+     * @param contentSize of content
+     */
+    public void ignore(String spaceId, String contentId, long contentSize);
+
+    /**
      * This method returns an item-by-item list of results for the write
      * requests.
      *
      * @return List of results
      */
     public List<AddContentResult> getResults();
-
 
 }

@@ -3,7 +3,6 @@ package org.duracloud.chunk;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
 import org.duracloud.chunk.error.NotFoundException;
@@ -12,8 +11,17 @@ import org.duracloud.chunk.writer.AddContentResult;
 import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.common.util.ExceptionUtil;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.List;
@@ -35,19 +43,24 @@ public class FileChunker {
     private final Logger log = Logger.getLogger(getClass());
 
     private ContentWriter contentWriter;
-    private final long maxChunkSize;
+    private FileChunkerOptions options;
 
-    public FileChunker(ContentWriter contentWriter, long maxChunkSize) {
+    public FileChunker(ContentWriter contentWriter) {
+        this(contentWriter, new FileChunkerOptions());
+    }
+
+    public FileChunker(ContentWriter contentWriter,
+                       FileChunkerOptions options) {
         this.contentWriter = contentWriter;
-        this.maxChunkSize = maxChunkSize;
+        this.options = options;
     }
 
     protected void writeReport(File outputFile) {
         StringBuilder sb = new StringBuilder();
         if (!outputFile.exists()) {
-            sb.append("spaceId,contentId,md5,state\n");
+            sb.append("spaceId,contentId,md5,size,state\n");
         }
-        
+
         OutputStream outputStream = getOutputStream(outputFile);
 
         List<AddContentResult> results = contentWriter.getResults();
@@ -57,6 +70,8 @@ public class FileChunker {
             sb.append(result.getContentId());
             sb.append(",");
             sb.append(result.getMd5());
+            sb.append(",");
+            sb.append(result.getContentSize());
             sb.append(",");
             sb.append(result.getState().name());
             sb.append("\n");
@@ -81,77 +96,81 @@ public class FileChunker {
     }
 
     /**
-     * These methods loop the arg baseDir and push the found content to the
+     * These methods loops the arg baseDir and pushes the found content to the
      * arg destSpace.
      *
      * @param baseDir     of content to push to DataStore
      * @param destSpaceId of content destination
      */
-    protected void addContentFrom(File baseDir,
-                                  String destSpaceId,
-                                  boolean preserveChunkMD5s)
-        throws NotFoundException {
-        this.addContentFrom(baseDir,
-                            destSpaceId,
-                            TrueFileFilter.TRUE,
-                            preserveChunkMD5s);
-    }
+    protected void addContentFrom(File baseDir, String destSpaceId) {
 
-    /**
-     * This method is the same as above with the additional ability to only
-     * include the files defined in the arg "includes" filter in the push.
-     *
-     * @param baseDir     of content to push to DataStore
-     * @param destSpaceId of content destination
-     * @param includes    file filter defining subset of files to push
-     */
-    protected void addContentFrom(File baseDir,
-                                  String destSpaceId,
-                                  IOFileFilter includes,
-                                  boolean preserveChunkMD5s)
-        throws NotFoundException {
-        String contentId;
-        InputStream stream;
-        ChunkInputStream chunk;
-        ChunkableContent chunkable;
-
-        Collection<File> files = listFiles(baseDir, includes);
+        Collection<File> files = listFiles(baseDir,
+                                           options.getFileFilter(),
+                                           options.getDirFilter());
         for (File file : files) {
-            contentId = getContentId(baseDir, file);
-            stream = getInputStream(file);
+            try {
+                doAddContent(baseDir, destSpaceId, file);
 
-            long fileSize = file.length();
-
-            log.debug("loading file: " + contentId + "[" + fileSize + "]");
-            if (fileSize <= maxChunkSize) {
-                chunk = new ChunkInputStream(contentId,
-                                             stream,
-                                             fileSize,
-                                             preserveChunkMD5s);
-
-                contentWriter.writeSingle(destSpaceId, chunk);
-
-            } else {
-                chunkable = new ChunkableContent(contentId,
-                                                 stream,
-                                                 file.length(),
-                                                 maxChunkSize);
-                chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
-
-                contentWriter.write(destSpaceId, chunkable);
+            } catch (Exception e) {
+                StringBuilder sb = new StringBuilder("Error: ");
+                sb.append("Unable to addContentFrom [");
+                sb.append(baseDir);
+                sb.append(", ");
+                sb.append(destSpaceId);
+                sb.append("] : ");
+                sb.append(e.getMessage());
+                sb.append("\n");
+                sb.append(ExceptionUtil.getStackTraceAsString(e));
+                System.err.println(sb);
+                log.error(sb);
             }
-
-            IOUtils.closeQuietly(stream);
         }
     }
 
-    private Collection<File> listFiles(File baseDir, IOFileFilter includes) {
+    private void doAddContent(File baseDir, String destSpaceId, File file)
+        throws NotFoundException {
+        long maxChunkSize = options.getMaxChunkSize();
+        boolean ignoreLargeFiles = options.isIgnoreLargeFiles();
+        boolean preserveChunkMD5s = options.isPreserveChunkMD5s();
+
+        String contentId = getContentId(baseDir, file);
+        InputStream stream = getInputStream(file);
+        long fileSize = file.length();
+
+        log.debug("loading file: " + contentId + "[" + fileSize + "]");
+        if (fileSize <= maxChunkSize) {
+            ChunkInputStream chunk = new ChunkInputStream(contentId,
+                                                          stream,
+                                                          fileSize,
+                                                          preserveChunkMD5s);
+
+            contentWriter.writeSingle(destSpaceId, chunk);
+
+        } else if (!ignoreLargeFiles) {
+            ChunkableContent chunkable = new ChunkableContent(contentId,
+                                                              stream,
+                                                              fileSize,
+                                                              maxChunkSize);
+            chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
+
+            contentWriter.write(destSpaceId, chunkable);
+
+        } else {
+            log.info("Ignoring: [" + baseDir.getPath() + "," + contentId + "]");
+            contentWriter.ignore(destSpaceId, contentId, fileSize);
+        }
+
+        IOUtils.closeQuietly(stream);
+    }
+
+    private Collection<File> listFiles(File baseDir,
+                                       IOFileFilter fileFilter,
+                                       IOFileFilter dirFilter) {
         if (!baseDir.isDirectory()) {
             throw new DuraCloudRuntimeException("Invalid dir: " + baseDir);
         }
 
-        IOFileFilter all = TrueFileFilter.TRUE;
-        Collection files = FileUtils.listFiles(baseDir, all, includes);
+        Collection files = FileUtils.listFiles(baseDir, fileFilter, dirFilter);
         if (null == files || files.size() == 0) {
             throw new DuraCloudRuntimeException("No files found: " + baseDir);
         }

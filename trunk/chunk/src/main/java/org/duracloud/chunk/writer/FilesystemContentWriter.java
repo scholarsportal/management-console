@@ -43,6 +43,14 @@ public class FilesystemContentWriter implements ContentWriter {
         return results;
     }
 
+    public void ignore(String spaceId, String contentId, long contentSize) {
+        AddContentResult result = new AddContentResult(spaceId,
+                                                       contentId,
+                                                       contentSize);
+        result.setState(AddContentResult.State.IGNORED);
+        results.add(result);
+    }
+
     /**
      * This method implements the ContentWriter interface for writing content
      * to a DataStore. In this case, the DataStore is a local filesystem.
@@ -97,7 +105,9 @@ public class FilesystemContentWriter implements ContentWriter {
         File spaceDir = getSpaceDir(spaceId);
         OutputStream outStream = getOutputStream(spaceDir, contentId);
 
-        AddContentResult result = new AddContentResult(spaceId, contentId);
+        AddContentResult result = new AddContentResult(spaceId,
+                                                       contentId,
+                                                       contentSize);
         result.setState(AddContentResult.State.SUCCESS);
         try {
             if (contentSize > TWO_GB) {

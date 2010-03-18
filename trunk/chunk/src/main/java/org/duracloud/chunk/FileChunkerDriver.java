@@ -7,10 +7,11 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.writer.ContentWriter;
@@ -42,17 +43,15 @@ public class FileChunkerDriver {
 
     private static void chunk(File fromDir,
                               File toSpace,
-                              Long chunkSize,
-                              IOFileFilter filter,
-                              ContentWriter writer,
-                              boolean saveMD5s) throws NotFoundException {
+                              FileChunkerOptions options,
+                              ContentWriter writer) throws NotFoundException {
 
         if (!fromDir.isDirectory()) {
             throw new DuraCloudRuntimeException("Invalid dir: " + fromDir);
         }
 
-        FileChunker chunker = new FileChunker(writer, chunkSize);
-        chunker.addContentFrom(fromDir, toSpace.getPath(), filter, saveMD5s);
+        FileChunker chunker = new FileChunker(writer, options);
+        chunker.addContentFrom(fromDir, toSpace.getPath());
 
         File report = new File("chunker-report.csv");
         chunker.writeReport(report);
@@ -107,21 +106,24 @@ public class FileChunkerDriver {
         add.setArgName("f t s{K|M|G}");
         add.setValueSeparator(' ');
 
-        Option filteredAdd = new Option("A",
-                                        "filteredadd",
+        Option fileFiltered = new Option("f",
+                                         "file-filter",
+                                         true,
+                                         "limit processed files to those " +
+                                             "listed in file-list:<l>");
+        fileFiltered.setArgs(1);
+        fileFiltered.setArgName("l");
+
+        Option dirFiltered = new Option("d",
+                                        "dir-filter",
                                         true,
-                                        "add content from " +
-                                            "dir:<f> to space:<t> " +
-                                            "of max chunk size:<s> " +
-                                            "in units of K,M,G with content " +
-                                            "to add filtered by the partial" +
-                                            "subDir-name list file:<l>");
-        filteredAdd.setArgs(4);
-        filteredAdd.setArgName("f t s{K|M|G} l");
-        filteredAdd.setValueSeparator(' ');
+                                        "limit processed directories to " +
+                                            "those listed in file-list:<l>");
+        dirFiltered.setArgs(1);
+        dirFiltered.setArgName("l");
 
         Option cloud = new Option("c",
-                                  "cloudstore",
+                                  "cloud-store",
                                   true,
                                   "use cloud store found at <host>:<port> " +
                                       "as content dest");
@@ -129,19 +131,29 @@ public class FileChunkerDriver {
         cloud.setArgName("host:port");
         cloud.setValueSeparator(':');
 
-        Option saveChunkMD5s = new Option("m",
-                                          "saveChunkMD5s",
-                                          false,
-                                          "if this option is set, chunk " +
-                                              "MD5s will be preserved in " +
-                                              "the manifest");
+        Option excludeChunkMD5s = new Option("x",
+                                             "exclude-chunk-md5s",
+                                             false,
+                                             "if this option is set, chunk " +
+                                                 "MD5s will NOT be preserved " +
+                                                 "in the manifest");
+
+        Option ignoreLargeFiles = new Option("i",
+                                             "ignore-large-files",
+                                             false,
+                                             "if this option is set, files " +
+                                                 "over the chunk size " +
+                                                 "specified in the 'add' " +
+                                                 "option will be ignored.");
 
         Options options = new Options();
         options.addOption(create);
         options.addOption(add);
-        options.addOption(filteredAdd);
+        options.addOption(fileFiltered);
+        options.addOption(dirFiltered);
         options.addOption(cloud);
-        options.addOption(saveChunkMD5s);
+        options.addOption(excludeChunkMD5s);
+        options.addOption(ignoreLargeFiles);
 
         return options;
     }
@@ -182,8 +194,8 @@ public class FileChunkerDriver {
 
         // Where will content be written?
         ContentWriter writer;
-        if (cmd.hasOption("cloudstore")) {
-            String[] vals = cmd.getOptionValues("cloudstore");
+        if (cmd.hasOption("cloud-store")) {
+            String[] vals = cmd.getOptionValues("cloud-store");
             String host = vals[0];
             String port = vals[1];
             ContentStoreManager mgr = new ContentStoreManagerImpl(host, port);
@@ -194,29 +206,47 @@ public class FileChunkerDriver {
         }
 
         // Will Chunk MD5's be preserved?
-        boolean chunkMD5 = false;
-        if (cmd.hasOption("saveChunkMD5s")) {
-            chunkMD5 = true;
+        boolean chunkMD5 = true;
+        if (cmd.hasOption("exclude-chunk-md5s")) {
+            chunkMD5 = false;
         }
 
+        // Will large files be ignored?
+        boolean ignoreLarge = false;
+        if (cmd.hasOption("ignore-large-files")) {
+            ignoreLarge = true;
+        }
+
+        // Will files be filtered?
+        IOFileFilter fileFilter = TrueFileFilter.TRUE;
+        if (cmd.hasOption("file-filter")) {
+            String[] filterVals = cmd.getOptionValues("file-filter");
+            fileFilter = buildFilter(new File(filterVals[0]));
+        }
+
+        // Will directories be filtered?
+        IOFileFilter dirFilter = TrueFileFilter.TRUE;
+        if (cmd.hasOption("dir-filter")) {
+            String[] filterVals = cmd.getOptionValues("dir-filter");
+            dirFilter = buildFilter(new File(filterVals[0]));
+        }
+
+        // Add content?
+        FileChunkerOptions options;
         if (cmd.hasOption("add")) {
             String[] vals = cmd.getOptionValues("add");
             File fromDir = new File(vals[0]);
             File toDir = new File(vals[1]);
             Long chunkSize = getChunkSize(vals[2]);
 
-            IOFileFilter filter = FileFilterUtils.trueFileFilter();
-            chunk(fromDir, toDir, chunkSize, filter, writer, chunkMD5);
+            options = new FileChunkerOptions(fileFilter,
+                                             dirFilter,
+                                             chunkSize,
+                                             chunkMD5,
+                                             ignoreLarge);
+            chunk(fromDir, toDir, options, writer);
 
-        } else if (cmd.hasOption("filteredadd")) {
-            String[] vals = cmd.getOptionValues("filteredadd");
-            File fromDir = new File(vals[0]);
-            File toDir = new File(vals[1]);
-            Long chunkSize = getChunkSize(vals[2]);
-            IOFileFilter filter = buildFilter(new File(vals[3]));
-
-            chunk(fromDir, toDir, chunkSize, filter, writer, chunkMD5);
-
+            // ...or generate test data
         } else if (cmd.hasOption("generate")) {
             String[] vals = cmd.getOptionValues("generate");
             File outFile = new File(vals[0]);
@@ -227,7 +257,6 @@ public class FileChunkerDriver {
         } else {
             usage();
         }
-
     }
 
     private static IOFileFilter buildFilter(File titlesFile) {
@@ -238,10 +267,11 @@ public class FileChunkerDriver {
 
         String line = readLine(br);
         while (line != null) {
-            filters.add(new RegexFileFilter(".*" + line.trim() + ".*"));
+            filters.add(new NameFileFilter(line.trim()));
             line = readLine(br);
         }
 
+        IOUtils.closeQuietly(br);
         return new OrFileFilter(filters);
     }
 
