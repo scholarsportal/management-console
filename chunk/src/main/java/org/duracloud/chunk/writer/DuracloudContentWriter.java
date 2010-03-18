@@ -35,9 +35,17 @@ public class DuracloudContentWriter implements ContentWriter {
     public DuracloudContentWriter(ContentStore contentStore) {
         this.contentStore = contentStore;
     }
-    
+
     public List<AddContentResult> getResults() {
         return results;
+    }
+
+    public void ignore(String spaceId, String contentId, long contentSize) {
+        AddContentResult result = new AddContentResult(spaceId,
+                                                       contentId,
+                                                       contentSize);
+        result.setState(AddContentResult.State.IGNORED);
+        results.add(result);
     }
 
     /**
@@ -111,7 +119,9 @@ public class DuracloudContentWriter implements ContentWriter {
                                       InputStream contentStream,
                                       long contentSize,
                                       String contentMimetype) {
-        AddContentResult result = new AddContentResult(spaceId, contentId);
+        AddContentResult result = new AddContentResult(spaceId,
+                                                       contentId,
+                                                       contentSize);
         String md5 = null;
         try {
             md5 = addContent(spaceId,

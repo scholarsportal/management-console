@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -56,8 +57,10 @@ public class FileChunkerTest {
     public void testCreateContent() throws IOException {
         long chunkSize = 10240;
         long size = chunkSize * 4 + chunkSize / 2;
+        FileChunkerOptions options = new FileChunkerOptions(chunkSize);
+
         String name = "create-test.txt";
-        FileChunker chunker = new FileChunker(writer, chunkSize);
+        FileChunker chunker = new FileChunker(writer, options);
         createAndVerifyContent(chunker, name, size);
     }
 
@@ -65,7 +68,7 @@ public class FileChunkerTest {
                                         String contentName,
                                         long contentSize) throws IOException {
         File outFile = new File(srcDir, contentName);
-        chunker.createTestContent(outFile, contentSize);
+        FileChunker.createTestContent(outFile, contentSize);
 
         Assert.assertTrue(outFile.exists());
         Assert.assertEquals(contentSize, outFile.length());
@@ -106,17 +109,15 @@ public class FileChunkerTest {
         String prefix = "load-test";
         String ext = ".txt";
         String suffix = ext + suffixPattern;
-
-        boolean preserveChunkMD5 = true;
-
-        FileChunker chunker = new FileChunker(writer, chunkSize);
-
         String name = prefix + runNumber + ext;
+
+        IOFileFilter dirFilter = FileFilterUtils.nameFileFilter(name);
+        FileChunkerOptions options = new FileChunkerOptions(dirFilter,
+                                                            chunkSize);
+
+        FileChunker chunker = new FileChunker(writer, options);
         File content = createAndVerifyContent(chunker, name, contentSize);
-        chunker.addContentFrom(srcDir,
-                               destDir.getPath(),
-                               FileFilterUtils.nameFileFilter(name),
-                               preserveChunkMD5);
+        chunker.addContentFrom(srcDir, destDir.getPath());
 
         Pattern p = Pattern.compile(".*" + prefix + runNumber + suffix);
         IOFileFilter filter = new RegexFileFilter(p);
@@ -137,6 +138,113 @@ public class FileChunkerTest {
         }
         Assert.assertEquals(content.length(), totalChunksSize);
 
+    }
+
+    @Test
+    public void testIgnoreFlag() throws Exception {
+        long chunkSize = 1024;
+        String bigFilename0 = "big0.txt";
+        String bigFilename1 = "big1.txt";
+        String smallFilename = "small.txt";
+
+        File bigFile0 = new File(srcDir, bigFilename0);
+        File bigFile1 = new File(srcDir, bigFilename1);
+        File smallFile = new File(srcDir, smallFilename);
+        FileChunker.createTestContent(bigFile0, chunkSize + 1);
+        FileChunker.createTestContent(bigFile1, chunkSize + 1);
+        FileChunker.createTestContent(smallFile, chunkSize - 1);
+
+        boolean ignoreLargeFiles = true;
+        FileChunkerOptions options;
+        options = new FileChunkerOptions(chunkSize, ignoreLargeFiles);
+        FileChunker chunker = new FileChunker(writer, options);
+        chunker.addContentFrom(srcDir, destDir.getPath());
+
+        Assert.assertTrue(!new File(destDir, bigFilename0).exists());
+        Assert.assertTrue(!new File(destDir, bigFilename1).exists());
+        Assert.assertTrue(new File(destDir, smallFilename).exists());
+
+    }
+
+    @Test
+    public void testInputFilters() throws Exception {
+        createContentTree();
+
+        int id = 0;
+        IOFileFilter fileFilter = FileFilterUtils.trueFileFilter();
+        IOFileFilter dirFilter = FileFilterUtils.trueFileFilter();
+        doTestInputFilters(fileFilter, dirFilter, id, 13);
+
+        id = 1;
+        fileFilter = FileFilterUtils.trueFileFilter();
+        dirFilter = FileFilterUtils.nameFileFilter("dir-0-b");
+        doTestInputFilters(fileFilter, dirFilter, id, 2);
+
+        id = 2;
+        fileFilter = FileFilterUtils.trueFileFilter();
+        dirFilter = FileFilterUtils.orFileFilter(FileFilterUtils.nameFileFilter(
+            "dir-0-b"), FileFilterUtils.nameFileFilter("dir-0-c"));
+        doTestInputFilters(fileFilter, dirFilter, id, 3);
+
+        id = 3;
+        fileFilter = FileFilterUtils.trueFileFilter();
+        dirFilter = FileFilterUtils.falseFileFilter();
+        doTestInputFilters(fileFilter, dirFilter, id, 1);
+
+        id = 4;
+        fileFilter = FileFilterUtils.falseFileFilter();
+        dirFilter = FileFilterUtils.trueFileFilter();
+        try {
+            doTestInputFilters(fileFilter, dirFilter, id, 0);
+            Assert.fail("exception expected since no files found.");
+        } catch (Exception e) {
+        }
+
+    }
+
+    private void doTestInputFilters(IOFileFilter fileFilter,
+                                    IOFileFilter dirFilter,
+                                    int id,
+                                    int numFiles) throws NotFoundException {
+        long chunkSize = 1024;
+        FileChunkerOptions options;
+        options = new FileChunkerOptions(fileFilter, dirFilter, chunkSize);
+
+        File testDestDir = new File(destDir, "test" + id);
+        String dest = testDestDir.getPath();
+
+        FileChunker chunker = new FileChunker(writer, options);
+        chunker.addContentFrom(srcDir, dest);
+        verifyFilters(testDestDir, numFiles);
+    }
+
+    private void verifyFilters(File dir, int numFiles) {
+        boolean recurse = true;
+        Collection<File> files = FileUtils.listFiles(dir, null, recurse);
+        Assert.assertEquals(numFiles, files.size());
+    }
+
+    private void createContentTree() throws Exception {
+        String ext = ".txt";
+        write(new File(srcDir, "file" + ext));
+
+        char[] dirSuffixes = new char[]{'a', 'b', 'c'};
+        for (char suffix0 : dirSuffixes) {
+            File dir0 = new File(srcDir, "dir-0-" + suffix0);
+            dir0.mkdir();
+            write(new File(dir0, "file-0" + suffix0 + ext));
+            for (char suffix1 : dirSuffixes) {
+                File dir1 = new File(dir0, "dir-1-" + suffix1);
+                dir1.mkdir();
+                write(new File(dir1, "file-0" + suffix0 + "1" + suffix1 + ext));
+            }
+        }
+    }
+
+    private void write(File file) throws Exception {
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write("hello".getBytes());
+        fos.close();
     }
 
 }
