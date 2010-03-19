@@ -27,7 +27,9 @@ public class SyncTool {
     }
 
     private void startSyncManager() {
-        syncManager = new SyncManager(syncConfig.getNumThreads());
+        syncManager = new SyncManager(syncConfig.getNumThreads(),
+                                      syncConfig.getBackupDir(),
+                                      syncConfig.getPollFrequency());
         syncManager.beginSync();
     }
 

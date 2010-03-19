@@ -3,6 +3,7 @@ package org.duracloud.sync;
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.duracloud.sync.mgmt.ChangedList;
 
 import java.io.File;
 import java.io.IOException;
