@@ -50,7 +50,7 @@ class DuraCloudBlobStoreConnection
                                  contentStore, spaceId, readAfterWrite);
     }
 
-    //@Override
+    @Override
     public Iterator<URI> listBlobIds(String filterPrefix) throws IOException {
         ensureOpen();
         try {
@@ -68,13 +68,11 @@ class DuraCloudBlobStoreConnection
             return new DuraCloudBlobIdIterator(uPrefix,
                     contentStore.getSpaceContents(spaceId, cPrefix));
         } catch (ContentStoreException e) {
-            IOException ioe = new IOException();
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException(e);
         }
     }
 
-    //@Override
+    @Override
     public void sync() throws IOException, UnsupportedOperationException {
         ensureOpen();
         // No-op; ContentStore does not expose a sync function,

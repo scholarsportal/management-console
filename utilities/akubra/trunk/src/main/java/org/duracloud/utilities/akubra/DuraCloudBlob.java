@@ -80,7 +80,7 @@ class DuraCloudBlob
         this.readAfterWrite = readAfterWrite;
     }
 
-    //@Override
+    @Override
     public void delete() throws IOException {
         ensureOpen();
         try {
@@ -106,13 +106,13 @@ class DuraCloudBlob
         }
     }
 
-    //@Override
+    @Override
     public boolean exists() throws IOException {
         ensureOpen();
         return getMetadata() != null;
     }
 
-    //@Override
+    @Override
     public long getSize() throws IOException, MissingBlobException {
         ensureOpen();
         Map<String, String> md = getMetadata();
@@ -126,7 +126,7 @@ class DuraCloudBlob
         return Long.parseLong(length);
     }
 
-    //@Override
+    @Override
     public Blob moveTo(URI blobId, Map<String, String> hints)
             throws DuplicateBlobException, IOException, MissingBlobException,
             NullPointerException, IllegalArgumentException {
@@ -178,7 +178,7 @@ class DuraCloudBlob
         return dest;
     }
 
-    //@Override
+    @Override
     public InputStream openInputStream() throws IOException,
             MissingBlobException {
         ensureOpen();
@@ -195,7 +195,7 @@ class DuraCloudBlob
         }
     }
 
-    //@Override
+    @Override
     public OutputStream openOutputStream(final long estimatedSize,
                                          boolean overwrite)
             throws IOException, DuplicateBlobException {
@@ -212,6 +212,7 @@ class DuraCloudBlob
         if (readAfterWrite) {
             final DuraCloudBlob blob = this;
             listener = new ContentWriteListener() {
+                @Override
                 public void contentWritten() {
                     if (origMeta == null) {
                         // wait until blob.exists() or timeout
@@ -443,10 +444,7 @@ class DuraCloudBlob
         } catch (NotFoundException e) {
             return null;
         } catch (ContentStoreException e) {
-            IOException ioe = new IOException("Error getting metadata for "
-                    + "blob: " + id);
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException("Error getting metadata for " + "blob: " + id, e);
         }
     }
 

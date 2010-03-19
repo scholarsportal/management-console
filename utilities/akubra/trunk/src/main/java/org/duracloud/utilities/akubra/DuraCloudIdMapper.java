@@ -39,15 +39,18 @@ public class DuraCloudIdMapper implements IdMapper {
         }
     }
 
+    @Override
     public URI getExternalId(URI internalId) {
         String contentId = internalId.toString().substring(internalPrefix.length());
         return URI.create(decode(contentId));
     }
 
+    @Override
     public URI getInternalId(URI externalId) {
         return URI.create(internalPrefix + encode(externalId.toString()));
     }
 
+    @Override
     public String getInternalPrefix(String externalPrefix) {
         return internalPrefix + encode(externalPrefix);
     }

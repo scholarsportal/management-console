@@ -92,10 +92,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
             this.readAfterWriteDefault = readAfterWriteDefault;
             contentStore.getSpaceAccess(spaceId);
         } catch (ContentStoreException e) {
-            IOException ioe = new IOException(
-                    "Error initializing ContentStore");
-            ioe.initCause(e);
-            throw ioe;
+            throw new IOException("Error initializing ContentStore", e);
         }
     }
 
@@ -141,7 +138,7 @@ public class DuraCloudBlobStore extends AbstractBlobStore {
         return new String[] { spaceURL.getHost(), port, p[1], p[2] };
     }
 
-    //@Override
+    @Override
     public BlobStoreConnection openConnection(Transaction tx,
                                               Map<String, String> hints)
             throws UnsupportedOperationException, IOException {

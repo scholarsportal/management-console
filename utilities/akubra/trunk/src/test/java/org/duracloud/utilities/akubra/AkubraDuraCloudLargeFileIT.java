@@ -23,7 +23,8 @@ public class AkubraDuraCloudLargeFileIT extends AkubraDuraCloudITBase {
 
     private static final byte[] ONE_KB;
 
-    private static Logger logger = LoggerFactory.getLogger(AkubraDuraCloudLargeFileIT.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(AkubraDuraCloudLargeFileIT.class);
 
     static {
         StringBuffer s = new StringBuffer(1024);
