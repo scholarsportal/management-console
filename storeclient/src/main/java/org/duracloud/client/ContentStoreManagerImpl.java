@@ -2,6 +2,7 @@ package org.duracloud.client;
 
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.error.StorageException;
@@ -99,6 +100,16 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         ContentStore contentStore =
             new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
         return contentStore;
+    }
+
+    public void login(Credential appCred) {
+        // Default method body
+
+    }
+
+    public void logout() {
+        // Default method body
+
     }
 
     private StorageAccountManager getStorageAccounts() throws ContentStoreException {

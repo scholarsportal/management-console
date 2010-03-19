@@ -9,6 +9,7 @@ import org.duracloud.client.ContentStoreManager;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
 import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
+import org.duracloud.common.model.Credential;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -64,6 +65,12 @@ public class MockContentStoreManagerFactoryImpl
         public ContentStore getPrimaryContentStore()
                 throws ContentStoreException {
             return this.primaryContentStore;
+        }
+
+        public void login(Credential appCred) {
+        }
+
+        public void logout() {
         }
 
     }

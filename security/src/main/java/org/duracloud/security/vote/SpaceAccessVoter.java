@@ -1,5 +1,7 @@
 package org.duracloud.security.vote;
 
+import org.duracloud.client.ContentStore;
+import static org.duracloud.security.vote.VoterUtil.debugText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
@@ -8,7 +10,6 @@ import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.intercept.web.FilterInvocation;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 import org.springframework.security.vote.AccessDecisionVoter;
-import static org.duracloud.security.vote.VoterUtil.debugText;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SpaceAccessVoter implements AccessDecisionVoter {
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private ContentStore contentStore;
 
     /**
      * This method always returns true because all configAttributes are able
@@ -80,7 +83,7 @@ public class SpaceAccessVoter implements AccessDecisionVoter {
 
         // FIXME: check/cache space's access state
         int grant = ACCESS_GRANTED;
-        log.info(debugText("SpaceAccessVoter", auth, config, resource, grant));
+        log.debug(debugText("SpaceAccessVoter", auth, config, resource, grant));
         return grant;
     }
 
