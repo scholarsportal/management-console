@@ -1,4 +1,4 @@
-package org.duracloud.security.domain;
+package org.duracloud.common.model;
 
 /**
  * @author Andrew Woods

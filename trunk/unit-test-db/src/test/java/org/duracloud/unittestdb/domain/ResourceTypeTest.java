@@ -1,6 +1,6 @@
 package org.duracloud.unittestdb.domain;
 
-import org.duracloud.security.domain.DuraCloudUserType;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.error.UnknownResourceTypeException;
 import org.junit.Assert;

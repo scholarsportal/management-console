@@ -4,7 +4,7 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.durastore.config.DuraStoreConfig;
-import org.duracloud.security.domain.DuraCloudUserType;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
