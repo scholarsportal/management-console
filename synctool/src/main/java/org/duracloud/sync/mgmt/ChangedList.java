@@ -1,0 +1,112 @@
+package org.duracloud.sync.mgmt;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+
+/**
+ * @author: Bill Branan
+ * Date: Mar 15, 2010
+ */
+public class ChangedList {
+
+    private HashMap<String, File> fileList;
+    private long listVersion;
+
+    private static ChangedList instance;
+
+    public static synchronized ChangedList getInstance() {
+        if(instance == null) {
+            instance = new ChangedList();
+        }
+        return instance;
+    }
+
+    private ChangedList() {
+        fileList = new HashMap<String, File>();
+        listVersion = 0;
+    }
+
+    /**
+     * Adds a changed file to the list of items to be processed.
+     * Note that only the most current update to any given file is
+     * provided to the change processor.
+     *
+     * @param changedFile a file which has changed on the file system
+     */
+    public synchronized void addChangedFile(File changedFile) {
+        fileList.put(changedFile.getAbsolutePath(), changedFile);
+        incrementVersion();
+    }
+
+    /**
+     * Retrieves a changed file for processing and removes it from the list.
+     * Returns null if there are no changed files in the list.
+     *
+     * @return a file which has changed on the file system
+     */
+    public synchronized File getChangedFile() {
+        if(fileList.isEmpty()) {
+            return null;
+        }
+
+        String key = fileList.keySet().iterator().next();
+        File changedFile = fileList.remove(key);
+        incrementVersion();
+        return changedFile;
+    }
+
+    private void incrementVersion() {
+        if(listVersion < Long.MAX_VALUE) {
+            listVersion++;
+        } else {
+            listVersion = 0;
+        }
+    }
+
+    public long getVersion() {
+        return listVersion;
+    }
+
+    public long persist(File persistFile) {
+        try {
+            FileOutputStream fileStream = new FileOutputStream(persistFile);
+            ObjectOutputStream oStream = new ObjectOutputStream((fileStream));
+
+            long persistVersion;
+            HashMap<String, File> fileListClone;
+            synchronized(this) {
+                fileListClone = (HashMap<String, File>)fileList.clone();
+                persistVersion = listVersion;
+            }
+
+            oStream.writeObject(fileListClone);
+            oStream.close();
+            return persistVersion;
+        } catch(IOException e) {
+            throw new RuntimeException("Unable to persist File Changed List:" +
+                e.getMessage(), e);
+        }
+    }
+
+    public void restore(File persistFile) {
+        try {
+            FileInputStream fileStream = new FileInputStream(persistFile);
+            ObjectInputStream oStream = new ObjectInputStream(fileStream);
+
+            synchronized(this) {
+                fileList = (HashMap<String, File>) oStream.readObject();
+            }
+
+            oStream.close();
+        } catch(Exception e) {
+            throw new RuntimeException("Unable to restore File Changed List:" +
+                e.getMessage(), e);
+        }
+    }
+    
+}

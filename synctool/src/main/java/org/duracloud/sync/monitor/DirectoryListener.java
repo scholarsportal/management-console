@@ -1,7 +1,7 @@
 package org.duracloud.sync.monitor;
 
 import org.apache.commons.io.monitor.FilesystemListenerAdaptor;
-import org.duracloud.sync.ChangedList;
+import org.duracloud.sync.mgmt.ChangedList;
 
 import java.io.File;
 

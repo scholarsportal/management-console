@@ -1,6 +1,7 @@
 package org.duracloud.sync.mgmt;
 
-import org.duracloud.sync.ChangedList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -10,13 +11,19 @@ import java.io.File;
  */
 public class ChangeWatcher implements Runnable {
 
+    private final Logger logger = LoggerFactory.getLogger(ChangeWatcher.class);    
+
     private boolean continueWatch;
     private ChangedList changedList;
     private ChangeHandler handler;
+    private long watchFrequency;
 
-    public ChangeWatcher(ChangedList changedList, ChangeHandler handler) {
+    public ChangeWatcher(ChangedList changedList,
+                         ChangeHandler handler,
+                         long watchFrequency) {
+        this.changedList = changedList;
         this.handler = handler;
-        this.changedList = changedList; 
+        this.watchFrequency = watchFrequency;
         continueWatch = true;
     }
 
@@ -25,6 +32,13 @@ public class ChangeWatcher implements Runnable {
             File changedFile = changedList.getChangedFile();
             if(changedFile != null) {
                 handler.fileChanged(changedFile);
+            } else {
+                // List is empty, wait before next check
+                try {
+                    Thread.sleep(watchFrequency);
+                } catch (InterruptedException e) {
+                    logger.warn("ChangeWatcher thread interrupted");
+                }
             }
         }
     }
