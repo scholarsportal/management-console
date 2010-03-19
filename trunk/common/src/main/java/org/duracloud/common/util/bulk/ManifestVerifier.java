@@ -185,7 +185,7 @@ public class ManifestVerifier {
                 entry.setFile(fileOf(name));
                 entry.setChecksum1(entries1.get(name));
                 entry.setState(State.MISSING_FROM_0);
-                results.put(entry.getChecksum0(), entry);
+                results.put(name, entry);
 
                 // Entry found in both sets
             } else {
