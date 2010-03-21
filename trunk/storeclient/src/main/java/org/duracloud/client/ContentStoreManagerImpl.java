@@ -1,13 +1,13 @@
 package org.duracloud.client;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.common.model.Credential;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.error.StorageException;
-import org.duracloud.error.ContentStoreException;
-import org.apache.commons.httpclient.HttpStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -74,7 +74,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
             String acctID = acctIDs.next();
             StorageAccount acct = accounts.get(acctID);
             ContentStore contentStore =
-                new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
+                new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
             contentStores.put(acctID, contentStore);
         }
         return contentStores;
@@ -87,7 +87,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
         ContentStore contentStore =
-            new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
+            new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
         return contentStore;
     }
 
@@ -98,18 +98,16 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
         ContentStore contentStore =
-            new ContentStoreImpl(baseURL, acct.getType(), acct.getId());
+            new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
         return contentStore;
     }
 
     public void login(Credential appCred) {
-        // Default method body
-
+        restHelper = new RestHttpHelper(appCred);
     }
 
     public void logout() {
-        // Default method body
-
+        restHelper = new RestHttpHelper();
     }
 
     private StorageAccountManager getStorageAccounts() throws ContentStoreException {

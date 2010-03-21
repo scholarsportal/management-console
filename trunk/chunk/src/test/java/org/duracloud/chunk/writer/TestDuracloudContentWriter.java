@@ -7,9 +7,13 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,6 +68,8 @@ public class TestDuracloudContentWriter {
 
         storeManager = new ContentStoreManagerImpl(host, getPort(), context);
         Assert.assertNotNull(storeManager);
+
+        storeManager.login(getRootCredential());
 
         store = storeManager.getPrimaryContentStore();
         writer = new DuracloudContentWriter(store);
@@ -303,6 +309,13 @@ public class TestDuracloudContentWriter {
         }
 
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private Credential getRootCredential() throws Exception {
+        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
+        ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+            DuraCloudUserType.ROOT);
+        return dbUtil.findCredentialForResource(rootUser);
     }
 
 }

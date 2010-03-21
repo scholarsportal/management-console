@@ -208,7 +208,14 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- for EasyMock -->
+    <!-- test -->
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>unit-test-db</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymockclassextension</artifactId>

@@ -41,8 +41,8 @@
     <beans:property name="allowIfAllAbstainDecisions" value="false"/>
     <beans:property name="decisionVoters">
       <beans:list>
-        <beans:bean class="org.duracloud.security.vote.SpaceAccessVoter" />
-        <beans:bean class="org.duracloud.security.vote.RoleAccessVoter" />
+        <beans:bean class="org.duracloud.security.vote.SpaceAccessVoterImpl" />
+        <beans:bean class="org.duracloud.security.vote.RoleVoterImpl" />
       </beans:list>
     </beans:property>
   </beans:bean>
@@ -51,6 +51,7 @@
   <authentication-provider>
     <user-service>
       <user name="root" password="rpw" authorities="ROLE_USER, ROLE_ADMIN, ROLE_ROOT"/>
+      <user name="system" password="spw" authorities="ROLE_USER, ROLE_ADMIN"/>
       <user name="admin" password="apw" authorities="ROLE_USER, ROLE_ADMIN"/>
       <user name="user" password="upw" authorities="ROLE_USER"/>
     </user-service>

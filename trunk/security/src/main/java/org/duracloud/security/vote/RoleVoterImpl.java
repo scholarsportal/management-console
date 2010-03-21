@@ -12,7 +12,7 @@ import org.springframework.security.vote.RoleVoter;
  * @author Andrew Woods
  *         Date: Mar 12, 2010
  */
-public class RoleAccessVoter extends RoleVoter {
+public class RoleVoterImpl extends RoleVoter {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
@@ -28,7 +28,7 @@ public class RoleAccessVoter extends RoleVoter {
                     Object resource,
                     ConfigAttributeDefinition config) {
         int decision = super.vote(authentication, resource, config);
-        log.debug(VoterUtil.debugText("RoleAccessVoter",
+        log.debug(VoterUtil.debugText("RoleVoterImpl",
                                       authentication,
                                       config,
                                       resource,

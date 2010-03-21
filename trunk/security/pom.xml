@@ -67,5 +67,13 @@
       <version>1.5.6</version>
     </dependency>
 
+    <!-- mock objects -->
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>
