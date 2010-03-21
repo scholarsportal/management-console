@@ -39,7 +39,7 @@ public class ContentStoreImpl implements ContentStore{
 
     private String baseURL = null;
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private RestHttpHelper restHelper;
 
     private static final String HEADER_PREFIX = "x-dura-meta-";
 
@@ -50,10 +50,11 @@ public class ContentStoreImpl implements ContentStore{
      * @param type a {@link org.duracloud.storage.domain.StorageProviderType} object.
      * @param storeId a {@link java.lang.String} object.
      */
-    public ContentStoreImpl(String baseURL, StorageProviderType type, String storeId) {
+    public ContentStoreImpl(String baseURL, StorageProviderType type, String storeId, RestHttpHelper restHelper) {
         this.baseURL = baseURL;
         this.type = type;
         this.storeId = storeId;
+        this.restHelper = restHelper;
     }
 
 

@@ -32,7 +32,7 @@ public class ContentIteratorTest {
         private long contentItems;
 
         public MockStore(long contentItems) {
-            super(null, null, null);
+            super(null, null, null, null);
             this.contentItems = contentItems;
         }
 

@@ -297,10 +297,6 @@ public class RestHttpHelper {
             throw new IllegalArgumentException("URL must be a non-empty value");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug(loggingRequestText(url, method, requestEntity, headers));
-        }
-
         HttpMethod httpMethod = method.getMethod(url, requestEntity);
 
         if (authHeaders != null && authHeaders.size() > 0) {
@@ -309,6 +305,10 @@ public class RestHttpHelper {
 
         if (headers != null && headers.size() > 0) {
             addHeaders(httpMethod, headers);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug(loggingRequestText(url, method, requestEntity, headers));
         }
 
         HttpClient client = new HttpClient();

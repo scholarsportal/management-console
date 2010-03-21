@@ -2,7 +2,11 @@ package org.duracloud.duraservice.rest;
 
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.duraservice.config.DuraServiceConfig;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 
 /**
  * @author Bill Branan
@@ -11,7 +15,7 @@ public class RestTestHelper {
 
     private static String configFileName = "test-duraservice.properties";
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private static RestHttpHelper restHelper = getAuthorizedRestHelper();
 
     private static String baseUrl;
 
@@ -110,6 +114,30 @@ public class RestTestHelper {
           xml.append("</serviceCompute>");
         xml.append("</servicesConfig>");
         return xml.toString();
+    }
+
+    private static RestHttpHelper getAuthorizedRestHelper() {
+        return new RestHttpHelper(getRootCredential());
+    }
+
+    private static Credential getRootCredential() {
+        UnitTestDatabaseUtil dbUtil = null;
+        try {
+            dbUtil = new UnitTestDatabaseUtil();
+        } catch (Exception e) {
+            System.err.println("ERROR from unitTestDB: " + e.getMessage());
+        }
+
+        Credential rootCredential = null;
+        try {
+            ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+                DuraCloudUserType.ROOT);
+            rootCredential = dbUtil.findCredentialForResource(rootUser);
+        } catch (Exception e) {
+            System.err.print("ERROR getting credential: " + e.getMessage());
+
+        }
+        return rootCredential;
     }
 
 }

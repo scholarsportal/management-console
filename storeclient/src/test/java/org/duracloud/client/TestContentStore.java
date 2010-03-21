@@ -4,11 +4,15 @@ import org.apache.log4j.Logger;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -72,6 +76,8 @@ public class TestContentStore {
 
         storeManager = new ContentStoreManagerImpl(host, getPort(), context);
         assertNotNull(storeManager);
+
+        storeManager.login(getRootCredential());
 
         store = storeManager.getPrimaryContentStore();
 
@@ -586,6 +592,13 @@ public class TestContentStore {
             fail("Exception expected on setContentMetadata(spaceId, invalidContentId, ...)");
         } catch(NotFoundException expected) {
         }
+    }
+
+    private static Credential getRootCredential() throws Exception {
+        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
+        ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+            DuraCloudUserType.ROOT);
+        return dbUtil.findCredentialForResource(rootUser);
     }
 
 }

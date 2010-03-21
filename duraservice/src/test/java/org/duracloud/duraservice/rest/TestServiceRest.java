@@ -2,6 +2,8 @@ package org.duracloud.duraservice.rest;
 
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -15,6 +17,8 @@ import org.duracloud.services.beans.ComputeServiceBean;
 import org.duracloud.services.util.ServiceSerializer;
 import org.duracloud.services.util.XMLServiceSerializerImpl;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +49,10 @@ public class TestServiceRest
 
         servicesAdmin = new ServicesAdminClient();
         servicesAdmin.setBaseURL(servicesAdminBaseURL);
-        servicesAdmin.setRester(new RestHttpHelper());
+        servicesAdmin.setRester(getAuthorizedRestHelper());
     }
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private static RestHttpHelper restHelper = getAuthorizedRestHelper();
 
     private static String baseUrl;
 
@@ -311,5 +315,29 @@ public class TestServiceRest
             serializer = new XMLServiceSerializerImpl();
         }
         return serializer;
+    }
+
+    private static RestHttpHelper getAuthorizedRestHelper() {
+        return new RestHttpHelper(getRootCredential());
+    }
+
+    private static Credential getRootCredential() {
+        UnitTestDatabaseUtil dbUtil = null;
+        try {
+            dbUtil = new UnitTestDatabaseUtil();
+        } catch (Exception e) {
+            System.err.println("ERROR from unitTestDB: " + e.getMessage());
+        }
+
+        Credential rootCredential = null;
+        try {
+            ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+                DuraCloudUserType.ROOT);
+            rootCredential = dbUtil.findCredentialForResource(rootUser);
+        } catch (Exception e) {
+            System.err.print("ERROR getting credential: " + e.getMessage());
+
+        }
+        return rootCredential;
     }
 }

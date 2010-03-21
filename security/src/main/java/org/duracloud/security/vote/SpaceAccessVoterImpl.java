@@ -1,0 +1,37 @@
+package org.duracloud.security.vote;
+
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ContentStoreManager;
+import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.SystemUserCredential;
+import org.duracloud.error.ContentStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author Andrew Woods
+ *         Date: Mar 12, 2010
+ */
+public class SpaceAccessVoterImpl extends SpaceAccessVoter {
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
+    protected ContentStore getContentStore(String host,
+                                           String port,
+                                           String storeId) {
+        ContentStoreManager storeMgr = new ContentStoreManagerImpl(host, port);
+        storeMgr.login(new SystemUserCredential());
+        ContentStore store = null;
+        try {
+            if (null == storeId) {
+                store = storeMgr.getPrimaryContentStore();
+            } else {
+                store = storeMgr.getContentStore(storeId);
+            }
+        } catch (ContentStoreException e) {
+            log.warn("Unable to get content-store: " + e.getMessage());
+        } finally {
+            storeMgr.logout();
+        }
+        return store;
+    }
+}
