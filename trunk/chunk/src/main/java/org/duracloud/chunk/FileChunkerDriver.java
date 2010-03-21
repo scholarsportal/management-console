@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -20,12 +21,12 @@ import org.duracloud.chunk.writer.FilesystemContentWriter;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.error.ContentStoreException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -187,10 +188,11 @@ public class FileChunkerDriver {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args)
-        throws IOException, NotFoundException, ContentStoreException {
+    public static void main(String[] args) throws Exception {
 
         CommandLine cmd = parseArgs(args);
+
+        ensureWritePermissionToLocalDir();
 
         // Where will content be written?
         ContentWriter writer;
@@ -256,6 +258,23 @@ public class FileChunkerDriver {
 
         } else {
             usage();
+        }
+    }
+
+    private static void ensureWritePermissionToLocalDir() throws Exception {
+        try {
+            File tmp = new File("remove-me.txt");
+            FileOutputStream fos = new FileOutputStream(tmp);
+            fos.write("hello".getBytes());
+            IOUtils.closeQuietly(fos);
+            FileUtils.deleteQuietly(tmp);
+        } catch (IOException e) {
+            String border = "\n---------------------------------------------\n";
+            StringBuilder sb = new StringBuilder(border);
+            sb.append("User must have permissions to write to the current " +
+                "working directory.");
+            sb.append(border);
+            throw new Exception(sb.toString(), e);
         }
     }
 
