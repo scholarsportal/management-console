@@ -1,6 +1,5 @@
 package org.duracloud.duraservice.rest;
 
-import junit.framework.TestCase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
@@ -20,6 +19,11 @@ import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,8 +39,7 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public class TestServiceRest
-        extends TestCase {
+public class TestServiceRest {
 
     private static String configFileName = "test-duraservice.properties";
     private static ServicesAdminClient servicesAdmin;   
@@ -64,9 +67,8 @@ public class TestServiceRest
 
     private static final String testServiceId = "0";
 
-    @Override
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         baseUrl = RestTestHelper.getBaseUrl();
         servicesUrl = baseUrl + "/services";
 
@@ -75,9 +77,8 @@ public class TestServiceRest
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
-    @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         try {
             undeployService(deploymentId);
         } catch(Exception e) {

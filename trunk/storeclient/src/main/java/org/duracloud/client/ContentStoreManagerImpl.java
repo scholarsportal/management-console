@@ -1,6 +1,7 @@
 package org.duracloud.client;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Bill Branan
  */
 public class ContentStoreManagerImpl implements ContentStoreManager {
+    private final Logger log = Logger.getLogger(this.getClass());
 
     private static final String DEFAULT_CONTEXT = "durastore";
 
@@ -65,6 +67,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
      * {@inheritDoc}
      */
     public Map<String, ContentStore> getContentStores() throws ContentStoreException {
+        log.debug("getContentStores()");
         StorageAccountManager acctManager = getStorageAccounts();
         Map<String, StorageAccount> accounts = acctManager.getStorageAccounts();
         Map<String, ContentStore> contentStores =
@@ -103,10 +106,12 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
     }
 
     public void login(Credential appCred) {
+        log.debug("login: "+appCred.getUsername());
         restHelper = new RestHttpHelper(appCred);
     }
 
     public void logout() {
+        log.debug("logout");
         restHelper = new RestHttpHelper();
     }
 

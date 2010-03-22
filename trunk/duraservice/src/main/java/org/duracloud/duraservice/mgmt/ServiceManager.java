@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.SystemUserCredential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
@@ -212,7 +213,10 @@ public class ServiceManager {
             new ContentStoreManagerImpl(serviceStore.getHost(),
                                         serviceStore.getPort(),
                                         serviceStore.getContext());
+        
+        storeManager.login(new SystemUserCredential());
         setServiceContentStore(storeManager.getPrimaryContentStore());
+        storeManager.logout();
 
         refreshServicesList();
     }
@@ -223,8 +227,9 @@ public class ServiceManager {
      */
     protected void refreshServicesList() {
         String servicesSpaceId = serviceStore.getSpaceId();
+        String configFileName = servicesSpaceId + ".xml";
+        log.debug("refreshing services list: "+configFileName);
         try {
-            String configFileName = servicesSpaceId+".xml";
             Content servicesInfoFile =
                 serviceStoreClient.getContent(servicesSpaceId, configFileName);
             List<ServiceInfo> services =
@@ -271,6 +276,7 @@ public class ServiceManager {
 
         List<ServiceInfo> availableServices = new ArrayList<ServiceInfo>();
         for(ServiceInfo service : services) {
+            log.debug("service: " + service.getContentId() + " available?");
             // Determine if service has an available deployment option
             boolean availDeployment = false;
             for(DeploymentOption depOp : service.getDeploymentOptions()) {
@@ -290,6 +296,7 @@ public class ServiceManager {
             }
         }
 
+        log.debug("getAvailableServices(): "+availableServices.size());
         return availableServices;
     }
 
