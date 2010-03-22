@@ -16,13 +16,12 @@
   <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
-
-
   
   <!-- Map URLs to Controllers -->
   <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
+        <prop key="/login">loginController</prop>
         <prop key="/init.htm">initController</prop>
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
@@ -50,6 +49,8 @@
   </bean>
   
   <!-- Request Controllers - processes request -->
+  <bean id="loginController" class="org.duracloud.duradmin.control.LoginController"/>
+
   <bean id="initController" class="org.duracloud.duradmin.control.InitController">
     <property name="contentStoreProvider" ref="contentStoreProvider"/>  
   </bean>

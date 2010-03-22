@@ -16,21 +16,12 @@
 			<tiles:putAttribute name="body">
 				<table>
 					<tr>
-						<td style="width:50%">
+						<td >
 							<h3>Getting Started with Duracloud</h3>
 							<p>
 								The best way to get started with Duracloud is by 
 								<a href="<c:url value="/spaces/add"/>">adding a new space</a>.
 							</p>							
-						</td>
-						<td>
-							<h3>My Duracloud</h3>
-							<p>
-								We might display some useful information about 
-								the current size, scope, activity of this 
-								installation.  
-							</p>							
-						
 						</td>
 					</tr>
 				</table>

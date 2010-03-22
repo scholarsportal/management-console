@@ -19,7 +19,7 @@
 	<definition name="base-header" template="/WEB-INF/jsp/layout/base-header.jsp" />
 
 
-
+   
 	<definition name="base-content-header" template="/WEB-INF/jsp/layout/base-content-header.jsp">
 		<put-attribute name="title"/>	
 		<put-attribute name="subtitle" />	
@@ -29,6 +29,8 @@
 		<put-attribute name="header"/>	
 		<put-attribute name="body" />	
 	</definition>
+
+    <definition name="login" template="/WEB-INF/jsp/login.jsp" extends="base"/>
 
 	<definition name="init" template="/WEB-INF/jsp/init.jsp"/>
 
