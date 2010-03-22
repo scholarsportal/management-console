@@ -2,11 +2,12 @@ package org.duracloud.duraservice.mgmt;
 
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.SystemUserCredential;
 import org.duracloud.duraservice.domain.ServiceComputeInstance;
 import org.duracloud.duraservice.domain.UserStore;
+import org.duracloud.error.ContentStoreException;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
@@ -68,6 +69,8 @@ public class ServiceConfigUtil {
             new ContentStoreManagerImpl(userStore.getHost(),
                                         userStore.getPort(),
                                         userStore.getContext());
+
+        storeManager.login(new SystemUserCredential());
         setUserContentStoreManager(storeManager);
     }
 
@@ -84,6 +87,7 @@ public class ServiceConfigUtil {
     public ServiceInfo populateService(ServiceInfo service,
                                        List<ServiceComputeInstance> serviceComputeInstances,
                                        String primaryHostName) {
+        log.debug("populateService: "+service.getContentId());
         // Perform a deep clone of the service (includes all configs and deployments)
         ServiceInfo srvClone = service.clone();
 

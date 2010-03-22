@@ -77,7 +77,7 @@ public abstract class SpaceAccessVoter implements AccessDecisionVoter {
             return ContentStore.AccessType.CLOSED;
         }
 
-        if (spaceId.equals("spaces")) {
+        if (spaceId.equals("spaces") || spaceId.equals("stores")) {
             return ContentStore.AccessType.OPEN;
         }
 
