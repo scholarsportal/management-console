@@ -1,14 +1,15 @@
 
 package org.duracloud.duradmin.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 public class FileDataTest {
 

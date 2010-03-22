@@ -1,6 +1,8 @@
 
 package org.duracloud.duradmin.webflow.content;
 
+import java.io.IOException;
+
 import org.duracloud.duradmin.contentstore.ContentStoreProviderTestBase;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
@@ -12,8 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 public class AddContentItemActionTest
         extends ContentStoreProviderTestBase {
