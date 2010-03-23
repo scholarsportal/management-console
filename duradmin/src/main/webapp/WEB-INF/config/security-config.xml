@@ -5,26 +5,15 @@
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
   <beans:bean id="authenticationProcessingFilter"
-    class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
+              class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
     <beans:property name="authenticationManager" ref="authenticationManager" />
     <beans:property name="authenticationFailureUrl" value="/login?login_error=1" />
     <beans:property name="defaultTargetUrl" value="/" />
     <beans:property name="filterProcessesUrl" value="/j_spring_security_check" />
   </beans:bean>
-  <beans:bean id="authenticationManager"
-    class="org.springframework.security.providers.ProviderManager">
-    <beans:property name="providers">
-      <beans:list>
-        <beans:ref bean="authenticationProvider" />
-      </beans:list>
-    </beans:property>
-  </beans:bean>
-  <beans:bean id="authenticationProvider"
-    class="org.duracloud.duradmin.security.ContentStoreAuthenticationProvider">
-    <custom-authentication-provider />
-    <beans:property name="contentStoreManager" ref="contentStoreManager" />
-  </beans:bean>
+
   <http>
     <intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <intercept-url pattern="/style/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -34,11 +23,17 @@
     <http-basic />
     <logout />
   </http>
-  <!--
-    this user service is really just a placeholder: the spring security
-    configuration seems to require that there be one user service defined in association
-    with an authentication-provider.
-  -->
-  <beans:bean id="userService" class="org.duracloud.duradmin.security.DummyUserService" />
-  <authentication-provider user-service-ref="userService" />
+
+  <authentication-manager alias="authenticationManager"/>
+
+  <!-- temporary, hard-coded usernames/passwords/roles -->
+  <authentication-provider>
+    <user-service>
+      <user name="root" password="rpw" authorities="ROLE_USER, ROLE_ADMIN, ROLE_ROOT"/>
+      <user name="system" password="spw" authorities="ROLE_USER, ROLE_ADMIN"/>
+      <user name="admin" password="apw" authorities="ROLE_USER, ROLE_ADMIN"/>
+      <user name="user" password="upw" authorities="ROLE_USER"/>
+    </user-service>
+  </authentication-provider>
+
 </beans:beans>
