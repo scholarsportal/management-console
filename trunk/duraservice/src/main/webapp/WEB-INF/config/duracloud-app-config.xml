@@ -12,6 +12,7 @@
     of the application
   -->
   <import resource="restapi-config.xml" />
+  <import resource="security-config.xml" />
   
   <!-- Domain Beans -->
   <bean id="serviceResource" class="org.duracloud.duraservice.rest.ServiceResource">
