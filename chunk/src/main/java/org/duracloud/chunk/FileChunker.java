@@ -13,15 +13,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ExceptionUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.DigestInputStream;
 import java.util.Collection;
 import java.util.List;
@@ -139,8 +131,9 @@ public class FileChunker {
 
         log.debug("loading file: " + contentId + "[" + fileSize + "]");
         if (fileSize <= maxChunkSize) {
+            BufferedInputStream buffStream = new BufferedInputStream(stream);
             ChunkInputStream chunk = new ChunkInputStream(contentId,
-                                                          stream,
+                                                          buffStream,
                                                           fileSize,
                                                           preserveChunkMD5s);
 
