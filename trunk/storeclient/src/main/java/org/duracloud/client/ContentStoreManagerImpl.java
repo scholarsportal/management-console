@@ -28,7 +28,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
 
     private String baseURL = null;
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private RestHttpHelper restHelper;
 
     /**
      * <p>Constructor for ContentStoreManagerImpl.</p>
@@ -76,9 +76,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         while (acctIDs.hasNext()) {
             String acctID = acctIDs.next();
             StorageAccount acct = accounts.get(acctID);
-            ContentStore contentStore =
-                new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
-            contentStores.put(acctID, contentStore);
+            contentStores.put(acctID, newContentStoreImpl(acct));
         }
         return contentStores;
     }
@@ -89,9 +87,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
     public ContentStore getContentStore(String storeID) throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getStorageAccount(storeID);
-        ContentStore contentStore =
-            new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
-        return contentStore;
+        return newContentStoreImpl(acct);
     }
 
     /**
@@ -100,19 +96,17 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
     public ContentStore getPrimaryContentStore() throws ContentStoreException {
         StorageAccountManager acctManager = getStorageAccounts();
         StorageAccount acct = acctManager.getPrimaryStorageAccount();
-        ContentStore contentStore =
-            new ContentStoreImpl(baseURL, acct.getType(), acct.getId(), restHelper);
-        return contentStore;
+        return newContentStoreImpl(acct);
     }
 
     public void login(Credential appCred) {
         log.debug("login: "+appCred.getUsername());
-        restHelper = new RestHttpHelper(appCred);
+        setRestHelper(new RestHttpHelper(appCred));
     }
 
     public void logout() {
         log.debug("logout");
-        restHelper = new RestHttpHelper();
+        setRestHelper(new RestHttpHelper());
     }
 
     private StorageAccountManager getStorageAccounts() throws ContentStoreException {
@@ -120,7 +114,7 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         HttpResponse response;
         String error = "Error retrieving content stores. ";
         try {
-            response = restHelper.get(url);
+            response = getRestHelper().get(url);
             if (response.getStatusCode() == HttpStatus.SC_OK) {
                 String storesXML = response.getResponseBody();
                 if (storesXML != null) {
@@ -138,5 +132,23 @@ public class ContentStoreManagerImpl implements ContentStoreManager {
         } catch (Exception e) {
             throw new ContentStoreException(error + e.getMessage(), e);
         }
+    }
+
+    private ContentStore newContentStoreImpl(StorageAccount acct) {
+        return new ContentStoreImpl(baseURL,
+                                    acct.getType(),
+                                    acct.getId(),
+                                    getRestHelper());
+    }
+
+    private RestHttpHelper getRestHelper() {
+        if (null == restHelper) {
+            restHelper = new RestHttpHelper();
+        }
+        return restHelper;
+    }
+
+    private void setRestHelper(RestHttpHelper restHelper) {
+        this.restHelper = restHelper;
     }
 }

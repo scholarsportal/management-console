@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.client.error.ServicesException;
 import org.duracloud.client.error.UnexpectedResponseException;
+import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -39,7 +40,7 @@ public class ServicesManager {
 
     private String baseURL = null;
 
-    private static RestHttpHelper restHelper = new RestHttpHelper();
+    private RestHttpHelper restHelper;
 
     public ServicesManager(String host, String port) {
         this(host, port, DEFAULT_CONTEXT);
@@ -115,7 +116,7 @@ public class ServicesManager {
 
     private List<ServiceInfo> getServices(String url) throws ServicesException {
         try {
-            HttpResponse response = restHelper.get(url);
+            HttpResponse response = getRestHelper().get(url);
             checkResponse(response, HttpStatus.SC_OK);
             InputStream servicesXml = response.getResponseStream();
 
@@ -143,7 +144,7 @@ public class ServicesManager {
         throws NotFoundException, ServicesException {
         String url = buildServiceURL(serviceId);
         try {
-            HttpResponse response = restHelper.get(url);
+            HttpResponse response = getRestHelper().get(url);
             checkResponse(response, HttpStatus.SC_OK);
             InputStream serviceXml = response.getResponseStream();
 
@@ -172,7 +173,7 @@ public class ServicesManager {
         throws NotFoundException, ServicesException {
         String url = buildDeployedServiceURL(serviceId, deploymentId);
         try {
-            HttpResponse response = restHelper.get(url);
+            HttpResponse response = getRestHelper().get(url);
             checkResponse(response, HttpStatus.SC_OK);
             InputStream serviceXml = response.getResponseStream();
 
@@ -201,7 +202,7 @@ public class ServicesManager {
         throws NotFoundException, ServicesException {
         String url = buildDeployedServicePropsURL(serviceId, deploymentId);
         try {
-            HttpResponse response = restHelper.get(url);
+            HttpResponse response = getRestHelper().get(url);
             checkResponse(response, HttpStatus.SC_OK);
             String responseBody = response.getResponseBody();
             return SerializationUtil.deserializeMap(responseBody);
@@ -250,7 +251,7 @@ public class ServicesManager {
         String serviceXml = configDoc.getServiceAsXML(serviceToDeploy);
         
         try {
-            HttpResponse response = restHelper.put(url, serviceXml, null);
+            HttpResponse response = getRestHelper().put(url, serviceXml, null);
             checkResponse(response, HttpStatus.SC_CREATED);
             String responseBody =
                 response.getResponseHeader("Location").getValue();
@@ -296,7 +297,7 @@ public class ServicesManager {
         String serviceXml = configDoc.getServiceAsXML(serviceForConfig);
 
         try {
-            HttpResponse response = restHelper.post(url, serviceXml, null);
+            HttpResponse response = getRestHelper().post(url, serviceXml, null);
             checkResponse(response, HttpStatus.SC_OK);
         } catch (NotFoundException e) {
             throw e;
@@ -319,7 +320,7 @@ public class ServicesManager {
         throws NotFoundException, ServicesException {
         String url = buildDeployedServiceURL(serviceId, deploymentId);
         try {
-            HttpResponse response = restHelper.delete(url);
+            HttpResponse response = getRestHelper().delete(url);
             checkResponse(response, HttpStatus.SC_OK);
         } catch (NotFoundException e) {
             throw e;
@@ -363,6 +364,22 @@ public class ServicesManager {
         }
     }
 
+    public void login(Credential credential) {
+        setRestHelper(new RestHttpHelper(credential));
+    }
 
+    public void logout() {
+        setRestHelper(new RestHttpHelper());
+    }
 
+    private RestHttpHelper getRestHelper() {
+        if (null == restHelper) {
+            restHelper = new RestHttpHelper();
+        }
+        return restHelper;
+    }
+
+    private void setRestHelper(RestHttpHelper restHelper) {
+        this.restHelper = restHelper;
+    }
 }
