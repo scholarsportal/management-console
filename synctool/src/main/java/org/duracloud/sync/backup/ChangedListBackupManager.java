@@ -1,6 +1,7 @@
-package org.duracloud.sync.mgmt;
+package org.duracloud.sync.backup;
 
 import org.duracloud.sync.util.DirectoryUtil;
+import org.duracloud.sync.mgmt.ChangedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,8 @@ public class ChangedListBackupManager implements Runnable {
 
     private final Logger logger =
         LoggerFactory.getLogger(ChangedListBackupManager.class);
+
+    public static final int SAVED_BACKUPS = 3;
 
     private File backupDir;
     private long backupFrequency;
@@ -37,10 +40,41 @@ public class ChangedListBackupManager implements Runnable {
         continueBackup = true;
     }
 
+    /**
+     * Attempts to reload the changed list from a backup file. If there are
+     * no backup files or the backup file cannot be read, returns -1, otherwise
+     * the backup file is loaded and the time the backup file was written is
+     * returned.
+     *
+     * @return the write time of the backup file, or -1 if no backup is available 
+     */
+    public long loadBackup() {
+        long backupTime = -1;
+        File[] backupDirFiles = getSortedBackupDirFiles();
+        if(backupDirFiles.length > 0) {
+            File latestBackup = backupDirFiles[0];
+            try {
+                backupTime = Long.parseLong(latestBackup.getName());
+                changedList.restore(latestBackup);
+            } catch(NumberFormatException e) {
+                logger.error("Unable to load changed list backup. File in " +
+                    "changed list backup dir has invalid name: " +
+                    latestBackup.getName());
+                backupTime = -1;
+            }
+        }
+        return backupTime;
+    }
+
+    /**
+     * Runs the backup manager. Writes out files which are a backups of the
+     * changed list based on the set backup frequency. Retains SAVED_BACKUPS
+     * number of backup files, removes the rest.
+     */
     public void run() {
         while(continueBackup) {
             if(changedListVersion < changedList.getVersion()) {
-                cleanupBackupDir(3);
+                cleanupBackupDir(SAVED_BACKUPS);
                 String filename = String.valueOf(System.currentTimeMillis());
                 File persistFile = new File(backupDir, filename);
                 changedListVersion = changedList.persist(persistFile);
@@ -58,13 +92,16 @@ public class ChangedListBackupManager implements Runnable {
      * Removes all but the most recent backup files
      */
     private void cleanupBackupDir(int keep) {
-        File[] backupDirFiles =
-            DirectoryUtil.listFilesSortedByModDate(backupDir);
+        File[] backupDirFiles = getSortedBackupDirFiles();
         if(backupDirFiles.length > keep) {
             for(int i=keep; i<backupDirFiles.length; i++) {
                 backupDirFiles[i].delete();
             }
         }
+    }
+
+    private File[] getSortedBackupDirFiles() {
+        return DirectoryUtil.listFilesSortedByModDate(backupDir);
     }
 
     public void endBackup() {

@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.List;
 
 /**
+ * Monitors of local file system directories for changes.
+ *
  * @author: Bill Branan
  * Date: Mar 12, 2010
  */
@@ -19,6 +21,13 @@ public class DirectoryUpdateMonitor {
 
     private FilesystemMonitor monitor;
 
+    /**
+     * Creates a directory update monitor which, when started, will notify
+     * on changes within the given directories.
+     *
+     * @param directories to monitor
+     * @param pollFrequency how often the monitor should look for changes
+     */
     public DirectoryUpdateMonitor(List<File> directories, long pollFrequency) {
         monitor = new FilesystemMonitor(pollFrequency);
 
@@ -35,6 +44,9 @@ public class DirectoryUpdateMonitor {
         }
     }
 
+    /**
+     * Starts the monitor watching for updates.
+     */
     public void startMonitor() {
         logger.info("Starting Directory Update Monitor");
         try {
@@ -44,7 +56,11 @@ public class DirectoryUpdateMonitor {
         }
     }
 
+    /**
+     * Stops the monitor, no further updates will be reported.
+     */
     public void stopMonitor() {
+        logger.info("Stopping Directory Update Monitor");
         try {
             monitor.stop();
         } catch(Exception e) {

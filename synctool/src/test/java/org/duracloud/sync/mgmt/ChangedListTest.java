@@ -1,11 +1,11 @@
 package org.duracloud.sync.mgmt;
 
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import org.duracloud.sync.SyncTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.duracloud.sync.mgmt.ChangedList;
 
 import java.io.File;
 
@@ -14,22 +14,19 @@ import java.io.File;
  * @author: Bill Branan
  * Date: Mar 19, 2010
  */
-public class ChangedListTest {
+public class ChangedListTest extends SyncTestBase {
 
-    private ChangedList changedList;
     private File changedFile;
 
     @Before
     public void setUp() throws Exception {
-        changedList = ChangedList.getInstance();
-        assertNull(changedList.getChangedFile());
-
+        super.setUp();
         changedFile = File.createTempFile("changed", "file");
     }
 
     @After
     public void tearDown() throws Exception {
-        assertNull(changedList.getChangedFile());
+        super.tearDown();
         changedFile.delete();
     }
 
