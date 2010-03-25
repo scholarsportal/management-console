@@ -6,6 +6,9 @@ import org.duracloud.sync.mgmt.ChangedList;
 import java.io.File;
 
 /**
+ * Handles update notifications from the Directory Update Monitor by adding
+ * the changed files to the ChangedList.
+ *
  * @author: Bill Branan
  * Date: Mar 12, 2010
  */

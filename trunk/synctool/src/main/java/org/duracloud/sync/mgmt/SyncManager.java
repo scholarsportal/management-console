@@ -1,6 +1,5 @@
 package org.duracloud.sync.mgmt;
 
-import org.duracloud.sync.endpoint.DuraStoreSyncEndpoint;
 import org.duracloud.sync.endpoint.SyncEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * The SyncManager is responsible to watch for new entries in the ChangedList
+ * and make sure those changes are pushed to the SyncEndpoint.
+ *
  * @author: Bill Branan
  * Date: Mar 15, 2010
  */
@@ -18,36 +20,50 @@ public class SyncManager implements ChangeHandler {
     private final Logger logger = LoggerFactory.getLogger(SyncManager.class);
 
     private ChangeWatcher changeWatcher;
-    private ChangedListBackupManager backupManager;
     private SyncEndpoint endpoint;
     private ExecutorService execPool;
 
-    public SyncManager(int threads, File backupDir, long frequency) {
+    /**
+     * Creates a SyncManager which, when started, will watch for updates to
+     * the ChangedList and kick off SyncWorkers to handle any changed files.
+     *
+     * @param endpoint
+     * @param threads
+     * @param frequency
+     */
+    public SyncManager(SyncEndpoint endpoint, int threads, long frequency) {
         logger.info("Starting Sync Manager with " + threads + " threads");
-        endpoint = new DuraStoreSyncEndpoint();
+        this.endpoint = endpoint;
         changeWatcher = new ChangeWatcher(ChangedList.getInstance(),
                                           this,
                                           frequency);
-        backupManager = new ChangedListBackupManager(ChangedList.getInstance(),
-                                                     backupDir,
-                                                     frequency);
-        
-        // Create thread pool for workers, changeWatcher, and backupManager
-        execPool = Executors.newFixedThreadPool(threads + 2);
+
+        // Create thread pool for workers and changeWatcher
+        execPool = Executors.newFixedThreadPool(threads + 1);
     }
 
+    /**
+     * Allows the SyncManager to begin watching for updates to the ChangedList
+     */
     public void beginSync() {
         execPool.execute(changeWatcher);
-        execPool.execute(backupManager);
     }
 
+    /**
+     * Stops the sync, no further changed files will be handled after those
+     * which are in progress have completed.
+     */
     public void endSync() {
         logger.info("Closing Sync Manager, ending sync");
         changeWatcher.endWatch();
-        backupManager.endBackup();
         execPool.shutdown();
     }
 
+    /**
+     * Notifies the SyncManager that a file has changed
+     *
+     * @param changedFile the changed file
+     */
     public void fileChanged(File changedFile) {
         execPool.execute(new SyncWorker(changedFile, endpoint));
     }    

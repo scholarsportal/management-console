@@ -1,7 +1,6 @@
-package org.duracloud.sync.mgmt;
+package org.duracloud.sync.util;
 
 import static junit.framework.Assert.assertTrue;
-import org.duracloud.sync.util.DirectoryUtil;
 import org.junit.Test;
 
 import java.io.File;

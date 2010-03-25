@@ -1,4 +1,4 @@
-package org.duracloud.sync;
+package org.duracloud.sync.walker;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
@@ -12,6 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Handles the walking of a set of directory trees. Each file found in the
+ * tree is added to the changed file list. This is the starting point
+ * for synchronization.
+ *
  * @author: Bill Branan
  * Date: Mar 17, 2010
  */

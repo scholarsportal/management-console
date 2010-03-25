@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 /**
+ * The list of files which have been changed.
+ *
  * @author: Bill Branan
  * Date: Mar 15, 2010
  */
@@ -72,6 +74,12 @@ public class ChangedList {
         return listVersion;
     }
 
+    /**
+     * Writes out the current state of the ChangeList to the given file.
+     *
+     * @param persistFile file to write state to
+     * @return the version ID of the ChangedList which was persisted
+     */
     public long persist(File persistFile) {
         try {
             FileOutputStream fileStream = new FileOutputStream(persistFile);
@@ -93,6 +101,11 @@ public class ChangedList {
         }
     }
 
+    /**
+     * Restores the state of the ChangedList using the given backup file
+     *
+     * @param persistFile file containing previous state
+     */
     public void restore(File persistFile) {
         try {
             FileInputStream fileStream = new FileInputStream(persistFile);
