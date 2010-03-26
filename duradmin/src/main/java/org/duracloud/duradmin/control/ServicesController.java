@@ -1,27 +1,19 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.ServiceCommand;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 public class ServicesController
         extends BaseFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
-
-    protected ControllerSupport controllerSupport = new ControllerSupport();
-
-    protected ServicesManager getServicesManager() throws Exception {
-        return controllerSupport.getServicesManager();
-    }
 
     public ServicesController() {
         setCommandClass(ServiceCommand.class);

@@ -1,19 +1,13 @@
 
 package org.duracloud.duradmin.webflow.service;
 
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.duracloud.client.ServicesManager;
 import org.duracloud.client.error.InvalidServiceConfigurationException;
+import org.duracloud.client.error.InvalidServiceConfigurationException.ValidationError;
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.client.error.ServicesException;
-import org.duracloud.client.error.InvalidServiceConfigurationException.ValidationError;
-import org.duracloud.duradmin.control.ControllerSupport;
 import org.duracloud.duradmin.util.ServiceInfoUtil;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
@@ -23,12 +17,23 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+
 public class DeployServiceAction
         implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private static Log log = LogFactory.getLog(DeployServiceAction.class);
+
+    private ServicesManager servicesManager;
+
+    public DeployServiceAction(ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     public DeploymentOption chooseDeploymentOption(RequestContext request)
             throws Exception {
@@ -77,8 +82,7 @@ public class DeployServiceAction
 
     private int deployService(ServiceInfo serviceInfo,
                               DeploymentOption deploymentOption)
-            throws ServicesException, NotFoundException, Exception {
-        ControllerSupport cs = new ControllerSupport();
+            throws ServicesException, NotFoundException {
         int id = serviceInfo.getId();
         String version = serviceInfo.getUserConfigVersion();
         String message =
@@ -89,12 +93,10 @@ public class DeployServiceAction
                                 deploymentOption);
 
         log.info(message);
-        int deploymentId =
-                cs.getServicesManager()
-                        .deployService(id,
-                                       version,
-                                       serviceInfo.getUserConfigs(),
-                                       deploymentOption);
+        int deploymentId = servicesManager.deployService(id,
+                                                         version,
+                                                         serviceInfo.getUserConfigs(),
+                                                         deploymentOption);
         message =
                 MessageFormat
                         .format("deployed service [id={0}, userConfigVersion={1}, deploymentOption[{2},] -  id returned: [{3}] ",
@@ -165,7 +167,7 @@ public class DeployServiceAction
     }
 
     private void reconfigure(ServiceInfo serviceInfo, Deployment deployment)
-            throws ServicesException, NotFoundException, Exception {
+        throws ServicesException, NotFoundException {
         int id = serviceInfo.getId();
         String version = serviceInfo.getUserConfigVersion();
         String message =
@@ -175,11 +177,10 @@ public class DeployServiceAction
                                 version,
                                 deployment);
         log.info(message);
-        ControllerSupport cs = new ControllerSupport();
-        cs.getServicesManager().updateServiceConfig(id,
-                                     deployment.getId(),
-                                     version,
-                                     deployment.getUserConfigs());
+        servicesManager.updateServiceConfig(id,
+                                            deployment.getId(),
+                                            version,
+                                            deployment.getUserConfigs());
         message =
                 MessageFormat
                         .format("updated configuration for serviceInfo(id={0}, userConfigVersion={1}, deploymentOption={2})",

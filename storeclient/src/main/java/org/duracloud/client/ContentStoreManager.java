@@ -1,6 +1,5 @@
 package org.duracloud.client;
 
-import org.duracloud.common.model.Credential;
 import org.duracloud.error.ContentStoreException;
 
 import java.util.Map;
@@ -36,16 +35,4 @@ public interface ContentStoreManager {
      * @throws if the content store cannot be retrieved
      */
     public ContentStore getPrimaryContentStore() throws ContentStoreException;
-
-    /**
-     * This method supplies user credentials to the application to access
-     * durastore.
-     * @param appCred of user
-     */
-    public void login(Credential appCred);
-
-    /**
-     * This method clears any previously logged-in credentials.
-     */
-    public void logout();
 }

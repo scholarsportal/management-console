@@ -1,44 +1,25 @@
 
 package org.duracloud.duradmin.contentstore;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.error.ContentStoreException;
 
 public class ContentStoreSelector {
 
     private String selectedId;
 
-    private ContentStoreManager contentStoreManager;
-
     public void setSelectedId(String selectedId) {
         this.selectedId = selectedId;
     }
 
-    public String getSelectedId() throws ContentStoreException {
-        if (this.selectedId == null) {
-            ContentStore store =
-                    this.contentStoreManager.getPrimaryContentStore();
+    public String getSelectedId(ContentStoreManager contentStoreManager)
+        throws ContentStoreException {
+        if (selectedId == null) {
+            ContentStore store = contentStoreManager.getPrimaryContentStore();
             setSelectedId(store.getStoreId());
         }
-        return this.selectedId;
-    }
-
-    public ContentStoreManager getContentStoreManager() {
-        return contentStoreManager;
-    }
-
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.contentStoreManager = contentStoreManager;
-    }
-
-    public List<ContentStore> getContentStores() throws ContentStoreException {
-        List<ContentStore> stores = new ArrayList<ContentStore>();
-        stores.addAll(this.contentStoreManager.getContentStores().values());
-        return stores;
+        return selectedId;
     }
 
 }

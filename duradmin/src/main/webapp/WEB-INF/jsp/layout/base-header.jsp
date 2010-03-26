@@ -38,14 +38,13 @@
 
 			<tiles:importAttribute name="currentUrl" />
 			<c:if test="${not empty contentStoreProvider}">
-				<c:set var="contentStoreSelector" value="${contentStoreProvider.contentStoreSelector}"/>
 
 				<form  action="<c:url value="/changeProvider"/>" method="POST">
 					<input type="hidden" name="returnTo" value="<c:url value="/spaces.htm"/>"/>
 					<spring:message code="storageProviders"/>:
 					<select name="storageProviderId" onchange="submit();">
-						<c:forEach var="storeOption" items="${contentStoreSelector.contentStores}">
-							<option value="${storeOption.storeId}" <c:if test="${contentStoreSelector.selectedId == storeOption.storeId}">selected</c:if> >
+						<c:forEach var="storeOption" items="${contentStoreProvider.contentStores}">
+							<option value="${storeOption.storeId}" <c:if test="${contentStoreProvider.selectedContentStoreId == storeOption.storeId}">selected</c:if> >
 								<spring:message code="${fn:toLowerCase(storeOption.storageProviderType)}"/>
 							</option>
 						</c:forEach>

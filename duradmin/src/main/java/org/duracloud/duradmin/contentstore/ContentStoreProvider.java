@@ -2,8 +2,11 @@
 package org.duracloud.duradmin.contentstore;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.error.ContentStoreException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContentStoreProvider {
 
@@ -11,24 +14,32 @@ public class ContentStoreProvider {
 
     private ContentStoreSelector contentStoreSelector;
 
-    public ContentStoreSelector getContentStoreSelector() {
-        return contentStoreSelector;
-    }
-
-    public void setContentStoreSelector(ContentStoreSelector contentStoreSelector) {
+    public ContentStoreProvider(ContentStoreManager contentStoreManager,
+                                ContentStoreSelector contentStoreSelector) {
+        this.contentStoreManager = contentStoreManager;
         this.contentStoreSelector = contentStoreSelector;
     }
 
-    public ContentStoreManager getContentStoreManager() {
-        return contentStoreManager;
+    public String getSelectedContentStoreId() throws ContentStoreException {
+        return contentStoreSelector.getSelectedId(contentStoreManager);
+    }
+
+    public void setSelectedContentStoreId(String storeId) {
+        contentStoreSelector.setSelectedId(storeId);
+    }
+
+    public ContentStore getContentStore() throws ContentStoreException {
+        String contentStoreId = getSelectedContentStoreId();
+        return this.contentStoreManager.getContentStore(contentStoreId);
+    }
+
+    public List<ContentStore> getContentStores() throws ContentStoreException {
+        List<ContentStore> stores = new ArrayList<ContentStore>();
+        stores.addAll(this.contentStoreManager.getContentStores().values());
+        return stores;        
     }
 
     public void setContentStoreManager(ContentStoreManager contentStoreManager) {
         this.contentStoreManager = contentStoreManager;
-    }
-
-    public ContentStore getContentStore() throws ContentStoreException {
-        String contentStoreId = this.contentStoreSelector.getSelectedId();
-        return this.contentStoreManager.getContentStore(contentStoreId);
     }
 }

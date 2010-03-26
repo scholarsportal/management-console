@@ -1,18 +1,17 @@
 
 package org.duracloud.duradmin.control;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.duracloud.duradmin.contentstore.ContentStoreSelector;
 import org.duracloud.duradmin.domain.StorageProvider;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.springframework.binding.message.Message;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ChangeProviderController
         extends BaseCommandController {
@@ -35,9 +34,7 @@ public class ChangeProviderController
             throw new IllegalArgumentException("Storage Provider ID must be provided.");
         }
 
-        ContentStoreSelector selector =
-                getContentStoreProvider().getContentStoreSelector();
-        selector.setSelectedId(storageProviderId);
+        getContentStoreProvider().setSelectedContentStoreId(storageProviderId);
         Message message =
                 MessageUtils
                         .createMessage("Successfully modified storage provider.");

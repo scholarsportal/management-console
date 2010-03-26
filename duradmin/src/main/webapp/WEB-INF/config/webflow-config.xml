@@ -14,12 +14,11 @@
   </bean>
   
   <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry" />
-
   
   <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
 	<webflow:flow-location id="spaces/add"  path="/WEB-INF/config/flows/add-space-flow.xml" />
 	<webflow:flow-location id="contents/add"  path="/WEB-INF/config/flows/add-content-item-flow.xml" />
-    <webflow:flow-location id="services/deploy"  path="/WEB-INF/config/flows/deploy-service-flow.xml" />
+  <webflow:flow-location id="services/deploy"  path="/WEB-INF/config/flows/deploy-service-flow.xml" />
 
   </webflow:flow-registry>
   
@@ -67,9 +66,14 @@
   </bean>
 
   <!-- deploy service configuration --> 
-  <bean name="services/deploy" class="org.duracloud.duradmin.webflow.service.DeployServiceFlowHandler" />
-  <bean name="deployServiceAction" class="org.duracloud.duradmin.webflow.service.DeployServiceAction">
+  <bean name="services/deploy" class="org.duracloud.duradmin.webflow.service.DeployServiceFlowHandler" >
+    <constructor-arg ref="servicesManager"/>
   </bean>
+
+  <bean name="deployServiceAction" class="org.duracloud.duradmin.webflow.service.DeployServiceAction">
+    <constructor-arg ref="servicesManager"/>
+  </bean>
+
   <bean name="serviceConfigurationValidator" class="org.duracloud.duradmin.webflow.service.ServiceConfigurationValidator">
   </bean>
 

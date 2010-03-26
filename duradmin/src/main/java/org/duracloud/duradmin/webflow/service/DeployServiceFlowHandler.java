@@ -1,30 +1,22 @@
 
 package org.duracloud.duradmin.webflow.service;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.duracloud.duradmin.control.ControllerSupport;
+import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
 import org.duracloud.serviceconfig.Deployment;
-import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
-import org.duracloud.serviceconfig.Deployment.Status;
-import org.duracloud.serviceconfig.DeploymentOption.State;
-import org.duracloud.serviceconfig.user.TextUserConfig;
-import org.duracloud.serviceconfig.user.UserConfig;
 import org.springframework.binding.message.Message;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.mvc.servlet.AbstractFlowHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class DeployServiceFlowHandler
         extends AbstractFlowHandler {
@@ -38,7 +30,11 @@ public class DeployServiceFlowHandler
 
     private static Log log = LogFactory.getLog(DeployServiceFlowHandler.class);
 
-    private ControllerSupport controllerSupport = new ControllerSupport();
+    private ServicesManager servicesManager;
+
+    public DeployServiceFlowHandler(ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     @Override
     public MutableAttributeMap createExecutionInputMap(HttpServletRequest request) {
@@ -79,7 +75,7 @@ public class DeployServiceFlowHandler
     }
 
     private ServiceInfo getService(int serviceId) throws Exception {
-        ServiceInfo s = controllerSupport.getServicesManager().getService(serviceId);
+        ServiceInfo s = servicesManager.getService(serviceId);
         return s;
     }
 

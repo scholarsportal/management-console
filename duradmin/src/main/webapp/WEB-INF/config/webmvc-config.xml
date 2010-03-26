@@ -37,7 +37,7 @@
         <prop key="/spaces/metadata/add">addMetadataController</prop>
         <prop key="/spaces/metadata/remove">removeMetadataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
-		<prop key="/changeProvider">changeProviderController</prop>
+        <prop key="/changeProvider">changeProviderController</prop>
         <prop key="/services/">servicesController</prop>
         <prop key="/services/undeploy">undeployServiceController</prop>
         <prop key="/data/services/deployment/properties">serviceDeploymentPropertiesController</prop>
@@ -51,77 +51,37 @@
   <!-- Request Controllers - processes request -->
   <bean id="loginController" class="org.duracloud.duradmin.control.LoginController"/>
 
-  <bean id="initController" class="org.duracloud.duradmin.control.InitController">
-    <property name="contentStoreProvider" ref="contentStoreProvider"/>  
-  </bean>
+  <bean id="initController" class="org.duracloud.duradmin.control.InitController" parent="baseFormController"/>
+  <bean id="servicesController" class="org.duracloud.duradmin.control.ServicesController" parent="baseFormController"/>
 
-  <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
-  </bean>
-
-  <bean id="changeProviderController" class="org.duracloud.duradmin.control.ChangeProviderController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-
-  <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
+  <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController" parent="baseFormController">
     <property name="successView" value="spaces" />
   </bean>
 
-  <bean id="changeSpaceAccessController" class="org.duracloud.duradmin.control.ChangeSpaceAccessController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
+  <bean id="contentController" class="org.duracloud.duradmin.control.ContentController" parent="baseFormController">
+    <property name="successView" value="content" />
   </bean>
-
-  <bean id="removeSpaceController" class="org.duracloud.duradmin.control.RemoveSpaceController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-  <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
+  
+  <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController" parent="baseCommandController">
     <property name="successView" value="contents" />
   </bean>
-  
-  <bean id="removeContentController" class="org.duracloud.duradmin.control.RemoveContentController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-  
-  <bean id="contentController" class="org.duracloud.duradmin.control.ContentController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-    <property name="successView" value="content" />  
+
+  <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
+    <constructor-arg ref="controllerSupport"/>
   </bean>
 
-  <bean id="addTagController" class="org.duracloud.duradmin.control.AddTagController">
-    <property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-  <bean id="removeTagController" class="org.duracloud.duradmin.control.RemoveTagController">
-    <property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-  <bean id="addMetadataController" class="org.duracloud.duradmin.control.AddMetadataController">
-    <property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-  <bean id="removeMetadataController" class="org.duracloud.duradmin.control.RemoveMetadataController">
-    <property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-
-  <bean id="contentItemDataController" class="org.duracloud.duradmin.control.ContentItemDataController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-  <bean id="spaceDataController" class="org.duracloud.duradmin.control.SpaceDataController">
-  	<property name="contentStoreProvider" ref="contentStoreProvider"/>
-  </bean>
-
-
-  <bean id="servicesController" class="org.duracloud.duradmin.control.ServicesController">
-  </bean>  
-  <bean id="undeployServiceController" class="org.duracloud.duradmin.control.UndeployServiceController">
-  </bean>
-  
-  <bean id="serviceDeploymentPropertiesController" class="org.duracloud.duradmin.control.ServiceDeploymentPropertiesController"/>
+  <bean id="changeProviderController" class="org.duracloud.duradmin.control.ChangeProviderController" parent="baseCommandController"/>
+  <bean id="changeSpaceAccessController" class="org.duracloud.duradmin.control.ChangeSpaceAccessController" parent="baseCommandController"/>
+  <bean id="removeSpaceController" class="org.duracloud.duradmin.control.RemoveSpaceController" parent="baseCommandController"/>
+  <bean id="removeContentController" class="org.duracloud.duradmin.control.RemoveContentController" parent="baseCommandController"/>
+  <bean id="addTagController" class="org.duracloud.duradmin.control.AddTagController" parent="baseCommandController"/>
+  <bean id="removeTagController" class="org.duracloud.duradmin.control.RemoveTagController" parent="baseCommandController"/>
+  <bean id="addMetadataController" class="org.duracloud.duradmin.control.AddMetadataController" parent="baseCommandController"/>
+  <bean id="removeMetadataController" class="org.duracloud.duradmin.control.RemoveMetadataController" parent="baseCommandController"/>
+  <bean id="contentItemDataController" class="org.duracloud.duradmin.control.ContentItemDataController" parent="baseCommandController"/>
+  <bean id="spaceDataController" class="org.duracloud.duradmin.control.SpaceDataController" parent="baseCommandController"/>
+  <bean id="undeployServiceController" class="org.duracloud.duradmin.control.UndeployServiceController" parent="baseCommandController"/>
+  <bean id="serviceDeploymentPropertiesController" class="org.duracloud.duradmin.control.ServiceDeploymentPropertiesController" parent="baseCommandController"/>
   
   
     <bean id="tilesConfigurer"

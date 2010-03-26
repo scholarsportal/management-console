@@ -1,18 +1,17 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.duracloud.duradmin.domain.ServiceCommand;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ServiceDeploymentPropertiesController
         extends BaseCommandController {
@@ -30,8 +29,7 @@ public class ServiceDeploymentPropertiesController
                                   Object command,
                                   BindException errors) throws Exception {
         ServiceCommand params = (ServiceCommand) command;
-        ControllerSupport cs = new ControllerSupport();
-        Map<String,String> props = cs.getServicesManager().getDeployedServiceProps(params.getServiceInfoId(),params.getDeploymentId());
+        Map<String,String> props = getServicesManager().getDeployedServiceProps(params.getServiceInfoId(),params.getDeploymentId());
         
         List<Map<String,String>> propList = new LinkedList<Map<String,String>>();
         for(String key : props.keySet()){

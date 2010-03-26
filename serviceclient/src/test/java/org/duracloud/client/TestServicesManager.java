@@ -42,7 +42,7 @@ public class TestServicesManager
     @Override
     @Before
     protected void setUp() throws Exception {
-        servicesManager = new ServicesManager(host, getPort());
+        servicesManager = new ServicesManagerImpl(host, getPort());
         assertNotNull(servicesManager.getBaseURL());
     }
 

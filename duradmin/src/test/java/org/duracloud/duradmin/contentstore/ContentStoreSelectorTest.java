@@ -1,33 +1,37 @@
 
 package org.duracloud.duradmin.contentstore;
 
-import java.util.List;
-
 import org.duracloud.client.ContentStore;
+import org.duracloud.error.ContentStoreException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Collection;
 
 public class ContentStoreSelectorTest
         extends ContentStoreProviderTestBase {
 
     @Test
     public void testSelectStore() throws Exception {
-        ContentStoreSelector selector =
-                this.contentStoreProvider.getContentStoreSelector();
-        Assert.assertNotNull(selector);
-        String storeId = selector.getSelectedId();
+        String storeId = this.contentStoreProvider.getSelectedContentStoreId();
         Assert.assertNotNull(storeId);
-        List<ContentStore> stores = selector.getContentStores();
-        for (ContentStore store : stores) {
+        for (ContentStore store : getContentStores()) {
             String sId = store.getStoreId();
             if (sId != storeId) {
                 Assert.assertNotSame(sId, contentStoreProvider
                         .getContentStore().getStoreId());
-                selector.setSelectedId(sId);
+                this.contentStoreProvider.setSelectedContentStoreId(sId);
                 Assert.assertSame(sId, contentStoreProvider.getContentStore()
                         .getStoreId());
                 break;
             }
         }
+    }
+
+    private Collection<ContentStore> getContentStores() throws ContentStoreException {
+        Collection<ContentStore> stores = contentStoreProvider.getContentStores();
+        Assert.assertNotNull(stores);
+        Assert.assertTrue(stores.size() > 0);
+        return stores;
     }
 }
