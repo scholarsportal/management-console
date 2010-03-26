@@ -1,5 +1,6 @@
 package org.duracloud.client;
 
+import org.duracloud.common.model.Securable;
 import org.duracloud.error.ContentStoreException;
 
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public interface ContentStoreManager {
+public interface ContentStoreManager extends Securable {
 
     /**
      * <p>getContentStores</p>
