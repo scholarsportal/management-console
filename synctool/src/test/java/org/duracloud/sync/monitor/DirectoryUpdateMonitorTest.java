@@ -60,7 +60,7 @@ public class DirectoryUpdateMonitorTest extends SyncTestBase {
     }
 
     private void checkFileInChangedList(File file) throws Exception {
-        Thread.sleep(200);
+        Thread.sleep(1000);
         File changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
         assertEquals(file.getAbsolutePath(), changedFile.getAbsolutePath());

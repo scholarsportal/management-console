@@ -29,7 +29,7 @@ public class SyncTestBase {
 
     protected File createTempDir(String dirName) {
         File tempDir = new File(System.getProperty("java.io.tmpdir") +
-                           File.pathSeparator + dirName);
+                           File.separator + dirName);
         if(!tempDir.exists()) {
             tempDir.mkdir();
         }
