@@ -135,8 +135,8 @@ public class DuracloudContentWriter implements ContentWriter {
 
         if (md5 != null) {
             result.setMd5(md5);
+            result.setState(AddContentResult.State.SUCCESS);
         }
-        result.setState(AddContentResult.State.SUCCESS);
 
         results.add(result);
     }
