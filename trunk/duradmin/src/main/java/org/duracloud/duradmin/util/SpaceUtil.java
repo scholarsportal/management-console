@@ -1,20 +1,19 @@
 
 package org.duracloud.duradmin.util;
 
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
-
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.common.web.EncodeUtil;
-import org.duracloud.duradmin.control.ControllerSupport;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.ContentMetadata;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.domain.SpaceMetadata;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.serviceconfig.ServiceInfo;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides utility methods for spaces.
@@ -46,21 +45,24 @@ public class SpaceUtil {
     public static void populateContentItem(ContentItem contentItem,
                                            String spaceId,
                                            String contentId,
-                                           ContentStore store)
+                                           ContentStore store,
+                                           ServicesManager servicesManager)
             throws ContentStoreException {
         Map<String, String> contentMetadata =
                 store.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
         contentItem.setExtendedMetadata(contentMetadata);
-        populateURLs(contentItem, store);
+        populateURLs(contentItem, store, servicesManager);
         
     }
-    
-    public static void populateURLs(ContentItem contentItem, ContentStore store){
+
+    private static void populateURLs(ContentItem contentItem,
+                                     ContentStore store,
+                                     ServicesManager servicesManager) {
         String mimetype = contentItem.getMetadata().getMimetype();
         String j2KBaseURL = null;
-        j2KBaseURL = resolveJ2KServiceBaseURL();
+        j2KBaseURL = resolveJ2KServiceBaseURL(servicesManager);
         if(j2KBaseURL != null && mimetype.toLowerCase().startsWith("image/")){
             contentItem.setTinyThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 1));
             contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 2));
@@ -108,19 +110,24 @@ public class SpaceUtil {
      * Returns the j2k service base URL if the service is running
      * @return null if the J2K Service is not running
      */
-    private static String resolveJ2KServiceBaseURL() {
+    private static String resolveJ2KServiceBaseURL(ServicesManager servicesManager) {
+        int deploymentId;
+        Map<String, String> props;
         try {
-            ControllerSupport cs = new ControllerSupport();
-            ServicesManager sm = cs.getServicesManager();
-            List<ServiceInfo> serviceInfos = sm.getDeployedServices();
-            for(ServiceInfo serviceInfo : serviceInfos){
-                if(serviceInfo.getContentId().toLowerCase().contains("j2k") && serviceInfo.getDeploymentCount() > 0){
-                    int deploymentId = serviceInfo.getDeployments().get(0).getId();
-                    Map<String,String> props = sm.getDeployedServiceProps(serviceInfo.getId(), deploymentId);
+            List<ServiceInfo> serviceInfos = servicesManager.getDeployedServices();
+            for (ServiceInfo serviceInfo : serviceInfos) {
+
+                if (serviceInfo.getContentId().toLowerCase().contains("j2k") &&
+                    serviceInfo.getDeploymentCount() > 0) {
+
+                    deploymentId = serviceInfo.getDeployments().get(0).getId();
+                    props = servicesManager.getDeployedServiceProps(serviceInfo.getId(),
+                                                                    deploymentId);
+
                     return props.get("url");
                 }
             }
-            
+
             return null;
         } catch (Exception e) {
             // TODO Auto-generated catch block

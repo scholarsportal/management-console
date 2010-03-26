@@ -1,9 +1,6 @@
 
 package org.duracloud.duradmin.control;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ServicesManager;
@@ -11,11 +8,13 @@ import org.duracloud.duradmin.domain.ServiceCommand;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class UndeployServiceController
         extends BaseCommandController {
 
     protected final Log log = LogFactory.getLog(getClass());
-    private ControllerSupport controllerSupport = new ControllerSupport();
     public UndeployServiceController() {
         setCommandClass(ServiceCommand.class);
         setCommandName("service");
@@ -30,7 +29,7 @@ public class UndeployServiceController
         ServiceCommand serviceCommand = (ServiceCommand) command;
         try {
             log.info("attempting to undeploy " + serviceCommand);
-            ServicesManager servicesManager = controllerSupport.getServicesManager();
+            ServicesManager servicesManager = getServicesManager();
             servicesManager.undeployService(serviceCommand.getServiceInfoId(), 
                                             serviceCommand.getDeploymentId());
             log.info("successfully undeployed " + serviceCommand);

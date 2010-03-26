@@ -1,20 +1,29 @@
 
 package org.duracloud.duradmin.contentstore;
 
+import org.duracloud.error.ContentStoreException;
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.util.Assert;
 
 public class ContentStoreProviderTest
         extends ContentStoreProviderTestBase {
 
     @Test
-    public void testGetContentStoreSelector() {
-        Assert.notNull(this.contentStoreProvider.getContentStoreSelector());
+    public void testGetContentStoreSelector() throws ContentStoreException {
+        String selectedId = this.contentStoreProvider.getSelectedContentStoreId();
+        Assert.assertNotNull(selectedId);
+
+        String newSelectedId = "new-store-id";
+        this.contentStoreProvider.setSelectedContentStoreId(newSelectedId);
+
+        selectedId = this.contentStoreProvider.getSelectedContentStoreId();
+        Assert.assertNotNull(selectedId);
+        Assert.assertEquals(newSelectedId, selectedId);
     }
 
     @Test
     public void testGetContentStore() throws Exception {
-        Assert.notNull(this.contentStoreProvider.getContentStore());
+        Assert.assertNotNull(this.contentStoreProvider.getContentStore());
     }
 
 }

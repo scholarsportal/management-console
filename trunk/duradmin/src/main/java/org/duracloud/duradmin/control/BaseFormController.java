@@ -1,24 +1,24 @@
 
 package org.duracloud.duradmin.control;
 
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.duracloud.client.ContentStore;
+import org.duracloud.client.ServicesManager;
+import org.duracloud.duradmin.contentstore.ContentStoreProvider;
+import org.duracloud.error.ContentStoreException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
-import org.duracloud.duradmin.contentstore.ContentStoreProvider;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import java.util.List;
 
 public abstract class BaseFormController
         extends SimpleFormController {
 
     protected final Logger log = Logger.getLogger(getClass());
 
-    private ControllerSupport controllerSupport = new ControllerSupport();
+    private ControllerSupport controllerSupport;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request,
@@ -36,12 +36,15 @@ public abstract class BaseFormController
         return controllerSupport.getContentStoreProvider();
     }
 
-    public void setContentStoreProvider(ContentStoreProvider contentStoreProvider) {
-        this.controllerSupport.setContentStoreProvider(contentStoreProvider);
-    }
-
     protected List<String> getSpaces() throws Exception {
         return controllerSupport.getSpaces();
     }
 
+    protected ServicesManager getServicesManager() throws Exception {
+        return controllerSupport.getServicesManager();
+    }
+
+    public void setControllerSupport(ControllerSupport controllerSupport) {
+        this.controllerSupport = controllerSupport;
+    }
 }

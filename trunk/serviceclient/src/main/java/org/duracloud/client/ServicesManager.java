@@ -1,20 +1,11 @@
 package org.duracloud.client;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.client.error.ServicesException;
-import org.duracloud.client.error.UnexpectedResponseException;
-import org.duracloud.common.model.Credential;
-import org.duracloud.common.util.SerializationUtil;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
-import org.duracloud.serviceconfig.ServicesConfigDocument;
 import org.duracloud.serviceconfig.user.UserConfig;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -23,75 +14,9 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public class ServicesManager {
+public interface ServicesManager {
 
-    private static enum ServicesList {
-        DEPLOYED ("deployed"),
-        AVAILABLE ("available");
-
-        public String type;
-
-        ServicesList(String type) {
-            this.type = type;
-        }
-    }
-
-    private static final String DEFAULT_CONTEXT = "duraservice";
-
-    private String baseURL = null;
-
-    private RestHttpHelper restHelper;
-
-    public ServicesManager(String host, String port) {
-        this(host, port, DEFAULT_CONTEXT);
-    }
-
-    public ServicesManager(String host, String port, String context) {
-        if (host == null || host.equals("")) {
-            throw new IllegalArgumentException("Host must be a valid " +
-                                               "server host name");
-        }
-
-        if (context == null) {
-            context = DEFAULT_CONTEXT;
-        }
-
-        if (port == null || port.equals("")) {
-            baseURL = "http://" + host + "/" + context;
-        } else {
-            baseURL = "http://" + host + ":" + port + "/" + context;
-        }
-    }
-
-    public String getBaseURL() {
-        return baseURL;
-    }
-
-    private String buildURL(String relativeURL) {
-        return baseURL + relativeURL;
-    }
-
-    private String buildGetServicesURL(ServicesList servicesList) {
-        if(servicesList == null) {
-            servicesList = ServicesList.AVAILABLE;
-        }
-        return buildURL("/services?show=" + servicesList.type);
-    }
-
-    private String buildServiceURL(int serviceId) {
-        return buildURL("/services/" + serviceId);
-    }
-
-    private String buildDeployedServiceURL(int serviceId,
-                                           int deploymentId) {
-        return buildURL("/services/" + serviceId + "/" + deploymentId);
-    }
-
-    private String buildDeployedServicePropsURL(int serviceId,
-                                                int deploymentId) {
-        return buildURL("/services/" + serviceId + "/" + deploymentId +
-            "/properties");
-    }
+    public String getBaseURL();
 
     /**
      * Provides a listing of available services, that is, services which
@@ -100,9 +25,7 @@ public class ServicesManager {
      * @return List of available services
      * @throws ServicesException if available services cannot be retrieved
      */
-    public List<ServiceInfo> getAvailableServices() throws ServicesException {
-        return getServices(buildGetServicesURL(ServicesList.AVAILABLE));
-    }
+    public List<ServiceInfo> getAvailableServices() throws ServicesException;
 
     /**
      * Provides a listing of all deployed services.
@@ -110,23 +33,7 @@ public class ServicesManager {
      * @return List of deployed services
      * @throws ServicesException if deployed services cannot be retrieved
      */
-    public List<ServiceInfo> getDeployedServices() throws ServicesException {
-        return getServices(buildGetServicesURL(ServicesList.DEPLOYED));
-    }
-
-    private List<ServiceInfo> getServices(String url) throws ServicesException {
-        try {
-            HttpResponse response = getRestHelper().get(url);
-            checkResponse(response, HttpStatus.SC_OK);
-            InputStream servicesXml = response.getResponseStream();
-
-            ServicesConfigDocument configDoc = new ServicesConfigDocument();
-            return configDoc.getServiceList(servicesXml);
-        } catch (Exception e) {
-            throw new ServicesException("Could not get spaces due to: " +
-                                        e.getMessage(), e);
-        }
-    }
+    public List<ServiceInfo> getDeployedServices() throws ServicesException;
 
     /**
      * Gets a service. This includes configuration options and deployment
@@ -141,22 +48,7 @@ public class ServicesManager {
      * @throws ServicesException if the service cannot be retrieved
      */
     public ServiceInfo getService(int serviceId)
-        throws NotFoundException, ServicesException {
-        String url = buildServiceURL(serviceId);
-        try {
-            HttpResponse response = getRestHelper().get(url);
-            checkResponse(response, HttpStatus.SC_OK);
-            InputStream serviceXml = response.getResponseStream();
-
-            ServicesConfigDocument configDoc = new ServicesConfigDocument();
-            return configDoc.getService(serviceXml);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServicesException("Could not get service" + serviceId +
-                                        " due to: " + e.getMessage(), e);
-        }
-    }
+        throws NotFoundException, ServicesException;
 
     /**
      * Gets a deployed service. This includes the selected configuration
@@ -170,23 +62,7 @@ public class ServicesManager {
      * @throws ServicesException if the service cannot be retrieved
      */
     public ServiceInfo getDeployedService(int serviceId, int deploymentId)
-        throws NotFoundException, ServicesException {
-        String url = buildDeployedServiceURL(serviceId, deploymentId);
-        try {
-            HttpResponse response = getRestHelper().get(url);
-            checkResponse(response, HttpStatus.SC_OK);
-            InputStream serviceXml = response.getResponseStream();
-
-            ServicesConfigDocument configDoc = new ServicesConfigDocument();
-            return configDoc.getService(serviceXml);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            String error = "Could not get deployment " + deploymentId +
-                " for service " + serviceId + " due to: " + e.getMessage();
-            throw new ServicesException(error, e);
-        }
-    }
+        throws NotFoundException, ServicesException;
 
     /**
      * Gets runtime properties for a deployed service.
@@ -199,22 +75,7 @@ public class ServicesManager {
      */
     public Map<String, String> getDeployedServiceProps(int serviceId,
                                                        int deploymentId)
-        throws NotFoundException, ServicesException {
-        String url = buildDeployedServicePropsURL(serviceId, deploymentId);
-        try {
-            HttpResponse response = getRestHelper().get(url);
-            checkResponse(response, HttpStatus.SC_OK);
-            String responseBody = response.getResponseBody();
-            return SerializationUtil.deserializeMap(responseBody);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            String error = "Could not get properties for deployment " +
-                deploymentId + " of service " + serviceId +
-                " due to: " + e.getMessage();
-            throw new ServicesException(error, e);
-        }
-    }
+        throws NotFoundException, ServicesException;
 
     /**
      * Deploys a service.
@@ -231,45 +92,7 @@ public class ServicesManager {
                              String userConfigVersion,
                              List<UserConfig> userConfigs,
                              DeploymentOption deploymentSelection)
-        throws NotFoundException, ServicesException {
-        String url = buildServiceURL(serviceId);
-
-        String hostName = null;
-        if(deploymentSelection != null) {
-            hostName = deploymentSelection.getHostname();
-            if(hostName != null) {
-                url += ("?serviceHost=" + hostName);
-            }
-        }
-
-        // Create service for deployment
-        ServiceInfo serviceToDeploy = new ServiceInfo();
-        serviceToDeploy.setUserConfigs(userConfigs);
-        serviceToDeploy.setUserConfigVersion(userConfigVersion);
-
-        ServicesConfigDocument configDoc = new ServicesConfigDocument();
-        String serviceXml = configDoc.getServiceAsXML(serviceToDeploy);
-        
-        try {
-            HttpResponse response = getRestHelper().put(url, serviceXml, null);
-            checkResponse(response, HttpStatus.SC_CREATED);
-            String responseBody =
-                response.getResponseHeader("Location").getValue();
-            return extractDeploymentId(responseBody);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServicesException("Could not deploy service " + serviceId +
-                                        " to host " + hostName +
-                                        " due to: " + e.getMessage(), e);
-        }
-    }
-
-    private int extractDeploymentId(String deploymentUrl) {
-        String[] deploymentUrlSplit = deploymentUrl.split("/");
-        String depId = deploymentUrlSplit[deploymentUrlSplit.length-1];
-        return Integer.valueOf(depId);
-    }
+        throws NotFoundException, ServicesException;
 
     /**
      * Updates the configuration of a deployed service.
@@ -285,27 +108,7 @@ public class ServicesManager {
                                     int deploymentId,
                                     String userConfigVersion,
                                     List<UserConfig> userConfigs)
-        throws NotFoundException, ServicesException {
-        String url = buildDeployedServiceURL(serviceId, deploymentId);
-
-        // Create service for config update
-        ServiceInfo serviceForConfig = new ServiceInfo();
-        serviceForConfig.setUserConfigs(userConfigs);
-        serviceForConfig.setUserConfigVersion(userConfigVersion);
-
-        ServicesConfigDocument configDoc = new ServicesConfigDocument();
-        String serviceXml = configDoc.getServiceAsXML(serviceForConfig);
-
-        try {
-            HttpResponse response = getRestHelper().post(url, serviceXml, null);
-            checkResponse(response, HttpStatus.SC_OK);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServicesException("Could not undeploy service " + serviceId +
-                                        " due to: " + e.getMessage(), e);
-        }
-    }
+        throws NotFoundException, ServicesException;
 
     /**
      * UnDeploys a service.
@@ -317,69 +120,6 @@ public class ServicesManager {
      */
     public void undeployService(int serviceId,
                                 int deploymentId)
-        throws NotFoundException, ServicesException {
-        String url = buildDeployedServiceURL(serviceId, deploymentId);
-        try {
-            HttpResponse response = getRestHelper().delete(url);
-            checkResponse(response, HttpStatus.SC_OK);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServicesException("Could not undeploy service " + serviceId +
-                                        " due to: " + e.getMessage(), e);
-        }
-    }
+        throws NotFoundException, ServicesException;
 
-    private void checkResponse(HttpResponse response, int expectedCode)
-            throws NotFoundException, ServicesException {
-        if (response == null) {
-            throw new ServicesException("Could not complete request due to " +
-                                        "error: Response was null.");
-        }
-        int statusCode = response.getStatusCode();
-        if (statusCode != expectedCode) {
-            String errorMessage;
-            try {
-                errorMessage = response.getResponseBody();
-            } catch(IOException e) {
-                errorMessage = "";
-            }
-
-            if(statusCode == HttpStatus.SC_NOT_FOUND) {
-                throw new NotFoundException(errorMessage);
-            } else {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Could not complete request due to error: ");
-                builder.append("Response code was ");
-                builder.append(statusCode);
-                builder.append(", expected value was ");
-                builder.append(expectedCode);
-                builder.append(". Error message: ");
-                builder.append(errorMessage);
-                throw new UnexpectedResponseException(builder.toString(),
-                                                      statusCode,
-                                                      expectedCode,
-                                                      errorMessage);
-            }
-        }
-    }
-
-    public void login(Credential credential) {
-        setRestHelper(new RestHttpHelper(credential));
-    }
-
-    public void logout() {
-        setRestHelper(new RestHttpHelper());
-    }
-
-    private RestHttpHelper getRestHelper() {
-        if (null == restHelper) {
-            restHelper = new RestHttpHelper();
-        }
-        return restHelper;
-    }
-
-    private void setRestHelper(RestHttpHelper restHelper) {
-        this.restHelper = restHelper;
-    }
 }

@@ -1,9 +1,7 @@
-
 package org.duracloud.duradmin.control;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ServicesManager;
-import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.error.ContentStoreException;
@@ -17,9 +15,16 @@ import java.util.List;
 public class ControllerSupport {
 
     private ContentStoreProvider contentStoreProvider;
+    private ServicesManager servicesManager;
+
+    public ControllerSupport(ContentStoreProvider contentStoreProvider,
+                             ServicesManager servicesManager) {
+        this.contentStoreProvider = contentStoreProvider;
+        this.servicesManager = servicesManager;
+    }
 
     public ContentStore getContentStore() throws ContentStoreException {
-        return contentStoreProvider.getContentStore();
+        return getContentStoreProvider().getContentStore();
     }
 
     public ContentStoreProvider getContentStoreProvider() {
@@ -43,12 +48,20 @@ public class ControllerSupport {
         return modelAndView;
     }
 
-    public ServicesManager getServicesManager() throws Exception {
-        ServicesManager servicesManager =
-            new ServicesManager(DuradminConfig.getDuraServiceHost(),
-                                DuradminConfig.getDuraServicePort(),
-                                DuradminConfig.getDuraServiceContext());
+    /**
+     * This method returns the current service-manager.
+     * It is highly suggested that callers of this method not cache the object
+     * returned here, since subsequent service-host/port/context updates will
+     * render the cached object obsolete.
+     *
+     * @return
+     * @throws Exception
+     */
+    public ServicesManager getServicesManager() {
         return servicesManager;
     }
 
+    public void setServicesManager(ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 }

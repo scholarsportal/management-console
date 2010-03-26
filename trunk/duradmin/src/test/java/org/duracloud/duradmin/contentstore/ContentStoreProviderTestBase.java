@@ -1,6 +1,7 @@
 
 package org.duracloud.duradmin.contentstore;
 
+import org.duracloud.client.ContentStoreManager;
 import org.duracloud.duradmin.mock.contentstore.MockContentStoreManagerFactoryImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -11,14 +12,11 @@ public class ContentStoreProviderTestBase {
 
     @Before
     public void setUp() throws Exception {
-        this.contentStoreProvider = new ContentStoreProvider();
-        this.contentStoreProvider
-                .setContentStoreManager(new MockContentStoreManagerFactoryImpl()
-                        .create());
-        ContentStoreSelector selector = new ContentStoreSelector();
-        selector.setContentStoreManager(this.contentStoreProvider
-                .getContentStoreManager());
-        this.contentStoreProvider.setContentStoreSelector(selector);
+        ContentStoreManager contentStoreManager = new MockContentStoreManagerFactoryImpl()
+            .create();
+        ContentStoreSelector contentStoreSelector = new ContentStoreSelector();
+        this.contentStoreProvider = new ContentStoreProvider(contentStoreManager,
+                                                             contentStoreSelector);
     }
 
     @After
