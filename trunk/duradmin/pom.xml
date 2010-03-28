@@ -280,6 +280,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- mock objects -->
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- selenium integration testing -->
     <dependency>
       <groupId>org.seleniumhq.selenium.client-drivers</groupId>

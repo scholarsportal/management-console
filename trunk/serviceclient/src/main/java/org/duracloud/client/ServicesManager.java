@@ -2,6 +2,7 @@ package org.duracloud.client;
 
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.client.error.ServicesException;
+import org.duracloud.common.model.Securable;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.user.UserConfig;
@@ -14,7 +15,7 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public interface ServicesManager {
+public interface ServicesManager extends Securable {
 
     public String getBaseURL();
 

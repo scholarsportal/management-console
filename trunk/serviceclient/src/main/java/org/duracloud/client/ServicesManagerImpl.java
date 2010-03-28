@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public class ServicesManagerImpl implements ServicesManager, Securable{
+public class ServicesManagerImpl implements ServicesManager, Securable {
 
     private static enum ServicesList {
         DEPLOYED ("deployed"),

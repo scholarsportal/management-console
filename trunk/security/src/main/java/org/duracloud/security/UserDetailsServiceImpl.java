@@ -6,6 +6,9 @@ import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class acts as the repository of username/password/role info for access
  * to this DuraCloud application.
@@ -15,6 +18,8 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
  *         Date: Mar 11, 2010
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private Map<String, User> usersTable;
 
     /**
      * This method retrieves UserDetails for all users from a flat file in
@@ -29,5 +34,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         throws UsernameNotFoundException, DataAccessException {
 
         return new User("", "", true, true, true, true, null);
+    }
+
+    public void setUsers(List<User> users) {
     }
 }

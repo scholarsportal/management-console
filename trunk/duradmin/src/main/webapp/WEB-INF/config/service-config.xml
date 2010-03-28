@@ -19,7 +19,7 @@
 
 
   
-  <bean id="contentStoreManager"  factory-bean="contentStoreManagerFactory" factory-method="create" />
+  <bean id="contentStoreManagerTarget"  factory-bean="contentStoreManagerFactory" factory-method="create" />
 
   <bean id="contentStoreSelector" class="org.duracloud.duradmin.contentstore.ContentStoreSelector"
         scope="session">
@@ -31,7 +31,7 @@
     <constructor-arg ref="contentStoreSelector" />
   </bean>
 
-  <bean id="servicesManager" class="org.duracloud.duradmin.services.DuradminServicesManagerImpl"/>
+  <bean id="servicesManagerTarget" class="org.duracloud.duradmin.services.DuradminServicesManagerImpl"/>
 
   <bean id="controllerSupport" class="org.duracloud.duradmin.control.ControllerSupport">
     <constructor-arg ref="contentStoreProvider"/>
