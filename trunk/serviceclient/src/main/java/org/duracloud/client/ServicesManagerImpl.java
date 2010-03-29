@@ -42,6 +42,7 @@ public class ServicesManagerImpl implements ServicesManager, Securable {
     private String baseURL = null;
 
     private RestHttpHelper restHelper;
+    private boolean isLoggedIn = false;
 
     public ServicesManagerImpl(String host, String port) {
         this(host, port, DEFAULT_CONTEXT);
@@ -366,11 +367,17 @@ public class ServicesManagerImpl implements ServicesManager, Securable {
     }
 
     public void login(Credential credential) {
-        setRestHelper(new RestHttpHelper(credential));
+        if (!isLoggedIn) {
+            setRestHelper(new RestHttpHelper(credential));
+            isLoggedIn = true;
+        }
     }
 
     public void logout() {
-        setRestHelper(new RestHttpHelper());
+        if (isLoggedIn) {
+            setRestHelper(new RestHttpHelper());
+            isLoggedIn = false;
+        }
     }
 
     private RestHttpHelper getRestHelper() {
