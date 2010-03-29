@@ -49,6 +49,7 @@ public class DirWalker extends DirectoryWalker {
         }
     }
 
+    @Override
     protected void handleFile(File file, int depth, Collection results) {
         fileList.addChangedFile(file);
     }

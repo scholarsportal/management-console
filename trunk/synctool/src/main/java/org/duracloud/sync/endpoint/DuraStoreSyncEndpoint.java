@@ -20,8 +20,9 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
     private final Logger logger =
         LoggerFactory.getLogger(DuraStoreSyncEndpoint.class);
 
-    public void syncFile(File file) {
-        logger.info("Syncing file " + file.getAbsolutePath() + " to DuraCloud!");        
+    public boolean syncFile(File file, File watchDir) {
+        logger.info("Syncing file " + file.getAbsolutePath() + " to DuraCloud!");
+        return false;
     }
 
     public String computeChecksum(File file) throws FileNotFoundException {

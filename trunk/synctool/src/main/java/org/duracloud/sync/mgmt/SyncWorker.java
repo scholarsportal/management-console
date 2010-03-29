@@ -13,6 +13,7 @@ import java.io.File;
 public class SyncWorker implements Runnable {
 
     private File syncFile;
+    private File watchDir;
     private SyncEndpoint syncEndpoint;
 
     /**
@@ -21,12 +22,13 @@ public class SyncWorker implements Runnable {
      * @param file the file to sync
      * @param endpoint the endpoint to which the file should be synced
      */
-    public SyncWorker(File file, SyncEndpoint endpoint) {
+    public SyncWorker(File file, File watchDir, SyncEndpoint endpoint) {
         this.syncFile = file;
+        this.watchDir = watchDir;
         this.syncEndpoint = endpoint;
     }
 
     public void run() {
-        syncEndpoint.syncFile(syncFile);
+        boolean success = syncEndpoint.syncFile(syncFile, watchDir);
     }
 }

@@ -23,8 +23,10 @@ public interface SyncEndpoint {
      * the same path will be removed at the endpoint (if it exists)
      *
      * @param file local file to sync with the endpoint
+     * @param watchDir the directory under watch in which this file resides
+     * @return true if file was successfully synced, false otherwise
      */
-    public void syncFile(File file);
+    public boolean syncFile(File file, File watchDir);
 
     /**
      * Retrieves a listing of all files available at the endpoint. This list
