@@ -24,17 +24,10 @@
     <logout />
   </http>
 
+  <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager"/>
-
-  <!-- temporary, hard-coded usernames/passwords/roles -->
-  <authentication-provider>
-    <user-service>
-      <user name="root" password="rpw" authorities="ROLE_USER, ROLE_ADMIN, ROLE_ROOT"/>
-      <user name="system" password="spw" authorities="ROLE_USER, ROLE_ADMIN"/>
-      <user name="admin" password="apw" authorities="ROLE_USER, ROLE_ADMIN"/>
-      <user name="user" password="upw" authorities="ROLE_USER"/>
-    </user-service>
-  </authentication-provider>
+  <authentication-provider user-service-ref="userDetailsSvc"/>
+  <beans:bean id="userDetailsSvc" class="org.duracloud.security.UserDetailsServiceImpl"/>
 
   <!-- AOP to log(in/out) ContentStoreMgr and ServicesMgr -->
   <beans:bean id="securityContextUtil" class="org.duracloud.security.context.SecurityContextUtil"/>
