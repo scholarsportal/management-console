@@ -3,11 +3,15 @@ package org.duracloud.client;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.duracloud.client.error.NotFoundException;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.user.Option;
 import org.duracloud.serviceconfig.user.SelectableUserConfig;
 import org.duracloud.serviceconfig.user.TextUserConfig;
 import org.duracloud.serviceconfig.user.UserConfig;
+import org.duracloud.unittestdb.UnitTestDatabaseUtil;
+import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +47,7 @@ public class TestServicesManager
     @Before
     protected void setUp() throws Exception {
         servicesManager = new ServicesManagerImpl(host, getPort());
+        servicesManager.login(getRootCredential());
         assertNotNull(servicesManager.getBaseURL());
     }
 
@@ -203,6 +208,26 @@ public class TestServicesManager
             }
         }
         return null;
+    }
+
+    private static Credential getRootCredential() {
+        UnitTestDatabaseUtil dbUtil = null;
+        try {
+            dbUtil = new UnitTestDatabaseUtil();
+        } catch (Exception e) {
+            System.err.println("ERROR from unitTestDB: " + e.getMessage());
+        }
+
+        Credential rootCredential = null;
+        try {
+            ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+                DuraCloudUserType.ROOT);
+            rootCredential = dbUtil.findCredentialForResource(rootUser);
+        } catch (Exception e) {
+            System.err.print("ERROR getting credential: " + e.getMessage());
+
+        }
+        return rootCredential;
     }
 
 }

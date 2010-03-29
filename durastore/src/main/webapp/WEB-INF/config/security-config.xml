@@ -22,7 +22,7 @@
       'closed' spaces will be handled by the spaceAccessVoter.
      -->
     <intercept-url pattern="/stores" method="POST" access="ROLE_ROOT"/>
-    <intercept-url pattern="/stores" method="GET" access="ROLE_ADMIN"/>
+    <intercept-url pattern="/stores" method="GET" access="ROLE_USER"/>
 
     <intercept-url pattern="/**" method="PUT" access="ROLE_USER"/>
     <intercept-url pattern="/**" method="POST" access="ROLE_USER"/>
