@@ -8,6 +8,7 @@ import org.duracloud.sync.endpoint.SyncEndpoint;
 import org.duracloud.sync.mgmt.SyncManager;
 import org.duracloud.sync.monitor.DirectoryUpdateMonitor;
 import org.duracloud.sync.walker.DirWalker;
+import org.duracloud.sync.walker.RestartDeleteChecker;
 import org.duracloud.sync.walker.RestartDirWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 
 /**
  * Starting point for the Sync Tool. The purpose of this tool is to synchronize
@@ -40,7 +40,7 @@ import java.util.Iterator;
  */
 public class SyncTool {
 
-    private final Logger logger = LoggerFactory.getLogger(SyncToolConfigParser.class);
+    private final Logger logger = LoggerFactory.getLogger(SyncTool.class);
     private SyncToolConfig syncConfig;
     private SyncManager syncManager;
     private SyncBackupManager syncBackupManager;
@@ -55,8 +55,9 @@ public class SyncTool {
     }
 
     private void startSyncManager() {
-        syncEndpoint= new DuraStoreSyncEndpoint();
-        syncManager = new SyncManager(syncEndpoint,
+        syncEndpoint = new DuraStoreSyncEndpoint();
+        syncManager = new SyncManager(syncConfig.getSyncDirs(),
+                                      syncEndpoint,
                                       syncConfig.getNumThreads(),
                                       syncConfig.getPollFrequency());
         syncManager.beginSync();
@@ -83,9 +84,9 @@ public class SyncTool {
     }
 
     private void startDeleteChecker() {
-        Iterator<String> filesList = syncEndpoint.getFilesList();
-        // TODO: Compare filesList to local files to see if any files were
-        //       deleted since the last run of SyncTool.
+        RestartDeleteChecker deleteChecker = new RestartDeleteChecker();
+        deleteChecker.runDeleteChecker(syncEndpoint.getFilesList(),
+                                       syncConfig.getSyncDirs());
     }
 
     private void startDirMonitor() {

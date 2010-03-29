@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,6 +21,7 @@ public class SyncManager implements ChangeHandler {
     private final Logger logger = LoggerFactory.getLogger(SyncManager.class);
 
     private ChangeWatcher changeWatcher;
+    private List<File> watchDirs;
     private SyncEndpoint endpoint;
     private ExecutorService execPool;
 
@@ -31,8 +33,12 @@ public class SyncManager implements ChangeHandler {
      * @param threads
      * @param frequency
      */
-    public SyncManager(SyncEndpoint endpoint, int threads, long frequency) {
+    public SyncManager(List<File> watchDirs,
+                       SyncEndpoint endpoint,
+                       int threads,
+                       long frequency) {
         logger.info("Starting Sync Manager with " + threads + " threads");
+        this.watchDirs = watchDirs;
         this.endpoint = endpoint;
         changeWatcher = new ChangeWatcher(ChangedList.getInstance(),
                                           this,
@@ -65,6 +71,25 @@ public class SyncManager implements ChangeHandler {
      * @param changedFile the changed file
      */
     public void fileChanged(File changedFile) {
-        execPool.execute(new SyncWorker(changedFile, endpoint));
-    }    
+        File watchDir = getWatchDir(changedFile);
+        execPool.execute(new SyncWorker(changedFile, watchDir, endpoint));
+    }
+
+    /*
+     * Determines which of the watched directories includes the changed file
+     */
+    protected File getWatchDir(File changedFile) {
+        for(File watchDir : watchDirs) {
+            File changedFileParent = changedFile.getParentFile();
+            while(changedFileParent != null) {
+                if(changedFileParent.equals(watchDir)) {
+                    return watchDir;
+                } else {
+                    changedFileParent = changedFileParent.getParentFile();
+                }
+            }
+        }
+        throw new RuntimeException("File " + changedFile.getAbsolutePath() +
+                                   " is not in any watched directory");
+    }
 }
