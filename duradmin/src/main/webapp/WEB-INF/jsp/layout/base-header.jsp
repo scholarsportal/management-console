@@ -34,6 +34,8 @@
 		
 		
 		<td id="main-menu-right">
+            <ul id="menu">
+            <li>
 			<tiles:importAttribute name="contentStoreProvider" ignore="true"/>
 
 			<tiles:importAttribute name="currentUrl" />
@@ -51,6 +53,12 @@
 					</select>
 				</form>
 			</c:if>
+            </li>
+
+            <li>
+            <a href='<c:url value="/logout"/>'>logout</a>
+            </li>
+            </ul>
 		</td>
 	</tr>
 </table>

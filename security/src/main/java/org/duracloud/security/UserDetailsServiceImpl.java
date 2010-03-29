@@ -51,19 +51,31 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                                                       grants1);
 
         List<String> grants2 = new ArrayList<String>();
+        grants2.add("ROLE_ADMIN");
         grants2.add("ROLE_USER");
-        SecurityUserBean user2 = new SecurityUserBean("user",
-                                                      "upw",
+        SecurityUserBean user2 = new SecurityUserBean("system",
+                                                      "spw",
                                                       true,
                                                       true,
                                                       true,
                                                       true,
                                                       grants2);
 
+        List<String> grants3 = new ArrayList<String>();
+        grants3.add("ROLE_USER");
+        SecurityUserBean user3 = new SecurityUserBean("user",
+                                                      "upw",
+                                                      true,
+                                                      true,
+                                                      true,
+                                                      true,
+                                                      grants3);
+
         List<SecurityUserBean> users = new ArrayList<SecurityUserBean>();
         users.add(user0);
         users.add(user1);
         users.add(user2);
+        users.add(user3);
         setUsers(users);
     }
 

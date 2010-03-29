@@ -18,10 +18,10 @@
     <intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <intercept-url pattern="/style/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <intercept-url pattern="/**" access="ROLE_USER" />
-    <form-login login-page="/login" />
+    <form-login login-page="/login" always-use-default-target="true"/>
     <anonymous />
     <http-basic />
-    <logout />
+    <logout logout-url="/logout"/>
   </http>
 
   <!-- AuthN Manager -->
