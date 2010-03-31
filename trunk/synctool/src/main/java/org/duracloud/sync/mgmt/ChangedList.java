@@ -74,6 +74,10 @@ public class ChangedList {
         return listVersion;
     }
 
+    public int getSize() {
+        return fileList.keySet().size();
+    }
+
     /**
      * Writes out the current state of the ChangeList to the given file.
      *

@@ -1,6 +1,8 @@
 package org.duracloud.sync.mgmt;
 
 import org.duracloud.sync.endpoint.SyncEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -11,6 +13,8 @@ import java.io.File;
  * Date: Mar 15, 2010
  */
 public class SyncWorker implements Runnable {
+
+    private final Logger logger = LoggerFactory.getLogger(SyncWorker.class);    
 
     private File syncFile;
     private File watchDir;
@@ -29,6 +33,17 @@ public class SyncWorker implements Runnable {
     }
 
     public void run() {
-        boolean success = syncEndpoint.syncFile(syncFile, watchDir);
+        boolean success = true;
+        try {
+            success = syncEndpoint.syncFile(syncFile, watchDir);
+        } catch(Exception e) {
+            logger.error("Exception syncing file " +
+                syncFile.getAbsolutePath() + " was " + e.getMessage(), e);
+            success = false;
+        }
+
+        if(!success) {
+            // TODO: Try, try again
+        }
     }
 }

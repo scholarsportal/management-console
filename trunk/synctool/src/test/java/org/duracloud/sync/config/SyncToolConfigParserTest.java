@@ -81,10 +81,11 @@ public class SyncToolConfigParserTest {
         argsMap.put("-f", "1000");
         argsMap.put("-h", "localhost");
         argsMap.put("-p", "8088");
-        argsMap.put("-s", tempDir.getAbsolutePath());
+        argsMap.put("-d", tempDir.getAbsolutePath());
         argsMap.put("-t", "5");
         argsMap.put("-u", "user");
         argsMap.put("-w", "pass");
+        argsMap.put("-s", "mySpace");
         return argsMap;
     }
 
@@ -97,12 +98,13 @@ public class SyncToolConfigParserTest {
         assertEquals(argsMap.get("-h"), syncConfig.getHost());
         assertEquals(argsMap.get("-p"),
                      String.valueOf(syncConfig.getPort()));
-        assertEquals(argsMap.get("-s"),
+        assertEquals(argsMap.get("-d"),
                      syncConfig.getSyncDirs().get(0).getAbsolutePath());
         assertEquals(argsMap.get("-t"),
                      String.valueOf(syncConfig.getNumThreads()));
         assertEquals(argsMap.get("-u"), syncConfig.getUsername());
         assertEquals(argsMap.get("-w"), syncConfig.getPassword());
+        assertEquals(argsMap.get("-s"), syncConfig.getSpaceId());
     }
 
     private String[] mapToArray(HashMap<String, String> map) {
@@ -156,7 +158,8 @@ public class SyncToolConfigParserTest {
     }
 
     private File getBackupFile() {
-        File backupFile = new File(tempDir, SyncToolConfigParser.BACKUP_FILE_NAME);
+        File backupFile =
+            new File(tempDir, SyncToolConfigParser.BACKUP_FILE_NAME);
         assertTrue(backupFile.exists());
         return backupFile;
     }
