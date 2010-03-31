@@ -70,6 +70,12 @@ public class SyncToolConfigParser {
        passwordOption.setRequired(true);
        cmdOptions.addOption(passwordOption);
 
+       Option spaceId =
+           new Option("s", "space", true,
+           "the ID of the DuraCloud space where content will be stored");
+       spaceId.setRequired(true);
+       cmdOptions.addOption(spaceId);
+
        Option backupDirOption =
            new Option("b", "backup-dir", true,
                       "the state of the sync tool is persisted to " +
@@ -78,7 +84,7 @@ public class SyncToolConfigParser {
        cmdOptions.addOption(backupDirOption);
 
        Option syncDirs =
-           new Option("s", "sync-dirs", true,
+           new Option("d", "sync-dirs", true,
                       "the directory paths to monitor and sync with DuraCloud");
        syncDirs.setRequired(true);
        syncDirs.setArgs(Option.UNLIMITED_VALUES);
@@ -153,6 +159,7 @@ public class SyncToolConfigParser {
         config.setHost(cmd.getOptionValue("h"));
         config.setUsername(cmd.getOptionValue("u"));
         config.setPassword(cmd.getOptionValue("w"));
+        config.setSpaceId(cmd.getOptionValue("s"));
 
         if(cmd.hasOption("p")) {
             try {
@@ -172,7 +179,7 @@ public class SyncToolConfigParser {
         }
         config.setBackupDir(backupDir);
 
-        String[] syncDirPaths = cmd.getOptionValues("s");
+        String[] syncDirPaths = cmd.getOptionValues("d");
         List<File> syncDirs = new ArrayList<File>();
         for(String path : syncDirPaths) {
             File syncDir = new File(path);
@@ -224,37 +231,10 @@ public class SyncToolConfigParser {
     }
 
     public void printConfig(SyncToolConfig toolConfig) {
-        StringBuilder config = new StringBuilder();
-
-        config.append("\n-----------------------\n");
-        config.append("Sync Tool Configuration");
-        config.append("\n-----------------------\n");
-
-        config.append("Sync Directories:\n");
-        for(File dir : toolConfig.getSyncDirs()) {
-            config.append("  ").append(dir.getAbsolutePath()).append("\n");
-        }
-
-        config.append("DuraStore Host: ");
-        config.append(toolConfig.getHost()).append("\n");
-        config.append("DuraStore Port: ");
-        config.append(toolConfig.getPort()).append("\n");
-        config.append("DuraStore Username: ");
-        config.append(toolConfig.getUsername()).append("\n");
-        config.append("DuraStore Password: ");
-        config.append(toolConfig.getPassword()).append("\n");
-        config.append("SyncTool Backup Directory: ");
-        config.append(toolConfig.getBackupDir()).append("\n");
-        config.append("SyncTool Poll Frequency: ");
-        config.append(toolConfig.getPollFrequency());
-        config.append("\n");
-        config.append("SyncTool Threads: ");
-        config.append(toolConfig.getNumThreads()).append("\n");
-        config.append("-----------------------\n");
-
-        logger.info(config.toString());
+        String config = toolConfig.getPrintableConfig();
+        logger.info(config);
     }
-    
+
     protected void backupConfig(File backupDir, String[] args) {
         File configBackupFile = new File(backupDir, BACKUP_FILE_NAME);
         try {

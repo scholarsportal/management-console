@@ -5,6 +5,7 @@ import org.duracloud.sync.config.SyncToolConfig;
 import org.duracloud.sync.config.SyncToolConfigParser;
 import org.duracloud.sync.endpoint.DuraStoreSyncEndpoint;
 import org.duracloud.sync.endpoint.SyncEndpoint;
+import org.duracloud.sync.mgmt.ChangedList;
 import org.duracloud.sync.mgmt.SyncManager;
 import org.duracloud.sync.monitor.DirectoryUpdateMonitor;
 import org.duracloud.sync.walker.DirWalker;
@@ -55,7 +56,12 @@ public class SyncTool {
     }
 
     private void startSyncManager() {
-        syncEndpoint = new DuraStoreSyncEndpoint();
+        syncEndpoint = new DuraStoreSyncEndpoint(syncConfig.getHost(),
+                                                 syncConfig.getPort(),
+                                                 syncConfig.getContext(),
+                                                 syncConfig.getUsername(),
+                                                 syncConfig.getPassword(),
+                                                 syncConfig.getSpaceId());
         syncManager = new SyncManager(syncConfig.getSyncDirs(),
                                       syncEndpoint,
                                       syncConfig.getNumThreads(),
@@ -103,10 +109,16 @@ public class SyncTool {
             String input;
             try {
                 input = br.readLine();
-                if(input.equals("exit") ||
-                   input.equals("close") ||
-                   input.equals("x")) {
+                if(input.equalsIgnoreCase("exit") ||
+                   input.equalsIgnoreCase("x")) {
                     exit = true;
+                } else if(input.equalsIgnoreCase("config") ||
+                          input.equalsIgnoreCase("c")) {
+                    System.out.println(syncConfig.getPrintableConfig());
+                } else if(input.equalsIgnoreCase("status") ||
+                          input.equalsIgnoreCase("s")) {
+                    int size = ChangedList.getInstance().getSize();
+                    System.out.println("Current size of Sync Queue: " + size);
                 }
             } catch(IOException e) {
                 logger.warn(e.getMessage(), e);

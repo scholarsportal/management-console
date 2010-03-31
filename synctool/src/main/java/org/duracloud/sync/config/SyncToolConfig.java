@@ -17,10 +17,45 @@ public class SyncToolConfig implements Serializable {
     private String context;
     private String username;
     private String password;
+    private String spaceId;
     private File backupDir;
     private List<File> syncDirs;
     private long pollFrequency;
     private int numThreads;
+
+    public String getPrintableConfig() {
+        StringBuilder config = new StringBuilder();
+
+        config.append("\n-----------------------\n");
+        config.append("Sync Tool Configuration");
+        config.append("\n-----------------------\n");
+
+        config.append("Sync Directories:\n");
+        for(File dir : getSyncDirs()) {
+            config.append("  ").append(dir.getAbsolutePath()).append("\n");
+        }
+
+        config.append("DuraStore Host: ");
+        config.append(getHost()).append("\n");
+        config.append("DuraStore Port: ");
+        config.append(getPort()).append("\n");
+        config.append("DuraStore Username: ");
+        config.append(getUsername()).append("\n");
+        config.append("DuraStore Password: ");
+        config.append(getPassword()).append("\n");
+        config.append("DuraCloud Space ID: ");
+        config.append(getSpaceId()).append("\n");
+        config.append("SyncTool Backup Directory: ");
+        config.append(getBackupDir()).append("\n");
+        config.append("SyncTool Poll Frequency: ");
+        config.append(getPollFrequency());
+        config.append("\n");
+        config.append("SyncTool Threads: ");
+        config.append(getNumThreads()).append("\n");
+        config.append("-----------------------\n");
+
+        return config.toString();
+    }
 
     public String getHost() {
         return host;
@@ -60,6 +95,14 @@ public class SyncToolConfig implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSpaceId() {
+        return spaceId;
+    }
+
+    public void setSpaceId(String spaceId) {
+        this.spaceId = spaceId;
     }
 
     public File getBackupDir() {
