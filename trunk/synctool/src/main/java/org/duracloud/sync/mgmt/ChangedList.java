@@ -16,7 +16,7 @@ import java.util.HashMap;
  */
 public class ChangedList {
 
-    private HashMap<String, File> fileList;
+    private HashMap<String, ChangedFile> fileList;
     private long listVersion;
 
     private static ChangedList instance;
@@ -29,7 +29,7 @@ public class ChangedList {
     }
 
     private ChangedList() {
-        fileList = new HashMap<String, File>();
+        fileList = new HashMap<String, ChangedFile>();
         listVersion = 0;
     }
 
@@ -40,8 +40,12 @@ public class ChangedList {
      *
      * @param changedFile a file which has changed on the file system
      */
-    public synchronized void addChangedFile(File changedFile) {
-        fileList.put(changedFile.getAbsolutePath(), changedFile);
+    public void addChangedFile(File changedFile) {
+        addChangedFile(new ChangedFile(changedFile));
+    }
+
+    protected synchronized void addChangedFile(ChangedFile changedFile) {
+        fileList.put(changedFile.getFile().getAbsolutePath(), changedFile);
         incrementVersion();
     }
 
@@ -51,13 +55,13 @@ public class ChangedList {
      *
      * @return a file which has changed on the file system
      */
-    public synchronized File getChangedFile() {
+    public synchronized ChangedFile getChangedFile() {
         if(fileList.isEmpty()) {
             return null;
         }
 
         String key = fileList.keySet().iterator().next();
-        File changedFile = fileList.remove(key);
+        ChangedFile changedFile = fileList.remove(key);
         incrementVersion();
         return changedFile;
     }
@@ -116,7 +120,7 @@ public class ChangedList {
             ObjectInputStream oStream = new ObjectInputStream(fileStream);
 
             synchronized(this) {
-                fileList = (HashMap<String, File>) oStream.readObject();
+                fileList = (HashMap<String, ChangedFile>) oStream.readObject();
             }
 
             oStream.close();

@@ -70,8 +70,8 @@ public class SyncManager implements ChangeHandler {
      *
      * @param changedFile the changed file
      */
-    public void fileChanged(File changedFile) {
-        File watchDir = getWatchDir(changedFile);
+    public void fileChanged(ChangedFile changedFile) {
+        File watchDir = getWatchDir(changedFile.getFile());
         execPool.execute(new SyncWorker(changedFile, watchDir, endpoint));
     }
 

@@ -27,7 +27,8 @@ import java.util.List;
  */
 public class SyncToolConfigParser {
 
-    private final Logger logger = LoggerFactory.getLogger(SyncToolConfigParser.class);
+    private final Logger logger =
+        LoggerFactory.getLogger(SyncToolConfigParser.class);
 
     protected static final String BACKUP_FILE_NAME = "config.bak";
 

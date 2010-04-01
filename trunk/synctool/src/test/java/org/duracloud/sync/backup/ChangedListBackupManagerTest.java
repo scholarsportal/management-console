@@ -1,10 +1,11 @@
 package org.duracloud.sync.backup;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.sync.SyncTestBase;
+import org.duracloud.sync.mgmt.ChangedFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,16 +42,16 @@ public class ChangedListBackupManagerTest  extends SyncTestBase {
         Thread.sleep(200);
         bkMan.endBackup();
 
-        File changedFile = changedList.getChangedFile();
+        ChangedFile changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
-        assertEquals(testFileName, changedFile.getName());
+        assertEquals(testFileName, changedFile.getFile().getName());
         assertNull(changedList.getChangedFile());
 
         bkMan.loadBackup();
 
         changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
-        assertEquals(testFileName, changedFile.getName());
+        assertEquals(testFileName, changedFile.getFile().getName());
         assertNull(changedList.getChangedFile());        
     }
 }

@@ -1,10 +1,11 @@
 package org.duracloud.sync.monitor;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.sync.SyncTestBase;
+import org.duracloud.sync.mgmt.ChangedFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,9 +62,10 @@ public class DirectoryUpdateMonitorTest extends SyncTestBase {
 
     private void checkFileInChangedList(File file) throws Exception {
         Thread.sleep(1000);
-        File changedFile = changedList.getChangedFile();
+        ChangedFile changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
-        assertEquals(file.getAbsolutePath(), changedFile.getAbsolutePath());
+        assertEquals(file.getAbsolutePath(), 
+                     changedFile.getFile().getAbsolutePath());
         assertNull(changedList.getChangedFile());
     }
 }

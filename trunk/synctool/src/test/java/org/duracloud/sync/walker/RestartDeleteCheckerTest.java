@@ -1,10 +1,11 @@
 package org.duracloud.sync.walker;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.sync.SyncTestBase;
+import org.duracloud.sync.mgmt.ChangedFile;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,9 +49,9 @@ public class RestartDeleteCheckerTest extends SyncTestBase {
         RestartDeleteChecker deleteChecker = new RestartDeleteChecker();
         deleteChecker.runDeleteChecker(filesList.iterator(), syncDirs);
 
-        File changedFile = changedList.getChangedFile();
+        ChangedFile changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
-        assertEquals(delFile, changedFile.getName());
+        assertEquals(delFile, changedFile.getFile().getName());
         assertNull(changedList.getChangedFile());
     }
 }
