@@ -36,9 +36,9 @@ public class ChangedListTest extends SyncTestBase {
         changedList.addChangedFile(changedFile);
         assertEquals(version + 1, changedList.getVersion());
 
-        File retrievedFile = changedList.getChangedFile();
+        ChangedFile retrievedFile = changedList.getChangedFile();
         assertEquals(changedFile.getAbsolutePath(),
-                     retrievedFile.getAbsolutePath());
+                     retrievedFile.getFile().getAbsolutePath());
         assertEquals(version + 2, changedList.getVersion());        
     }
 
@@ -49,16 +49,16 @@ public class ChangedListTest extends SyncTestBase {
         File persistFile = File.createTempFile("persist", "file");
         changedList.persist(persistFile);
 
-        File retrievedFile = changedList.getChangedFile();
+        ChangedFile retrievedFile = changedList.getChangedFile();
         assertEquals(changedFile.getAbsolutePath(),
-                     retrievedFile.getAbsolutePath());
+                     retrievedFile.getFile().getAbsolutePath());
         assertNull(changedList.getChangedFile());
 
         changedList.restore(persistFile);
 
         retrievedFile = changedList.getChangedFile();
         assertEquals(changedFile.getAbsolutePath(),
-                     retrievedFile.getAbsolutePath());
+                     retrievedFile.getFile().getAbsolutePath());
         assertNull(changedList.getChangedFile());
 
         persistFile.delete();

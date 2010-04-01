@@ -16,7 +16,9 @@ public class SyncWorker implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(SyncWorker.class);    
 
-    private File syncFile;
+    private static final int MAX_RETRIES = 3;
+
+    private ChangedFile syncFile;
     private File watchDir;
     private SyncEndpoint syncEndpoint;
 
@@ -26,24 +28,39 @@ public class SyncWorker implements Runnable {
      * @param file the file to sync
      * @param endpoint the endpoint to which the file should be synced
      */
-    public SyncWorker(File file, File watchDir, SyncEndpoint endpoint) {
+    public SyncWorker(ChangedFile file, File watchDir, SyncEndpoint endpoint) {
         this.syncFile = file;
         this.watchDir = watchDir;
         this.syncEndpoint = endpoint;
     }
 
     public void run() {
-        boolean success = true;
+        boolean success;
+        File file = syncFile.getFile();
         try {
-            success = syncEndpoint.syncFile(syncFile, watchDir);
+            success = syncEndpoint.syncFile(file, watchDir);
         } catch(Exception e) {
             logger.error("Exception syncing file " +
-                syncFile.getAbsolutePath() + " was " + e.getMessage(), e);
+                file.getAbsolutePath() + " was " + e.getMessage(), e);
             success = false;
         }
 
         if(!success) {
-            // TODO: Try, try again
+            retryOnFailure();
+        }
+    }
+
+    private void retryOnFailure() {
+        int syncAttempts = syncFile.getSyncAttempts();
+        String syncFilePath = syncFile.getFile().getAbsolutePath();
+        if(syncAttempts < MAX_RETRIES) {
+            logger.info("Adding " + syncFilePath + " back to the changed " +
+                        "list, another attempt will be made to sync file.");
+            syncFile.incrementSyncAttempts();
+            ChangedList.getInstance().addChangedFile(syncFile);
+        } else {
+            logger.error("Failed to sync file " + syncFilePath + " after " +
+                syncAttempts + " attempts. No further attempts will be made.");
         }
     }
 }

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.FileNameMap;
 import java.net.MalformedURLException;
@@ -161,7 +162,13 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                                 fileStream,
                                 syncFile.length(),
                                 mimetype,
-                                null);
+                                null);        
+        try {
+            fileStream.close();
+        } catch(IOException e) {
+            logger.error("Error attempting to close stream for file " +
+                syncFile.getAbsolutePath() + ": " + e.getMessage(), e);
+        }
     }
 
     /*

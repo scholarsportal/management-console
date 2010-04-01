@@ -39,7 +39,7 @@ public class ChangeWatcher implements Runnable {
 
     public void run() {
         while(continueWatch) {
-            File changedFile = changedList.getChangedFile();
+            ChangedFile changedFile = changedList.getChangedFile();
             if(changedFile != null) {
                 handler.fileChanged(changedFile);
             } else {

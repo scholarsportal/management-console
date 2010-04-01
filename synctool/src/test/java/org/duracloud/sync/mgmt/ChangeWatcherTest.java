@@ -41,7 +41,7 @@ public class ChangeWatcherTest extends SyncTestBase {
     }
 
     private class TestHandler implements ChangeHandler {
-        public void fileChanged(File changedFile) {
+        public void fileChanged(ChangedFile changedFile) {
             changes++;
         }
     }
