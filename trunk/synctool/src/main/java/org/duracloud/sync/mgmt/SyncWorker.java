@@ -16,11 +16,12 @@ public class SyncWorker implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(SyncWorker.class);    
 
-    private static final int MAX_RETRIES = 3;
+    private static final int MAX_RETRIES = 5;
 
     private ChangedFile syncFile;
     private File watchDir;
     private SyncEndpoint syncEndpoint;
+    private StatusManager statusManager;
 
     /**
      * Creates a SyncWorker to handle syncing a file
@@ -32,6 +33,7 @@ public class SyncWorker implements Runnable {
         this.syncFile = file;
         this.watchDir = watchDir;
         this.syncEndpoint = endpoint;
+        this.statusManager = StatusManager.getInstance();
     }
 
     public void run() {
@@ -45,7 +47,9 @@ public class SyncWorker implements Runnable {
             success = false;
         }
 
-        if(!success) {
+        if(success) {
+            statusManager.completedProcessing();
+        }else {
             retryOnFailure();
         }
     }
@@ -59,6 +63,7 @@ public class SyncWorker implements Runnable {
             syncFile.incrementSyncAttempts();
             ChangedList.getInstance().addChangedFile(syncFile);
         } else {
+            statusManager.failedProcessing(syncFile.getFile());
             logger.error("Failed to sync file " + syncFilePath + " after " +
                 syncAttempts + " attempts. No further attempts will be made.");
         }

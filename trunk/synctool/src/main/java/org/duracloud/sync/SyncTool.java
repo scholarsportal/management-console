@@ -5,7 +5,7 @@ import org.duracloud.sync.config.SyncToolConfig;
 import org.duracloud.sync.config.SyncToolConfigParser;
 import org.duracloud.sync.endpoint.DuraStoreSyncEndpoint;
 import org.duracloud.sync.endpoint.SyncEndpoint;
-import org.duracloud.sync.mgmt.ChangedList;
+import org.duracloud.sync.mgmt.StatusManager;
 import org.duracloud.sync.mgmt.SyncManager;
 import org.duracloud.sync.monitor.DirectoryUpdateMonitor;
 import org.duracloud.sync.walker.DirWalker;
@@ -102,6 +102,7 @@ public class SyncTool {
     }
 
     private void listenForExit() {
+        StatusManager statusManager = StatusManager.getInstance();
         BufferedReader br =
             new BufferedReader(new InputStreamReader(System.in));
         boolean exit = false;
@@ -117,8 +118,7 @@ public class SyncTool {
                     System.out.println(syncConfig.getPrintableConfig());
                 } else if(input.equalsIgnoreCase("status") ||
                           input.equalsIgnoreCase("s")) {
-                    int size = ChangedList.getInstance().getSize();
-                    System.out.println("Current size of Sync Queue: " + size);
+                    System.out.println(statusManager.getPrintableStatus());
                 }
             } catch(IOException e) {
                 logger.warn(e.getMessage(), e);

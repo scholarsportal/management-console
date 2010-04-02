@@ -25,6 +25,7 @@ public class DirWalker extends DirectoryWalker {
 
     private List<File> topDirs;
     private ChangedList fileList;
+    private int files = 0;
 
     public DirWalker(List<File> topDirs) {
         super();
@@ -47,10 +48,13 @@ public class DirWalker extends DirectoryWalker {
                             ", as it does not point to a directory");
             }
         }
+        logger.info("Found " + files +
+            " files to sync in initial directory walk");
     }
 
     @Override
     protected void handleFile(File file, int depth, Collection results) {
+        ++files;
         fileList.addChangedFile(file);
     }
 
