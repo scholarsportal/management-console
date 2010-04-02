@@ -1,16 +1,17 @@
 
 package org.duracloud.services.replication.osgi;
 
-import org.junit.Test;
-
+import junit.framework.Assert;
 import org.duracloud.services.ComputeService;
 import org.duracloud.services.replication.ReplicationService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
+import org.junit.After;
+import org.junit.Test;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.Assert;
 
 public class TestServices
         extends AbstractDuracloudOSGiTestBasePax {
@@ -18,6 +19,23 @@ public class TestServices
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final int MAX_TRIES = 10;
+
+    @After
+    public void tearDown() throws BundleException {
+        // FIXME: tearDown is only here for debugging. Can be removed when
+        //        ReplicationTester is fixed.
+        Bundle[] bundles = bundleContext.getBundles();
+        Assert.assertNotNull(bundles);
+        System.out.println("num bundles: " + bundles.length);
+        for (Bundle bundle : bundles) {
+            String name = bundle.getSymbolicName();
+            int state = bundle.getState();
+            System.out.println("bundle: '" + name + "' [" + state + "]");
+            if (name.contains("activemq") || name.contains("jms")) {
+//                bundle.uninstall();
+            }
+        }
+    }
 
     @Test
     public void testDynamicConfig() throws Exception {
@@ -28,6 +46,14 @@ public class TestServices
                                         getReplicationService());
         tester.testDynamicConfig();
 
+    }
+
+    @Test
+    public void testReplication() throws Exception {
+        log.debug("testing Content Replication of Replication Service");
+
+        ReplicationTester tester = new ReplicationTester(getReplicationService());
+        tester.testReplication();
     }
 
     protected Object getService(String serviceInterface) throws Exception {

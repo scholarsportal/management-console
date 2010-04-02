@@ -1,10 +1,11 @@
 package org.duracloud.services.image;
 
+import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
-import org.duracloud.client.ContentStore;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
+import org.duracloud.common.model.Credential;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class ImageConversionService extends BaseService implements ComputeServic
     private String duraStoreHost;
     private String duraStorePort;
     private String duraStoreContext;
+    private String username;
+    private String password;
     private String toFormat;
     private String colorSpace;
     private String sourceSpaceId;
@@ -48,16 +51,17 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     @Override
     public void start() throws Exception {
-        System.out.println("Starting Image Conversion Service");
+        System.out.println("Starting Image Conversion Service: " + username);
         this.setServiceStatus(ServiceStatus.STARTING);
-
-        File workDir = new File(getServiceWorkDir());
+        
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(duraStoreHost,
                                         duraStorePort,
                                         duraStoreContext);
+        storeManager.login(new Credential(username, password));
         ContentStore contentStore = storeManager.getPrimaryContentStore();
 
+        File workDir = new File(getServiceWorkDir());
         conversionThread = new ConversionThread(contentStore,
                                                 workDir,
                                                 toFormat,
@@ -139,6 +143,22 @@ public class ImageConversionService extends BaseService implements ComputeServic
                 DEFAULT_DURASTORE_CONTEXT);
             this.duraStoreContext = DEFAULT_DURASTORE_CONTEXT;
         }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getToFormat() {

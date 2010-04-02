@@ -4,9 +4,6 @@ import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
-import org.duracloud.client.ContentStoreManagerImpl;
-import org.duracloud.common.model.SystemUserCredential;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Content;
@@ -54,7 +51,7 @@ public class ServiceManager {
     protected static final String NEW_HOST_DISPLAY = "New Service Instance";
 
     // The primary services host, generally deployed on the primary user instance
-    protected static String primaryHost;
+    private static String primaryHost;
 
     // Port for connection to the services admin at the primary service instance
     private String primaryServicesAdminPort;
@@ -80,16 +77,25 @@ public class ServiceManager {
     // ServiceCompute used to run service compute instances
     private ServiceCompute serviceCompute = null;
 
-    private ServiceConfigUtil configUtil = null;
-
     private int serviceDeploymentIds = 0;
 
     // List of service compute instances
     private List<ServiceComputeInstance> serviceComputeInstances = null;
 
+    private ContentStoreManagerUtil contentStoreManagerUtil;
+    private ServiceConfigUtil serviceConfigUtil;
+    private ServiceComputeInstanceUtil serviceComputeInstanceUtil;
+
     public static final String NEW_SERVICE_HOST = "new";
 
-    public ServiceManager() {
+
+    public ServiceManager(ContentStoreManagerUtil contentStoreManagerUtil,
+                          ServiceConfigUtil serviceConfigUtil,
+                          ServiceComputeInstanceUtil serviceComputeInstanceUtil) {
+        this.contentStoreManagerUtil = contentStoreManagerUtil;
+        this.serviceConfigUtil = serviceConfigUtil;
+        this.serviceComputeInstanceUtil = serviceComputeInstanceUtil;
+
         deployedServices = new ArrayList<ServiceInfo>();
         serviceComputeInstances = new ArrayList<ServiceComputeInstance>();
     }
@@ -112,30 +118,13 @@ public class ServiceManager {
             throw new ServiceException(error, cse);
         }
 
-        try {
-            configUtil = new ServiceConfigUtil(userStore);
-        } catch (ContentStoreException cse) {
-            String error = "Could not create connection to user storage " +
-                           "list due to exception: " + cse.getMessage();
-            throw new ServiceException(error, cse);
-        }
+        ServiceComputeInstance serviceComputeInstance = serviceComputeInstanceUtil
+            .createComputeInstance(primaryHost,
+                                   primaryServicesAdminPort,
+                                   primaryServicesAdminContext,
+                                   PRIMARY_HOST_DISPLAY);
 
-        if(primaryHost != null &&
-           !primaryHost.equals("") &&
-           primaryServicesAdminPort != null &&
-           !primaryServicesAdminPort.equals("") &&
-           primaryServicesAdminContext != null &&
-           !primaryServicesAdminContext.equals("")) {
-            addServiceComputeInstance(primaryHost,
-                                      primaryServicesAdminPort,
-                                      primaryServicesAdminContext,
-                                      PRIMARY_HOST_DISPLAY);
-        } else {
-            String error = "Could not create primary compute instance, " +
-                "values for primaryServiceInstance must be included in the " +
-                "DuraService configuration XML";
-            throw new ServiceException(error);
-        }
+        serviceComputeInstances.add(serviceComputeInstance);
     }
 
     /*
@@ -197,26 +186,14 @@ public class ServiceManager {
     }
 
     /*
-     * Provides access to the underlying configuration utility
-     */
-    protected ServiceConfigUtil getServiceConfigUtil() {
-        return configUtil;
-    }
-
-    /*
      * Reviews the list of content available in the DuraCloud
      * service storage location and builds a service registry.
      */
-    protected void initializeServicesList()
+    private void initializeServicesList()
     throws ContentStoreException {
-        ContentStoreManager storeManager =
-            new ContentStoreManagerImpl(serviceStore.getHost(),
-                                        serviceStore.getPort(),
-                                        serviceStore.getContext());
-        
-        storeManager.login(new SystemUserCredential());
-        setServiceContentStore(storeManager.getPrimaryContentStore());
-        storeManager.logout();
+        ContentStoreManager storeManager = contentStoreManagerUtil.getContentStoreManager(
+            serviceStore);
+        serviceStoreClient = storeManager.getPrimaryContentStore();
 
         refreshServicesList();
     }
@@ -225,17 +202,17 @@ public class ServiceManager {
      * Retrieves the xml file where all service information is contained
      * and rebuilds the list of services.
      */
-    protected void refreshServicesList() {
+    private void refreshServicesList() {
         String servicesSpaceId = serviceStore.getSpaceId();
         String configFileName = servicesSpaceId + ".xml";
         log.debug("refreshing services list: "+configFileName);
         try {
             Content servicesInfoFile =
                 serviceStoreClient.getContent(servicesSpaceId, configFileName);
-            List<ServiceInfo> services =
-                buildServiceList(servicesInfoFile.getStream());
 
-            setServicesList(services);
+            this.services = ServicesConfigDocument.getServiceList(
+                servicesInfoFile.getStream());
+
         } catch (ContentStoreException cse) {
             String error = "Could not retrieve services in space: " +
                             servicesSpaceId + " due to exception: " +
@@ -243,25 +220,6 @@ public class ServiceManager {
             log.error(error);
             throw new ServiceException(error, cse);
         }
-    }
-
-    /*
-     * Parses the service information xml file
-     */
-    private List<ServiceInfo> buildServiceList(InputStream servicesInfoXml) {
-        // Use serviceconfig tools to parse xml
-        ServicesConfigDocument configDoc = new ServicesConfigDocument();
-        return configDoc.getServiceList(servicesInfoXml);
-    }
-
-
-
-    protected void setServiceContentStore(ContentStore store) {
-        this.serviceStoreClient = store;
-    }
-
-    protected void setServicesList(List<ServiceInfo> services) {
-        this.services = services;
     }
 
     /**
@@ -322,9 +280,10 @@ public class ServiceManager {
      * Uses the config util to populate service values
      */
     private ServiceInfo populateService(ServiceInfo service) {
-          return configUtil.populateService(service,
-                                            serviceComputeInstances,
-                                            primaryHost);
+        return serviceConfigUtil.populateService(service,
+                                                 serviceComputeInstances,
+                                                 userStore,
+                                                 primaryHost);
     }
 
     /*
@@ -375,7 +334,8 @@ public class ServiceManager {
         // Resolve system config
         List<SystemConfig> systemConfig = srvToDeploy.getSystemConfigs();
         if(systemConfig != null) {
-            systemConfig = configUtil.resolveSystemConfigVars(systemConfig);
+            systemConfig = serviceConfigUtil.resolveSystemConfigVars(userStore,
+                                                                     systemConfig);
         }
 
         Map<String, String> serviceConfig =
@@ -554,7 +514,7 @@ public class ServiceManager {
      *
      * @throws NoSuchServiceException if there is no service in the list with the given ID
      */
-    protected ServiceInfo findService(int serviceId)
+    private ServiceInfo findService(int serviceId)
         throws NoSuchServiceException {
         for(ServiceInfo service : services) {
             if(service.getId() == (serviceId)) {
@@ -742,9 +702,9 @@ public class ServiceManager {
             findServiceDeployment(deployedService, deploymentId);
         String hostName = serviceDeployment.getHostname();
 
-        ServiceComputeInstance serviceCompute;
+        ServiceComputeInstance serviceComputeInstance;
         try {
-            serviceCompute = getServiceComputeInstanceByHostName(hostName);
+            serviceComputeInstance = getServiceComputeInstanceByHostName(hostName);
         } catch (NoSuchServiceComputeInstanceException e) {
             String error = "Host name " + hostName +
                 " is not valid for deployment " + deploymentId +
@@ -752,7 +712,7 @@ public class ServiceManager {
             throw new ServiceException(error);
         }
 
-        ServicesAdminClient servicesAdmin = serviceCompute.getServicesAdmin();
+        ServicesAdminClient servicesAdmin = serviceComputeInstance.getServicesAdmin();
         Map<String, String> serviceProps;
         try {
             serviceProps =
@@ -1055,7 +1015,7 @@ public class ServiceManager {
     /*
      * Retrieves a service compute instance based on its host name 
      */
-    protected ServiceComputeInstance getServiceComputeInstanceByHostName(String hostName)
+    private ServiceComputeInstance getServiceComputeInstanceByHostName(String hostName)
         throws NoSuchServiceComputeInstanceException {
         if(hostName == null || hostName.isEmpty()) {
             String error = "instanceHost may not be null or empty";
@@ -1068,37 +1028,6 @@ public class ServiceManager {
             }
         }
         throw new NoSuchServiceComputeInstanceException(hostName);
-    }
-
-    /*
-     * Adds a new service compute instance to the internal list.
-     */
-    private void addServiceComputeInstance(String hostName,
-                                           String servicesAdminPort,
-                                           String servicesAdminContext,
-                                           String displayName) {
-        ServicesAdminClient servicesAdmin =
-            createServicesAdminClient(hostName,
-                                      servicesAdminPort,
-                                      servicesAdminContext);
-        ServiceComputeInstance instance =
-            new ServiceComputeInstance(hostName, displayName, servicesAdmin);
-        serviceComputeInstances.add(instance);
-    }
-
-    /*
-     * Creates a new object capable of making connection to a services
-     * administrator at a given host
-     */
-    private ServicesAdminClient createServicesAdminClient(String instanceHost,
-                                                          String servicesAdminPort,
-                                                          String servicesAdminContext) {
-        String baseUrl = "http://" + instanceHost + ":" +
-            servicesAdminPort + "/" + servicesAdminContext;
-        ServicesAdminClient servicesAdmin = new ServicesAdminClient();
-        servicesAdmin.setBaseURL(baseUrl);
-        servicesAdmin.setRester(new RestHttpHelper());
-        return servicesAdmin;
     }
 
     /**

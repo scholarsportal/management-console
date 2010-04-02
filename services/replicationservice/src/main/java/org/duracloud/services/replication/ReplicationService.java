@@ -2,6 +2,7 @@
 package org.duracloud.services.replication;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.duracloud.common.model.Credential;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
@@ -39,6 +40,10 @@ public class ReplicationService extends BaseService
 
     private String brokerURL;
 
+    private String username;
+
+    private String password;
+
     private String fromStoreId;
 
     private String toStoreId;
@@ -57,6 +62,8 @@ public class ReplicationService extends BaseService
     public void start() throws Exception {
         log.info("Starting Replication Service");
 
+        Credential credential = new Credential(username, password);
+
         //TODO: Convert to log msg
         System.out.println("**********");
         System.out.println("Starting replication service");
@@ -64,6 +71,7 @@ public class ReplicationService extends BaseService
         System.out.println("port: " + port);
         System.out.println("context: " + context);
         System.out.println("brokerURL: " + brokerURL);
+        System.out.println("credential: " + credential);
         System.out.println("fromStoreId: " + fromStoreId);
         System.out.println("toStoreId: " + toStoreId);
         System.out.println("replicationType: " + replicationType);
@@ -77,8 +85,12 @@ public class ReplicationService extends BaseService
         jmsContainer.start();
         jmsContainer.initialize();
 
-        replicator =
-                new Replicator(host, port, context, fromStoreId, toStoreId);
+        replicator = new Replicator(host,
+                                    port,
+                                    context,
+                                    credential,
+                                    fromStoreId,
+                                    toStoreId);
 
         System.out.print("Listener container started: ");
         System.out.println("jmsContainer.isRunning()");
@@ -193,6 +205,22 @@ public class ReplicationService extends BaseService
 
     public void setBrokerURL(String brokerURL) {
         this.brokerURL = brokerURL;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFromStoreId() {

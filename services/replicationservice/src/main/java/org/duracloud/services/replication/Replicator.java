@@ -1,10 +1,11 @@
 package org.duracloud.services.replication;
 
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.Credential;
 import org.duracloud.domain.Content;
+import org.duracloud.error.ContentStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +28,13 @@ public class Replicator {
     public Replicator(String host,
                       String port,
                       String context,
+                      Credential credential,
                       String fromStoreId,
                       String toStoreId) {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, port, context);
 
+        storeManager.login(credential);
         try {
             fromStore = storeManager.getContentStore(fromStoreId);
             toStore = storeManager.getContentStore(toStoreId);

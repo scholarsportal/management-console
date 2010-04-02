@@ -25,7 +25,7 @@ public class ServiceXmlGenerator {
     private static final String SERVICES_XML_FILE_NAME =
         "duracloud-service-repository.xml";
 
-    private List<ServiceInfo> buildServiceList() {
+    protected List<ServiceInfo> buildServiceList() {
         List<ServiceInfo> servicesList = new ArrayList<ServiceInfo>();
         servicesList.add(buildHelloService());
         servicesList.add(buildReplicationService());
@@ -138,21 +138,31 @@ public class ServiceXmlGenerator {
         // System Configs
         List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
 
-        SystemConfig host =
-            new SystemConfig("host", "$DURASTORE-HOST", "localhost");
-        SystemConfig port =
-            new SystemConfig("port", "$DURASTORE-PORT", "8080");
-        SystemConfig context =
-            new SystemConfig("context", "$DURASTORE-CONTEXT", "durastore");
-        SystemConfig brokerURL =
-            new SystemConfig("brokerURL",
-                             "$MESSAGE-BROKER-URL",
-                             "tcp://localhost:61617");
+        SystemConfig host = new SystemConfig("host",
+                                             ServiceConfigUtil.STORE_HOST_VAR,
+                                             "localhost");
+        SystemConfig port = new SystemConfig("port",
+                                             ServiceConfigUtil.STORE_PORT_VAR,
+                                             "8080");
+        SystemConfig context = new SystemConfig("context",
+                                                ServiceConfigUtil.STORE_CONTEXT_VAR,
+                                                "durastore");
+        SystemConfig brokerURL = new SystemConfig("brokerURL",
+                                                  ServiceConfigUtil.STORE_MSG_BROKER_VAR,
+                                                  "tcp://localhost:61617");
+        SystemConfig username = new SystemConfig("username",
+                                                 ServiceConfigUtil.STORE_USER_VAR,
+                                                 "no-username");
+        SystemConfig password = new SystemConfig("password",
+                                                 ServiceConfigUtil.STORE_PWORD_VAR,
+                                                 "no-password");
 
         systemConfig.add(host);
         systemConfig.add(port);
         systemConfig.add(context);
         systemConfig.add(brokerURL);
+        systemConfig.add(username);
+        systemConfig.add(password);
 
         repService.setSystemConfigs(systemConfig);
 
@@ -332,16 +342,27 @@ public class ServiceXmlGenerator {
         // System Configs
         List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
 
-        SystemConfig host =
-            new SystemConfig("duraStoreHost", "$DURASTORE-HOST", "localhost");
-        SystemConfig port =
-            new SystemConfig("duraStorePort", "$DURASTORE-PORT", "8080");
-        SystemConfig context =
-            new SystemConfig("duraStoreContext", "$DURASTORE-CONTEXT", "durastore");
+        SystemConfig host = new SystemConfig("duraStoreHost",
+                                             ServiceConfigUtil.STORE_HOST_VAR,
+                                             "localhost");
+        SystemConfig port = new SystemConfig("duraStorePort",
+                                             ServiceConfigUtil.STORE_PORT_VAR,
+                                             "8080");
+        SystemConfig context = new SystemConfig("duraStoreContext",
+                                                ServiceConfigUtil.STORE_CONTEXT_VAR,
+                                                "durastore");
+        SystemConfig username = new SystemConfig("username",
+                                                 ServiceConfigUtil.STORE_USER_VAR,
+                                                 "no-username");
+        SystemConfig password = new SystemConfig("password",
+                                                 ServiceConfigUtil.STORE_PWORD_VAR,
+                                                 "no-password");
 
         systemConfig.add(host);
         systemConfig.add(port);
         systemConfig.add(context);
+        systemConfig.add(username);
+        systemConfig.add(password);
 
         icService.setSystemConfigs(systemConfig);
 

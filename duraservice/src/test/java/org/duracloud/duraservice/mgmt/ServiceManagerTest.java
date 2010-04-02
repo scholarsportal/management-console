@@ -1,9 +1,5 @@
 package org.duracloud.duraservice.mgmt;
 
-import junit.framework.TestCase;
-import org.duracloud.client.ContentStore;
-import org.duracloud.client.ContentStoreManager;
-import org.duracloud.duraservice.domain.MockServiceManager;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
@@ -15,15 +11,17 @@ import org.duracloud.serviceconfig.user.Option;
 import org.duracloud.serviceconfig.user.SingleSelectUserConfig;
 import org.duracloud.serviceconfig.user.TextUserConfig;
 import org.duracloud.serviceconfig.user.UserConfig;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.easymock.classextension.EasyMock;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,67 +30,24 @@ import java.util.Map;
  *
  * @author Bill Branan
  */
-public class ServiceManagerTest
-        extends TestCase {
+public class ServiceManagerTest extends ServiceManagerTestMockSupport {
 
-    private MockServiceManager serviceManager;
+    private ServiceManager serviceManager;
 
-    private static final String USER_SPACE_1 = "space1";
-    private static final String USER_SPACE_2 = "space2";
-    private static final String USER_CONTENT_STORE = "content-store";
-
-    public ContentStoreManager createMockUserContentStoreMgr() throws Exception {
-        // User Content Store Mock
-        ContentStore mockUserContentStore =
-            EasyMock.createMock(ContentStore.class);
-        EasyMock.expect(mockUserContentStore.getStoreId()).
-            andReturn(USER_CONTENT_STORE).anyTimes();
-        EasyMock.expect(mockUserContentStore.getStorageProviderType()).
-            andReturn(StorageProviderType.AMAZON_S3.toString()).anyTimes();
-        List<String> spaces = new ArrayList<String>();
-        spaces.add(USER_SPACE_1);
-        spaces.add(USER_SPACE_2);
-        EasyMock.expect(mockUserContentStore.getSpaces()).
-            andReturn(spaces).anyTimes();
-
-        // User Content Store Manager Mock
-        ContentStoreManager  mockUserContentStoreMgr =
-            EasyMock.createMock(ContentStoreManager.class);
-        Map<String, ContentStore> userContentStores =
-            new HashMap<String, ContentStore>();
-        userContentStores.put(USER_CONTENT_STORE, mockUserContentStore);
-        EasyMock.expect(mockUserContentStoreMgr.getContentStores()).
-            andReturn(userContentStores).anyTimes();
-        EasyMock.expect(mockUserContentStoreMgr.getContentStore(EasyMock.isA(
-            String.class))).
-            andReturn(mockUserContentStore).anyTimes();
-        EasyMock.expect(mockUserContentStoreMgr.getPrimaryContentStore()).
-            andReturn(mockUserContentStore).anyTimes();
-
-        EasyMock.replay(mockUserContentStore);
-        EasyMock.replay(mockUserContentStoreMgr);
-
-        return mockUserContentStoreMgr;
-    }
-
-    @Override
     @Before
-    protected void setUp() throws Exception {
-        serviceManager = new MockServiceManager();
-        String configXml = RestTestHelper.buildTestInitXml();
-        ByteArrayInputStream configStream =
-            new ByteArrayInputStream(configXml.getBytes("UTF-8"));
-        serviceManager.configure(configStream);
+    public void setUp() throws Exception {
+        serviceManager = new ServiceManager(createMockContentStoreManagerUtil(),
+                                            createMockServiceConfigUtil(),
+                                            createMockServiceComputeInstanceUtil());
 
-        ContentStoreManager mockUserContentStoreMgr =
-            createMockUserContentStoreMgr();
-        ServiceConfigUtil configUtil = serviceManager.getServiceConfigUtil();
-        configUtil.setUserContentStoreManager(mockUserContentStoreMgr);
+        String configXml = RestTestHelper.buildTestInitXml();
+        ByteArrayInputStream configStream = new ByteArrayInputStream(configXml.getBytes(
+            "UTF-8"));
+        serviceManager.configure(configStream);
     }
 
-    @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         serviceManager.undeployAllServices();
         List<ServiceInfo> deployedServices =
             serviceManager.getDeployedServices();
@@ -101,10 +56,13 @@ public class ServiceManagerTest
 
     @Test
     public void testNotConfigured() throws Exception {
-        MockServiceManager unConfigedServiceManager = new MockServiceManager();
+        ServiceManager unConfigedServiceManager = new ServiceManager(
+            createMockContentStoreManagerUtil(),
+            createMockServiceConfigUtil(),
+            createMockServiceComputeInstanceUtil());
         String failMsg = "Should throw an exception if not initialized";
 
-        try{
+        try {
             unConfigedServiceManager.getAvailableServices();
             fail(failMsg);
         } catch (RuntimeException re) {}
@@ -147,7 +105,7 @@ public class ServiceManagerTest
         assertTrue(services.size() == 2);
         for(ServiceInfo service : services) {
             int serviceId = service.getId();
-            assertTrue(serviceId == 1 || serviceId == 2);
+            assertTrue("id: " + serviceId, serviceId == 1 || serviceId == 2);
         }
     }
 
@@ -187,14 +145,14 @@ public class ServiceManagerTest
                 assertTrue(options.size() == 1);
                 assertEquals(USER_CONTENT_STORE, options.get(0).getValue());
                 storesOptions = true;
-            }            
+            }
             // Spaces Config Options
             if(config instanceof MultiSelectUserConfig) {
                 assertEquals("config3", config.getName());
                 List<Option> options =
                     ((MultiSelectUserConfig)config).getOptions();
                 assertNotNull(options);
-                assertTrue(options.size() == 2);
+                assertTrue("size: " + options.size(), options.size() == 2);
                 for(Option option : options) {
                     assertTrue(option.getValue().equals(USER_SPACE_1) ||
                                option.getValue().equals(USER_SPACE_2));
@@ -276,7 +234,7 @@ public class ServiceManagerTest
                                      userConfigs);
         services = serviceManager.getDeployedServices();
         assertTrue(services.size() == 2);
-        assertEquals(serviceId, services.get(1).getId());        
+        assertEquals(serviceId, services.get(1).getId());
     }
 
     @Test
