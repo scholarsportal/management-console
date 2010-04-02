@@ -361,7 +361,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch (InvalidIdException e) {
             throw new InvalidIdException(task, spaceId, contentId, e);            
         } catch(NotFoundException e) {
-            throw new NotFoundException(task, spaceId, e);
+            throw new NotFoundException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }

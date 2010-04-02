@@ -18,6 +18,7 @@ public class ChangedList {
 
     private HashMap<String, ChangedFile> fileList;
     private long listVersion;
+    private StatusManager status;
 
     private static ChangedList instance;
 
@@ -31,6 +32,7 @@ public class ChangedList {
     private ChangedList() {
         fileList = new HashMap<String, ChangedFile>();
         listVersion = 0;
+        status = StatusManager.getInstance();
     }
 
     /**
@@ -42,6 +44,7 @@ public class ChangedList {
      */
     public void addChangedFile(File changedFile) {
         addChangedFile(new ChangedFile(changedFile));
+        status.addedToQueue();
     }
 
     protected synchronized void addChangedFile(ChangedFile changedFile) {
@@ -76,10 +79,6 @@ public class ChangedList {
 
     public long getVersion() {
         return listVersion;
-    }
-
-    public int getSize() {
-        return fileList.keySet().size();
     }
 
     /**
