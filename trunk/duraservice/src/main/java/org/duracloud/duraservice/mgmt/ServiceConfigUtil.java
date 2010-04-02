@@ -3,9 +3,9 @@ package org.duracloud.duraservice.mgmt;
 import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
-import org.duracloud.client.ContentStoreManagerImpl;
-import org.duracloud.common.model.SystemUserCredential;
+import org.duracloud.common.model.Credential;
 import org.duracloud.duraservice.domain.ServiceComputeInstance;
+import org.duracloud.duraservice.domain.Store;
 import org.duracloud.duraservice.domain.UserStore;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.serviceconfig.Deployment;
@@ -39,43 +39,21 @@ public class ServiceConfigUtil {
     public static final String STORE_HOST_VAR = "$DURASTORE-HOST";
     public static final String STORE_PORT_VAR = "$DURASTORE-PORT";
     public static final String STORE_CONTEXT_VAR = "$DURASTORE-CONTEXT";
-    public static final String STORE_MSG_BROKER_VAR = "$MESSAGE-BROKER-URL";    
-
-    // Store in which user content is stored
-    private UserStore userStore = null;
+    public static final String STORE_MSG_BROKER_VAR = "$MESSAGE-BROKER-URL";
+    public static final String STORE_USER_VAR = "$DURASTORE-USERNAME";
+    public static final String STORE_PWORD_VAR = "$DURASTORE-PASSWORD";
 
     // Provides access to user storage
-    private ContentStoreManager userStoreManager = null;
+    private final ContentStoreManagerUtil contentStoreManagerUtil;
 
     /**
      * Creates a service config utility with access to a user's content store
      *
-     * @param userStore a user's content store
      * @throws ContentStoreException if the content store is not available
      */
-    public ServiceConfigUtil(UserStore userStore)
+    public ServiceConfigUtil(ContentStoreManagerUtil contentStoreManagerUtil)
         throws ContentStoreException {
-        this.userStore = userStore;
-        initializeUserStorageClient();
-    }
-
-    /*
-     * Initializes the user storage client, which provides access to the
-     * user's content store.
-     */
-    private void initializeUserStorageClient()
-    throws ContentStoreException {
-        ContentStoreManager storeManager =
-            new ContentStoreManagerImpl(userStore.getHost(),
-                                        userStore.getPort(),
-                                        userStore.getContext());
-
-        storeManager.login(new SystemUserCredential());
-        setUserContentStoreManager(storeManager);
-    }
-
-    protected void setUserContentStoreManager(ContentStoreManager storeMgr) {
-        this.userStoreManager = storeMgr;
+        this.contentStoreManagerUtil = contentStoreManagerUtil;
     }
 
     /*
@@ -86,6 +64,7 @@ public class ServiceConfigUtil {
      */
     public ServiceInfo populateService(ServiceInfo service,
                                        List<ServiceComputeInstance> serviceComputeInstances,
+                                       UserStore userStore,
                                        String primaryHostName) {
         log.debug("populateService: "+service.getContentId());
         // Perform a deep clone of the service (includes all configs and deployments)
@@ -99,8 +78,9 @@ public class ServiceConfigUtil {
         srvClone.setDeploymentOptions(populatedDeploymentOptions);
 
         // Populate variables in user config ($STORES and $SPACES)
+        ContentStoreManager userStoreManager = getUserStoreManager(userStore);
         List<UserConfig> populatedUserConfigs =
-            populateVariables(srvClone.getUserConfigs());
+            populateVariables(userStoreManager, srvClone.getUserConfigs());
         srvClone.setUserConfigs(populatedUserConfigs);
 
         // Remove system configs
@@ -117,21 +97,26 @@ public class ServiceConfigUtil {
         return srvClone;
     }
 
+    private ContentStoreManager getUserStoreManager(Store store) {
+        return contentStoreManagerUtil.getContentStoreManager(store);
+    }
+
     /**
      * Handles the population of option sets for variables $STORES and $SPACES.
      *
      * @param userConfigs user configuration for a service
      * @return the populated user configuration list
      */
-    public List<UserConfig> populateVariables(List<UserConfig> userConfigs) {
+    private List<UserConfig> populateVariables(ContentStoreManager userStoreManager,
+                                               List<UserConfig> userConfigs) {
         List<UserConfig> newUserConfigs = new ArrayList<UserConfig>();
         if(userConfigs != null){
             for(UserConfig config : userConfigs) {
                 if(config instanceof SelectableUserConfig) {
                     List<Option> options =
                         ((SelectableUserConfig)config).getOptions();
-                    options = populateStoresVariable(options);
-                    options = populateSpacesVariable(options);
+                    options = populateStoresVariable(userStoreManager, options);
+                    options = populateSpacesVariable(userStoreManager, options);
                     if(config instanceof SingleSelectUserConfig) {
                         SingleSelectUserConfig newConfig =
                             new SingleSelectUserConfig(config.getName(),
@@ -159,7 +144,8 @@ public class ServiceConfigUtil {
     /*
      * Populates the $STORES variable
      */
-    private List<Option> populateStoresVariable(List<Option> options) {
+    private List<Option> populateStoresVariable(ContentStoreManager userStoreManager,
+                                                List<Option> options) {
         List<Option> newOptionsList = new ArrayList<Option>();
         for (Option option : options) {
             String value = option.getValue();
@@ -196,7 +182,8 @@ public class ServiceConfigUtil {
     /*
      * Populates the $SPACES variable
      */
-    private List<Option> populateSpacesVariable(List<Option> options) {
+    private List<Option> populateSpacesVariable(ContentStoreManager userStoreManager,
+                                                List<Option> options) {
         List<Option> newOptionsList = new ArrayList<Option>();
         for (Option option : options) {
             String value = option.getValue();
@@ -289,14 +276,15 @@ public class ServiceConfigUtil {
      * @param systemConfig the system configuration of a service
      * @return the populated system configuration
      */
-    public List<SystemConfig> resolveSystemConfigVars(List<SystemConfig> systemConfig) {
-       List<SystemConfig> newConfigList = new ArrayList<SystemConfig>();
-       for(SystemConfig config : systemConfig) {
+    public List<SystemConfig> resolveSystemConfigVars(UserStore userStore,
+                                                      List<SystemConfig> systemConfig) {
+        List<SystemConfig> newConfigList = new ArrayList<SystemConfig>();
+        Credential user = contentStoreManagerUtil.getCurrentUser();
+        for (SystemConfig config : systemConfig) {
             String configValue = config.getValue();
-            SystemConfig newConfig =
-                new SystemConfig(config.getName(),
-                                 configValue,
-                                 config.getDefaultValue());
+            SystemConfig newConfig = new SystemConfig(config.getName(),
+                                                      configValue,
+                                                      config.getDefaultValue());
             if(configValue.equals(STORE_HOST_VAR)) {
                 newConfig.setValue(userStore.getHost());
             } else if(configValue.equals(STORE_PORT_VAR)) {
@@ -305,6 +293,10 @@ public class ServiceConfigUtil {
                 newConfig.setValue(userStore.getContext());
             } else if(configValue.equals(STORE_MSG_BROKER_VAR)) {
                 newConfig.setValue(userStore.getMsgBrokerUrl());
+            } else if (configValue.equals(STORE_USER_VAR)) {
+                newConfig.setValue(user.getUsername());
+            } else if (configValue.equals(STORE_PWORD_VAR)) {
+                newConfig.setValue(user.getPassword());
             }
             newConfigList.add(newConfig);
         }
