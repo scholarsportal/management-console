@@ -150,9 +150,9 @@ public class FileChunkerTest {
         File bigFile0 = new File(srcDir, bigFilename0);
         File bigFile1 = new File(srcDir, bigFilename1);
         File smallFile = new File(srcDir, smallFilename);
-        FileChunker.createTestContent(bigFile0, chunkSize + 1);
-        FileChunker.createTestContent(bigFile1, chunkSize + 1);
-        FileChunker.createTestContent(smallFile, chunkSize - 1);
+        FileChunker.createTestContent(bigFile0, chunkSize + 1).close();
+        FileChunker.createTestContent(bigFile1, chunkSize + 1).close();
+        FileChunker.createTestContent(smallFile, chunkSize - 1).close();
 
         boolean ignoreLargeFiles = true;
         FileChunkerOptions options;
