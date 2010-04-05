@@ -1,6 +1,7 @@
 package org.duracloud.chunk;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -57,18 +59,16 @@ public class FileChunkerTest {
     public void testCreateContent() throws IOException {
         long chunkSize = 10240;
         long size = chunkSize * 4 + chunkSize / 2;
-        FileChunkerOptions options = new FileChunkerOptions(chunkSize);
 
         String name = "create-test.txt";
-        FileChunker chunker = new FileChunker(writer, options);
-        createAndVerifyContent(chunker, name, size);
+        createAndVerifyContent(name, size);
     }
 
-    private File createAndVerifyContent(FileChunker chunker,
-                                        String contentName,
-                                        long contentSize) throws IOException {
+    private File createAndVerifyContent(String contentName, long contentSize)
+        throws IOException {
         File outFile = new File(srcDir, contentName);
-        FileChunker.createTestContent(outFile, contentSize);
+        InputStream is = FileChunker.createTestContent(outFile, contentSize);
+        IOUtils.closeQuietly(is);
 
         Assert.assertTrue(outFile.exists());
         Assert.assertEquals(contentSize, outFile.length());
@@ -116,7 +116,7 @@ public class FileChunkerTest {
                                                             chunkSize);
 
         FileChunker chunker = new FileChunker(writer, options);
-        File content = createAndVerifyContent(chunker, name, contentSize);
+        File content = createAndVerifyContent(name, contentSize);
         chunker.addContentFrom(srcDir, destDir.getPath());
 
         Pattern p = Pattern.compile(".*" + prefix + runNumber + suffix);
