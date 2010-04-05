@@ -12,6 +12,23 @@
   <artifactId>unit-test-db</artifactId>
   <version>1.0.0</version>
 
+  <build>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.duracloud.unittestdb.UnitTestDatabaseLoaderCLI</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>  
+  
   <dependencies>
 
     <!-- internal projects -->
