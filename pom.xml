@@ -52,6 +52,7 @@
       <module>mavenplugins</module>
       <module>common</module>
       <module>common-db</module>
+      <module>common-rest</module>    
       <module>serviceconfig</module>
       <module>computeprovider</module>
       <module>storageprovider</module>

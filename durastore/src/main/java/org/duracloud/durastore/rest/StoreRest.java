@@ -1,19 +1,18 @@
 package org.duracloud.durastore.rest;
 
-import java.util.Iterator;
+import org.duracloud.common.rest.RestUtil;
+import org.duracloud.durastore.util.StorageProviderFactory;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.storage.error.StorageException;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-
-import org.duracloud.durastore.rest.RestUtil.RequestContent;
-import org.duracloud.durastore.util.StorageProviderFactory;
-import org.duracloud.storage.error.StorageException;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
+import java.util.Iterator;
 
 /**
  * Provides interaction with storage providers accounts via REST
@@ -32,7 +31,7 @@ public class StoreRest extends BaseRest {
      */
     @POST
     public Response initializeStores(){
-        RequestContent content = null;
+        RestUtil.RequestContent content = null;
         try {
             RestUtil restUtil = new RestUtil();
             content = restUtil.getRequestContent(request, headers);

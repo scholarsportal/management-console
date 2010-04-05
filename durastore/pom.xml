@@ -26,6 +26,12 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
+      <artifactId>common-rest</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
       <artifactId>security</artifactId>
       <version>1.0.0</version>
     </dependency>
@@ -181,14 +187,6 @@
       <artifactId>commons-httpclient</artifactId>
       <version>3.1</version>
     </dependency>
-
-    <!-- for FileUpload -->
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-
 
     <dependency>
       <groupId>commons-io</groupId>

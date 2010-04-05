@@ -1,9 +1,9 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.rest.RestUtil;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
-import org.duracloud.durastore.rest.RestUtil.RequestContent;
 import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.provider.StorageProvider;
 
@@ -232,7 +232,7 @@ public class ContentRest extends BaseRest {
                                String contentID,
                                @QueryParam("storeID")
                                String storeID) {
-        RequestContent content = null;
+        RestUtil.RequestContent content = null;
         try {
             RestUtil restUtil = new RestUtil();
             content = restUtil.getRequestContent(request, headers);
