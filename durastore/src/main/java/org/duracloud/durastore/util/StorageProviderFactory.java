@@ -160,7 +160,7 @@ public class StorageProviderFactory {
     throws StorageException {
         if (storageAccountManager == null) {
             String error =
-                    "The Storage Provider Utility must be initilized with an " +
+                    "The Storage Provider Factory must be initilized with an " +
                     "XML file containing storage account information before it " +
                     "can fulfill any requests.";
             throw new StorageException(error);

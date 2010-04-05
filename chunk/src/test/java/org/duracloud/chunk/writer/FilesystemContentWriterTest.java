@@ -64,7 +64,9 @@ public class FilesystemContentWriterTest {
 
         File destSpace = new File(destDir, "spaceId-0");
         String spaceId = destSpace.getPath();
-        String contentId = "a/b/c/contentId";
+        String sep =  File.separator;
+        // a/b/c/contentId or a\b\c\contentId
+        String contentId = "a" + sep + "b" + sep + "c" + sep + "contentId";
 
         int numChunks = 4;
         long maxChunkSize = 1024;

@@ -226,12 +226,7 @@ public class FileChunker {
         int MAX_CHAR_MINUS_MIN_CHAR = 126 - MIN_CHAR;
         Random r = new Random();
         for (long i = 0; i < size; ++i) {
-
-            if (i % 101 == 0) {
-                bw.newLine();
-            } else {
-                bw.write(r.nextInt(MAX_CHAR_MINUS_MIN_CHAR) + MIN_CHAR);
-            }
+            bw.write(r.nextInt(MAX_CHAR_MINUS_MIN_CHAR) + MIN_CHAR);
         }
         IOUtils.closeQuietly(bw);
 
