@@ -267,7 +267,7 @@ public class ContentRest extends BaseRest {
                 return Response.serverError().entity(e.getMessage()).build();
             }
         } else {
-            String error = "Content must be included as part of the request.";
+            String error = "Content could not be retrieved from the request.";
             return Response.status(HttpStatus.SC_BAD_REQUEST)
                 .entity(error)
                 .build();

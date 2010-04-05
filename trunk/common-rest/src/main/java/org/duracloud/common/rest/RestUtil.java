@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -49,7 +48,8 @@ public class RestUtil {
 
                     FileItemHeaders itemHeaders = item.getHeaders();
                     if(itemHeaders != null) {
-                        String contentLength = itemHeaders.getHeader("Content-Length");
+                        String contentLength =
+                            itemHeaders.getHeader("Content-Length");
                         if(contentLength != null) {
                             rContent.size = Integer.parseInt(contentLength);
                         }
@@ -59,27 +59,12 @@ public class RestUtil {
                 }
             }
         } else {
-            // If the content stream was not been found as a multipart,
+            // If the content stream was not found as a multipart,
             // try to use the stream from the request directly
-            if(rContent == null) {
-                if (request.getContentLength() > 0) {
-                  rContent = new RequestContent();
-                  rContent.contentStream = request.getInputStream();
-                  rContent.size = request.getContentLength();
-                } else {
-                    String transferEncoding =
-                            request.getHeader("Transfer-Encoding");
-                    if (transferEncoding != null && transferEncoding.contains("chunked")) {
-                        BufferedInputStream bis =
-                            new BufferedInputStream(request.getInputStream());
-                        bis.mark(2);
-                        if (bis.read() > 0) {
-                            bis.reset();
-                            rContent = new RequestContent();
-                            rContent.contentStream = bis;
-                        }
-                    }
-                }
+            rContent = new RequestContent();
+            rContent.contentStream = request.getInputStream();
+            if (request.getContentLength() >= 0) {
+              rContent.size = request.getContentLength();
             }
         }
 
