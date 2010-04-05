@@ -2,10 +2,10 @@ package org.duracloud.duraservice.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.error.DuraCloudCheckedException;
+import org.duracloud.common.rest.RestUtil;
 import org.duracloud.duraservice.error.NoSuchDeployedServiceException;
 import org.duracloud.duraservice.error.NoSuchServiceComputeInstanceException;
 import org.duracloud.duraservice.error.NoSuchServiceException;
-import org.duracloud.duraservice.rest.RestUtil.RequestContent;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -83,7 +83,7 @@ public class ServiceRest extends BaseRest {
     public Response initializeServices() {
         try {
             RestUtil restUtil = new RestUtil();
-            RequestContent content = restUtil.getRequestContent(request, headers);
+            RestUtil.RequestContent content = restUtil.getRequestContent(request, headers);
             ServiceResource.configureManager(content.getContentStream());
             String responseText = "Initialization Successful";
             return Response.ok(responseText, TEXT_PLAIN).build();
@@ -327,7 +327,7 @@ public class ServiceRest extends BaseRest {
     private InputStream getRequestContent() {
         try {
             RestUtil restUtil = new RestUtil();
-            RequestContent content =
+            RestUtil.RequestContent content =
                 restUtil.getRequestContent(request, headers);
             return content.getContentStream();
         } catch (Exception e) {

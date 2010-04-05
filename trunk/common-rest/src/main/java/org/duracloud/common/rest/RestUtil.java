@@ -1,21 +1,17 @@
-package org.duracloud.durastore.rest;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+package org.duracloud.common.rest;
 
 import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-
 import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 
 /**
@@ -108,7 +104,7 @@ public class RestUtil {
         return rContent;
     }
 
-    class RequestContent {
+    public class RequestContent {
         private InputStream contentStream = null;
         private String mimeType = null;
         private int size = 0;
