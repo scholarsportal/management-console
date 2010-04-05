@@ -218,7 +218,9 @@ public class FileChunker {
                                                          long size)
         throws IOException {
         final int BUF_SZ = 8192;
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), BUF_SZ);
+        FileOutputStream fos = new FileOutputStream(outFile);
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        BufferedWriter bw = new BufferedWriter(osw, BUF_SZ);
 
         int MIN_CHAR = 32;
         int MAX_CHAR_MINUS_MIN_CHAR = 126 - MIN_CHAR;
