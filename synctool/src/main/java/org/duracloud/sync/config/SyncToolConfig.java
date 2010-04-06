@@ -26,9 +26,9 @@ public class SyncToolConfig implements Serializable {
     public String getPrintableConfig() {
         StringBuilder config = new StringBuilder();
 
-        config.append("\n-----------------------\n");
-        config.append("Sync Tool Configuration");
-        config.append("\n-----------------------\n");
+        config.append("\n--------------------------------------\n");
+        config.append(" Sync Tool Configuration");
+        config.append("\n--------------------------------------\n");
 
         config.append("Sync Directories:\n");
         for(File dir : getSyncDirs()) {
@@ -52,7 +52,7 @@ public class SyncToolConfig implements Serializable {
         config.append("\n");
         config.append("SyncTool Threads: ");
         config.append(getNumThreads()).append("\n");
-        config.append("-----------------------\n");
+        config.append("--------------------------------------\n");
 
         return config.toString();
     }

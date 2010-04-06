@@ -68,9 +68,9 @@ public class StatusManager {
     public String getPrintableStatus() {
         StringBuilder status = new StringBuilder();
 
-        status.append("\n-----------------------\n");
-        status.append("Sync Tool Status");
-        status.append("\n-----------------------\n");
+        status.append("\n--------------------------------------\n");
+        status.append(" Sync Tool Status");
+        status.append("\n--------------------------------------\n");
         status.append("Start Time: " + startTime + "\n");
         status.append("Sync Queue Size: " + queue + "\n");
         status.append("Successful Syncs: " + completed + "\n");
@@ -78,7 +78,7 @@ public class StatusManager {
         for(File failedFile : failed) {
             status.append("  " + failedFile.getAbsolutePath() + "\n");    
         }
-        status.append("-----------------------\n");
+        status.append("--------------------------------------\n");
         return status.toString();
     }
 

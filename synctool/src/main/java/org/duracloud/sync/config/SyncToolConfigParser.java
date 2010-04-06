@@ -231,11 +231,6 @@ public class SyncToolConfigParser {
         System.exit(1);
     }
 
-    public void printConfig(SyncToolConfig toolConfig) {
-        String config = toolConfig.getPrintableConfig();
-        logger.info(config);
-    }
-
     protected void backupConfig(File backupDir, String[] args) {
         File configBackupFile = new File(backupDir, BACKUP_FILE_NAME);
         try {
