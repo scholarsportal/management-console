@@ -8,6 +8,7 @@ import org.duracloud.sync.endpoint.SyncEndpoint;
 import org.duracloud.sync.mgmt.StatusManager;
 import org.duracloud.sync.mgmt.SyncManager;
 import org.duracloud.sync.monitor.DirectoryUpdateMonitor;
+import org.duracloud.sync.util.LogUtil;
 import org.duracloud.sync.walker.DirWalker;
 import org.duracloud.sync.walker.RestartDeleteChecker;
 import org.duracloud.sync.walker.RestartDirWalker;
@@ -47,12 +48,17 @@ public class SyncTool {
     private SyncBackupManager syncBackupManager;
     private DirectoryUpdateMonitor dirMonitor;
     private SyncEndpoint syncEndpoint;
+    private LogUtil logUtil;
 
     private SyncToolConfig processCommandLineArgs(String[] args) {
         SyncToolConfigParser syncConfigParser = new SyncToolConfigParser();
         syncConfig = syncConfigParser.processCommandLine(args);
-        syncConfigParser.printConfig(syncConfig);
         return syncConfig;
+    }
+
+    private void setupLogging(){
+        logUtil = new LogUtil();
+        logUtil.setupLogger(syncConfig.getBackupDir());
     }
 
     private void startSyncManager() {
@@ -119,6 +125,12 @@ public class SyncTool {
                 } else if(input.equalsIgnoreCase("status") ||
                           input.equalsIgnoreCase("s")) {
                     System.out.println(statusManager.getPrintableStatus());
+                } else if(input.startsWith("l ")) {
+                    logUtil.setLogLevel(input.substring(2));
+                    System.out.println("Log level set to " +
+                                       logUtil.getLogLevel());
+                } else {
+                    System.out.println(getPrintableHelp());
                 }
             } catch(IOException e) {
                 logger.warn(e.getMessage(), e);
@@ -135,6 +147,8 @@ public class SyncTool {
 
     public void runSyncTool(SyncToolConfig syncConfig) {
         this.syncConfig = syncConfig;
+        setupLogging();
+        printWelcome();
         startSyncManager();
 
         long lastBackup = startSyncBackupManager();
@@ -147,6 +161,30 @@ public class SyncTool {
 
         startDirMonitor();
         listenForExit();
+    }
+
+    private void printWelcome() {
+        System.out.println(syncConfig.getPrintableConfig());
+        System.out.println(getPrintableHelp());
+    }
+
+    public String getPrintableHelp() {
+        StringBuilder help = new StringBuilder();
+
+        help.append("\n--------------------------------------\n");
+        help.append(" Sync Tool Help");
+        help.append("\n--------------------------------------\n");
+
+        help.append("The following commands are available:\n");
+        help.append("x - Exits the Sync Tool\n");
+        help.append("c - Prints the Sync Tool configuration\n");
+        help.append("s - Prints the Sync Tool status\n");
+        help.append("l <Level> - Changes the log level to <Level> (may ");
+        help.append("be any of DEBUG, INFO, WARN, ERROR)\n");
+        help.append("Location of logs: " + logUtil.getLogLocation() + "\n");
+        help.append("--------------------------------------\n");
+        
+        return help.toString();
     }
 
     public static void main(String[] args) throws Exception {
