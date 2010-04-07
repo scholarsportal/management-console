@@ -30,9 +30,16 @@ public class SyncToolConfigParserTest {
 
     @After
     public void tearDown() throws Exception {
-        File backupFile = new File(tempDir, SyncToolConfigParser.BACKUP_FILE_NAME);
+        File backupFile =
+            new File(tempDir, SyncToolConfigParser.BACKUP_FILE_NAME);
         if(backupFile.exists()) {
             backupFile.delete();
+        }
+
+        File prevBackupFile =
+            new File(tempDir, SyncToolConfigParser.PREV_BACKUP_FILE_NAME);
+        if(prevBackupFile.exists()) {
+            prevBackupFile.delete();
         }
     }
 
@@ -152,9 +159,37 @@ public class SyncToolConfigParserTest {
 
         File backupFile = getBackupFile();
         String[] retrieveArgs = syncConfigParser.retrieveConfig(backupFile);
-        for(int i=0; i<testArgs.length; i++) {
-            assertTrue(testArgs[i].equals(retrieveArgs[i]));
-        }
+        compareArrays(testArgs, retrieveArgs);
+    }
+
+    @Test
+    public void testPrevBackupFile() throws Exception {
+        HashMap<String, String> argsMap = getArgsMap();
+        String[] args = mapToArray(argsMap);
+
+        // First backup
+        syncConfigParser.backupConfig(tempDir, args);
+        File backupFile = getBackupFile();
+        String[] retrieveArgs = syncConfigParser.retrieveConfig(backupFile);
+        compareArrays(args, retrieveArgs);
+
+        HashMap<String, String> newArgsMap =
+            (HashMap<String, String>)argsMap.clone();
+        newArgsMap.put("-z", "new");
+        String[] newArgs = mapToArray(newArgsMap);
+
+        // Second backup
+        syncConfigParser.backupConfig(tempDir, newArgs);
+
+        // Check config file (should be new args)
+        backupFile = getBackupFile();
+        retrieveArgs = syncConfigParser.retrieveConfig(backupFile);
+        compareArrays(newArgs, retrieveArgs);
+
+        // Check previous config backup (should be old args)
+        backupFile = getPrevBackupFile();
+        retrieveArgs = syncConfigParser.retrieveConfig(backupFile);
+        compareArrays(args, retrieveArgs);
     }
 
     private File getBackupFile() {
@@ -164,13 +199,30 @@ public class SyncToolConfigParserTest {
         return backupFile;
     }
 
+    private File getPrevBackupFile() {
+        File prevBackupFile =
+            new File(tempDir, SyncToolConfigParser.PREV_BACKUP_FILE_NAME);
+        assertTrue(prevBackupFile.exists());
+        return prevBackupFile;
+    }
+
+    private void compareArrays(String[] arr1, String[] arr2) {
+        assertEquals(arr1.length, arr2.length);
+        for(int i=0; i<arr1.length; i++) {
+            assertTrue(arr1[i].equals(arr2[i]));
+        }
+    }
+
     @Test
     public void testConfigFileOptions() throws Exception {
         HashMap<String, String> argsMap = getArgsMap();
 
-        // Process standard options, which should produce config backup file
+        // Process standard options
+        String[] args = mapToArray(argsMap);
         SyncToolConfig syncConfig =
-            syncConfigParser.processStandardOptions(mapToArray(argsMap));
+            syncConfigParser.processStandardOptions(args);
+        // Create config backup file
+        syncConfigParser.backupConfig(syncConfig.getBackupDir(), args);
         File backupFile = getBackupFile();
 
         // Create arg map including only -c option, pointing to config file
@@ -183,4 +235,5 @@ public class SyncToolConfigParserTest {
             syncConfigParser.processConfigFileOptions(mapToArray(argsMap));
         checkStandardOptions(getArgsMap(), syncConfig);
     }
+
 }

@@ -127,14 +127,24 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                     String dcChecksum =
                         contentMetadata.get(ContentStore.CONTENT_CHECKSUM);
                     String localChecksum = computeChecksum(syncFile);
-                    if(!dcChecksum.equals(localChecksum)) {
+                    if(dcChecksum.equals(localChecksum)) {
+                        logger.debug("Checksum for local file {} matches " +
+                            "file in DuraCloud, no update needed.",
+                            syncFile.getAbsolutePath());
+                    } else {
+                        logger.debug("Local file {} changed, updating DuraCloud.",
+                                     syncFile.getAbsolutePath());
                         addUpdateContent(contentId, syncFile);
                     }
                 } else { // File was added
+                    logger.debug("Local file {} added, moving to DuraCloud.",
+                                 syncFile.getAbsolutePath());
                     addUpdateContent(contentId, syncFile);
                 }
             } else { // File was deleted
                 if(dcFileExists) {
+                    logger.debug("Local file {} deleted, removing from DuraCloud.",
+                                 syncFile.getAbsolutePath());
                     contentStore.deleteContent(spaceId, contentId);
                 }
             }

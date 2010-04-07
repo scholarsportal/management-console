@@ -7,6 +7,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,8 @@ public class SyncToolConfigParser {
     private final Logger logger =
         LoggerFactory.getLogger(SyncToolConfigParser.class);
 
-    protected static final String BACKUP_FILE_NAME = "config.bak";
+    protected static final String BACKUP_FILE_NAME = "synctool.config";
+    protected static final String PREV_BACKUP_FILE_NAME = "synctool.config.bak";
 
     protected static final int DEFAULT_PORT = 8080;
     protected static final long DEFAULT_POLL_FREQUENCY = 10000;
@@ -40,7 +42,9 @@ public class SyncToolConfigParser {
     private Options cmdOptions;
     private Options configFileOptions;
 
-
+    /**
+     * Creates a parser for command line configuration options.
+     */
     public SyncToolConfigParser() {
        // Command Line Options
        cmdOptions = new Options();
@@ -119,10 +123,20 @@ public class SyncToolConfigParser {
        configFileOptions.addOption(configFileOption);
     }
 
+    /**
+     * Parses command line configuration into an object structure, validates
+     * correct values along the way.
+     *
+     * Prints a help message and exits the JVM on parse failure.
+     *
+     * @param args command line configuration values
+     * @return populated SyncToolConfig
+     */
     public SyncToolConfig processCommandLine(String[] args) {
         SyncToolConfig config = null;
         try {
             config = processConfigFileOptions(args);
+            backupConfig(config.getBackupDir(), args);
         } catch (ParseException e) {
             printHelp(e.getMessage());
         }
@@ -214,14 +228,13 @@ public class SyncToolConfigParser {
             config.setNumThreads(DEFAULT_NUM_THREADS);
         }
 
-        backupConfig(backupDir, args);
         return config;
     }
 
     private void printHelp(String message) {
-        logger.info("\n-----------------------\n" +
-                    message +
-                    "\n-----------------------\n");
+        System.out.println("\n-----------------------\n" +
+                           message +
+                           "\n-----------------------\n");
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("Running SyncTool",
@@ -234,6 +247,12 @@ public class SyncToolConfigParser {
     protected void backupConfig(File backupDir, String[] args) {
         File configBackupFile = new File(backupDir, BACKUP_FILE_NAME);
         try {
+            if(configBackupFile.exists()) {
+                File prevConfigBackupFile =
+                    new File(backupDir, PREV_BACKUP_FILE_NAME);
+                FileUtils.copyFile(configBackupFile, prevConfigBackupFile);
+            }
+
             BufferedWriter backupWriter =
                 new BufferedWriter(new FileWriter(configBackupFile));
             for(String arg : args) {
@@ -248,7 +267,7 @@ public class SyncToolConfigParser {
         }
     }
 
-    public String[] retrieveConfig(File configBackupFile) {
+    protected String[] retrieveConfig(File configBackupFile) {
         String[] config = null;
         if(configBackupFile.exists()) {
             ArrayList<String> args = new ArrayList<String>();
@@ -260,12 +279,35 @@ public class SyncToolConfigParser {
                     args.add(line);
                     line = backupReader.readLine();
                 }
-                config = args.toArray(new String[0]);
+                config = args.toArray(new String[args.size()]);
             } catch(IOException e) {
                 throw new RuntimeException("Unable to read configuration file " +
                                            "due to: " + e.getMessage(), e);
             }
         }
         return config;
+    }
+
+    /**
+     * Retrieves the configuration of the previous run of the Sync Tool.
+     * If there was no previous run, the backup file cannot be found, or
+     * the backup file cannot be read, returns null, otherwise returns the
+     * parsed configuration
+     * @param backupDir the current backup directory
+     * @return config for previous sync tool run, or null
+     */
+    public SyncToolConfig retrievePrevConfig(File backupDir) {
+        File prevConfigBackupFile =
+                    new File(backupDir, PREV_BACKUP_FILE_NAME);
+        if(prevConfigBackupFile.exists()) {
+            String[] prevConfigArgs = retrieveConfig(prevConfigBackupFile);
+            try {
+                return processStandardOptions(prevConfigArgs);
+            } catch (ParseException e) {
+                return null;
+            }          
+        } else {
+            return null;
+        }
     }
 }
