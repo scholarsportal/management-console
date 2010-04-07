@@ -11,6 +11,10 @@
 			</tiles:putAttribute>
 			<tiles:putAttribute name="miniform" value="" />
 			<tiles:putAttribute name="body">
+				<script type="text/javascript">
+					dojo.require("duracloud.durastore");
+				</script>
+			
 				<table class="small extended-metadata">
 					<tr>
 						<td><spring:message code="access" /></td>
@@ -43,6 +47,9 @@
 		</tiles:insertTemplate></div>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
+
+
+	
 		<tiles:insertDefinition name="base-main-content">
 			<tiles:putAttribute name="header">
 				<tiles:insertDefinition name="base-content-header">
@@ -163,11 +170,28 @@
 							</td>
 						</tr>
 					</table>
+					
+					<script type="text/javascript">
+						dojo.require("duracloud.durastore");
+	
+						dojo.addOnLoad(function(){
+							ds = duracloud.durastore;
+							dojo.query(".actionable-item").forEach(
+								function(item){
+							    	dojo.connect(item, 'onmouseover', function() {
+										var nodeId;
+										dojo.query("[id*='metadata-div-']",item).forEach(function(div){
+											nodeId = div.id;
+										});
+										ds.loadContentItem(nodeId,'${space.spaceId}',item.id);
+							    	});
+								});
+							});
+					</script>
 					<c:forEach items="${contentItemList.contentItemList}" var="content"
 						varStatus="status">
-						<div class="actionable-item">
-						<table id="${content.contentId}" 
-							onmouseover="loadContentItem('metadata-div-${status.count}', '${space.spaceId}', '${content.encodedContentId}');">
+						<div  id="${content.encodedContentId}" class="actionable-item">
+						<table>
 									<tr class="list-item-header">
 										<td colspan="2">
 											<a href="<c:url value="content.htm">

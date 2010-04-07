@@ -1,4 +1,32 @@
 <%@include file="/WEB-INF/jsp/include.jsp"%>
+
+	<script type="text/javascript">
+	dojo.addOnLoad(function(){
+		
+		dojo.query(".boxcontrol .miniform-button").forEach(
+			    function(element) {
+			    	dojo.connect(element, 'onclick', function(evt) {
+			    		showMiniform(evt);
+			    	});
+			    }
+			);		
+		
+		
+		/*configure tag and metadata components*/
+		dojo.query("div.tag, table.extended-metadata tr").forEach(
+		    function(element) {
+		    	dojo.connect(element, 'onmouseover', function() {
+					dojo.query("[type=button]",element).attr('style', {visibility:'visible'});
+		    	});
+	
+		    	dojo.connect(element, 'onmouseout', function() {
+					dojo.query("[type=button]",element).attr('style', {visibility:'hidden'});
+		    	});
+		    }
+		);		
+	});
+	</script>
+
 		<table class="boxcontrol">
 			<tr>
 				<td class="title">

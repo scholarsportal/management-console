@@ -7,6 +7,9 @@
 		<spring:message code="space" /> :: ${contentItem.spaceId} :: ${contentItem.contentId}
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
+		<script type="text/javascript">
+			dojo.require("duracloud.durastore");
+		</script>
 
 		<div><tiles:insertTemplate
 			template="/WEB-INF/jsp/layout/metadata-control.jsp">

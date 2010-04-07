@@ -42,7 +42,7 @@
 								<td>
 									<input class="minibutton" style="visibility:hidden"
 									type="button" value="x" 
-									onclick="removeMetadataByKey('<c:out value="${spaceId}"/>', '<c:out value="${m.name}"/>','<c:out value="${contentId}"/>', this.parentNode.parentNode);"/>								
+									onclick="duracloud.durastore.removeMetadataByKey('<c:out value="${spaceId}"/>', '<c:out value="${m.name}"/>','<c:out value="${contentId}"/>', this.parentNode.parentNode);"/>								
 								</td>
 							</tr>
 						</c:forEach>					
