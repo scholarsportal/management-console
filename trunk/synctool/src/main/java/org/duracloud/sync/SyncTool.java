@@ -56,6 +56,23 @@ public class SyncTool {
         return syncConfig;
     }
 
+    /**
+     * Determines if the sync directory list has been changed since the
+     * previous run. If it has, a restart cannot occur.
+     * @return true if sync directories have not been changed, false otherwise
+     */
+    private boolean restartPossible() {
+        SyncToolConfigParser syncConfigParser = new SyncToolConfigParser();
+        SyncToolConfig prevConfig =
+            syncConfigParser.retrievePrevConfig(syncConfig.getBackupDir());
+
+        if(prevConfig != null) {
+            return syncConfig.getSyncDirs().equals(prevConfig.getSyncDirs());
+        } else {
+            return false;
+        }
+    }
+
     private void setupLogging(){
         logUtil = new LogUtil();
         logUtil.setupLogger(syncConfig.getBackupDir());
@@ -75,11 +92,14 @@ public class SyncTool {
         syncManager.beginSync();
     }
 
-    private long startSyncBackupManager() {
+    private long startSyncBackupManager(boolean restart) {
         syncBackupManager =
             new SyncBackupManager(syncConfig.getBackupDir(),
                                   syncConfig.getPollFrequency());
-        long lastBackup = syncBackupManager.attemptRestart();
+        long lastBackup = 0;
+        if(restart) {
+            lastBackup = syncBackupManager.attemptRestart();
+        }
         syncBackupManager.startupBackups();
         return lastBackup;
     }
@@ -151,11 +171,14 @@ public class SyncTool {
         printWelcome();
         startSyncManager();
 
-        long lastBackup = startSyncBackupManager();
-        if(lastBackup > 0) {
+        boolean restart = restartPossible();
+        long lastBackup = startSyncBackupManager(restart);
+        if(restart && lastBackup > 0) {
+            logger.info("Running Sync Tool re-start file check");
             startRestartDirWalker(lastBackup);
             startDeleteChecker();
         } else {
+            logger.info("Running Sync Tool complete file check");
             startDirWalker();
         }
 
