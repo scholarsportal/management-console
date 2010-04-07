@@ -112,6 +112,13 @@
       <version>3.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+      <scope>runtime</scope>
+    </dependency>    
+    
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -123,8 +130,15 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.5.6</version>
     </dependency>
-
+    
     <!-- test -->
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common-db</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>unit-test-db</artifactId>
