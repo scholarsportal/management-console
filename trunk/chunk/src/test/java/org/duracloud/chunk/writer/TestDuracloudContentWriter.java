@@ -63,7 +63,7 @@ public class TestDuracloudContentWriter {
         if (accountXml == null) {
             accountXml = StorageAccountTestUtil.buildTestAccountXml();
         }
-        RestHttpHelper restHelper = new RestHttpHelper();
+        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
         restHelper.post(url, accountXml, null);
 
         storeManager = new ContentStoreManagerImpl(host, getPort(), context);
