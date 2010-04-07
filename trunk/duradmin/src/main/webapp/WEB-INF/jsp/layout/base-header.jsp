@@ -2,10 +2,7 @@
 
 
 <div id="top-header">
-	<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_logo_horiz_100.png">
-	<strong>
-		<spring:message code="application.title"/>
-	</strong>
+	<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_transparent.png" height="50">
 </div>
 
 <tiles:importAttribute name="mainMenu" />

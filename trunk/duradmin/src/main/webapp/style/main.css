@@ -48,18 +48,21 @@ table.tooltipDialog-header td:last-child {
 	text-align:right;
 }
 
-.available-services td:first-child{
-	width:25%
+.deployed-service td:first-child, .available-services td:first-child {
+	width:25%;
 }
-.available-services td:last-child{
+
+.deployed-service td:last-child, .available-services td:last-child {
 	text-align:right;
 	width:25%
-	
 }
+
+
+
 #header{
 	width:100%;
 	/*deep sky blue*/
-	background-color:#00B2EE;
+	/*background-color:#00B2EE;*/
 	color:#FFF;
 }
 
