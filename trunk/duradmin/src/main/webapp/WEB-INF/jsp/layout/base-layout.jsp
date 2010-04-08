@@ -27,15 +27,51 @@
 	<script type="text/javascript">
 	dojo.require("dojox.widget.Toaster");
 	dojo.require("duracloud._base");
+	dojo.require("duracloud.storage");
+	dojo.require("dojo.cookie");
+		
 
-
-		/*zebra stripe standard tables css 2 doesn't support nth-child*/	
 		dojo.addOnLoad(function(){
-			dojo.query(".standard > tbody > tr:nth-child(odd)").addClass("evenRow");
-			dojo.query(".extended-metadata tr:nth-child(even)").addClass("evenRow");
+		duracloud.storage.init();
+		//register for the following events:
+		var expireContentItem = function(e){
+				var contentId = dojo.attr(e.target,"contentId");
+				var spaceId = dojo.attr(e.target,"spaceId");
+				duracloud.storage.expireContentItem(spaceId,contentId);
+			};
+			
+		var expireSpace = function(e){
+				var spaceId = dojo.attr(e.target,"spaceId");
+				duracloud.storage.expireSpace(spaceId);
+			};
+			
+		dojo.query(".add-content-item").forEach(function(node){
+			dojo.connect(node, "onclick", expireSpace);
 		});
 
-		dojo.addOnLoad(function(){
+		dojo.query(".update-space").forEach(function(node){
+			dojo.connect(node, "onclick", expireSpace);
+		});
+		
+		//content item removed
+		dojo.query(".remove-content-item").forEach(function(node){
+			dojo.connect(node, "onclick", expireContentItem);
+		});
+
+		//content item updated
+		dojo.query(".update-content-item").forEach(function(node){
+			dojo.connect(node, "onclick", expireContentItem);
+		});
+	
+		//space removed
+		dojo.query(".remove-space").forEach(function(node){
+			dojo.connect(node, "onclick", expireSpace);
+		});
+
+		/*zebra stripe standard tables css 2 doesn't support nth-child*/	
+			dojo.query(".standard > tbody > tr:nth-child(odd)").addClass("evenRow");
+			dojo.query(".extended-metadata tr:nth-child(even)").addClass("evenRow");
+
 			//adds mouse listeners on spaces table rows
 			//will throw an error if spaces table is not found
 			try{
