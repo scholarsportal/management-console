@@ -50,6 +50,10 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
      * @param context the application context by which DuraStore can be accessed
      */
     public ContentStoreManagerImpl(String host, String port, String context) {
+        init(host, port, context);
+    }
+
+    private void init(String host, String port, String context) {
         if (host == null || host.equals("")) {
             throw new IllegalArgumentException("Host must be a valid server host name");
         }
@@ -63,6 +67,11 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
         } else {
             baseURL = "http://" + host + ":" + port + "/" + context;
         }
+    }
+
+    public void reinitialize(String host, String port, String context)
+        throws ContentStoreException {
+        init(host, port, context);
     }
 
     /**

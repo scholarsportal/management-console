@@ -36,4 +36,14 @@ public interface ContentStoreManager extends Securable {
      * @throws if the content store cannot be retrieved
      */
     public ContentStore getPrimaryContentStore() throws ContentStoreException;
+
+    /**
+     * <p>reconfigure</p>
+     * @param host of durastore
+     * @param port of durastore
+     * @param context of durastore
+     * @throws ContentStoreException
+     */
+    public void reinitialize(String host, String port, String context)
+        throws ContentStoreException;
 }
