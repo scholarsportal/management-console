@@ -3,6 +3,7 @@ package org.duracloud.duradmin.contentstore;
 
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.error.ContentStoreException;
 
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class ContentStoreProvider {
         return stores;        
     }
 
-    public void setContentStoreManager(ContentStoreManager contentStoreManager) {
-        this.contentStoreManager = contentStoreManager;
+    public void reinitializeContentStoreManager() throws ContentStoreException {
+        this.contentStoreManager.reinitialize(DuradminConfig.getDuraStoreHost(),
+                                              DuradminConfig.getDuraStorePort(),
+                                              DuradminConfig.getDuraStoreContext());
     }
 }

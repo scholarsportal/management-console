@@ -1,9 +1,6 @@
 package org.duracloud.duradmin.control;
 
-import org.duracloud.client.ContentStoreManager;
 import org.duracloud.duradmin.config.DuradminConfig;
-import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
-import org.duracloud.duradmin.contentstore.ContentStoreManagerFactoryImpl;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.AdminInit;
 import org.springframework.validation.BindException;
@@ -49,13 +46,8 @@ public class InitController extends BaseFormController {
     private void updateInit(AdminInit init) throws Exception {
         DuradminConfig.setConfig(init);
 
-        ContentStoreManagerFactory contentStoreManagerFactory =
-            new ContentStoreManagerFactoryImpl();
-        ContentStoreManager contentStoreManager =
-            contentStoreManagerFactory.create();
-
         ContentStoreProvider contentStoreProvider = getContentStoreProvider();
-        contentStoreProvider.setContentStoreManager(contentStoreManager);
+        contentStoreProvider.reinitializeContentStoreManager();
     }
 
 }

@@ -40,7 +40,6 @@ public class MockContentStoreManagerFactoryImpl
                 new HashMap<String, ContentStore>();
 
         public MockContentStoreManager() {
-
             for (int i = 0; i < 3; i++) {
                 String storeId = "Mock Store #" + i;
                 this.contentStores.put(storeId, new MockContentStore(storeId));
@@ -49,6 +48,10 @@ public class MockContentStoreManagerFactoryImpl
             this.primaryContentStore =
                     this.contentStores.get(this.contentStores.keySet()
                             .iterator().next());
+        }
+
+        public void reinitialize(String host, String port, String context)
+            throws ContentStoreException {
         }
 
         public ContentStore getContentStore(String storeID)
