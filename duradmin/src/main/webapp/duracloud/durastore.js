@@ -1,29 +1,36 @@
-dojo.require("duracloud._base")
+dojo.require("duracloud._base");
+dojo.require("duracloud.storage");
 dojo.provide("duracloud.durastore");
-
 duracloud.durastore = {
-	loadSpaceMetadata: function(nodeId, spaceId){
+		
+	loadSpaceMetadata: function(node, spaceId){
 		//check if already updated.
-		var node = dojo.byId(nodeId);
+		//var node = dojo.byId(nodeId);
 		var contents = node.innerHTML;
 		//console.debug(contents);
 		if(contents.search('<!--empty-->') < 0){
 			return;
+		}
+
+		var s = duracloud.storage.get(spaceId);
+		if(s != null){
+		      node.innerHTML = duracloud.formatSpaceMetadataHtml(s);
+		      return;
 		}
 		
 		duracloud.showWaitMessage(node, "Retrieving metadata...");
 		
 		dojo.xhrGet( {
 		    // The following URL must match that used to test the server.
-		    url: "/duradmin/data/spaces/space?spaceId="+spaceId,
+			url: "/duradmin/data/spaces/space?spaceId="+spaceId,
 		    handleAs: "json",
 		    headers: getAuthHeaders(),
 		    load: function(responseObject, ioArgs) {
 			  console.debug(responseObject);  // Dump it to the console
 			  var space = responseObject.space;
-			  var metadataHtml = duracloud.formatSpaceMetadataHtml(space);
-		      dojo.byId(nodeId).innerHTML = metadataHtml;
-		},
+			  node.innerHTML = duracloud.formatSpaceMetadataHtml(space);
+			  duracloud.storage.put(spaceId, space);
+			},
 			error: function(responseObject, ioArgs){
 	          	  console.error("HTTP status code: ", ioArgs.xhr.status); 
 
@@ -34,12 +41,20 @@ duracloud.durastore = {
 		});
 	},
 	
-	loadContentItem: function (nodeId, spaceId, contentId){
-		var node = dojo.byId(nodeId);
+	loadContentItem: function (node, spaceId, contentId){
+		//var node = dojo.byId(nodeId);
 		var contents = node.innerHTML;
 		if(contents.search('<!--empty-->') < 0){
 			return;
 		}
+		
+		var s = duracloud.storage.get(spaceId,contentId);
+		if(s != null){
+			  node.innerHTML = "";
+		      node.appendChild(duracloud.formatContentItemMetadataHtml(s));
+		      return;
+		}
+
 		duracloud.showWaitMessage(node, "Retrieving metadata...");
 		dojo.xhrGet( {
 		    // The following URL must match that used to test the server.
@@ -49,9 +64,11 @@ duracloud.durastore = {
 			  console.debug(responseObject);  // Dump it to the console
 			  var ci = responseObject.contentItem;
 			  var details = duracloud.formatContentItemMetadataHtml(ci);
-			  var node = dojo.byId(nodeId);
+			  //var node = dojo.byId(nodeId);
 			  node.innerHTML = "";
 		      node.appendChild(details);
+		      duracloud.storage.put(spaceId,contentId,ci);
+
 		},
 			error: function(responseObject, ioArgs){
 		          console.error("HTTP status code: ", ioArgs.xhr.status); 

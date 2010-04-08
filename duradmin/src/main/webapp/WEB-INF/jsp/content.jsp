@@ -38,11 +38,11 @@
         <form:form commandName="contentItem"
 			action="${modifyPropertiesUrl}"
 			method="post">
-			<input type="hidden" name="action" value="update" />
+			<input type="hidden" name="action" value="update"/>
 			<p><label for="mimetype"><spring:message code="mimetype" /></label>
 			<form:input id="mimetype" path="contentMimetype" /> <form:errors
 				path="contentMimetype" /></p>
-			<p><input type='submit' value="<spring:message code="update"/>" />
+			<p><input type='submit' class="update-content-item" contentId="${contentItem.contentId}" spaceId="${contentItem.spaceId}" value="<spring:message code="update"/>" />
 			</p>
 		</form:form></div>
 
@@ -86,7 +86,7 @@
 										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
 									</li>
 
-									<li><a class="delete-action"
+									<li><a class="delete-action remove-content-item" spaceId="${contentItem.spaceId}"
 										href="<c:url value="removeContent.htm" >
 										   		<c:param name="spaceId" value="${contentItem.spaceId}"/>
 										   		<c:param name="contentId" value="${contentItem.contentId}"/>

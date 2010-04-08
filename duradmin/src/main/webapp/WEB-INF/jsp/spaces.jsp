@@ -22,6 +22,11 @@
 					dojo.require("duracloud.durastore");
 
 					dojo.addOnLoad(function(){
+						
+						dojo.query(".space-metadata").forEach(function(div){
+							duracloud.durastore.loadSpaceMetadata(div,div.parentNode.id);
+						});
+					/*
 						dojo.query(".space-list-item").forEach(
 							function(item){
 						    	dojo.connect(item, 'onmouseover', function() {
@@ -32,6 +37,7 @@
 									duracloud.durastore.loadSpaceMetadata(nodeId,item.id);
 						    	});
 							});
+							*/
 						});
 				</script>
 				<c:forEach items="${spaces}" var="spaceId" varStatus="status">
@@ -62,7 +68,7 @@
 								</div>
 							</div>
 							
-							<div id="metadata-div-${status.count}" class="list-item-content">
+							<div id="metadata-div-${status.count}" class="space-metadata list-item-content">
 								<!--empty-->
 							</div>
 					</div>

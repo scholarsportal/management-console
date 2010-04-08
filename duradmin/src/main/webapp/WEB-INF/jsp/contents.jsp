@@ -73,7 +73,7 @@
 									<li><a
 										href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message
 										code="add.contentItem" /></a></li>
-									<li><a
+									<li><a spaceId="${space.spaceId}" class="update-space"
 										href="<c:url value="/space/changeAccess">
 											<c:param name="spaceId" value="${space.spaceId}"/>
 											<c:param name="returnTo" value="${currentUrl}"/>
@@ -81,7 +81,7 @@
 										<spring:message
 											code="${space.metadata.access == 'OPEN' ?'close.space' : 'open.space'}" />
 									</a></li>
-									<li><a id="removeSpaceLink" class="delete-action" href="<c:url value="removeSpace.htm">
+									<li><a  spaceId="${space.spaceId}" class="remove-space delete-action" href="<c:url value="removeSpace.htm">
 											   		<c:param name="spaceId" value="${space.spaceId}"/>
 											   		<c:param name="returnTo" value="${pageContext.request.contextPath}/spaces.htm"/>
 											    </c:url>">
@@ -175,6 +175,8 @@
 						dojo.require("duracloud.durastore");
 	
 						dojo.addOnLoad(function(){
+						
+							/*
 							ds = duracloud.durastore;
 							dojo.query(".actionable-item").forEach(
 								function(item){
@@ -186,7 +188,14 @@
 										ds.loadContentItem(nodeId,'${space.spaceId}',item.id);
 							    	});
 								});
+								
+							*/
+							
+
+							dojo.query(".content-item-details").forEach(function(div){
+								duracloud.durastore.loadContentItem(div, dojo.attr(div.id, "spaceId"), dojo.attr(div.id, "contentId"));
 							});
+						});
 					</script>
 					<c:forEach items="${contentItemList.contentItemList}" var="content"
 						varStatus="status">
@@ -209,7 +218,7 @@
 													<img src="${content.tinyThumbnailURL}" />
 												</c:if>
 											</div>
-											<div id="metadata-div-${status.count}" class="content-item-details">
+											<div id="metadata-div-${status.count}" contentId="${content.contentId}" spaceId="${content.spaceId}"  class="content-item-details">
 												<!--empty-->
 											</div>
 										</td>
@@ -227,7 +236,7 @@
 													<li>
 														<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
 													</li>
-													<li><a class="delete-action"
+													<li><a  class="delete-action remove-content-item" spaceId="${content.spaceId}" contentId="${content.contentId}"
 														href="<c:url value="removeContent.htm"  >
 														   		<c:param name="spaceId" value="${space.spaceId}"/>
 														   		<c:param name="contentId" value="${content.contentId}"/>
