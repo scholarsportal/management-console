@@ -31,12 +31,15 @@ public class SyncToolConfigParser {
     private final Logger logger =
         LoggerFactory.getLogger(SyncToolConfigParser.class);
 
+    protected static final long GIGABYTE = 1073741824;
+
     protected static final String BACKUP_FILE_NAME = "synctool.config";
     protected static final String PREV_BACKUP_FILE_NAME = "synctool.config.bak";
 
     protected static final int DEFAULT_PORT = 8080;
     protected static final long DEFAULT_POLL_FREQUENCY = 10000;
     protected static final int DEFAULT_NUM_THREADS = 10;
+    protected static final int DEFAULT_MAX_FILE_SIZE = 1; // 1 GB
     protected static final String context = "durastore";
 
     private Options cmdOptions;
@@ -111,6 +114,15 @@ public class SyncToolConfigParser {
         numThreads.setRequired(false);
         cmdOptions.addOption(numThreads);
 
+       Option maxFileSize =
+           new Option("m", "max-file-size", true,
+                      "the maximum size of a stored file in GB (value must " +
+                      "be between 1 and 5), larger files will be split into " +
+                      "pieces (optional, default value is " +
+                      DEFAULT_MAX_FILE_SIZE + ")");
+        maxFileSize.setRequired(false);
+        cmdOptions.addOption(maxFileSize);        
+
        // Options to use Backup Config
        configFileOptions = new Options();
 
@@ -136,7 +148,6 @@ public class SyncToolConfigParser {
         SyncToolConfig config = null;
         try {
             config = processConfigFileOptions(args);
-            backupConfig(config.getBackupDir(), args);
         } catch (ParseException e) {
             printHelp(e.getMessage());
         }
@@ -148,7 +159,7 @@ public class SyncToolConfigParser {
         try {
             CommandLineParser parser = new PosixParser();
             CommandLine cmd = parser.parse(configFileOptions, args);
-            
+
             String configFilePath = cmd.getOptionValue("c");
             File configFile = new File(configFilePath);
             if(!configFile.exists()) {
@@ -158,10 +169,17 @@ public class SyncToolConfigParser {
             }
 
             String[] configFileArgs = retrieveConfig(configFile);
-            return processStandardOptions(configFileArgs);
-        } catch(ParseException e) {
-            return processStandardOptions(args);
+            return processAndBackup(configFileArgs);
+        } catch(ParseException e) {           
+            return processAndBackup(args);
         }
+    }
+
+    private SyncToolConfig processAndBackup(String[] args)
+        throws ParseException {
+        SyncToolConfig config = processStandardOptions(args);
+        backupConfig(config.getBackupDir(), args);
+        return config;
     }
 
     protected SyncToolConfig processStandardOptions(String[] args)
@@ -226,6 +244,23 @@ public class SyncToolConfigParser {
             }
         } else {
             config.setNumThreads(DEFAULT_NUM_THREADS);
+        }
+
+        if(cmd.hasOption("m")) {
+            String error = "The value for max-file-size (-m) must be a " +
+                           "number between 1 and 5.";
+            try {
+                long maxFileSize = Integer.valueOf(cmd.getOptionValue("m"));
+                if(maxFileSize >= 1 && maxFileSize <= 5) {
+                    config.setMaxFileSize(maxFileSize * GIGABYTE);
+                } else {
+                    throw new ParseException(error);
+                }
+            } catch(NumberFormatException e) {
+                throw new ParseException(error);
+            }
+        } else {
+            config.setMaxFileSize(DEFAULT_MAX_FILE_SIZE * GIGABYTE);
         }
 
         return config;

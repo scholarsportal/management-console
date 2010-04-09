@@ -19,7 +19,7 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Mar 17, 2010
  */
-public class DirWalker extends DirectoryWalker {
+public class DirWalker extends DirectoryWalker implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(DirWalker.class);
 
@@ -27,13 +27,17 @@ public class DirWalker extends DirectoryWalker {
     private ChangedList fileList;
     private int files = 0;
 
-    public DirWalker(List<File> topDirs) {
+    protected DirWalker(List<File> topDirs) {
         super();
         this.topDirs = topDirs;
         fileList = ChangedList.getInstance();
     }
 
-    public void walkDirs() {
+    public void run() {
+        walkDirs();
+    }
+
+    protected void walkDirs() {
         for(File dir : topDirs) {
             if(dir.exists() && dir.isDirectory()) {
                 try {
@@ -56,6 +60,10 @@ public class DirWalker extends DirectoryWalker {
     protected void handleFile(File file, int depth, Collection results) {
         ++files;
         fileList.addChangedFile(file);
+    }
+
+    public static void start(List<File> topDirs) {
+        (new Thread(new DirWalker(topDirs))).start();       
     }
 
 }

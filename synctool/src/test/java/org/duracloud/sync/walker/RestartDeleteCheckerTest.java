@@ -46,8 +46,9 @@ public class RestartDeleteCheckerTest extends SyncTestBase {
         List<File> syncDirs = new ArrayList<File>();
         syncDirs.add(tempDir);
 
-        RestartDeleteChecker deleteChecker = new RestartDeleteChecker();
-        deleteChecker.runDeleteChecker(filesList.iterator(), syncDirs);
+        RestartDeleteChecker deleteChecker =
+            new RestartDeleteChecker(filesList.iterator(), syncDirs);
+        deleteChecker.run();
 
         ChangedFile changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
