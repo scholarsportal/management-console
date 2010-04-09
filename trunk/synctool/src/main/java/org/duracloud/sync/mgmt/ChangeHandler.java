@@ -6,6 +6,12 @@ package org.duracloud.sync.mgmt;
  */
 public interface ChangeHandler {
 
-    public void fileChanged(ChangedFile changedFile);
-    
+    /**
+     * Tells the handler that a file has changed
+     *
+     * @param changedFile a file which has changed
+     * @returns true if handling was successful, false otherwise
+     */
+    public boolean handleChangedFile(ChangedFile changedFile);
+
 }

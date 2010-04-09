@@ -14,10 +14,11 @@ import java.util.List;
  */
 public class StatusManager {
 
-    private long queue;
+    private long inWork;
     private long completed;
     private List<File> failed;
     private String startTime;
+    private ChangedList changedList;
 
     private static StatusManager instance;
 
@@ -32,19 +33,23 @@ public class StatusManager {
      * Not to be used outside of tests
      */
     protected StatusManager() {
-        queue = 0;
         completed = 0;
         failed = new ArrayList<File>();
         startTime =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+        changedList = ChangedList.getInstance();
     }
 
-    public long getQueueSize() {
-        return queue;
+    public int getQueueSize() {
+        return changedList.getListSize();
     }
 
-    public synchronized void addedToQueue() {
-        queue++;
+    public synchronized void inWork() { 
+        inWork++;
+    }
+
+    public long getInWork() {
+        return inWork;
     }
 
     public long getCompleted() {
@@ -53,7 +58,7 @@ public class StatusManager {
 
     public synchronized void completedProcessing() {
         completed++;
-        queue--;
+        inWork--;
     }
 
     public List<File> getFailed() {
@@ -62,7 +67,7 @@ public class StatusManager {
 
     public synchronized void failedProcessing(File file) {
         failed.add(file);
-        queue--;
+        inWork--;
     }
 
     public String getPrintableStatus() {
@@ -72,10 +77,11 @@ public class StatusManager {
         status.append(" Sync Tool Status");
         status.append("\n--------------------------------------\n");
         status.append("Start Time: " + startTime + "\n");
-        status.append("Sync Queue Size: " + queue + "\n");
-        status.append("Successful Syncs: " + completed + "\n");
-        status.append("Failed Syncs: " + failed.size() + "\n");
-        for(File failedFile : failed) {
+        status.append("Sync Queue Size: " + getQueueSize() + "\n");
+        status.append("Syncs In Process: " + getInWork() + "\n");
+        status.append("Successful Syncs: " + getCompleted() + "\n");
+        status.append("Failed Syncs: " + getFailed().size() + "\n");
+        for(File failedFile : getFailed()) {
             status.append("  " + failedFile.getAbsolutePath() + "\n");    
         }
         status.append("--------------------------------------\n");

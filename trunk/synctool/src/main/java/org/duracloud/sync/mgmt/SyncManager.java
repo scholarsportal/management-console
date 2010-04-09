@@ -6,8 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The SyncManager is responsible to watch for new entries in the ChangedList
@@ -23,7 +27,8 @@ public class SyncManager implements ChangeHandler {
     private ChangeWatcher changeWatcher;
     private List<File> watchDirs;
     private SyncEndpoint endpoint;
-    private ExecutorService execPool;
+    private ExecutorService watcherPool;
+    private ThreadPoolExecutor workerPool;
 
     /**
      * Creates a SyncManager which, when started, will watch for updates to
@@ -44,15 +49,23 @@ public class SyncManager implements ChangeHandler {
                                           this,
                                           frequency);
 
-        // Create thread pool for workers and changeWatcher
-        execPool = Executors.newFixedThreadPool(threads + 1);
+        // Create thread pool for changeWatcher
+        watcherPool = Executors.newFixedThreadPool(1);
+        // Create thread pool for watchers
+        workerPool =
+            new ThreadPoolExecutor(threads,
+                                   threads,
+                                   Long.MAX_VALUE,
+                                   TimeUnit.NANOSECONDS,
+                                   new ArrayBlockingQueue(threads),
+                                   new ThreadPoolExecutor.AbortPolicy());
     }
 
     /**
      * Allows the SyncManager to begin watching for updates to the ChangedList
      */
     public void beginSync() {
-        execPool.execute(changeWatcher);
+        watcherPool.execute(changeWatcher);
     }
 
     /**
@@ -62,17 +75,36 @@ public class SyncManager implements ChangeHandler {
     public void endSync() {
         logger.info("Closing Sync Manager, ending sync");
         changeWatcher.endWatch();
-        execPool.shutdown();
+        watcherPool.shutdown();
+        workerPool.shutdown();
     }
 
     /**
      * Notifies the SyncManager that a file has changed
      *
      * @param changedFile the changed file
+     * @returns true if file accepted for processing, false otherwise
      */
-    public void fileChanged(ChangedFile changedFile) {
-        File watchDir = getWatchDir(changedFile.getFile());
-        execPool.execute(new SyncWorker(changedFile, watchDir, endpoint));
+    public boolean handleChangedFile(ChangedFile changedFile) {
+        if(spaceInWorkQueue()) {
+            File watchDir = getWatchDir(changedFile.getFile());
+            try {
+                workerPool.execute(new SyncWorker(changedFile, watchDir, endpoint));
+            } catch(RejectedExecutionException e) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+   /**
+     * Indicates that the SyncManager is ready to handle another changed file.
+     * @return true if there is an open slot in the work queue
+     */
+    private boolean spaceInWorkQueue() {
+        return workerPool.getQueue().remainingCapacity() > 0;
     }
 
     /*

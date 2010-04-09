@@ -14,15 +14,15 @@ public class StatusManagerTest {
     @Test
     public void testStatusManager() {
         StatusManager status = new StatusManager();
-        assertEquals(0, status.getQueueSize());
+        assertEquals(0, status.getInWork());
         assertEquals(0, status.getCompleted());
         assertEquals(0, status.getFailed().size());
 
         for(int i=0; i<100; i++) {
-            status.addedToQueue();
+            status.inWork();
         }
 
-        assertEquals(100, status.getQueueSize());
+        assertEquals(100, status.getInWork());
         assertEquals(0, status.getCompleted());
         assertEquals(0, status.getFailed().size());
 
@@ -30,7 +30,7 @@ public class StatusManagerTest {
             status.completedProcessing();
         }
 
-        assertEquals(50, status.getQueueSize());
+        assertEquals(50, status.getInWork());
         assertEquals(50, status.getCompleted());
         assertEquals(0, status.getFailed().size());
 
@@ -38,7 +38,7 @@ public class StatusManagerTest {
             status.failedProcessing(new File("test"));
         }
 
-        assertEquals(0, status.getQueueSize());
+        assertEquals(0, status.getInWork());
         assertEquals(50, status.getCompleted());
         assertEquals(50, status.getFailed().size());
     }
