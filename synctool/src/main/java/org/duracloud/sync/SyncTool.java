@@ -160,7 +160,13 @@ public class SyncTool {
     private void closeSyncTool() {
         syncBackupManager.endBackups();
         syncManager.endSync();
-        dirMonitor.stopMonitor();        
+        dirMonitor.stopMonitor();
+
+        long inWork = StatusManager.getInstance().getInWork();
+        if(inWork > 0) {
+            System.out.println("\nThe Sync Tool will exit after the remaining "
+                               + inWork + " work items have completed\n");
+        }
     }
 
     public void runSyncTool(SyncToolConfig syncConfig) {

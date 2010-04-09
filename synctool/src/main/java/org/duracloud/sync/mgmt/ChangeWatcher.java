@@ -17,6 +17,7 @@ public class ChangeWatcher implements Runnable {
     private ChangedList changedList;
     private ChangeHandler handler;
     private long watchFrequency;
+    private StatusManager status;
 
     /**
      * Creates a ChangeWatcher which watches for changes to the ChangedList
@@ -32,16 +33,22 @@ public class ChangeWatcher implements Runnable {
         this.changedList = changedList;
         this.handler = handler;
         this.watchFrequency = watchFrequency;
+        this.status = StatusManager.getInstance();
         continueWatch = true;
     }
 
     public void run() {
-        while(continueWatch) {
+        while (continueWatch) {
             ChangedFile changedFile = changedList.getChangedFile();
-            if(changedFile != null) {
-                handler.fileChanged(changedFile);
+            if (changedFile != null) {
+                boolean success = handler.handleChangedFile(changedFile);
+                if(success) {
+                    status.inWork();
+                } else {
+                    changedList.addChangedFile(changedFile);                       
+                }
             } else {
-                // List is empty, wait before next check
+                // List is empty or handler not ready, wait before next check
                 sleep(watchFrequency);
             }
         }
