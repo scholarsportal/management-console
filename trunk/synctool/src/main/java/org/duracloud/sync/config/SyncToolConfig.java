@@ -22,6 +22,7 @@ public class SyncToolConfig implements Serializable {
     private List<File> syncDirs;
     private long pollFrequency;
     private int numThreads;
+    private long maxFileSize;
 
     public String getPrintableConfig() {
         StringBuilder config = new StringBuilder();
@@ -52,6 +53,8 @@ public class SyncToolConfig implements Serializable {
         config.append("\n");
         config.append("SyncTool Threads: ");
         config.append(getNumThreads()).append("\n");
+        config.append("SyncTool Max File Size: ");
+        config.append(getMaxFileSize()).append(" bytes\n");
         config.append("--------------------------------------\n");
 
         return config.toString();
@@ -135,5 +138,13 @@ public class SyncToolConfig implements Serializable {
 
     public void setNumThreads(int numThreads) {
         this.numThreads = numThreads;
+    }
+
+    public long getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public void setMaxFileSize(long maxFileSize) {
+        this.maxFileSize = maxFileSize;
     }
 }

@@ -56,6 +56,7 @@ public class SyncToolConfigParserTest {
         argsMap.remove("-f");
         argsMap.remove("-p");
         argsMap.remove("-t");
+        argsMap.remove("-m");
 
         // Process configs, make sure optional params are set to defaults
         syncConfig =
@@ -65,6 +66,9 @@ public class SyncToolConfigParserTest {
         assertEquals(SyncToolConfigParser.DEFAULT_PORT, syncConfig.getPort());
         assertEquals(SyncToolConfigParser.DEFAULT_NUM_THREADS,
                      syncConfig.getNumThreads());
+        assertEquals(SyncToolConfigParser.DEFAULT_MAX_FILE_SIZE *
+                     SyncToolConfigParser.GIGABYTE,
+                     syncConfig.getMaxFileSize());
 
         // Make sure error is thrown on missing required params
         for(String arg : argsMap.keySet()) {
@@ -79,7 +83,13 @@ public class SyncToolConfigParserTest {
         failMsg = "Port arg should require a numerical value";
         addArgFailTest(argsMap, "-p", "nonNum", failMsg);
         failMsg = "Threads arg should require a numerical value";
-        addArgFailTest(argsMap, "-t", "nonNum", failMsg);        
+        addArgFailTest(argsMap, "-t", "nonNum", failMsg);
+        failMsg = "Max file size arg should require a numerical value";
+        addArgFailTest(argsMap, "-m", "nonNum", failMsg);
+        failMsg = "Max file size arg should be between 1 and 5";
+        addArgFailTest(argsMap, "-m", "0", failMsg);
+        addArgFailTest(argsMap, "-m", "6", failMsg);
+
     }
 
     private HashMap<String, String> getArgsMap() {
@@ -93,6 +103,7 @@ public class SyncToolConfigParserTest {
         argsMap.put("-u", "user");
         argsMap.put("-w", "pass");
         argsMap.put("-s", "mySpace");
+        argsMap.put("-m", "2");
         return argsMap;
     }
 
@@ -112,6 +123,9 @@ public class SyncToolConfigParserTest {
         assertEquals(argsMap.get("-u"), syncConfig.getUsername());
         assertEquals(argsMap.get("-w"), syncConfig.getPassword());
         assertEquals(argsMap.get("-s"), syncConfig.getSpaceId());
+        assertEquals(argsMap.get("-m"),
+                     String.valueOf(syncConfig.getMaxFileSize() /
+                                    SyncToolConfigParser.GIGABYTE));
     }
 
     private String[] mapToArray(HashMap<String, String> map) {

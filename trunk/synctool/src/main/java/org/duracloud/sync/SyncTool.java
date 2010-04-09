@@ -3,7 +3,7 @@ package org.duracloud.sync;
 import org.duracloud.sync.backup.SyncBackupManager;
 import org.duracloud.sync.config.SyncToolConfig;
 import org.duracloud.sync.config.SyncToolConfigParser;
-import org.duracloud.sync.endpoint.DuraStoreSyncEndpoint;
+import org.duracloud.sync.endpoint.DuraStoreChunkSyncEndpoint;
 import org.duracloud.sync.endpoint.SyncEndpoint;
 import org.duracloud.sync.mgmt.StatusManager;
 import org.duracloud.sync.mgmt.SyncManager;
@@ -79,12 +79,14 @@ public class SyncTool {
     }
 
     private void startSyncManager() {
-        syncEndpoint = new DuraStoreSyncEndpoint(syncConfig.getHost(),
-                                                 syncConfig.getPort(),
-                                                 syncConfig.getContext(),
-                                                 syncConfig.getUsername(),
-                                                 syncConfig.getPassword(),
-                                                 syncConfig.getSpaceId());
+        syncEndpoint = 
+            new DuraStoreChunkSyncEndpoint(syncConfig.getHost(),
+                                           syncConfig.getPort(),
+                                           syncConfig.getContext(),
+                                           syncConfig.getUsername(),
+                                           syncConfig.getPassword(),
+                                           syncConfig.getSpaceId(),
+                                           syncConfig.getMaxFileSize());
         syncManager = new SyncManager(syncConfig.getSyncDirs(),
                                       syncEndpoint,
                                       syncConfig.getNumThreads(),
@@ -105,20 +107,16 @@ public class SyncTool {
     }
 
     private void startDirWalker() {
-        DirWalker dirWalker = new DirWalker(syncConfig.getSyncDirs());
-        dirWalker.walkDirs();
+        DirWalker.start(syncConfig.getSyncDirs());
     }
 
     private void startRestartDirWalker(long lastBackup) {
-        RestartDirWalker reDirWalker =
-            new RestartDirWalker(syncConfig.getSyncDirs(), lastBackup);
-        reDirWalker.walkDirs();
+        RestartDirWalker.start(syncConfig.getSyncDirs(), lastBackup);
     }
 
     private void startDeleteChecker() {
-        RestartDeleteChecker deleteChecker = new RestartDeleteChecker();
-        deleteChecker.runDeleteChecker(syncEndpoint.getFilesList(),
-                                       syncConfig.getSyncDirs());
+        RestartDeleteChecker.start(syncEndpoint.getFilesList(),
+                                   syncConfig.getSyncDirs());
     }
 
     private void startDirMonitor() {
@@ -168,21 +166,29 @@ public class SyncTool {
     public void runSyncTool(SyncToolConfig syncConfig) {
         this.syncConfig = syncConfig;
         setupLogging();
-        printWelcome();
+        System.out.print("\nStarting up the Sync Tool ...");
         startSyncManager();
 
+        System.out.print("...");
         boolean restart = restartPossible();
+        System.out.print("...");
         long lastBackup = startSyncBackupManager(restart);
+        System.out.print("...");
         if(restart && lastBackup > 0) {
             logger.info("Running Sync Tool re-start file check");
             startRestartDirWalker(lastBackup);
+            System.out.print("...");
             startDeleteChecker();
+            System.out.print("...");
         } else {
             logger.info("Running Sync Tool complete file check");
             startDirWalker();
+            System.out.print("...");
         }
 
         startDirMonitor();
+        System.out.println("... Startup Complete");
+        printWelcome();
         listenForExit();
     }
 

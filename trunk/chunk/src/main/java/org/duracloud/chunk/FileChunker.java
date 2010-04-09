@@ -88,7 +88,25 @@ public class FileChunker {
     }
 
     /**
-     * These methods loops the arg baseDir and pushes the found content to the
+     * This method pushes the content file to the space destSpaceId with the
+     * content ID destContentId
+     *
+     * @param destSpaceId   of content destination
+     * @param destContentId of content
+     * @param file          to add
+     */
+    public void addContent(String destSpaceId,
+                           String destContentId,
+                           File file) {
+        try {
+            doAddContent(destSpaceId, destContentId, file);
+        } catch(NotFoundException e) {
+            throw new DuraCloudRuntimeException(e);
+        }
+    }
+
+    /**
+     * This method loops the arg baseDir and pushes the found content to the
      * arg destSpace.
      *
      * @param baseDir     of content to push to DataStore
@@ -113,7 +131,6 @@ public class FileChunker {
                 sb.append(e.getMessage());
                 sb.append("\n");
                 sb.append(ExceptionUtil.getStackTraceAsString(e));
-                System.err.println(sb);
                 log.error(sb);
             }
         }
@@ -121,18 +138,25 @@ public class FileChunker {
 
     private void doAddContent(File baseDir, String destSpaceId, File file)
         throws NotFoundException {
+        String destContentId = getContentId(baseDir, file);
+        doAddContent(destSpaceId, destContentId, file);
+    }
+
+    private void doAddContent(String destSpaceId,
+                              String destContentId,
+                              File file)        
+        throws NotFoundException {
         long maxChunkSize = options.getMaxChunkSize();
         boolean ignoreLargeFiles = options.isIgnoreLargeFiles();
         boolean preserveChunkMD5s = options.isPreserveChunkMD5s();
 
-        String contentId = getContentId(baseDir, file);
         InputStream stream = getInputStream(file);
         long fileSize = file.length();
 
-        log.debug("loading file: " + contentId + "[" + fileSize + "]");
+        log.debug("loading file: " + destContentId + "[" + fileSize + "]");
         if (fileSize <= maxChunkSize) {
             BufferedInputStream buffStream = new BufferedInputStream(stream);
-            ChunkInputStream chunk = new ChunkInputStream(contentId,
+            ChunkInputStream chunk = new ChunkInputStream(destContentId,
                                                           buffStream,
                                                           fileSize,
                                                           preserveChunkMD5s);
@@ -140,7 +164,7 @@ public class FileChunker {
             contentWriter.writeSingle(destSpaceId, chunk);
 
         } else if (!ignoreLargeFiles) {
-            ChunkableContent chunkable = new ChunkableContent(contentId,
+            ChunkableContent chunkable = new ChunkableContent(destContentId,
                                                               stream,
                                                               fileSize,
                                                               maxChunkSize);
@@ -149,8 +173,9 @@ public class FileChunker {
             contentWriter.write(destSpaceId, chunkable);
 
         } else {
-            log.info("Ignoring: [" + baseDir.getPath() + "," + contentId + "]");
-            contentWriter.ignore(destSpaceId, contentId, fileSize);
+            log.info("Ignoring: [" + file.getAbsolutePath() + "," +
+                     destContentId + "]");
+            contentWriter.ignore(destSpaceId, destContentId, fileSize);
         }
 
         IOUtils.closeQuietly(stream);

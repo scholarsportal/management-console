@@ -16,9 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.FileNameMap;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,14 +42,6 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                                  String username,
                                  String password,
                                  String spaceId) {
-        String baseUrl;
-        try {
-            baseUrl = new URL("http", host, port, context).toString();
-        } catch(MalformedURLException e) {
-            throw new RuntimeException("Could not create connection to " +
-                                       "DuraStore due to: " + e.getMessage());
-        }
-
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, String.valueOf(port), context);
         storeManager.login(new Credential(username, password));
@@ -155,7 +145,7 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
         return true;
     }
 
-    private void addUpdateContent(String contentId, File syncFile)
+    protected void addUpdateContent(String contentId, File syncFile)
         throws ContentStoreException {
         InputStream fileStream;
         try {
@@ -223,5 +213,13 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                                        "DuraStore due to: " + e.getMessage());
         }
         return spaceContents;
+    }
+
+    protected ContentStore getContentStore() {
+        return contentStore;
+    }
+
+    protected String getSpaceId() {
+        return spaceId;
     }
 }

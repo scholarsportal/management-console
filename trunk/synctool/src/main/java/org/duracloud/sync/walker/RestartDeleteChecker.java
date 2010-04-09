@@ -12,10 +12,25 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Mar 29, 2010
  */
-public class RestartDeleteChecker {
+public class RestartDeleteChecker implements Runnable {
 
     private final Logger logger =
         LoggerFactory.getLogger(RestartDeleteChecker.class);
+
+    private Iterator<String> filesList;
+    private List<File> syncDirs;
+
+    /**
+     * Creates a restart delete checker
+     *
+     * @param filesList list of relative file paths which exist in the endpoint
+     * @param syncDirs the list of local source directories being synced
+     */
+    protected RestartDeleteChecker(Iterator<String> filesList,
+                                List<File> syncDirs) {
+        this.filesList = filesList;
+        this.syncDirs = syncDirs;
+    }
 
     /**
      * Checks each item in the files list (relative file paths) against each
@@ -24,12 +39,8 @@ public class RestartDeleteChecker {
      * no longer exists in the local source directories (i.e. the source file
      * has been deleted.) Each file of this type is added to the ChangedList
      * to be handled by deletion in the endpoint.
-     *
-     * @param filesList list of relative file paths which exist in the endpoint
-     * @param syncDirs the list of local source directories being synced
      */
-    public void runDeleteChecker(Iterator<String> filesList,
-                                 List<File> syncDirs) {
+    public void run() {
         logger.info("Running Delete Checker");
         ChangedList changedList = ChangedList.getInstance();
 
@@ -54,5 +65,10 @@ public class RestartDeleteChecker {
                 }
             }
         }
+    }
+
+    public static void start(Iterator<String> filesList,
+                             List<File> syncDirs) {
+        (new Thread(new RestartDeleteChecker(filesList, syncDirs))).start();
     }
 }

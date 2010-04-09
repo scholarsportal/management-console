@@ -69,6 +69,18 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>chunk</artifactId>
+      <version>1.0.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- SNAPSHOT of Commons IO trunk, revision 923495 -->
     <dependency>
       <groupId>org.duracloud</groupId>
@@ -94,6 +106,14 @@
       <artifactId>jcl-over-slf4j</artifactId>
       <version>1.5.11</version>
       <scope>runtime</scope>
+    </dependency>    
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>unit-test-db</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
     </dependency>    
 
   </dependencies>

@@ -23,14 +23,14 @@ public class RestartDirWalker extends DirWalker {
     private long lastBackup;
     private List<File> changedDirs;
 
-    public RestartDirWalker(List<File> topDirs, long lastBackup) {
+    protected RestartDirWalker(List<File> topDirs, long lastBackup) {
         super(topDirs);
         this.lastBackup = lastBackup;
         changedDirs = new ArrayList<File>();
     }
 
     @Override
-    public void walkDirs() {
+    protected void walkDirs() {
         super.walkDirs();
 
         // Walk and add all files in directories which have changed
@@ -55,5 +55,9 @@ public class RestartDirWalker extends DirWalker {
             changedDirs.add(directory);
         }
         return true;
+    }
+
+    public static void start(List<File> topDirs, long lastBackup) {
+        (new Thread(new RestartDirWalker(topDirs, lastBackup))).start();       
     }
 }
