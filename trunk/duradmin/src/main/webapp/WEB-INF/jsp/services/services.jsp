@@ -1,3 +1,4 @@
+
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="base-service" >
 	<tiles:putAttribute name="title">
@@ -28,13 +29,11 @@
 				    });
 				    
 				</script>			
-				<div style="width:100%; height:100%">
-					<div dojoType="dijit.layout.TabContainer" style="width: 800px; height: 400px" id="tabs" >
-						<div dojoType="dijit.layout.ContentPane" id="deployed" title="Deployed"  style="min-height:400px" >
-						</div>
-				        <div dojoType="dijit.layout.ContentPane" title="Available" id="available" style="min-height:400px">
-				        </div>
+				<div dojoType="dijit.layout.TabContainer" style="width: 100%; height: 100%" id="tabs" >
+					<div dojoType="dijit.layout.ContentPane" id="deployed" title="Deployed"   >
 					</div>
+			        <div dojoType="dijit.layout.ContentPane" title="Available" id="available" >
+			        </div>
 				</div>
 				
 			</tiles:putAttribute>
