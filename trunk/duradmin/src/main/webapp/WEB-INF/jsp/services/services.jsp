@@ -28,14 +28,15 @@
 				    });
 				    
 				</script>			
-				
-
-				<div dojoType="dijit.layout.TabContainer" style="width: 100%; height: 100%;" id="tabs" doLayout="false">
-					<div dojoType="dijit.layout.ContentPane" id="deployed" title="Deployed"  style="min-height:400px" >
+				<div style="width:100%; height:100%">
+					<div dojoType="dijit.layout.TabContainer" style="width: 800px; height: 400px" id="tabs" >
+						<div dojoType="dijit.layout.ContentPane" id="deployed" title="Deployed"  style="min-height:400px" >
+						</div>
+				        <div dojoType="dijit.layout.ContentPane" title="Available" id="available" style="min-height:400px">
+				        </div>
 					</div>
-			        <div dojoType="dijit.layout.ContentPane" title="Available" id="available" style="min-height:400px"/>
-			        </div>
 				</div>
+				
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
 	</tiles:putAttribute>

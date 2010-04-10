@@ -14,7 +14,7 @@ duracloud.durastore = {
 
 		var s = duracloud.storage.get(spaceId);
 		if(s != null){
-		      node.innerHTML = duracloud.formatSpaceMetadataHtml(s);
+		      dojo.attr(node, "innerHTML", duracloud.formatSpaceMetadataHtml(s));
 		      return;
 		}
 		
@@ -24,7 +24,6 @@ duracloud.durastore = {
 		    // The following URL must match that used to test the server.
 			url: "/duradmin/data/spaces/space?spaceId="+spaceId,
 		    handleAs: "json",
-		    headers: getAuthHeaders(),
 		    load: function(responseObject, ioArgs) {
 			  console.debug(responseObject);  // Dump it to the console
 			  var space = responseObject.space;

@@ -10,43 +10,67 @@ if(!dojo._hasResource["duracloud.storage"]){
 		 * Init method checks if the storage is stale and clears it.
 		 */
 		duracloud.storage.init = function(){
-			var cookieName = "jsessionid";
-			var sessionId = dojo.cookie(cookieName);
-			if(sessionId === undefined){
-				sessionId = new Date().getMilliseconds().toString();
-			}
-			var storedId =  dojox.storage.get(cookieName);
-			if(storedId != sessionId){
-				dojox.storage.clear();
-				dojox.storage.put(cookieName, sessionId);	
-				dojo.cookie(cookieName, sessionId);	
+			try{
+				var cookieName = "duracloudSessionId";
+				var sessionId = dojo.cookie(cookieName);
+				if(sessionId === undefined){
+					sessionId = new Date().getMilliseconds().toString();
+				}
+				
+				var storedId =  dojox.storage.get(cookieName);
+				if(storedId != sessionId){
+					dojox.storage.clear();
+					dojox.storage.put(cookieName, sessionId);	
+					dojo.cookie(cookieName, sessionId);	
+				}
+			}catch(err){
+				console.error(err);
 			}
 		};
 		
 		duracloud.storage.expireContentItem = function(spaceId, contentId){
 			duracloud.storage.expireSpace(spaceId);
-			dojox.storage.remove(this._makeKey(spaceId,contentId));
+			try{
+				dojox.storage.remove(this._makeKey(spaceId,contentId));
+			}catch(err){
+				console.error(err);
+			}
 		};
 		
 		duracloud.storage.expireSpace = function(spaceId){
-			dojox.storage.remove(this._makeKey(spaceId));
+			try{
+				dojox.storage.remove(this._makeKey(spaceId));
+			}catch(err){
+				console.error(err);
+			}
 		};
 		
 		duracloud.storage.get = function(){
-			var args = new Array();
-			for(var i=0; i < arguments.length;i++){
-				args.push(arguments[i]);
+			try{
+				var args = new Array();
+				for(var i=0; i < arguments.length;i++){
+					args.push(arguments[i]);
+				}
+				return dojox.storage.get(this._makeKey.apply(this, args));
+			}catch(err){
+				console.error(err);
+				return null;
 			}
-			return dojox.storage.get(this._makeKey.apply(this, args));
 		};
 		
+		
 		duracloud.storage.put= function(){
-			var args = new Array();
-			for(var i=0; i < arguments.length-1;i++){
-				args.push(arguments[i]);
-			}
+			try{
+				var args = new Array();
+				for(var i=0; i < arguments.length-1;i++){
+					args.push(arguments[i]);
+				}
 
-			return dojox.storage.put(this._makeKey.apply(this, args), arguments[arguments.length-1]);
+				return dojox.storage.put(this._makeKey.apply(this, args), arguments[arguments.length-1]);
+			}catch(err){
+				console.error(err);
+				return null;
+			}
 		};
 
 		duracloud.storage._makeKey = function (){

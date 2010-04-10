@@ -16,7 +16,7 @@ duracloud.duraservice = {
 		var table = dojo.create("table", properties);
 		dojo.addClass(table,"standard");
 		var header = dojo.create("tr",null, table);
-		dojo.create("th", {colspan: 2, innerHTML:title}, header);
+		dojo.create("th", {"colspan": 2, "innerHTML":title}, header);
 		populateTable(table,data);
 		return table;
 	},
@@ -90,10 +90,10 @@ duracloud.duraservice = {
 			var deployment = service.deployments[d];
 			var dContent = dojo.create("div");
 			var messageDiv = dojo.create("div",{},dContent);
-			var actionList = dojo.create("ul", {class: "action-list"},dContent);
+			var actionList = dojo.create("ul", {"class": "action-list"},dContent);
 			var li = dojo.create("li", {}, actionList);
 			dojo.create("a", {innerHTML: "Reconfigure", href: "/duradmin/services/deploy?serviceId=" + service.id + "&deploymentId=" + deployment.id},li);
-			var undeployLink = dojo.create("a", {href:"javascript:void(0)", innerHTML: "Undeploy"},dojo.create("li", {}, actionList));
+			var undeployLink = dojo.create("a", {"href":"javascript:void(0)", "innerHTML": "Undeploy"},dojo.create("li", {}, actionList));
 			dojo.connect(undeployLink,"onclick", function(){
 				duracloud.duraservice.undeployService(service.id, deployment.id, messageDiv, function(responseObject, ioArgs) {
 		    		try{
@@ -130,13 +130,13 @@ duracloud.duraservice = {
 			}
 			var dtab = new dijit.layout.ContentPane({title: deployment.hostname,content: dContent});
 			
-			var cd = dojo.create("div", {class:"configDetails"}, dContent);
+			var cd = dojo.create("div", {"class":"configDetails"}, dContent);
 			duracloud.duraservice.loadConfigurationDetails(cd, service.id, deployment.id);
 			
 			deploymentTabs.addChild(dtab);
 		}	
 
-		var tooltip = new dijit.TooltipDialog({content:deploymentTabs.domNode, style:"display:none"});
+		var tooltip = new dijit.TooltipDialog({"content":deploymentTabs.domNode, "style":"display:none"});
 		var dropdown = new dijit.form.DropDownButton({
             label: "Deployments",
             dropDown: tooltip,
@@ -149,7 +149,7 @@ duracloud.duraservice = {
 		var actionSpan = dojo.create("span");
 		row[2] = actionSpan;
 		var deployAnother = function (){
-			dojo.create("a", {innerHTML: "Deploy New Instance", href: "/duradmin/services/deploy?serviceId=" + service.id}, actionSpan);
+			dojo.create("a", {"innerHTML": "Deploy New Instance", "href": "/duradmin/services/deploy?serviceId=" + service.id}, actionSpan);
 		};
 		
 		if(service.maxDeploymentsAllowed < service.deployments.length){
@@ -180,7 +180,7 @@ duracloud.duraservice = {
     			avail.attr("content", "");
     		}
 
-			var table = dojo.create("table", {class: "standard available-services"}, avail.containerNode);
+			var table = dojo.create("table", null, avail.containerNode);
 			var rows = new Array();
 			for(sv in services){
     			var service = services[sv];

@@ -70,7 +70,7 @@
 								</td>
 								<td style="text-align: right">
 								<ul class="action-list">
-									<li><a
+									<li><a class="add-content-item" spaceId="${space.spaceId}"
 										href="<c:url value="/contents/add?spaceId=${space.spaceId}"/>"><spring:message
 										code="add.contentItem" /></a></li>
 									<li><a spaceId="${space.spaceId}" class="update-space"
