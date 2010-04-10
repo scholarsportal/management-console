@@ -10,7 +10,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- load the dojo toolkit base -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/dojo/dojo.js"
-	    djConfig="parseOnLoad:true, isDebug:false, debugAtAllCosts: false">
+	    djConfig="parseOnLoad:true, isDebug:false, debugAtAllCosts:false">
+
 	</script>
 	<!-- load the duradmin base -->
 	<!-- script type="text/javascript" src="${pageContext.request.contextPath}/script/common/base.js"></script-->
@@ -22,51 +23,55 @@
     <title>
     	<spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
     </title>
-    
   </head>
+  <body class="tundra">
 	<script type="text/javascript">
 	dojo.require("dojox.widget.Toaster");
 	dojo.require("duracloud._base");
+	dojo.require("duracloud.ui");
 	dojo.require("duracloud.storage");
 	dojo.require("dojo.cookie");
 		
 
 		dojo.addOnLoad(function(){
-		duracloud.storage.init();
-		//register for the following events:
-		var expireContentItem = function(e){
-				var contentId = dojo.attr(e.target,"contentId");
-				var spaceId = dojo.attr(e.target,"spaceId");
-				duracloud.storage.expireContentItem(spaceId,contentId);
-			};
+			duracloud.storage.init();
+			var expireContentItem = function(e){
+					var contentId = dojo.attr(e.target,"contentId");
+					var spaceId = dojo.attr(e.target,"spaceId");
+					duracloud.storage.expireContentItem(spaceId,contentId);
+				};
+				
+			var expireSpace = function(e){
+					var spaceId = dojo.attr(e.target,"spaceId");
+					duracloud.storage.expireSpace(spaceId);
+				};
 			
-		var expireSpace = function(e){
-				var spaceId = dojo.attr(e.target,"spaceId");
-				duracloud.storage.expireSpace(spaceId);
-			};
-			
-		dojo.query(".add-content-item").forEach(function(node){
-			dojo.connect(node, "onclick", expireSpace);
-		});
-
-		dojo.query(".update-space").forEach(function(node){
-			dojo.connect(node, "onclick", expireSpace);
-		});
-		
-		//content item removed
-		dojo.query(".remove-content-item").forEach(function(node){
-			dojo.connect(node, "onclick", expireContentItem);
-		});
-
-		//content item updated
-		dojo.query(".update-content-item").forEach(function(node){
-			dojo.connect(node, "onclick", expireContentItem);
-		});
+			var contentItemClick = function(e){
+				expireSpace(e);
+				duracloud.ui.showWait("Loading...");
+			};	
+			dojo.query(".add-content-item").forEach(function(node){
+				dojo.connect(node, "onclick", contentItemClick);
+			});
 	
-		//space removed
-		dojo.query(".remove-space").forEach(function(node){
-			dojo.connect(node, "onclick", expireSpace);
-		});
+			dojo.query(".update-space").forEach(function(node){
+				dojo.connect(node, "onclick", expireSpace);
+			});
+			
+			//content item removed
+			dojo.query(".remove-content-item").forEach(function(node){
+				dojo.connect(node, "onclick", expireContentItem);
+			});
+	
+			//content item updated
+			dojo.query(".update-content-item").forEach(function(node){
+				dojo.connect(node, "onclick", expireContentItem);
+			});
+		
+			//space removed
+			dojo.query(".remove-space").forEach(function(node){
+				dojo.connect(node, "onclick", expireSpace);
+			});
 
 		/*zebra stripe standard tables css 2 doesn't support nth-child*/	
 			dojo.query(".standard > tbody > tr:nth-child(odd)").addClass("evenRow");
@@ -106,7 +111,7 @@
 			
 		});
 	</script>
-  <body class="tundra">
+
   <div dojoType="dojox.widget.Toaster" id="toaster1" positionDirection="tr-left">
   </div>
 	<tiles:importAttribute name="mainTab" scope="request" />

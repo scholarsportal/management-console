@@ -114,7 +114,7 @@ table.body{
 
 
 
-td#menu-div {
+#menu-div {
 	width:15em;
 	min-width:15em;
 	max-width:15em;
@@ -127,11 +127,11 @@ td#menu-div {
 	background-color: #FFF;
 }
 
-#menu-div, td#main-content  {
+#menu-div, #main-content  {
 	vertical-align:top;
 }
 
-td#main-content{
+#main-content{
 	padding:0;
 	margin:0;
 }

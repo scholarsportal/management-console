@@ -1,9 +1,8 @@
-dojo.require("dojox.encoding.base64");
+dojo.provide("duracloud._base");
 dojo.require("dojo.cookie");
 
-dojo.provide("duracloud._base");
-
 duracloud = function(){};
+
 
 duracloud.showWaitMessage = function (node, messageText){
 		if(node == null){
@@ -11,8 +10,8 @@ duracloud.showWaitMessage = function (node, messageText){
 		}
 		node.innerHTML = "";
 		var div = dojo.create("div",null, node);
-		var img =  dojo.create("img", {src:"/duradmin/images/wait.gif" },div);
-		dojo.create("span", {innerHTML: messageText},div);
+		var img =  dojo.create("img", {"src":"/duradmin/images/wait.gif" },div);
+		dojo.create("span", {"innerHTML": messageText},div);
 };
 
 
@@ -20,8 +19,8 @@ duracloud.showError = function (node, ioArgs){
 	var messageText = "Unable to complete request: status (" + ioArgs.xhr.status + ")";
 	node.innerHTML = "";
 	var div = dojo.create("div",null, node);
-	var img =  dojo.create("img", {src:"/duradmin/images/error.png" },div);
-	dojo.create("span", {innerHTML: messageText},div);
+	var img =  dojo.create("img", {"src":"/duradmin/images/error.png" },div);
+	dojo.create("span", {"innerHTML": messageText},div);
 };
 	
 duracloud.formatSpaceMetadataHtml = function (/*Object*/space){
@@ -35,14 +34,14 @@ duracloud.formatSpaceMetadataHtml = function (/*Object*/space){
 
 duracloud.formatContentItemMetadataHtml =  function(/*ConentItem Object*/ci){
 		  var metadata = ci.metadata;
-		  var table = dojo.create("table", {class:"content-item-metadata-summary"});
+		  var table = dojo.create("table", {"class":"content-item-metadata-summary"});
 	      var row = addRow(table);
 		  addCell("modified", row);
 	      addCell(metadata.modified, row);
 	      var tn = ci.tinyThumbnailURL;
 	      if(tn != undefined && tn != null){
-	    	  var thumblink = dojo.create("a", {target:"viewer", href: ci.viewerURL});
-	    	  dojo.create("img", {src:tn, style:"height:75px;width:75px"}, thumblink);
+	    	  var thumblink = dojo.create("a", {"target":"viewer", "href": ci.viewerURL});
+	    	  dojo.create("img", {"src":tn, "style":"height:75px;width:75px"}, thumblink);
 	    	  var cell = addCell(thumblink, row);
 	          dojo.attr(cell, "rowspan", "3");
 	      }
@@ -191,30 +190,8 @@ hide = function (event){
 	makeVisible(event.target,false);
 };
 
-convertToByteArray = function(data){
-    var bin=[] ;
-    for (var i=0; i<data.length; i++){
-    bin.push(data.charCodeAt(i));
-    }
-    return bin;
-};
 
-getAuthHeaders = function(){
-	var cookie = dojo.cookie("auth");
-	return	{"Authorization": cookie };	
-};
 
-formatCredentials = function(username, password){
-	var credentials = convertToByteArray(username + ":" + password);
-	return ("Basic " + dojox.encoding.base64.encode(credentials));
-};
-
-storeCredentials = function(){
-	var form = dojo.byId("loginForm");
-	var username = form["j_username"].value;
-	var password = form["j_password"].value;
-	dojo.cookie("auth", formatCredentials(username,password));
-};
 
 
 
