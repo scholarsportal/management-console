@@ -24,8 +24,11 @@
     	<spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
     </title>
   </head>
-  <body class="tundra">
+  <body class="tundra" style="width: 100%; height: 100%;">
 	<script type="text/javascript">
+	dojo.require("dijit.layout.BorderContainer");
+	dojo.require("dijit.layout.ContentPane");
+
 	dojo.require("dojox.widget.Toaster");
 	dojo.require("duracloud._base");
 	dojo.require("duracloud.ui");
@@ -116,24 +119,28 @@
   </div>
 	<tiles:importAttribute name="mainTab" scope="request" />
    	
-    <div id="header"><tiles:insertAttribute name="header"/></div>
-    <table class="body" >
-   		<tr>
-   			<td id="menu-div">
+    
+   	<div dojoType="dijit.layout.BorderContainer" gutters="false" style="width: 100%; height: 100%;">
+   	    <div id="header" dojoType="dijit.layout.ContentPane" region="top" splitter="false">
+			<tiles:insertAttribute name="header"/>
+		</div>
+
+   	    <div id="menu-div" dojoType="dijit.layout.ContentPane" region="left" splitter="false">
 			    <tiles:insertAttribute name="menu"/>
-   			</td>
-   			<td id="main-content">
-				
+		</div>
+
+   	    <div id="main-content" dojoType="dijit.layout.ContentPane" region="center" splitter="false">
 			    <tiles:insertAttribute name="main-content" />
-   			</td>
 
-   			<td id="help">
+		</div>
+   	    <div id="help" dojoType="dijit.layout.ContentPane" region="right" splitter="false">
 				<tiles:insertAttribute name="help"/>   				
-   			</td>
-
-   		</tr>
-   	</table>
+		</div>
+   	    <div id="footer" dojoType="dijit.layout.ContentPane" region="bottom" splitter="false">
+			<tiles:insertAttribute name="footer" />
+		</div>
+    </div>
    	
-    <div id="footer"><tiles:insertAttribute name="footer" /></div>
+   	</div> 
   </body>
 </html>
