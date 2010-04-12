@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +57,7 @@ public class SyncManager implements ChangeHandler {
                                    threads,
                                    Long.MAX_VALUE,
                                    TimeUnit.NANOSECONDS,
-                                   new ArrayBlockingQueue(threads),
+                                   new SynchronousQueue(),
                                    new ThreadPoolExecutor.AbortPolicy());
     }
 
@@ -86,25 +86,15 @@ public class SyncManager implements ChangeHandler {
      * @returns true if file accepted for processing, false otherwise
      */
     public boolean handleChangedFile(ChangedFile changedFile) {
-        if(spaceInWorkQueue()) {
-            File watchDir = getWatchDir(changedFile.getFile());
-            try {
-                workerPool.execute(new SyncWorker(changedFile, watchDir, endpoint));
-            } catch(RejectedExecutionException e) {
-                return false;
-            }
+        File watchDir = getWatchDir(changedFile.getFile());
+        try {
+            workerPool.execute(
+                new SyncWorker(changedFile, watchDir, endpoint)
+            );
             return true;
-        } else {
+        } catch(RejectedExecutionException e) {
             return false;
         }
-    }
-
-   /**
-     * Indicates that the SyncManager is ready to handle another changed file.
-     * @return true if there is an open slot in the work queue
-     */
-    private boolean spaceInWorkQueue() {
-        return workerPool.getQueue().remainingCapacity() > 0;
     }
 
     /*

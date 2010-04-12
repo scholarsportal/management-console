@@ -48,8 +48,8 @@ public class SyncWorker implements Runnable {
         }
 
         if(success) {
-            statusManager.completedProcessing();
-        }else {
+            statusManager.successfulCompletion();
+        } else {
             retryOnFailure();
         }
     }
@@ -62,8 +62,9 @@ public class SyncWorker implements Runnable {
                         "list, another attempt will be made to sync file.");
             syncFile.incrementSyncAttempts();
             ChangedList.getInstance().addChangedFile(syncFile);
+            statusManager.stoppingWork();
         } else {
-            statusManager.failedProcessing(syncFile.getFile());
+            statusManager.failedCompletion(syncFile.getFile());
             logger.error("Failed to sync file " + syncFilePath + " after " +
                 syncAttempts + " attempts. No further attempts will be made.");
         }
