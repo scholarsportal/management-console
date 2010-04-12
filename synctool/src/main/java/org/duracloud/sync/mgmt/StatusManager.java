@@ -15,7 +15,7 @@ import java.util.List;
 public class StatusManager {
 
     private long inWork;
-    private long completed;
+    private long succeeded;
     private List<File> failed;
     private String startTime;
     private ChangedList changedList;
@@ -33,7 +33,7 @@ public class StatusManager {
      * Not to be used outside of tests
      */
     protected StatusManager() {
-        completed = 0;
+        succeeded = 0;
         failed = new ArrayList<File>();
         startTime =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
@@ -44,30 +44,34 @@ public class StatusManager {
         return changedList.getListSize();
     }
 
-    public synchronized void inWork() { 
+    public synchronized void startingWork() {
         inWork++;
+    }
+
+    public synchronized void stoppingWork() {
+        inWork--;
+    }
+
+    public synchronized void successfulCompletion() {
+        succeeded++;
+        inWork--;
+    }
+
+    public synchronized void failedCompletion(File file) {
+        failed.add(file);
+        inWork--;
     }
 
     public long getInWork() {
         return inWork;
     }
 
-    public long getCompleted() {
-        return completed;
-    }
-
-    public synchronized void completedProcessing() {
-        completed++;
-        inWork--;
+    public long getSucceeded() {
+        return succeeded;
     }
 
     public List<File> getFailed() {
         return failed;
-    }
-
-    public synchronized void failedProcessing(File file) {
-        failed.add(file);
-        inWork--;
     }
 
     public String getPrintableStatus() {
@@ -79,7 +83,7 @@ public class StatusManager {
         status.append("Start Time: " + startTime + "\n");
         status.append("Sync Queue Size: " + getQueueSize() + "\n");
         status.append("Syncs In Process: " + getInWork() + "\n");
-        status.append("Successful Syncs: " + getCompleted() + "\n");
+        status.append("Successful Syncs: " + getSucceeded() + "\n");
         status.append("Failed Syncs: " + getFailed().size() + "\n");
         for(File failedFile : getFailed()) {
             status.append("  " + failedFile.getAbsolutePath() + "\n");    

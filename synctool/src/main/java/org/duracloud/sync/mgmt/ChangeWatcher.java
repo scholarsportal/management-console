@@ -43,7 +43,7 @@ public class ChangeWatcher implements Runnable {
             if (changedFile != null) {
                 boolean success = handler.handleChangedFile(changedFile);
                 if(success) {
-                    status.inWork();
+                    status.startingWork();
                 } else {
                     changedList.addChangedFile(changedFile);                       
                 }

@@ -15,31 +15,31 @@ public class StatusManagerTest {
     public void testStatusManager() {
         StatusManager status = new StatusManager();
         assertEquals(0, status.getInWork());
-        assertEquals(0, status.getCompleted());
+        assertEquals(0, status.getSucceeded());
         assertEquals(0, status.getFailed().size());
 
         for(int i=0; i<100; i++) {
-            status.inWork();
+            status.startingWork();
         }
 
         assertEquals(100, status.getInWork());
-        assertEquals(0, status.getCompleted());
+        assertEquals(0, status.getSucceeded());
         assertEquals(0, status.getFailed().size());
 
         for(int i=0; i<50; i++) {
-            status.completedProcessing();
+            status.successfulCompletion();
         }
 
         assertEquals(50, status.getInWork());
-        assertEquals(50, status.getCompleted());
+        assertEquals(50, status.getSucceeded());
         assertEquals(0, status.getFailed().size());
 
         for(int i=0; i<50; i++) {
-            status.failedProcessing(new File("test"));
+            status.failedCompletion(new File("test"));
         }
 
         assertEquals(0, status.getInWork());
-        assertEquals(50, status.getCompleted());
+        assertEquals(50, status.getSucceeded());
         assertEquals(50, status.getFailed().size());
     }
 }
