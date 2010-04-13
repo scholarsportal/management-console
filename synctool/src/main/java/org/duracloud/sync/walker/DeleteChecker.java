@@ -12,22 +12,22 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Mar 29, 2010
  */
-public class RestartDeleteChecker implements Runnable {
+public class DeleteChecker implements Runnable {
 
     private final Logger logger =
-        LoggerFactory.getLogger(RestartDeleteChecker.class);
+        LoggerFactory.getLogger(DeleteChecker.class);
 
     private Iterator<String> filesList;
     private List<File> syncDirs;
 
     /**
-     * Creates a restart delete checker
+     * Creates a delete checker
      *
      * @param filesList list of relative file paths which exist in the endpoint
      * @param syncDirs the list of local source directories being synced
      */
-    protected RestartDeleteChecker(Iterator<String> filesList,
-                                List<File> syncDirs) {
+    protected DeleteChecker(Iterator<String> filesList,
+                            List<File> syncDirs) {
         this.filesList = filesList;
         this.syncDirs = syncDirs;
     }
@@ -69,6 +69,6 @@ public class RestartDeleteChecker implements Runnable {
 
     public static void start(Iterator<String> filesList,
                              List<File> syncDirs) {
-        (new Thread(new RestartDeleteChecker(filesList, syncDirs))).start();
+        (new Thread(new DeleteChecker(filesList, syncDirs))).start();
     }
 }
