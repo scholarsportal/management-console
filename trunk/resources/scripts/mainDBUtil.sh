@@ -50,6 +50,7 @@ export CLASSPATH=$CLASSPATH:$MAIN_LIB/stax-api-1.0-2.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/storageprovider-1.0.0.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/xstream-1.3.1.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/computeprovider-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-1.0.0.jar
 
 export CLASSPATH=$CLASSPATH:$BUILD_HOME/mainwebapp/target/classes
 
