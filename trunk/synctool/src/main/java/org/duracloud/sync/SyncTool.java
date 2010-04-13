@@ -10,7 +10,7 @@ import org.duracloud.sync.mgmt.SyncManager;
 import org.duracloud.sync.monitor.DirectoryUpdateMonitor;
 import org.duracloud.sync.util.LogUtil;
 import org.duracloud.sync.walker.DirWalker;
-import org.duracloud.sync.walker.RestartDeleteChecker;
+import org.duracloud.sync.walker.DeleteChecker;
 import org.duracloud.sync.walker.RestartDirWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +115,7 @@ public class SyncTool {
     }
 
     private void startDeleteChecker() {
-        RestartDeleteChecker.start(syncEndpoint.getFilesList(),
+        DeleteChecker.start(syncEndpoint.getFilesList(),
                                    syncConfig.getSyncDirs());
     }
 
@@ -184,13 +184,13 @@ public class SyncTool {
             logger.info("Running Sync Tool re-start file check");
             startRestartDirWalker(lastBackup);
             System.out.print("...");
-            startDeleteChecker();
-            System.out.print("...");
         } else {
             logger.info("Running Sync Tool complete file check");
             startDirWalker();
             System.out.print("...");
         }
+        startDeleteChecker();
+        System.out.print("...");
 
         startDirMonitor();
         System.out.println("... Startup Complete");

@@ -38,7 +38,7 @@ public class SyncToolConfigParser {
 
     protected static final int DEFAULT_PORT = 8080;
     protected static final long DEFAULT_POLL_FREQUENCY = 10000;
-    protected static final int DEFAULT_NUM_THREADS = 10;
+    protected static final int DEFAULT_NUM_THREADS = 3;
     protected static final int DEFAULT_MAX_FILE_SIZE = 1; // 1 GB
     protected static final String context = "durastore";
 

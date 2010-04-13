@@ -18,7 +18,7 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Mar 29, 2010
  */
-public class RestartDeleteCheckerTest extends SyncTestBase {
+public class DeleteCheckerTest extends SyncTestBase {
 
     private File tempDir;
 
@@ -46,8 +46,8 @@ public class RestartDeleteCheckerTest extends SyncTestBase {
         List<File> syncDirs = new ArrayList<File>();
         syncDirs.add(tempDir);
 
-        RestartDeleteChecker deleteChecker =
-            new RestartDeleteChecker(filesList.iterator(), syncDirs);
+        DeleteChecker deleteChecker =
+            new DeleteChecker(filesList.iterator(), syncDirs);
         deleteChecker.run();
 
         ChangedFile changedFile = changedList.getChangedFile();
