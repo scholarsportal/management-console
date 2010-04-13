@@ -1,12 +1,11 @@
-
 package org.duracloud.services.hello.impl;
+
+import java.util.Dictionary;
 
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
-
-import java.util.Dictionary;
 import java.util.Enumeration;
 
 public class HelloServiceImpl extends BaseService
