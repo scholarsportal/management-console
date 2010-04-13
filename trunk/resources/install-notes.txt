@@ -35,6 +35,9 @@ Then in the 'Libraries' tab of the 'build-path-configuration' add a new 'variabl
 To download source jars for all dependent libraries run:
 mvn dependency:sources
 
+
+
+
 ::Database::
 The mainwebapp requires account information stored in an underlying database.
 Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
@@ -55,6 +58,16 @@ These credentials should be stored in a local database that is accessed by the u
 To create the unit-test-database, run the following script: resources/scripts/unitDBUtil.sh (or run UnitTestDatabaseLoaderCLI.java from eclipse).
 Once the database has been created, the unit tests being run through maven need to know where the database is located, 
  and what the boot-password is (since it is an encrypted database).
+
+When prompted add the following role/username/password combos:
+root-user root rpw
+admin-user admin apw
+system-user system spw
+standard-user user upw
+anonymous-user anonymous (no password)
+
+Also - it is necessary to add amazon s3, rackspace, etc credentials here as well.
+
 Add the <profile> with <id>always</id> found in 'resources/conf/settings.xml' to your settings.xml.
 
 <profile>
@@ -73,7 +86,7 @@ Also add the <activeProfiles> element found in 'resources/conf/settings.xml' to 
 
 ::Services::
 Services (projects in the /services directory) were built using PAX Construct, see http://www.ops4j.org/projects/pax/construct/ 
-for more info on using these tools. These projects are built as usual by using "mvn clean install". In order to deploy them all
+for more info on using these tools. Make sure that you download and add these tools to your path per the instructions on the website.  Once the PAX Construct tools are installed you can then build these projects by using "mvn clean install". In order to deploy them all
 into an OSGi container at once, from the services directory use: 
 
 mvn clean install pax:provision                      (Equinox)
