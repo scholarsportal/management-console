@@ -15,6 +15,14 @@ public class SecurityUserBean {
     private boolean accountNonLocked;
     private List<String> grantedAuthorities;
 
+    public static final String SCHEMA_VERSION = "0.2";
+
+    public SecurityUserBean(String username,
+                            String password,
+                            List<String> grantedAuthorities) {
+        this(username, password, true, true, true, true, grantedAuthorities);
+    }
+
     public SecurityUserBean(String username,
                             String password,
                             boolean enabled,
