@@ -68,7 +68,7 @@ public abstract class SpaceAccessVoter implements AccessDecisionVoter {
 
 
     private ContentStore.AccessType getSpaceAccess(HttpServletRequest request) {
-        String host = request.getRemoteHost();
+        String host = "localhost";
         String port = Integer.toString(request.getLocalPort());
 
         String storeId = getStoreId(request);
@@ -114,8 +114,6 @@ public abstract class SpaceAccessVoter implements AccessDecisionVoter {
         if (storeIdIndex > -1) {
             int idIndex = query.indexOf("=", storeIdIndex) + 1;
             if (idIndex == storeIdIndex + name.length() + 1) {
-                // TODO: it seems that more than one query param never makes it
-                //       this far.
                 int nextParamIndex = query.indexOf("&", idIndex);
                 int end = nextParamIndex > -1 ? nextParamIndex : query.length();
                 storeId = query.substring(idIndex, end);
@@ -125,7 +123,7 @@ public abstract class SpaceAccessVoter implements AccessDecisionVoter {
     }
 
     private String getSpaceId(HttpServletRequest httpRequest) {
-        String spaceId = httpRequest.getServletPath();
+        String spaceId = httpRequest.getPathInfo();
         if (null == spaceId) {
             return null;
         }
