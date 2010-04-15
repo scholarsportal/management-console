@@ -1,18 +1,19 @@
 package org.duracloud.client;
 
+import junit.framework.Assert;
 import org.apache.log4j.Logger;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.model.Credential;
-import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
-import org.duracloud.unittestdb.util.StorageAccountTestUtil;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.duracloud.unittestdb.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -24,6 +25,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -208,7 +210,7 @@ public class TestContentStore {
         try {
             createSpace(id, null);
             fail("Exception expected attempting to add " +
-                 "a space with an invalid id");
+                 "a space with an invalid id: " + id);
         } catch(InvalidIdException e) {
             assertNotNull(e);
         }
@@ -349,7 +351,7 @@ public class TestContentStore {
             InputStream contentStream = IOUtil.writeStringToStream(content);
             String contentMimeType = "text/plain";
             store.addContent(invalidSpaceId, contentId, contentStream,
-                             content.length(), contentMimeType, emptyMap);
+                             content.length(), contentMimeType, null, emptyMap);
             fail("Exception expected on addContent(invalidSpaceId, ...)");
         } catch(NotFoundException expected) {
         }
@@ -390,13 +392,13 @@ public class TestContentStore {
         // Add content
         String c1 = "test-content-1";
         InputStream stream = IOUtil.writeStringToStream(c1);
-        store.addContent(spaceId, c1, stream, c1.length(), mime, null);
+        store.addContent(spaceId, c1, stream, c1.length(), mime, null, null);
         String c2 = "test-content-2";
         stream = IOUtil.writeStringToStream(c2);
-        store.addContent(spaceId, c2, stream, c2.length(), mime, null);
+        store.addContent(spaceId, c2, stream, c2.length(), mime, null, null);
         String c3 = "content-3";
         stream = IOUtil.writeStringToStream(c3);
-        store.addContent(spaceId, c3, stream, c3.length(), mime, null);
+        store.addContent(spaceId, c3, stream, c3.length(), mime, null, null);
 
         // Get all content
         Iterator<String> contentIds = store.getSpaceContents(spaceId);
@@ -462,7 +464,7 @@ public class TestContentStore {
 
     private void testInvalidContentItem(String contentId) throws Exception {
         try {
-            addContentItem(contentId);
+            addContentItem(contentId, false);
             fail("Exception expected attempting to add " +
                  "content with an invalid id");
         } catch (InvalidIdException e) {
@@ -470,21 +472,38 @@ public class TestContentStore {
         }
     }
 
-    private String addContentItem(String contentId) throws Exception {
+    private String addContentItem(String contentId, boolean checksumInAdvance)
+        throws Exception {
         String content = "Test content";
-        InputStream contentStream = IOUtil.writeStringToStream(content);
+        ByteArrayInputStream contentStream =
+            new ByteArrayInputStream(content.getBytes());
         String contentMimeType = "text/plain";
-        return store.addContent(spaceId,
-                                contentId,
-                                contentStream,
-                                content.length(),
-                                contentMimeType,
-                                null);
+
+        String advChecksum = null;
+        if(checksumInAdvance) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+            advChecksum = util.generateChecksum(contentStream);
+            contentStream.reset();
+        }
+
+        String checksum = store.addContent(spaceId,
+                                           contentId,
+                                           contentStream,
+                                           content.length(),
+                                           contentMimeType,
+                                           advChecksum,
+                                           null);
+
+        if(checksumInAdvance) {
+            Assert.assertEquals(advChecksum, checksum);
+        }
+
+        return checksum;
     }
 
     private void testCharacterInContentId(char character) throws Exception {
         String contentId = "test-" + String.valueOf(character) + "-content";
-        String checksum = addContentItem(contentId);
+        String checksum = addContentItem(contentId, true);
         assertNotNull(checksum);
         
         Content content = store.getContent(spaceId, contentId);
@@ -509,6 +528,7 @@ public class TestContentStore {
                                            contentStream,
                                            content.length(),
                                            contentMimeType,
+                                           null,
                                            contentMetadata);
         // Check content checksum
         assertNotNull(checksum);

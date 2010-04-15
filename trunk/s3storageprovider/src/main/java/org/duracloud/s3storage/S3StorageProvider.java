@@ -2,6 +2,7 @@ package org.duracloud.s3storage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
@@ -11,7 +12,6 @@ import org.duracloud.storage.provider.StorageProvider;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
-import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
@@ -25,7 +25,6 @@ import org.jets3t.service.security.AWSCredentials;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.security.DigestInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -220,6 +219,7 @@ public class S3StorageProvider
                           " to be available, loop " + loops);
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
+                log.warn(e);
             }
         }
     }
@@ -405,7 +405,7 @@ public class S3StorageProvider
         String bucketName = getBucketName(spaceId);
         ByteArrayInputStream is = storeMetadata(spaceMetadata);
         addContent(spaceId, bucketName + SPACE_METADATA_SUFFIX, "text/xml",
-                   is.available(), is);
+                   is.available(), null, is);
     }
 
     /**
@@ -505,14 +505,16 @@ public class S3StorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) {
-        log.debug("addContent(" + spaceId + ", " + contentId + ", "
-                + contentMimeType + ", " + contentSize + ")");
+        log.debug("addContent("+ spaceId +", "+ contentId +", "+
+            contentMimeType +", "+ contentSize +", "+ contentChecksum +")");
 
         throwIfSpaceNotExist(spaceId);
 
-        // Wrap the content to be able to compute a checksum during transfer
-        DigestInputStream wrappedContent = wrapStream(content);
+        // Wrap the content in order to be able to retrieve a checksum
+        ChecksumInputStream wrappedContent =
+            new ChecksumInputStream(content, contentChecksum);
 
         if(contentMimeType == null || contentMimeType.equals("")) {
             contentMimeType = DEFAULT_MIMETYPE;
@@ -534,14 +536,15 @@ public class S3StorageProvider
         putObject(contentItem, spaceId);
 
         // Compare checksum
-        String checksum = compareChecksum(this, spaceId, contentId, wrappedContent);
+        String finalChecksum =
+            compareChecksum(this, spaceId, contentId, wrappedContent.getMD5());
 
         // Set default content metadata values
         Map<String, String> contentMetadata = new HashMap<String, String>();
         contentMetadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
         setContentMetadata(spaceId, contentId, contentMetadata);
 
-        return checksum;
+        return finalChecksum;
     }
 
     private void putObject(S3Object contentItem,

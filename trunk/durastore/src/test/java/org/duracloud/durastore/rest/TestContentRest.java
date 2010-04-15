@@ -1,6 +1,7 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.rest.HttpHeaders;
 import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
@@ -11,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ws.rs.core.HttpHeaders;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,7 +164,7 @@ public class TestContentRest extends BaseRestTester {
         assertTrue(contentType.contains("text/xml"));
 
         String contentChecksum =
-            response.getResponseHeader("Content-MD5").getValue();
+            response.getResponseHeader(HttpHeaders.CONTENT_MD5).getValue();
         assertNotNull(contentChecksum);
 
         String contentETag =

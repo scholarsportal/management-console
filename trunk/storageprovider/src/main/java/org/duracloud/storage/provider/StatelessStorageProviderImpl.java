@@ -20,11 +20,13 @@ public class StatelessStorageProviderImpl
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) throws StorageException {
         return targetProvider.addContent(spaceId,
                                          contentId,
                                          contentMimeType,
                                          contentSize,
+                                         contentChecksum,
                                          content);
     }
 

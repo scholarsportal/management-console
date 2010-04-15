@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
@@ -171,7 +172,7 @@ public class RackspaceStorageProviderTest {
 
         // test addContent()
         log.debug("Test addContent()");
-        addContent(SPACE_ID, CONTENT_ID, CONTENT_MIME_VALUE);
+        addContent(SPACE_ID, CONTENT_ID, CONTENT_MIME_VALUE, false);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
@@ -200,9 +201,9 @@ public class RackspaceStorageProviderTest {
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
-        addContent(SPACE_ID, testContent2, CONTENT_MIME_VALUE);
+        addContent(SPACE_ID, testContent2, CONTENT_MIME_VALUE, false);
         String testContent3 = "test-content-3";
-        addContent(SPACE_ID, testContent3, null);
+        addContent(SPACE_ID, testContent3, null, true);
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
@@ -309,15 +310,32 @@ public class RackspaceStorageProviderTest {
         assertFalse(contains(spaces, SPACE_ID));
     }
 
-    private void addContent(String spaceId, String contentId, String mimeType) {
+    private void addContent(String spaceId,
+                            String contentId,
+                            String mimeType,
+                            boolean checksumInAdvance) {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
+
+        String advChecksum = null;
+        if(checksumInAdvance) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+            advChecksum = util.generateChecksum(contentStream);
+            contentStream.reset();
+        }
+
         String checksum = rackspaceProvider.addContent(spaceId,
                                                        contentId,
                                                        mimeType,
                                                        contentSize,
+                                                       advChecksum,
                                                        contentStream);
+
+        if(checksumInAdvance) {
+            assertEquals(advChecksum, checksum);
+        }
+
         compareChecksum(rackspaceProvider, spaceId, contentId, checksum);
     }
 
@@ -389,6 +407,7 @@ public class RackspaceStorageProviderTest {
                                          contentId,
                                          "text/plain",
                                          contentSize,
+                                         null,
                                          contentStream);
             fail(failMsg);
         } catch (NotFoundException expected) {

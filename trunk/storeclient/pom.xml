@@ -85,7 +85,13 @@
       <artifactId>common</artifactId>
       <version>1.0.0</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common-rest</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>storageprovider</artifactId>

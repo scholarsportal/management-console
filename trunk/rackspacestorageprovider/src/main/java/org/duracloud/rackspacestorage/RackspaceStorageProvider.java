@@ -1,9 +1,17 @@
 
 package org.duracloud.rackspacestorage;
 
-import com.rackspacecloud.client.cloudfiles.*;
+import com.rackspacecloud.client.cloudfiles.FilesAuthorizationException;
+import com.rackspacecloud.client.cloudfiles.FilesCDNContainer;
+import com.rackspacecloud.client.cloudfiles.FilesClient;
+import com.rackspacecloud.client.cloudfiles.FilesContainer;
+import com.rackspacecloud.client.cloudfiles.FilesContainerInfo;
+import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
+import com.rackspacecloud.client.cloudfiles.FilesObject;
+import com.rackspacecloud.client.cloudfiles.FilesObjectMetaData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
@@ -13,12 +21,10 @@ import org.duracloud.storage.provider.StorageProvider;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
-import static org.duracloud.storage.util.StorageProviderUtil.wrapStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.DigestInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -389,6 +395,7 @@ public class RackspaceStorageProvider
                    containerName + SPACE_METADATA_SUFFIX,
                    "text/xml",
                    is.available(),
+                   null,
                    is);
     }
 
@@ -521,9 +528,10 @@ public class RackspaceStorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) {
-        log.debug("addContent(" + spaceId + ", " + contentId + ", "
-                + contentMimeType + ", " + contentSize + ")");
+        log.debug("addContent("+ spaceId +", "+ contentId +", "+
+            contentMimeType +", "+ contentSize +", "+ contentChecksum +")");
 
         throwIfSpaceNotExist(spaceId);
 
@@ -534,8 +542,9 @@ public class RackspaceStorageProvider
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put(METADATA_CONTENT_MIMETYPE, contentMimeType);
 
-        // Wrap the content to be able to compute a checksum during transfer
-        DigestInputStream wrappedContent = wrapStream(content);
+        // Wrap the content in order to be able to retrieve a checksum
+        ChecksumInputStream wrappedContent =
+            new ChecksumInputStream(content, contentChecksum);
 
         storeStreamedObject(contentId,
                             contentMimeType,
@@ -544,13 +553,14 @@ public class RackspaceStorageProvider
                             wrappedContent);
 
         // Compare checksum
-        return compareChecksum(this, spaceId, contentId, wrappedContent);
+        String finalChecksum = wrappedContent.getMD5();
+        return compareChecksum(this, spaceId, contentId, finalChecksum);
     }
 
     private void storeStreamedObject(String contentId, String contentMimeType,
                                      String spaceId,
                                      Map<String, String> metadata,
-                                     DigestInputStream wrappedContent) {
+                                     ChecksumInputStream wrappedContent) {
         String containerName = getContainerName(spaceId);
         StringBuilder err = new StringBuilder("Could not add content "
                 + contentId + " with type " + contentMimeType

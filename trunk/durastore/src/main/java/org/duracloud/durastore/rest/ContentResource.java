@@ -131,6 +131,7 @@ public class ContentResource {
                                     InputStream content,
                                     String contentMimeType,
                                     int contentSize,
+                                    String checksum,
                                     String storeID)
     throws ResourceException, InvalidIdException {
         // TODO: Check user permissions
@@ -144,6 +145,7 @@ public class ContentResource {
                                       contentID,
                                       contentMimeType,
                                       contentSize,
+                                      checksum,
                                       content);
         } catch (NotFoundException e) {
             throw new ResourceNotFoundException("add content",

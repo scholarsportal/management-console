@@ -1,6 +1,7 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.rest.HttpHeaders;
 import org.duracloud.common.rest.RestUtil;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
@@ -15,7 +16,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -135,7 +135,7 @@ public class ContentRest extends BaseRest {
                     response.header(HttpHeaders.CONTENT_LENGTH, metadataValue);
                     contentSizeSet = true;
                 } else if(metadataName.equals(StorageProvider.METADATA_CONTENT_CHECKSUM)) {
-                    response.header("Content-MD5", metadataValue);
+                    response.header(HttpHeaders.CONTENT_MD5, metadataValue);
                     response.header(HttpHeaders.ETAG, metadataValue);
                     contentChecksumSet = true;
                 } else if(metadataName.equals(StorageProvider.METADATA_CONTENT_MODIFIED)) {
@@ -143,27 +143,27 @@ public class ContentRest extends BaseRest {
                     contentModifiedSet = true;
                 } else if((metadataName.equals(HttpHeaders.CONTENT_TYPE) && !contentTypeSet) ||
                           (metadataName.equals(HttpHeaders.CONTENT_LENGTH) && !contentSizeSet) ||
-                          (metadataName.equals("Content-MD5") && !contentChecksumSet) ||
+                          (metadataName.equals(HttpHeaders.CONTENT_MD5) && !contentChecksumSet) ||
                           (metadataName.equals(HttpHeaders.ETAG) && !contentChecksumSet) ||
                           (metadataName.equals(HttpHeaders.LAST_MODIFIED) && !contentModifiedSet)) {
                     response.header(metadataName, metadataValue);
                 } else if(metadataName.equals(HttpHeaders.DATE) ||
-                          metadataName.equals("Connection")) {
+                          metadataName.equals(HttpHeaders.CONNECTION)) {
                     // Ignore this value
-                } else if(metadataName.equals("Age") ||
+                } else if(metadataName.equals(HttpHeaders.AGE) ||
                           metadataName.equals(HttpHeaders.CACHE_CONTROL) ||
                           metadataName.equals(HttpHeaders.CONTENT_ENCODING) ||
                           metadataName.equals(HttpHeaders.CONTENT_LANGUAGE) ||
                           metadataName.equals(HttpHeaders.CONTENT_LOCATION) ||
-                          metadataName.equals("Content-Range") ||
+                          metadataName.equals(HttpHeaders.CONTENT_RANGE) ||
                           metadataName.equals(HttpHeaders.EXPIRES) ||
                           metadataName.equals(HttpHeaders.LOCATION) ||
-                          metadataName.equals("Pragma") ||
-                          metadataName.equals("Retry-After") ||
-                          metadataName.equals("Server") ||
-                          metadataName.equals("Transfer-Encoding") ||
-                          metadataName.equals("Upgrade") ||
-                          metadataName.equals("Warning")) {
+                          metadataName.equals(HttpHeaders.PRAGMA) ||
+                          metadataName.equals(HttpHeaders.RETRY_AFTER) ||
+                          metadataName.equals(HttpHeaders.SERVER) ||
+                          metadataName.equals(HttpHeaders.TRANSFER_ENCODING) ||
+                          metadataName.equals(HttpHeaders.UPGRADE) ||
+                          metadataName.equals(HttpHeaders.WARNING)) {
                     // Pass through as a standard http header
                     response.header(metadataName, metadataValue);
                 } else {
@@ -240,14 +240,21 @@ public class ContentRest extends BaseRest {
             return Response.serverError().entity(e.getMessage()).build();
         }
 
+        String checksum = null;
+        MultivaluedMap<String, String> rHeaders = headers.getRequestHeaders();
+        if(rHeaders.containsKey(HttpHeaders.CONTENT_MD5)) {
+            checksum = rHeaders.getFirst(HttpHeaders.CONTENT_MD5);
+        }
+
         if(content != null) {
             try {
-                String checksum =
+                checksum =
                     ContentResource.addContent(spaceID,
                                                contentID,
                                                content.getContentStream(),
                                                content.getMimeType(),
                                                content.getSize(),
+                                               checksum,
                                                storeID);
                 updateContentMetadata(spaceID, contentID, storeID);
                 URI location = uriInfo.getRequestUri();

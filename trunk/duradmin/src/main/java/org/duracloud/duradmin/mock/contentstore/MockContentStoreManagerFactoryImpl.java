@@ -133,6 +133,7 @@ public class MockContentStoreManagerFactoryImpl
                                  InputStream content,
                                  long contentSize,
                                  String contentMimeType,
+                                 String contentChecksum,
                                  Map<String, String> contentMetadata)
                 throws ContentStoreException {
 

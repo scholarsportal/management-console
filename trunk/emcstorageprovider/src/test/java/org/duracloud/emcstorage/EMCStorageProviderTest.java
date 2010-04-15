@@ -218,12 +218,34 @@ public class EMCStorageProviderTest {
                             String contentKey,
                             String mime,
                             byte[] data) throws StorageException {
+        addContent(spaceKey, contentKey, mime, data, false);
+    }
+
+    private void addContent(String spaceKey,
+                            String contentKey,
+                            String mime,
+                            byte[] data,
+                            boolean checksumInAdvance) throws StorageException {
         ByteArrayInputStream contentStream = new ByteArrayInputStream(data);
+
+        String advChecksum = null;
+        if(checksumInAdvance) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+            advChecksum = util.generateChecksum(contentStream);
+            contentStream.reset();
+        }
+
         String checksum = emcProvider.addContent(spaceKey,
                                                  contentKey,
                                                  mime,
                                                  data.length,
+                                                 advChecksum,
                                                  contentStream);
+
+        if(checksumInAdvance) {
+            assertEquals(advChecksum, checksum);
+        }
+        
         compareChecksum(emcProvider, spaceKey, contentKey, checksum);
     }
 
@@ -467,11 +489,11 @@ public class EMCStorageProviderTest {
         emcProvider.createSpace(spaceId0);
 
         // First content to add
-        addContent(spaceId0, contentId0, mimeText, content0);
+        addContent(spaceId0, contentId0, mimeText, content0, true);
 
         // Second content to add
         byte[] content1 = "<a>hello</a>".getBytes();
-        addContent(spaceId0, contentId1, mimeXml, content1);
+        addContent(spaceId0, contentId1, mimeXml, content1, true);
 
         // Verify content on retrieval.
         InputStream is0 = emcProvider.getContent(spaceId0, contentId0);
@@ -908,6 +930,7 @@ public class EMCStorageProviderTest {
                                    contentId,
                                    mimeText,
                                    contentSize,
+                                   null,
                                    contentStream);
             Assert.fail(failMsg);
         } catch (NotFoundException expected) {

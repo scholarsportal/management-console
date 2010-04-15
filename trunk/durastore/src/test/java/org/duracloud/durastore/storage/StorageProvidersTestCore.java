@@ -106,13 +106,35 @@ public class StorageProvidersTestCore
                             String contentKey,
                             String mime,
                             byte[] data) throws StorageException {
+        addContent(provider, spaceKey, contentKey, mime, data, false);
+    }
+
+    private void addContent(StorageProvider provider,
+                            String spaceKey,
+                            String contentKey,
+                            String mime,
+                            byte[] data,
+                            boolean checksumInAdvance) throws StorageException {
         ByteArrayInputStream contentStream = new ByteArrayInputStream(data);
+
+        String advChecksum = null;
+        if(checksumInAdvance) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+            advChecksum = util.generateChecksum(contentStream);
+            contentStream.reset();
+        }
+
         String checksum =
                 provider.addContent(spaceKey,
                                     contentKey,
                                     mime,
                                     data.length,
+                                    advChecksum,
                                     contentStream);
+        if(checksumInAdvance) {
+           assertEquals(advChecksum, checksum);
+        }
+
         compareChecksum(provider, spaceKey, contentKey, checksum);
     }
 
@@ -278,11 +300,11 @@ public class StorageProvidersTestCore
         byte[] content0 = "hello,world.".getBytes();
 
         // First content to add
-        addContent(provider, spaceId0, contentId1, mimeText, content0);
+        addContent(provider, spaceId0, contentId1, mimeText, content0, true);
 
         // Second content to add
         byte[] content1 = "<a>hello</a>".getBytes();
-        addContent(provider, spaceId0, contentId2, mimeXml, content1);
+        addContent(provider, spaceId0, contentId2, mimeXml, content1, true);
 
         // Verify content on retrieval.
         InputStream is0 = provider.getContent(spaceId0, contentId1);

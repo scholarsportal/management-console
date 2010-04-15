@@ -143,6 +143,7 @@ public class ReplicationTester {
                                        content,
                                        contentSize,
                                        mime,
+                                       null,
                                        metadata);
     }
 

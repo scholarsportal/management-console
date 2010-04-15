@@ -178,6 +178,10 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
         return maxChunkSize;
     }
 
+    public String getChecksum() {
+        return largeStream.getMD5();
+    }    
+
     public ChunksManifest finalizeManifest() {
         addEntry();
         

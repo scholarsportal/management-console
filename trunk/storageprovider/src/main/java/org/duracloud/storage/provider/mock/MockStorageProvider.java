@@ -20,6 +20,8 @@ public class MockStorageProvider
 
     private long contentSize;
 
+    private String contentChecksum;
+
     private InputStream content;
 
     private Map<String, String> contentMetadata;
@@ -36,11 +38,13 @@ public class MockStorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) throws StorageException {
         this.spaceId = spaceId;
         this.contentId = contentId;
         this.contentMimeType = contentMimeType;
         this.contentSize = contentSize;
+        this.contentChecksum = contentChecksum;
         this.content = content;
         this.spaceContents = new ArrayList<String>();
         spaceContents.add(content.toString());

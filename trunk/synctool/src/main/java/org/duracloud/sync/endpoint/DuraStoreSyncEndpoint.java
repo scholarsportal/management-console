@@ -113,10 +113,11 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
             }
 
             if(syncFile.exists()) {
+                String localChecksum = computeChecksum(syncFile);
+
                 if(dcFileExists) { // File was updated
                     String dcChecksum =
                         contentMetadata.get(ContentStore.CONTENT_CHECKSUM);
-                    String localChecksum = computeChecksum(syncFile);
                     if(dcChecksum.equals(localChecksum)) {
                         logger.debug("Checksum for local file {} matches " +
                             "file in DuraCloud, no update needed.",
@@ -124,12 +125,12 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                     } else {
                         logger.debug("Local file {} changed, updating DuraCloud.",
                                      syncFile.getAbsolutePath());
-                        addUpdateContent(contentId, syncFile);
+                        addUpdateContent(contentId, localChecksum, syncFile);
                     }
                 } else { // File was added
                     logger.debug("Local file {} added, moving to DuraCloud.",
                                  syncFile.getAbsolutePath());
-                    addUpdateContent(contentId, syncFile);
+                    addUpdateContent(contentId, localChecksum, syncFile);
                 }
             } else { // File was deleted
                 if(dcFileExists) {
@@ -145,7 +146,9 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
         return true;
     }
 
-    protected void addUpdateContent(String contentId, File syncFile)
+    protected void addUpdateContent(String contentId,
+                                    String contentCheckdum,
+                                    File syncFile)
         throws ContentStoreException {
         InputStream fileStream;
         try {
@@ -162,6 +165,7 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                                 fileStream,
                                 syncFile.length(),
                                 mimetype,
+                                contentCheckdum,
                                 null);        
         try {
             fileStream.close();

@@ -221,6 +221,7 @@ public class ConversionManager {
                                         convertedFileStream,
                                         convertedFile.length(),
                                         mimetype,
+                                        null,
                                         metadata);
                 success = true;
             } catch (ContentStoreException e) {
@@ -361,6 +362,7 @@ public class ConversionManager {
                                 resultsStream,
                                 resultsBytes.length,
                                 "text/plain",
+                                null,
                                 null);
     }
 

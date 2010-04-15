@@ -63,6 +63,7 @@ public class AddContentItemAction
                                     new FileInputStream(contents),
                                     contents.length(),
                                     contentMimeType,
+                                    null,
                                     null);
             
             fileData.dereferenceFileData();

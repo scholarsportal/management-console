@@ -202,8 +202,9 @@ public interface ContentStore {
      * @param spaceId the identifier of the DuraCloud Space
      * @param contentId the identifier of the new content item
      * @param content the new content as a stream
-     * @param contentMimeType the MIME type of the content
      * @param contentSize the size of the content
+     * @param contentMimeType the MIME type of the content
+     * @param contentChecksum the MD5 checksum of the content, or null if the checksum is not known
      * @param contentMetadata a map of metadata values to be linked to this content
      * @throws InvalidIdException if the content ID is not valid
      * @throws NotFoundException if the space does not exist
@@ -215,6 +216,7 @@ public interface ContentStore {
                              InputStream content,
                              long contentSize,
                              String contentMimeType,
+                             String contentChecksum,
                              Map<String, String> contentMetadata)
             throws ContentStoreException;
 

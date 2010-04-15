@@ -65,6 +65,7 @@ public class ImageConversionServiceTester {
                                 new FileInputStream(testFile),
                                 testFile.length(),
                                 "image/tiff",
+                                null,
                                 null);
 
         try {

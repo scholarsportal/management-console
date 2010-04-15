@@ -38,8 +38,10 @@ public class DuraStoreChunkSyncEndpoint extends DuraStoreSyncEndpoint {
     }
 
     @Override
-    protected void addUpdateContent(String contentId, File syncFile) {
-        chunker.addContent(getSpaceId(), contentId, syncFile);
+    protected void addUpdateContent(String contentId,
+                                    String contentChecksum,
+                                    File syncFile) {
+        chunker.addContent(getSpaceId(), contentId, contentChecksum, syncFile);
     }
 
 }

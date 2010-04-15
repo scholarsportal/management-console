@@ -93,13 +93,15 @@ public class FileChunker {
      *
      * @param destSpaceId   of content destination
      * @param destContentId of content
+     * @param fileChecksum MD5 checksum of file or null if not known
      * @param file          to add
      */
     public void addContent(String destSpaceId,
                            String destContentId,
+                           String fileChecksum,
                            File file) {
         try {
-            doAddContent(destSpaceId, destContentId, file);
+            doAddContent(destSpaceId, destContentId, fileChecksum, file);
         } catch(NotFoundException e) {
             throw new DuraCloudRuntimeException(e);
         }
@@ -139,11 +141,12 @@ public class FileChunker {
     private void doAddContent(File baseDir, String destSpaceId, File file)
         throws NotFoundException {
         String destContentId = getContentId(baseDir, file);
-        doAddContent(destSpaceId, destContentId, file);
+        doAddContent(destSpaceId, destContentId, null, file);
     }
 
     private void doAddContent(String destSpaceId,
                               String destContentId,
+                              String fileChecksum,
                               File file)        
         throws NotFoundException {
         long maxChunkSize = options.getMaxChunkSize();
@@ -159,9 +162,9 @@ public class FileChunker {
             ChunkInputStream chunk = new ChunkInputStream(destContentId,
                                                           buffStream,
                                                           fileSize,
-                                                          preserveChunkMD5s);
+                                                          false);
 
-            contentWriter.writeSingle(destSpaceId, chunk);
+            contentWriter.writeSingle(destSpaceId, fileChecksum, chunk);
 
         } else if (!ignoreLargeFiles) {
             ChunkableContent chunkable = new ChunkableContent(destContentId,
@@ -171,6 +174,18 @@ public class FileChunker {
             chunkable.setPreserveChunkMD5s(preserveChunkMD5s);
 
             contentWriter.write(destSpaceId, chunkable);
+
+            // Verify final checksum
+            if(fileChecksum != null) {
+                String finalChecksum = chunkable.getChecksum();
+                if(!fileChecksum.equals(finalChecksum)) {
+                    String err = "Final checksum of chunked content " +
+                                 finalChecksum +
+                                 " does not match provided checksum " +
+                                 fileChecksum;
+                    throw new DuraCloudRuntimeException(err);
+                }
+            }
 
         } else {
             log.info("Ignoring: [" + file.getAbsolutePath() + "," +

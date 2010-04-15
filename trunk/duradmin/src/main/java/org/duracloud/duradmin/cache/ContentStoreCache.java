@@ -189,6 +189,7 @@ public class ContentStoreCache
      * @param content
      * @param contentMimeType
      * @param contentSize
+     * @param contentChecksum
      * @param contentMetadata
      * @return
      * @throws ContentStoreException
@@ -198,6 +199,7 @@ public class ContentStoreCache
                              InputStream content,
                              long contentSize,
                              String contentMimeType,
+                             String contentChecksum,
                              Map<String, String> contentMetadata)
             throws ContentStoreException {
         //TODO implement
