@@ -19,6 +19,7 @@ public class ChunkInputStream extends InputStream {
     private CountingDigestInputStream stream;
     private long chunkSize;
     private String mimetype = "application/octet-stream";
+    private boolean preserveMD5;
 
     public ChunkInputStream(String chunkId,
                             InputStream inputStream,
@@ -27,6 +28,7 @@ public class ChunkInputStream extends InputStream {
         this.stream = new CountingDigestInputStream(inputStream, preserveMD5);
         this.chunkId = chunkId;
         this.chunkSize = chunkSize;
+        this.preserveMD5 = preserveMD5;
     }
 
     /**
@@ -67,5 +69,9 @@ public class ChunkInputStream extends InputStream {
 
     public long getChunkSize() {
         return chunkSize;
+    }
+
+    public boolean md5Preserved() {
+        return preserveMD5;
     }
 }

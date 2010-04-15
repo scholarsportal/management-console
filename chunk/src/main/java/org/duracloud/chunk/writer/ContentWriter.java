@@ -30,11 +30,14 @@ public interface ContentWriter {
      * piece of content
      *
      * @param spaceId destination where arg chunk content will be written
+     * @param chunkChecksum md5 checksum of the chunk if known, null otherwise     
      * @param chunk   content to be written
      * @return MD5 of content
      * @throws NotFoundException on error
      */
-    public String writeSingle(String spaceId, ChunkInputStream chunk)
+    public String writeSingle(String spaceId,
+                              String chunkChecksum,
+                              ChunkInputStream chunk)
         throws NotFoundException;
 
     /**

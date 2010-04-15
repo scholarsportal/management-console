@@ -39,6 +39,7 @@ public class DuracloudContentWriterTest {
                                                 isChunkInputStream(),
                                                 EasyMock.anyLong(),
                                                 EasyMock.isA(String.class),
+                                                (String) EasyMock.isNull(),
                                                 (Map) EasyMock.anyObject()))
             .andReturn("")
             .anyTimes();
@@ -106,7 +107,7 @@ public class DuracloudContentWriterTest {
                                                       contentSize,
                                                       preserveMD5);
 
-        String md5 = writer.writeSingle(spaceId, chunk);
+        String md5 = writer.writeSingle(spaceId, null, chunk);
         Assert.assertNotNull(md5);
 
     }

@@ -183,7 +183,7 @@ public class FilesystemContentWriterTest {
                                                       preserveMD5);
         IOUtils.closeQuietly(contentStream);
 
-        String md5 = writer.writeSingle(spaceId, chunk);
+        String md5 = writer.writeSingle(spaceId, null, chunk);
         Assert.assertNotNull(md5);
 
         // check files
@@ -193,6 +193,15 @@ public class FilesystemContentWriterTest {
         String md5Real = calculateMD5(file);
         Assert.assertEquals(md5Real, md5);
 
+        file.delete();
+        contentStream.reset();
+        chunk = new ChunkInputStream(contentId,
+                                     contentStream,
+                                     contentSize,
+                                     preserveMD5);
+        md5 = writer.writeSingle(spaceId, md5Real, chunk);
+        Assert.assertNotNull(md5);
+        Assert.assertEquals(md5, md5Real);
     }
 
     private String calculateMD5(File file) throws IOException {

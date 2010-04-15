@@ -70,11 +70,13 @@ public class BrokeredStorageProviderTest {
                                   contentId,
                                   contentMimeType,
                                   contentSize,
+                                  null,
                                   content);
         broker.addContent(spaceId,
                           contentId,
                           contentMimeType,
                           contentSize,
+                          null,
                           content);
 
         verifySpaceId();
@@ -145,8 +147,8 @@ public class BrokeredStorageProviderTest {
 
     @Test
     public void getSpaceContents() throws StorageException {
-        directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, content);
-        broker.addContent(spaceId, contentId, contentMimeType, contentSize, content);
+        directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, null, content);
+        broker.addContent(spaceId, contentId, contentMimeType, contentSize, null, content);
         Iterator<String> spaceContents0 = directProvider.getSpaceContents(spaceId, null);
         Iterator<String> spaceContents1 = broker.getSpaceContents(spaceId, null);
 
@@ -155,8 +157,8 @@ public class BrokeredStorageProviderTest {
 
     @Test
     public void getSpaceContentsChunked() throws StorageException {
-        directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, content);
-        broker.addContent(spaceId, contentId, contentMimeType, contentSize, content);
+        directProvider.addContent(spaceId, contentId, contentMimeType, contentSize, null, content);
+        broker.addContent(spaceId, contentId, contentMimeType, contentSize, null, content);
         List<String> spaceContents0 =
             directProvider.getSpaceContentsChunked(spaceId, null, 0, null);
         List<String> spaceContents1 =

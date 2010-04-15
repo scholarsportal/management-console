@@ -62,7 +62,7 @@ public class FilesystemContentWriter implements ContentWriter {
     public ChunksManifest write(String spaceId, ChunkableContent chunkable)
         throws NotFoundException {
         for (ChunkInputStream chunk : chunkable) {
-            writeSingle(spaceId, chunk);
+            writeSingle(spaceId, null, chunk);
         }
 
         ChunksManifest manifest = chunkable.finalizeManifest();
@@ -87,15 +87,23 @@ public class FilesystemContentWriter implements ContentWriter {
      * @return MD5 of content
      * @throws NotFoundException
      */
-    public String writeSingle(String spaceId, ChunkInputStream chunk)
+    public String writeSingle(String spaceId,
+                              String chunkChecksum,
+                              ChunkInputStream chunk)
         throws NotFoundException {
         AddContentResult result = writeContent(spaceId,
                                                chunk.getChunkId(),
                                                chunk,
                                                chunk.getChunkSize());
-        result.setMd5(chunk.getMD5());
+        String finalChecksum = chunk.getMD5();
+        if(chunkChecksum != null && chunk.md5Preserved()) {
+            if(!chunkChecksum.equals(finalChecksum)) {
+                result.setState(AddContentResult.State.ERROR);
+            }
+        }
 
-        return result.getMd5();
+        result.setMd5(finalChecksum);
+        return finalChecksum;
     }
 
     private AddContentResult writeContent(String spaceId,

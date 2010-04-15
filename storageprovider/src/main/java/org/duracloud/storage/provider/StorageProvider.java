@@ -166,6 +166,7 @@ public interface StorageProvider {
      * @param contentId - ID of the content in the space
      * @param contentMimeType - the MIME type of the content being added
      * @param contentSize - the file size (in bytes) of the content being added
+     * @param contentChecksum - the MD5 checksum of the content being added (null if no checksum is known)
      * @param content - content to add
      * @return The checksum of the provided content
      * @throws NotFoundException if space with ID spaceId does not exist
@@ -175,6 +176,7 @@ public interface StorageProvider {
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content);
 
     /**

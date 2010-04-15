@@ -9,6 +9,7 @@ import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
@@ -250,13 +251,27 @@ public class TestDuracloudContentWriter {
                                                       preserveMD5);
 
         String spaceId = getSpaceId();
-        String md5 = writer.writeSingle(spaceId, chunk);
+
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+        String realMd5 = util.generateChecksum(contentStream);
+        contentStream.reset();
+
+        String md5 = writer.writeSingle(spaceId, null, chunk);
         Assert.assertNotNull(md5);
+        Assert.assertEquals(realMd5, md5);
 
         List<String> contents = getSpaceContents(spaceId, contentId);
 
         int numChunks = 1;
         verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
+
+        contentStream.reset();
+        chunk = new ChunkInputStream(contentId,
+                                     contentStream,
+                                     contentLen,
+                                     preserveMD5);
+        md5 = writer.writeSingle(spaceId, realMd5, chunk);
+        Assert.assertEquals(realMd5, md5);
     }
 
     private Content getContent(String spaceId, String id) {

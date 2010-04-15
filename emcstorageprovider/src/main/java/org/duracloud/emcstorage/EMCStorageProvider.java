@@ -4,6 +4,7 @@ import com.emc.esu.api.*;
 import com.emc.esu.api.rest.EsuRestApi;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.NotFoundException;
@@ -11,12 +12,11 @@ import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
-import org.duracloud.storage.util.StorageProviderUtil;
+import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.security.DigestInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -526,12 +526,14 @@ public class EMCStorageProvider implements StorageProvider {
                              String contentId,
                              String mimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) {
         try {
             return doAddContent(spaceId,
                                 contentId,
                                 mimeType,
                                 contentSize,
+                                contentChecksum,
                                 content);
         } catch (NotFoundException e) {
             throw e;
@@ -544,9 +546,10 @@ public class EMCStorageProvider implements StorageProvider {
                                 String contentId,
                                 String mimeType,
                                 long contentSize,
+                                String contentChecksum,
                                 InputStream content) {
-        log.debug("addContent(" + spaceId + ", " + contentId + ", " + mimeType +
-            ", " + contentSize + ")");
+        log.debug("addContent("+ spaceId +", "+ contentId +", "+
+            mimeType +", "+ contentSize +", "+ contentChecksum +")");
 
         throwIfSpaceNotExist(spaceId);
 
@@ -560,9 +563,9 @@ public class EMCStorageProvider implements StorageProvider {
         // Determine if object already exists.
         ObjectPath objectPath = getObjectPath(spaceId, contentId);
 
-        // Wrap the content to be able to compute a checksum during transfer
-        DigestInputStream wrappedContent = StorageProviderUtil.wrapStream(
-            content);
+       // Wrap the content in order to be able to retrieve a checksum
+        ChecksumInputStream wrappedContent =
+            new ChecksumInputStream(content, contentChecksum);
 
         UploadHelper helper = new UploadHelper(emcService);
         boolean closeStream = true;
@@ -585,10 +588,8 @@ public class EMCStorageProvider implements StorageProvider {
         }
 
         // Compare checksum
-        return StorageProviderUtil.compareChecksum(this,
-                                                   spaceId,
-                                                   contentId,
-                                                   wrappedContent);
+        String finalChecksum = wrappedContent.getMD5();
+        return compareChecksum(this, spaceId, contentId, finalChecksum);
     }
 
     private MetadataList createRequiredContentMetadata(String spaceId,

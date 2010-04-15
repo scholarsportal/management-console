@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
@@ -169,7 +170,7 @@ public class S3StorageProviderTest {
         // test addContent()
         log.debug("Test addContent()");
         String contentId = getNewContentId();
-        addContent(spaceId, contentId, CONTENT_MIME_VALUE);
+        addContent(spaceId, contentId, CONTENT_MIME_VALUE, false);
 
         // test getContentMetadata()
         log.debug("Test getContentMetadata()");
@@ -208,9 +209,9 @@ public class S3StorageProviderTest {
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
-        addContent(spaceId, testContent2, CONTENT_MIME_VALUE);
+        addContent(spaceId, testContent2, CONTENT_MIME_VALUE, false);
         String testContent3 = "test-content-3";
-        addContent(spaceId, testContent3, null);
+        addContent(spaceId, testContent3, null, true);
 
         // test getSpaceContents()
         log.debug("Test getSpaceContents()");
@@ -309,15 +310,32 @@ public class S3StorageProviderTest {
         assertFalse(contains(spaces, spaceId));
     }
 
-    private void addContent(String spaceId, String contentId, String mimeType) {
+    private void addContent(String spaceId,
+                            String contentId,
+                            String mimeType,
+                            boolean checksumInAdvance) {
         byte[] content = CONTENT_DATA.getBytes();
         int contentSize = content.length;
         ByteArrayInputStream contentStream = new ByteArrayInputStream(content);
+
+        String advChecksum = null;
+        if(checksumInAdvance) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+            advChecksum = util.generateChecksum(contentStream);
+            contentStream.reset();
+        }
+
         String checksum = s3Provider.addContent(spaceId,
                                                 contentId,
                                                 mimeType,
                                                 contentSize,
+                                                advChecksum,
                                                 contentStream);
+
+        if(checksumInAdvance) {
+            assertEquals(advChecksum, checksum);
+        }
+
         compareChecksum(s3Provider, spaceId, contentId, checksum);
     }
 
@@ -417,6 +435,7 @@ public class S3StorageProviderTest {
                                   contentId,
                                   CONTENT_MIME_VALUE,
                                   contentSize,
+                                  null,
                                   contentStream);
             fail(failMsg);
         } catch (NotFoundException expected) {
@@ -544,7 +563,7 @@ public class S3StorageProviderTest {
         String contentId = getNewContentId();
 
         s3Provider.createSpace(spaceId);
-        addContent(spaceId, contentId, CONTENT_MIME_VALUE);
+        addContent(spaceId, contentId, CONTENT_MIME_VALUE, false);
 
         // This is the method under test.
         s3Provider.setContentMetadata(spaceId, contentId, contentMetadata);

@@ -62,7 +62,7 @@ public class DuracloudContentWriter implements ContentWriter {
         createSpaceIfNotExist(spaceId);
 
         for (ChunkInputStream chunk : chunkable) {
-            writeSingle(spaceId, chunk);
+            writeSingle(spaceId, null, chunk);
         }
 
         ChunksManifest manifest = chunkable.finalizeManifest();
@@ -76,22 +76,27 @@ public class DuracloudContentWriter implements ContentWriter {
      * This method writes a single chunk to the DataStore.
      *
      * @param spaceId destination where arg chunk content will be written
+     * @param chunkChecksum md5 checksum of the chunk if known, null otherwise
      * @param chunk   content to be written
      * @return MD5 of written content
      * @throws NotFoundException if space is not found
      */
-    public String writeSingle(String spaceId, ChunkInputStream chunk)
+    public String writeSingle(String spaceId,
+                              String chunkChecksum,
+                              ChunkInputStream chunk)
         throws NotFoundException {
         log.debug("writeSingle: " + spaceId + ", " + chunk.getChunkId());
         createSpaceIfNotExist(spaceId);
 
-        addChunk(spaceId, chunk);
+        addChunk(spaceId, chunkChecksum, chunk);
 
         log.debug("written: " + spaceId + ", " + chunk.getChunkId());
         return chunk.getMD5();
     }
 
-    private void addChunk(String spaceId, ChunkInputStream chunk) {
+    private void addChunk(String spaceId,
+                          String chunkChecksum,
+                          ChunkInputStream chunk) {
         String chunkId = chunk.getChunkId();
         log.debug("addChunk: " + spaceId + ", " + chunkId);
 
@@ -99,7 +104,8 @@ public class DuracloudContentWriter implements ContentWriter {
                              chunkId,
                              chunk,
                              chunk.getChunkSize(),
-                             chunk.getMimetype());
+                             chunk.getMimetype(),
+                             chunkChecksum);
     }
 
     private void addManifest(String spaceId, ChunksManifest manifest) {
@@ -111,14 +117,16 @@ public class DuracloudContentWriter implements ContentWriter {
                              manifestId,
                              manifestBody,
                              manifestBody.getLength(),
-                             manifest.getMimetype());
+                             manifest.getMimetype(),
+                             null);
     }
 
     private void addContentThenReport(String spaceId,
                                       String contentId,
                                       InputStream contentStream,
                                       long contentSize,
-                                      String contentMimetype) {
+                                      String contentMimetype,
+                                      String contentChecksum) {
         AddContentResult result = new AddContentResult(spaceId,
                                                        contentId,
                                                        contentSize);
@@ -128,7 +136,8 @@ public class DuracloudContentWriter implements ContentWriter {
                              contentId,
                              contentStream,
                              contentSize,
-                             contentMimetype);
+                             contentMimetype,
+                             contentChecksum);
         } catch (ContentNotAddedException e) {
             result.setState(AddContentResult.State.ERROR);
         }
@@ -149,7 +158,8 @@ public class DuracloudContentWriter implements ContentWriter {
                               String contentId,
                               InputStream contentStream,
                               long contentSize,
-                              String contentMimetype)
+                              String contentMimetype,
+                              String contentChecksum)
         throws ContentNotAddedException {
         Map<String, String> metadata = null;
         try {
@@ -158,6 +168,7 @@ public class DuracloudContentWriter implements ContentWriter {
                                            contentStream,
                                            contentSize,
                                            contentMimetype,
+                                           contentChecksum,
                                            metadata);
         } catch (ContentStoreException e) {
             log.error(e.getFormattedMessage(), e);

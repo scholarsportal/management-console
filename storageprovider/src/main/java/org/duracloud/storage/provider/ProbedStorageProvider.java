@@ -69,6 +69,7 @@ public abstract class ProbedStorageProvider
                              String contentId,
                              String contentMimeType,
                              long contentSize,
+                             String contentChecksum,
                              InputStream content) throws StorageException {
         startMetric("addContent");
         String result =
@@ -76,6 +77,7 @@ public abstract class ProbedStorageProvider
                                            contentId,
                                            contentMimeType,
                                            contentSize,
+                                           contentChecksum,
                                            content);
         stopMetric("addContent");
         return result;

@@ -28,6 +28,7 @@ public class BrokeredStorageProvider
                            String contentId,
                            String contentMimeType,
                            long contentSize,
+                           String contentChecksum,
                            InputStream content) throws StorageException {
 
         return dispatchProvider.addContent(targetProvider,
@@ -36,6 +37,7 @@ public class BrokeredStorageProvider
                                            contentId,
                                            contentMimeType,
                                            contentSize,
+                                           contentChecksum,
                                            content);
     }
 

@@ -2,6 +2,7 @@ package org.duracloud.client;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.rest.HttpHeaders;
 import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -330,6 +331,7 @@ public class ContentStoreImpl implements ContentStore{
                              InputStream content,
                              long contentSize,
                              String contentMimeType,
+                             String contentChecksum,
                              Map<String, String> contentMetadata)
             throws ContentStoreException {
         validateContentId(contentId);
@@ -346,6 +348,12 @@ public class ContentStoreImpl implements ContentStore{
 
         Map<String, String> headers =
             convertMetadataToHeaders(contentMetadata);
+
+        // Include checksum if provided
+        if(contentChecksum != null) {
+            headers.put(HttpHeaders.CONTENT_MD5, contentChecksum);
+        }
+        
         try {
             HttpResponse response = restHelper.put(url,
                                                    content,
@@ -353,9 +361,10 @@ public class ContentStoreImpl implements ContentStore{
                                                    contentMimeType,
                                                    headers);
             checkResponse(response, HttpStatus.SC_CREATED);
-            Header checksum = response.getResponseHeader("Content-MD5");
+            Header checksum =
+                response.getResponseHeader(HttpHeaders.CONTENT_MD5);
             if(checksum == null) {
-                checksum = response.getResponseHeader("ETag");
+                checksum = response.getResponseHeader(HttpHeaders.ETAG);
             }
             return checksum.getValue();
         } catch (InvalidIdException e) {
@@ -505,14 +514,14 @@ public class ContentStoreImpl implements ContentStore{
         for (Header header : response.getResponseHeaders()) {
             String name = header.getName();
             if (!name.startsWith(HEADER_PREFIX)) {
-                if(name.equals("Content-Type")) {
+                if(name.equals(HttpHeaders.CONTENT_TYPE)) {
                     headers.put(CONTENT_MIMETYPE, header.getValue());
-                } else if (name.equals("Content-MD5") ||
-                           name.equals("ETag")) {
+                } else if (name.equals(HttpHeaders.CONTENT_MD5) ||
+                           name.equals(HttpHeaders.ETAG)) {
                     headers.put(CONTENT_CHECKSUM, header.getValue());
-                } else if (name.equals("Content-Length")) {
+                } else if (name.equals(HttpHeaders.CONTENT_LENGTH)) {
                     headers.put(CONTENT_SIZE, header.getValue());
-                } else if (name.equals("Last-Modified")) {
+                } else if (name.equals(HttpHeaders.LAST_MODIFIED)) {
                     headers.put(CONTENT_MODIFIED, header.getValue());
                 }
                 headers.put(name, header.getValue());

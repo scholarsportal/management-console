@@ -16,6 +16,7 @@ public interface StatelessStorageProvider {
                                       String contentId,
                                       String contentMimeType,
                                       long contentSize,
+                                      String contentChecksum,
                                       InputStream content)
             throws StorageException;
 

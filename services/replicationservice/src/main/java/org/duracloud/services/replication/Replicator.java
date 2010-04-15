@@ -100,6 +100,7 @@ public class Replicator {
 
                 String mimeType = "application/octet-stream";
                 long contentSize = 0;
+                String checksum = null;
 
                 if(metadata != null) {
                     mimeType = metadata.get(ContentStore.CONTENT_MIMETYPE);
@@ -114,6 +115,8 @@ public class Replicator {
                             contentSize = 0;
                         }
                     }
+
+                    checksum = metadata.get(ContentStore.CONTENT_CHECKSUM);
                 }
 
                 toStore.addContent(spaceId,
@@ -121,6 +124,7 @@ public class Replicator {
                                    contentStream,
                                    contentSize,
                                    mimeType,
+                                   checksum,
                                    metadata);
             } else {
                 throw new ContentStoreException("The content stream retrieved " +
