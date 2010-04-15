@@ -92,8 +92,7 @@ public class SpaceAccessVoterTest {
 
         EasyMock.expect(request.getServletPath()).andReturn(
             "/" + spaceId + "/some-objId");
-        EasyMock.expect(request.getContextPath()).andReturn("");
-        EasyMock.expect(request.getRemoteHost()).andReturn("localhost");
+        EasyMock.expect(request.getPathInfo()).andReturn(spaceId);
         EasyMock.expect(request.getLocalPort()).andReturn(8080);
         EasyMock.expect(request.getQueryString()).andReturn(
             "storeID=5&attachment=true");
