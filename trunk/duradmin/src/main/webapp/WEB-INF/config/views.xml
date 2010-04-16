@@ -8,7 +8,7 @@
     <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
 	    <property name="encoding"><value>UTF-8</value></property>
 	    <property name="contentType"><value>application/json</value></property>
-	    <property name="jsonWriter"><ref bean="sojoJsonWriter"/></property>
+	    <property name="jsonWriter"><ref bean="jsonlibJsonWriter"/></property>
     	<property name="jsonErrors">
 	    	<list>
 	        	<ref bean="statusError" />
@@ -16,8 +16,16 @@
 	        </list>
         </property>
     </bean>
+	<!-- 
+	<bean name="sojoJsonWriter" class="org.springframework.web.servlet.view.json.writer.sojo.SojoJsonStringWriter">
+    	<property name="convertAllMapValues"><value>true</value></property>
+    </bean>
+    <bean name="xstreamJsonWriter" class="org.springframework.web.servlet.view.json.writer.xstream.XStreamJsonStringWriter">
+    	<property name="convertAllMapValues"><value>true</value></property>
+    </bean>
+     -->    
     
-    <bean name="sojoJsonWriter" class="org.springframework.web.servlet.view.json.writer.sojo.SojoJsonStringWriter">
+    <bean name="jsonlibJsonWriter" class="org.springframework.web.servlet.view.json.writer.jsonlib.JsonlibJsonStringWriter">
     	<property name="convertAllMapValues"><value>true</value></property>
     </bean>
 	

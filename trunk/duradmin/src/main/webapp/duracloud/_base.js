@@ -5,13 +5,22 @@ duracloud = function(){};
 
 
 duracloud.showWaitMessage = function (node, messageText){
-		if(node == null){
-			node = dojo.byId("flashMessageDiv");
-		}
-		node.innerHTML = "";
-		var div = dojo.create("div",null, node);
-		var img =  dojo.create("img", {"src":"/duradmin/images/wait.gif" },div);
-		dojo.create("span", {"innerHTML": messageText},div);
+	if(node == null){
+		node = dojo.byId("flashMessageDiv");
+	}
+
+	node.innerHTML = "";
+	var div = dojo.create("div",null, node);
+	var img =  dojo.create("img", {"src":"/duradmin/images/wait.gif" },div);
+	dojo.create("span", {"innerHTML": messageText},div);
+};
+
+
+duracloud.hideWaitMessage = function (node){
+	if(node == null){
+		node = dojo.byId("flashMessageDiv");
+	}
+	node.innerHTML = "";
 };
 
 

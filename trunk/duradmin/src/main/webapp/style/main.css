@@ -552,3 +552,11 @@ table.extended-metadata > tbody > tr {
 	padding: 0.25em;
 }
 
+.label-panel {
+	border-bottom: 1px dashed #999;	
+}
+.label-panel:hover {
+	background-color: #CCC;	
+	cursor: pointer;
+}
+
