@@ -28,7 +28,6 @@
 	<script type="text/javascript">
 	dojo.require("dijit.layout.BorderContainer");
 	dojo.require("dijit.layout.ContentPane");
-
 	dojo.require("dojox.widget.Toaster");
 	dojo.require("duracloud._base");
 	dojo.require("duracloud.ui");
@@ -111,16 +110,17 @@
 				    		}
 				    	});
 				    });	
+
 			
 		});
 	</script>
 
-  <div dojoType="dojox.widget.Toaster" id="toaster1" positionDirection="tr-left">
-  </div>
+	  <div dojoType="dojox.widget.Toaster" id="toaster1" positionDirection="tr-left">
+	  </div>
 	<tiles:importAttribute name="mainTab" scope="request" />
    	
     
-   	<div dojoType="dijit.layout.BorderContainer" gutters="false" style="width: 100%; height: 100%;">
+   	<div id="main" dojoType="dijit.layout.BorderContainer" gutters="false" style="width: 100%; height: 100%;">
    	    <div id="header" dojoType="dijit.layout.ContentPane" region="top" splitter="false">
 			<tiles:insertAttribute name="header"/>
 		</div>
@@ -140,7 +140,5 @@
 			<tiles:insertAttribute name="footer" />
 		</div>
     </div>
-   	
-   	</div> 
   </body>
 </html>

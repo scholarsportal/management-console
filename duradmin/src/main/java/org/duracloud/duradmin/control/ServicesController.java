@@ -19,6 +19,8 @@ public class ServicesController extends BaseCommandController{
         setCommandName("service");
     }
     
+    
+    
     @Override
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -30,6 +32,7 @@ public class ServicesController extends BaseCommandController{
         if("json".equals(format)){
             ServicesManager sm = getServicesManager();
             List<ServiceInfo> services = ("deployed".equals(show) ? sm.getDeployedServices(): sm.getAvailableServices());
+            
             return new ModelAndView("jsonView", "list", services);
         }else{
             return new ModelAndView("services");
