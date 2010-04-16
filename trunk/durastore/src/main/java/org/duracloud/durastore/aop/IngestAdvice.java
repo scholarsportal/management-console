@@ -95,8 +95,13 @@ public class IngestAdvice
         }
         if (methodArgs != null) {
             for (Object obj : methodArgs) {
-                log.debug(pre2 + "method-arg: ");
-                log.debug(obj.toString());
+                String argValue;
+                if(obj == null) {
+                    argValue = "null";
+                } else {
+                    argValue = obj.toString();
+                }
+                log.debug(pre2 + "method-arg: " + argValue);
             }
         }
     }
