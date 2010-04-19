@@ -1,19 +1,19 @@
 package org.duracloud.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import java.security.DigestInputStream;
-
+import org.duracloud.common.util.ChecksumUtil.Algorithm;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.duracloud.common.util.ChecksumUtil.Algorithm;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
+import java.security.DigestInputStream;
 
 public class ChecksumUtilTest {
 
@@ -107,6 +107,23 @@ public class ChecksumUtilTest {
 
         String checksum = ChecksumUtil.getChecksum(wrappedStream);
         assertEquals(md5, checksum);
+    }
+
+    @Test
+    public void testGetFileChecksum() throws Exception {
+        File tempFile = File.createTempFile("checksum-util-test", "file");
+        Writer writer = new FileWriter(tempFile);
+        writer.write(content);
+        writer.close();
+
+        ChecksumUtil util = new ChecksumUtil(Algorithm.MD5);
+        try {
+            String fileMd5 = util.generateChecksum(tempFile);
+            String streamMd5 = util.generateChecksum(getStream(content));
+            assertEquals(fileMd5, streamMd5);
+        } finally {
+            tempFile.delete();
+        }
     }
 
 }

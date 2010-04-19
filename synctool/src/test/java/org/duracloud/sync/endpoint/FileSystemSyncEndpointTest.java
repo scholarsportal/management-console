@@ -19,7 +19,7 @@ public class FileSystemSyncEndpointTest extends SyncTestBase {
     public void testGetSyncFile() throws Exception {
         File syncToDir = new File("/a/b/c");
         FileSystemSyncEndpoint syncEndpoint =
-            new FileSystemSyncEndpoint(syncToDir);
+            new FileSystemSyncEndpoint(syncToDir, true);
 
         File watchDir = new File("/a/b/d/e");
         File syncFile = new File("/a/b/d/e/f/g.txt");
@@ -33,7 +33,7 @@ public class FileSystemSyncEndpointTest extends SyncTestBase {
     public void testSyncToFileSystem() throws Exception {
         File syncToDir = createTempDir("syncToDir");
         FileSystemSyncEndpoint syncEndpoint =
-            new FileSystemSyncEndpoint(syncToDir);
+            new FileSystemSyncEndpoint(syncToDir, true);
 
         File watchDir = createTempDir("watchDir");
         File syncFile = File.createTempFile("sync", "file", watchDir);

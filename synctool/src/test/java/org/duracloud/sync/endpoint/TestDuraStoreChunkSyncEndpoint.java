@@ -11,10 +11,10 @@ import java.io.FileOutputStream;
  */
 public class TestDuraStoreChunkSyncEndpoint extends DuraStoreSyncTestBase {
 
-    @Test
-    public void testDuraStoreChunkSyncEndpoint() throws Exception {
-        int maxFileSize = 1024;
+    private static int maxFileSize = 1024;
 
+    @Test
+    public void testChunkSyncDeletesOn() throws Exception {
         DuraStoreChunkSyncEndpoint endpoint =
             new DuraStoreChunkSyncEndpoint(host,
                                            Integer.parseInt(port),
@@ -22,9 +22,11 @@ public class TestDuraStoreChunkSyncEndpoint extends DuraStoreSyncTestBase {
                                            rootCredential.getUsername(),
                                            rootCredential.getPassword(),
                                            spaceId,
+                                           true,
                                            maxFileSize);
         testSync(endpoint);
 
+        // Test chunking
         File largeFile = File.createTempFile("large", "file", tempDir);
         FileOutputStream fos = new FileOutputStream(largeFile);
 
@@ -37,5 +39,19 @@ public class TestDuraStoreChunkSyncEndpoint extends DuraStoreSyncTestBase {
 
         endpoint.syncFile(largeFile, tempDir);
         testEndpoint(endpoint, 3);
+    }
+
+    @Test
+    public void testChunkSyncDeletesOff() throws Exception {
+        DuraStoreChunkSyncEndpoint endpoint =
+            new DuraStoreChunkSyncEndpoint(host,
+                                           Integer.parseInt(port),
+                                           context,
+                                           rootCredential.getUsername(),
+                                           rootCredential.getPassword(),
+                                           spaceId,
+                                           false,
+                                           maxFileSize);
+        testSyncNoDeletes(endpoint);
     }
 }

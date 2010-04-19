@@ -486,13 +486,11 @@ public class ContentStoreImpl implements ContentStore{
     }
 
     private Map<String, String> convertMetadataToHeaders(Map<String, String> metadata) {
-        if(metadata == null) {
-            return null;
-        }
-
         Map<String, String> headers = new HashMap<String, String>();
-        for (String metaName : metadata.keySet()) {
-            headers.put(HEADER_PREFIX + metaName, metadata.get(metaName));
+        if(metadata != null) {
+            for (String metaName : metadata.keySet()) {
+                headers.put(HEADER_PREFIX + metaName, metadata.get(metaName));
+            }
         }
         return headers;
     }

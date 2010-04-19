@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -27,8 +26,15 @@ public class ChecksumUtil {
         }
     }
 
-    public String generateChecksum(File file) throws FileNotFoundException {
-        return generateChecksum(new FileInputStream(file));
+    public String generateChecksum(File file) throws IOException {
+        FileInputStream stream = new FileInputStream(file);
+        String checksum;
+        try {
+            checksum = generateChecksum(stream);
+        } finally {
+            stream.close();
+        }
+        return checksum;
     }
 
     /**

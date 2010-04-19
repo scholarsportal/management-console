@@ -28,13 +28,15 @@ public class DirectoryUpdateMonitor {
      * @param directories to monitor
      * @param pollFrequency how often the monitor should look for changes
      */
-    public DirectoryUpdateMonitor(List<File> directories, long pollFrequency) {
+    public DirectoryUpdateMonitor(List<File> directories,
+                                  long pollFrequency,
+                                  boolean syncDeletes) {
         monitor = new FilesystemMonitor(pollFrequency);
 
         for (File watchDir : directories) {
             if (watchDir.exists() && watchDir.isDirectory()) {
                 FilesystemObserver observer = new FilesystemObserver(watchDir);
-                observer.addListener(new DirectoryListener());
+                observer.addListener(new DirectoryListener(syncDeletes));
                 monitor.addObserver(observer);
             } else {
                 throw new RuntimeException("Path " +

@@ -15,9 +15,11 @@ import java.io.File;
 public class DirectoryListener extends FilesystemListenerAdaptor {
 
     private ChangedList changedList;
+    private boolean syncDeletes;
 
-    public DirectoryListener() {
+    public DirectoryListener(boolean syncDeletes) {
         changedList = ChangedList.getInstance();
+        this.syncDeletes = syncDeletes;
     }
 
     @Override
@@ -32,7 +34,9 @@ public class DirectoryListener extends FilesystemListenerAdaptor {
 
     @Override
     public void onFileDelete(File file) {
-        addFileToChangedList(file);
+        if(syncDeletes) {
+            addFileToChangedList(file);
+        }
     }
 
     private void addFileToChangedList(File file) {

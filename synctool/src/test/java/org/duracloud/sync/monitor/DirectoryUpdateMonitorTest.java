@@ -40,7 +40,8 @@ public class DirectoryUpdateMonitorTest extends SyncTestBase {
         List<File> dirs = new ArrayList<File>();
         dirs.add(tempDir);
 
-        DirectoryUpdateMonitor monitor = new DirectoryUpdateMonitor(dirs, 100);
+        DirectoryUpdateMonitor monitor =
+            new DirectoryUpdateMonitor(dirs, 100, true);
         monitor.startMonitor();
 
         // Create file
@@ -60,12 +61,38 @@ public class DirectoryUpdateMonitorTest extends SyncTestBase {
         monitor.stopMonitor();
     }
 
+    @Test
+    public void testDirectoryUpdateMonitorNoDeletes() throws Exception {
+        List<File> dirs = new ArrayList<File>();
+        dirs.add(tempDir);
+
+        DirectoryUpdateMonitor monitor =
+            new DirectoryUpdateMonitor(dirs, 100, false);
+        monitor.startMonitor();
+
+        // Create file
+        File tempFile = File.createTempFile("temp", "file", tempDir);
+        checkFileInChangedList(tempFile);
+
+        // Delete file
+        tempFile.delete();
+        checkFileNotInChangedList(tempFile);
+
+        monitor.stopMonitor();
+    }
+
     private void checkFileInChangedList(File file) throws Exception {
         Thread.sleep(1000);
         ChangedFile changedFile = changedList.getChangedFile();
         assertNotNull(changedFile);
-        assertEquals(file.getAbsolutePath(), 
+        assertEquals(file.getAbsolutePath(),
                      changedFile.getFile().getAbsolutePath());
         assertNull(changedList.getChangedFile());
     }
+
+    private void checkFileNotInChangedList(File file) throws Exception {
+        Thread.sleep(1000);
+        assertNull(changedList.getChangedFile());
+    }
+
 }

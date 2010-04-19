@@ -86,6 +86,7 @@ public class SyncTool {
                                            syncConfig.getUsername(),
                                            syncConfig.getPassword(),
                                            syncConfig.getSpaceId(),
+                                           syncConfig.syncDeletes(),
                                            syncConfig.getMaxFileSize());
         syncManager = new SyncManager(syncConfig.getSyncDirs(),
                                       syncEndpoint,
@@ -116,12 +117,13 @@ public class SyncTool {
 
     private void startDeleteChecker() {
         DeleteChecker.start(syncEndpoint.getFilesList(),
-                                   syncConfig.getSyncDirs());
+                            syncConfig.getSyncDirs());
     }
 
     private void startDirMonitor() {
         dirMonitor = new DirectoryUpdateMonitor(syncConfig.getSyncDirs(),
-                                                syncConfig.getPollFrequency());
+                                                syncConfig.getPollFrequency(),
+                                                syncConfig.syncDeletes());
         dirMonitor.startMonitor();
     }
 
@@ -189,7 +191,10 @@ public class SyncTool {
             startDirWalker();
             System.out.print("...");
         }
-        startDeleteChecker();
+
+        if(syncConfig.syncDeletes()) {
+            startDeleteChecker();
+        }
         System.out.print("...");
 
         startDirMonitor();

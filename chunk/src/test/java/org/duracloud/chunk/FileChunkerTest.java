@@ -8,6 +8,7 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.chunk.writer.FilesystemContentWriter;
+import org.duracloud.common.util.ChecksumUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -138,6 +139,28 @@ public class FileChunkerTest {
         }
         Assert.assertEquals(content.length(), totalChunksSize);
 
+    }
+
+    @Test
+    public void testAddContent() throws Exception {
+        long chunkSize = 1024;
+        long fileSize = chunkSize + chunkSize/2;
+        String fileName = "add-content-test.txt";
+
+        FileChunker chunker =
+            new FileChunker(writer, new FileChunkerOptions(chunkSize));
+        File file = createAndVerifyContent(fileName, fileSize);
+
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+        String fileChecksum = util.generateChecksum(file);
+        chunker.addContent(destDir.getPath(), fileName, fileChecksum, file);
+
+        File chunk1 = new File(destDir, fileName + ".dura-chunk-0000");
+        File chunk2 = new File(destDir, fileName + ".dura-chunk-0001");
+        File manifest = new File(destDir, fileName + ".dura-manifest");
+        Assert.assertTrue(chunk1.exists());
+        Assert.assertTrue(chunk2.exists());
+        Assert.assertTrue(manifest.exists());
     }
 
     @Test

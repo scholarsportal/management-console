@@ -80,7 +80,8 @@ public class SyncToolConfigParser {
 
        Option spaceId =
            new Option("s", "space", true,
-           "the ID of the DuraCloud space where content will be stored");
+                      "the ID of the DuraCloud space where content " +
+                      "will be stored");
        spaceId.setRequired(true);
        cmdOptions.addOption(spaceId);
 
@@ -121,7 +122,16 @@ public class SyncToolConfigParser {
                       "pieces (optional, default value is " +
                       DEFAULT_MAX_FILE_SIZE + ")");
         maxFileSize.setRequired(false);
-        cmdOptions.addOption(maxFileSize);        
+        cmdOptions.addOption(maxFileSize);
+
+       Option syncDeletes =
+           new Option("x", "sync-deletes", false,
+                      "indicates that deletes performed on files within the " +
+                      "sync directories should also be performed on those " +
+                      "files in DuraCloud; if this option is not included " +
+                      "all deletes are ignored (optional, not set by default)");
+        syncDeletes.setRequired(false);
+        cmdOptions.addOption(syncDeletes);
 
        // Options to use Backup Config
        configFileOptions = new Options();
@@ -261,6 +271,12 @@ public class SyncToolConfigParser {
             }
         } else {
             config.setMaxFileSize(DEFAULT_MAX_FILE_SIZE * GIGABYTE);
+        }
+
+        if(cmd.hasOption("x")) {
+            config.setSyncDeletes(true);
+        } else {
+            config.setSyncDeletes(false);
         }
 
         return config;

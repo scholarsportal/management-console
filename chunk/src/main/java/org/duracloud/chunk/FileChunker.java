@@ -177,7 +177,8 @@ public class FileChunker {
 
             // Verify final checksum
             if(fileChecksum != null) {
-                String finalChecksum = chunkable.getChecksum();
+                String finalChecksum =
+                    chunkable.getManifest().getHeader().getSourceMD5();                
                 if(!fileChecksum.equals(finalChecksum)) {
                     String err = "Final checksum of chunked content " +
                                  finalChecksum +
