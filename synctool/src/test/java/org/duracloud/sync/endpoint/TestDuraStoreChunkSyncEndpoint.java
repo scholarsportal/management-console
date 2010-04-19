@@ -19,8 +19,8 @@ public class TestDuraStoreChunkSyncEndpoint extends DuraStoreSyncTestBase {
             new DuraStoreChunkSyncEndpoint(host,
                                            Integer.parseInt(port),
                                            context,
-                                           rootCredential.getUsername(),
-                                           rootCredential.getPassword(),
+                                           getRootCredential().getUsername(),
+                                           getRootCredential().getPassword(),
                                            spaceId,
                                            true,
                                            maxFileSize);
@@ -47,8 +47,8 @@ public class TestDuraStoreChunkSyncEndpoint extends DuraStoreSyncTestBase {
             new DuraStoreChunkSyncEndpoint(host,
                                            Integer.parseInt(port),
                                            context,
-                                           rootCredential.getUsername(),
-                                           rootCredential.getPassword(),
+                                           getRootCredential().getUsername(),
+                                           getRootCredential().getPassword(),
                                            spaceId,
                                            false,
                                            maxFileSize);

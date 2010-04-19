@@ -1,7 +1,10 @@
 package org.duracloud.unittestdb.util;
 
 import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.EncryptionUtil;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
@@ -13,7 +16,19 @@ import org.duracloud.unittestdb.domain.ResourceType;
  */
 public class StorageAccountTestUtil {
 
-    public static String buildTestAccountXml() throws Exception {
+    private Credential rootCredential;
+
+    public HttpResponse initializeDurastore(String host, String port, String context)
+        throws Exception {
+        String baseURL = "http://" + host + ":" + port + "/" + context;
+        String storesURL =  baseURL + "/stores";
+
+        String xml = buildTestAccountXml();
+        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
+        return restHelper.post(storesURL, xml, null);
+    }
+
+    private String buildTestAccountXml() throws Exception {
         StringBuilder xml = new StringBuilder();
         xml.append("<storageProviderAccounts>");
 
@@ -59,6 +74,16 @@ public class StorageAccountTestUtil {
 
         xml.append("</storageProviderAccounts>");
         return xml.toString();
+    }
+
+    public Credential getRootCredential() throws Exception {
+        if (null == rootCredential) {
+            UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
+            ResourceType rootUser = ResourceType.fromDuraCloudUserType(
+                DuraCloudUserType.ROOT);
+            rootCredential = dbUtil.findCredentialForResource(rootUser);
+        }
+        return rootCredential;
     }
 
 }

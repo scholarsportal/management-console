@@ -6,7 +6,6 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.IOUtil;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
@@ -52,8 +51,6 @@ public class TestContentStore {
 
     private static String context = "durastore";
 
-    private static String accountXml = null;
-
     private static ContentStoreManager storeManager;
 
     private static ContentStore store;
@@ -69,16 +66,10 @@ public class TestContentStore {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        String url = "http://" + host + ":" + getPort() + "/" + context + "/stores";
-        if(accountXml == null) {
-            accountXml = StorageAccountTestUtil.buildTestAccountXml();
-        }
-        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
-        restHelper.post(url, accountXml, null);
+        StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
+        acctUtil.initializeDurastore(host, getPort(), context);
 
         storeManager = new ContentStoreManagerImpl(host, getPort(), context);
-        assertNotNull(storeManager);
-
         storeManager.login(getRootCredential());
 
         store = storeManager.getPrimaryContentStore();

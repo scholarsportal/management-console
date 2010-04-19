@@ -190,6 +190,7 @@
       <unitTests>**/*Test.class</unitTests>
       <integrationTests>**/Test*.class</integrationTests>
       <instrumentedTests>**/*Test*__*.class</instrumentedTests>
+      <innerClasses>**/*$*</innerClasses>
       <log.level.default>INFO</log.level.default>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -341,6 +342,7 @@
           <excludes>
             <exclude>${integrationTests}</exclude>
             <exclude>${instrumentedTests}</exclude>
+            <exclude>${innerClasses}</exclude>
           </excludes>
           <includes>
             <include>${unitTests}</include>
@@ -368,6 +370,7 @@
               <excludes>
                 <exclude>${unitTests}</exclude>
                 <exclude>${instrumentedTests}</exclude>
+                <exclude>${innerClasses}</exclude>
               </excludes>
               <includes>
                 <include>${integrationTests}</include>

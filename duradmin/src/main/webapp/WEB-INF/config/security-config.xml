@@ -33,7 +33,7 @@
   <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager"/>
   <authentication-provider user-service-ref="userDetailsSvc"/>
-  <beans:bean id="userDetailsSvc" class="org.duracloud.security.UserDetailsServiceImpl"/>
+  <beans:bean id="userDetailsSvc" class="org.duracloud.security.impl.UserDetailsServiceImpl"/>
 
   <!-- AOP to log(in/out) ContentStoreMgr and ServicesMgr -->
   <beans:bean id="securityContextUtil" class="org.duracloud.security.context.SecurityContextUtil"/>

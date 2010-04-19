@@ -26,14 +26,12 @@ public class RestTestHelper {
 
     private static String baseUrl;
 
-    private static String host = "http://localhost";
+    private static String host = "localhost";
 
     private static String port;
     private static final String defaultPort = "8080";
 
     private static String webapp = "durastore";
-
-    private static String accountXml = null;
 
     public static final String METADATA_NAME =
         BaseRest.HEADER_PREFIX + "test-metadata";
@@ -43,11 +41,8 @@ public class RestTestHelper {
     public static final String SPACE_ACCESS = "OPEN";
 
     public static HttpResponse initialize() throws Exception {
-        String url = getBaseUrl() + "/stores";
-        if(accountXml == null) {
-            accountXml = StorageAccountTestUtil.buildTestAccountXml();
-        }
-        return restHelper.post(url, accountXml, null);
+        StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
+        return acctUtil.initializeDurastore(host, port, webapp);
     }
 
     public static HttpResponse addSpace(String spaceID)
@@ -84,7 +79,7 @@ public class RestTestHelper {
 
     public static String getBaseUrl() throws Exception {
         if (baseUrl == null) {
-            baseUrl = host + ":" + getPort() + "/" + webapp;
+            baseUrl = "http://" + host + ":" + getPort() + "/" + webapp;
         }
         return baseUrl;
     }

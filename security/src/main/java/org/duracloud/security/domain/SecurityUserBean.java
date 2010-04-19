@@ -1,4 +1,4 @@
-package org.duracloud.security;
+package org.duracloud.security.domain;
 
 import java.util.List;
 

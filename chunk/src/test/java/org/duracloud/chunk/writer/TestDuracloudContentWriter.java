@@ -6,15 +6,14 @@ import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
-import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
-import org.duracloud.unittestdb.util.StorageAccountTestUtil;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.duracloud.unittestdb.util.StorageAccountTestUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,17 +58,10 @@ public class TestDuracloudContentWriter {
 
     @Before
     public void setUp() throws Exception {
-        String url =
-            "http://" + host + ":" + getPort() + "/" + context + "/stores";
-        if (accountXml == null) {
-            accountXml = StorageAccountTestUtil.buildTestAccountXml();
-        }
-        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
-        restHelper.post(url, accountXml, null);
+        StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
+        acctUtil.initializeDurastore(host, getPort(), context);
 
         storeManager = new ContentStoreManagerImpl(host, getPort(), context);
-        Assert.assertNotNull(storeManager);
-
         storeManager.login(getRootCredential());
 
         store = storeManager.getPrimaryContentStore();
