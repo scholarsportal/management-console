@@ -35,13 +35,15 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
 
     private ContentStore contentStore;
     private String spaceId;
+    private boolean syncDeletes;
 
     public DuraStoreSyncEndpoint(String host,
                                  int port,
                                  String context,
                                  String username,
                                  String password,
-                                 String spaceId) {
+                                 String spaceId,
+                                 boolean syncDeletes) {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, String.valueOf(port), context);
         storeManager.login(new Credential(username, password));
@@ -54,6 +56,7 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
         }
 
         this.spaceId = spaceId;
+        this.syncDeletes = syncDeletes;
         ensureSpaceExists();
     }
 
@@ -134,9 +137,15 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                 }
             } else { // File was deleted
                 if(dcFileExists) {
-                    logger.debug("Local file {} deleted, removing from DuraCloud.",
-                                 syncFile.getAbsolutePath());
-                    contentStore.deleteContent(spaceId, contentId);
+                    if(syncDeletes) {
+                        logger.debug("Local file {} deleted, " +
+                                     "removing from DuraCloud.",
+                                     syncFile.getAbsolutePath());
+                        contentStore.deleteContent(spaceId, contentId);
+                    } else {
+                        logger.debug("Ignoring delete of file {}",
+                                     syncFile.getAbsolutePath());
+                    }
                 }
             }
         } catch(ContentStoreException e) {
@@ -160,18 +169,22 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
         }
 
         String mimetype = getMimeType(syncFile);
-        contentStore.addContent(spaceId,
-                                contentId,
-                                fileStream,
-                                syncFile.length(),
-                                mimetype,
-                                contentCheckdum,
-                                null);        
+
         try {
-            fileStream.close();
-        } catch(IOException e) {
-            logger.error("Error attempting to close stream for file " +
-                syncFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            contentStore.addContent(spaceId,
+                                    contentId,
+                                    fileStream,
+                                    syncFile.length(),
+                                    mimetype,
+                                    contentCheckdum,
+                                    null);
+        } finally {
+            try {
+                fileStream.close();
+            } catch(IOException e) {
+                logger.error("Error attempting to close stream for file " +
+                    syncFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            }
         }
     }
 
@@ -205,6 +218,8 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
         } catch(FileNotFoundException e) {
             throw new RuntimeException("File not found: " +
                 file.getAbsolutePath(), e);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

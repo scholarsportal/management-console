@@ -31,6 +31,7 @@ public class FileSystemSyncEndpoint implements SyncEndpoint {
         LoggerFactory.getLogger(FileSystemSyncEndpoint.class);    
 
     private File syncToDir;
+    private boolean syncDeletes;
 
     /**
      * Creates a SyncEnpoint pointing to a directory on the local file system
@@ -38,8 +39,9 @@ public class FileSystemSyncEndpoint implements SyncEndpoint {
      *
      * @param syncToDir
      */
-    public FileSystemSyncEndpoint(File syncToDir) {
+    public FileSystemSyncEndpoint(File syncToDir, boolean syncDeletes) {
         this.syncToDir = syncToDir;
+        this.syncDeletes = syncDeletes;
     }
 
     public boolean syncFile(File syncFile, File watchDir) {
@@ -65,7 +67,11 @@ public class FileSystemSyncEndpoint implements SyncEndpoint {
                 success = false;
             }
         } else { // File was deleted
-            success = syncToFile.delete();
+            if(syncDeletes) {
+                success = syncToFile.delete();
+            } else {
+                success = true;
+            }
         }
         return success;
     }

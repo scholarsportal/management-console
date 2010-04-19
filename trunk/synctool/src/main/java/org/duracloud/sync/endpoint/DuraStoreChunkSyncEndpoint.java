@@ -21,8 +21,9 @@ public class DuraStoreChunkSyncEndpoint extends DuraStoreSyncEndpoint {
                                       String username,
                                       String password,
                                       String spaceId,
+                                      boolean syncDeletes,
                                       long maxFileSize) {
-        super(host, port, context, username, password, spaceId);
+        super(host, port, context, username, password, spaceId, syncDeletes);
 
         if(maxFileSize % 1024 != 0) {
             throw new RuntimeException("Max file size must be a " +

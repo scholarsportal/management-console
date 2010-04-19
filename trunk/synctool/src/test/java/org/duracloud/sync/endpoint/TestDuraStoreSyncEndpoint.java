@@ -16,8 +16,19 @@ public class TestDuraStoreSyncEndpoint extends DuraStoreSyncTestBase {
                                       context,
                                       rootCredential.getUsername(),
                                       rootCredential.getPassword(),
-                                      spaceId);
+                                      spaceId,
+                                      true);
         testSync(endpoint);
+
+        endpoint =
+            new DuraStoreSyncEndpoint(host,
+                                      Integer.parseInt(port),
+                                      context,
+                                      rootCredential.getUsername(),
+                                      rootCredential.getPassword(),
+                                      spaceId,
+                                      false);
+        testSyncNoDeletes(endpoint);
     }
     
 }

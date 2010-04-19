@@ -57,6 +57,7 @@ public class SyncToolConfigParserTest {
         argsMap.remove("-p");
         argsMap.remove("-t");
         argsMap.remove("-m");
+        argsMap.remove("-x");
 
         // Process configs, make sure optional params are set to defaults
         syncConfig =
@@ -69,6 +70,7 @@ public class SyncToolConfigParserTest {
         assertEquals(SyncToolConfigParser.DEFAULT_MAX_FILE_SIZE *
                      SyncToolConfigParser.GIGABYTE,
                      syncConfig.getMaxFileSize());
+        assertEquals(false, syncConfig.syncDeletes());
 
         // Make sure error is thrown on missing required params
         for(String arg : argsMap.keySet()) {
@@ -89,7 +91,6 @@ public class SyncToolConfigParserTest {
         failMsg = "Max file size arg should be between 1 and 5";
         addArgFailTest(argsMap, "-m", "0", failMsg);
         addArgFailTest(argsMap, "-m", "6", failMsg);
-
     }
 
     private HashMap<String, String> getArgsMap() {
@@ -104,6 +105,7 @@ public class SyncToolConfigParserTest {
         argsMap.put("-w", "pass");
         argsMap.put("-s", "mySpace");
         argsMap.put("-m", "2");
+        argsMap.put("-x", "");
         return argsMap;
     }
 
@@ -126,6 +128,7 @@ public class SyncToolConfigParserTest {
         assertEquals(argsMap.get("-m"),
                      String.valueOf(syncConfig.getMaxFileSize() /
                                     SyncToolConfigParser.GIGABYTE));
+        assertEquals(true, syncConfig.syncDeletes());
     }
 
     private String[] mapToArray(HashMap<String, String> map) {
