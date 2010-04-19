@@ -65,7 +65,7 @@
 						</table>
 					</div>
 					<div class="basic-form-buttons" >
-						<input type="submit" name="_eventId_submit" value="Add" class="add-content-item" spaceId="${contentItem.spaceId}"/> 
+						<input type="submit" name="_eventId_submit" value="Add" class="add-content-item blocking-action" spaceId="${contentItem.spaceId}"/> 
 						<input type="submit" name="_eventId_cancel" value="Cancel"/> 
 					</div>
 				</form:form>

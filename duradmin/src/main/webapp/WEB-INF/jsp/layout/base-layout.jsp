@@ -50,9 +50,15 @@
 			
 			var contentItemClick = function(e){
 				expireSpace(e);
-				duracloud.ui.showWait("Loading...");
+				duracloud.ui.showWait("Working...");
 			};	
-			dojo.query(".add-content-item").forEach(function(node){
+
+			dojo.query(".logout").forEach(function(node){
+				dojo.connect(node, "onclick", function(){
+					duracloud.storage.clear();
+				});
+			});
+			dojo.query(".blocking-action").forEach(function(node){
 				dojo.connect(node, "onclick", contentItemClick);
 			});
 	

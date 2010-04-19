@@ -42,7 +42,7 @@ public class ContentItemValidator {
         }else{
             try {
                 IdUtil.validateContentId(contentId);
-
+                /*
                 if (contentItemExists(contentItem)) {
                     messages
                             .addMessage(new MessageBuilder()
@@ -50,6 +50,7 @@ public class ContentItemValidator {
                                     .defaultText("A content item with this ID already exists. Please try another.")
                                     .build());
                 }
+                */
             
             } catch(InvalidIdException e) {
                 messages.addMessage(new MessageBuilder().error()

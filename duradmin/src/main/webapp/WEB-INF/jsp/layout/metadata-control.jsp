@@ -21,7 +21,7 @@
 				<textarea style="min-width:15em" name="value" rows="3" cols="10"></textarea>
 			</div>
 			<div class="miniform-buttons">
-				<input type="submit" value="<spring:message code="add"/>"/>
+				<input type="submit" class="blocking-action" value="<spring:message code="add"/>"/>
 				<input type="button" onclick="hideMiniform(event)" value="<spring:message code="cancel"/>"/>					
 			</div>
 			

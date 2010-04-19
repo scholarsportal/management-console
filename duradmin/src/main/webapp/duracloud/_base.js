@@ -41,38 +41,6 @@ duracloud.formatSpaceMetadataHtml = function (/*Object*/space){
 		  return "Access: " + access + "<br/>" + "Created on " + created + "<br/>" + count +  " items";
 };
 
-duracloud.formatContentItemMetadataHtml =  function(/*ConentItem Object*/ci){
-		  var metadata = ci.metadata;
-		  var table = dojo.create("table", {"class":"content-item-metadata-summary"});
-	      var row = addRow(table);
-		  addCell("modified", row);
-	      addCell(metadata.modified, row);
-	      var tn = ci.tinyThumbnailURL;
-	      if(tn != undefined && tn != null){
-	    	  var thumblink = dojo.create("a", {"target":"viewer", "href": ci.viewerURL});
-	    	  dojo.create("img", {"src":tn, "style":"height:75px;width:75px"}, thumblink);
-	    	  var cell = addCell(thumblink, row);
-	          dojo.attr(cell, "rowspan", "3");
-	      }
-
-	      
-	      row = addRow(table);
-	      addCell("mimetype", row);
-		  addCell(metadata.mimetype, row);
-		  row = addRow(table);
-		  addCell("size", row);
-		  addCell(metadata.size + " bytes", row);
-	      
-		  row = addRow(table);
-		  addCell("checksum", row);
-		  addCell(metadata.checksum, row);
-	      return table;
-};
-
-
-	
-	
-
 
 addRow = function (tableElement){
 	return dojo.create("tr", null, tableElement);
@@ -143,11 +111,6 @@ setFlashInfoMessage =  function (message){
 };
 
 setFlashMessage = function (message, type){
-//	clearFlashMessage();
-//	var div = dojo.byId("flashMessageDiv");
-//	var span = dojo.create("span", {innerHTML: message}, div);
-//	dojo.addClass(span, "message-" + type);
-	
     var toaster = dijit.byId("toaster1");
     toaster.setContent(message, type, 3000);
     toaster.show();

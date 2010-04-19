@@ -11,6 +11,7 @@ import org.duracloud.duradmin.contentstore.ContentItemListCache;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.ControllerUtils;
+import org.duracloud.duradmin.util.SpaceUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,6 +49,7 @@ public class ContentsController
         if(viewFilter !=null){
             contentItemList.setViewFilter(viewFilter);
         }
+        
         
         String action = space.getAction();
         if (StringUtils.hasText(action)) {

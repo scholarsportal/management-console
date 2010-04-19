@@ -22,10 +22,10 @@
 			<input type="hidden" name="spaceId" value="<c:out value="${spaceId}"/>"/>
 			<input type="hidden" name="contentId" value="<c:out value="${contentId}"/>"/>
 			<input type="hidden" name="returnTo" value="<c:out value="${currentUrl}"/>"/>
-				<input type="text" name="tag" type="text" size="13"/> 
+				<textarea style="min-width:15em" name="tag" rows="3" cols="10"></textarea>
 			</div>
 			<div class="miniform-buttons">
-				<input type="submit" value="Add"/>
+				<input type="submit" class="blocking-action" value="Add"/>
 				<input type="button" onclick="hideMiniform(event)" value="<spring:message code='cancel'/>"/>					
 			</div>
 		</form>

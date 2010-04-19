@@ -84,7 +84,7 @@
 						</table>
 					</div>
 					<div class="basic-form-buttons" >
-						<input type="submit" name="_eventId_submit" value="<spring:message code="deploy"/>"/> 
+						<input type="submit" name="_eventId_submit" class="blocking-action" value="<spring:message code="deploy"/>"/> 
 						<input type="submit" name="_eventId_cancel" value="<spring:message code="cancel"/>"/> 
 					</div>
 				</form:form>

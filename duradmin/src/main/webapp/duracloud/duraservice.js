@@ -194,7 +194,7 @@ duracloud.duraservice = {
 			var rows = new Array();
 			for(sv in services){
     			var service = services[sv];
-    			var deployLink = dojo.create("a", {href: "/duradmin/services/deploy?serviceId=" + service.id, innerHTML: "deploy"});
+    			var deployLink = dojo.create("a", {"class":"blocking-action", href: "/duradmin/services/deploy?serviceId=" + service.id, innerHTML: "deploy"});
     			var row = new Array();
     			row[0] = service.displayName;
     			row[1] = service.description;

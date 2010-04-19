@@ -84,6 +84,15 @@ if(!dojo._hasResource["duracloud.storage"]){
 		    return key;
 		};
 
+		duracloud.storage.clear = function (){
+			try{
+				dojox.storage.clear();
+			}catch(err){
+				console.error(err);
+			}
+		};
+
+		
 	})();
 }
 
