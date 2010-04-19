@@ -17,32 +17,41 @@ public class RestTestHelper {
 
     private static RestHttpHelper restHelper = getAuthorizedRestHelper();
 
-    private static String baseUrl;
+    private static String baseServiceUrl;
+    private static String baseStoreUrl;
 
     private static String host = "http://localhost";
 
     private static String port;
     private static final String defaultPort = "8080";
 
-    private static String webapp = "duraservice";
+    private static String serviceContext = "duraservice";
+    private static String storeContext = "durastore";
 
     private static String initXml = null;
 
     public static final String SPACE_ACCESS = "OPEN";
 
     public static HttpResponse initialize() throws Exception {
-        String url = getBaseUrl() + "/services";
+        String url = getBaseServiceUrl() + "/services";
         if(initXml == null) {
             initXml = buildTestInitXml();
         }
         return restHelper.post(url, initXml, null);
     }
 
-    public static String getBaseUrl() throws Exception {
-        if (baseUrl == null) {
-            baseUrl = host + ":" + getPort() + "/" + webapp;
+    public static String getBaseServiceUrl() throws Exception {
+        if (baseServiceUrl == null) {
+            baseServiceUrl = host + ":" + getPort() + "/" + serviceContext;
         }
-        return baseUrl;
+        return baseServiceUrl;
+    }
+
+    public static String getBaseStoreUrl() throws Exception {
+        if (baseStoreUrl == null) {
+            baseStoreUrl = host + ":" + getPort() + "/" + storeContext;
+        }
+        return baseStoreUrl;
     }
 
     private static String getPort() throws Exception {
@@ -116,7 +125,7 @@ public class RestTestHelper {
         return xml.toString();
     }
 
-    private static RestHttpHelper getAuthorizedRestHelper() {
+    public static RestHttpHelper getAuthorizedRestHelper() {
         return new RestHttpHelper(getRootCredential());
     }
 

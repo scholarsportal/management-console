@@ -1,21 +1,16 @@
 package org.duracloud.sync;
 
+import org.apache.commons.io.FileUtils;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.model.Credential;
-import org.duracloud.common.model.DuraCloudUserType;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.unittestdb.util.StorageAccountTestUtil;
-import org.duracloud.unittestdb.UnitTestDatabaseUtil;
-import org.duracloud.unittestdb.domain.ResourceType;
 import org.duracloud.error.ContentStoreException;
-import org.junit.BeforeClass;
+import org.duracloud.unittestdb.util.StorageAccountTestUtil;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.After;
-import static org.junit.Assert.assertNotNull;
-import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
 
 import java.io.File;
 import java.util.Random;
@@ -31,8 +26,9 @@ public class SyncIntegrationTestBase extends SyncTestBase {
     protected static String port;
     protected static ContentStore store;
     protected static String spaceId;
-    protected static Credential rootCredential;
     protected File tempDir;
+
+    private final static StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -40,18 +36,11 @@ public class SyncIntegrationTestBase extends SyncTestBase {
         context = "durastore";
         port = getPort();
 
-        String url =
-            "http://" + host + ":" + port + "/" + context + "/stores";
-        String accountXml = StorageAccountTestUtil.buildTestAccountXml();
-
-        rootCredential = getRootCredential();
-        RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
-        restHelper.post(url, accountXml, null);
+        acctUtil.initializeDurastore(host, port, context);
 
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, port, context);
-        assertNotNull(storeManager);
-        storeManager.login(rootCredential);
+        storeManager.login(getRootCredential());
 
         store = storeManager.getPrimaryContentStore();
 
@@ -59,11 +48,8 @@ public class SyncIntegrationTestBase extends SyncTestBase {
         spaceId = "synctool-test-space-" + random;
     }
 
-    private static Credential getRootCredential() throws Exception {
-        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        ResourceType rootUser = ResourceType.fromDuraCloudUserType(
-            DuraCloudUserType.ROOT);
-        return dbUtil.findCredentialForResource(rootUser);
+    protected static Credential getRootCredential() throws Exception {
+        return acctUtil.getRootCredential();
     }
 
     private static String getPort() throws Exception {

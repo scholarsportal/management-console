@@ -2,7 +2,7 @@ package org.duracloud.security.xml;
 
 import org.duracloud.SecurityUserType;
 import org.duracloud.SecurityUsersType;
-import org.duracloud.security.SecurityUserBean;
+import org.duracloud.security.domain.SecurityUserBean;
 
 import java.util.List;
 

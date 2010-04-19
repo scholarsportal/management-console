@@ -42,6 +42,6 @@
   <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager"/>
   <authentication-provider user-service-ref="userDetailsSvc"/>
-  <beans:bean id="userDetailsSvc" class="org.duracloud.security.UserDetailsServiceImpl"/>
+  <beans:bean id="userDetailsSvc" class="org.duracloud.security.impl.UserDetailsServiceImpl"/>
 
 </beans:beans>

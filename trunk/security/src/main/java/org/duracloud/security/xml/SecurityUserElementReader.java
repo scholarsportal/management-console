@@ -4,8 +4,7 @@ import org.duracloud.SecurityUserType;
 import org.duracloud.SecurityUsersDocument;
 import org.duracloud.SecurityUsersType;
 import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.security.SecurityUserBean;
-import org.duracloud.security.error.EmptyUserListException;
+import org.duracloud.security.domain.SecurityUserBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +26,15 @@ public class SecurityUserElementReader {
      */
     public static List<SecurityUserBean> createSecurityUsersFrom(
         SecurityUsersDocument doc) {
-        SecurityUsersType usersType = doc.getSecurityUsers();
-        if (usersType.sizeOfSecurityUserArray() == 0) {
-            throw new EmptyUserListException();
-        }
-
-        checkSchemaVersion(usersType.getSchemaVersion());
-
         List<SecurityUserBean> beans = new ArrayList<SecurityUserBean>();
-        for (SecurityUserType userType : usersType.getSecurityUserArray()) {
-            beans.add(createSecurityUser(userType));
+
+        SecurityUsersType usersType = doc.getSecurityUsers();
+        if (usersType.sizeOfSecurityUserArray() > 0) {
+            checkSchemaVersion(usersType.getSchemaVersion());
+
+            for (SecurityUserType userType : usersType.getSecurityUserArray()) {
+                beans.add(createSecurityUser(userType));
+            }
         }
 
         return beans;
