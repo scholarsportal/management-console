@@ -175,31 +175,14 @@
 						dojo.require("duracloud.durastore");
 	
 						dojo.addOnLoad(function(){
-						
-							/*
-							ds = duracloud.durastore;
-							dojo.query(".actionable-item").forEach(
-								function(item){
-							    	dojo.connect(item, 'onmouseover', function() {
-										var nodeId;
-										dojo.query("[id*='metadata-div-']",item).forEach(function(div){
-											nodeId = div.id;
-										});
-										ds.loadContentItem(nodeId,'${space.spaceId}',item.id);
-							    	});
-								});
-								
-							*/
-							
-
-							dojo.query(".content-item-details").forEach(function(div){
+							dojo.query(".content-item").forEach(function(div){
 								duracloud.durastore.loadContentItem(div, dojo.attr(div.id, "spaceId"), dojo.attr(div.id, "contentId"));
 							});
 						});
 					</script>
 					<c:forEach items="${contentItemList.contentItemList}" var="content"
 						varStatus="status">
-						<div  id="${content.encodedContentId}" class="actionable-item">
+						<div  id="${content.encodedContentId}"   contentId="${content.contentId}" spaceId="${content.spaceId}"  class="content-item actionable-item">
 						<table>
 									<tr class="list-item-header">
 										<td colspan="2">
@@ -212,15 +195,15 @@
 									</tr>
 
 									<tr>
-										<td  width="70%" id="details">
+										<td  width="70%" >
 											<div class="tiny-thumb">
-												<c:if test="${not empty content.tinyThumbnailURL}">
-													<img src="${content.tinyThumbnailURL}" />
-												</c:if>
+												
 											</div>
-											<div id="metadata-div-${status.count}" contentId="${content.contentId}" spaceId="${content.spaceId}"  class="content-item-details">
-												<!--empty-->
+											<div class="content-item-metadata">
+												
 											</div>
+											
+											
 										</td>
 
 										<td>
@@ -233,6 +216,11 @@
 														   	  <c:param name="contentId" value="${content.contentId}"/>
 													      </c:url>"><spring:message code="details" /></a>
 											        </li>
+													<c:if test="${content.viewerURL != null}">
+														<li>
+															<a target = "viewer" href="${content.viewerURL}"><spring:message code="view" /></a>
+														</li>
+													</c:if>
 													<li>
 														<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
 													</li>

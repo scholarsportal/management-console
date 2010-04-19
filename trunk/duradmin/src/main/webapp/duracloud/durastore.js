@@ -40,38 +40,67 @@ duracloud.durastore = {
 		});
 	},
 	
+	_formatContentItemMetadataHtml: function(node, contentItem){
+		  var ci = contentItem;
+		  var metadata = ci.metadata;
+	      var tn = ci.tinyThumbnailURL;
+    	  var thumbLink = dojo.create("a", {"target":"viewer", "href": ci.viewerURL});
+    	  dojo.create("img", {"src":tn}, thumbLink);
+    	  
+    	  dojo.query(".tiny-thumb", node).forEach(function(div){
+    		 div.innerHTML = "";
+    		 div.appendChild(thumbLink);
+    	  });
+    	  
+    	  dojo.query(".content-item-metadata", node).forEach(function(div){
+    		  div.innerHTML = "";
+
+        	  var table = dojo.create("table", {"class":"content-item-metadata-summary"});
+    	      var row = addRow(table);
+              addCell("modified", row);
+    	      addCell(metadata.modified, row);
+    	      
+    	      row = addRow(table);
+    	      addCell("mimetype", row);
+    		  addCell(metadata.mimetype, row);
+
+    		  row = addRow(table);
+    		  addCell("size", row);
+    		  addCell(metadata.size + " bytes", row);
+    	      
+    		  row = addRow(table);
+    		  addCell("checksum", row);
+    		  addCell(metadata.checksum, row);
+
+    		  div.appendChild(table);
+    	  });
+    	  
+	},
+	
 	loadContentItem: function (node, spaceId, contentId){
-		//var node = dojo.byId(nodeId);
-		var contents = node.innerHTML;
-		if(contents.search('<!--empty-->') < 0){
-			return;
-		}
+		var that = this;
 		
-		var s = duracloud.storage.get(spaceId,contentId);
-		if(s != null){
-			  node.innerHTML = "";
-		      node.appendChild(duracloud.formatContentItemMetadataHtml(s));
+		var ci = duracloud.storage.get(spaceId,contentId);
+
+		if(ci != null){
+		     that._formatContentItemMetadataHtml(node,ci);
 		      return;
 		}
 
-		duracloud.showWaitMessage(node, "Retrieving metadata...");
+		//duracloud.showWaitMessage(null, "Retrieving metadata...");
 		dojo.xhrGet( {
 		    // The following URL must match that used to test the server.
 		    url: "/duradmin/data/spaces/contentItem?spaceId="+spaceId+"&contentId=" + contentId,
 		    handleAs: "json",
 		    load: function(responseObject, ioArgs) {
 			  console.debug(responseObject);  // Dump it to the console
-			  var ci = responseObject.contentItem;
-			  var details = duracloud.formatContentItemMetadataHtml(ci);
-			  //var node = dojo.byId(nodeId);
-			  node.innerHTML = "";
-		      node.appendChild(details);
-		      duracloud.storage.put(spaceId,contentId,ci);
-
-		},
+			  var contentItem = responseObject.contentItem;
+			  that._formatContentItemMetadataHtml(node,contentItem);
+			  duracloud.storage.put(spaceId,contentId,contentItem);
+			},
 			error: function(responseObject, ioArgs){
-		          console.error("HTTP status code: ", ioArgs.xhr.status); 
-		          duracloud.showError(node, ioArgs);
+	          console.error("HTTP status code: ", ioArgs.xhr.status); 
+	          duracloud.showError(node, ioArgs);
 			}
 		});
 	},

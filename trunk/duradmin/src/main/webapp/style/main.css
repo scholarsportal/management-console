@@ -382,14 +382,13 @@ table.contents-table > tbody > tr > td#actionColumn {
 }
 */
 
-.content-item-details {
+.content-item-metadata {
 	min-height: 3.0em;
 	font-size: 0.8em;
 	float:left;
-	
 }
 
-.content-item-details td:first-child:after{
+.content-item-metadata td:first-child:after{
 	content: ": ";
 }
 
@@ -402,6 +401,8 @@ table.contents-table > tbody > tr > td#actionColumn {
 .tiny-thumb, .tiny-thumb img{
 	width:4.0em;
 	height:4.0em;
+	margin-right:1em;
+	border-style:none;
 }
 
 .space-list-item {
@@ -548,10 +549,14 @@ table.extended-metadata > tbody > tr {
 
 .content-preview{
 	border: 1px dashed #999; 
-	min-height: 10.5em; 
+	height: 10.5em; 
 	padding: 0.25em;
 }
 
+.content-preview img {
+	height:10.5em;
+	max-width:10.5em;	
+}
 .label-panel {
 	border-bottom: 1px dashed #999;	
 }

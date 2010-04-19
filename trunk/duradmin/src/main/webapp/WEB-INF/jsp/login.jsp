@@ -15,7 +15,7 @@
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
-				<form id="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="post">
+				<form id="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="post" >
 					<div>
 						<table class="basic-form">
 							<tr>
@@ -37,7 +37,7 @@
 						</table>
 					</div>
 					<div class="basic-form-buttons" >
-						<input type="submit" value="Login"/>					
+						<input type="submit" value="Login" />					
 					</div>
 				</form>
 			</tiles:putAttribute>

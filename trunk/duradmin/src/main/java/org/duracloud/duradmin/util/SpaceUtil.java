@@ -60,57 +60,72 @@ public class SpaceUtil {
     private static void populateURLs(ContentItem contentItem,
                                      ContentStore store,
                                      ServicesManager servicesManager) {
-        String mimetype = contentItem.getMetadata().getMimetype();
         String j2KBaseURL = null;
         j2KBaseURL = resolveJ2KServiceBaseURL(servicesManager);
-        if(j2KBaseURL != null && mimetype.toLowerCase().startsWith("image/")){
-            contentItem.setTinyThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 1));
-            contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 2));
-            contentItem.setViewerURL(formatViewerURL(contentItem, store, j2KBaseURL));
-        }
+    	contentItem.setTinyThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 1));
+        contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 2));
+        contentItem.setViewerURL(formatViewerURL(contentItem, store, j2KBaseURL));
 
-        contentItem.setDownloadURL(formatDownloadURL(contentItem,store));
+        contentItem.setDownloadURL(formatDownloadURL(contentItem,store,true));
     }
 
     
 
 
-    private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
-         String standardURL = formatDownloadURL(contentItem,store);
-         return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
-                                     j2KBaseURL, 
-                                     EncodeUtil.urlEncode(standardURL));
+
+	private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
+         String standardURL = formatDownloadURL(contentItem,store,false);
+         if(j2KBaseURL !=null){
+             return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
+                     j2KBaseURL, 
+                     EncodeUtil.urlEncode(standardURL));
+         }else{
+        	 return standardURL;
+         }
     }
     
 
+	private static String[] GENERIC_THUMBNAIL_PREFIXES = {"image", "video", "text", "pdf"}; 
     private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL, int size) {
-        String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
-                            "svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&" +
-                            "svc.format=image/png&svc.level={2}&svc.rotate=0&svc.region=0,0,500,500";
-
-        return MessageFormat.format(
-                                    pattern, 
-                                    j2KBaseURL,
-                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store)),
-                                    size
-                                    );
+        String mimetype = contentItem.getMetadata().getMimetype();
+        if(mimetype.toLowerCase().startsWith("image/") && j2KBaseURL != null){
+	    	String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
+	                            "svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&" +
+	                            "svc.format=image/png&svc.level={2}&svc.rotate=0&svc.region=0,0,500,500";
+	
+	        return MessageFormat.format(
+	                                    pattern, 
+	                                    j2KBaseURL,
+	                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store, false)),
+	                                    size);
+        }else{
+        	for(String gtf : GENERIC_THUMBNAIL_PREFIXES){
+        		if(mimetype.startsWith(gtf)){
+        			return "/duradmin/images/generic-thumb-" + gtf + ".png";
+        		}
+        	}
+        	
+        	return "/duradmin/images/generic-thumb-other.png";
+        }
+        
+        
     }
     
-    public static String formatDownloadURL(ContentItem contentItem, ContentStore store) {
-        String pattern = "{0}/{1}/{2}?storeID={3}&attachment=true";
- 
+    public static String formatDownloadURL(ContentItem contentItem, ContentStore store, boolean asAttachment) {
+
+    	String pattern = "/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
         return MessageFormat.format(pattern,
-                                    store.getBaseURL(),
                                     contentItem.getSpaceId(),
                                     EncodeUtil.urlEncode(contentItem.getContentId()),
-                                    store.getStoreId());
+                                    store.getStoreId(),
+                                    asAttachment);
     }
 
     /**
      * Returns the j2k service base URL if the service is running
      * @return null if the J2K Service is not running
      */
-    private static String resolveJ2KServiceBaseURL(ServicesManager servicesManager) {
+    public static String resolveJ2KServiceBaseURL(ServicesManager servicesManager) {
         int deploymentId;
         Map<String, String> props;
         try {

@@ -41,6 +41,8 @@
         <prop key="/data/services/deployment/properties">serviceDeploymentPropertiesController</prop>
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
+        <prop key="/download/contentItem">contentItemDownloadController</prop>
+  
       </props>
     </property>
     <property name="order" value="1" />
@@ -63,10 +65,14 @@
   <bean id="contentsController" class="org.duracloud.duradmin.control.ContentsController" parent="baseCommandController">
     <property name="successView" value="contents" />
   </bean>
+  <bean id="contentItemDownloadController" class="org.duracloud.duradmin.control.ContentItemDownloadController">
+    <constructor-arg ref="controllerSupport"/>
+  </bean>
 
   <bean id="homeController" class="org.duracloud.duradmin.control.HomeController">
     <constructor-arg ref="controllerSupport"/>
   </bean>
+
 
   <bean id="changeProviderController" class="org.duracloud.duradmin.control.ChangeProviderController" parent="baseCommandController"/>
   <bean id="changeSpaceAccessController" class="org.duracloud.duradmin.control.ChangeSpaceAccessController" parent="baseCommandController"/>

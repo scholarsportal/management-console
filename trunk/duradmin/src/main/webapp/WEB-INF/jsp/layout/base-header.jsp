@@ -4,9 +4,7 @@
 <div id="top-header">
 	<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_transparent.png" height="50">
 </div>
-
 <tiles:importAttribute name="mainMenu" />
-
 <table id="main-menu" >
 	<tr>
 		<td id="main-menu-left">
@@ -53,7 +51,7 @@
             </li>
 
             <li>
-            <a href='<c:url value="/logout"/>'>logout</a>
+            <a href='<c:url value="/logout"/>' class="logout">logout</a>
             </li>
             </ul>
 		</td>
