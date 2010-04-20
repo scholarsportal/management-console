@@ -120,11 +120,10 @@ duracloud.duraservice = {
 			var tabContent = tab.containerNode;
 
 			dojo.create("a", {innerHTML: "Reconfigure", href: "/duradmin/services/deploy?serviceId=" + service.id + "&deploymentId=" + deployment.id},tabContent);
-			var undeployLink = dojo.create("a", {"href":"javascript:void(0)", "innerHTML": "Undeploy"}, tabContent);
-			dojo.connect(undeployLink,"onclick", function(){
+			var undeployButton = dojo.create("button", {"innerHTML": "Undeploy"}, tabContent);
+			dojo.connect(undeployButton,"onclick", function(){
 				duracloud.duraservice.undeployService(service.id, deployment.id, tabContent.containerNode, function(responseObject, ioArgs) {
 		    		try{
-					    
 		    			setFlashMessage("Successfully undeployed " + service.displayName);
 		    			
 			    		dojo.fadeOut({
