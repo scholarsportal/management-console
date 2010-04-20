@@ -138,7 +138,7 @@
 						<div class="content-preview">
 							<c:choose>
 								<c:when test="${not empty contentItem.thumbnailURL}">
-									<a target="viewer" href="${contentItem.viewerURL !=null ? contentItem.viewerURL : contentItem.downloadURL}">
+									<a target="viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>">
 										<img src="${contentItem.thumbnailURL}"/>
 									</a>
 								</c:when>
