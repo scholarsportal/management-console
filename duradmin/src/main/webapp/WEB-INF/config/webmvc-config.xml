@@ -42,6 +42,7 @@
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
         <prop key="/download/contentItem">contentItemDownloadController</prop>
+        <prop key="/security">initSecurityUsersController</prop>
   
       </props>
     </property>
@@ -73,6 +74,9 @@
     <constructor-arg ref="controllerSupport"/>
   </bean>
 
+  <bean id="initSecurityUsersController" class="org.duracloud.duradmin.control.InitSecurityUsersController">
+    <constructor-arg ref="userDetailsSvc"/>
+  </bean>
 
   <bean id="changeProviderController" class="org.duracloud.duradmin.control.ChangeProviderController" parent="baseCommandController"/>
   <bean id="changeSpaceAccessController" class="org.duracloud.duradmin.control.ChangeSpaceAccessController" parent="baseCommandController"/>
