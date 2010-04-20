@@ -24,6 +24,9 @@
     <intercept-url pattern="/stores" method="POST" access="ROLE_ROOT"/>
     <intercept-url pattern="/stores" method="GET" access="ROLE_USER"/>
 
+    <intercept-url pattern="/security" method="POST" access="ROLE_ADMIN"/>
+    <intercept-url pattern="/security" method="GET" access="ROLE_ADMIN"/>
+
     <intercept-url pattern="/**" method="PUT" access="ROLE_USER"/>
     <intercept-url pattern="/**" method="POST" access="ROLE_USER"/>
     <intercept-url pattern="/**" method="DELETE" access="ROLE_USER"/>
