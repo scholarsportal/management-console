@@ -42,7 +42,7 @@ public class RestTestHelper {
 
     public static HttpResponse initialize() throws Exception {
         StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
-        return acctUtil.initializeDurastore(host, port, webapp);
+        return acctUtil.initializeDurastore(host, getPort(), webapp);
     }
 
     public static HttpResponse addSpace(String spaceID)
