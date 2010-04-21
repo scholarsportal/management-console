@@ -13,32 +13,35 @@
 						<spring:message code="spaces"/>
 					</tiles:putAttribute>	
 					<tiles:putAttribute name="subtitle">
-						<a id="addSpaceLink" href="<c:url value="/spaces/add"/>"><spring:message code="add.space"/></a>
+						<ul class="action-list">
+							<li>
+								<a id="addSpaceLink" href="<c:url value="/spaces/add"/>"><spring:message code="add.space"/></a>
+							</li>							
+							<li>
+								<a id="refresh" href=""><spring:message code="refresh"/></a>						
+							</li>
+						</ul>
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
 			</tiles:putAttribute>
 			<tiles:putAttribute name="body">
 				<script type="text/javascript">
 					dojo.require("duracloud.durastore");
+					dojo.require("duracloud.storage");
 
 					dojo.addOnLoad(function(){
 						
 						dojo.query(".space-metadata").forEach(function(div){
 							duracloud.durastore.loadSpaceMetadata(div,div.parentNode.id);
 						});
-					/*
-						dojo.query(".space-list-item").forEach(
-							function(item){
-						    	dojo.connect(item, 'onmouseover', function() {
-									var nodeId;
-									dojo.query("[id*='metadata-div-']",item).forEach(function(div){
-										nodeId = div.id;
-									});
-									duracloud.durastore.loadSpaceMetadata(nodeId,item.id);
-						    	});
+
+						dojo.query("#refresh").forEach(function(element){
+							dojo.connect(element, "onclick", function(e){
+								duracloud.storage.clear();
 							});
-							*/
 						});
+
+					});
 				</script>
 				<c:forEach items="${spaces}" var="spaceId" varStatus="status">
 				

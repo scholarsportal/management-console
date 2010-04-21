@@ -6,50 +6,65 @@
 	<tiles:putAttribute name="title">
 		<spring:message code="space" /> :: ${contentItem.spaceId} :: ${contentItem.contentId}
 	</tiles:putAttribute>
-	<tiles:putAttribute name="menu">
-		<script type="text/javascript">
-			dojo.require("duracloud.durastore");
-		</script>
 
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/metadata-control.jsp">
-			<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
-			<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
-			<tiles:putAttribute name="metadata"
-				value="${contentItem.extendedMetadata}" />
-		</tiles:insertTemplate></div>
-
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/tag-control.jsp">
-			<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
-			<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
-			<tiles:putAttribute name="tags" value="${contentItem.metadata.tags}" />
-		</tiles:insertTemplate></div>
-
-
-
-
-		<div class="sidebar-actions">
-		<h4><spring:message code="form.contentItem.modifyProperties" /></h4>
-		<c:url value="content.htm" var="modifyPropertiesUrl">
-            <c:param name="spaceId" value="${contentItem.spaceId}"/>
-            <c:param name="contentId" value="${contentItem.contentId}"/>
-        </c:url>
-        <form:form commandName="contentItem"
-			action="${modifyPropertiesUrl}"
-			method="post">
-			<input type="hidden" name="action" value="update"/>
-			<p><label for="mimetype"><spring:message code="mimetype" /></label>
-			<form:input id="mimetype" path="contentMimetype" /> <form:errors
-				path="contentMimetype" /></p>
-			<p><input type='submit' class="update-content-item" contentId="${contentItem.contentId}" spaceId="${contentItem.spaceId}" value="<spring:message code="update"/>" />
-			</p>
-		</form:form></div>
-
-	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
-		<tiles:insertDefinition name="base-main-content">
-			<tiles:putAttribute name="header">
+		<script type="text/javascript">
+			dojo.require("duracloud.storage");
+			dojo.addOnLoad(function(){
+					
+				dojo.query("#refresh").forEach(function(element){
+					dojo.connect(element, "onclick", function(e){
+						var id = e.target.id;
+						duracloud.storage.expireContentItem(dojo.attr(id,"spaceId"),dojo.attr(id,"contentId"));
+					});
+				});
+
+			});
+
+
+				
+		</script>
+		<div  dojoType="dijit.layout.ContentPane" region="left" splitter="false" id="menu-div">
+			<script type="text/javascript">
+				dojo.require("duracloud.durastore");
+			</script>
+	
+			<div><tiles:insertTemplate
+				template="/WEB-INF/jsp/layout/metadata-control.jsp">
+				<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
+				<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
+				<tiles:putAttribute name="metadata"
+					value="${contentItem.extendedMetadata}" />
+			</tiles:insertTemplate></div>
+	
+			<div><tiles:insertTemplate
+				template="/WEB-INF/jsp/layout/tag-control.jsp">
+				<tiles:putAttribute name="spaceId" value="${contentItem.spaceId}" />
+				<tiles:putAttribute name="contentId" value="${contentItem.contentId}" />
+				<tiles:putAttribute name="tags" value="${contentItem.metadata.tags}" />
+			</tiles:insertTemplate></div>
+	
+	
+	
+	
+			<div class="sidebar-actions">
+			<h4><spring:message code="form.contentItem.modifyProperties" /></h4>
+			<c:url value="content.htm" var="modifyPropertiesUrl">
+	            <c:param name="spaceId" value="${contentItem.spaceId}"/>
+	            <c:param name="contentId" value="${contentItem.contentId}"/>
+	        </c:url>
+	        <form:form commandName="contentItem"
+				action="${modifyPropertiesUrl}"
+				method="post">
+				<input type="hidden" name="action" value="update"/>
+				<p><label for="mimetype"><spring:message code="mimetype" /></label>
+				<form:input id="mimetype" path="contentMimetype" /> <form:errors
+					path="contentMimetype" /></p>
+				<p><input type='submit' class="update-content-item" contentId="${contentItem.contentId}" spaceId="${contentItem.spaceId}" value="<spring:message code="update"/>" />
+				</p>
+			</form:form></div>
+		</div>	
+		<div  dojoType="dijit.layout.ContentPane" region="top" splitter="false" class="main-content-header">
 				<tiles:insertDefinition name="base-content-header">
 					<tiles:putAttribute name="title">
 						${contentItem.contentId}
@@ -93,6 +108,10 @@
 										   		<c:param name="returnTo" value="${pageContext.request.contextPath}/contents.htm?spaceId=${contentItem.spaceId}"/>
 										    </c:url>"><spring:message code="remove" /></a></li>
 
+									<li><a  id="refresh" spaceId="${contentItem.spaceId}" contentId="${contentItem.contentId}" href="">
+											<spring:message code="refresh"/>
+										</a>
+									</li>
 								</ul>
 
 
@@ -104,9 +123,9 @@
 
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="body">
-
+		
+		</div>		
+		<div  dojoType="dijit.layout.ContentPane" region="center" splitter="true">
 				<table>
 					<tr>
 						<td style="width: 75%">
@@ -153,9 +172,7 @@
 
 				</table>
 
-
-			</tiles:putAttribute>
-		</tiles:insertDefinition>
+			</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
 

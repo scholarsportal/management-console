@@ -4,54 +4,9 @@
 		<spring:message code="space" />
 	</tiles:putAttribute>
 	<tiles:putAttribute name="menu">
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/box-control.jsp">
-			<tiles:putAttribute name="title">
-				<spring:message code="space.details"/>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="miniform" value="" />
-			<tiles:putAttribute name="body">
-				<script type="text/javascript">
-					dojo.require("duracloud.durastore");
-				</script>
-			
-				<table class="small extended-metadata">
-					<tr>
-						<td><spring:message code="access" /></td>
-						<td><spring:message
-							code="access.${fn:toLowerCase(space.metadata.access)}" /></td>
-					</tr>
-					<tr>
-						<td><spring:message code="created" /></td>
-						<td>${space.metadata.created}</td>
-					</tr>
-					<tr>
-						<td><spring:message code="contentItem.count" /></td>
-						<td>${space.metadata.count}</td>
-					</tr>
-
-				</table>
-			</tiles:putAttribute>
-		</tiles:insertTemplate></div>
-		<!-- extended metadata -->
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/metadata-control.jsp">
-			<tiles:putAttribute name="spaceId" value="${space.spaceId}" />
-			<tiles:putAttribute name="metadata" value="${space.extendedMetadata}" />
-		</tiles:insertTemplate></div>
-		<!-- tags -->
-		<div><tiles:insertTemplate
-			template="/WEB-INF/jsp/layout/tag-control.jsp">
-			<tiles:putAttribute name="spaceId" value="${space.spaceId}" />
-			<tiles:putAttribute name="tags" value="${space.metadata.tags}" />
-		</tiles:insertTemplate></div>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="main-content">
-
-
-	
-		<tiles:insertDefinition name="base-main-content">
-			<tiles:putAttribute name="header">
+		<div dojoType="dijit.layout.ContentPane" region="top" splitter="false" class="main-content-header">
 				<tiles:insertDefinition name="base-content-header">
 					<tiles:putAttribute name="title">
 						${space.spaceId}
@@ -88,6 +43,10 @@
 											<spring:message code="remove"/>
 										</a>
 									</li>
+									<li><a  id="refresh" spaceId="${space.spaceId}" href="">
+											<spring:message code="refresh"/>
+										</a>
+									</li>
 
 								</ul>
 
@@ -96,8 +55,53 @@
 						</table>
 					</tiles:putAttribute>
 				</tiles:insertDefinition>
-			</tiles:putAttribute>
-			<tiles:putAttribute name="body">
+
+		</div>
+   	    <div  dojoType="dijit.layout.ContentPane" region="left" splitter="true" id="menu-div">
+			<tiles:insertTemplate
+				template="/WEB-INF/jsp/layout/box-control.jsp">
+				<tiles:putAttribute name="title">
+					<spring:message code="space.details"/>
+				</tiles:putAttribute>
+				<tiles:putAttribute name="miniform" value="" />
+				<tiles:putAttribute name="body">
+					<script type="text/javascript">
+						dojo.require("duracloud.durastore");
+					</script>
+				
+					<table class="small extended-metadata">
+						<tr>
+							<td><spring:message code="access" /></td>
+							<td><spring:message
+								code="access.${fn:toLowerCase(space.metadata.access)}" /></td>
+						</tr>
+						<tr>
+							<td><spring:message code="created" /></td>
+							<td>${space.metadata.created}</td>
+						</tr>
+						<tr>
+							<td><spring:message code="contentItem.count" /></td>
+							<td>${space.metadata.count}</td>
+						</tr>
+	
+					</table>
+				</tiles:putAttribute>
+			</tiles:insertTemplate>					
+			<!-- extended metadata -->
+			<div><tiles:insertTemplate
+				template="/WEB-INF/jsp/layout/metadata-control.jsp">
+				<tiles:putAttribute name="spaceId" value="${space.spaceId}" />
+				<tiles:putAttribute name="metadata" value="${space.extendedMetadata}" />
+			</tiles:insertTemplate></div>
+			<!-- tags -->
+			<div><tiles:insertTemplate
+				template="/WEB-INF/jsp/layout/tag-control.jsp">
+				<tiles:putAttribute name="spaceId" value="${space.spaceId}" />
+				<tiles:putAttribute name="tags" value="${space.metadata.tags}" />
+			</tiles:insertTemplate></div>		
+		</div>
+		<div  dojoType="dijit.layout.BorderContainer" region="center" splitter="false" gutters="false">
+   	    <div  dojoType="dijit.layout.ContentPane" region="top" splitter="false">
 				<tiles:importAttribute name="contentStoreProvider" />
 				<c:set var="contentStore"
 					value="${contentStoreProvider.contentStore}" />
@@ -170,7 +174,11 @@
 							</td>
 						</tr>
 					</table>
-					
+			</c:otherwise>	
+			</c:choose>
+
+		</div>		
+   	    <div  dojoType="dijit.layout.ContentPane" region="center" splitter="false">
 					<script type="text/javascript">
 						dojo.require("duracloud.durastore");
 	
@@ -178,6 +186,13 @@
 							dojo.query(".content-item").forEach(function(div){
 								duracloud.durastore.loadContentItem(div, dojo.attr(div.id, "spaceId"), dojo.attr(div.id, "contentId"));
 							});
+
+							dojo.query("#refresh").forEach(function(element){
+								dojo.connect(element, "onclick", function(e){
+									duracloud.storage.expireSpace(dojo.attr(e.target.id,"spaceId"));
+								});
+							});
+							
 						});
 					</script>
 					<c:forEach items="${contentItemList.contentItemList}" var="content"
@@ -237,10 +252,8 @@
 								</table>
 								</div>
 							</c:forEach>
-					</c:otherwise>
-				</c:choose>
-			</tiles:putAttribute>
-		</tiles:insertDefinition>
+				</div>
+			</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
 

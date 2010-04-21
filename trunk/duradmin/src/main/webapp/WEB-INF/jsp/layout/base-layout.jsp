@@ -130,17 +130,9 @@
    	    <div id="header" dojoType="dijit.layout.ContentPane" region="top" splitter="false">
 			<tiles:insertAttribute name="header"/>
 		</div>
-
-   	    <div id="menu-div" dojoType="dijit.layout.ContentPane" region="left" splitter="false">
-			    <tiles:insertAttribute name="menu"/>
-		</div>
-
-   	    <div id="main-content" dojoType="dijit.layout.ContentPane" region="center" splitter="false">
+		
+   	    <div id="main-content" dojoType="dijit.layout.BorderContainer" region="center" gutters="false" splitter="false">
 			    <tiles:insertAttribute name="main-content" />
-
-		</div>
-   	    <div id="help" dojoType="dijit.layout.ContentPane" region="right" splitter="false">
-				<tiles:insertAttribute name="help"/>   				
 		</div>
    	    <div id="footer" dojoType="dijit.layout.ContentPane" region="bottom" splitter="false">
 			<tiles:insertAttribute name="footer" />

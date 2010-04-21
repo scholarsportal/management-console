@@ -56,6 +56,15 @@ table.tooltipDialog-header td:last-child {
 }
 
 
+.global-actions{
+	float:right;
+
+}
+
+.global-actions, .global-actions a {
+	color:#333;
+}
+
 
 #header{
 	width:100%;
@@ -113,8 +122,8 @@ table.body{
 
 
 #menu-div {
-	min-width:15em;
-	max-width:15em;
+	min-width:30%;
+	max-width:30%;
 	
 	background-color:#F5DEB3;
 	padding:0.5em;
