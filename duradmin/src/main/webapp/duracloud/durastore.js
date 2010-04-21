@@ -12,12 +12,12 @@ duracloud.durastore = {
 			return;
 		}
 
-		var s = duracloud.storage.get(spaceId);
+		var s = duracloud.storage.getSpace(spaceId);
 		if(s != null){
 		      dojo.attr(node, "innerHTML", duracloud.formatSpaceMetadataHtml(s));
 		      return;
 		}
-		
+
 		duracloud.showWaitMessage(node, "Retrieving metadata...");
 		
 		dojo.xhrGet( {
@@ -28,7 +28,7 @@ duracloud.durastore = {
 			  console.debug(responseObject);  // Dump it to the console
 			  var space = responseObject.space;
 			  node.innerHTML = duracloud.formatSpaceMetadataHtml(space);
-			  duracloud.storage.put(spaceId, space);
+			  duracloud.storage.putSpace(spaceId, space);
 			},
 			error: function(responseObject, ioArgs){
 	          	  console.error("HTTP status code: ", ioArgs.xhr.status); 
@@ -80,7 +80,7 @@ duracloud.durastore = {
 	loadContentItem: function (node, spaceId, contentId){
 		var that = this;
 		
-		var ci = duracloud.storage.get(spaceId,contentId);
+		var ci = duracloud.storage.getContentItem(spaceId,contentId);
 
 		if(ci != null){
 		     that._formatContentItemMetadataHtml(node,ci);
@@ -96,7 +96,7 @@ duracloud.durastore = {
 			  console.debug(responseObject);  // Dump it to the console
 			  var contentItem = responseObject.contentItem;
 			  that._formatContentItemMetadataHtml(node,contentItem);
-			  duracloud.storage.put(spaceId,contentId,contentItem);
+			  duracloud.storage.putContentItem(spaceId,contentId,contentItem);
 			},
 			error: function(responseObject, ioArgs){
 	          console.error("HTTP status code: ", ioArgs.xhr.status); 

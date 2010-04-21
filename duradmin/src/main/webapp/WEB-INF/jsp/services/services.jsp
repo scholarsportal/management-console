@@ -38,7 +38,10 @@
 						</div>
 
 					</div>
-			        <div dojoType="dijit.layout.ContentPane" title="Available" id="available" >
+					<div dojoType="dijit.layout.BorderContainer" id="available" title="Available" gutters="true" >
+				        <div dojoType="dijit.layout.ContentPane" region="left" id="availableList" style="width:50%" >
+				        
+				        </div>
 			        </div>
 				</div>
 				

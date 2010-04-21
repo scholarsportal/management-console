@@ -94,23 +94,26 @@ duracloud.duraservice = {
 			deployed.addChild(details);
 		});
 
-		
 		//define details panel 
-		var details = new dijit.layout.BorderContainer({region:"center"});
-		var topPane = new dijit.layout.ContentPane({region:"top"});
-		details.addChild(topPane);
-		var namePane = dojo.create("div", {innerHTML : service.displayName + " v." + service.serviceVersion});
-		var actionPane = dojo.create("div");
-		topPane.containerNode.appendChild(namePane);
-		topPane.containerNode.appendChild(actionPane);
 		
+		var details = new dijit.layout.BorderContainer({region:"center", gutters:"false"});
+		var topPane = new dijit.layout.ContentPane({region:"left", splitter:"false", style:"min-width:30%; max-width:30%"});
+		details.addChild(topPane);
+		var np = topPane.containerNode;
+		np.appendChild(dojo.create("h4",{innerHTML : service.displayName}));
+		np.appendChild(dojo.create("h5",{innerHTML :" v." + service.serviceVersion}));
+		np.appendChild(dojo.create("p",{innerHTML : service.description, style:"width:100%"}));
+		var centerPane = new dijit.layout.BorderContainer({region:"center", gutters:"false"});
+		details.addChild(centerPane);
 		if(service.maxDeploymentsAllowed < service.deployments.length){
-			dojo.create("a", {"innerHTML": "Deploy New Instance", "href": "/duradmin/services/deploy?serviceId=" + service.id}, actionPane);
+			var actionPane = new dijit.layout.BorderContainer({region:"top", gutters:"false"});
+			centerPane.addChild(actionPane);
+			dojo.create("a", {"innerHTML": "Deploy New Instance", "href": "/duradmin/services/deploy?serviceId=" + service.id}, actionPane.containerNode);
 		}	
 		
 		//add tabs
-		var tabs = new dijit.layout.TabContainer({region: "center"});
-		details.addChild(tabs);
+		var tabs = new dijit.layout.TabContainer({region: "center", splitter: "false"});
+		centerPane.addChild(tabs);
 		
 		var d = null;
 		for(d in service.deployments){
@@ -177,7 +180,8 @@ duracloud.duraservice = {
 
 
 	loadAvailablePanel: function(/*ContentPane*/avail){
-		this._getServices("available", avail.containerNode, function(responseObject, ioArgs){
+		var availableList = dijit.byId("availableList");
+		this._getServices("available", availableList.containerNode, function(responseObject, ioArgs){
     		console.debug("responseObject = " + responseObject);
     		var services = responseObject.list;
     		var sv = null;
@@ -189,7 +193,7 @@ duracloud.duraservice = {
     			avail.attr("content", "");
     		}
 
-			var table = dojo.create("table", null, avail.containerNode);
+			var table = dojo.create("table", null, availableList.containerNode);
 			var rows = new Array();
 			for(sv in services){
     			var service = services[sv];

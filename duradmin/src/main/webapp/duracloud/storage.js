@@ -6,6 +6,10 @@ if(!dojo._hasResource["duracloud.storage"]){
 	dojo.require("duracloud._base");
 	
 	(function(){
+		
+		var globalNamespace = "duracloud";
+		var spacesNamespace = globalNamespace + ".spaces";
+
 		/**
 		 * Init method checks if the storage is stale and clears it.
 		 */
@@ -31,7 +35,7 @@ if(!dojo._hasResource["duracloud.storage"]){
 		duracloud.storage.expireContentItem = function(spaceId, contentId){
 			duracloud.storage.expireSpace(spaceId);
 			try{
-				dojox.storage.remove(this._makeKey(spaceId,contentId));
+				dojox.storage.remove(this._makeKey(contentId), this._makeKey(spacesNamespace,spaceId));
 			}catch(err){
 				console.error(err);
 			}
@@ -39,34 +43,45 @@ if(!dojo._hasResource["duracloud.storage"]){
 		
 		duracloud.storage.expireSpace = function(spaceId){
 			try{
-				dojox.storage.remove(this._makeKey(spaceId));
+				dojox.storage.clear(this._makeKey(spacesNamespace,spaceId));
+				dojox.storage.remove(this._makeKey(spaceId), this._makeKey(spacesNamespace));
 			}catch(err){
 				console.error(err);
 			}
 		};
+
 		
-		duracloud.storage.get = function(){
+		duracloud.storage.getSpace = function(spaceId){
 			try{
-				var args = new Array();
-				for(var i=0; i < arguments.length;i++){
-					args.push(arguments[i]);
-				}
-				return dojox.storage.get(this._makeKey.apply(this, args));
+				return dojox.storage.get(this._makeKey(spaceId), this._makeKey(spacesNamespace));
 			}catch(err){
 				console.error(err);
 				return null;
 			}
 		};
 		
-		
-		duracloud.storage.put= function(){
+		duracloud.storage.getContentItem = function(spaceId, contentId){
 			try{
-				var args = new Array();
-				for(var i=0; i < arguments.length-1;i++){
-					args.push(arguments[i]);
-				}
+				return dojox.storage.get(this._makeKey(contentId), this._makeKey(spacesNamespace,spaceId));
+			}catch(err){
+				console.error(err);
+				return null;
+			}
+		};
 
-				return dojox.storage.put(this._makeKey.apply(this, args), arguments[arguments.length-1]);
+		
+		duracloud.storage.putSpace = function(spaceId, space){
+			try{
+				return dojox.storage.put(this._makeKey(spaceId),space, null, this._makeKey(spacesNamespace));
+			}catch(err){
+				console.error(err);
+				return null;
+			}
+		};
+
+		duracloud.storage.putContentItem = function(spaceId, contentId,contentItem){
+			try{
+				return dojox.storage.put(this._makeKey(contentId),contentItem, null, this._makeKey(spacesNamespace, spaceId));
 			}catch(err){
 				console.error(err);
 				return null;
@@ -86,7 +101,11 @@ if(!dojo._hasResource["duracloud.storage"]){
 
 		duracloud.storage.clear = function (){
 			try{
-				dojox.storage.clear();
+				dojox.storage.clear(this._makeKey(spacesNamespace));
+				var spaceKeys = dojox.storage.getNamespaces();
+				for(s in spaceKeys){
+					dojox.storage.clear(spaceKeys[s]);
+				}
 			}catch(err){
 				console.error(err);
 			}
