@@ -11,6 +11,7 @@ import org.duracloud.domain.Space;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
+import org.duracloud.error.UnauthorizedException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.IdUtil;
@@ -51,7 +52,10 @@ public class ContentStoreImpl implements ContentStore{
      * @param type a {@link org.duracloud.storage.domain.StorageProviderType} object.
      * @param storeId a {@link java.lang.String} object.
      */
-    public ContentStoreImpl(String baseURL, StorageProviderType type, String storeId, RestHttpHelper restHelper) {
+    public ContentStoreImpl(String baseURL,
+                            StorageProviderType type,
+                            String storeId,
+                            RestHttpHelper restHelper) {
         this.baseURL = baseURL;
         this.type = type;
         this.storeId = storeId;
@@ -130,6 +134,7 @@ public class ContentStoreImpl implements ContentStore{
      * {@inheritDoc}
      */
     public List<String> getSpaces() throws ContentStoreException {
+        String task = "get spaces";
         String url = buildURL("/spaces");
         url = addStoreIdQueryParameter(url);
 
@@ -153,6 +158,8 @@ public class ContentStoreImpl implements ContentStore{
             } else {
                 throw new ContentStoreException("Response body is empty");
             }
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, "listing", e);            
         } catch (Exception e) {
             throw new ContentStoreException("Error attempting to get spaces " +
                                             "due to: " + e.getMessage(), e);
@@ -212,6 +219,8 @@ public class ContentStoreImpl implements ContentStore{
             return space;
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, e);
         }
@@ -231,6 +240,8 @@ public class ContentStoreImpl implements ContentStore{
             checkResponse(response, HttpStatus.SC_CREATED);
         } catch (InvalidIdException e) {
             throw new InvalidIdException(task, spaceId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, e);
         }
@@ -247,6 +258,8 @@ public class ContentStoreImpl implements ContentStore{
             checkResponse(response, HttpStatus.SC_OK);
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, e);
         }
@@ -265,6 +278,8 @@ public class ContentStoreImpl implements ContentStore{
             return extractMetadataFromHeaders(response);
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, e);
         }
@@ -284,6 +299,8 @@ public class ContentStoreImpl implements ContentStore{
             checkResponse(response, HttpStatus.SC_OK);
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, e);
         }
@@ -371,6 +388,8 @@ public class ContentStoreImpl implements ContentStore{
             throw new InvalidIdException(task, spaceId, contentId, e);            
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -395,6 +414,8 @@ public class ContentStoreImpl implements ContentStore{
             return content;
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -412,6 +433,8 @@ public class ContentStoreImpl implements ContentStore{
             checkResponse(response, HttpStatus.SC_OK);
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -435,6 +458,8 @@ public class ContentStoreImpl implements ContentStore{
             checkResponse(response, HttpStatus.SC_OK);
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -455,13 +480,15 @@ public class ContentStoreImpl implements ContentStore{
                              extractNonMetadataHeaders(response));
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException(task, spaceId, e);            
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
     }
 
     private void checkResponse(HttpResponse response, int expectedCode)
-            throws ContentStoreException, InvalidIdException {
+            throws ContentStoreException {
         if (response == null) {
             throw new ContentStoreException("Response content was null.");
         }
@@ -479,8 +506,10 @@ public class ContentStoreImpl implements ContentStore{
                 throw new NotFoundException(errMsg);
             } else if (responseCode == HttpStatus.SC_BAD_REQUEST) {
                 throw new InvalidIdException(errMsg);
+            } else if (responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                throw new UnauthorizedException(errMsg);
             } else {
-                throw new ContentStoreException(errMsg);                
+                throw new ContentStoreException(errMsg);
             }
         }
     }

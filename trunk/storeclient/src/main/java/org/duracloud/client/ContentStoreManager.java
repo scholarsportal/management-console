@@ -18,7 +18,8 @@ public interface ContentStoreManager extends Securable {
      * @return a map of content stores to content store IDs
      * @throws ContentStoreException if the content store list cannot be retrieved
      */
-    public Map<String, ContentStore> getContentStores() throws ContentStoreException;
+    public Map<String, ContentStore> getContentStores()
+        throws ContentStoreException;
     
     /**
      * <p>getContentStore</p>
@@ -27,7 +28,8 @@ public interface ContentStoreManager extends Securable {
      * @return the ContentStore mapped to storeID
      * @throws ContentStoreException if the content store cannot be retrieved
      */
-    public ContentStore getContentStore(String storeID) throws ContentStoreException;
+    public ContentStore getContentStore(String storeID)
+        throws ContentStoreException;
     
     /**
      * <p>getPrimaryContentStore</p>
@@ -35,7 +37,21 @@ public interface ContentStoreManager extends Securable {
      * @return the primary ContentStore
      * @throws if the content store cannot be retrieved
      */
-    public ContentStore getPrimaryContentStore() throws ContentStoreException;
+    public ContentStore getPrimaryContentStore()
+        throws ContentStoreException;
+
+    /**
+     * Provides access to the primary content store without requiring login().
+     * Only certain ContentStore activities are permitted to anonymous users,
+     * primarily getting content from open spaces.
+     *
+     * <p>getPrimaryContentStoreAsAnonymous</p>
+     *
+     * @return the primary ContentStore
+     * @throws if the content store cannot be retrieved
+     */
+    public ContentStore getPrimaryContentStoreAsAnonymous()
+        throws ContentStoreException;
 
     /**
      * <p>reconfigure</p>

@@ -9,6 +9,7 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.StorageException;
 
 import java.io.ByteArrayInputStream;
@@ -110,6 +111,14 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
         return newContentStoreImpl(acct);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public ContentStore getPrimaryContentStoreAsAnonymous() 
+        throws ContentStoreException {
+        return newAnonymousContentStoreImpl();
+    }
+
     public void login(Credential appCred) {
         log.debug("login: " + appCred.getUsername());
         if (!isLoggedIn) {
@@ -157,6 +166,14 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
                                     acct.getId(),
                                     getRestHelper());
     }
+
+    private ContentStore newAnonymousContentStoreImpl() {
+        return new ContentStoreImpl(baseURL,
+                                    StorageProviderType.UNKNOWN,
+                                    null,
+                                    getRestHelper());
+    }
+
 
     private RestHttpHelper getRestHelper() {
         if (null == restHelper) {
