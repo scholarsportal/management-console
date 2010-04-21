@@ -1,9 +1,13 @@
 package org.duracloud.client;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.UnauthorizedException;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
-import org.junit.Assert;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +32,7 @@ public class TestAnonymousAccess extends ClientTestBase {
     private static ContentStore store;
 
 
-    // FIXME: @BeforeClass
+    @BeforeClass
     public static void beforeClass() throws Exception {
         StorageAccountTestUtil acctUtil = new StorageAccountTestUtil();
         acctUtil.initializeDurastore(getHost(), getPort(), getContext());
@@ -36,7 +40,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         ContentStoreManager storeManager = new ContentStoreManagerImpl(getHost(),
                                                                        getPort(),
                                                                        getContext());
-        store = storeManager.getPrimaryContentStore();
+        store = storeManager.getPrimaryContentStoreAsAnonymous();
 
         createSpace();
         createContent();
@@ -67,7 +71,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         caller.makeCall(201);
     }
 
-    // FIXME: @AfterClass
+    @AfterClass
     public static void afterClass() throws Exception {
         // delete test space
         HttpCaller caller = new HttpCaller() {
@@ -79,103 +83,98 @@ public class TestAnonymousAccess extends ClientTestBase {
     }
 
     @Test
-    public void testPlaceHolder() {
-        // TODO: remove this when the other tests work.
-    }
-
-    // FIXME: @Test
-    public void testGetSpaces() {
+    public void testGetSpaces() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.getSpaces();
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(allowed);
+        assertTrue(allowed);
     }
 
     // FIXME: @Test
-    public void testGetSpace() {
+    public void testGetSpace() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.getSpace(getSpaceId(), null, 0, null);
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(allowed);
+        assertTrue(allowed);
     }
 
     // FIXME: @Test
-    public void testGetSpaceMetadata() {
+    public void testGetSpaceMetadata() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.getSpaceMetadata(getSpaceId());
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(allowed);
+        assertTrue(allowed);
     }
 
-    // FIXME: @Test
-    public void testCreateSpace() {
+    @Test
+    public void testCreateSpace() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.createSpace("should-not-work", null);
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
-    // FIXME: @Test
-    public void testSetSpaceMetadata() {
+    @Test
+    public void testSetSpaceMetadata() throws ContentStoreException {
         boolean allowed = true;
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put("name-x", "value-x");
 
         try {
             store.setSpaceMetadata(getSpaceId(), metadata);
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
-    // FIXME: @Test
-    public void testDeleteSpace() {
+    @Test
+    public void testDeleteSpace() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.deleteSpace(getSpaceId());
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
     // FIXME: @Test
-    public void testGetContent() {
+    public void testGetContent() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.getContent(getSpaceId(), getContentId());
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(allowed);
+        assertTrue(allowed);
     }
 
     // FIXME: @Test
-    public void testGetContentMetadata() {
+    public void testGetContentMetadata() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.getContentMetadata(getSpaceId(), getContentId());
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(allowed);
+        assertTrue(allowed);
     }
 
-    // FIXME: @Test
-    public void testStoreContent() {
+    @Test
+    public void testStoreContent() throws ContentStoreException {
         boolean allowed = true;
         String data = "hello";
         InputStream content = new ByteArrayInputStream(data.getBytes());
@@ -187,34 +186,34 @@ public class TestAnonymousAccess extends ClientTestBase {
                              null,
                              null,
                              null);
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
-    // FIXME: @Test
-    public void testSetContentMetadata() {
+    @Test
+    public void testSetContentMetadata() throws ContentStoreException {
         boolean allowed = true;
         Map<String, String> metadata = new HashMap<String, String>();
         metadata.put("name-x", "value-x");
         try {
             store.setContentMetadata(getSpaceId(), getContentId(), metadata);
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
-    // FIXME: @Test
-    public void testDeleteContent() {
+    @Test
+    public void testDeleteContent() throws ContentStoreException {
         boolean allowed = true;
         try {
             store.deleteContent(getSpaceId(), getContentId());
-        } catch (ContentStoreException e) {
+        } catch (UnauthorizedException e) {
             allowed = false;
         }
-        Assert.assertTrue(!allowed);
+        assertFalse(allowed);
     }
 
     private static String getSpaceId() {
