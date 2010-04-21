@@ -9,6 +9,7 @@ import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
+import org.duracloud.duradmin.util.SpaceUtil;
 
 /**
  * A view preparer to be invoked by every page in the application.
@@ -34,8 +35,13 @@ public class BaseViewPreparer
     public void execute(TilesRequestContext tilesRequestContext,
                         AttributeContext attributeContext) {
 
+    	
         try {
+            attributeContext.putAttribute("customLogoUrl",
+            		new Attribute(SpaceUtil.formatDownloadURL("x-duracloud-admin", "logo", "1", false)),
+                    true);
 
+        	
             attributeContext.putAttribute("mainMenu", new Attribute(MainMenu
                     .instance()), true);
             log.debug("main menu attribute set");
@@ -57,7 +63,9 @@ public class BaseViewPreparer
 
             log.debug("contentStoreProvider attribute set: "
                     + contentStoreProvider);
-
+            
+            
+            
         } catch (ContentStoreException ex) {
             log.error("failed to complete execution of BaseViewPreparer: "
                     + ex.getMessage());

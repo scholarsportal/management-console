@@ -110,16 +110,19 @@ public class SpaceUtil {
         
         
     }
-    
-    public static String formatDownloadURL(ContentItem contentItem, ContentStore store, boolean asAttachment) {
 
-    	String pattern = "/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
+    public static String formatDownloadURL(String spaceId, String contentId, String storeId, boolean asAttachment) {
+       	String pattern = "/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
         return MessageFormat.format(pattern,
-                                    contentItem.getSpaceId(),
-                                    EncodeUtil.urlEncode(contentItem.getContentId()),
-                                    store.getStoreId(),
+                                    spaceId,
+                                    EncodeUtil.urlEncode(contentId),
+                                    storeId,
                                     asAttachment);
     }
+    
+    public static String formatDownloadURL(ContentItem contentItem, ContentStore store, boolean asAttachment) {
+    	return formatDownloadURL(contentItem.getSpaceId(), contentItem.getContentId(), store.getStoreId(), asAttachment);
+     }
 
     /**
      * Returns the j2k service base URL if the service is running
