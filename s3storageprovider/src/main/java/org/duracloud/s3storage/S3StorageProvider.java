@@ -9,15 +9,13 @@ import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.provider.StorageProviderBase;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
-import org.jets3t.service.acl.GrantAndPermission;
-import org.jets3t.service.acl.GroupGrantee;
-import org.jets3t.service.acl.Permission;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
@@ -32,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -40,8 +37,7 @@ import java.util.TimeZone;
  *
  * @author Bill Branan
  */
-public class S3StorageProvider
-        implements StorageProvider {
+public class S3StorageProvider extends StorageProviderBase {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
@@ -180,7 +176,7 @@ public class S3StorageProvider
         }
     }
 
-    private void throwIfSpaceNotExist(String spaceId) {
+    protected void throwIfSpaceNotExist(String spaceId) {
         throwIfSpaceNotExist(spaceId, true);
     }
 
@@ -237,6 +233,7 @@ public class S3StorageProvider
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = bucket.getCreationDate();
         spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
+        spaceMetadata.put(METADATA_SPACE_ACCESS, AccessType.CLOSED.name());
 
         try {
             setNewSpaceMetadata(spaceId, spaceMetadata);
@@ -247,8 +244,8 @@ public class S3StorageProvider
         }
     }
 
-    private void setNewSpaceMetadata (String spaceId,
-                                      Map<String, String> spaceMetadata) {
+    private void setNewSpaceMetadata(String spaceId,
+                                     Map<String, String> spaceMetadata) {
         boolean success = false;
         int maxLoops = 6;
         for (int loops = 0; !success && loops < maxLoops; loops++) {
@@ -270,7 +267,10 @@ public class S3StorageProvider
     private S3Bucket createBucket(String spaceId) {
         String bucketName = getBucketName(spaceId);
         try {
-            return s3Service.createBucket(bucketName);
+            AccessControlList bucketAcl = AccessControlList.REST_CANNED_PRIVATE;
+            S3Bucket bucket = new S3Bucket(bucketName);
+            bucket.setAcl(bucketAcl);
+            return s3Service.createBucket(bucket);
         } catch (S3ServiceException e) {
             String err = "Could not create S3 bucket with name " + bucketName
                     + " due to error: " + e.getMessage();
@@ -335,10 +335,6 @@ public class S3StorageProvider
         }
 
         spaceMetadata.put(METADATA_SPACE_COUNT, getSpaceCount(spaceId));
-
-        AccessType access = getSpaceAccess(spaceId);
-        spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
-
         return spaceMetadata;
     }
 
@@ -402,101 +398,20 @@ public class S3StorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
+        // Ensure that space access is included in the new metadata
+        if(!spaceMetadata.containsKey(METADATA_SPACE_ACCESS)) {
+            String spaceAccess = getSpaceAccess(spaceId).name();
+            spaceMetadata.put(METADATA_SPACE_ACCESS, spaceAccess);
+        }
+
         String bucketName = getBucketName(spaceId);
         ByteArrayInputStream is = storeMetadata(spaceMetadata);
         addContent(spaceId, bucketName + SPACE_METADATA_SUFFIX, "text/xml",
                    is.available(), null, is);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public AccessType getSpaceAccess(String spaceId) {
-        log.debug("getSpaceAccess(" + spaceId + ")");
 
-        throwIfSpaceNotExist(spaceId);
 
-        AccessType spaceAccess = AccessType.CLOSED;
-        AccessControlList acl = getBucketAcl(spaceId);
-        Set<GrantAndPermission> grants = acl.getGrants();
-        for (GrantAndPermission grant : grants) {
-            if (GroupGrantee.ALL_USERS.equals(grant.getGrantee())) {
-                if (Permission.PERMISSION_READ
-                        .equals(grant.getPermission())) {
-                    spaceAccess = AccessType.OPEN;
-                }
-            }
-        }
-        return spaceAccess;
-    }
-
-    private AccessControlList getBucketAcl(String spaceId) {
-        String bucketName = getBucketName(spaceId);
-        try {
-            return s3Service.getBucketAcl(bucketName);
-        } catch (S3ServiceException e) {
-            String err = "Could not retrieve access control list for S3 bucket "
-                    + bucketName + " due to error: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpaceAccess(String spaceId, AccessType access) {
-        log.debug("setSpaceAccess(" + spaceId + ")");
-
-        throwIfSpaceNotExist(spaceId);
-
-        AccessControlList bucketAcl = getBucketAcl(spaceId);
-        if (AccessType.OPEN.equals(access)) {
-            // Grants read permissions to all users
-            bucketAcl.grantPermission(GroupGrantee.ALL_USERS,
-                                      Permission.PERMISSION_READ);
-        } else {
-            // Revokes all permissions for user groups. This does not remove
-            // permissions granted to specific users (such as owner.)
-            bucketAcl.revokeAllPermissions(GroupGrantee.ALL_USERS);
-            bucketAcl.revokeAllPermissions(GroupGrantee.AUTHENTICATED_USERS);
-        }
-
-        String bucketName = getBucketName(spaceId);
-        S3Bucket bucket = new S3Bucket(bucketName);
-        bucket.setAcl(bucketAcl);
-        putBucketAcl(bucket);
-
-        // Set ACL for all objects contained in the bucket (except space metadata)
-        Iterator<String> contentIds = getSpaceContents(spaceId, null);
-        while(contentIds.hasNext()) {
-            String contentId = contentIds.next();
-            putObjectAcl(bucketName, contentId, bucketAcl);
-        }
-    }
-
-    private void putBucketAcl(S3Bucket bucket) {
-        try {
-            s3Service.putBucketAcl(bucket);
-        } catch (S3ServiceException e) {
-            String err = "Could not set S3 bucket " + bucket.getName() + " ACL "
-                    + " due to error: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
-    }
-
-    private void putObjectAcl(String bucketName,
-                              String contentName,
-                              AccessControlList acl) {
-        try {
-            s3Service.putObjectAcl(bucketName, contentName, acl);
-        } catch (S3ServiceException e) {
-            String err = "Could not set S3 object " + bucketName +
-                    ":" + contentName
-                    + " ACL due to error: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -528,9 +443,9 @@ public class S3StorageProvider
             contentItem.setContentLength(contentSize);
         }
 
-        // Set access control to mirror the bucket
-        AccessControlList bucketAcl = getBucketAcl(spaceId);
-        contentItem.setAcl(bucketAcl);
+        // Set private access control, content must be accessed via DuraCloud
+        AccessControlList privateAcl = AccessControlList.REST_CANNED_PRIVATE;
+        contentItem.setAcl(privateAcl);
 
         // Add the object
         putObject(contentItem, spaceId);
@@ -572,9 +487,8 @@ public class S3StorageProvider
 
         String bucketName = getBucketName(spaceId);        
         S3Object contentItem = getObject(contentId, bucketName);
-        InputStream content = getDataInputStream(contentItem);
 
-        return content;
+        return getDataInputStream(contentItem);
     }
 
     private S3Object getObject(String contentId,
@@ -734,7 +648,6 @@ public class S3StorageProvider
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Map<String, String> getContentMetadata(String spaceId,
                                                   String contentId) {
         log.debug("getContentMetadata(" + spaceId + ", " + contentId + ")");

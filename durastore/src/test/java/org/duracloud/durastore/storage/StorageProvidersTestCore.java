@@ -279,7 +279,7 @@ public class StorageProvidersTestCore
         assertNotNull(prop);
         assertEquals(AccessType.CLOSED.toString(), prop);
 
-        // Close access, and test again.
+        // Open access, and test again.
         provider.setSpaceAccess(spaceId0, AccessType.OPEN);
         access = provider.getSpaceAccess(spaceId0);
         Assert.assertEquals(AccessType.OPEN, access);
@@ -290,6 +290,13 @@ public class StorageProvidersTestCore
         prop = spaceMd.get(StorageProvider.METADATA_SPACE_ACCESS);
         assertNotNull(prop);
         assertEquals(AccessType.OPEN.toString(), prop);
+
+        // Set to Closed via metadata, test again
+        spaceMd.put(StorageProvider.METADATA_SPACE_ACCESS,
+                    AccessType.CLOSED.toString());
+        provider.setSpaceMetadata(spaceId0, spaceMd);
+        access = provider.getSpaceAccess(spaceId0);
+        Assert.assertEquals(AccessType.CLOSED, access);        
     }
 
     public void testAddAndGetContent(StorageProvider provider,
