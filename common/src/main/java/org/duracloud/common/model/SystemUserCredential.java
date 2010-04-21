@@ -1,6 +1,5 @@
 package org.duracloud.common.model;
 
-import java.util.Calendar;
 import java.util.Random;
 
 /**
@@ -8,16 +7,19 @@ import java.util.Random;
  *         Date: Mar 20, 2010
  */
 public class SystemUserCredential extends Credential {
-    private static final String id = generateId();
-
-    private static String generateId() {
-        Random r = new Random();
-        int prefix = r.nextInt();
-        return prefix + ":" + Calendar.getInstance().toString();
-    }
+    private static String id;
 
     public SystemUserCredential() {
-        super(id, "not-needed");
+        super(generateId(), "not-needed");
+    }
+
+    private static String generateId() {
+        if (null == id) {
+            Random r = new Random();
+            int prefix = r.nextInt(10000);
+            id = prefix + "-" + System.currentTimeMillis();
+        }
+        return id;
     }
 
     @Override

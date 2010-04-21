@@ -70,6 +70,11 @@ public class MockContentStoreManagerFactoryImpl
             return this.primaryContentStore;
         }
 
+        public ContentStore getPrimaryContentStoreAsAnonymous()
+                throws ContentStoreException {
+            return this.primaryContentStore;
+        }
+
         public void login(Credential appCred) {
         }
 

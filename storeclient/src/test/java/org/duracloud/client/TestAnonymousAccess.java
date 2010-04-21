@@ -52,7 +52,7 @@ public class TestAnonymousAccess extends ClientTestBase {
                 String url = getSpaceUrl();
                 String content = null;
                 Map<String, String> headers = new HashMap<String, String>();
-                headers.put(ContentStore.SPACE_ACCESS,
+                headers.put("x-dura-meta-" + ContentStore.SPACE_ACCESS,
                             ContentStore.AccessType.OPEN.name());
                 return restHelper.put(url, content, headers);
             }
@@ -93,7 +93,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         assertTrue(allowed);
     }
 
-    // FIXME: @Test
+    @Test
     public void testGetSpace() throws ContentStoreException {
         boolean allowed = true;
         try {
@@ -104,7 +104,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         assertTrue(allowed);
     }
 
-    // FIXME: @Test
+    @Test
     public void testGetSpaceMetadata() throws ContentStoreException {
         boolean allowed = true;
         try {
@@ -151,7 +151,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         assertFalse(allowed);
     }
 
-    // FIXME: @Test
+    @Test
     public void testGetContent() throws ContentStoreException {
         boolean allowed = true;
         try {
@@ -162,7 +162,7 @@ public class TestAnonymousAccess extends ClientTestBase {
         assertTrue(allowed);
     }
 
-    // FIXME: @Test
+    @Test
     public void testGetContentMetadata() throws ContentStoreException {
         boolean allowed = true;
         try {
