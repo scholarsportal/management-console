@@ -389,7 +389,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
         } catch(UnauthorizedException e) {
-            throw new UnauthorizedException(task, spaceId, e);
+            throw new UnauthorizedException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -415,7 +415,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
         } catch(UnauthorizedException e) {
-            throw new UnauthorizedException(task, spaceId, e);
+            throw new UnauthorizedException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -434,7 +434,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
         } catch(UnauthorizedException e) {
-            throw new UnauthorizedException(task, spaceId, e);
+            throw new UnauthorizedException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -459,7 +459,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
         } catch(UnauthorizedException e) {
-            throw new UnauthorizedException(task, spaceId, e);
+            throw new UnauthorizedException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
@@ -481,7 +481,7 @@ public class ContentStoreImpl implements ContentStore{
         } catch(NotFoundException e) {
             throw new NotFoundException(task, spaceId, contentId, e);
         } catch(UnauthorizedException e) {
-            throw new UnauthorizedException(task, spaceId, e);            
+            throw new UnauthorizedException(task, spaceId, contentId, e);
         } catch (Exception e) {
             throw new ContentStoreException(task, spaceId, contentId, e);
         }
