@@ -1,6 +1,5 @@
 package org.duracloud.rackspacestorage;
 
-import com.rackspacecloud.client.cloudfiles.FilesCDNContainer;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
@@ -9,15 +8,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.NotFoundException;
-import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
@@ -101,9 +96,12 @@ public class RackspaceStorageProviderTest {
 
     @Test
     public void testRackspaceStorageProvider() throws Exception {
+        /* Test Spaces */
+
         // test createSpace()
         log.debug("Test createSpace()");
         rackspaceProvider.createSpace(SPACE_ID);
+        testSpaceMetadata(SPACE_ID, AccessType.CLOSED);
 
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
@@ -113,15 +111,8 @@ public class RackspaceStorageProviderTest {
 
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
-        Map<String, String> sMetadata = rackspaceProvider.getSpaceMetadata(SPACE_ID);
-
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_COUNT));
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS));
-
+        Map<String, String> sMetadata =
+            testSpaceMetadata(SPACE_ID, AccessType.CLOSED);
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
 
@@ -129,31 +120,8 @@ public class RackspaceStorageProviderTest {
         log.debug("Test getSpaces()");
         Iterator<String> spaces = rackspaceProvider.getSpaces();
         assertNotNull(spaces);
-        assertTrue(contains(spaces, SPACE_ID)); // This will only work when SPACE_ID fits
-                                                // the Rackspace container naming conventions
-
-        // test invalid space
-        log.debug("Test getSpaceAccess() with invalid spaceId");
-        try {
-            rackspaceProvider.getSpaceAccess(SPACE_ID+"-invalid");
-            fail("getSpaceAccess() should throw an exception with an invalid spaceId");
-        } catch(StorageException expected) {
-            assertNotNull(expected);
-        }
-
-        log.debug("Test getSpaceContents() with invalid spaceId");
-        try {
-            rackspaceProvider.getSpaceContents(SPACE_ID+"-invalid", null);
-            fail("getSpaceContents() should throw an exception with an invalid spaceId");
-        } catch(StorageException expected) {
-            assertNotNull(expected);
-        }
-
-        // Check space access - should be closed
-        // TODO: Uncomment after Rackspace SDK bug is fixed
-        //        log.debug("Check space access");
-        //        FilesCDNContainer cdnContainer = filesClient.getCDNContainerInfo(SPACE_ID);
-        //        assertFalse(cdnContainer.isEnabled());
+        // This will only work when SPACE_ID fits the Rackspace container naming conventions
+        assertTrue(contains(spaces, SPACE_ID));
 
         // test setSpaceAccess()
         log.debug("Test setSpaceAccess(OPEN)");
@@ -164,11 +132,23 @@ public class RackspaceStorageProviderTest {
         AccessType access = rackspaceProvider.getSpaceAccess(SPACE_ID);
         assertEquals(access, AccessType.OPEN);
 
-        // Check space access - should be open
+        // Check Rackspace CDN access - should be off (as always)
         log.debug("Check space access");
-        FilesCDNContainer cdnContainer =
-                filesClient.getCDNContainerInfo(SPACE_ID);
-        assertTrue(cdnContainer.isEnabled());
+        assertFalse(filesClient.isCDNEnabled(SPACE_ID));
+
+        // test set space access via metadata update
+        log.debug("Test setSpaceMetadata(Access) ");
+        spaceMetadata = new HashMap<String, String>();
+        spaceMetadata.put(StorageProvider.METADATA_SPACE_ACCESS,
+                          AccessType.CLOSED.name());
+        rackspaceProvider.setSpaceMetadata(SPACE_ID, spaceMetadata);
+
+        // test getSpaceAccess()
+        log.debug("Test getSpaceAccess()");
+        access = rackspaceProvider.getSpaceAccess(SPACE_ID);
+        assertEquals(access, AccessType.CLOSED);
+
+        /* Test Content */
 
         // test addContent()
         log.debug("Test addContent()");
@@ -183,21 +163,6 @@ public class RackspaceStorageProviderTest {
         assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_MODIFIED));
         assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_SIZE));
         assertNotNull(cMetadata.get(StorageProvider.METADATA_CONTENT_CHECKSUM));
-
-        // Check content access
-        log.debug("Check content access");
-        String spaceUrl = cdnContainer.getCdnURL();
-        String contentUrl = spaceUrl + "/" + CONTENT_ID;
-        RestHttpHelper restHelper = new RestHttpHelper();
-        HttpResponse httpResponse = restHelper.get(contentUrl);
-        assertEquals(HttpStatus.SC_OK, httpResponse.getStatusCode());
-
-        // test setSpaceAccess()
-        log.debug("Test setSpaceAccess(CLOSED)");
-        rackspaceProvider.setSpaceAccess(SPACE_ID, AccessType.CLOSED);
-        // Note that content stays in the Rackspace CDN for 24 hours
-        // after it is made available, even if the container has been
-        // set to private access or the content has been deleted.
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
@@ -297,6 +262,8 @@ public class RackspaceStorageProviderTest {
         assertEquals(StorageProvider.DEFAULT_MIMETYPE,
                      cMetadata.get(CONTENT_MIME_NAME));     
 
+        /* Test Deletes */
+
         // test deleteContent()
         log.debug("Test deleteContent()");
         rackspaceProvider.deleteContent(SPACE_ID, CONTENT_ID);
@@ -337,6 +304,29 @@ public class RackspaceStorageProviderTest {
         }
 
         compareChecksum(rackspaceProvider, spaceId, contentId, checksum);
+    }
+
+    private Map<String, String> testSpaceMetadata(String spaceId,
+                                                  AccessType access) {
+        Map<String, String> sMetadata =
+            rackspaceProvider.getSpaceMetadata(spaceId);
+
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_CREATED));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
+
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_COUNT));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
+
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_ACCESS));
+        String spaceAccess =
+            sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS);
+        assertNotNull(spaceAccess);
+        assertEquals(access.name(), spaceAccess);
+
+        return sMetadata;
     }
 
     @Test

@@ -62,7 +62,6 @@ public class StorageProviderUtil {
     throws StorageException {
         // Pull out known computed values
         metadataMap.remove(StorageProvider.METADATA_SPACE_COUNT);
-        metadataMap.remove(StorageProvider.METADATA_SPACE_ACCESS);
 
         // Serialize Map
         byte[] metadata = null;

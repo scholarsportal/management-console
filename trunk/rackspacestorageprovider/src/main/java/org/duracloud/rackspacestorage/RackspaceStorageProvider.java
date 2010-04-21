@@ -2,7 +2,6 @@
 package org.duracloud.rackspacestorage;
 
 import com.rackspacecloud.client.cloudfiles.FilesAuthorizationException;
-import com.rackspacecloud.client.cloudfiles.FilesCDNContainer;
 import com.rackspacecloud.client.cloudfiles.FilesClient;
 import com.rackspacecloud.client.cloudfiles.FilesContainer;
 import com.rackspacecloud.client.cloudfiles.FilesContainerInfo;
@@ -18,6 +17,7 @@ import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.provider.StorageProviderBase;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
@@ -39,8 +39,7 @@ import java.util.TimeZone;
  *
  * @author Bill Branan
  */
-public class RackspaceStorageProvider
-        implements StorageProvider {
+public class RackspaceStorageProvider extends StorageProviderBase {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
@@ -224,7 +223,7 @@ public class RackspaceStorageProvider
         }
     }
 
-    private void throwIfSpaceNotExist(String spaceId) {
+    protected void throwIfSpaceNotExist(String spaceId) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
             throw new NotFoundException(msg);
@@ -260,6 +259,7 @@ public class RackspaceStorageProvider
         Map<String, String> spaceMetadata = new HashMap<String, String>();
         Date created = new Date(System.currentTimeMillis());
         spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
+        spaceMetadata.put(METADATA_SPACE_ACCESS, AccessType.CLOSED.name());
         setSpaceMetadata(spaceId, spaceMetadata);
     }
 
@@ -351,9 +351,6 @@ public class RackspaceStorageProvider
         spaceMetadata.put("space-total-size", String.valueOf(containerInfo
                 .getTotalSize()));
 
-        AccessType access = getSpaceAccess(spaceId);
-        spaceMetadata.put(METADATA_SPACE_ACCESS, access.toString());
-
         return spaceMetadata;
     }
 
@@ -384,9 +381,16 @@ public class RackspaceStorageProvider
 
         throwIfSpaceNotExist(spaceId);
 
+        // Ensure that space created date is included in the new metadata
         Date created = getCreationDate(spaceId, spaceMetadata);
         if (created != null) {
             spaceMetadata.put(METADATA_SPACE_CREATED, formattedDate(created));
+        }
+
+        // Ensure that space access is included in the new metadata
+        if(!spaceMetadata.containsKey(METADATA_SPACE_ACCESS)) {
+            String spaceAccess = getSpaceAccess(spaceId).name();
+            spaceMetadata.put(METADATA_SPACE_ACCESS, spaceAccess);
         }
 
         String containerName = getContainerName(spaceId);
@@ -430,95 +434,6 @@ public class RackspaceStorageProvider
         }
 
         return creationTime;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public AccessType getSpaceAccess(String spaceId) {
-        log.debug("getSpaceAccess(" + spaceId + ")");
-
-        throwIfSpaceNotExist(spaceId);
-
-        String containerName = getContainerName(spaceId);
-        AccessType spaceAccess = AccessType.CLOSED;
-
-        try {
-            FilesCDNContainer cdnContainer = getCDNContainerInfo(containerName);
-            if (cdnContainer.isEnabled()) {
-                spaceAccess = AccessType.OPEN;
-            }
-        } catch (StorageException e) {
-            // While a bug in the Rackspace SDK is being ironed out
-            // just return CLOSED when an exception is thrown
-            // TODO: Remove try/catch after Rackspace SDK has been fixed
-            String notice = "Calling RackspaceProvider.getCDNContainerInfo() " +
-                "currently throws an exception when a container has not been " +
-                "CDN enabled. Returning CLOSED as the AccessType whenever an" +
-                "exception is thrown in the meantime. Rackspace Error message: " +
-                e.getMessage();
-            log.warn(notice);
-            spaceAccess = AccessType.CLOSED;
-        }
-
-        return spaceAccess;
-    }
-
-    private FilesCDNContainer getCDNContainerInfo(String containerName) {
-        StringBuilder err = new StringBuilder("Could not retrieve CDN info " +
-                "for Rackspace container " + containerName + " due to error: ");
-
-        try {
-            return filesClient.getCDNContainerInfo(containerName);
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpaceAccess(String spaceId, AccessType access) {
-        log.debug("setSpaceAccess(" + spaceId + ", " + access + ")");
-
-        throwIfSpaceNotExist(spaceId);
-
-        String containerName = getContainerName(spaceId);
-        AccessType currentAccess = getSpaceAccess(spaceId);
-        if (!currentAccess.equals(access)) {
-            if (access.equals(AccessType.OPEN)) {
-                cdnEnableContainer(containerName);
-            } else {
-                cdnDisableContainer(containerName);
-            }
-        }
-    }
-
-    private void cdnEnableContainer(String containerName) {
-        StringBuilder err = new StringBuilder("Could not set Rackspace "
-                + "container " + containerName
-                + " ACL to access enabled due to error: ");
-
-        try {
-            filesClient.cdnEnableContainer(containerName);
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-        }
-    }
-
-    private void cdnDisableContainer(String containerName) {
-        StringBuilder err = new StringBuilder("Could not set Rackspace "
-                + "container " + containerName
-                + " ACL to access disabled due to error: ");
-
-        try {
-            filesClient.cdnUpdateContainer(containerName, -1, false, true);
-        } catch (IOException e) {
-            err.append(e.getMessage());
-            throw new StorageException(err.toString(), e, RETRY);
-        }
     }
 
     /**
@@ -602,6 +517,9 @@ public class RackspaceStorageProvider
             }
 
             return content;
+        } catch (FilesNotFoundException e) {
+            err.append(e.getMessage());
+            throw new NotFoundException(err.toString(), e);            
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);
@@ -773,6 +691,9 @@ public class RackspaceStorageProvider
             }
 
             return metadata;
+        } catch (FilesNotFoundException e) {
+            err.append(e.getMessage());
+            throw new NotFoundException(err.toString(), e);            
         } catch (FilesAuthorizationException e) {
             err.append(e.getMessage());
             throw new StorageException(err.toString(), e, NO_RETRY);

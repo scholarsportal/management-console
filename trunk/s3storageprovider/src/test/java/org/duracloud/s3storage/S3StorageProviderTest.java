@@ -113,9 +113,12 @@ public class S3StorageProviderTest {
     public void testS3StorageProvider() throws Exception {
         String spaceId = getNewSpaceId();
 
+        /* Test Spaces */
+
         // test createSpace()
         log.debug("Test createSpace()");
         s3Provider.createSpace(spaceId);
+        testSpaceMetadata(spaceId, AccessType.CLOSED);
 
         // test setSpaceMetadata()
         log.debug("Test setSpaceMetadata()");
@@ -125,15 +128,8 @@ public class S3StorageProviderTest {
 
         // test getSpaceMetadata()
         log.debug("Test getSpaceMetadata()");
-        Map<String, String> sMetadata = s3Provider.getSpaceMetadata(spaceId);
-
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_CREATED));
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_COUNT));
-        assertTrue(sMetadata.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
-        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS));
-
+         Map<String, String> sMetadata =
+             testSpaceMetadata(spaceId, AccessType.CLOSED);
         assertTrue(sMetadata.containsKey(SPACE_META_NAME));
         assertEquals(SPACE_META_VALUE, sMetadata.get(SPACE_META_NAME));
 
@@ -141,17 +137,16 @@ public class S3StorageProviderTest {
         log.debug("Test getSpaces()");
         Iterator<String> spaces = s3Provider.getSpaces();
         assertNotNull(spaces);
-        assertTrue(contains(spaces,
-                            spaceId)); // This will only work when spaceId fits
-        // the S3 bucket naming conventions
+        // This will only work when spaceId fits the S3 bucket naming conventions
+        assertTrue(contains(spaces, spaceId)); 
 
-        // Check space access
-        log.debug("Check space access");
+        // Check S3 bucket access
+        log.debug("Check S3 bucket access");
         String bucketName = s3Provider.getBucketName(spaceId);
         String spaceUrl = "http://" + bucketName + ".s3.amazonaws.com";
 
         HttpResponse spaceResponse = restHelper.get(spaceUrl);
-        // Expect a 403 forbidden error because the Space Access is closed by default
+        // Expect a 403 forbidden error because bucket access is always restricted
         assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
 
         // test setSpaceAccess()
@@ -164,8 +159,24 @@ public class S3StorageProviderTest {
         assertEquals(access, AccessType.OPEN);
 
         // Check space access
-        log.debug("Check space access");
-        testGetLooped(spaceUrl, HttpStatus.SC_OK);
+        log.debug("Check S3 bucket access");
+        spaceResponse = restHelper.get(spaceUrl);
+        // Expect a 403 forbidden error because bucket access is always restricted
+        assertEquals(HttpStatus.SC_FORBIDDEN, spaceResponse.getStatusCode());
+
+        // test set space access via metadata update
+        log.debug("Test setSpaceMetadata(Access) ");
+        spaceMetadata = new HashMap<String, String>();
+        spaceMetadata.put(StorageProvider.METADATA_SPACE_ACCESS,
+                          AccessType.CLOSED.name());
+        s3Provider.setSpaceMetadata(spaceId, spaceMetadata);
+
+        // test getSpaceAccess()
+        log.debug("Test getSpaceAccess()");
+        access = s3Provider.getSpaceAccess(spaceId);
+        assertEquals(access, AccessType.CLOSED);
+
+        /* Test Content */
 
         // test addContent()
         log.debug("Test addContent()");
@@ -188,24 +199,10 @@ public class S3StorageProviderTest {
 
         // Check content access
         log.debug("Check content access");
-        testGetLooped(spaceUrl + "/" + contentId, HttpStatus.SC_OK);
-
-        // test setSpaceAccess()
-        log.debug("Test setSpaceAccess(CLOSED)");
-        s3Provider.setSpaceAccess(spaceId, AccessType.CLOSED);
-
-        // test getSpaceAccess()
-        log.debug("Test getSpaceAccess()");
-        access = s3Provider.getSpaceAccess(spaceId);
-        assertEquals(access, AccessType.CLOSED);        
-
-        // Check space access
-        log.debug("Check space access");
-        testGetLooped(spaceUrl, HttpStatus.SC_FORBIDDEN);
-
-        // Check content access
-        log.debug("Check content access");
-        testGetLooped(spaceUrl + "/" + contentId, HttpStatus.SC_FORBIDDEN);
+        HttpResponse contentResponse =
+            restHelper.get(spaceUrl + "/" + contentId);
+        // Expect a 403 forbidden error because content access is always restricted
+        assertEquals(HttpStatus.SC_FORBIDDEN, contentResponse.getStatusCode());
 
         // add additional content for getContents tests
         String testContent2 = "test-content-2";
@@ -297,6 +294,8 @@ public class S3StorageProviderTest {
         assertEquals(StorageProvider.DEFAULT_MIMETYPE,
                      cMetadata.get(S3Object.METADATA_HEADER_CONTENT_TYPE));
 
+        /* Test Deletes */
+
         // test deleteContent()
         log.debug("Test deleteContent()");
         s3Provider.deleteContent(spaceId, contentId);
@@ -339,33 +338,26 @@ public class S3StorageProviderTest {
         compareChecksum(s3Provider, spaceId, contentId, checksum);
     }
 
-    private void testGetLooped(String url, int expectedCode) throws Exception {
-        int maxLoops = 10;
-        for (int loops = 0;
-             !checkResponse(url, expectedCode) && loops < maxLoops;
-             loops++) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-            }
-        }
-        assertResponse(url, expectedCode);
-    }
+    private Map<String, String> testSpaceMetadata(String spaceId,
+                                                 AccessType access) {
+        Map<String, String> sMetadata = s3Provider.getSpaceMetadata(spaceId);
 
-    private boolean checkResponse(String url, int expectedCode)
-        throws Exception {
-        HttpResponse response = restHelper.get(url);
-        assertNotNull(response);
-        return expectedCode == response.getStatusCode();
-    }
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_CREATED));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_CREATED));
 
-    private String assertResponse(String url, int expectedCode)
-        throws Exception {
-        HttpResponse response = restHelper.get(url);
-        assertNotNull(response);
-        String responseText = response.getResponseBody();
-        assertEquals(responseText, expectedCode, response.getStatusCode());
-        return responseText;
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_COUNT));
+        assertNotNull(sMetadata.get(StorageProvider.METADATA_SPACE_COUNT));
+
+        assertTrue(sMetadata.containsKey(
+            StorageProvider.METADATA_SPACE_ACCESS));
+        String spaceAccess =
+            sMetadata.get(StorageProvider.METADATA_SPACE_ACCESS);
+        assertNotNull(spaceAccess);
+        assertEquals(access.name(), spaceAccess);
+
+        return sMetadata;
     }
 
     @Test
