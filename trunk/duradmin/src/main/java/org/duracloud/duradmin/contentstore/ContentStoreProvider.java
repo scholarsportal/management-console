@@ -45,8 +45,4 @@ public class ContentStoreProvider {
                                               DuradminConfig.getDuraStorePort(),
                                               DuradminConfig.getDuraStoreContext());
     }
-
-	public ContentStore getPrimaryContentStore() throws ContentStoreException {
-		return this.contentStoreManager.getPrimaryContentStore();
-	}
 }

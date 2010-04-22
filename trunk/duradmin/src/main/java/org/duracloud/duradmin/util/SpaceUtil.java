@@ -111,7 +111,7 @@ public class SpaceUtil {
         
     }
 
-    public static String formatDownloadURL(String spaceId, String contentId, String storeId, boolean asAttachment) {
+    private static String formatDownloadURL(String spaceId, String contentId, String storeId, boolean asAttachment) {
        	String pattern = "/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
         return MessageFormat.format(pattern,
                                     spaceId,
