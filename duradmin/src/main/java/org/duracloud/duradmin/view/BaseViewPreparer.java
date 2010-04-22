@@ -37,11 +37,6 @@ public class BaseViewPreparer
 
     	
         try {
-            attributeContext.putAttribute("customLogoUrl",
-            		new Attribute(SpaceUtil.formatDownloadURL("x-duracloud-admin", "logo", "1", false)),
-                    true);
-
-        	
             attributeContext.putAttribute("mainMenu", new Attribute(MainMenu
                     .instance()), true);
             log.debug("main menu attribute set");

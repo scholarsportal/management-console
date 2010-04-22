@@ -1,11 +1,7 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-	<tiles:importAttribute name="customLogoUrl" />
-
 	<div id="top-header" >
 		<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_transparent.png" height="50"/>
-		<c:if test="${not empty customLogoUrl}">
-			<img src="${pageContext.request.contextPath}/${customLogoUrl}" height="50"/>
-		</c:if>
+		<img src="/durastore/x-duracloud-admin/logo?storeID=1" height="50"/>
 
 		<c:if test="${pageContext.request.userPrincipal != null}">
 			<ul class="global-actions horizontal-list">
