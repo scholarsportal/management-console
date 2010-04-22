@@ -10,6 +10,7 @@ import org.duracloud.security.domain.SecurityUserBean;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -46,7 +47,7 @@ public class SecurityUsersDocumentBinding {
      * @param users SecurityUserBean list to be serialized
      * @return SecurityUsers xml document
      */
-    public static String createDocumentFrom(List<SecurityUserBean> users) {
+    public static String createDocumentFrom(Collection<SecurityUserBean> users) {
         SecurityUsersDocument doc = SecurityUsersDocument.Factory.newInstance();
         if (null != users) {
             SecurityUsersType usersType = SecurityUserElementWriter.createSecurityUsersElementFrom(

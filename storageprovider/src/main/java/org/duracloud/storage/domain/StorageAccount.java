@@ -9,9 +9,11 @@ package org.duracloud.storage.domain;
 public class StorageAccount {
 
     private String id = null;
+    private String ownerId = "0";
     private String username = null;
     private String password = null;
     private StorageProviderType type = null;
+    private boolean isPrimary;
 
     public StorageAccount(String id,
                           String username,
@@ -35,6 +37,14 @@ public class StorageAccount {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     /**
@@ -79,4 +89,11 @@ public class StorageAccount {
         this.type = type;
     }
 
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
 }

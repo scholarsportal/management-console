@@ -54,6 +54,7 @@
       <module>common-db</module>
       <module>common-rest</module>    
       <module>serviceconfig</module>
+      <module>app-config</module>
       <module>computeprovider</module>
       <module>storageprovider</module>
       <module>unit-test-db</module>
