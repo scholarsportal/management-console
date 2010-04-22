@@ -179,23 +179,30 @@ public class ConversionManager {
         Content sourceContent =
             contentStore.getContent(sourceSpaceId, contentId);
         InputStream sourceStream = sourceContent.getStream();
-        File sourceFile = writeSourceToFile(sourceStream, contentId);
 
-        // Perform conversion
-        File convertedFile = convertImage(sourceFile);
-
+        File sourceFile = null;
+        File convertedFile = null;
         try {
+            sourceFile = writeSourceToFile(sourceStream, contentId);
+
+            // Perform conversion
+            convertedFile = convertImage(sourceFile);
+
             // Store the converted file in the destination space
             storeConvertedContent(convertedFile,
                                   sourceContent.getMetadata());
         } finally {
             // Delete source and converted files from work directory
-            if (!sourceFile.delete()) {
-                sourceFile.deleteOnExit();
+            if(sourceFile != null) {
+                if (!sourceFile.delete()) {
+                    sourceFile.deleteOnExit();
+                }
             }
 
-            if (!convertedFile.delete()) {
-                convertedFile.deleteOnExit();
+            if(convertedFile != null) {
+                if (!convertedFile.delete()) {
+                    convertedFile.deleteOnExit();
+                }
             }
         }
     }
@@ -255,13 +262,16 @@ public class ConversionManager {
         sourceFile.createNewFile();
         FileOutputStream sourceOut = new FileOutputStream(sourceFile);
 
-        long sizeCopied = IOUtils.copyLarge(sourceStream, sourceOut);
-        if(sizeCopied <= 0) {
-            throw new IOException("Unable to copy any bytes from file " +
-                fileName);
+        try {
+            long sizeCopied = IOUtils.copyLarge(sourceStream, sourceOut);
+            if(sizeCopied <= 0) {
+                throw new IOException("Unable to copy any bytes from file " +
+                    fileName);
+            }
+        } finally {
+            sourceStream.close();
+            sourceOut.close();
         }
-
-        sourceOut.close();
         return sourceFile;
     }
 
