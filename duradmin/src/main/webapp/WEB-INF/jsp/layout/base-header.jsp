@@ -1,7 +1,7 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 	<div id="top-header" >
 		<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_transparent.png" height="50"/>
-		<img src="/durastore/x-duracloud-admin/logo?storeID=1" height="50"/>
+		<img src="/durastore/x-duracloud-admin/logo" height="50"/>
 
 		<c:if test="${pageContext.request.userPrincipal != null}">
 			<ul class="global-actions horizontal-list">
