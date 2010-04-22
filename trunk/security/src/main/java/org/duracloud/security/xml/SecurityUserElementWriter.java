@@ -4,7 +4,7 @@ import org.duracloud.SecurityUserType;
 import org.duracloud.SecurityUsersType;
 import org.duracloud.security.domain.SecurityUserBean;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * This class is responsible for serializing SecurityUserBean lists into
@@ -22,7 +22,7 @@ public class SecurityUserElementWriter {
      * @param users list to be serialized
      * @return xml SecurityUsers element with content from arg users
      */
-    public static SecurityUsersType createSecurityUsersElementFrom(List<SecurityUserBean> users) {
+    public static SecurityUsersType createSecurityUsersElementFrom(Collection<SecurityUserBean> users) {
         SecurityUsersType usersType = SecurityUsersType.Factory.newInstance();
         populateElementFromObject(usersType, users);
 
@@ -30,7 +30,7 @@ public class SecurityUserElementWriter {
     }
 
     private static void populateElementFromObject(SecurityUsersType usersType,
-                                                  List<SecurityUserBean> users) {
+                                                  Collection<SecurityUserBean> users) {
         usersType.setSchemaVersion(SecurityUserBean.SCHEMA_VERSION);
         for (SecurityUserBean user : users) {
             SecurityUserType userType = usersType.addNewSecurityUser();

@@ -1,5 +1,6 @@
 package org.duracloud.security.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,16 @@ public class SecurityUserBean {
     private List<String> grantedAuthorities;
 
     public static final String SCHEMA_VERSION = "0.2";
+
+    public SecurityUserBean() {
+        this("unknown",
+             "unknown",
+             false,
+             false,
+             false,
+             false,
+             new ArrayList<String>());
+    }
 
     public SecurityUserBean(String username,
                             String password,
@@ -65,5 +76,40 @@ public class SecurityUserBean {
 
     public List<String> getGrantedAuthorities() {
         return grantedAuthorities;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setGrantedAuthorities(List<String> grantedAuthorities) {
+        this.grantedAuthorities = grantedAuthorities;
+    }
+
+    public void addGrantedAuthority(String grantedAuthority) {
+        if (null == this.grantedAuthorities) {
+            this.grantedAuthorities = new ArrayList<String>();
+        }
+        this.grantedAuthorities.add(grantedAuthority);
     }
 }
