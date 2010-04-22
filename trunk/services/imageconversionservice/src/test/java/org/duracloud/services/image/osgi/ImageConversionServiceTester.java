@@ -6,6 +6,7 @@ import static junit.framework.Assert.fail;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.Credential;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.services.image.ImageConversionService;
 
@@ -27,6 +28,11 @@ public class ImageConversionServiceTester {
 
     private ImageConversionService service;
     private String workDir;
+
+    // This needs to be set (and should not be included in commit) in order
+    // for this test to pass. This is available for testing in lieu of
+    // including the unit-test-db project in the OSGi container. 
+    private String rootPassword = "";
 
     private final static String BASE_DIR_PROP = "base.dir";
 
@@ -53,6 +59,8 @@ public class ImageConversionServiceTester {
         String destSpaceId = "conversion-test-dest-" + random;
         service.setSourceSpaceId(sourceSpaceId);
         service.setDestSpaceId(destSpaceId);
+        service.setUsername("root");
+        service.setPassword(rootPassword);
 
         ContentStore contentStore = getContentStore();
 
@@ -97,6 +105,7 @@ public class ImageConversionServiceTester {
             new ContentStoreManagerImpl(service.getDuraStoreHost(),
                                         service.getDuraStorePort(),
                                         service.getDuraStoreContext());
+        storeManager.login(new Credential("root", rootPassword));
         return storeManager.getPrimaryContentStore();
     }
 
@@ -130,5 +139,5 @@ public class ImageConversionServiceTester {
 
         return baseDir + File.separator + "src/test/resources/";
     }
-
+    
 }
