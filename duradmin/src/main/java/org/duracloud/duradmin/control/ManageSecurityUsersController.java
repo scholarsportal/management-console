@@ -1,22 +1,17 @@
 package org.duracloud.duradmin.control;
 
 import org.apache.log4j.Logger;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.common.model.RootUserCredential;
-import org.duracloud.common.web.RestHttpHelper;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
+import org.duracloud.appconfig.domain.Application;
 import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.domain.SecurityUserCommand;
 import org.duracloud.security.DuracloudUserDetailsService;
 import org.duracloud.security.domain.SecurityUserBean;
-import org.duracloud.security.xml.SecurityUsersDocumentBinding;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -75,48 +70,27 @@ public class ManageSecurityUsersController extends BaseFormController {
         // update duradmin.
         userDetailsService.setUsers(users);
 
-        RestHttpHelper restHelper = new RestHttpHelper(new RootUserCredential());
-        String xml = SecurityUsersDocumentBinding.createDocumentFrom(users);
+        // update durastore.
+        Application durastore = getDuraStoreApp();
+        durastore.setSecurityUsers(users);
 
-        // update durastore & duraservice.
-        updateDuraStoreSecurity(restHelper, xml);
-        updateDuraServiceSecurity(restHelper, xml);
+        // update duraservice
+        Application duraservice = getDuraServiceApp();
+        duraservice.setSecurityUsers(users);
     }
 
-    private void updateDuraStoreSecurity(RestHttpHelper restHelper, String xml)
-        throws Exception {
+    private Application getDuraStoreApp() {
         String host = DuradminConfig.getDuraStoreHost();
         String port = DuradminConfig.getDuraStorePort();
         String ctxt = DuradminConfig.getDuraStoreContext();
-        String url = "http://" + host + ":" + port + "/" + ctxt + "/security";
-        updateSecurity(restHelper, xml, url);
-    }
+        return new Application(host, port, ctxt);
+    }    
 
-    private void updateDuraServiceSecurity(RestHttpHelper restHelper,
-                                           String xml) throws Exception {
-
+    private Application getDuraServiceApp() {
         String host = DuradminConfig.getDuraServiceHost();
         String port = DuradminConfig.getDuraServicePort();
         String ctxt = DuradminConfig.getDuraServiceContext();
-        String url = "http://" + host + ":" + port + "/" + ctxt + "/security";
-        updateSecurity(restHelper, xml, url);
-    }
-
-    private void updateSecurity(RestHttpHelper restHelper,
-                                String xml,
-                                String url) throws Exception {
-        Map<String, String> headers = null;
-        HttpResponse response = restHelper.post(url, xml, headers);
-        if (null == response || response.getStatusCode() != 200) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("Error initializing security: ");
-            msg.append(url);
-            msg.append(" (");
-            msg.append(response.getStatusCode());
-            msg.append(")");
-            log.error(msg);
-            throw new DuraCloudRuntimeException(msg.toString());
-        }
+        return new Application(host,port,ctxt);
     }
 
 }
