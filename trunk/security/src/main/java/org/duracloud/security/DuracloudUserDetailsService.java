@@ -10,6 +10,8 @@ import java.util.List;
  *         Date: Apr 15, 2010
  */
 public interface DuracloudUserDetailsService extends UserDetailsService {
-    
+
     public void setUsers(List<SecurityUserBean> users);
+
+    public List<SecurityUserBean> getUsers();
 }

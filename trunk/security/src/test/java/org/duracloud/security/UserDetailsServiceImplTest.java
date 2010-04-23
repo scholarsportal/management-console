@@ -130,4 +130,27 @@ public class UserDetailsServiceImplTest {
         }
         Assert.assertTrue(thrown);
     }
+
+    @Test
+    public void testGetUsers() {
+        // Try in un-initialized state.
+        List<SecurityUserBean> beans = userDetailsService.getUsers();
+        Assert.assertNotNull(beans);
+        Assert.assertEquals(0, beans.size());
+
+        // Now try in a useable state.
+        userDetailsService.setUsers(users);
+        beans = userDetailsService.getUsers();
+        Assert.assertNotNull(beans);
+        Assert.assertEquals(3, beans.size());
+
+        List<String> foundUsers = new ArrayList<String>();
+        for (SecurityUserBean bean : beans) {
+            foundUsers.add(bean.getUsername());
+        }
+        Assert.assertTrue(foundUsers.contains(usernameA));
+        Assert.assertTrue(foundUsers.contains(usernameB));
+        Assert.assertTrue(foundUsers.contains(usernameC));
+    }
+
 }
