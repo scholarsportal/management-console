@@ -1,5 +1,7 @@
 package org.duracloud.security.domain;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,11 +81,15 @@ public class SecurityUserBean {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        if (!StringUtils.isBlank(username)) {
+            this.username = username;
+        }
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (!StringUtils.isBlank(password)) {
+            this.password = password;
+        }
     }
 
     public void setEnabled(boolean enabled) {
