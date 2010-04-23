@@ -33,6 +33,7 @@
     <definition name="login" template="/WEB-INF/jsp/login.jsp" extends="base"/>
 
 	<definition name="init" template="/WEB-INF/jsp/init.jsp"/>
+  <definition name="users" template="/WEB-INF/jsp/users.jsp"/>
 
 	<definition name="home" template="/WEB-INF/jsp/home.jsp"/>
 	

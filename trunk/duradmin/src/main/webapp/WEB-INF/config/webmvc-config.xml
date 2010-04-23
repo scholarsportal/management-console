@@ -43,6 +43,7 @@
         <prop key="/data/spaces/space">spaceDataController</prop>
         <prop key="/download/contentItem">contentItemDownloadController</prop>
         <prop key="/security">initSecurityUsersController</prop>
+        <prop key="/users.htm">manageSecurityUsersController</prop>
   
       </props>
     </property>
@@ -75,6 +76,10 @@
   </bean>
 
   <bean id="initSecurityUsersController" class="org.duracloud.duradmin.control.InitSecurityUsersController">
+    <constructor-arg ref="userDetailsSvc"/>
+  </bean>
+
+  <bean id="manageSecurityUsersController" class="org.duracloud.duradmin.control.ManageSecurityUsersController" parent="baseFormController">
     <constructor-arg ref="userDetailsSvc"/>
   </bean>
 
