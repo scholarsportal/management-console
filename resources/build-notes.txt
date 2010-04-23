@@ -71,3 +71,10 @@ To build and run the cli,
  This utility takes a string as input and generates its encrypted version.
  [from common/]
  java -cp target/common-1.0.0.jar org.duracloud.common.util.EncryptionUtil
+
+::Application Initialization Utility::
+ This utility takes a config file (example at app-config/src/main/resources/init.props) and initializes an instance of duracloud.
+ [from app-config]
+ mvn assembly:assembly
+ java -jar target/app-config-1.0.0-driver.jar
+
