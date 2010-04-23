@@ -32,6 +32,9 @@ public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
 
     private Map<String, User> usersTable = new HashMap<String, User>();
 
+    private static final Credential systemUser = new SystemUserCredential();
+    private static final Credential rootUser = new RootUserCredential();
+
     public UserDetailsServiceImpl() {
         initializeUsers();
     }
@@ -40,7 +43,6 @@ public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
         usersTable.clear();
 
         // Add system user.
-        Credential systemUser = new SystemUserCredential();
         List<String> grants = new ArrayList<String>();
         grants.add("ROLE_ADMIN");
         grants.add("ROLE_USER");
@@ -49,7 +51,6 @@ public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
                                                        grants);
 
         // Add root user
-        Credential rootUser = new RootUserCredential();
         grants = new ArrayList<String>();
         grants.add("ROLE_ROOT");
         grants.add("ROLE_ADMIN");
@@ -86,7 +87,7 @@ public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
      * @param users to populate into the usersTable
      */
     public void setUsers(List<SecurityUserBean> users) {
-        initializeUsers();        
+        initializeUsers();
         for (SecurityUserBean u : users) {
             addUser(u);
         }
@@ -109,4 +110,45 @@ public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
 
         usersTable.put(u.getUsername(), user);
     }
+
+    /**
+     * This method returns all of the non-system-defined users.
+     *
+     * @return
+     */
+    public List<SecurityUserBean> getUsers() {
+        List<SecurityUserBean> users = new ArrayList<SecurityUserBean>();
+        for (User user : this.usersTable.values()) {
+            List<String> grants = getGrants(user.getAuthorities());
+            SecurityUserBean bean = new SecurityUserBean(user.getUsername(),
+                                                         user.getPassword(),
+                                                         user.isEnabled(),
+                                                         user.isAccountNonExpired(),
+                                                         user.isCredentialsNonExpired(),
+                                                         user.isAccountNonLocked(),
+                                                         grants);
+            if (isCustomUser(bean)) {
+                users.add(bean);
+            }
+        }
+        return users;
+    }
+
+    private boolean isCustomUser(SecurityUserBean user) {
+        String username = user.getUsername();
+        String rootname = rootUser.getUsername();
+        String sysname = systemUser.getUsername();
+        return !username.equals(rootname) && !username.equals(sysname);
+    }
+
+    private List<String> getGrants(GrantedAuthority[] gAuths) {
+        List<String> grants = new ArrayList<String>();
+        if (gAuths != null && gAuths.length > 0) {
+            for (GrantedAuthority gAuth : gAuths) {
+                grants.add(gAuth.getAuthority());
+            }
+        }
+        return grants;
+    }
+
 }
