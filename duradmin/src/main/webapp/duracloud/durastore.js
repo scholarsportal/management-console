@@ -1,6 +1,8 @@
 dojo.require("duracloud._base");
 dojo.require("duracloud.storage");
 dojo.provide("duracloud.durastore");
+dojo.require("dojox.dtl.filter.strings");
+
 duracloud.durastore = {
 		
 	loadSpaceMetadata: function(node, spaceId){
@@ -87,10 +89,10 @@ duracloud.durastore = {
 		      return;
 		}
 
-		//duracloud.showWaitMessage(null, "Retrieving metadata...");
+		var escapedContentId = dojox.dtl.filter.strings.urlencode(contentId);
 		dojo.xhrGet( {
 		    // The following URL must match that used to test the server.
-		    url: "/duradmin/data/spaces/contentItem?spaceId="+spaceId+"&contentId=" + contentId,
+		    url: "/duradmin/data/spaces/contentItem?spaceId="+spaceId+"&contentId=" + escapedContentId,
 		    handleAs: "json",
 		    load: function(responseObject, ioArgs) {
 			  console.debug(responseObject);  // Dump it to the console
