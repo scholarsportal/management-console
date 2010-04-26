@@ -74,16 +74,25 @@ public class SpaceUtil {
 
 
 	private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
-         String standardURL = formatDownloadURL(contentItem,store,false);
          if(j2KBaseURL !=null){
              return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
                      j2KBaseURL, 
-                     EncodeUtil.urlEncode(standardURL));
+                     EncodeUtil.urlEncode(formatDurastoreURL(contentItem,store)));
          }else{
-        	 return standardURL;
+        	 return formatDownloadURL(contentItem,store,false);
+             
          }
     }
     
+
+	private static String formatDurastoreURL(ContentItem contentItem,ContentStore store) {
+       	String pattern = "/durastore/{0}/{1}?storeID={2}";
+        return MessageFormat.format(pattern,
+                                    contentItem.getSpaceId(),
+                                    EncodeUtil.urlEncode(contentItem.getContentId()),
+                                    store.getStoreId());
+	}
+
 
 	private static String[] GENERIC_THUMBNAIL_PREFIXES = {"image", "video", "text", "pdf"}; 
     private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL, int size) {
@@ -96,7 +105,7 @@ public class SpaceUtil {
 	        return MessageFormat.format(
 	                                    pattern, 
 	                                    j2KBaseURL,
-	                                    EncodeUtil.urlEncode(formatDownloadURL(contentItem, store, false)),
+	                                    EncodeUtil.urlEncode(formatDurastoreURL(contentItem, store)),
 	                                    size);
         }else{
         	for(String gtf : GENERIC_THUMBNAIL_PREFIXES){
@@ -112,7 +121,7 @@ public class SpaceUtil {
     }
 
     private static String formatDownloadURL(String spaceId, String contentId, String storeId, boolean asAttachment) {
-       	String pattern = "/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
+       	String pattern = "/duradmin/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
         return MessageFormat.format(pattern,
                                     spaceId,
                                     EncodeUtil.urlEncode(contentId),
