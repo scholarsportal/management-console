@@ -237,7 +237,7 @@
 														</li>
 													</c:if>
 													<li>
-														<a href="<c:url value="${content.downloadURL}"></c:url>"><spring:message code="download" /></a>
+														<a href="${content.downloadURL}""><spring:message code="download" /></a>
 													</li>
 													<li><a  class="delete-action remove-content-item" spaceId="${content.spaceId}" contentId="${content.contentId}"
 														href="<c:url value="removeContent.htm"  >

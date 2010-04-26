@@ -93,12 +93,12 @@
 									
 									<c:if test="${contentItem.viewerURL != null}">
 										<li>
-											<a target = "viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>"><spring:message code="view" /></a>
+											<a target = "viewer" href="${contentItem.viewerURL}"><spring:message code="view" /></a>
 										</li>
 									</c:if>
 									
 									<li>
-										<a href="<c:url value="${contentItem.downloadURL}"></c:url>"><spring:message code="download" /></a>
+										<a href="${contentItem.downloadURL}"><spring:message code="download" /></a>
 									</li>
 
 									<li><a class="delete-action remove-content-item" spaceId="${contentItem.spaceId}"
@@ -157,7 +157,7 @@
 						<div class="content-preview">
 							<c:choose>
 								<c:when test="${not empty contentItem.thumbnailURL}">
-									<a target="viewer" href="<c:url value="${contentItem.viewerURL}"></c:url>">
+									<a target="viewer" href="${contentItem.viewerURL}">
 										<img src="${contentItem.thumbnailURL}"/>
 									</a>
 								</c:when>
