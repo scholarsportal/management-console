@@ -22,7 +22,7 @@
     <property name="mappings">
       <props>
         <prop key="/login">loginController</prop>
-        <prop key="/init.htm">initController</prop>
+        <prop key="/init">initController</prop>
         <prop key="/home.htm">homeController</prop>
         <prop key="/spaces.htm">spacesController</prop>
         <prop key="/removeSpace.htm">removeSpaceController</prop>
@@ -53,7 +53,7 @@
   <!-- Request Controllers - processes request -->
   <bean id="loginController" class="org.duracloud.duradmin.control.LoginController"/>
 
-  <bean id="initController" class="org.duracloud.duradmin.control.InitController" parent="baseFormController"/>
+  <bean id="initController" class="org.duracloud.duradmin.control.InitController" parent="baseCommandController"/>
   <bean id="servicesController" class="org.duracloud.duradmin.control.ServicesController" parent = "baseCommandController"/>
 
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController" parent="baseFormController">
