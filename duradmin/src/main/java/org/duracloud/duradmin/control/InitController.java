@@ -1,53 +1,102 @@
 package org.duracloud.duradmin.control;
 
+import org.apache.log4j.Logger;
+import static org.duracloud.appconfig.xml.DuradminInitDocumentBinding.createDuradminConfigFrom;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import static org.duracloud.common.util.ExceptionUtil.getStackTraceAsString;
 import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.AdminInit;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import java.io.IOException;
 
 /**
- * @author: Bill Branan
- * Date: Jan 15, 2010
+ * This class initializes the application based on the xml body of the
+ * servlet request.
+ *
+ * @author: Andrew Woods
+ * Date: Apr 30, 2010
  */
-public class InitController extends BaseFormController {
+public class InitController extends BaseCommandController {
 
-    public InitController() {
-        setCommandClass(AdminInit.class);
-        setCommandName("initBean");
+    private final Logger log = Logger.getLogger(getClass());
+
+    protected ModelAndView handle(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  Object o,
+                                  BindException be) throws Exception {
+        String method = request.getMethod();
+        if (!method.equalsIgnoreCase("POST")) {
+            respond(response, "unsupported: " + method, SC_METHOD_NOT_ALLOWED);
+            return null;
+        }
+
+        ServletInputStream xml = request.getInputStream();
+        if (xml != null) {
+            try {
+                updateInit(createDuradminConfigFrom(xml));
+                respond(response, "Initialization Successful\n", SC_OK);
+
+            } catch (Exception e) {
+                respond(response,
+                        getStackTraceAsString(e),
+                        SC_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            respond(response, "no duradminConfig in request\n", SC_BAD_REQUEST);
+        }
+        return null;
     }
 
-    @Override
-    public Object formBackingObject(HttpServletRequest request)
+    private void updateInit(org.duracloud.appconfig.domain.DuradminConfig config)
         throws Exception {
-        AdminInit init = (AdminInit) super.formBackingObject(request);
+        AdminInit init = new AdminInit();
+        init.setDuraServiceHost(config.getDuraserviceHost());
+        init.setDuraServicePort(config.getDurastorePort());
+        init.setDuraServiceContext(config.getDuraserviceContext());
+        init.setDuraStoreHost(config.getDurastoreHost());
+        init.setDuraStorePort(config.getDurastorePort());
+        init.setDuraStoreContext(config.getDurastoreContext());
 
-        init.setDuraStoreHost(DuradminConfig.getDuraStoreHost());
-        init.setDuraStorePort(DuradminConfig.getDuraStorePort());
-        init.setDuraStoreContext(DuradminConfig.getDuraStoreContext());
-
-        init.setDuraServiceHost(DuradminConfig.getDuraServiceHost());
-        init.setDuraServicePort(DuradminConfig.getDuraServicePort());
-        init.setDuraServiceContext(DuradminConfig.getDuraServiceContext());
-
-        return init;
-    }
-    
-    @Override
-    public ModelAndView onSubmit(Object command, BindException bindException)
-        throws Exception {
-        AdminInit init = (AdminInit) command;
-        updateInit(init);
-        return new ModelAndView("init", "initBean", init);
-    }
-
-    private void updateInit(AdminInit init) throws Exception {
         DuradminConfig.setConfig(init);
 
         ContentStoreProvider contentStoreProvider = getContentStoreProvider();
         contentStoreProvider.reinitializeContentStoreManager();
     }
 
+    private void respond(HttpServletResponse response, String msg, int status) {
+        ServletOutputStream output;
+        try {
+            output = response.getOutputStream();
+
+        } catch (IOException e) {
+            String err = "Error getting servlet output stream";
+            log.error(err, e);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+            throw new DuraCloudRuntimeException(err, e);
+        }
+
+        try {
+            output.write(msg.getBytes());
+            output.flush();
+
+        } catch (IOException e) {
+            String err = "Error writing to servlet output stream";
+            log.error(err, e);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+            throw new DuraCloudRuntimeException(err, e);
+        }
+
+        response.setStatus(status);
+    }
 }
