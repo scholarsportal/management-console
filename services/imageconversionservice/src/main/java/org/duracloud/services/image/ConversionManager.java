@@ -1,27 +1,23 @@
 package org.duracloud.services.image;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.duracloud.client.ContentStore;
-import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Handles the conversion of image files from one format to another.
@@ -33,10 +29,10 @@ import java.util.Map;
  */
 public class ConversionManager {
 
-    private boolean continueConversion = true;
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private boolean conversionComplete = false;
-    private List<String> successfulConversions;
-    private Map<String, String> unsuccessfulConversions;
+    private boolean continueConversion = true;
     private Map<String, String> extMimeMap;
 
     private ContentStore contentStore;
@@ -49,6 +45,8 @@ public class ConversionManager {
     private String nameSuffix;
 
     private String convertScript;
+    private ThreadPoolExecutor workerPool;
+    private ConversionResultProcessor resultProcessor;
 
     public ConversionManager(ContentStore contentStore,
                              File workDir,
@@ -57,7 +55,8 @@ public class ConversionManager {
                              String sourceSpaceId,
                              String destSpaceId,
                              String namePrefix,
-                             String nameSuffix) {
+                             String nameSuffix,
+                             int threads) {
         this.contentStore = contentStore;
         this.workDir = workDir;
         this.toFormat = toFormat;
@@ -67,10 +66,19 @@ public class ConversionManager {
         this.namePrefix = namePrefix;
         this.nameSuffix = nameSuffix;
 
-        successfulConversions = new ArrayList<String>();
-        unsuccessfulConversions = new HashMap<String, String>();
         extMimeMap = new HashMap<String, String>();
         loadExtMimeMap();
+
+        resultProcessor =
+            new ConversionResultProcessor(contentStore, destSpaceId, workDir);
+
+        workerPool =
+            new ThreadPoolExecutor(threads,
+                                   threads,
+                                   Long.MAX_VALUE,
+                                   TimeUnit.NANOSECONDS,
+                                   new SynchronousQueue(),
+                                   new ThreadPoolExecutor.AbortPolicy());        
     }
 
     private void loadExtMimeMap() {
@@ -90,52 +98,58 @@ public class ConversionManager {
         printStartMessage();
 
         workDir.setWritable(true);
-
-        // Get content list from space where source images reside (limit to prefix)
-        Iterator<String> contentIds;
-        try {
-            contentIds =
-                contentStore.getSpaceContents(sourceSpaceId, namePrefix);
-        } catch(ContentStoreException e) {
-            throw new RuntimeException("Conversion could not be started due" +
-                                       " to error: " + e.getMessage(), e);
-        }
-
-        // Ensure that the destination space exists
-        try {
-            checkDestSpace();
-        } catch(ContentStoreException e) {
-            String err = "Could not access destination space " + destSpaceId +
-                         "due to error: " + e.getMessage();
-            throw new RuntimeException(err, e);
-        }
+        checkDestSpace();
+        Iterator<String> contentIds = getContentList();
+        String convertScript = getConvertScript();
 
         while (continueConversion && contentIds.hasNext()) {
             String contentId = contentIds.next();
 
             // Perform conversion for files matching suffix
             if(fileMatchesSuffix(contentId)) {
-                try {
-                    performConversion(contentId);
-                    successfulConversions.add(contentId);
-                } catch(Exception e) {
-                    unsuccessfulConversions.put(contentId, e.getMessage());
+                ConversionWorker worker =
+                    new ConversionWorker(contentStore,
+                                         sourceSpaceId,
+                                         destSpaceId,
+                                         contentId,
+                                         workDir,
+                                         toFormat,
+                                         extMimeMap,
+                                         convertScript,
+                                         resultProcessor);
+                boolean successStartingWorker = false;
+                while(!successStartingWorker) {
+                    try {
+                        workerPool.execute(worker);
+                        successStartingWorker = true;
+                    } catch(RejectedExecutionException e) {
+                        successStartingWorker = false;
+                        sleep(10000);
+                    }
                 }
             }
         }
 
-        // Write conversion results file to target dir
+        workerPool.shutdown();
         try {
-            storeConversionResults();
-        } catch(ContentStoreException e) {
-            throw new RuntimeException("Could not store conversion results " +
-                                       "due to error: " + e.getMessage(), e);
+            workerPool.awaitTermination(60, TimeUnit.MINUTES);
+        } catch(InterruptedException e) {
+            log.warn("Interruped waiting for worker pool to shut down. " +
+                     "Assuming shutdown is complete.");
         }
 
         // Indicate that the conversion is complete
         conversionComplete = true;
 
         printEndMessage();
+    }
+
+    private void sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            log.warn("ChangeWatcher thread interrupted");
+        }
     }
 
     private void printStartMessage() {
@@ -161,7 +175,14 @@ public class ConversionManager {
         System.out.println(getConversionStatus());
     }
 
-    protected boolean fileMatchesSuffix(String contentId) {
+    protected String getConversionStatus() {
+        return resultProcessor.getConversionStatus(conversionComplete);
+    }
+
+    /*
+     * Determins if a file includes the user provided suffix
+     */
+    private boolean fileMatchesSuffix(String contentId) {
         boolean fileMatchSuffix = false;
         if (nameSuffix != null && !nameSuffix.equals("")) {
             if (contentId.endsWith(nameSuffix)) {
@@ -173,147 +194,57 @@ public class ConversionManager {
         return fileMatchSuffix;
     }
 
-    protected void performConversion(String contentId)
-        throws IOException, ContentStoreException {
-        // Stream the content item down to the work directory
-        Content sourceContent =
-            contentStore.getContent(sourceSpaceId, contentId);
-        InputStream sourceStream = sourceContent.getStream();
-
-        File sourceFile = null;
-        File convertedFile = null;
+    /*
+     * Get content list from space where source images reside (limit to prefix)
+     */
+    private Iterator<String> getContentList() {
+        Iterator<String> contentIds;
         try {
-            sourceFile = writeSourceToFile(sourceStream, contentId);
-
-            // Perform conversion
-            convertedFile = convertImage(sourceFile);
-
-            // Store the converted file in the destination space
-            storeConvertedContent(convertedFile,
-                                  sourceContent.getMetadata());
-        } finally {
-            // Delete source and converted files from work directory
-            if(sourceFile != null) {
-                if (!sourceFile.delete()) {
-                    sourceFile.deleteOnExit();
-                }
-            }
-
-            if(convertedFile != null) {
-                if (!convertedFile.delete()) {
-                    convertedFile.deleteOnExit();
-                }
-            }
+            contentIds =
+                contentStore.getSpaceContents(sourceSpaceId, namePrefix);
+        } catch(ContentStoreException e) {
+            throw new RuntimeException("Conversion could not be started due" +
+                                       " to error: " + e.getMessage(), e);
         }
-    }
-
-    private void storeConvertedContent(File convertedFile,
-                                       Map<String, String> metadata)
-        throws IOException, ContentStoreException {
-        ContentStoreException exception = null;
-
-        boolean success = false;
-        int maxLoops = 4;
-        for (int loops = 0; !success && loops < maxLoops; loops++) {
-            FileInputStream convertedFileStream =
-                new FileInputStream(convertedFile);
-            String mimetype = extMimeMap.get(toFormat);
-            if(mimetype == null) {
-                mimetype = extMimeMap.get("default");
-            }
-
-            try {
-                contentStore.addContent(destSpaceId,
-                                        convertedFile.getName(),
-                                        convertedFileStream,
-                                        convertedFile.length(),
-                                        mimetype,
-                                        null,
-                                        metadata);
-                success = true;
-            } catch (ContentStoreException e) {
-                exception = e;
-                success = false;
-            } finally {
-                convertedFileStream.close();
-            }
-
-            if (!success) {
-                throw exception;
-            }
-        }
-    }
-
-    private void checkDestSpace() throws ContentStoreException {
-        // Create the destination space if it does not exist
-        try {
-            contentStore.getSpaceMetadata(destSpaceId);
-        } catch (NotFoundException e) {
-            contentStore.createSpace(destSpaceId, null);
-        }
-    }
-
-    protected File writeSourceToFile(InputStream sourceStream,
-                                     String fileName) throws IOException {
-        File sourceFile = new File(workDir, fileName);
-        if(sourceFile.exists()) {
-            sourceFile.delete();
-        }
-        sourceFile.createNewFile();
-        FileOutputStream sourceOut = new FileOutputStream(sourceFile);
-
-        try {
-            long sizeCopied = IOUtils.copyLarge(sourceStream, sourceOut);
-            if(sizeCopied <= 0) {
-                throw new IOException("Unable to copy any bytes from file " +
-                    fileName);
-            }
-        } finally {
-            sourceStream.close();
-            sourceOut.close();
-        }
-        return sourceFile;
+        return contentIds;
     }
 
     /*
-     * Converts a local image to a given format using ImageMagick.
-     * Returns the name of the converted image.
+     * Ensure that the destination space exists
      */
-    protected File convertImage(File sourceFile) throws IOException {
-        String fileName = sourceFile.getName();
-        // TODO: Convert to log msg
-        System.out.println("Converting " + fileName + " to " + toFormat);
-
-        ProcessBuilder pb =
-            new ProcessBuilder(getConvertScript(), toFormat, fileName);
-        pb.directory(workDir);
-        Process p = pb.start();
-
+    private void checkDestSpace() {
         try {
-            p.waitFor();  // Wait for the conversion to complete
-        } catch (InterruptedException e) {
-            throw new IOException("Conversion process interruped for " +
-                fileName, e);
-        }
-
-        String convertedFileName = FilenameUtils.getBaseName(fileName);
-        convertedFileName += "." + toFormat;
-        File convertedFile = new File(workDir, convertedFileName);
-        if(convertedFile.exists()) {
-            return convertedFile;
-        } else {
-            throw new IOException("Could not find converted file: " +
-                convertedFileName);
+            try {
+                contentStore.getSpaceMetadata(destSpaceId);
+            } catch (NotFoundException e) {
+                contentStore.createSpace(destSpaceId, null);
+            }
+        } catch(ContentStoreException e) {
+            String err = "Could not access destination space " + destSpaceId +
+                         "due to error: " + e.getMessage();
+            throw new RuntimeException(err, e);
         }
     }
 
-    private String getConvertScript() throws IOException {
-        if(convertScript == null) {
-            convertScript = createScript();
+    /*
+     * Gets the script used to perform conversions
+     */
+    private String getConvertScript() {
+        try {
+            if(convertScript == null) {
+                convertScript = createScript();
+            }
+        } catch(IOException e) {
+            String err = "Could not create conversion script due to error: " +
+                         e.getMessage();
+            throw new RuntimeException(err, e);
         }
         return convertScript;
     }
 
+    /*
+     * Creates the script used to perform conversions
+     */
     private String createScript() throws IOException {
         String fileName;
         List<String> scriptLines = new ArrayList<String>();
@@ -350,72 +281,12 @@ public class ConversionManager {
         }
     }
 
-    protected void storeConversionResults() throws ContentStoreException {
-        String results = collectConversionResults();
-
-        Date now = new Date(System.currentTimeMillis());
-        SimpleDateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String resultsId = "Conversion-Results-" + dateFormat.format(now);
-
-        byte[] resultsBytes;
-        try {
-            resultsBytes = results.getBytes("UTF-8");
-        } catch(UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        ByteArrayInputStream resultsStream =
-            new ByteArrayInputStream(resultsBytes);
-
-        contentStore.addContent(destSpaceId,
-                                resultsId,
-                                resultsStream,
-                                resultsBytes.length,
-                                "text/plain",
-                                null,
-                                null);
-    }
-
-    protected String collectConversionResults() {
-        StringBuilder results = new StringBuilder();
-        if(continueConversion) {
-            results.append("Conversion Process Completed. ");
-        } else {
-            results.append("Conversion Process Interrupted. ");
-        }
-        results.append("Results for completed conversions:\n\n");
-
-        results.append("Successfully converted content items:\n");
-        for(String contentId : successfulConversions) {
-            results.append(contentId);
-            results.append("\n");
-        }
-        results.append("\n");
-
-        results.append("Unable to convert content items:\n");
-        for(String contentId : unsuccessfulConversions.keySet()) {
-            results.append(contentId);
-            String error = unsuccessfulConversions.get(contentId);
-            results.append(", due to error: ");
-            results.append(error);
-            results.append("\n");
-        }
-        return results.toString();
-    }
-
-    public String getConversionStatus() {
-        String status = "Conversion In Progress";
-        if(conversionComplete) {
-            status =  "Conversion Complete";
-        }
-        return status +
-            ". Successful convertions: " + successfulConversions.size() +
-            ". Unsuccessful conversions: " + unsuccessfulConversions.size();
-    }
-
+    /*
+     * Indicate that conversion should stop after the files currently being
+     * processed have completed
+     */
     public void stopConversion() {
-        // Indicate that conversion should stop after the
-        // current file is completed
         continueConversion = false;
+        workerPool.shutdown();
     }
 }

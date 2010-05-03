@@ -108,7 +108,7 @@ public class ServiceXmlGeneratorTest {
     private void verifyImageconversion(ServiceInfo serviceInfo) {
         List<SystemConfig> systemConfigs = serviceInfo.getSystemConfigs();
         Assert.assertNotNull(systemConfigs);
-        Assert.assertEquals(5, systemConfigs.size());
+        Assert.assertEquals(6, systemConfigs.size());
 
         verifyDurastoreCredential(systemConfigs);
     }
