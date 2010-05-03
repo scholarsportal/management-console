@@ -48,10 +48,12 @@ public class ImageConversionService extends BaseService implements ComputeServic
     private String destSpaceId;
     private String namePrefix;
     private String nameSuffix;
+    private int threads;
 
     @Override
     public void start() throws Exception {
-        System.out.println("Starting Image Conversion Service: " + username);
+        System.out.println("Starting Image Conversion Service as " + username +
+                           ", with " + threads + " worker threads");
         this.setServiceStatus(ServiceStatus.STARTING);
         
         ContentStoreManager storeManager =
@@ -69,7 +71,8 @@ public class ImageConversionService extends BaseService implements ComputeServic
                                                 sourceSpaceId,
                                                 destSpaceId,
                                                 namePrefix,
-                                                nameSuffix);
+                                                nameSuffix,
+                                                threads);
         conversionThread.start();
 
         this.setServiceStatus(ServiceStatus.STARTED);        
@@ -246,6 +249,14 @@ public class ImageConversionService extends BaseService implements ComputeServic
                 "Setting value to default: " + DEFAULT_NAME_SUFFIX);
             this.nameSuffix = DEFAULT_NAME_SUFFIX;
         }
+    }
+
+    public int getThreads() {
+        return threads;
+    }
+
+    public void setThreads(int threads) {
+        this.threads = threads;
     }
 
     private void log(String logMsg) {

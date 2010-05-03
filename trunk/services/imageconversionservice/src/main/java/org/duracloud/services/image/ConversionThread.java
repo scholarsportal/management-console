@@ -21,7 +21,8 @@ public class ConversionThread extends Thread {
                             String sourceSpaceId,
                             String destSpaceId,
                             String namePrefix,
-                            String nameSuffix) {
+                            String nameSuffix,
+                            int threads) {
         conversionManager = new ConversionManager(contentStore,
                                                   workDir,
                                                   toFormat,
@@ -29,7 +30,8 @@ public class ConversionThread extends Thread {
                                                   sourceSpaceId,
                                                   destSpaceId,
                                                   namePrefix,
-                                                  nameSuffix);
+                                                  nameSuffix,
+                                                  threads);
     }
 
     public void run() {

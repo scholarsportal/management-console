@@ -22,6 +22,7 @@
     <property name="destSpaceId" value="image-conversion-dest"/>
     <property name="namePrefix" value=""/>
     <property name="nameSuffix" value=""/>
+    <property name="threads" value="5"/>
   </bean>
 
 </beans>
