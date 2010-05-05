@@ -1,5 +1,7 @@
 package org.duracloud.common.error;
 
+import org.duracloud.common.util.ExceptionUtil;
+
 /**
  * This class is the top-level Checked DuraCloud exception from which other
  * internal exceptions extend.
@@ -64,6 +66,7 @@ public class DuraCloudCheckedException extends Exception implements MessageForma
         String msg = core.getFormattedMessage();
         if (null == msg) {
             msg = this.getMessage();
+            msg += ExceptionUtil.getStackTraceAsString(this);            
         }
         return msg;
     }
