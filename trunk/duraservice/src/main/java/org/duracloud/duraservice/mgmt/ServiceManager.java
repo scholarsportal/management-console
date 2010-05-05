@@ -376,6 +376,8 @@ public class ServiceManager {
             error = "Unable to configure service bundle." + contentId;
             checkResponse(response, error);
 
+            sleep(1000); // give configuration time to take effect
+
             // Start the service
             response = servicesAdmin.startServiceBundle(contentId);
             error = "Unable to start service bundle." + contentId;
@@ -1046,6 +1048,13 @@ public class ServiceManager {
         //                          displayName);
         //return serviceInstance.getHostName();
         return primaryHost;
+    }
+
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+        }
     }
 
 }
