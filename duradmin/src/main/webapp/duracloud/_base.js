@@ -25,6 +25,11 @@ duracloud.hideWaitMessage = function (node){
 
 
 duracloud.showError = function (node, ioArgs){
+	if(node == null){
+		console.error("node is null");
+		return;
+	}
+
 	var messageText = "Unable to complete request: status (" + ioArgs.xhr.status + ")";
 	node.innerHTML = "";
 	var div = dojo.create("div",null, node);

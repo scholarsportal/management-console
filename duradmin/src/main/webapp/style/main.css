@@ -1,6 +1,5 @@
 body, html { width:100%; height:100%; margin:0; padding:0 }
 
-
 body, #footer{
 	/*slate gray*/
 	background-color:#B9D3EE;
@@ -574,3 +573,7 @@ table.extended-metadata > tbody > tr {
 	cursor: pointer;
 }
 
+.ar {
+	text-align:right;
+	
+}
