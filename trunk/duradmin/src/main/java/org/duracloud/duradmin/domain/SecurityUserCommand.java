@@ -28,7 +28,8 @@ public class SecurityUserCommand {
 
     public void removeUser(String username) {
         if (username != null) {
-            for (SecurityUserBean user : users) {
+        	List<SecurityUserBean> readOnlyUserList = new ArrayList<SecurityUserBean>(users);
+            for (SecurityUserBean user : readOnlyUserList) {
                 if (username.equalsIgnoreCase(user.getUsername())) {
                     users.remove(user);
                 }

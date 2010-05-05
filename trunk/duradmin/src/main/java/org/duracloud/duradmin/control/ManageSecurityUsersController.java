@@ -50,17 +50,19 @@ public class ManageSecurityUsersController extends BaseFormController {
 
             List<String> grants = new ArrayList<String>();
             grants.add("ROLE_USER");
-
+           
             cmd.addUser(new SecurityUserBean(username, password, grants));
 
         } else if (verb.equalsIgnoreCase("remove")) {
-            // FIXME: implement in jsp
             cmd.removeUser(cmd.getUsername());
-
         } else if (verb.equalsIgnoreCase("modify")) {
-            // FIXME: implement in jsp
-            // do update on users of cmd object
-        }
+            for(SecurityUserBean user : cmd.getUsers()){
+            	if(user.getUsername().equals(cmd.getUsername())){
+                	user.setPassword(cmd.getPassword());
+                	break;
+            	}
+            }
+        } 
 
         pushUpdates(cmd.getUsers());
         return new ModelAndView("users", "userBeans", cmd);

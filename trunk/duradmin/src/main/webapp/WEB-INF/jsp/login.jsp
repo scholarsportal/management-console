@@ -17,7 +17,7 @@
 			<tiles:putAttribute name="body">
 				<form id="loginForm" action="${pageContext.request.contextPath}/j_spring_security_check" method="post" >
 					<div>
-						<table class="basic-form">
+						<table class="basic-form" style="max-width:400px">
 							<tr>
 								<td class="label">
 									<label for="j_username">Username</label>

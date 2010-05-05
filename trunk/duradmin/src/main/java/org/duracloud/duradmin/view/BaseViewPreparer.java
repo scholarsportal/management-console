@@ -37,7 +37,7 @@ public class BaseViewPreparer
 
     	
         try {
-            attributeContext.putAttribute("mainMenu", new Attribute(MainMenu
+        	attributeContext.putAttribute("mainMenu", new Attribute(MainMenu
                     .instance()), true);
             log.debug("main menu attribute set");
 

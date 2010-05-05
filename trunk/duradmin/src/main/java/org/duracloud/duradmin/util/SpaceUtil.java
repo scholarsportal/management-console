@@ -74,7 +74,7 @@ public class SpaceUtil {
 
 
 	private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
-         if(j2KBaseURL !=null){
+         if(j2KBaseURL !=null && contentItem.getMetadata().getMimetype().startsWith("image/")){
              return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
                      j2KBaseURL, 
                      EncodeUtil.urlEncode(formatDurastoreURL(contentItem,store)));
@@ -86,8 +86,9 @@ public class SpaceUtil {
     
 
 	private static String formatDurastoreURL(ContentItem contentItem,ContentStore store) {
-       	String pattern = "/durastore/{0}/{1}?storeID={2}";
+       	String pattern =  "{0}/{1}/{2}?storeID={3}";
         return MessageFormat.format(pattern,
+        							store.getBaseURL(),
                                     contentItem.getSpaceId(),
                                     EncodeUtil.urlEncode(contentItem.getContentId()),
                                     store.getStoreId());

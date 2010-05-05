@@ -1,13 +1,18 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 	<div id="top-header" >
 		<img alt="<spring:message code="application.title"/>" src="${pageContext.request.contextPath}/images/duracloud_transparent.png" height="50"/>
+		<!-- 
 		<img src="/durastore/x-duracloud-admin/logo" height="50"/>
-
+		 -->
+		
 		<c:if test="${pageContext.request.userPrincipal != null}">
 			<ul class="global-actions horizontal-list">
 				<li>
 					<span>Welcome ${pageContext.request.userPrincipal.name}</span>
 				</li>
+	            <li>
+		             | <a href='<c:url value="/users.htm"/>'>Admin</a>
+	            </li>
 	            <li>
 		             | <a href='<c:url value="/logout"/>' class="logout">Logout</a>
 	            </li>
@@ -46,11 +51,16 @@
 	
 				<tiles:importAttribute name="currentUrl" />
 				<c:if test="${not empty contentStoreProvider}">
-	
-					<form  action="<c:url value="/changeProvider"/>" method="POST">
+					<script type="text/javascript">
+						function providerIdChanged(){
+							duracloud.storage.clear();
+							dojo.byId("changeProviderForm").submit();
+						}
+					</script>
+					<form id="changeProviderForm" action="<c:url value="/changeProvider"/>" method="POST">
 						<input type="hidden" name="returnTo" value="<c:url value="/spaces.htm"/>"/>
 						<spring:message code="storageProviders"/>:
-						<select name="storageProviderId" onchange="submit();">
+						<select name="storageProviderId" onchange="providerIdChanged()">
 							<c:forEach var="storeOption" items="${contentStoreProvider.contentStores}">
 								<option value="${storeOption.storeId}" <c:if test="${contentStoreProvider.selectedContentStoreId == storeOption.storeId}">selected</c:if> >
 									<spring:message code="${fn:toLowerCase(storeOption.storageProviderType)}"/>

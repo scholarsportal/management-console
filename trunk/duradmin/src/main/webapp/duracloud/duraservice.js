@@ -22,12 +22,15 @@ duracloud.duraservice = {
 	
 	loadConfigurationDetails: function (configNode, serviceId, deploymentId){
 		var that = this;
+		duracloud.showWaitMessage(configNode,"Refreshing...");
+
 		dojo.xhrGet( {
 		    // The following URL must match that used to test the server.
 		    url: "/duradmin/data/services/deployment/properties?serviceInfoId="+serviceId + "&deploymentId="+deploymentId,
 		    handleAs: "json",
 		    load: function(responseObject, ioArgs) {
 				console.debug(responseObject);
+				configNode.innerHTML = "";
 				var properties = responseObject.properties;
 				var data = new Array();
 				for(i = 0; i < properties.length; i++){
@@ -38,7 +41,9 @@ duracloud.duraservice = {
 			},
 			error: function(responseObject, ioArgs){
 		          console.error("HTTP status code: ", ioArgs.xhr.status); 
+		          configNode.innerHTML = "";
 				  var data = new Array(['unable to load properties:', "HTTP status code: "+ ioArgs.xhr.status]);
+				  var table = that._createTable("Properties", data, {});
 				  populateTable(table, data);
 			}
 		});
@@ -123,6 +128,14 @@ duracloud.duraservice = {
 			var tabContent = tab.containerNode;
 
 			dojo.create("a", {innerHTML: "Reconfigure", href: "/duradmin/services/deploy?serviceId=" + service.id + "&deploymentId=" + deployment.id},tabContent);
+			var refreshLink = dojo.create("button", {innerHTML: "Refresh"},tabContent);
+			dojo.connect(refreshLink, "onclick", function(){
+				dojo.query(".configDetails",tabContent).forEach(function(d){
+					duracloud.duraservice.loadConfigurationDetails(d, service.id, deployment.id);
+					duracloud.setFlashInfoMessage("Info refreshed");
+				});
+			});
+			
 			var undeployButton = dojo.create("button", {"innerHTML": "Undeploy"}, tabContent);
 			dojo.connect(undeployButton,"onclick", function(){
 				duracloud.duraservice.undeployService(service.id, deployment.id, tabContent.containerNode, function(responseObject, ioArgs) {

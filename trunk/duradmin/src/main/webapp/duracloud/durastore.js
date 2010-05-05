@@ -34,8 +34,9 @@ duracloud.durastore = {
 			},
 			error: function(responseObject, ioArgs){
 	          	  console.error("HTTP status code: ", ioArgs.xhr.status); 
-
-		          duracloud.showError(node, ioArgs);
+	          	  if(ioArgs.xhr.status > 0 ){
+	          		  duracloud.showError(node, ioArgs);
+	          	  }
 		          return responseObject;
 			}
 
@@ -101,8 +102,10 @@ duracloud.durastore = {
 			  duracloud.storage.putContentItem(spaceId,contentId,contentItem);
 			},
 			error: function(responseObject, ioArgs){
-	          console.error("HTTP status code: ", ioArgs.xhr.status); 
-	          duracloud.showError(node, ioArgs);
+	          	  console.error("HTTP status code: ", ioArgs.xhr.status);
+	          	  if(ioArgs.xhr.status > 0 ){
+	          		  duracloud.showError(node, ioArgs);
+	          	  }
 			}
 		});
 	},
