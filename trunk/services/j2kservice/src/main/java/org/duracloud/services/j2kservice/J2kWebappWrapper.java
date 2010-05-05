@@ -43,6 +43,7 @@ public class J2kWebappWrapper extends BaseService implements ComputeService, Man
     private WebAppUtil webappUtil;
 
     private static final String DEFAULT_URL = "http://example.org";
+    private static final String APACHE_FLAG = "WITH_APACHE";
 
     @Override
     public void start() throws Exception {
@@ -101,8 +102,31 @@ public class J2kWebappWrapper extends BaseService implements ComputeService, Man
     @Override
     public Map<String, String> getServiceProps() {
         Map<String, String> props = super.getServiceProps();
-        props.put("url", url.toString());
+        props.put("url", getPublicURL().toString());
         return props;
+    }
+
+    private URL getPublicURL() {
+        String apacheFlag = System.getProperty(APACHE_FLAG);
+        if (null == apacheFlag || apacheFlag.isEmpty()) {
+            return url;
+        }
+
+        int port = url.getPort();
+        String portSuffix = "";
+        if (port != -1) {
+            portSuffix = "-p" + port;
+        }
+
+        String protocol = url.getProtocol();
+        String host = url.getHost();
+        String file = url.getFile();
+
+        try {
+            return new URL(protocol, host, file + portSuffix);
+        } catch (MalformedURLException e) {
+            throw new ServiceRuntimeException(e);
+        }
     }
 
     @Override

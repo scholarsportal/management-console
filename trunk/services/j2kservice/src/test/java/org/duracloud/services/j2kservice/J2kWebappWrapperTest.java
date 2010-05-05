@@ -31,6 +31,7 @@ public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
     private String tomcatZipName = "apache-tomcat-6.0.20.zip";
 
     private int port = 38282;
+    private final String APACHE_FLAG = "WITH_APACHE";
 
     @Before
     public void setUp() throws IOException {
@@ -77,11 +78,19 @@ public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
         tomcatUtil = null;
         webappUtil = null;
         wrapper = null;
+
+        System.clearProperty(APACHE_FLAG);
     }
 
     @Test
     public void testStartStopCycle() throws Exception {
         super.testStopStartCycle(getUrlPattern());
+    }
+
+    @Test
+    public void testStartStopCycleWithApache() throws Exception {
+        System.setProperty(APACHE_FLAG, "true");
+        super.testStopStartCycle(getUrlPatternWithApache());
     }
 
     @Test
@@ -91,5 +100,9 @@ public class J2kWebappWrapperTest extends J2kWebappWrapperTestBase {
 
     private String getUrlPattern() {
         return urlRunningBase + ":" + port + "/" + context;
+    }
+
+    private String getUrlPatternWithApache() {
+        return urlRunningBase + "/" + context + "-p" + port;
     }
 }
