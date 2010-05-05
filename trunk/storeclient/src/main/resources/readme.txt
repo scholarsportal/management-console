@@ -23,8 +23,8 @@ The example client (found in ExampleClient.java) includes a simple
 main class to print out the list of spaces and space metadata 
 available in your DuraStore account. To run the example:
 * Extract the store-client zip file
-* Update the HOST and PORT constant values in ExampleClient.java to 
-correctly point to your DuraCloud instance.
+* Update the HOST, PORT, USERNAME, and PASSWORD constant values in
+ExampleClient.java as needed to connect to your DuraCloud instance.
 * Make sure Ant is availble on your path and type "ant" to compile
 the example.
 * Type "ant run" to run the example, which will print space names

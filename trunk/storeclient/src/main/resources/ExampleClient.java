@@ -1,7 +1,8 @@
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
+import org.duracloud.common.model.Credential;
+import org.duracloud.error.ContentStoreException;
 
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,17 @@ public class ExampleClient {
     private static final String HOST = "localhost";
 	private static final String PORT = "8080";
 	private static final String CONTEXT = "durastore";
+    private static final String USERNAME = "user";
+    private static final String PASSWORD = "upw";
     
     private ContentStore store;
 
     public ExampleClient() throws ContentStoreException {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(HOST, PORT, CONTEXT);
-        store = storeManager.getPrimaryContentStore();  
+        Credential credential = new Credential(USERNAME, PASSWORD);
+        storeManager.login(credential);
+        store = storeManager.getPrimaryContentStore();
     }
 
     public void printStores() throws ContentStoreException {
