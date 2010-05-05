@@ -32,6 +32,13 @@
 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.duracloud.servicesadminclient.ServicesAdminClientCLI</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
         <executions>
           <execution>
             <phase>package</phase>
