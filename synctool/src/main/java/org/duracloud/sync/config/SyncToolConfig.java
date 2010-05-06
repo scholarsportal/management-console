@@ -43,8 +43,6 @@ public class SyncToolConfig implements Serializable {
         config.append(getPort()).append("\n");
         config.append("DuraStore Username: ");
         config.append(getUsername()).append("\n");
-        config.append("DuraStore Password: ");
-        config.append(getPassword()).append("\n");
         config.append("DuraCloud Space ID: ");
         config.append(getSpaceId()).append("\n");
         config.append("SyncTool Backup Directory: ");
