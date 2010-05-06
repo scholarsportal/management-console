@@ -31,7 +31,6 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
     private String baseURL = null;
 
     private RestHttpHelper restHelper;
-    private boolean isLoggedIn = false;
 
     /**
      * <p>Constructor for ContentStoreManagerImpl.</p>
@@ -121,18 +120,12 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
 
     public void login(Credential appCred) {
         log.debug("login: " + appCred.getUsername());
-        if (!isLoggedIn) {
-            setRestHelper(new RestHttpHelper(appCred));
-            isLoggedIn = true;
-        }
+        setRestHelper(new RestHttpHelper(appCred));
     }
 
     public void logout() {
         log.debug("logout");
-        if (isLoggedIn) {
-            setRestHelper(new RestHttpHelper());
-            isLoggedIn = false;
-        }
+        setRestHelper(new RestHttpHelper());
     }
 
     private StorageAccountManager getStorageAccounts() throws ContentStoreException {

@@ -360,15 +360,7 @@ public class ServiceManager {
             String error = "Unable to deploy service bundle." + contentId;
             checkResponse(response, error);
 
-            // Wait to allow deployment to complete
-            int maxLoops = 5;
-            for(int i=0; i < maxLoops; i++) {
-                if(servicesAdmin.isServiceDeployed(contentId)) {
-                    break;
-                } else {
-                    Thread.sleep(2000);
-                }
-            }
+            waitUntilDeployed(contentId, servicesAdmin);
 
             // Configure the service
             response =
@@ -376,7 +368,7 @@ public class ServiceManager {
             error = "Unable to configure service bundle." + contentId;
             checkResponse(response, error);
 
-            sleep(1000); // give configuration time to take effect
+            waitUntilConfigured(contentId, serviceConfig, servicesAdmin);
 
             // Start the service
             response = servicesAdmin.startServiceBundle(contentId);
@@ -394,6 +386,50 @@ public class ServiceManager {
                                     computeInstance.getHostName(),
                                     userConfig,
                                     systemConfig);
+    }
+
+    private void waitUntilDeployed(String contentId, ServicesAdminClient servicesAdmin)
+           throws Exception {
+           int maxLoops = 5;
+           for(int i=0; i < maxLoops; i++) {
+               if(servicesAdmin.isServiceDeployed(contentId)) {
+                   return;
+
+               } else {
+                   sleep(2000);
+               }
+           }
+       }
+
+    private void waitUntilConfigured(String configId,
+                                     Map<String, String> expected,
+                                     ServicesAdminClient servicesAdmin)
+        throws Exception {
+        Map<String, String> config = servicesAdmin.getServiceConfig(configId);
+        int maxLoops = 5;
+        for (int i = 0; i < maxLoops; i++) {
+            if (matches(expected, config)) {
+                return;
+
+            } else {
+                sleep(2000);
+            }
+        }
+    }
+
+    private boolean matches(Map<String, String> expected,
+                            Map<String, String> config) {
+        if (null == config) {
+            return false;
+        }
+
+        for (String key : expected.keySet()) {
+            String val = expected.get(key);
+            if (val != null && !val.equalsIgnoreCase(config.get(key))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void checkUserConfigVersion(ServiceInfo service,
