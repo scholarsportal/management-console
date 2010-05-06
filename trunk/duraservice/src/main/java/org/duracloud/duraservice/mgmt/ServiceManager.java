@@ -418,7 +418,7 @@ public class ServiceManager {
         int waitMillis = 2000;
         int maxLoops = 5;
         for (int i = 0; i < maxLoops; i++) {
-            sleep(2000);
+            sleep(waitMillis);
             config = servicesAdmin.getServiceConfig(configId);
             if (matches(expected, config)) {
                 return;
