@@ -31,6 +31,11 @@ public class InitController extends BaseCommandController {
 
     private final Logger log = Logger.getLogger(getClass());
 
+    public InitController() {
+    	setCommandClass(AdminInit.class);
+    	setCommandName("adminInit");
+    }
+    
     protected ModelAndView handle(HttpServletRequest request,
                                   HttpServletResponse response,
                                   Object o,
@@ -99,4 +104,5 @@ public class InitController extends BaseCommandController {
 
         response.setStatus(status);
     }
+
 }
