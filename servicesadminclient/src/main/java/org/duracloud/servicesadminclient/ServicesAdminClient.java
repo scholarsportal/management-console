@@ -129,8 +129,9 @@ public class ServicesAdminClient {
             List<ComputeServiceBean> beans = getSerializer().deserializeList(
                 body);
 
+            String id = bundleId.substring(0, bundleId.lastIndexOf("."));
             for (ComputeServiceBean bean : beans) {
-                if (bundleId.equals(bean.getServiceName())) {
+                if (bean.getServiceName().contains(id)) {
                     deployed = true;
                 }
             }
