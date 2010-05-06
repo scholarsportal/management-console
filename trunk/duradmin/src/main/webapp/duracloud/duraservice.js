@@ -101,17 +101,17 @@ duracloud.duraservice = {
 
 		//define details panel 
 		
-		var details = new dijit.layout.BorderContainer({region:"center", gutters:"false"});
-		var topPane = new dijit.layout.ContentPane({region:"left", splitter:"false", style:"min-width:30%; max-width:30%"});
+		var details = new dijit.layout.BorderContainer({region:"center", gutters:"false", splitter: false});
+		var topPane = new dijit.layout.ContentPane({region:"left", splitter:false, style:"min-width:30%; max-width:30%"});
 		details.addChild(topPane);
 		var np = topPane.containerNode;
 		np.appendChild(dojo.create("h4",{innerHTML : service.displayName}));
 		np.appendChild(dojo.create("h5",{innerHTML :" v." + service.serviceVersion}));
 		np.appendChild(dojo.create("p",{innerHTML : service.description, style:"width:100%"}));
-		var centerPane = new dijit.layout.BorderContainer({region:"center", gutters:"false"});
+		var centerPane = new dijit.layout.BorderContainer({region:"center", gutters:"false", splitter:false});
 		details.addChild(centerPane);
 		if(service.maxDeploymentsAllowed < service.deployments.length){
-			var actionPane = new dijit.layout.BorderContainer({region:"top", gutters:"false"});
+			var actionPane = new dijit.layout.BorderContainer({region:"top", gutters:"false", splitter:false});
 			centerPane.addChild(actionPane);
 			dojo.create("a", {"innerHTML": "Deploy New Instance", "href": "/duradmin/services/deploy?serviceId=" + service.id}, actionPane.containerNode);
 		}	
