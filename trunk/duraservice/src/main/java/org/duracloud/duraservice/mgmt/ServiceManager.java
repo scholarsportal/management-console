@@ -403,7 +403,7 @@ public class ServiceManager {
         }
 
         StringBuilder sb = new StringBuilder("Service not deployed in ");
-        sb.append(maxLoops * waitMillis);
+        sb.append(maxLoops * waitMillis / 1000);
         sb.append(" secs: ");
         sb.append(contentId);
         log.error(sb.toString());
@@ -426,7 +426,7 @@ public class ServiceManager {
         }
 
         StringBuilder sb = new StringBuilder("Service not configured in ");
-        sb.append(maxLoops * waitMillis);
+        sb.append(maxLoops * waitMillis / 1000);
         sb.append(" secs: ");
         sb.append(configId);
         log.error(sb.toString());
