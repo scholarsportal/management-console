@@ -44,6 +44,10 @@ public class ServiceManagerTestMockSupport {
     private final String configFileName = serviceSpaceId + ".xml";
     private final String serviceId1 = "service1.zip";
     private final String serviceId2 = "service2.zip";
+    private final String config1Name = "config1";
+    private final String config2Name = "config2";
+    private final String config3Name = "config3";
+    private final String config1Value = "Config Value";
 
     public Content getServiceInfoFile() throws Exception {
         List<ServiceInfo> services = new ArrayList<ServiceInfo>();
@@ -80,9 +84,9 @@ public class ServiceManagerTestMockSupport {
         service1.setMaxDeploymentsAllowed(-1);
 
         List<UserConfig> service1UserConfig = new ArrayList<UserConfig>();
-        TextUserConfig config1 = new TextUserConfig("config1",
+        TextUserConfig config1 = new TextUserConfig(config1Name,
                                                     "Config 1",
-                                                    "Config Value");
+                                                    config1Value);
 
         List<Option> config2ops = new ArrayList<Option>();
         Option config2op1 = new Option("Config 2 Option 1",
@@ -93,7 +97,7 @@ public class ServiceManagerTestMockSupport {
                                        false);
         config2ops.add(config2op1);
         config2ops.add(config2op2);
-        SingleSelectUserConfig config2 = new SingleSelectUserConfig("config2",
+        SingleSelectUserConfig config2 = new SingleSelectUserConfig(config2Name,
                                                                     "Config 2",
                                                                     config2ops);
 
@@ -110,7 +114,7 @@ public class ServiceManagerTestMockSupport {
         config3ops.add(config3op1);
         config3ops.add(config3op2);
         config3ops.add(config3op3);
-        MultiSelectUserConfig config3 = new MultiSelectUserConfig("config3",
+        MultiSelectUserConfig config3 = new MultiSelectUserConfig(config3Name,
                                                                   "Config 3",
                                                                   config3ops);
 
@@ -251,6 +255,9 @@ public class ServiceManagerTestMockSupport {
         EasyMock.expect(adminClient.startServiceBundle(EasyMock.isA(String.class)))
             .andReturn(response)
             .anyTimes();
+
+        EasyMock.expect(adminClient.getServiceConfig(EasyMock.isA(String.class)))
+            .andStubAnswer(new ServiceConfigAnswer());
 
         Map<String, String> props = new HashMap<String, String>();
         EasyMock.expect(adminClient.getServiceProps(EasyMock.isA(String.class)))
@@ -412,6 +419,21 @@ public class ServiceManagerTestMockSupport {
 
             }
             return arg;
+        }
+    }
+
+    private class ServiceConfigAnswer implements IAnswer<Map<String, String>> {
+        public Map<String, String> answer() throws Throwable {
+            Object[] args = EasyMock.getCurrentArguments();
+            Assert.assertNotNull(args);
+            Assert.assertEquals(1, args.length);
+
+            Map<String, String> config = new HashMap<String, String>();
+            config.put(config1Name, config1Value);
+            config.put(config2Name, USER_CONTENT_STORE);
+            config.put(config3Name, USER_SPACE_1 + "," + USER_SPACE_2);
+
+            return config;
         }
     }
 

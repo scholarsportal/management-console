@@ -414,12 +414,14 @@ public class ServiceManager {
                                      Map<String, String> expected,
                                      ServicesAdminClient servicesAdmin)
         throws Exception {
+        log.debug("config expected: " + expected);
         Map<String, String> config;
         int waitMillis = 2000;
         int maxLoops = 5;
         for (int i = 0; i < maxLoops; i++) {
             sleep(waitMillis);
             config = servicesAdmin.getServiceConfig(configId);
+            log.debug("config found: " + config);
             if (matches(expected, config)) {
                 return;
             }
