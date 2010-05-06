@@ -388,33 +388,49 @@ public class ServiceManager {
                                     systemConfig);
     }
 
-    private void waitUntilDeployed(String contentId, ServicesAdminClient servicesAdmin)
-           throws Exception {
-           int maxLoops = 5;
-           for(int i=0; i < maxLoops; i++) {
-               if(servicesAdmin.isServiceDeployed(contentId)) {
-                   return;
+    private void waitUntilDeployed(String contentId,
+                                   ServicesAdminClient servicesAdmin)
+        throws Exception {
+        int waitMillis = 2000;
+        int maxLoops = 5;
+        for (int i = 0; i < maxLoops; i++) {
+            if (servicesAdmin.isServiceDeployed(contentId)) {
+                return;
 
-               } else {
-                   sleep(2000);
-               }
-           }
-       }
+            } else {
+                sleep(waitMillis);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder("Service not deployed in ");
+        sb.append(maxLoops * waitMillis);
+        sb.append(" secs: ");
+        sb.append(contentId);
+        log.error(sb.toString());
+        throw new ServiceException(sb.toString());
+    }
 
     private void waitUntilConfigured(String configId,
                                      Map<String, String> expected,
                                      ServicesAdminClient servicesAdmin)
         throws Exception {
-        Map<String, String> config = servicesAdmin.getServiceConfig(configId);
+        Map<String, String> config;
+        int waitMillis = 2000;
         int maxLoops = 5;
         for (int i = 0; i < maxLoops; i++) {
+            sleep(2000);
+            config = servicesAdmin.getServiceConfig(configId);
             if (matches(expected, config)) {
                 return;
-
-            } else {
-                sleep(2000);
             }
         }
+
+        StringBuilder sb = new StringBuilder("Service not configured in ");
+        sb.append(maxLoops * waitMillis);
+        sb.append(" secs: ");
+        sb.append(configId);
+        log.error(sb.toString());
+        throw new ServiceException(sb.toString());
     }
 
     private boolean matches(Map<String, String> expected,
