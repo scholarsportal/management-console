@@ -33,8 +33,8 @@
 					<div dojoType="dijit.layout.BorderContainer" id="deployed" title="Deployed" gutters="true" >
 						<div dojoType="dijit.layout.ContentPane" id="deployedList" style="width:250px" region="left" splitter="false">
 						</div>
-						<div dojoType="dijit.layout.ContentPane" region="center" gutter="false" id="details">
-						Click on a service to the right for details.					
+						<div dojoType="dijit.layout.ContentPane" region="center" id="details" splitter="false">
+						Click on a service to the left for details.					
 						</div>
 
 					</div>
