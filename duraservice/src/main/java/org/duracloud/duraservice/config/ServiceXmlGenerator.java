@@ -357,7 +357,7 @@ public class ServiceXmlGenerator {
         SystemConfig password = new SystemConfig("password",
                                                  ServiceConfigUtil.STORE_PWORD_VAR,
                                                  "no-password");
-        SystemConfig threads = new SystemConfig("threads", "5", "5");
+        SystemConfig threads = new SystemConfig("threads", "1", "1");
 
         systemConfig.add(host);
         systemConfig.add(port);
