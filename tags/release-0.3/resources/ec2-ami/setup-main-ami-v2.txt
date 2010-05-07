@@ -1,0 +1,145 @@
+Base-AMI: ami-ec48af85
+
+
+####################
+## building image ##
+####################
+
+####
+:: Initial Utility Setup ::
+####
+:start base instance from elasticfox, etc...
+:ssh in
+:#apt-get update
+
+----
+:java
+----
+:#apt-get install sun-java5-jdk
+
+----
+:init.d
+----
+:#apt-get install sysv-rc-conf
+
+----
+:maven
+----
+:#apt-get install maven2
+:add <server>...tomcat-server</server> to /usr/share/maven2/conf/settings.xml
+:cp 'resources/settings.xml' as /usr/share/maven2/conf/settings.xml
+:set values in settings.xml appropriately
+
+----
+:svn
+----
+:#apt-get install subversion
+
+----
+:tomcat
+----
+:#wget http://apache.hoxt.com/tomcat/tomcat-6/v6.0.18/bin/apache-tomcat-6.0.18.tar.gz
+:untar to /opt/tomcat/apache-tomcat-6.0.18
+:after trying to build (further down), 
+:>cp webapps/mainwebapp/WEB-INF/lib/derby-10.4.2.0.jar to $CATALINA_HOME/lib/
+
+:add 'tomcat' user to /opt/tomcat/conf/tomcat-users.xml
+<tomcat-users>
+  <role rolename="manager"/>
+  <role rolename="admin"/>
+  <user username="tomcat" password="password" roles="admin,manager"/>
+</tomcat-users>
+
+----
+:user
+----
+:#useradd -d /home/tomcat -m tomcat
+:#passwd tomcat [tomcat123]
+:chgrp of $CATALINA_HOME/* to 'tomcat'
+:chown of $CATALINA_HOME/* to 'tomcat'
+:add $CATALINA_HOME to /home/tomcat/.bashrc
+
+----
+:ec2-api-tools
+----
+:#wget http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip
+:unzip as /opt/ec2-api-tools
+:#chown -R tomcat /opt/ec2-api-tools
+:#chgrp -R tomcat /opt/ec2/api-tools
+:#chmod +x /opt/ec2-api-tools/bin/ec2-cmd
+:#chmod +x /opt/ec2-api-tools/bin/ec2-attach-volume
+:#chmod +x /opt/ec2-api-tools/bin/ec2-detach-volume
+
+----
+:derby (used for analyzing ebs database)
+----
+:#wget http://www.ibiblio.org/pub/mirrors/apache/db/derby/db-derby-10.4.2.0/db-derby-10.4.2.0-bin.tar.gz
+:untar to /opt/derby/db-derby-10.4.2.0-bin
+
+
+####
+:: init.d setup ::
+####
+:paste init.d-tomcat as /etc/init.d/tomcat
+:paste init.d-ebs as /etc/init.d/ebs
+:paste init.d-mainwebapp as /etc/init.d/duracloud
+:change permissions on each of three above with chmod +x
+
+----
+:set run-levels
+----
+:#sysv-rc-conf -p
+:set as follows:
+service    1  2    3    4    5    0    6   S
+duracloud [][S80][S80][S80][S80][   ][   ][]
+ebs       [][S71][S71][S71][S71][K90][D90][]
+tomcat    [][S75][S75][S75][S75][   ][   ][]
+
+
+####
+:: dir creation ::
+####
+:#mkdir /mnt/db
+:cp pk-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem to /home/root/
+:cp cert-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem to /home/root/
+
+:#mkdir /opt/duracloud
+:cp ec2-pom.xml as /opt/duracloud/pom.xml (note no modules defined in pom)
+
+
+####
+:: verification ::
+####
+:#svn co https://www.fedora-commons.org/svn/duracloud/trunk junk
+:select (p)ermanent
+:run through mvn commands in /etc/init.d/duracloud
+:need to mount database (see /etc/init.d/ebs)
+
+:locally, connect to [ec2-instance-url]:8080/mainwebapp
+:>login in as preloaded user, ensure connectivity to mounted ebs db.
+
+----
+:clean-up
+----
+:remove all artifact files before creating bundle.
+:#cd $CATALINA_HOME/webapps
+:#rm -rf mainwebapp* durastore* duradavwebapp*
+
+:#rm -rf /home/tomcat/logs
+
+:#cd /opt/duracloud
+:#mvn clean
+
+
+####
+:: bundle ::
+####
+:package-image
+:#cd /home/root
+:#ec2-bundle-vol -k pk-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem -c cert-Q57C5W4UM66CCYJXZUYTJCOBPFS4A3JJ.pem -u 184789323014
+:#cd /tmp
+:#cp image.manifest.xml ubuntu8.10-32bit-main-bootstrap-ebs-v0.1.manifest.xml
+:#ec2-upload-bundle -b duracloud.images -m ubuntu8.10-32bit-main-bootstrap-ebs-v0.1.manifest.xml -a 0YMHVZZZ5GP0P7VFJV82 -s gAyPmUW6AYIPWRuOMHSOLjmxEbLdEGvXQGjpIP3g
+:<from local machine> #ec2-register duracloud.images/ubuntu8.10-32bit-main-bootstrap-ebs-v0.1.manifest.xml
+
+
