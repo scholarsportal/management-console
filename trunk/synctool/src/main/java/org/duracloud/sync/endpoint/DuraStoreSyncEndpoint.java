@@ -5,6 +5,7 @@ import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.common.util.MimetypeUtil;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.NotFoundException;
 import org.slf4j.Logger;
@@ -15,9 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.FileNameMap;
 import java.net.URI;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,6 +35,7 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
     private ContentStore contentStore;
     private String spaceId;
     private boolean syncDeletes;
+    private MimetypeUtil mimeUtil;
 
     public DuraStoreSyncEndpoint(String host,
                                  int port,
@@ -54,6 +54,8 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
             throw new RuntimeException("Could not create connection to " +
                 "DuraStore due to " + e.getMessage(), e);
         }
+
+        mimeUtil = new MimetypeUtil();
 
         this.spaceId = spaceId;
         this.syncDeletes = syncDeletes;
@@ -168,7 +170,7 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                 e.getMessage(), e);
         }
 
-        String mimetype = getMimeType(syncFile);
+        String mimetype = mimeUtil.getMimeType(syncFile);
 
         try {
             contentStore.addContent(spaceId,
@@ -186,17 +188,6 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                     syncFile.getAbsolutePath() + ": " + e.getMessage(), e);
             }
         }
-    }
-
-    /*
-     * Determines the MIME type of the file. This is currently not a very
-     * robust implementation. Using this method the mime type is determined
-     * based on the file extension, and the mapping comes from the file
-     * content-types.properties under the lib/ directory of the running JRE
-     */
-    private String getMimeType(File file) {
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        return fileNameMap.getContentTypeFor(file.getName());
     }
 
     /*
