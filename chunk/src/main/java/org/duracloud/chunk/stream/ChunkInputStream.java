@@ -1,6 +1,7 @@
 package org.duracloud.chunk.stream;
 
 import org.apache.log4j.Logger;
+import org.duracloud.common.util.MimetypeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +15,12 @@ import java.io.InputStream;
  */
 public class ChunkInputStream extends InputStream {
     private final Logger log = Logger.getLogger(getClass());
+    private static final MimetypeUtil mimeUtil = new MimetypeUtil();
 
     private String chunkId;
     private CountingDigestInputStream stream;
     private long chunkSize;
-    private String mimetype = "application/octet-stream";
+    private String mimetype;
     private boolean preserveMD5;
 
     public ChunkInputStream(String chunkId,
@@ -29,6 +31,8 @@ public class ChunkInputStream extends InputStream {
         this.chunkId = chunkId;
         this.chunkSize = chunkSize;
         this.preserveMD5 = preserveMD5;
+
+        mimetype = mimeUtil.getMimeType(chunkId);
     }
 
     /**
