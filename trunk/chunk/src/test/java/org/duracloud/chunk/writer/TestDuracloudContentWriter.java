@@ -35,6 +35,7 @@ import java.util.Random;
 public class TestDuracloudContentWriter {
 
     private DuracloudContentWriter writer;
+    private DuracloudContentWriter writerThrow;
 
     private static String host = "localhost";
     private static String port = null;
@@ -66,6 +67,7 @@ public class TestDuracloudContentWriter {
 
         store = storeManager.getPrimaryContentStore();
         writer = new DuracloudContentWriter(store);
+        writerThrow = new DuracloudContentWriter(store, true);
     }
 
     private static String getPort() throws Exception {
@@ -104,7 +106,6 @@ public class TestDuracloudContentWriter {
         String contentId = "test-contentId";
         String contentMimetype = "text/plain";
 
-
         long maxChunkSize = 1024;
         int numChunks = (int) (contentLen / maxChunkSize + 1);
         ChunkableContent chunkable = new ChunkableContent(contentId,
@@ -120,6 +121,31 @@ public class TestDuracloudContentWriter {
         verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
         verifyManifestAdded(contents, spaceId, contentId);
         verifyResults(writer.getResults(), contents, spaceId);
+    }
+
+    @Test
+    public void testWriteSkipResults() throws Exception {
+        long contentLen = 4000;
+        InputStream contentStream = createContentStream(contentLen);
+
+        String contentId = "test-contentId";
+        String contentMimetype = "text/plain";
+
+        long maxChunkSize = 1024;
+        int numChunks = (int) (contentLen / maxChunkSize + 1);
+        ChunkableContent chunkable = new ChunkableContent(contentId,
+                                                          contentMimetype,
+                                                          contentStream,
+                                                          contentLen,
+                                                          maxChunkSize);
+
+        String spaceId = getSpaceId();
+        writerThrow.write(spaceId, chunkable);
+
+        List<String> contents = getSpaceContents(spaceId, contentId);
+        verifyContentAdded(contents, spaceId, contentId, contentLen, numChunks);
+        verifyManifestAdded(contents, spaceId, contentId);
+        verifyNoResults(writerThrow.getResults());
     }
 
     private void verifyContentAdded(List<String> contents,
@@ -218,6 +244,11 @@ public class TestDuracloudContentWriter {
             Assert.assertNotNull(resultContentId, resultMD5);
         }
 
+    }
+
+    private void verifyNoResults(List<AddContentResult> results) {
+        Assert.assertNotNull(results);
+        Assert.assertEquals(0, results.size());
     }
 
     private AddContentResult findResult(String path,
