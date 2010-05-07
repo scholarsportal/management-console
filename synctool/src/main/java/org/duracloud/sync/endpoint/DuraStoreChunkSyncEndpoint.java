@@ -32,7 +32,7 @@ public class DuraStoreChunkSyncEndpoint extends DuraStoreSyncEndpoint {
         this.maxFileSize = maxFileSize;
 
         DuracloudContentWriter contentWriter =
-            new DuracloudContentWriter(getContentStore());
+            new DuracloudContentWriter(getContentStore(), true);
         FileChunkerOptions chunkerOptions =
             new FileChunkerOptions(maxFileSize);
         chunker = new FileChunker(contentWriter, chunkerOptions);

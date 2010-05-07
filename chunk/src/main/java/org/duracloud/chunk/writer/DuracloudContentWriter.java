@@ -9,6 +9,7 @@ import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,8 +33,17 @@ public class DuracloudContentWriter implements ContentWriter {
     private Set<String> existingSpaces = new HashSet<String>();
     private List<AddContentResult> results = new ArrayList<AddContentResult>();
 
+    // if true, skip writing results and throw exception when errors occur
+    private boolean throwOnError = false;
+
     public DuracloudContentWriter(ContentStore contentStore) {
         this.contentStore = contentStore;
+    }
+
+    public DuracloudContentWriter(ContentStore contentStore,
+                                  boolean throwOnError) {
+        this.contentStore = contentStore;
+        this.throwOnError = throwOnError;
     }
 
     public List<AddContentResult> getResults() {
@@ -139,15 +149,21 @@ public class DuracloudContentWriter implements ContentWriter {
                              contentMimetype,
                              contentChecksum);
         } catch (ContentNotAddedException e) {
-            result.setState(AddContentResult.State.ERROR);
+            if(throwOnError) {
+                String err = "Content not added due to: " + e.getMessage();
+                throw new DuraCloudRuntimeException(err, e);
+            } else {
+                result.setState(AddContentResult.State.ERROR);
+            }
         }
 
-        if (md5 != null) {
-            result.setMd5(md5);
-            result.setState(AddContentResult.State.SUCCESS);
+        if(!throwOnError) {
+            if (md5 != null) {
+                result.setMd5(md5);
+                result.setState(AddContentResult.State.SUCCESS);
+            }
+            results.add(result);
         }
-
-        results.add(result);
     }
 
     /**

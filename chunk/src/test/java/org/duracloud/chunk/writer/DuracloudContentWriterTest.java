@@ -4,6 +4,7 @@ import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.client.ContentStore;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.error.ContentStoreException;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
@@ -16,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,15 +27,23 @@ import java.util.Map;
 public class DuracloudContentWriterTest {
 
     private DuracloudContentWriter writer;
-    ContentStore contentStore;
+    private DuracloudContentWriter writerError;
+    private DuracloudContentWriter writerErrorThrow;
+    private ContentStore contentStore;
+    private ContentStore contentStoreThrow;
 
     @Before
     public void setUp() throws ContentStoreException {
-        writer = new DuracloudContentWriter(createMockContentStore());
+        contentStore = createMockContentStore();
+        writer = new DuracloudContentWriter(contentStore);
+
+        contentStoreThrow = createThrowingMockContentStore();
+        writerError = new DuracloudContentWriter(contentStoreThrow);
+        writerErrorThrow = new DuracloudContentWriter(contentStoreThrow, true);
     }
 
     private ContentStore createMockContentStore() throws ContentStoreException {
-        contentStore = EasyMock.createMock(ContentStore.class);
+        ContentStore contentStore = EasyMock.createMock(ContentStore.class);
         EasyMock.expect(contentStore.addContent(EasyMock.isA(String.class),
                                                 EasyMock.isA(String.class),
                                                 isChunkInputStream(),
@@ -54,10 +64,34 @@ public class DuracloudContentWriterTest {
         return contentStore;
     }
 
+    private ContentStore createThrowingMockContentStore()
+        throws ContentStoreException {
+        ContentStore contentStoreThrow = EasyMock.createMock(ContentStore.class);
+        EasyMock.expect(contentStoreThrow.addContent(EasyMock.isA(String.class),
+                                                EasyMock.isA(String.class),
+                                                isChunkInputStream(),
+                                                EasyMock.anyLong(),
+                                                EasyMock.isA(String.class),
+                                                (String) EasyMock.isNull(),
+                                                (Map) EasyMock.anyObject()))
+            .andThrow(new ContentStoreException("Expected addContent Error "))
+            .anyTimes();
+
+        contentStoreThrow.createSpace(EasyMock.isA(String.class),
+                                 (Map) EasyMock.anyObject());
+        EasyMock.expectLastCall().anyTimes();
+
+        EasyMock.expect(contentStoreThrow.getSpaceAccess(EasyMock.isA(String.class)))
+            .andReturn(ContentStore.AccessType.OPEN)
+            .anyTimes();
+        EasyMock.replay(contentStoreThrow);
+        return contentStoreThrow;
+    }
+
     @After
     public void tearDown() {
-        EasyMock.verify(contentStore);
         contentStore = null;
+        contentStoreThrow = null;
         writer = null;
     }
 
@@ -76,6 +110,44 @@ public class DuracloudContentWriterTest {
                                                           maxChunkSize);
         writer.write(spaceId, chunkable);
 
+        EasyMock.verify(contentStore);
+    }
+
+    @Test
+    public void testErrorOnWrite() throws NotFoundException {
+        long contentSize = 4000;
+        InputStream contentStream = createContentStream(contentSize);
+
+        String spaceId = "test-spaceId";
+        String contentId = "test-contentId";
+
+        long maxChunkSize = 1024;
+        ChunkableContent chunkable = new ChunkableContent(contentId,
+                                                          contentStream,
+                                                          contentSize,
+                                                          maxChunkSize);
+        // Test add with error, expecting error to be listed in results
+        writerError.write(spaceId, chunkable);
+        List<AddContentResult> results = writerError.getResults();
+        Assert.assertEquals(5, results.size());
+        for(int i=0; i<5; i++) {
+            AddContentResult result = results.get(i);
+            Assert.assertNotNull(result);
+            Assert.assertTrue(result.getContentId().startsWith(contentId));
+            Assert.assertEquals(AddContentResult.State.ERROR, result.getState());
+        }
+
+        // Test add with error, expecting error to result in a thrown exception
+        try {
+            writerErrorThrow.write(spaceId, chunkable);
+            Assert.fail("Exception expected");
+        } catch(DuraCloudRuntimeException expected) {
+            Assert.assertNotNull(expected);
+        }
+        results = writerErrorThrow.getResults();
+        Assert.assertEquals(0, results.size());
+
+        EasyMock.verify(contentStoreThrow);
     }
 
     private InputStream createContentStream(long size) {
