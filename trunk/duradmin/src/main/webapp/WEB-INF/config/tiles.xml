@@ -41,7 +41,6 @@
 		<put-attribute name="mainTab" value="spaces"/>
 	</definition>
 	
-	
 	<definition name="spaces" extends="base-space" template="/WEB-INF/jsp/spaces.jsp"/>
 
 	<definition name="defineSpace" extends="base-space" template="/WEB-INF/jsp/spaces/addSpace.jsp"/>
@@ -72,4 +71,7 @@
 	<definition name="exception" extends="error">
 	</definition>
 
+	<!-- version 2 -->
+ 	<definition name="spacesManager" template="/WEB-INF/jsp/spaces/spacesManager.jsp"/>
+ 
 </tiles-definitions>
