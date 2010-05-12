@@ -44,6 +44,7 @@
         <prop key="/download/contentItem">contentItemDownloadController</prop>
         <prop key="/security">initSecurityUsersController</prop>
         <prop key="/users.htm">manageSecurityUsersController</prop>
+        <prop key="/spaces">spacesController2</prop>
   
       </props>
     </property>
@@ -58,6 +59,9 @@
 
   <bean id="spacesController" class="org.duracloud.duradmin.control.SpacesController" parent="baseFormController">
     <property name="successView" value="spaces" />
+  </bean>
+
+  <bean id="spacesController2" class="org.duracloud.duradmin.spaces.controller.SpacesController">
   </bean>
 
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController" parent="baseFormController">
