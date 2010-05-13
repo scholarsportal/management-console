@@ -18,6 +18,11 @@ public class SpaceAccessVoterImpl extends SpaceAccessVoter {
     protected ContentStore getContentStore(String host,
                                            String port,
                                            String storeId) {
+        // FIXME: temporary handling of https requests
+        if (port != null && port.equals("443")) {
+            port = "80";
+        }
+
         ContentStoreManager storeMgr = new ContentStoreManagerImpl(host, port);
         storeMgr.login(new SystemUserCredential());
         ContentStore store = null;
