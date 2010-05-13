@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.js"></script>
 	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" type="text/css" media="all" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
 </head>
 <body>
@@ -73,10 +74,11 @@
 			<div id="spaces-list-view">
 				<div class="north">
 					<h3 class="header">
-						Spaces list header
+						Spaces
+						<input style="float:right" class="add-space-button" type="button" value="Add Space"/>
 					</h3>
 					<div class="header">
-						<span style="float:left"><input type="checkbox"/> prev next</span> <span style="float:left"><input type="text"/></span>
+						<span style="float:left"><input type="checkbox"/> prev next</span> <span style="float:right"><input type="text"/></span>
 					</div>
 				</div>
 			
@@ -110,10 +112,11 @@
 			<div id="content-item-list-view">
 				<div class="north">
 					<h3 class="header">
-						Content item list header
+						Content Items
+						<input style="float:right" class="add-content-item-button" type="button" value="Add Content Item"/>
 					</h3>
 					<div class="header" >
-						<span style="float:left"><input type="checkbox"/> prev next</span> <span style="float:left"><input type="text"/></span>
+						<span style="float:left"><input type="checkbox"/> prev next</span> <span style="float:right"><input type="text"/></span>
 					</div>
 				</div>
 			
@@ -150,7 +153,7 @@
 			<div class="header button-bar">
 				<ul class="horizontal-list">
 					<li>
-						<input type="button" value="Add Content"/>
+						<input class="add-content-item-button" type="button" value="Add Content"/>
 					</li>
 					<li>
 						<input type="button" value="Delete"/>
@@ -160,7 +163,7 @@
 
 		</div>
 		<div class="center">
-			<div class="expandable-panel">
+			<div class="dc-expandable-panel">
 					<h4>Details</h4>
 					<table>
 						<tr>
@@ -181,23 +184,63 @@
 						</tr>
 					</table>
 			</div>
-			<div id="metadata-panel" class="expandable-panel">
-					<h4>Metadata
-						 <input  class="dc-toggler" type="button" value="open"/>
-					 </h4>
-					<table class="content">
+			<div id="metadata-panel" class="dc-expandable-panel">
+					<h4>Metadata</h4>
+					<table  width="100%">
 						<tr class="dc-mouse-panel-activator">
 							<td class="name">
 								Lorem
 							</td>
 							<td class="value">
 								Ipsum dolor								
-							</td>
-							<td>
 								<span class="dc-mouse-panel">
 									<input type="button"  value="x"/>
 								</span>
-							
+							</td>
+						</tr>
+						<tr>
+							<td class="name">
+								<input type="text" value="" size="15"/>
+							</td>
+							<td class="value">
+								<input type="text" value="" size="20"/>
+								<input type="button" value="+"/>
+							</td>
+						</tr>
+					</table>
+			</div>
+			<div id="tag-panel" class="dc-expandable-panel">
+					<h4>Tags</h4>
+					<table  width="100%">
+						<tr>
+							<td>
+								<ul class="horizontal-list">
+									<li class="dc-mouse-panel-activator">
+										anicca
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									<li class="dc-mouse-panel-activator">
+										dukkha
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									<li class="dc-mouse-panel-activator">
+										anatta
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="text" value="" size="35"/>
+								<input type="button" value="+"/>
 							</td>
 						</tr>
 					</table>
@@ -213,9 +256,116 @@
 		<div class="north">
 			<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Content Detail</h3>
 			<h5 class="header object-name">Content Name</h5>
+			<div class="header">
+				<img src="xxx" height="50" width="50"/><span>Mime Type:</span><span>image/jpg</span>
+			</div>
+			<div class="header button-bar">
+				<ul class="horizontal-list">
+					<li>
+						<input type="button" value="Edit"/>
+					</li>
+					<li>
+						<input type="button" value="Download"/>
+					</li>
+					<li>
+						<input type="button" value="Delete"/>
+					</li>
+				</ul>
+			</div>
+
 		</div>
 		<div class="center">
-			<p> Scrollable Content Here</p>
+			<div class="dc-expandable-panel">
+					<h4>Preview</h4>
+					<div style="text-align:center">
+						<a href="xxx">
+							<img src="xxx" height="200" width="200"/>					
+						</a>
+					</div>
+
+			</div>
+			<div class="dc-expandable-panel">
+					<h4>Details</h4>
+					<table>
+						<tr>
+							<td>
+								Items
+							</td>
+							<td>
+								<span id="space-item-count">3</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Created
+							</td>
+							<td>
+								<span id="space-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
+							</td>
+						</tr>
+					</table>
+			</div>
+			<div id="metadata-panel" class="dc-expandable-panel">
+					<h4>Metadata</h4>
+					<table  width="100%">
+						<tr class="dc-mouse-panel-activator">
+							<td class="name">
+								Lorem
+							</td>
+							<td class="value">
+								Ipsum dolor								
+								<span class="dc-mouse-panel">
+									<input type="button"  value="x"/>
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="name">
+								<input type="text" value="" size="15"/>
+							</td>
+							<td class="value">
+								<input type="text" value="" size="20"/>
+								<input type="button" value="+"/>
+							</td>
+						</tr>
+					</table>
+			</div>
+			<div id="tag-panel" class="dc-expandable-panel">
+					<h4>Tags</h4>
+					<table  width="100%">
+						<tr>
+							<td>
+								<ul class="horizontal-list">
+									<li class="dc-mouse-panel-activator">
+										anicca
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									<li class="dc-mouse-panel-activator">
+										dukkha
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									<li class="dc-mouse-panel-activator">
+										anatta
+										<span class="dc-mouse-panel">
+											<input type="button"  value="x"/>
+										</span>
+									</li>
+									
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="text" value="" size="35"/>
+								<input type="button" value="+"/>
+							</td>
+						</tr>
+					</table>
+			</div>
 
 		</div>
 	</div>
@@ -223,5 +373,27 @@
 	<div class="ui-layout-south">
 		Footer
 	</div>	
+
+	<div id="add-space-dialog" class="dc-dialog" title="Add Space">
+		<p class="validateTips">All form fields are required.</p>
+		<form>
+		<fieldset>
+			<label for="name">Name</label>
+			<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+		</fieldset>
+		</form>
+
+	</div>
+
+	<div id="add-content-item-dialog" class="dc-dialog" title="Add Content Item">
+		<form>
+		<fieldset>
+			<label for="name">Item Name</label>
+			<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+		</fieldset>
+		</form>
+
+	</div>
+	
 </body>
 </html>
