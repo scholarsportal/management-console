@@ -39,7 +39,9 @@ body {
 }
 
 .dc-item {
-	padding:0.5em;
+	padding-top:0.25em;
+	padding-bottom:0.25em;
+	
 	border-collapse:  collapse;
 }
 
@@ -49,7 +51,10 @@ body {
 }
 
 
-
+.dc-dialog {
+	border: 1px solid #DDD;
+	background-color: #EEE;	
+}
 
 /*
  * ADD BORDERS & COLORS TO LAYOUT ELEMENTS
@@ -80,4 +85,12 @@ body {
 #dc-partner-logo {
 	float:right;
 	width:100px;
+}
+
+.dc-mouse-panel {
+	visibility: hidden;
+}
+
+.dc-toggler {
+	float:right;
 }

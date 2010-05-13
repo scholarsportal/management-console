@@ -74,14 +74,14 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 			,   resizable: 				false
 			,   slidable: 				false
 			,   spacing_open:			0			
-			,	togglerLength_open:		0			
+			,	togglerLength_open:		0	
 		};
 				
 		spacesListPane = $('#spaces-list-view').layout(spacesAndContentLayoutOptions);
 		contentItemListPane = $("#content-item-list-view").layout(spacesAndContentLayoutOptions);
 
 		//detail pane's layout options
-		var detailOptions = {
+		var spaceDetailLayoutOptions = {
 				north__paneSelector:	".north"
 					,   north__size: 			175
 					,	center__paneSelector:	".center"
@@ -91,8 +91,18 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 					,	togglerLength_open:		0
 		};
 
+		var contentItemDetailLayoutOptions = {
+				north__paneSelector:	".north"
+					,   north__size: 			200
+					,	center__paneSelector:	".center"
+					,   resizable: 				false
+					,   slidable: 				false
+					,   spacing_open:			0
+					,	togglerLength_open:		0
+		};
 
-		detailPane = $('#detail-pane').layout(detailOptions);
+		
+		detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
 
 		//style the list items
 		$(".dc-item-list .dc-item").live("click",function(evt){
@@ -126,18 +136,34 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 		////////////////////////////////////////////////////////////////////
 		//end generic dc-item list behavior
 		////////////////////////////////////////////////////////////////////
-
+		
+		
 		$(".dc-toggler").live("click",function(evt){
-			var parent  = $(evt.target).closest(".expandable-panel");
-			$(".content",parent).slideToggle("slow");
+			var parent  = $(evt.target).closest(".dc-expandable-panel");
+			$(parent).children().last().slideToggle("slow");
 		});
+			
+		$(document.body).bind("DOMSubtreeModified",function(){ 
+			$(".dc-expandable-panel").each(function(){
+				
+				if($("input[class=dc-toggler]",this).size() == 0){
+					$(this).children().first().append("<input type='button' value='>' class='dc-toggler'/>");
+				}
+			});	
+		})
 		
-		
-		$(".dc-mouse-panel-activator").live("mouseover",function(evt){
-			$(".dc-mouse-panel",evt.target).css("visibility","visible").fadeIn("fast");
+		$(".dc-mouse-panel-activator td,li.dc-mouse-panel-activator").live("mouseover",function(evt){
+			console.debug(evt);
+			
+			var ancestor = $(evt.target).closest(".dc-mouse-panel-activator");
+			$(".dc-mouse-panel",ancestor)
+						 .css("visibility","visible")
+						 .fadeIn("fast");
 		}).live("mouseout",function(evt){
-			if(!jQuery.contains(evt.target, evt.relatedTarget)){
-				$(".dc-mouse-panel",evt.target).fadeOut("fast");
+			console.debug(evt);
+			var ancestor = $(evt.target).closest(".dc-mouse-panel-activator");
+			if($(ancestor).find(evt.relatedTarget).size() == 0){
+				$(".dc-mouse-panel",ancestor).fadeOut("fast");
 			}
 		});
 
@@ -145,12 +171,12 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 		//this method loads the children of the source
 		//into the target after emptying the contents
 		//with a fade in / fade out effect
-		var swapDetailPane = function(source, target){
+		var swapDetailPane = function(source, target, layoutOptions){
 			var detail = $(source).clone();
 			$(target).fadeOut("fast", function(){
 				$(target).empty().prepend(detail.children());
 				$(target).fadeIn("fast");
-				$(target).layout(detailOptions);
+				$(target).layout(layoutOptions);
 			});
 			return $(source);
 		};		
@@ -169,7 +195,7 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 		$("#spacesList .dc-item").click(
 			function(evt){
 				setObjectName("#spaceDetailPane", "My space");
-				swapDetailPane("#spaceDetailPane","#detail-pane");
+				swapDetailPane("#spaceDetailPane","#detail-pane", spaceDetailLayoutOptions);
 				$("#contentItemList > .dc-item").removeClass("dc-selected-list-item");
 			}
 		);
@@ -177,11 +203,80 @@ var pageHeaderLayout, centerLayout, listBrowserLayout, spacesListPane, contentIt
 		///////////////////////////////////////////
 		///click on a content list item
 		$("#contentItemList .dc-item").click(
-				function(evt){
-					setObjectName("#contentItemDetailPane", "My Content Item");
-					swapDetailPane("#contentItemDetailPane", "#detail-pane");
+			function(evt){
+				setObjectName("#contentItemDetailPane", "My Content Item");
+				swapDetailPane("#contentItemDetailPane", "#detail-pane",contentItemDetailLayoutOptions);
 
+			}
+		);
+		
+		///////////////////////////////////////////
+		///open add space dialog
+		$.fx.speeds._default = 1000;
+		$('#add-space-dialog').dialog({
+			autoOpen: false,
+			show: 'blind',
+			hide: 'blind',
+			height: 300,
+			closeOnEscape:true,
+			modal: false,
+			buttons: {
+				'Add': function() {
+					alert("implement add functionality");
+					$(this).dialog("close");
+				},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			},
+			close: function() {
+
+			}
+		});
+
+		var dcOpenDialog =  function(evt, dialogId) {
+			var offset = $(evt.target).offset();
+			var coords = [offset.left,offset.top];
+			coords[1] += evt.target.height;
+			$(dialogId)
+				.dialog('option', 'position', coords)
+				.dialog('open');
+			return false;
+		};
+
+		$('.add-space-button').click(
+				function(evt){
+					dcOpenDialog(evt,"#add-space-dialog");
 				}
 			);
+		
+
+		$('#add-content-item-dialog').dialog({
+			autoOpen: false,
+			show: 'blind',
+			hide: 'blind',
+			height: 300,
+			closeOnEscape:true,
+			modal: false,
+			buttons: {
+				'Add': function() {
+					alert("implement add functionality");
+					$(this).dialog("close");
+				},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			},
+			close: function() {
+
+			}
+		});
+		
+		$('.add-content-item-button').live("click",
+				function(evt){
+						dcOpenDialog(evt,"#add-content-item-dialog");
+				});
+
+		
 			
 	});
