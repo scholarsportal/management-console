@@ -64,8 +64,6 @@ public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
 
         if (port == null || port.equals("")) {
             baseURL = "http://" + host + "/" + context;
-        } else if (port.equals("443")) {
-            baseURL = "https://" + host + ":" + port + "/" + context;
         } else {
             baseURL = "http://" + host + ":" + port + "/" + context;
         }
