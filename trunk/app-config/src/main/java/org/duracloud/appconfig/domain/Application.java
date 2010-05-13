@@ -80,7 +80,15 @@ public class Application {
     }
 
     private String getBaseUrl() {
-        return "http://" + getHost() + ":" + getPort() + "/" + getContext();
+        return getProtocol() + getHost() + ":" + getPort() + "/" + getContext();
+    }
+
+    private String getProtocol() {
+        String protocol = "http://";
+        if (getPort().equals("443")) {
+            protocol = "https://";
+        }
+        return protocol;
     }
 
     private String getSecurityUrl() {
