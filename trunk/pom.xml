@@ -63,11 +63,10 @@
       <module>s3storageprovider</module>
       <module>rackspacestorageprovider</module>
       <module>emcstorageprovider</module>
-<!--      <module>sunstorageprovider</module>-->
       <module>mainwebapp</module>
       <module>security</module>
       <module>durastore</module> 
-      <module>duradavwebapp</module>
+<!--      <module>duradavwebapp</module>-->
       <module>storeclient</module>
       <module>duradmin</module>
       <module>hellowebapp</module>
