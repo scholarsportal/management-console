@@ -27,11 +27,11 @@ public class ServiceXmlGenerator {
 
     protected List<ServiceInfo> buildServiceList() {
         List<ServiceInfo> servicesList = new ArrayList<ServiceInfo>();
-        servicesList.add(buildHelloService());
+        //servicesList.add(buildHelloService());
         servicesList.add(buildReplicationService());
         servicesList.add(buildImageMagickService());
         servicesList.add(buildWebappUtilService());
-        servicesList.add(buildHelloWebappWrapper());
+        //servicesList.add(buildHelloWebappWrapper());
         servicesList.add(buildJ2kService());
         servicesList.add(buildImageConversionService());
         return servicesList;
@@ -231,10 +231,11 @@ public class ServiceXmlGenerator {
         j2kService.setContentId("j2kservice-1.0.0.zip");
         String desc =
             "The J2K service deploys an instance of the Adore Djatoka web " +
-                "application which provides for serving and viewing JPEG2000 " +
-                "images.";
+            "application which provides for serving and viewing JPEG2000 " +
+            "images. Note that in order to view images using the J2K " +
+            "service, the images must be in an OPEN space.";
         j2kService.setDescription(desc);
-        j2kService.setDisplayName("J2K Service");
+        j2kService.setDisplayName("JPEG 2000 Image Viewer Service");
         j2kService.setUserConfigVersion("1.0");
         j2kService.setServiceVersion("1.0.0");
         j2kService.setMaxDeploymentsAllowed(1);
