@@ -19,15 +19,29 @@ body {
 	margin-bottom:0;
 }
 
-.dc-selected-list-item {
-	background-color:#999;
+.dc-main-tabs li{
+	float:left;	
+	background-color: #DDD;
+	
 }
 
-.dc-checked-list-item {
-	background-color:#555;
+.dc-main-tabs .selected {
+	background-color: #FFF;
+}
+
+.dc-selected-list-item {
+	background-color:#DDD;
+}
+
+.dc-checked-selected-list-item {
+	background-color:#888;
 	color:#FFF;
 }
 
+.dc-checked-list-item {
+	background-color:#999;
+	color:#FFF;
+}
 
 .dc-item div:first-child {
 	float:left;
@@ -47,7 +61,7 @@ body {
 
 .dc-item:hover {
 	border-bottom: 1px solid orange;
-	cursor: 
+	cursor: pointer;
 }
 
 
@@ -71,7 +85,7 @@ body {
 /* give specific elements their own colors */
 
 #dc-logo, #dc-partner-logo {
-	height:65px;
+	height:60px;
 	background-color:#DDD;
 	
 }

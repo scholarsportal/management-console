@@ -72,6 +72,12 @@
 	</definition>
 
 	<!-- version 2 -->
- 	<definition name="spacesManager" template="/WEB-INF/jsp/spaces/spacesManager.jsp"/>
- 
+	<definition name="app-frame" template="/WEB-INF/jsp/layout/v2/base-layout.jsp">
+		<put-attribute name="title" value="title" />
+		<put-attribute name="header-extensions" value=""/>
+
+		<put-attribute name="main-content" value="main-content"/>
+	</definition>
+
+ 	<definition name="spacesManager" template="/WEB-INF/jsp/spaces/spacesManager.jsp" extends="app-frame"/>
 </tiles-definitions>
