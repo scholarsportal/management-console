@@ -122,7 +122,7 @@ public class ConversionResultProcessor implements ConversionResultListener {
             status =  "Conversion Complete";
         }
         return status +
-            ". Successful convertions: " + successfulConversions +
+            ". Successful conversions: " + successfulConversions +
             ". Unsuccessful conversions: " + unsuccessfulConversions + ".";
     }
 
