@@ -116,7 +116,7 @@ $(document).ready(function() {
 	var pageHeaderLayout 
 
 	 $("body").layout({
-			north__size:	    100
+			north__size:	    87
 		,   north__paneSelector:"#page-header"
 		,	north__onresize:	"pageHeaderLayout.resizeAll"
 		,   resizable:   false
@@ -141,7 +141,7 @@ $(document).ready(function() {
 		,	togglerLength_closed:	-1			
 
 	});
-
+/*
 	var headerCenter  = $("#header-center").layout({
 		center__paneSelector:	"#dc-logo-panel"
 	,	south__paneSelector:	"#dc-tabs-panel"
@@ -153,4 +153,5 @@ $(document).ready(function() {
 	,	togglerLength_closed:	-1			
 	
 	});
+	*/
 });
