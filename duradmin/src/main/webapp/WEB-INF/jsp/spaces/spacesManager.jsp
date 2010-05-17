@@ -8,15 +8,15 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="main-content">
-		<div class="center-north">
-			<div style="float:left">
+		<div class="center-north" id="center-pane-north">
+			<div class="float-l">
 				<label for="providerList">Provider</label>
 				<select name="providerList"><option>Amazon S3</option>
 				</select>
 			</div>
 	
-			<div style="float:left">
-	        	<ul class="horizontal-list">
+			<!-- <div class="float-l">
+	        	<ul>
 	        		<li>
 			        	<input type="button" value="Browse"/>
 			    	</li>
@@ -24,35 +24,29 @@
 			        	<input type="button" value="Search"/>
 			    	</li>
 	        	</ul>
-	        </div>
-	        <!-- 
-	        FIX ME  - right padding seems to be necessary to render properly in firefox
-	        			without it, there is an ugly horizontal scroll for no apparent 
-	        			reason. -db
-	        
-	         -->
-			<div style="float:right;padding-right:0.25em" >
+	        </div> -->
+			<div class="float-r" id="pinned">
 				<span>
 				4 Items
 				<input type="button" value="+"/>   			
 				<input type="button" value="^"/>   	
-				</span>
-	   					
+				</span>	   					
 	   		</div>
 	   	</div>
 	   	<div id="list-browser">
 			<div id="spaces-list-view">
-				<div class="north">
-					<h5 class="header">
-						Spaces
-						<input style="float:right" class="add-space-button" type="button" value="Add Space"/>
-					</h5>
+				<div class="north header list-header clearfix">
+					<div id="header-spaces-list" class="clearfix">
+						<h2>Spaces</h2>
+						<a class="flex button float-r add-space-button" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Space</i></i></span></a>
+					</div>
 					<div class="header">
-						<span style="float:left"><input id="check-all-spaces" type="checkbox"/> prev next</span> <span style="float:right"><input type="text"/></span>
+						<span class="float-r"><input type="text"/></span>
+						<input id="check-all-spaces" type="checkbox"/> prev next
 					</div>
 				</div>
 			
-				<div class="center">
+				<div class="center dc-item-list-wrapper">
 					<div class="dc-item-list" id="spaces-list">
 						<div class="dc-item space-item prototype" style="display:none">
 							<input  type="checkbox"/><span class="space-id">Space Id Here</span>
@@ -65,17 +59,18 @@
 				</div>
 			</div>
 			<div id="content-item-list-view">
-				<div class="north">
-					<h5 class="header">
-						Content Items
-						<input style="float:right" class="add-content-item-button" type="button" value="Add Content Item"/>
-					</h5>
+				<div class="north header list-header clearfix">
+					<div id="header-content-list" class="clearfix">
+						<h2>Content Items</h2>
+						<a class="flex button float-r add-content-item-button" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
+					</div>
 					<div class="header" >
-						<span style="float:left"><input type="checkbox"/> prev next</span> <span style="float:right"><input type="text"/></span>
+						<span class="float-r"><input type="text"/></span>
+						<input type="checkbox"/> prev next
 					</div>
 				</div>
 			
-				<div class="center">
+				<div class="center dc-item-list-wrapper">
 					<div class="dc-item-list" id="contentItemList">
 						<div class="dc-item">
 							<input type="checkbox"/>content item name here
