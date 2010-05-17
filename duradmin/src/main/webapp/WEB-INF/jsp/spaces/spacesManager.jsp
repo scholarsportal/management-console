@@ -10,9 +10,7 @@
 	<tiles:putAttribute name="main-content">
 		<div class="center-north" id="center-pane-north">
 			<div class="float-l">
-				<label for="providerList">Provider</label>
-				<select name="providerList"><option>Amazon S3</option>
-				</select>
+				Provider: <a class="flex button" id="select-provider" href="#"><span><i class="post arw-down-liteblue">Amazon S3</i></span></a>
 			</div>
 	
 			<!-- <div class="float-l">
