@@ -41,7 +41,7 @@
 			</div>
 		</div>	
 		<div id="right" class="float-r">
-			<img id="dc-partner-logo" src="/duradmin/images/partner_logo_nypl.png"/>
+			<img class="float-r" id="dc-partner-logo" src="/duradmin/images/partner_logo_nypl.png"/>
 			<div id="dc-user" class="float-r">
 				Charles Stross, Administrator
 				<ul class="horizontal-list">
