@@ -37,7 +37,7 @@ $(document).ready(function() {
 
 	var spacesAndContentLayoutOptions = {
 			north__paneSelector:	".north"
-		,   north__size: 			100
+		,   north__size: 			60
 		,	center__paneSelector:	".center"
 		,   resizable: 				false
 		,   slidable: 				false
