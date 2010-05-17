@@ -109,6 +109,11 @@ body {
 	padding:10px;
 }
 
+#detail-pane .north
+{
+	background:url(../images/bg_details_header.png) repeat-x bottom left;
+}
+
 #list-browser
 {
 	background:#6e6e6e url(../images/bg_list_browser_header.gif) no-repeat top right;
@@ -156,13 +161,17 @@ body {
 
 .ui-layout-resizer
 {
+}
+
+#spaces-list-view-resizer
+{	
 	background-color:#6e6e6e;
+	border-top:1px solid #828282;
 }
 
 #list-browser-resizer
 {
-	background-color:#444648;
-	background-position:top right;
+
 }
 
 .ui-layout-toggler
@@ -178,6 +187,10 @@ body {
 	padding:15px 10px 10px 10px;
 }
 
+.ui-layout-south .sep
+{
+	color:#47c1ff;
+}
 
 /* BUTTONS *******************************************/
 
@@ -228,6 +241,10 @@ a.std span
 	background-position:top left;
 }
 
+.arw-down-blue
+{
+	background:url(../images/icon_sm_arw_blue.gif) no-repeat top right;
+}
 
 .arw-down-green
 {
@@ -251,6 +268,18 @@ div.switch-holder,
 .switch-holder div.r
 {
 	display:block;
+}
+
+#select-provider,
+#select-provider span
+{
+	background-image:url(../images/btn_provider.gif);
+}
+
+a#select-provider span i
+{
+	color:#76e8ff !important;
+	padding-right:100px;
 }
 
 /* TABS **********************************************/
@@ -371,11 +400,6 @@ div.switch-holder,
 {
 	background-image:url(../images/app_title.png);
 	width:280px;
-}	
-
-#dc-partner-logo
-{
-	float:right;
 }
 
 #dc-user
@@ -388,10 +412,17 @@ div.switch-holder,
 	width:500px;
 }
 
+#logo-ds
+{
+	background:url(../images/logo_duraspace_onwhite.gif) no-repeat top left;
+	width:98px;
+	height:18px;
+}
+
 .outer,
 .outer a
 {
-	color:#898989;
+	color:#4c4c4c;
 	font-size:11px;
 }
 
