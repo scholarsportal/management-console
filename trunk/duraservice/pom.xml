@@ -61,6 +61,7 @@
                   <excludes>
                     <exclude>${unitTests}</exclude>
                     <exclude>${instrumentedTests}</exclude>
+                    <exclude>${innerClasses}</exclude>
                   </excludes>
                   <includes>
                     <include>${integrationTests}</include>

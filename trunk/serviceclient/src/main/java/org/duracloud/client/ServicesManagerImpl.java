@@ -82,18 +82,17 @@ public class ServicesManagerImpl implements ServicesManager, Securable {
     }
 
     private String buildServiceURL(int serviceId) {
-        return buildURL("/services/" + serviceId);
+        return buildURL("/" + serviceId);
     }
 
     private String buildDeployedServiceURL(int serviceId,
                                            int deploymentId) {
-        return buildURL("/services/" + serviceId + "/" + deploymentId);
+        return buildURL("/" + serviceId + "/" + deploymentId);
     }
 
     private String buildDeployedServicePropsURL(int serviceId,
                                                 int deploymentId) {
-        return buildURL("/services/" + serviceId + "/" + deploymentId +
-            "/properties");
+        return buildURL("/" + serviceId + "/" + deploymentId + "/properties");
     }
 
     /**
