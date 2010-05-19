@@ -139,7 +139,7 @@ public class ServiceRest extends BaseRest {
      * @param serviceId the ID of the service to retrieve
      * @return 200 on success with a serialized service
      */
-    @Path("/services/{serviceId}")
+    @Path("/{serviceId}")
     @GET
     @Produces(XML)
     public Response getService(@PathParam("serviceId")
@@ -171,7 +171,7 @@ public class ServiceRest extends BaseRest {
      * @param deploymentId the ID of the deployment to retrieve
      * @return 200 on success with a serialized service
      */
-    @Path("/services/{serviceId}/{deploymentId}")
+    @Path("/{serviceId}/{deploymentId}")
     @GET
     @Produces(XML)
     public Response getDeployedService(@PathParam("serviceId")
@@ -205,7 +205,7 @@ public class ServiceRest extends BaseRest {
      * @param deploymentId the ID of the deployment to retrieve
      * @return 200 on success with serialized service properties
      */
-    @Path("/services/{serviceId}/{deploymentId}/properties")
+    @Path("/{serviceId}/{deploymentId}/properties")
     @GET
     @Produces(XML)
     public Response getDeployedServiceProperties(@PathParam("serviceId")
@@ -243,7 +243,7 @@ public class ServiceRest extends BaseRest {
      * @param serviceHost the server host on which to deploy the service
      * @return 201 on success with deploymentId of the new service deployment
      */
-    @Path("/services/{serviceId}")
+    @Path("/{serviceId}")
     @PUT
     public Response deployService(@PathParam("serviceId")
                                   int serviceId,
@@ -282,7 +282,7 @@ public class ServiceRest extends BaseRest {
      * @param deploymentId the ID of the deployment to reconfigure
      * @return 200 on success
      */
-    @Path("/services/{serviceId}/{deploymentId}")
+    @Path("/{serviceId}/{deploymentId}")
     @POST
     public Response configureService(@PathParam("serviceId")
                                      int serviceId,
@@ -307,7 +307,7 @@ public class ServiceRest extends BaseRest {
      * @param deploymentId the ID of the deployment to undeploy
      * @return 200 on success
      */
-    @Path("/services/{serviceId}/{deploymentId}")
+    @Path("/{serviceId}/{deploymentId}")
     @DELETE
     public Response undeployService(@PathParam("serviceId")
                                     int serviceId,

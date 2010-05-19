@@ -54,9 +54,7 @@ public class TestServiceRest {
     private static RestHttpHelper restHelper = RestTestHelper.getAuthorizedRestHelper();
 
     private static String baseUrl;
-
-    private static String servicesUrl;
-
+    
     private ServiceSerializer serializer;
 
     private int deploymentId = 0;
@@ -66,7 +64,6 @@ public class TestServiceRest {
     @Before
     public void setUp() throws Exception {
         baseUrl = RestTestHelper.getBaseServiceUrl();
-        servicesUrl = baseUrl + "/services";
 
         // Initialize DuraService
         HttpResponse response = RestTestHelper.initialize();
@@ -96,7 +93,7 @@ public class TestServiceRest {
 
     @Test
     public void testGetService() throws Exception {
-        String url = servicesUrl + "/" + testServiceId;
+        String url = baseUrl + "/" + testServiceId;
         HttpResponse response = restHelper.get(url);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
@@ -109,7 +106,7 @@ public class TestServiceRest {
     @Test
     public void testGetDeployedService() throws Exception {
         deploymentId = deployService();
-        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
+        String url = baseUrl + "/" + testServiceId + "/" + deploymentId;
         HttpResponse response = restHelper.get(url);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
@@ -127,7 +124,7 @@ public class TestServiceRest {
     @Test
     public void testGetDeployedServiceProps() throws Exception {
         deploymentId = deployService();
-        String url = servicesUrl + "/" + testServiceId + "/" +
+        String url = baseUrl + "/" + testServiceId + "/" +
             deploymentId + "/properties";
 
         HttpResponse response = restHelper.get(url);
@@ -142,7 +139,7 @@ public class TestServiceRest {
     public void testConfigureService() throws Exception {
         deploymentId = deployService();
 
-        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
+        String url = baseUrl + "/" + testServiceId + "/" + deploymentId;
         HttpResponse response = restHelper.get(url);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
@@ -207,7 +204,7 @@ public class TestServiceRest {
 
     @Test
     public void testGetAvailableServices() throws Exception {
-        String url = servicesUrl + "?show=available";
+        String url = baseUrl + "/services?show=available";
         HttpResponse response = restHelper.get(url);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         List<ServiceInfo> services =
@@ -218,7 +215,7 @@ public class TestServiceRest {
 
     @Test
     public void testGetDeployedServices() throws Exception {
-        String url = servicesUrl + "?show=deployed";
+        String url = baseUrl + "/services?show=deployed";
         HttpResponse response = restHelper.get(url);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         List<ServiceInfo> servicesStart =
@@ -260,7 +257,7 @@ public class TestServiceRest {
     }
 
     private int deployService() throws Exception {
-        String url = servicesUrl + "/" + testServiceId;
+        String url = baseUrl + "/" + testServiceId;
         HttpResponse response = restHelper.get(url);
         InputStream serviceXmlStream = response.getResponseStream();
         ServiceInfo service =
@@ -284,7 +281,7 @@ public class TestServiceRest {
     }
 
     private HttpResponse undeployService(int deploymentId) throws Exception {
-        String url = servicesUrl + "/" + testServiceId + "/" + deploymentId;
+        String url = baseUrl + "/" + testServiceId + "/" + deploymentId;
         return restHelper.delete(url);
     }
 
