@@ -32,7 +32,8 @@
     <module>scriptservice</module>
     <module>j2kservice</module>
     <module>imagemagickservice</module>
-    <module>imageconversionservice</module>    
+    <module>imageconversionservice</module>
+    <module>mediastreamingservice</module>
   </modules>
 
   <build>

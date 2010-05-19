@@ -34,6 +34,7 @@ public class ServiceXmlGenerator {
         //servicesList.add(buildHelloWebappWrapper());
         servicesList.add(buildJ2kService());
         servicesList.add(buildImageConversionService());
+        servicesList.add(buildMediaStreamingService());
         return servicesList;
     }
 
@@ -374,6 +375,83 @@ public class ServiceXmlGenerator {
         return icService;
     }
 
+    private ServiceInfo buildMediaStreamingService() {
+        ServiceInfo msService = new ServiceInfo();
+        msService.setId(7);
+        msService.setContentId("mediastreamingservice-1.0.0.zip");
+        String desc = "The Media Streaming service provides streaming " +
+            "capabilities for video and audio files. The service takes " +
+            "advantage of the Amazon Cloudfront streaming capabilities, " +
+            "so files to be streamed must be within a space on an Amazon " +
+            "provider. All media to be streamed by this service needs to be " +
+            "within a single space. More information about which files can " +
+            "be streamed can be found in the Cloudfront documentation. After " +
+            "the service has started, the space chosen as the viewer space " +
+            "will include a playlist including all items in the media space " +
+            "as well as example html files which can be used to display a " +
+            "viewer.";
+        msService.setDescription(desc);
+        msService.setDisplayName("Media Streaming Service");
+        msService.setUserConfigVersion("1.0");
+        msService.setServiceVersion("1.0.0");
+        msService.setMaxDeploymentsAllowed(1);
+
+        // User Configs
+        List<UserConfig> msServiceUserConfig = new ArrayList<UserConfig>();
+
+        // Source space
+        List<Option> spaceOptions = new ArrayList<Option>();
+        Option spaces =
+            new Option("Spaces", ServiceConfigUtil.SPACES_VAR, false);
+        spaceOptions.add(spaces);
+
+        SingleSelectUserConfig mediaSourceSpace =
+            new SingleSelectUserConfig("mediaSourceSpaceId",
+                                       "Source Media Space",
+                                       spaceOptions);
+
+        SingleSelectUserConfig mediaViewerSpace =
+            new SingleSelectUserConfig("mediaViewerSpaceId",
+                                       "Viewer Space",
+                                       spaceOptions);
+
+
+        msServiceUserConfig.add(mediaSourceSpace);
+        msServiceUserConfig.add(mediaViewerSpace);
+
+        msService.setUserConfigs(msServiceUserConfig);
+
+        // System Configs
+        List<SystemConfig> systemConfig = new ArrayList<SystemConfig>();
+
+        SystemConfig host = new SystemConfig("duraStoreHost",
+                                             ServiceConfigUtil.STORE_HOST_VAR,
+                                             "localhost");
+        SystemConfig port = new SystemConfig("duraStorePort",
+                                             ServiceConfigUtil.STORE_PORT_VAR,
+                                             "8080");
+        SystemConfig context = new SystemConfig("duraStoreContext",
+                                                ServiceConfigUtil.STORE_CONTEXT_VAR,
+                                                "durastore");
+        SystemConfig username = new SystemConfig("username",
+                                                 ServiceConfigUtil.STORE_USER_VAR,
+                                                 "no-username");
+        SystemConfig password = new SystemConfig("password",
+                                                 ServiceConfigUtil.STORE_PWORD_VAR,
+                                                 "no-password");
+
+        systemConfig.add(host);
+        systemConfig.add(port);
+        systemConfig.add(context);
+        systemConfig.add(username);
+        systemConfig.add(password);
+
+        msService.setSystemConfigs(systemConfig);
+
+        msService.setDeploymentOptions(getSimpleDeploymentOptions());
+
+        return msService;
+    }
 
     private List<DeploymentOption> getSimpleDeploymentOptions() {
         // Deployment Options

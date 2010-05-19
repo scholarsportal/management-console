@@ -3,6 +3,7 @@ package org.duracloud.duraservice.config;
 import org.duracloud.common.util.ApplicationConfig;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.SystemConfig;
+import org.duracloud.serviceconfig.user.UserConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,7 @@ public class ServiceXmlGeneratorTest {
         List<ServiceInfo> serviceInfos = serviceXmlGenerator.buildServiceList();
         Assert.assertNotNull(serviceInfos);
 
-        int NUM_SERVICES = 5;
+        int NUM_SERVICES = 6;
         Assert.assertEquals(NUM_SERVICES, serviceInfos.size());
 
         boolean foundHello = false;
@@ -31,6 +32,8 @@ public class ServiceXmlGeneratorTest {
         boolean foundHellowebappwrapper = false;
         boolean foundJ2k = false;
         boolean foundImageconversion = false;
+        boolean foundMediaStreaming = false;
+
         for (ServiceInfo serviceInfo : serviceInfos) {
             String contentId = serviceInfo.getContentId();
             Assert.assertNotNull(contentId);
@@ -62,6 +65,11 @@ public class ServiceXmlGeneratorTest {
                 "imageconversionservice-" + VER + ".zip")) {
                 foundImageconversion = true;
                 verifyImageconversion(serviceInfo);
+
+            } else if (contentId.equals(
+                "mediastreamingservice-" + VER + ".zip")) {
+                foundMediaStreaming = true;
+                verifyMediaStreaming(serviceInfo);
 
             } else {
                 Assert.fail("unexpected contentId: " + contentId);
@@ -109,6 +117,18 @@ public class ServiceXmlGeneratorTest {
         List<SystemConfig> systemConfigs = serviceInfo.getSystemConfigs();
         Assert.assertNotNull(systemConfigs);
         Assert.assertEquals(6, systemConfigs.size());
+
+        verifyDurastoreCredential(systemConfigs);
+    }
+
+    private void verifyMediaStreaming(ServiceInfo serviceInfo) {
+        List<UserConfig> userConfigs = serviceInfo.getUserConfigs();
+        Assert.assertNotNull(userConfigs);
+        Assert.assertEquals(2, userConfigs.size());
+
+        List<SystemConfig> systemConfigs = serviceInfo.getSystemConfigs();
+        Assert.assertNotNull(systemConfigs);
+        Assert.assertEquals(5, systemConfigs.size());
 
         verifyDurastoreCredential(systemConfigs);
     }
