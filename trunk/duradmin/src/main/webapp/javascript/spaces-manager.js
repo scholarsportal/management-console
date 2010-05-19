@@ -258,6 +258,9 @@ $(document).ready(function() {
 
 		}
 	});
+	//hides the title bar on all dialogs;
+	
+	$(".ui-dialog-titlebar").hide();
 	
 	$('.add-content-item-button').live("click",
 			function(evt){
