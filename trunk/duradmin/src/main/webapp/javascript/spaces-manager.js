@@ -78,13 +78,12 @@ $(document).ready(function() {
 	//into the target after emptying the contents
 	//with a fade in / fade out effect
 	var swapDetailPane = function(source, target, layoutOptions){
-		var detail = $(source).clone();
 		$(target).fadeOut("fast", function(){
-			$(target).empty().prepend(detail.children());
+			$(target).empty().prepend($(source).children());
 			$(target).fadeIn("fast");
 			$(target).layout(layoutOptions);
 		});
-		return $(source);
+		return $(target);
 	};		
 
 	
@@ -109,14 +108,61 @@ $(document).ready(function() {
 			}
 		});
 
+	$("#check-all-content-items").click(
+			function(evt){
+				var checked = $(evt.target).attr("checked");
+				$("#content-item-list input[type=checkbox]").attr("checked", checked);
+				dcStyleItem($("#content-item-list .dc-item").first());
+				if(checked){
+					showMultiContentItemDetail();
+				}else{
+					showGenericDetailPane();
+				}
+			});
+	
 	var showMultiSpaceDetail = function(){
-		swapDetailPane("#spaceMultiSelectPane","#detail-pane", spaceDetailLayoutOptions);
-		$("#contentItemList > .dc-item").remove();
+		var multiSpace = $("#spaceMultiSelectPane").clone();
+		loadMetadataPane(multiSpace);
+		loadTagPane(multiSpace);
+		swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
+		$("#content-item-list > .dc-item").each(function(element){
+			if(!$(element).hasClass("dc-prototype")){
+				$(element).remove();
+			};
+			
+		});
 	};
+
+	var showMultiContentItemDetail = function(){
+		var multiSpace = $("#contentItemMultiSelectPane").clone();
+		loadMetadataPane(multiSpace);
+		loadTagPane(multiSpace);
+		swapDetailPane(multiSpace,"#detail-pane", contentItemDetailLayoutOptions);
+	};
+
 	var showGenericDetailPane = function(){
 		swapDetailPane("#genericDetailPane","#detail-pane", spaceDetailLayoutOptions);
 	};
 
+	//////////////////////////////////////////
+	////functions for loading metadata and tags
+	var appendCopy = function(target, source){
+		var copy = $(source).clone();
+		$(copy).removeAttr("id").show();
+		$(".center", target).append(copy);
+		return copy;
+	};
+	
+	var loadMetadataPane = function(target){
+		return appendCopy(target, "#metadata-panel");
+	};
+
+	var loadTagPane = function(target){
+		return appendCopy(target, "#tag-panel");
+	};
+	
+	
+	
 	///////////////////////////////////////////
 	///click on a space list item
 	$("#spaces-list .dc-item").live("click",
@@ -129,15 +175,12 @@ $(document).ready(function() {
 			if(multiChecked){
 				showMultiSpaceDetail();
 			}else{
-				$("#contentItemList > .dc-item").removeClass("dc-selected-list-item dc-checked-list-item dc-checked-selected-list-item")
-				$("#contentItemList > .dc-item").find("input[type][checked]").attr("checked", false);
+				$("#content-item-list > .dc-item").removeClass("dc-selected-list-item dc-checked-list-item dc-checked-selected-list-item")
+				$("#content-item-list > .dc-item").find("input[type][checked]").attr("checked", false);
 				var spaceId = $(dcNearestDcItem(evt.target)).attr("id");
 				
 				dcGetSpace(spaceId,{
-					load: function(space){
-						setObjectName("#spaceDetailPane", space.spaceId);
-						swapDetailPane("#spaceDetailPane","#detail-pane", spaceDetailLayoutOptions);
-					}
+					load: loadSpace
 				});
 			}
 		
@@ -147,17 +190,24 @@ $(document).ready(function() {
 
 	///////////////////////////////////////////
 	///click on a content list item
-	$("#contentItemList .dc-item").click(
+	$("#content-item-list .dc-item").live("click",
 		function(evt){
-			setObjectName("#contentItemDetailPane", "My Content Item");
-			swapDetailPane("#contentItemDetailPane", "#detail-pane",contentItemDetailLayoutOptions);
-
+			var multiChecked = $("#content-item-list").find("input[type=checkbox][checked]").size() > 1;
+			if(multiChecked){
+				showMultiContentItemDetail();
+			}else{
+				var pane = $("#contentItemDetailPane").clone();
+				setObjectName(pane, "Content Item Name");
+				loadMetadataPane(pane);
+				loadTagPane(pane);
+				swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
+			}
 		}
 	);
 	
 	///////////////////////////////////////////
 	///open add space dialog
-	$.fx.speeds._default = 1000;
+	$.fx.speeds._default = 10;
 	$('#add-space-dialog').dialog({
 		autoOpen: false,
 		show: 'blind',
@@ -219,6 +269,33 @@ $(document).ready(function() {
 	/////////////////////////////////////////////////////////////
 	//Spaces / Content Ajax calls
 	/////////////////////////////////////////////////////////////
+	
+	var loadSpace = function(space){
+		
+		var spaceDetailPane = $("#spaceDetailPane").clone();
+		var contentItems = space.contentItems;
+		loadContentItems(contentItems);
+		setObjectName(spaceDetailPane, space.spaceId);
+		loadMetadataPane(spaceDetailPane);
+		loadTagPane(spaceDetailPane);
+		swapDetailPane(spaceDetailPane,"#detail-pane", spaceDetailLayoutOptions);
+		
+	};
+	
+
+	var loadContentItems = function(contentItems){
+		var prototype = $("#content-item-list .dc-prototype").first();
+		for(i in contentItems){
+			var node =  prototype.clone();
+			var ci = contentItems[i];
+			$(node).attr("id", ci);
+			$(node).removeClass("prototype");
+			$(".content-item-id", node).html(ci);
+			$("#content-item-list").append(node);
+			$(node).show();
+		}
+	}
+	
 	var dcGetSpaces = function(callback){
 		var spaces = new Array(50);
 		for(var i = 0; i < spaces.length; i++){
@@ -228,18 +305,15 @@ $(document).ready(function() {
 	};
 	
 	var dcGetSpace = function(spaceId,callback){
-		/*
 		var contentItems = new Array(50);
 		for(var i = 0; i < contentItems.length; i++){
-			contentItems[i] = {id:"Content Item #" + i};
+			contentItems[i] = "/this/is/faux/content/item/" + i;
 		}
-		
-		*/
 		
 		
 		callback.load({
 						spaceId: spaceId,
-						//contentItems: contentItems,
+						contentItems: contentItems,
 						createdOn: "Jan 1, 2010 12:00:00 GMT",
 						itemCount: 50
 					  });
@@ -249,7 +323,7 @@ $(document).ready(function() {
 	
 	dcGetSpaces({
 		load: function(spaces){
-			var prototype = $("#spaces-list .prototype").first();
+			var prototype = $("#spaces-list .dc-prototype").first();
 			for(s in spaces){
 				var node =  prototype.clone();
 				var space = spaces[s];
@@ -258,7 +332,10 @@ $(document).ready(function() {
 				$(".space-id", node).html(space.spaceId);
 				$("#spaces-list").append(node);
 				$(node).show();
-				
+			}
+			
+			if(spaces.length > 0){
+				loadSpace(spaces[0]);
 			}
 		}
 	});

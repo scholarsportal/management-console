@@ -114,6 +114,16 @@ body {
 	background:url(../images/bg_details_header.png) repeat-x bottom left;
 }
 
+#detail-pane .center
+{
+	overflow: auto;
+}
+
+.dc-prototype {
+	
+	display:none;	
+}
+
 #list-browser
 {
 	background:#6e6e6e url(../images/bg_list_browser_header.gif) no-repeat top right;
