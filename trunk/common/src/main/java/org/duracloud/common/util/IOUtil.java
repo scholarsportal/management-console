@@ -58,4 +58,11 @@ public class IOUtil {
         }
     }
 
+    public static void fileFindReplace(File file, String find, String replace) 
+        throws IOException {
+        String fileContents = FileUtils.readFileToString(file);
+        fileContents = fileContents.replaceAll("\\Q" + find + "\\E", replace);
+        FileUtils.writeStringToFile(file, fileContents);
+    }
+
 }

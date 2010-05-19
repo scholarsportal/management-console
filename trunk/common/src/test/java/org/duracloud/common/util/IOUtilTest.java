@@ -1,15 +1,16 @@
 package org.duracloud.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertEquals;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertTrue;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * Tests the I/O Utilities.
@@ -45,5 +46,21 @@ public class IOUtilTest {
         testStream.read(bytes);
         String readValue = new String(bytes, "UTF-8");
         assertTrue(testValue.equals(readValue));
+    }
+
+    @Test
+    public void testFileFindReplace() throws Exception {
+        File testFile = File.createTempFile("temp", "file");
+        try {
+            String fileContent = "before $TO_REPLACE after";
+            FileUtils.writeStringToFile(testFile, fileContent);
+
+            IOUtil.fileFindReplace(testFile, "$TO_REPLACE", "and");
+
+            String finalContent = FileUtils.readFileToString(testFile);
+            assertEquals("before and after", finalContent);
+        } finally {
+            testFile.delete();
+        }
     }
 }
