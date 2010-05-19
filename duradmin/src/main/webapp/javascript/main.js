@@ -8,8 +8,7 @@
 ////////////////////////////////////////////////////////////////////
 var dcOpenDialogOverTarget =  function(evt, dialogId) {
 	var offset = $(evt.target).offset();
-	var coords = [offset.left,offset.top];
-	coords[1] = coords[1] + evt.target.height;
+	var coords = [offset.left-20,offset.top+24];
 	$(dialogId)
 		.dialog('option', 'position', coords)
 		.dialog('open');
