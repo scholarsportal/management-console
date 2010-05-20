@@ -19,107 +19,29 @@ $.fn.nearestOfClass = function(className){
 	return $(nearest);
 };
 
-////////////////////////////////////////////////////////////////////
-//Opens any dialog by id over the event's target
-////////////////////////////////////////////////////////////////////
-var dcOpenDialogOverTarget =  function(evt, dialogId) {
+$.fn.openDialogOverTarget =  function(evt) {
 	var offset = $(evt.target).offset();
 	var coords = [offset.left-20,offset.top+24];
-	$(dialogId)
-		.dialog('option', 'position', coords)
+	this.dialog('option', 'position', coords)
 		.dialog('open');
 	return false;
 };
-
-var dcNearestOfClass = function(node, className){
-	return($(node).hasClass(className)) ? $(node).first() : $(node).closest("." + className);
-};
-
-var dcNearestDcItem = function(node){
-	return dcNearestOfClass(node, "dc-item");
-};
-
-var dcStyleItem =  function(target){
-	var dcItem = dcNearestDcItem(target);
-	$(dcItem).removeClass("dc-checked-selected-list-item dc-checked-list-item dc-selected-list-item");
-	var checked = $(dcItem).find("input[type=checkbox][checked]").size() > 0;
-	$(dcItem).addClass(checked ? "dc-checked-selected-list-item" : "dc-selected-list-item");
-	dcRestyleDcItemSiblings(dcItem);
-};
-
-//style the list items
-var dcRestyleDcItemSiblings = function(dcItem){
-	$(dcItem).siblings().removeClass("dc-selected-list-item dc-checked-selected-list-item dc-checked-list-item");
-	$(dcItem).siblings().find("input[type=checkbox][checked]").closest(".dc-item").addClass("dc-checked-list-item");
-};
-
+////////////////////////////////////////////////////////////////////
+//Opens any dialog by id over the event's target
+////////////////////////////////////////////////////////////////////
 
 
 $(document).ready(function() {
 
-	////////////////////////////////////////////////////////////////////
-	//start generic dc-item list behavior
-	////////////////////////////////////////////////////////////////////
-	$(".dc-item-list .dc-item").live("click",function(evt){
-		var dcItem = dcNearestDcItem(evt.target);
-		dcRestyleDcItemSiblings(dcItem);
-		if($("input[type=checkbox][checked]",dcItem).size() > 0){
-			$(dcItem).addClass("dc-checked-selected-list-item");	
-		}else{
-			$(dcItem).addClass("dc-selected-list-item");
-		}
-	});
-	
-	$(".dc-item, .dc-action-panel").live("mouseover",function(evt){
-		$(".dc-action-panel", dcNearestDcItem(evt.target)).css("visibility","visible");
-	}).live("mouseout",function(evt){
-		if(!$.contains(evt.target, evt.relatedTarget)){
-			$(".dc-action-panel",dcNearestDcItem(evt.target)).css("visibility","hidden");
-		}
-	});
-
-	
-	//on checkbox click styling
-	$(".dc-item-list input[type=checkbox]")
-		.live("click", function(evt){
-			dcStyleItem(evt.target);
-			evt.stopPropagation();
-		});
-	$(".dc-item-list .dc-item")
-		.live("dblclick", function(evt){
-			evt.stopPropagation();
-			$(dcNearestDcItem(evt.target)).find("input[type=checkbox]").click();
-			dcStyleItem(evt.target)});
-
-	//if you set this style property in css, it doesn't layout properly
-	$(".dc-item .dc-action-panel").css("visibility", "hidden");
-
-
-
-	////////////////////////////////////////////////////////////////////
-	//end generic dc-item list behavior
-	////////////////////////////////////////////////////////////////////
-	
-	
-	$(".dc-toggler").live("click",function(evt){
-		var parent  = $(evt.target).closest(".dc-expandable-panel");
-		$(parent).children().last().slideToggle("slow");
-	});
-		
-	$(document.body).bind("DOMSubtreeModified",function(){ 
-		$(".dc-expandable-panel").each(function(){
-			
-			if($("input[class=dc-toggler]",this).size() == 0){
-				$(this).children().first().append("<input type='button' value='>' class='dc-toggler'/>");
-			}
-		});	
-	})
+	///////////////////////////////////////////////////////////////////////
+	////controls rollovers on tags and metadata
+	///////////////////////////////////////////////////////////////////////
 	
 	$(".dc-mouse-panel-activator td, li.dc-mouse-panel-activator, .dc-mouse-panel").live("mouseover",function(evt){
-		var ancestor = dcNearestOfClass(evt.target,".dc-mouse-panel-activator");
+		var ancestor = $(evt.target).nearestOfClass(".dc-mouse-panel-activator");
 		$(".dc-mouse-panel",ancestor).css("visibility","visible");
 	}).live("mouseout",function(evt){
-		var ancestor = dcNearestOfClass(evt.target,".dc-mouse-panel-activator");
+		var ancestor = $(evt.target).nearestOfClass(".dc-mouse-panel-activator");
 		$(".dc-mouse-panel",ancestor).css("visibility","hidden");
 	});
 	

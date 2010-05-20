@@ -82,11 +82,15 @@ $(document).ready(function() {
 	//into the target after emptying the contents
 	//with a fade in / fade out effect
 	var swapDetailPane = function(source, target, layoutOptions){
+		$(".dc-expandable-panel",source).expandopanel({});
+
 		$(target).fadeOut("fast", function(){
 			$(target).empty().prepend($(source).children());
 			$(target).fadeIn("fast");
 			$(target).layout(layoutOptions);
 		});
+		
+
 		return $(target);
 	};		
 
@@ -116,6 +120,7 @@ $(document).ready(function() {
 		loadTagPane(multiSpace);
 		swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
 		$("#content-item-list").selectablelist("clear");
+		
 	};
 
 	var showMultiContentItemDetail = function(){
@@ -123,6 +128,7 @@ $(document).ready(function() {
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
 		swapDetailPane(multiSpace,"#detail-pane", contentItemDetailLayoutOptions);
+
 	};
 
 	var showGenericDetailPane = function(){
@@ -175,7 +181,7 @@ $(document).ready(function() {
 
 	$('.add-space-button').click(
 			function(evt){
-				dcOpenDialogOverTarget(evt,"#add-space-dialog");
+				$("#add-space-dialog").openDialogOverTarget(evt);
 			}
 		);
 	
@@ -206,7 +212,7 @@ $(document).ready(function() {
 	
 	$('.add-content-item-button').live("click",
 			function(evt){
-					dcOpenDialogOverTarget(evt,"#add-content-item-dialog");
+				$("#add-content-item-dialog").openDialogOverTarget(evt);
 			});
 
 	

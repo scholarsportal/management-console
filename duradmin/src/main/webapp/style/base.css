@@ -449,6 +449,9 @@ a#select-provider span i
 	
 .dc-toggler {
 	float:right;
+	background: url(../images/icon_sm_arw_liteblue.gif) no-repeat top left;
+	width:25px;
+	height:25px;
 }
 
 /* DETAIL PANE ****************************************************/
