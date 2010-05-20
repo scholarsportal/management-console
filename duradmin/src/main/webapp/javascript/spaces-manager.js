@@ -214,21 +214,24 @@ $(document).ready(function() {
 	/////////////////////////////////////////////////////////////
 	//Spaces / Content Ajax calls
 	/////////////////////////////////////////////////////////////
-	
+
+	/**
+	 * loads the space data into the detail pane
+	 */
 	var loadSpace = function(space){
-		
 		var spaceDetailPane = $("#spaceDetailPane").clone();
 		var contentItems = space.contentItems;
 		setObjectName(spaceDetailPane, space.spaceId);
 		loadMetadataPane(spaceDetailPane);
 		loadTagPane(spaceDetailPane);
 		swapDetailPane(spaceDetailPane,"#detail-pane", spaceDetailLayoutOptions);
-		
 		loadContentItems(contentItems);
-		
 	};
 	
-	var dcGetContentItem = function(contentItemId, spaceId, callback){
+	/**
+	 * returns contentItem details
+	 */
+	var getContentItem = function(contentItemId, spaceId, callback){
 		var contentItem = {contentId: contentItemId, spaceId: spaceId};
 		callback.load(contentItem);
 	};
@@ -267,7 +270,7 @@ $(document).ready(function() {
 	};
 	
 	var dcGetSpace = function(spaceId,callback){
-		var contentItems = new Array(50);
+		var contentItems = new Array(10);
 		for(var i = 0; i < contentItems.length; i++){
 			contentItems[i] = spaceId+"/this/is/faux/content/item/" + i;
 		}
@@ -277,7 +280,7 @@ $(document).ready(function() {
 						spaceId: spaceId,
 						contentItems: contentItems,
 						createdOn: "Jan 1, 2010 12:00:00 GMT",
-						itemCount: 50
+						itemCount: 10
 					  });
 	};
 
@@ -319,7 +322,7 @@ $(document).ready(function() {
 			 * @FIXME 
 			 */
 			var spaceId = "XXXXXX";
-			dcGetContentItem($(state.item).attr("id"),spaceId,{
+			getContentItem($(state.item).attr("id"),spaceId,{
 				load: loadContentItem
 			});
 		}else{
@@ -335,7 +338,7 @@ $(document).ready(function() {
 			/**
 			 * @FIXME 
 			 */
-			dcGetContentItem($(state.item).attr("id"),spaceId,{
+			getContentItem($(state.item).attr("id"),spaceId,{
 				load: loadContentItem
 			});
 		}else{
