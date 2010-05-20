@@ -18,19 +18,12 @@
 
 	<!-- 3rd party jquery plugins start-->
 	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
-	  <script type="text/javascript" src="http://github.com/cowboy/jquery-throttle-debounce/raw/master/jquery.ba-throttle-debounce.js"></script>
-	 
-	  <!-- mb.menu -->
-	  <!-- 
-	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/jquery.metadata.js"></script>
-	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/mbMenu.js"></script>
-	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/jquery.hoverIntent.js"></script>
-	  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/jquery/plugins/mb-menu/menu1.css" media="screen" />
-		-->	
+	<script type="text/javascript" src="http://github.com/cowboy/jquery-throttle-debounce/raw/master/jquery.ba-throttle-debounce.js"></script>
 	<!-- 3rd party jquery plugins end-->
 
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.dc.common.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 
