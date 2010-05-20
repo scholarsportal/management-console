@@ -32,6 +32,7 @@
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
