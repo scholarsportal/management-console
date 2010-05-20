@@ -9,18 +9,15 @@ import static junit.framework.Assert.fail;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
-import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProvider.AccessType;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
-import org.duracloud.unittestdb.UnitTestDatabaseUtil;
-import org.duracloud.unittestdb.domain.ResourceType;
 import org.jets3t.service.model.S3Object;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +40,7 @@ import java.util.Random;
  *
  * @author Bill Branan
  */
-public class S3StorageProviderTest {
+public class S3StorageProviderTest extends S3ProviderTestBase {
 
     protected static final Logger log = Logger.getLogger(S3StorageProviderTest.class);
 
@@ -63,14 +60,8 @@ public class S3StorageProviderTest {
     @Before
     public void setUp() throws Exception {
         Credential s3Credential = getCredential();
-        Assert.assertNotNull(s3Credential);
-
-        String username = s3Credential.getUsername();
-        String password = s3Credential.getPassword();
-        Assert.assertNotNull(username);
-        Assert.assertNotNull(password);
-
-        s3Provider = new S3StorageProvider(username, password);
+        s3Provider = new S3StorageProvider(s3Credential.getUsername(), 
+                                           s3Credential.getPassword());
         restHelper = new RestHttpHelper();
     }
 
@@ -88,12 +79,6 @@ public class S3StorageProviderTest {
                 // do nothing.
             }
         }
-    }
-
-    private Credential getCredential() throws Exception {
-        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        return dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
-                                                StorageProviderType.AMAZON_S3));
     }
 
     private String getNewSpaceId() {

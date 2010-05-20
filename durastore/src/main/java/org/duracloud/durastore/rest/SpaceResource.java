@@ -107,11 +107,6 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
 
-            AccessType access = storage.getSpaceAccess(spaceID);
-            if(access.equals(AccessType.CLOSED)) {
-                // TODO: Check user permissions
-            }
-
             List<String> contents = storage.getSpaceContentsChunked(spaceID,
                                                                     prefix,
                                                                     maxResults,
@@ -149,7 +144,6 @@ public class SpaceResource {
                                 Map<String, String> userMetadata,
                                 String storeID)
     throws ResourceException, InvalidIdException {
-        // TODO: Check user permissions
         IdUtil.validateSpaceId(spaceID);
 
         try {
@@ -178,7 +172,6 @@ public class SpaceResource {
                                            Map<String, String> userMetadata,
                                            String storeID)
     throws ResourceException {
-        // TODO: Check user permissions
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
@@ -228,8 +221,6 @@ public class SpaceResource {
      */
     public static void deleteSpace(String spaceID, String storeID)
     throws ResourceException {
-        // TODO: Check user permissions
-
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
