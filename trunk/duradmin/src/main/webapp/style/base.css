@@ -85,6 +85,16 @@ body {
 	margin-right:10px !important;
 }
 
+h1, h2, h3
+{
+	font-family:Helvetica, Sans-Serif;
+}
+
+h1 { font-size:2em; font-weight:normal; }
+h2 { font-size:1.3em; font-weight:normal; }
+h3 { font-size:1em; }
+
+
 .float-l {float:left; }
 .float-r {float:right; }
 
@@ -107,16 +117,6 @@ body {
 	color:#9b9b9b;
 	font-size:13px;
 	padding:10px;
-}
-
-#detail-pane .north
-{
-	background:url(../images/bg_details_header.png) repeat-x bottom left;
-}
-
-#detail-pane .center
-{
-	overflow: auto;
 }
 
 .dc-prototype {
@@ -210,6 +210,7 @@ a.std,
 a.std span
 {
 	background-image:url(../images/btn_std.gif) !important;
+	color:#ccc;
 }
 
 .plus
@@ -265,6 +266,7 @@ a.std span
 .switch-holder div.r
 {
 	background:url(../images/switch_holder.gif) no-repeat;
+	display:block;
 	height:35px;
 }
 
@@ -274,10 +276,9 @@ a.std span
 	padding-top:5px;
 }
 
-div.switch-holder,
-.switch-holder div.r
+.switch-holder
 {
-	display:block;
+	margin:20px;
 }
 
 #select-provider,
@@ -441,6 +442,116 @@ a#select-provider span i
 	visibility: hidden;
 }
 
+.dc-mouse-panel-activator
+{
+	cursor:pointer;	
+}	
+	
 .dc-toggler {
 	float:right;
 }
+
+/* DETAIL PANE ****************************************************/
+
+.detail-pane
+{
+	
+}
+
+.detail-pane h1
+{
+	color:#777;
+	margin-bottom:10px;
+}
+
+.detail-pane h2
+{
+	color:#ccc;
+	margin-bottom:10px;
+}
+
+.detail-pane .north
+{
+	background:url(../images/bg_details_header.png) repeat-x bottom left;
+	padding:0 10px;
+}
+
+.detail-pane .center
+{
+	background-color:#414141;
+	border:1px solid #2d2d2d;
+	border-top-color:#333;
+	border-bottom-color:#999;
+	font-family:Verdana, Sans-Serif;
+	font-size:11px;
+	overflow: auto;
+}
+
+.detail-pane .segment-header
+{
+	background:url(../images/bg_segment_header.gif) repeat-x top left;
+	border-bottom:1px solid #333;
+	color:#999;
+	font-size:13px;
+	height:28px;
+	line-height:25px;
+	padding:0 10px;
+}
+
+.detail-pane .segment-content
+{
+	padding:10px;
+}
+
+.detail-pane .segment-content table
+{
+	width:100%;
+}
+
+.detail-pane .segment-content table td
+{
+	border-bottom:1px solid #555;
+	padding:4px 5px 4px 0;
+}
+
+.detail-pane .segment-content table td.label,
+span.label
+{
+	color:#999;
+}
+
+.detail-pane .segment-content table td.label
+{
+	width:30%;
+}
+
+
+.detail-pane .segment-content table td.value
+{
+	width:70%;
+}
+
+.detail-pane .segment-content input
+{
+	background-color:#484747;
+	border:1px solid #7a7a7a;
+	color:#ccc;
+	padding:2px;
+}
+
+.detail-pane .mime-type
+{
+	background:url(../images/icons_mimetypes.gif) no-repeat;
+	font-size:13px;
+	height:40px;
+	line-height:40px;
+	margin:10px 0;
+	padding-left:50px;
+}
+
+.detail-pane #mime-jpeg
+ {
+ 	background-position:top left;
+ }
+
+	

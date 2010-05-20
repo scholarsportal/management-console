@@ -68,61 +68,66 @@
 				</div>
 			</div>
 	   	</div>
-		<div id="detail-pane">
-		</div>	
+		<div id="detail-pane" class="detail-pane"></div>	
 	
 	<!-- 
 	Space Detail Pane:  The div is invisible and used as a prototype for displaying specific space
 						details.
 	 -->
 	<div id="spaceDetailPane" style="display:none">
-		<div class="north">
-			<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Space Detail</h3>
-			<h5 class="header object-name">Space Name Here</h5>
-			<div class="header toggle-control">
-				Access: 
-				<input type="button" value="Open"/>
-				<input type="button" value="Close"/>
+		<div class="north header">
+			<h1>Space Detail</h1>
+			<h2 class="object-name">Space Name Here</h2>
+			<div class="toggle-control flex switch-holder">
+			    <div class="r">
+			        <span class="flex button-holder button-holder-on">
+			        	<i class="pre unlock unlocked">Open</i><a class="flex button switch"><span><i class="pre lock">Close</i></span></a>
+			        </span>
+			        
+			        <span class="flex button-holder button-holder-off">
+			        	<a class="flex button switch"><span><i class="pre unlock">Open</i></span></a><i class="pre lock locked">Closed</i>
+			        </span>            
+			        
+			        <span class="flex button-holder">
+			        	<a class="flex button switch"><span><i class="pre unlock">Open</i></span></a><a class="flex button switch" style="margin-left:-2px;"><span><i class="pre lock">Close</i></span></a>
+			        </span>
+			    </div>
 			</div>
-			<div class="header button-bar">
-				<ul class="horizontal-list">
-					<li>
-						<input class="add-content-item-button" type="button" value="Add Content"/>
-					</li>
-					<li>
-						<input type="button" value="Delete"/>
-					</li>
-				</ul>
+			<div class="button-bar">
+				<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
+				<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete Space</i></span></a>
 			</div>
 
 		</div>
 		<div class="center">
 			<div class="dc-expandable-panel">
-					<h4>Details</h4>
+				<div class="segment-header clearfix">Details</div>
+				<div class="segment-content clearfix">
 					<table>
 						<tr>
-							<td>
+							<td class="label">
 								Items
 							</td>
-							<td>
+							<td class="value">
 								<span id="space-item-count">3</span>
 							</td>
 						</tr>
 						<tr>
-							<td>
+							<td class="label">
 								Created
 							</td>
-							<td>
+							<td class="value">
 								<span id="space-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
 							</td>
 						</tr>
 					</table>
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<div id="genericDetailPane" style="display:none">
-		<div class="north">
+		<div class="north header">
 			Nothing is selected.
 		</div>
 		<div class="center">
@@ -151,7 +156,7 @@
 	</div>
 
 	<div id="contentItemMultiSelectPane" style="display:none">
-		<div class="north">
+		<div class="north header">
 			<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Content Item Detail</h3>
 			<h5 class="header object-name">Multiple Content Items Selected</h5>
 			<div class="header toggle-control">
@@ -175,122 +180,135 @@
 		an invisible  prototype for content items details.
 	 -->
 	<div id="contentItemDetailPane" style="display:none" >
-		<div class="north">
-			<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Content Detail</h3>
-			<h5 class="header object-name">Content Name</h5>
-			<div class="header">
-				<img src="xxx" height="50" width="50"/><span>Mime Type:</span><span>image/jpg</span>
+		<div class="north header">
+			<h1>Content Detail</h1>
+			<h2 class="object-name">Content Name Here</h2>
+			<div class="mime-type" id="mime-image">
+				<span class="label">Mime Type:</span> <span class="value">image/jpg</span>
 			</div>
-			<div class="header button-bar">
-				<ul class="horizontal-list">
-					<li>
-						<input type="button" value="Edit"/>
-					</li>
-					<li>
-						<input type="button" value="Download"/>
-					</li>
-					<li>
-						<input type="button" value="Delete"/>
-					</li>
-				</ul>
+			
+			<div class="button-bar">
+				<a href="javascript:void(1);" class="flex button"><span><i class="pre pencil">Edit</i></span></a>
+				<a href="javascript:void(1);" class="flex button"><span>Download</span></a>
+				<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete</i></span></a>
 			</div>
-
 		</div>
 		<div class="center">
 			<div class="dc-expandable-panel">
-					<h4>Preview</h4>
-					<div style="text-align:center">
-						<a href="xxx">
-							<img src="xxx" height="200" width="200"/>					
-						</a>
-					</div>
-
+				<div class="segment-header clearfix">Preview</div>
+				<div class="segment-content clearfix" style="text-align:center">
+					<a href="#">
+						<img src="xxx" height="200" width="200"/>					
+					</a>
+				</div>
 			</div>
 			<div class="dc-expandable-panel">
-					<h4>Details</h4>
+				<div class="segment-header clearfix">Details</div>
+				<div class="segment-content clearfix">
 					<table>
 						<tr>
-							<td>
-								Items
+							<td class="label">
+								Space
 							</td>
-							<td>
-								<span id="space-item-count">3</span>
+							<td class="value">
+								<span id="content-space-id">Space ID here</span>
 							</td>
 						</tr>
 						<tr>
-							<td>
+							<td class="label">
+								Size
+							</td>
+							<td class="value">
+								<span id="content-size">Size here</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="label">
 								Created
 							</td>
-							<td>
-								<span id="space-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
+							<td class="value">
+								<span id="content-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="label">
+								Checksum
+							</td>
+							<td class="value">
+								<span id="content-checksum">Checksum here</span>
 							</td>
 						</tr>
 					</table>
+				</div>
 			</div>
 
 		</div>
 	</div>
 	
 	<div id="metadata-panel" class="dc-expandable-panel" style="display:none">
-			<h4>Metadata</h4>
-			<table  width="100%">
-				<tr class="dc-mouse-panel-activator">
-					<td class="name">
-						Lorem
-					</td>
-					<td class="value">
-						Ipsum dolor								
-						<span class="dc-mouse-panel">
-							<input type="button"  value="x"/>
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<td class="name">
-						<input type="text" value="" size="15"/>
-					</td>
-					<td class="value">
-						<input type="text" value="" size="20"/>
-						<input type="button" value="+"/>
-					</td>
-				</tr>
-			</table>
+			<div class="segment-header clearfix">Metadata</div>
+			<div class="segment-content clearfix">
+				<table>
+					<tr class="dc-mouse-panel-activator">
+						<td class="name">
+							Lorem
+						</td>
+						<td class="value">
+							Ipsum dolor								
+							<span class="dc-mouse-panel float-r">
+								<input type="button"  value="x"/>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="name">
+							<input type="text" value="" size="15"/>
+						</td>
+						<td class="value">
+							<input type="text" value="" size="20"/>
+							<input type="button" value="+"/>
+						</td>
+					</tr>
+				</table>
+			</div>
 	</div>
 	<div id="tag-panel" class="dc-expandable-panel" style="display:none">
-			<h4>Tags</h4>
-			<table>
-				<tr>
-					<td>
-						<ul class="horizontal-list">
-							<li class="dc-mouse-panel-activator">
-								anicca
-								<span class="dc-mouse-panel">
-									<input type="button"  value="x"/>
-								</span>
-							</li>
-							<li class="dc-mouse-panel-activator">
-								dukkha
-								<span class="dc-mouse-panel">
-									<input type="button"  value="x"/>
-								</span>
-							</li>
-							<li class="dc-mouse-panel-activator">
-								anatta
-								<span class="dc-mouse-panel">
-									<input type="button"  value="x"/>
-								</span>
-							</li>
-							
-						</ul>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<input type="text" value="" size="35"/>
-						<input type="button" value="+"/>
-					</td>
-				</tr>
-			</table>
+			<div class="segment-header clearfix">Tags</div>
+			<div class="segment-content clearfix">
+				<table>
+					<tr>
+						<td>
+							<ul class="horizontal-list">
+								<li class="dc-mouse-panel-activator">
+									anicca
+									<span class="dc-mouse-panel">
+										<input type="button"  value="x"/>
+									</span>
+								</li>
+								<li class="dc-mouse-panel-activator">
+									dukkha
+									<span class="dc-mouse-panel">
+										<input type="button"  value="x"/>
+									</span>
+								</li>
+								<li class="dc-mouse-panel-activator">
+									anatta
+									<span class="dc-mouse-panel">
+										<input type="button"  value="x"/>
+									</span>
+								</li>
+								
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="text" value="" size="35"/>
+							<input type="button" value="+"/>
+						</td>
+					</tr>
+				</table>
+			</div>
 	</div>
 	
 	
