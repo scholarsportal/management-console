@@ -7,6 +7,7 @@
 
   <!-- REST API resources -->
   <bean id="storeRest" class="org.duracloud.durastore.rest.StoreRest" />
+  <bean id="taskRest" class="org.duracloud.durastore.rest.TaskRest" />
   <bean id="spaceRest" class="org.duracloud.durastore.rest.SpaceRest" />
   <bean id="contentRest" class="org.duracloud.durastore.rest.ContentRest" />
   <bean id="securityRest" class="org.duracloud.durastore.rest.SecurityRest">

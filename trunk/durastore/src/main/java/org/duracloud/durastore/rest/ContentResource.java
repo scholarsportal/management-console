@@ -8,7 +8,6 @@ import org.duracloud.storage.error.InvalidIdException;
 import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
-import org.duracloud.storage.provider.StorageProvider.AccessType;
 import org.duracloud.storage.util.IdUtil;
 
 import java.io.InputStream;
@@ -37,12 +36,6 @@ public class ContentResource {
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
-
-            AccessType access = storage.getSpaceAccess(spaceID);
-            if(access.equals(AccessType.CLOSED)) {
-                // TODO: Check user permissions
-            }
-
             return storage.getContent(spaceID, contentID);
         } catch (NotFoundException e) {
             throw new ResourceNotFoundException("get content",
@@ -68,12 +61,6 @@ public class ContentResource {
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
-
-            AccessType access = storage.getSpaceAccess(spaceID);
-            if(access.equals(AccessType.CLOSED)) {
-                // TODO: Check user permissions
-            }
-
             return storage.getContentMetadata(spaceID, contentID);
         } catch (NotFoundException e) {
             throw new ResourceNotFoundException("get metadata for content",
@@ -99,7 +86,6 @@ public class ContentResource {
                                              Map<String, String> userMetadata,
                                              String storeID)
     throws ResourceException {
-        // TODO: Check user permissions
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
@@ -134,7 +120,6 @@ public class ContentResource {
                                     String checksum,
                                     String storeID)
     throws ResourceException, InvalidIdException {
-        // TODO: Check user permissions
         IdUtil.validateContentId(contentID);
 
         try {
@@ -168,8 +153,6 @@ public class ContentResource {
                                      String contentID,
                                      String storeID)
     throws ResourceException {
-        // TODO: Check user permissions
-
         try {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);

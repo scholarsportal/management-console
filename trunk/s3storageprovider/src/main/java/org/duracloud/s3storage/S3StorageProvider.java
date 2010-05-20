@@ -16,10 +16,8 @@ import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
-import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
-import org.jets3t.service.security.AWSCredentials;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -43,17 +41,9 @@ public class S3StorageProvider extends StorageProviderBase {
 
     private String accessKeyId = null;
     private S3Service s3Service = null;
-    
+
     public S3StorageProvider(String accessKey, String secretKey) {
-        accessKeyId = accessKey;
-        AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey);
-        try {
-            s3Service = new RestS3Service(awsCredentials);
-        } catch (S3ServiceException e) {
-            String err = "Could not create connection to S3 due to error: "
-                    + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
+        this(S3ProviderUtil.getS3Service(accessKey, secretKey), accessKey);
     }
 
     public S3StorageProvider(S3Service s3Service, String accessKey) {
@@ -716,33 +706,8 @@ public class S3StorageProvider extends StorageProviderBase {
         return contentMetadata;
     }
 
-    /**
-     * Converts a provided space ID into a valid and unique S3 bucket name.
-     *
-     * @param spaceId
-     * @return
-     */
     protected String getBucketName(String spaceId) {
-        String bucketName = accessKeyId + "." + spaceId;
-        bucketName = bucketName.toLowerCase();
-        bucketName = bucketName.replaceAll("[^a-z0-9-.]", "-");
-
-        // Remove duplicate separators (. and -)
-        while (bucketName.contains("--") || bucketName.contains("..")
-                || bucketName.contains("-.") || bucketName.contains(".-")) {
-            bucketName = bucketName.replaceAll("[-]+", "-");
-            bucketName = bucketName.replaceAll("[.]+", ".");
-            bucketName = bucketName.replaceAll("-[.]", "-");
-            bucketName = bucketName.replaceAll("[.]-", ".");
-        }
-
-        if (bucketName.length() > 63) {
-            bucketName = bucketName.substring(0, 63);
-        }
-        while (bucketName.endsWith("-") || bucketName.endsWith(".")) {
-            bucketName = bucketName.substring(0, bucketName.length() - 1);
-        }
-        return bucketName;
+        return S3ProviderUtil.getBucketName(accessKeyId, spaceId);
     }
 
     /**
@@ -772,4 +737,5 @@ public class S3StorageProvider extends StorageProviderBase {
         }
         return isSpace;
     }
+
 }
