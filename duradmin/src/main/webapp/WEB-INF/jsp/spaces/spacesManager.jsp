@@ -40,7 +40,7 @@
 						<a class="flex button float-r add-space-button" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Space</i></i></span></a>
 					</div>
 					<div class="header">
-						<span class="float-r"><input type="text"/></span>
+						<span class="float-r"><input class="dc-item-list-filter" type="text"/></span>
 						<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> prev next
 					</div>
 				</div>

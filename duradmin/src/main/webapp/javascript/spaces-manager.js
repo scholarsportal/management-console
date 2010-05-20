@@ -307,7 +307,7 @@ $(document).ready(function() {
 				load: loadSpace
 			});
 		}else{
-			showMultContentItemDetail();
+			showMultiSpaceDetail();
 		}
 	});
 
@@ -323,7 +323,7 @@ $(document).ready(function() {
 				load: loadContentItem
 			});
 		}else{
-			showMultContentItemDetail();
+			showMultiContentItemDetail();
 		}
 	});
 
@@ -345,11 +345,20 @@ $(document).ready(function() {
 
 	///////////////////////////////////////////
 	///click on a space list item
+	var spacesArray = new Array();
+	var spacesIdArray = new Array();
+
 	
-	dcGetSpaces({
-		load: function(spaces){
-			for(s in spaces){
-				var space = spaces[s];
+	$(".dc-item-list-filter").bind("keyup", $.throttle(1200, true, function(evt){
+			loadSpaces(spacesArray, evt.target.value);
+		}));
+
+	var loadSpaces = function(spaces,filter) {
+		$("#spaces-list").selectablelist("clear");
+			
+		for(s in spaces){
+			var space = spaces[s];
+			if(filter === undefined || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
 				var node =  document.createElement("div");
 				var actions = document.createElement("div");
 				$(actions).append("<button class='delete-space-button'>-</button>");
@@ -360,9 +369,24 @@ $(document).ready(function() {
 				$("#spaces-list").selectablelist('addItem',node);	   
 			}
 			
-			if(spaces.length > 0){
+			if(s == 0){
 				loadSpace(spaces[0]);
+			}		
+
+		}
+		
+		
+	};
+	
+	dcGetSpaces({
+		load: function(spaces){
+			spacesArray = spaces;
+			spacesIdArray = new Array();
+			for(s in spacesArray){
+				spacesIdArray[s] = spacesArray[s].spaceId;
 			}
+			loadSpaces(spacesArray);
+
 		}
 	});
 	
