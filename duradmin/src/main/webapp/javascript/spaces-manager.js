@@ -156,6 +156,9 @@ $(document).ready(function() {
 	///////////////////////////////////////////
 	///open add space dialog
 	$.fx.speeds._default = 10;
+
+
+	
 	$('#add-space-dialog').dialog({
 		autoOpen: false,
 		show: 'blind',
@@ -174,12 +177,16 @@ $(document).ready(function() {
 		},
 		close: function() {
 
-		}
+		},
+		  open: function(e){
+			$(e.target).closeOnLostFocus();
+		  }
+		
 	});
 
 
 
-	$('.add-space-button').click(
+	$('.add-space-button').live("click",
 			function(evt){
 				$("#add-space-dialog").openDialogOverTarget(evt);
 			}
@@ -204,7 +211,11 @@ $(document).ready(function() {
 		},
 		close: function() {
 
-		}
+		},
+		  open: function(e){
+			 $(e.target).closeOnLostFocus();
+		  }
+		
 	});
 	//hides the title bar on all dialogs;
 	
@@ -358,7 +369,7 @@ $(document).ready(function() {
 	var spacesIdArray = new Array();
 
 	
-	$(".dc-item-list-filter").bind("keyup", $.throttle(1200, true, function(evt){
+	$(".dc-item-list-filter").bind("keyup", $.throttle(400, false, function(evt){
 			loadSpaces(spacesArray, evt.target.value);
 		}));
 
