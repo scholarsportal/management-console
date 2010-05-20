@@ -18,9 +18,19 @@
 
 	<!-- 3rd party jquery plugins start-->
 	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
+	 
+	  <!-- mb.menu -->
+	  <!-- 
+	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/jquery.metadata.js"></script>
+	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/mbMenu.js"></script>
+	  <script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/mb-menu/jquery.hoverIntent.js"></script>
+	  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/jquery/plugins/mb-menu/menu1.css" media="screen" />
+		-->	
 	<!-- 3rd party jquery plugins start-->
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
+
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
 	<!-- page level header extensions reserved for pages that wish to inject page specific scripts into the header -->
