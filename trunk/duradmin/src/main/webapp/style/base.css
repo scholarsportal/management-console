@@ -454,6 +454,10 @@ a#select-provider span i
 	height:25px;
 }
 
+.dc-expandable-panel div:first-child{
+	cursor: pointer;		
+}
+
 /* DETAIL PANE ****************************************************/
 
 .detail-pane
