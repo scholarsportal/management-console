@@ -4,6 +4,22 @@
  */
 
 ////////////////////////////////////////////////////////////////////
+//jquery extensions
+///////////////////////////////////////////////////////////////////
+$.fn.makeVisible = function() {
+	return $(this).css("visibility", "visible");
+};
+
+$.fn.makeHidden = function() {
+	return $(this).css("visibility", "hidden");
+};
+
+$.fn.nearestOfClass = function(className){
+	var nearest = (this.hasClass(className)) ? this : this.closest("." + className);
+	return $(nearest);
+};
+
+////////////////////////////////////////////////////////////////////
 //Opens any dialog by id over the event's target
 ////////////////////////////////////////////////////////////////////
 var dcOpenDialogOverTarget =  function(evt, dialogId) {

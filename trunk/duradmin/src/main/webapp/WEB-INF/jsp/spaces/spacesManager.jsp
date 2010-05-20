@@ -23,6 +23,7 @@
 			    	</li>
 	        	</ul>
 	        </div> -->
+
 			<div class="float-r" id="pinned">
 				<span>
 				4 Items
@@ -32,7 +33,7 @@
 	   		</div>
 	   	</div>
 	   	<div id="list-browser">
-			<div id="spaces-list-view">
+	   		<div id="spaces-list-view" class="dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 					<div id="header-spaces-list" class="clearfix">
 						<h2>Spaces</h2>
@@ -40,23 +41,16 @@
 					</div>
 					<div class="header">
 						<span class="float-r"><input type="text"/></span>
-						<input id="check-all-spaces" type="checkbox"/> prev next
+						<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> prev next
 					</div>
 				</div>
 			
 				<div class="center dc-item-list-wrapper">
 					<div class="dc-item-list" id="spaces-list">
-						<div class="dc-item space-item dc-prototype">
-							<input  type="checkbox"/><span class="space-id">Space Id Here</span>
-							<div class="dc-action-panel">
-								<input type="button" value="+"/>
-								<input type="button" value="-"/>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
-			<div id="content-item-list-view">
+			<div id="content-item-list-view" class="dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 					<div id="header-content-list" class="clearfix">
 						<h2>Content Items</h2>
@@ -64,19 +58,12 @@
 					</div>
 					<div class="header" >
 						<span class="float-r"><input type="text"/></span>
-						<input id="check-all-content-items" type="checkbox"/> prev next
+						<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> prev next
 					</div>
 				</div>
 			
 				<div class="center dc-item-list-wrapper">
 					<div class="dc-item-list" id="content-item-list">
-						<div class="dc-item dc-prototype">
-							<input type="checkbox"/><span class="content-item-id">content item id goes here</span>
-							<div class="dc-action-panel">
-								<input type="button" value="+"/>
-								<input type="button" value="-"/>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>

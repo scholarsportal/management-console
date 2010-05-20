@@ -2,10 +2,14 @@
  * 
  * created by Daniel Bernstein
  */
+
+
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
+
 
 $(document).ready(function() {
 
+	
 	centerLayout = $('#page-content').layout({
 		//minSize:				50	// ALL panes
 		north__size: 			50	
@@ -96,41 +100,22 @@ $(document).ready(function() {
 			
 	///////////////////////////////////////////
 	///check/uncheck all spaces
-	$("#check-all-spaces").click(
+	$(".dc-check-all").click(
 		function(evt){
 			var checked = $(evt.target).attr("checked");
-			$("#spaces-list input[type=checkbox]").attr("checked", checked);
-			dcStyleItem($("#spaces-list .dc-item").first());
-			if(checked){
-				showMultiSpaceDetail();
-			}else{
-				showGenericDetailPane();
-			}
-		});
+			$(evt.target)
+				.closest(".dc-list-item-viewer")
+				.find(".dc-item-list")
+				.selectablelist("select", checked);
+	});
 
-	$("#check-all-content-items").click(
-			function(evt){
-				var checked = $(evt.target).attr("checked");
-				$("#content-item-list input[type=checkbox]").attr("checked", checked);
-				dcStyleItem($("#content-item-list .dc-item").first());
-				if(checked){
-					showMultiContentItemDetail();
-				}else{
-					showGenericDetailPane();
-				}
-			});
 	
 	var showMultiSpaceDetail = function(){
 		var multiSpace = $("#spaceMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
 		swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
-		$("#content-item-list > .dc-item").each(function(element){
-			if(!$(element).hasClass("dc-prototype")){
-				$(element).remove();
-			};
-			
-		});
+		$("#content-item-list").selectablelist("clear");
 	};
 
 	var showMultiContentItemDetail = function(){
@@ -141,7 +126,7 @@ $(document).ready(function() {
 	};
 
 	var showGenericDetailPane = function(){
-		swapDetailPane("#genericDetailPane","#detail-pane", spaceDetailLayoutOptions);
+		swapDetailPane($("#genericDetailPane").clone(),"#detail-pane", spaceDetailLayoutOptions);
 	};
 
 	//////////////////////////////////////////
@@ -161,49 +146,6 @@ $(document).ready(function() {
 		return appendCopy(target, "#tag-panel");
 	};
 	
-	
-	
-	///////////////////////////////////////////
-	///click on a space list item
-	$("#spaces-list .dc-item").live("click",
-		function(evt){
-			//if multiple spaces are selected display
-			//spaceMultiselect Panel
-			var multiChecked = $("#spaces-list").find("input[type=checkbox][checked]").size() > 1;
-			//deselect everything in the content window
-		
-			if(multiChecked){
-				showMultiSpaceDetail();
-			}else{
-				$("#content-item-list > .dc-item").removeClass("dc-selected-list-item dc-checked-list-item dc-checked-selected-list-item")
-				$("#content-item-list > .dc-item").find("input[type][checked]").attr("checked", false);
-				var spaceId = $(dcNearestDcItem(evt.target)).attr("id");
-				
-				dcGetSpace(spaceId,{
-					load: loadSpace
-				});
-			}
-		
-		
-		}
-	);
-
-	///////////////////////////////////////////
-	///click on a content list item
-	$("#content-item-list .dc-item").live("click",
-		function(evt){
-			var multiChecked = $("#content-item-list").find("input[type=checkbox][checked]").size() > 1;
-			if(multiChecked){
-				showMultiContentItemDetail();
-			}else{
-				var pane = $("#contentItemDetailPane").clone();
-				setObjectName(pane, "Content Item Name");
-				loadMetadataPane(pane);
-				loadTagPane(pane);
-				swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
-			}
-		}
-	);
 	
 	///////////////////////////////////////////
 	///open add space dialog
@@ -277,32 +219,49 @@ $(document).ready(function() {
 		
 		var spaceDetailPane = $("#spaceDetailPane").clone();
 		var contentItems = space.contentItems;
-		loadContentItems(contentItems);
 		setObjectName(spaceDetailPane, space.spaceId);
 		loadMetadataPane(spaceDetailPane);
 		loadTagPane(spaceDetailPane);
 		swapDetailPane(spaceDetailPane,"#detail-pane", spaceDetailLayoutOptions);
 		
+		loadContentItems(contentItems);
+		
 	};
 	
+	var dcGetContentItem = function(contentItemId, spaceId, callback){
+		var contentItem = {contentId: contentItemId, spaceId: spaceId};
+		callback.load(contentItem);
+	};
 
+	var loadContentItem = function(contentItem){
+		var pane = $("#contentItemDetailPane").clone();
+		setObjectName(pane, contentItem.contentId);
+		loadMetadataPane(pane);
+		loadTagPane(pane);
+		swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
+	};
+
+	
 	var loadContentItems = function(contentItems){
-		var prototype = $("#content-item-list .dc-prototype").first();
+		$("#content-item-list").selectablelist("clear");
+		
 		for(i in contentItems){
-			var node =  prototype.clone();
 			var ci = contentItems[i];
-			$(node).attr("id", ci);
-			$(node).removeClass("prototype");
-			$(".content-item-id", node).html(ci);
-			$("#content-item-list").append(node);
-			$(node).show();
+			var node =  document.createElement("div");
+			var actions = document.createElement("div");
+			$(actions).append("<button class='delete-space-button'>-</button>");
+			$(node).attr("id", ci)
+				   .html(ci)
+				   .append(actions);
+			$("#content-item-list").selectablelist('addItem',node);	   
+
 		}
 	}
 	
 	var dcGetSpaces = function(callback){
 		var spaces = new Array(50);
 		for(var i = 0; i < spaces.length; i++){
-			spaces[i] = {spaceId:"Space #" + i};
+			spaces[i] = {spaceId:"Space-" + i};
 		}
 		callback.load(spaces);
 	};
@@ -310,7 +269,7 @@ $(document).ready(function() {
 	var dcGetSpace = function(spaceId,callback){
 		var contentItems = new Array(50);
 		for(var i = 0; i < contentItems.length; i++){
-			contentItems[i] = "/this/is/faux/content/item/" + i;
+			contentItems[i] = spaceId+"/this/is/faux/content/item/" + i;
 		}
 		
 		
@@ -323,18 +282,82 @@ $(document).ready(function() {
 	};
 
 
+	$("#content-item-list").selectablelist({});
+	$("#spaces-list").selectablelist({});
+
+	
+	///////////////////////////////////////////
+	///click on a space list item
+
+	$("#spaces-list").bind("currentItemChanged", function(evt,state){
+		if(state.selectedItems.length < 2){
+			dcGetSpace($(state.item).attr("id"),{
+				load: loadSpace
+			});
+		}else{
+			showMultiSpaceDetail();
+		}
+	});
+
+	$("#spaces-list").bind("selectionChanged", function(evt,state){
+		if(state.selectedItems.length == 0){
+			showGenericDetailPane();
+		}else if(state.selectedItems.length == 1){
+			dcGetSpace($(state.item).attr("id"),{
+				load: loadSpace
+			});
+		}else{
+			showMultContentItemDetail();
+		}
+	});
+
+	///////////////////////////////////////////
+	///click on a content list item
+	$("#content-item-list").bind("currentItemChanged", function(evt,state){
+		if(state.selectedItems.length < 2){
+			/**
+			 * @FIXME 
+			 */
+			var spaceId = "XXXXXX";
+			dcGetContentItem($(state.item).attr("id"),spaceId,{
+				load: loadContentItem
+			});
+		}else{
+			showMultContentItemDetail();
+		}
+	});
+
+	$("#content-item-list").bind("selectionChanged", function(evt,state){
+		if(state.selectedItems.length == 0){
+			showGenericDetailPane();
+		}else if(state.selectedItems.length == 1){
+			var spaceId = "YYYYYYY";
+			/**
+			 * @FIXME 
+			 */
+			dcGetContentItem($(state.item).attr("id"),spaceId,{
+				load: loadContentItem
+			});
+		}else{
+			showMultiContentItemDetail();
+		}
+	});
+
+	///////////////////////////////////////////
+	///click on a space list item
 	
 	dcGetSpaces({
 		load: function(spaces){
-			var prototype = $("#spaces-list .dc-prototype").first();
 			for(s in spaces){
-				var node =  prototype.clone();
 				var space = spaces[s];
-				$(node).attr("id", space.spaceId);
-				$(node).removeClass("prototype");
-				$(".space-id", node).html(space.spaceId);
-				$("#spaces-list").append(node);
-				$(node).show();
+				var node =  document.createElement("div");
+				var actions = document.createElement("div");
+				$(actions).append("<button class='delete-space-button'>-</button>");
+				$(node).attr("id", space.spaceId)
+					   .html(space.spaceId)
+					   .append(actions);
+				
+				$("#spaces-list").selectablelist('addItem',node);	   
 			}
 			
 			if(spaces.length > 0){
@@ -342,4 +365,6 @@ $(document).ready(function() {
 			}
 		}
 	});
+	
+	
 });
