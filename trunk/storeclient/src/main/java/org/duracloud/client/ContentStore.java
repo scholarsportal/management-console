@@ -293,10 +293,18 @@ public interface ContentStore {
     public void validateContentId(String contentId) throws InvalidIdException;
 
     /**
+     * Gets a listing of the supported tasks. A task is an activity which is
+     * outside of the standard set of storage activites but is available
+     * through one or more storage providers.
+     *
+     * @return the return value of the task
+     */
+    public List<String> getSupportedTasks()
+        throws ContentStoreException;
+
+    /**
      * Perform a task which is outside of the standard set of storage activites
-     * but is available through one or more providers. See external
-     * documentation for more information on which tasks can be performed
-     * using this method and the parameters they expect.
+     * but is available through one or more storage providers.
      *
      * @param taskName the name of the task to be performed
      * @param taskParameters the parameters of the task, what is included here

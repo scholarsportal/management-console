@@ -607,9 +607,26 @@ public class TestContentStore {
     }
 
     @Test
+    public void testGetSupportedTasks() throws Exception {
+        List<String> supportedTasks = store.getSupportedTasks();
+        assertNotNull(supportedTasks);
+        assertTrue(supportedTasks.contains("noop"));
+    }
+
+    @Test
     public void testPerformTask() throws Exception {
-        String taskName = "invalid-task";
-        String taskParams = "invalid-task-params";
+        // Noop task
+        String taskName = "noop";
+        String taskParams = "";
+
+        String response = store.performTask(taskName, taskParams);
+        assertNotNull(response);
+        response = store.getTaskStatus(taskName);
+        assertNotNull(response);
+
+        // Invalid tasks
+        taskName = "invalid-task";
+        taskParams = "invalid-task-params";
 
         try {            
             store.performTask(taskName, taskParams);

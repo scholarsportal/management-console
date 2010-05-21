@@ -274,4 +274,31 @@ public class ContentStoreCache
     public void validateContentId(String contentId) throws InvalidIdException {
         this.backendStore.validateContentId(contentId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getSupportedTasks()
+        throws ContentStoreException {
+        //TODO implement
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String performTask(String taskName, String taskParameters)
+        throws ContentStoreException {
+        //TODO implement
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */    
+    public String getTaskStatus(String taskName)
+        throws ContentStoreException {
+        //TODO implement
+        return null;
+    }
 }

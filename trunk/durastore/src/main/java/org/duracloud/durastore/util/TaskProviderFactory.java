@@ -1,6 +1,6 @@
 package org.duracloud.durastore.util;
 
-import org.duracloud.s3storage.S3TaskProvider;
+import org.duracloud.s3task.S3TaskProvider;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.domain.StorageProviderType;

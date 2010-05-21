@@ -41,7 +41,10 @@ public class MediaStreamingService extends BaseService implements ComputeService
     private static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
     private static final String DEFAULT_MEDIA_SOURCE_SPACE_ID = "media-source";
     private static final String DEFAULT_MEDIA_VIEWER_SPACE_ID = "media-viewer";
-   
+
+    private static final String ENABLE_STREAMING_TASK = "enable-streaming";
+    private static final String DISABLE_STREAMING_TASK = "disable-streaming";    
+
     private String duraStoreHost;
     private String duraStorePort;
     private String duraStoreContext;
@@ -50,11 +53,13 @@ public class MediaStreamingService extends BaseService implements ComputeService
     private String mediaViewerSpaceId;
     private String mediaSourceSpaceId;
 
+    private ContentStore contentStore;
+
     private String streamHost;
 
     @Override
     public void start() throws Exception {
-        System.out.println("Starting Media Streaming Service as " + username);
+        log("Starting Media Streaming Service as " + username);
         this.setServiceStatus(ServiceStatus.STARTING);
         
         ContentStoreManager storeManager =
@@ -62,13 +67,14 @@ public class MediaStreamingService extends BaseService implements ComputeService
                                         duraStorePort,
                                         duraStoreContext);
         storeManager.login(new Credential(username, password));
-        ContentStore contentStore = storeManager.getPrimaryContentStore();
+        contentStore = storeManager.getPrimaryContentStore();
 
         File workDir = new File(getServiceWorkDir());
         workDir.setWritable(true);
 
-        // TODO: Create/enable distribution
-        streamHost = "TODO:StreamHost";
+        // Create/enable distribution
+        streamHost =
+            contentStore.performTask(ENABLE_STREAMING_TASK, mediaSourceSpaceId);
         
         // Create playlist in work dir
         PlaylistCreator creator = new PlaylistCreator();
@@ -175,7 +181,8 @@ public class MediaStreamingService extends BaseService implements ComputeService
         System.out.println("Stopping Media Streaming Service");
         this.setServiceStatus(ServiceStatus.STOPPING);
         
-        // TODO: Delete/disable distribution
+        // Disable distribution
+        contentStore.performTask(DISABLE_STREAMING_TASK, mediaSourceSpaceId);
         
         this.setServiceStatus(ServiceStatus.STOPPED);
     }
@@ -186,6 +193,15 @@ public class MediaStreamingService extends BaseService implements ComputeService
         
         // Add stream host
         props.put("streamHost", streamHost);
+
+        String streamingStatus;
+        try {
+            streamingStatus = contentStore.getTaskStatus(ENABLE_STREAMING_TASK);
+        } catch(ContentStoreException e) {
+            streamingStatus = "unknown";
+        }
+
+        props.put("streamingStatus", streamingStatus);
         
         return props;
     }

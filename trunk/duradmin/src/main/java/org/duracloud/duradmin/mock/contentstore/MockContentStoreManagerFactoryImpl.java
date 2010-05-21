@@ -298,6 +298,24 @@ public class MockContentStoreManagerFactoryImpl
         public void validateContentId(String contentId) throws InvalidIdException {
             // TODO Auto-generated method stub
         }
+
+        public List<String> getSupportedTasks()
+            throws ContentStoreException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public String performTask(String taskName, String taskParameters)
+            throws ContentStoreException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public String getTaskStatus(String taskName)
+            throws ContentStoreException {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
 }

@@ -1,9 +1,13 @@
 package org.duracloud.durastore.rest;
 
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import org.duracloud.common.web.RestHttpHelper;
+import static junit.framework.Assert.assertNotNull;
 import org.apache.commons.httpclient.HttpStatus;
+import org.duracloud.common.util.SerializationUtil;
+import org.duracloud.common.web.RestHttpHelper;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * @author: Bill Branan
@@ -12,20 +16,48 @@ import org.apache.commons.httpclient.HttpStatus;
 public class TestTaskRest extends BaseRestTester {
 
     @Test
+    public void getSupportedTasks() throws Exception {
+        String url = baseUrl + "/task";
+        RestHttpHelper.HttpResponse response = restHelper.get(url);
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
+        assertNotNull(responseText);
+        List<String> supportedTasks =
+            SerializationUtil.deserializeList(responseText);
+        assertNotNull(supportedTasks);
+        assertTrue(supportedTasks.contains("noop"));
+    }
+
+    @Test
     public void testPerformTask() throws Exception {
-        String taskId = "unsupported-task";
+        // Noop Task
+        String taskId = "noop";
         String url = baseUrl + "/task/" + taskId;
         RestHttpHelper.HttpResponse response = restHelper.post(url, null, null);
-        String responseText = checkResponse(response, HttpStatus.SC_BAD_REQUEST);
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
+        assertNotNull(responseText);        
+
+        // Unsupported Task
+        taskId = "unsupported-task";
+        url = baseUrl + "/task/" + taskId;
+        response = restHelper.post(url, null, null);
+        responseText = checkResponse(response, HttpStatus.SC_BAD_REQUEST);
         assertTrue(responseText.contains(taskId));
     }
 
     @Test
     public void testGetTask() throws Exception {
-        String taskId = "unsupported-task";
+        // Noop Task
+        String taskId = "noop";
         String url = baseUrl + "/task/" + taskId;
         RestHttpHelper.HttpResponse response = restHelper.get(url);
-        String responseText = checkResponse(response, HttpStatus.SC_BAD_REQUEST);
+        String responseText = checkResponse(response, HttpStatus.SC_OK);
+        assertNotNull(responseText);
+
+        // Unsupported Task
+        taskId = "unsupported-task";
+        url = baseUrl + "/task/" + taskId;
+        response = restHelper.get(url);
+        responseText = checkResponse(response, HttpStatus.SC_BAD_REQUEST);
         assertTrue(responseText.contains(taskId));
     }
 }
