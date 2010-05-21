@@ -74,7 +74,7 @@
 	Space Detail Pane:  The div is invisible and used as a prototype for displaying specific space
 						details.
 	 -->
-	<div id="spaceDetailPane" style="display:none">
+	<div id="spaceDetailPane" class="dc-detail-pane" style="display:none">
 		<div class="north header">
 			<h1>Space Detail</h1>
 			<h2 class="object-name">Space Name Here</h2>
@@ -124,6 +124,8 @@
 				</div>
 			</div>
 		</div>
+		<div class="east"><!-- used for space purposes only --></div>
+
 	</div>
 
 	<div id="genericDetailPane" style="display:none">
@@ -243,6 +245,9 @@
 			</div>
 
 		</div>
+		
+		<div class="east"><!-- used for space purposes only --></div>
+		
 	</div>
 	
 	<div id="metadata-panel" class="dc-expandable-panel" style="display:none">
