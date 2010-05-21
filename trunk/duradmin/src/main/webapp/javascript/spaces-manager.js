@@ -34,8 +34,6 @@ $(document).ready(function() {
 		,   west__onresize:         "spacesListPane.resizeAll"
 		,	center__paneSelector:	"#content-item-list-view"
 		,   center__onresize:       "contentItemListPane.resizeAll"
-
-
 	});
 	
 
@@ -55,24 +53,23 @@ $(document).ready(function() {
 	//detail pane's layout options
 	var spaceDetailLayoutOptions = {
 			north__paneSelector:	".north"
-				,   north__size: 			175
+				,   north__size: 			160
 				,	center__paneSelector:	".center"
 				,   resizable: 				false
 				,   slidable: 				false
 				,   spacing_open:			0
 				,	togglerLength_open:		0
+				,   east__paneSelector:    ".east"
+				,   east__size:    5
+				
 	};
-
-	var contentItemDetailLayoutOptions = {
-			north__paneSelector:	".north"
-				,   north__size: 			200
-				,	center__paneSelector:	".center"
-				,   resizable: 				false
-				,   slidable: 				false
-				,   spacing_open:			0
-				,	togglerLength_open:		0
-	};
-
+	
+	//content item detail layout is slightly different from 
+	//the space detail - copy and supply overrides
+	var contentItemDetailLayoutOptions = $.extend(true,{}, 
+													   spaceDetailLayoutOptions, 
+													   {north__size:150});
+	
 	
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
 
