@@ -292,4 +292,30 @@ public interface ContentStore {
      */
     public void validateContentId(String contentId) throws InvalidIdException;
 
+    /**
+     * Perform a task which is outside of the standard set of storage activites
+     * but is available through one or more providers. See external
+     * documentation for more information on which tasks can be performed
+     * using this method and the parameters they expect.
+     *
+     * @param taskName the name of the task to be performed
+     * @param taskParameters the parameters of the task, what is included here
+     *                       and how the information is formatted is
+     *                       task-specific
+     * @return the return value of the task
+     */
+    public String performTask(String taskName, String taskParameters)
+        throws ContentStoreException;
+
+    /**
+     * For task which are long-running, this method is used to query the status
+     * of the activites being performed. This method is used after a call to
+     * performTask() using the same task name.
+     *
+     * @param taskName the name of the task which is in process
+     * @return the status of the task
+     */
+    public String getTaskStatus(String taskName)
+        throws ContentStoreException;
+
 }
