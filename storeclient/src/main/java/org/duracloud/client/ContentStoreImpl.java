@@ -12,6 +12,7 @@ import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
 import org.duracloud.error.UnauthorizedException;
+import org.duracloud.error.UnsupportedTaskException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.IdUtil;
@@ -99,7 +100,11 @@ public class ContentStoreImpl implements ContentStore{
         contentId = EncodeUtil.urlEncode(contentId);
         String url = buildURL("/" + spaceId + "/" + contentId);
         return addStoreIdQueryParameter(url);
+    }
 
+    private String buildTaskURL(String taskName) {
+        String url = buildURL("/task/" + taskName);
+        return addStoreIdQueryParameter(url);
     }
 
     private String buildSpaceURL(String spaceId,
@@ -592,4 +597,45 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String performTask(String taskName, String taskParameters)
+        throws ContentStoreException {
+        String url = buildTaskURL(taskName);
+        try {
+            HttpResponse response = restHelper.post(url, taskParameters, null);
+            checkResponse(response, HttpStatus.SC_OK);
+            return response.getResponseBody();
+        } catch(InvalidIdException e) {
+            throw new UnsupportedTaskException(taskName, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException("Not authorized to perform task: " +
+                                            taskName, e);
+        } catch (Exception e) {
+            throw new ContentStoreException("Error performing task: " +
+                                            taskName + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getTaskStatus(String taskName)
+        throws ContentStoreException {
+        String url = buildTaskURL(taskName);
+        try {
+            HttpResponse response = restHelper.get(url);
+            checkResponse(response, HttpStatus.SC_OK);
+            return response.getResponseBody();
+        } catch(InvalidIdException e) {
+            throw new UnsupportedTaskException(taskName, e);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException("Not authorized to get task " +
+                                            "status: " + taskName, e);
+        } catch (Exception e) {
+            throw new ContentStoreException("Error getting task status: " +
+                                            taskName + e.getMessage(), e);
+        }
+    }
 }

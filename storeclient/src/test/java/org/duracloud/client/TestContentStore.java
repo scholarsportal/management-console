@@ -10,6 +10,7 @@ import org.duracloud.domain.Content;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.error.InvalidIdException;
 import org.duracloud.error.NotFoundException;
+import org.duracloud.error.UnsupportedTaskException;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
 import org.duracloud.unittestdb.util.StorageAccountTestUtil;
@@ -602,6 +603,24 @@ public class TestContentStore {
             store.setContentMetadata(spaceId, invalidContentId, emptyMap);
             fail("Exception expected on setContentMetadata(spaceId, invalidContentId, ...)");
         } catch(NotFoundException expected) {
+        }
+    }
+
+    @Test
+    public void testPerformTask() throws Exception {
+        String taskName = "invalid-task";
+        String taskParams = "invalid-task-params";
+
+        try {            
+            store.performTask(taskName, taskParams);
+        } catch(UnsupportedTaskException expected) {
+            assertNotNull(expected);
+        }
+
+        try {
+            store.getTaskStatus(taskName);
+        } catch(UnsupportedTaskException expected) {
+            assertNotNull(expected);
         }
     }
 

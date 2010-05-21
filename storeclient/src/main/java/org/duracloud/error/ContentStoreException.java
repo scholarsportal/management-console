@@ -27,6 +27,12 @@ public class ContentStoreException extends DuraCloudCheckedException {
         super(throwable);
     }
 
+    public ContentStoreException(String message,
+                                 Throwable t,
+                                 String messageKey) {
+        super(message, t, messageKey);
+    }
+
     public ContentStoreException(String task, String spaceId, Throwable t) {
         super(buildErrMsg(task, spaceId, t), t, messageKeyNoContent);
         setArgs(task, spaceId, t.getMessage());
