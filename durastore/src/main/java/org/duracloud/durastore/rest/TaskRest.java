@@ -3,6 +3,7 @@ package org.duracloud.durastore.rest;
 import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.rest.RestUtil;
 import org.duracloud.common.util.IOUtil;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.durastore.util.TaskProviderFactory;
 import org.duracloud.storage.error.UnsupportedTaskException;
 import org.duracloud.storage.provider.TaskProvider;
@@ -14,6 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Allows for calling storage provider specific tasks
@@ -23,6 +25,28 @@ import java.io.InputStream;
  */
 @Path("/task")
 public class TaskRest extends BaseRest {
+
+    /**
+     * Gets a listing of supported tasks for a given provider
+     *
+     * @return 200 on success
+     */
+    @GET
+    public Response getSupportedTasks(@QueryParam("storeID")
+                                      String storeID){
+        try {
+            TaskProvider taskProvider =
+                TaskProviderFactory.getTaskProvider(storeID);
+
+            List<String> supportedTasks = taskProvider.getSupportedTasks();
+            String responseText =
+                SerializationUtil.serializeList(supportedTasks);
+
+            return Response.ok(responseText, TEXT_PLAIN).build();
+        } catch (Exception e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
 
     /**
      * Performs a task

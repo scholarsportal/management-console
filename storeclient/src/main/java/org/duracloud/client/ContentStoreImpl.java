@@ -3,6 +3,7 @@ package org.duracloud.client;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.common.rest.HttpHeaders;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -99,6 +100,11 @@ public class ContentStoreImpl implements ContentStore{
     private String buildContentURL(String spaceId, String contentId) {
         contentId = EncodeUtil.urlEncode(contentId);
         String url = buildURL("/" + spaceId + "/" + contentId);
+        return addStoreIdQueryParameter(url);
+    }
+
+    private String buildTaskURL() {
+        String url = buildURL("/task");
         return addStoreIdQueryParameter(url);
     }
 
@@ -594,6 +600,26 @@ public class ContentStoreImpl implements ContentStore{
             IdUtil.validateContentId(contentId);
         } catch(org.duracloud.storage.error.InvalidIdException e) {
             throw new InvalidIdException(e.getMessage());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getSupportedTasks()
+        throws ContentStoreException {
+        String url = buildTaskURL();
+        try {
+            HttpResponse response = restHelper.get(url);
+            checkResponse(response, HttpStatus.SC_OK);
+            String reponseText = response.getResponseBody();
+            return SerializationUtil.deserializeList(reponseText);
+        } catch(UnauthorizedException e) {
+            throw new UnauthorizedException("Not authorized to get supported " +
+                                            "tasks", e);
+        } catch (Exception e) {
+            throw new ContentStoreException("Error getting supported tasks: " +
+                                            e.getMessage(), e);
         }
     }
 

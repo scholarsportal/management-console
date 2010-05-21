@@ -13,7 +13,7 @@ import org.jets3t.service.security.AWSCredentials;
  */
 public class S3ProviderUtil {
 
-    protected static S3Service getS3Service(String accessKey, String secretKey) {
+    public static S3Service getS3Service(String accessKey, String secretKey) {
         AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey);
         try {
             return new RestS3Service(awsCredentials);
@@ -30,7 +30,7 @@ public class S3ProviderUtil {
      * @param spaceId
      * @return
      */
-    protected static String getBucketName(String accessKeyId, String spaceId) {
+    public static String getBucketName(String accessKeyId, String spaceId) {
         String bucketName = accessKeyId + "." + spaceId;
         bucketName = bucketName.toLowerCase();
         bucketName = bucketName.replaceAll("[^a-z0-9-.]", "-");

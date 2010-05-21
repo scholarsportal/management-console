@@ -1,11 +1,14 @@
-package org.duracloud.s3storage;
+package org.duracloud.s3task;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
 import org.duracloud.common.model.Credential;
+import org.duracloud.s3storage.S3ProviderTestBase;
 import org.duracloud.storage.error.UnsupportedTaskException;
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.Assert.fail;
-import static junit.framework.Assert.assertNotNull;
+
+import java.util.List;
 
 /**
  * @author: Bill Branan
@@ -24,8 +27,19 @@ public class S3TaskProviderTest extends S3ProviderTestBase {
 
     @Test
     public void testPerformTask() throws Exception {
+        List<String> supportedTasks = taskProvider.getSupportedTasks();
+        assertNotNull(supportedTasks);
+
+        for(String taskName : supportedTasks) {
+            String result = taskProvider.getTaskStatus(taskName);
+            assertNotNull(result);
+        }
+
+        String noopResult = taskProvider.performTask("noop", "");
+        assertNotNull(noopResult);
+
         try {
-            taskProvider.performTask("task", "parameters");
+            taskProvider.performTask("unsupported-task", "parameters");
             fail("Exception expected performing unknown task");
         } catch(UnsupportedTaskException expected) {
             assertNotNull(expected);
@@ -35,7 +49,7 @@ public class S3TaskProviderTest extends S3ProviderTestBase {
     @Test
     public void testGetTaskStatus() throws Exception {
         try {
-            taskProvider.performTask("task", "parameters");
+            taskProvider.performTask("unsupported-task", "parameters");
             fail("Exception expected performing unknown task");
         } catch(UnsupportedTaskException expected) {
             assertNotNull(expected);
