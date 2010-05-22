@@ -6,6 +6,279 @@
 
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
 
+/**
+ * Tabular Expando Panel: used for displaying lists of static properties
+ */
+$.widget("ui.tabularexpandopanel", 
+	$.extend({}, $.ui.expandopanel.prototype, 
+		{  //extended definition 
+			_init: function(){ 
+				$.ui.expandopanel.prototype._init.call(this); //call super init first
+				//add the table if it is not null
+				var d = this.options.data;
+				if(d != null){
+					var table = dc.createTable(d, ["label", "value"]);
+					this.append(table);
+				}
+			}, 
+			
+			destroy: function(){ 
+				//tabular destroy here
+				$.ui.expandopanel.prototype.destroy.call(this); // call the original function 
+			}, 
+			
+			options: $.extend({}, $.ui.expandopanel.prototype.options, {
+				data: [["a1","b1"], ["a2","b2"]],
+			}),
+		}
+	)
+); 
+
+/**
+ * Metadata Panel: used for displaying lists of static properties
+ */
+$.widget("ui.metadatapanel", 
+	$.extend({}, $.ui.expandopanel.prototype, 
+		{  //extended definition 
+			_init: function(){ 
+				$.ui.expandopanel.prototype._init.call(this); //call super init first
+				var that = this;
+				
+				//initialize table
+				var table =  $("table", this.element);
+				if(table.size() == 0){
+					table = $(document.createElement("table"));
+					this.getContent().prepend(table);	
+					var addControlsRow = this._createControlsRow();
+					
+					var fSuccess = function(){that._addSuccess(that)};
+
+					//attach listeners
+					$("input[type=button]", addControlsRow).click(function(evt){
+						//alert("clicked add!");
+						
+						that.element.trigger("add", { value: that._getValue(), 
+											  success: fSuccess,
+											  failure: that._addFailure});
+					});
+
+
+					table.append(addControlsRow);
+
+				}
+				
+				this._initializeDataContainer();
+			}, 
+			
+			
+			destroy: function(){ 
+				//tabular destroy here
+				$.ui.expandopanel.prototype.destroy.call(this); // call the original function 
+			}, 
+
+			options: $.extend({}, $.ui.expandopanel.prototype.options, {
+				data: [
+				           {name: "name 1", value: "value1"},
+				           {name: "name 2", value: "value2"}
+							],
+			}),
+
+			load: function(data){
+				this.options.data = data;
+				for(i in data){
+					this._add(data[i]);
+				};
+			},
+			
+			_initializeDataContainer: function(){
+				
+			},
+			
+			_addSuccess: function(context){
+				var v = context._getValue();
+				if($.isArray(v)){
+					for(i in v){
+						context._add(v[i]);
+					}
+				}else{
+					context._add(v);
+					
+				}
+				context._clearForm();
+			},
+			
+			_addFailure: function(){
+				alert("add operation failed!");	
+			},
+
+			_removeSuccess: function(context, data){
+				$(".name",context.element).each(function(index,value){
+					if($(value).html() == data.name){
+						$(value).parent().remove();	
+					}
+					
+				});	
+			},
+			
+			_removeFailure: function(){
+				alert("remove failed!");	
+			},
+			
+			_createControlsRow: function(){
+				var controls = $(document.createElement("tr"));
+				controls.append(
+					$(document.createElement("td"))
+						.addClass("name")
+						.html("<input type='text' class='name-txt' size='15'/>")
+				);
+
+				controls.append(
+						$(document.createElement("td"))
+							.addClass("value")
+							.html("<input type='text' class='value-txt' size='20'/><input type='button' value='+'/>")
+					);
+				
+				return controls;
+				
+			},
+
+			_getValue: function(){
+				var fields = { 
+						name: $(".name-txt",this.element).first().val(),
+						value: $(".value-txt",this.element).val(),
+				};
+				
+				return fields;
+			},
+
+			_getDataContainer: function(){
+				return $("table", this.element);
+			},
+
+			
+			_createDataChild: function(data){
+				var child = $(document.createElement("tr"));
+				//add the name element
+				child.append($(document.createElement("td")).addClass("name").html(data.name));
+				//add the value value
+				var valueCell = $(document.createElement("td"));
+				child.append(valueCell.addClass("value").html(data.value));
+				//append remove button
+				button = $(document.createElement("span")).addClass("dc-mouse-panel float-r").makeHidden().append("<input type='button' value='x'/>");
+				valueCell.append(button);
+				return child;
+			},
+			
+			_appendChild: function (child){
+				this._getDataContainer().children().last().prepend(child);
+				return child;
+			},
+			
+			_add: function(data){
+				var that = this;
+				var child = this._createDataChild(data);
+				child.addClass("dc-mouse-panel-activator");
+				this._appendChild(child);
+				//add click listener 
+				$("input", child).click(function(evt){
+					var props = "";
+					for(p in data){
+						props += p + ": " + data[p] + ", ";
+					}
+					//alert("clicked remove: "  + props);
+					that.element.trigger("remove", { value: that._getValue(), 
+						  success: function(){
+							that._removeSuccess(that,data);
+						  },
+						  failure: that._removeFailure});
+				});
+			},
+			
+			
+			_clearForm: function(){
+				$("input[type='text']", this.element).val('');
+			},
+			
+			destroy: function(){ 
+			}, 
+			
+		}
+	)
+); 
+
+/**
+ * Tags panel is substantially the same in display and behavior as metadatapanel
+ */
+$.widget("ui.tagspanel", 
+		$.extend({}, $.ui.metadatapanel.prototype, 
+			{  //extended definition 
+				_init: function(){ 
+					$.ui.metadatapanel.prototype._init.call(this); //call super init first
+				}, 
+				
+				_initializeDataContainer: function(){
+					$("table",this.element).prepend("<tr><td><ul class='horizontal-list'></ul></td></tr>");
+				},
+				
+				destroy: function(){ 
+					$.ui.metadatapanel.prototype.destroy.call(this); // call the original function 
+				}, 
+
+				_createControlsRow: function(){
+					var controls = $(document.createElement("tr"));
+
+					controls.append(
+							$(document.createElement("td"))
+								.addClass("value")
+								.html("<input type='text' class='name-txt' size='35'/><input type='button' value='+'/>")
+						);
+					
+					return controls;
+					
+				},
+
+				_getValue: function(){
+					var fields = { 
+						tag: $(".name-txt",this.element).first().val(),
+					};
+					
+					return fields;
+				},
+
+				_getDataContainer: function(){
+					return $("ul", this.element);
+				},
+
+				
+				_createDataChild: function(data){
+					var child = $(document.createElement("li"));
+					//add the name element
+					child.html(data.tag);
+					//append remove button
+					button = $(document.createElement("span")).addClass("dc-mouse-panel float-r").makeHidden().append("<input type='button' value='x'/>");
+					child.append(button);
+					return child;
+				},
+				
+				_appendChild: function (child){
+					this._getDataContainer().append(child);
+					return child;
+				},
+				
+				_removeSuccess: function(context, data){
+					$("li",context.element).each(function(index,value){
+						var text = $(value).text();
+						if(text == data.tag){
+							$(value).remove();	
+						}
+						
+					});	
+				},
+
+
+			}
+		)
+	);
 
 $(document).ready(function() {
 
@@ -117,7 +390,6 @@ $(document).ready(function() {
 		loadTagPane(multiSpace);
 		swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
 		$("#content-item-list").selectablelist("clear");
-		
 	};
 
 	var showMultiContentItemDetail = function(){
@@ -133,7 +405,8 @@ $(document).ready(function() {
 	};
 
 	//////////////////////////////////////////
-	////functions for loading metadata and tags
+	////functions for loading metadata, tags and properties
+	/*obsolete
 	var appendCopy = function(target, source){
 		var copy = $(source).clone();
 		$(copy).removeAttr("id").show();
@@ -141,14 +414,30 @@ $(document).ready(function() {
 		return copy;
 	};
 	
+	*/
+	
 	var loadMetadataPane = function(target){
-		return appendCopy(target, "#metadata-panel");
+		var div = document.createElement("div");
+		$(".center", target).append(div);
+		$(div).metadatapanel({title: "Metadata"});
+		$(div).metadatapanel("load",[{name:"name1", value:"value1"}]);
+		return div;
 	};
 
 	var loadTagPane = function(target){
-		return appendCopy(target, "#tag-panel");
+		var div = document.createElement("div");
+		$(".center", target).append(div);
+		$(div).tagspanel({title: "Tags"});
+		$(div).tagspanel("load",[{tag:"tag1"}, {tag:"tag2"}, {tag:"tag3"}]);
+		return div;
 	};
 	
+	var loadProperties = function(target, /*array*/ properties){
+		var div = document.createElement("div");
+		$(".center", target).append(div);
+		$(div).tabularexpandopanel({title: "Details", data: properties});
+	};
+
 	
 	///////////////////////////////////////////
 	///open add space dialog
@@ -233,15 +522,40 @@ $(document).ready(function() {
 	 * loads the space data into the detail pane
 	 */
 	var loadSpace = function(space){
-		var spaceDetailPane = $("#spaceDetailPane").clone();
+		var detail = $("#spaceDetailPane").clone();
 		var contentItems = space.contentItems;
-		setObjectName(spaceDetailPane, space.spaceId);
-		loadMetadataPane(spaceDetailPane);
-		loadTagPane(spaceDetailPane);
-		swapDetailPane(spaceDetailPane,"#detail-pane", spaceDetailLayoutOptions);
+		setObjectName(detail, space.spaceId);
+		loadProperties(detail, extractSpaceProperties(space));
+		var mp = loadMetadataPane(detail);
+		$(mp).bind("add", function(evt, future){
+			future.success();
+		});
+
+		$(mp).bind("remove", function(evt, future){
+			future.success();
+		});
+		
+		var tag = loadTagPane(detail);
+
+		$(tag).bind("add", function(evt, future){
+			future.success();
+		});
+
+		$(tag).bind("remove", function(evt, future){
+			future.success();
+		});
+
+		swapDetailPane(detail,"#detail-pane", spaceDetailLayoutOptions);
 		loadContentItems(contentItems);
 	};
+
 	
+	var extractSpaceProperties = function(space){
+		return [ 
+					['Items', space.metadata.count],
+					['Created', space.metadata.created],
+			   ];
+	};
 	/**
 	 * returns contentItem details
 	 */
@@ -293,8 +607,7 @@ $(document).ready(function() {
 		callback.load({
 						spaceId: spaceId,
 						contentItems: contentItems,
-						createdOn: "Jan 1, 2010 12:00:00 GMT",
-						itemCount: 10
+						metadata: {count: 10, created: "Jan 1, 2010 12:00:00 GMT"},
 					  });
 	};
 
@@ -387,7 +700,7 @@ $(document).ready(function() {
 			}
 			
 			if(s == 0){
-				loadSpace(spaces[0]);
+				dcGetSpace(spaces[0].spaceId, {load:loadSpace});
 			}		
 
 		}
