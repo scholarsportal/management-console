@@ -116,16 +116,13 @@
 		</div>
 	
 		<div id="genericDetailPane" style="display:none">
-			<div class="north header">
-				Nothing is selected.
-			</div>
-			<div class="center">
-			</div>
+			<div class="north header"></div>
+			<div class="center"></div>
 		</div>
 	
 		<div id="spaceMultiSelectPane" style="display:none">
 			<div class="north">
-				<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Space Detail</h3>
+				<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/>Space Detail</h3>
 				<h5 class="header object-name">Multiple Spaces Selected</h5>
 				<div class="header toggle-control">
 					Access: 

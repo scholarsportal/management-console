@@ -475,7 +475,7 @@ a#select-provider span i
 
 .detail-pane
 {
-	
+	padding-right:5px !important;
 }
 
 .detail-pane h1
@@ -505,6 +505,7 @@ a#select-provider span i
 	font-family:Verdana, Sans-Serif;
 	font-size:11px;
 	overflow: auto;
+	width:auto !important;
 }
 
 .detail-pane .segment-header
