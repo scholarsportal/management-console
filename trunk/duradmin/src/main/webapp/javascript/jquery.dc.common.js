@@ -51,7 +51,7 @@ $.fn.closeOnLostFocus = function() { // on the open event
         $(e.target).parents().andSelf().each(function () { // search parents and self
             // if the original dialog selector is the click's target or a parent of the target
             // we have not clicked outside the box
-            if (this == dialogEl) {
+            if ($(this).first().attr("id") == $(dialogEl).attr("id")) {
                 clickedOutside = false; // found
                 return false; // stop searching
             }
