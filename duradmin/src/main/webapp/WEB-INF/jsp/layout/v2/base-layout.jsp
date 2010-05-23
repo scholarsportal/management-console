@@ -6,15 +6,18 @@
 <!-- 
 	created by Daniel Bernstein and CH
  -->
+
 <div id="page-header" class="outer">	
+
 	<div id="left" class="float-l">
 		<div id="dc-logo-panel"><a href="/duradmin/spaces" id="dc-logo"></a><span id="dc-app-title"></span></div>
 		<div id="dc-tabs-panel">
 		    <ul class="horizontal-list dc-main-tabs flex clearfix">
-		        <li><a href="javascript:void(1); alert('Dashboard click')"><span>Dashboard</span></a></li>
-		        <li class="selected"><a href="javascript:void(1); alert('Spaces click')"><span>Spaces</span></a></li>
-		        <li><a href="javascript:void(1); alert('Services click')"><span>Services</span></a></li>
-		        <li><a href="javascript:void(1); alert('Reports click')"><span>Reports</span></a></li>
+		    	<tiles:importAttribute name="mainTab" />
+		        <li class="${mainTab == 'dashboard' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/dashboard"><span>Dashboard</span></a></li>
+		        <li class="${mainTab == 'spaces' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/spaces"><span>Spaces</span></a></li>
+		        <li class="${mainTab == 'services' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/services"><span>Services</span></a></li>
+		        <li class="${mainTab == 'reports' ? 'selected':'' }"><a href="javascript:void(1); alert('Reports click')"><span>Reports</span></a></li>
 		    </ul>
 		</div>
 	</div>	
