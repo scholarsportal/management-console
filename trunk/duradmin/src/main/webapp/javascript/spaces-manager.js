@@ -500,6 +500,7 @@ $(document).ready(function() {
 		show: 'blind',
 		hide: 'blind',
 		height: 300,
+		resizable: false,
 		closeOnEscape:true,
 		modal: false,
 		buttons: {
