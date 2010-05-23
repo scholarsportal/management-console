@@ -58,9 +58,9 @@
 /* Extends .flex *****/
 
 .button a,
-a.button,
+.button,
 .button a span,
-a.button span,
+.button span,
 .button-holder,
 .button-holder span,
 i.pre,
@@ -73,9 +73,9 @@ i.post
 
 
 .button a,
-a.button,
+.button,
 .button a span,
-a.button span
+.button span
 {
 	background:url(../images/btn_featured.gif) no-repeat;
 	color:#000;
