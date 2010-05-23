@@ -466,20 +466,22 @@ $(document).ready(function() {
 		closeOnEscape:true,
 		modal: false,
 		buttons: {
-			'Add': function() {
+			'Add': function(evt) {
 				alert("implement add functionality");
 				$(this).dialog("close");
 			},
-			Cancel: function() {
+			Cancel: function(evt) {
 				$(this).dialog('close');
 			}
 		},
+		
 		close: function() {
-
+	
 		},
-		  open: function(e){
+		
+		open: function(e){
 			$(e.target).closeOnLostFocus();
-		  }
+		}
 		
 	});
 
