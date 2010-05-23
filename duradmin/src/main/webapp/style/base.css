@@ -297,6 +297,15 @@ a#select-provider span i
 	padding-right:100px;
 }
 
+
+.dialog-open {
+	border:1px solid  red !important;
+}
+
+.dialog-closed {
+	border:1px solid  blue !important;
+}
+
 /* TABS **********************************************/
 /* Extends css.flex *****/
 

@@ -19,13 +19,29 @@ $.fn.nearestOfClass = function(className){
 	return $(nearest);
 };
 
+$.fn.toggleOpenClosed = function(){
+	$(this).nearestOfClass("button")
+			.toggleClass("dialog-open")
+			.toggleClass("dialog-closed");
+};
+
+/**
+ * openDialogClass optional - a css class to style the target while dialog is open
+ * */
 $.fn.openDialogOverTarget =  function(evt) {
 	var offset = $(evt.target).offset();
 	var coords = [offset.left-20,offset.top+24];
 	this.dialog('option', 'position', coords)
 		.dialog('open');
-	return false;
+	
+	$(evt.target).toggleOpenClosed();
+	
+	//listen when the dialog closes
+	$(this).bind( "dialogclose", function(event, ui) {
+		$(evt.target).toggleOpenClosed();
+	});
 };
+
 
 $.fn.closeOnLostFocus = function() { // on the open event
     // find the dialog element

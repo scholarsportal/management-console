@@ -45,7 +45,7 @@
 					<div class="north header list-header clearfix">
 						<div id="header-spaces-list" class="clearfix">
 							<h2>Spaces</h2>
-							<a class="flex button float-r add-space-button" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Space</i></i></span></a>
+							<a class="flex button float-r add-space-button dialog-closed" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Space</i></i></span></a>
 						</div>
 						<div class="header">
 							<span class="float-r"><input class="dc-item-list-filter" type="text"/></span>
@@ -62,7 +62,7 @@
 					<div class="north header list-header clearfix">
 						<div id="header-content-list" class="clearfix">
 							<h2>Content Items</h2>
-							<a class="flex button float-r add-content-item-button" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
+							<a class="flex button float-r add-content-item-button dialog-closed" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
 						</div>
 						<div class="header" >
 							<span class="float-r"><input type="text"/></span>
