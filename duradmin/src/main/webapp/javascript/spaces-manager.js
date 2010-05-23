@@ -7,34 +7,6 @@
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
 
 /**
- * Tabular Expando Panel: used for displaying lists of static properties
- */
-$.widget("ui.tabularexpandopanel", 
-	$.extend({}, $.ui.expandopanel.prototype, 
-		{  //extended definition 
-			_init: function(){ 
-				$.ui.expandopanel.prototype._init.call(this); //call super init first
-				//add the table if it is not null
-				var d = this.options.data;
-				if(d != null){
-					var table = dc.createTable(d, ["label", "value"]);
-					this.append(table);
-				}
-			}, 
-			
-			destroy: function(){ 
-				//tabular destroy here
-				$.ui.expandopanel.prototype.destroy.call(this); // call the original function 
-			}, 
-			
-			options: $.extend({}, $.ui.expandopanel.prototype.options, {
-				data: [["a1","b1"], ["a2","b2"]],
-			}),
-		}
-	)
-); 
-
-/**
  * Metadata Panel: used for displaying lists of static properties
  */
 $.widget("ui.metadatapanel", 
@@ -454,6 +426,33 @@ $(document).ready(function() {
 		$(div).tabularexpandopanel({title: "Details", data: properties});
 	};
 
+	var loadPreview = function(target, contentItem){
+		var div = document.createElement("div");
+		$(".center", target).append(div);
+		$(div).expandopanel({title: "Preview"});
+		
+		var thumbnail = $(document.createElement("img"))
+							.attr("src", contentItem.thumbnailURL)
+							.addClass("preview-image");
+							
+		var viewerLink = $(document.createElement("a"))
+							.attr("href", contentItem.viewerURL)
+							.append(thumbnail);
+		
+		
+		$(div).expandopanel("getContent").css("text-align", "center").append(viewerLink);
+
+	
+
+		/* This is basic - uses default settings */
+		
+		viewerLink.fancybox({
+				'transitionIn'	:	'elastic',
+				'transitionOut'	:	'elastic',
+				'speedIn'		:	600, 
+				'speedOut'		:	200, 
+				'overlayShow'	:	false});
+	};
 	
 	///////////////////////////////////////////
 	///open add space dialog
@@ -572,22 +571,72 @@ $(document).ready(function() {
 					['Created', space.metadata.created],
 			   ];
 	};
+
+	var extractContentItemProperties = function(contentItem){
+		var m = contentItem.metadata;
+		return [
+			        ["Space", contentItem.spaceId],
+			        ["Size", m.size],
+			        ["Created", m.created],
+			        ["Checksum", m.checksum],
+		       ];
+	};
 	/**
 	 * returns contentItem details
 	 */
 	var getContentItem = function(contentItemId, spaceId, callback){
-		var contentItem = {contentId: contentItemId, spaceId: spaceId};
+		var contentItem = {
+				contentId: contentItemId, 
+				spaceId:   spaceId, 
+				thumbnailURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe.jpg",
+				viewerURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe_b.jpg",
+				metadata:  {
+					size: "1234567", 
+					created: "Jun 10 2009 12:00:00",
+					checksum: "deadbeafdeadbeefdeadbeef",
+					mimetype: "text/plain",
+					},
+				extendedMetadata: [
+				                   {name: "name1", value: "value1"},
+				                   {name: "name2", value: "value2"},
+				                   {name: "name3", value: "value3"},
+				                   {name: "name4", value: "value4"},
+				                   ],
+			};
 		callback.load(contentItem);
 	};
 
 	var loadContentItem = function(contentItem){
 		var pane = $("#contentItemDetailPane").clone();
 		setObjectName(pane, contentItem.contentId);
+		loadPreview(pane, contentItem);
+		loadProperties(pane, extractContentItemProperties(contentItem));
+		//load the details panel
+		var mimetype = contentItem.metadata.mimetype;
+		$(".mime-type .value", pane).text(mimetype);
+		$(".mime-type", pane).addClass(getMimetypeImageClass(mimetype));
 		loadMetadataPane(pane);
 		loadTagPane(pane);
+		
+		
 		swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
 	};
 
+	var getMimetypeImageClass = function(mimetype){
+		var mtc = "";
+		if(mimetype.indexOf("image") > -1){
+			mtc = "image";
+		}else if(mimetype.indexOf("video") > -1){
+			mtc = "video";
+		}else if(mimetype.indexOf("audio") > -1){
+			mtc ="audio";
+		}else{
+			mtc = "text";
+		}
+		
+		return "mime-type-" + mtc;
+		
+	};
 	
 	var loadContentItems = function(contentItems){
 		$("#content-item-list").selectablelist("clear");

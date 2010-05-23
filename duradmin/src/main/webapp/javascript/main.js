@@ -3,34 +3,34 @@
  * created by Daniel Bernstein
  */
 
-	///////////////////////////////////////////////////////////////////////
-	////duracloud js utils
-	///////////////////////////////////////////////////////////////////////
-	var dc = {};
-	dc.createTable = function(data, /*optional: array*/ columnClasses){
-		var table = document.createElement("table");
-		for(i = 0; i < data.length; i++){
-			var row = document.createElement("tr");
-			$(table).append(row);
-			for(j = 0; j < data[i].length; j++){
-				var cell = document.createElement("td");
-				$(row).append(cell);
-				$(cell).html(data[i][j]);
-				if(columnClasses !=null){
-					var columnClass;
-					if(j >= columnClasses.length){
-						columnClass = columnClasses[ j % columnClasses.length];
-					}else{
-						columnClass = columnClasses[j];
-					}
-
-					$(cell).addClass(columnClass)
+///////////////////////////////////////////////////////////////////////
+////duracloud js utils
+///////////////////////////////////////////////////////////////////////
+var dc = {};
+dc.createTable = function(data, /*optional: array*/ columnClasses){
+	var table = document.createElement("table");
+	for(i = 0; i < data.length; i++){
+		var row = document.createElement("tr");
+		$(table).append(row);
+		for(j = 0; j < data[i].length; j++){
+			var cell = document.createElement("td");
+			$(row).append(cell);
+			$(cell).html(data[i][j]);
+			if(columnClasses !=null){
+				var columnClass;
+				if(j >= columnClasses.length){
+					columnClass = columnClasses[ j % columnClasses.length];
+				}else{
+					columnClass = columnClasses[j];
 				}
+
+				$(cell).addClass(columnClass)
 			}
 		}
-		return table;
-	};
-	
+	}
+	return table;
+};
+
 
 $(document).ready(function() {
 
