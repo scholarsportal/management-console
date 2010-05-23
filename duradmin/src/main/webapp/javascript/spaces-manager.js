@@ -318,8 +318,6 @@ $(document).ready(function() {
 				,   slidable: 				false
 				,   spacing_open:			0
 				,	togglerLength_open:		0
-				,   east__paneSelector:    ".east"
-				,   east__size:    5
 				
 	};
 	
