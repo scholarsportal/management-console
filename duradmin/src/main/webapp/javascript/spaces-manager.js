@@ -227,11 +227,9 @@ $.widget("ui.tagspanel",
 				},
 
 				_getValue: function(){
-					var tags =  $(".name-txt",this.element).first().val().split(" ");
+					var tag =  $(".name-txt",this.element).first().val();
 					var fields = new Array();
-					for(i in tags){
-						fields.push({tag: tags[i]});
-					}
+					fields.push(tag);
 					return fields;
 				},
 
@@ -243,7 +241,7 @@ $.widget("ui.tagspanel",
 				_createDataChild: function(data){
 					var child = $(document.createElement("li"));
 					//add the name element
-					child.html(data.tag);
+					child.html(data);
 					//append remove button
 					button = $(document.createElement("span")).addClass("dc-mouse-panel float-r").makeHidden().append("<input type='button' value='x'/>");
 					child.append(button);
@@ -258,7 +256,7 @@ $.widget("ui.tagspanel",
 				_removeSuccess: function(context, data){
 					$("li",context.element).each(function(index,value){
 						var text = $(value).text();
-						if(text == data.tag){
+						if(text == data){
 							context._animateRemove($(value), function(){$(value).remove()});
 						}
 						
@@ -404,19 +402,19 @@ $(document).ready(function() {
 	
 	*/
 	
-	var loadMetadataPane = function(target){
+	var loadMetadataPane = function(target, extendedMetadata){
 		var div = document.createElement("div");
 		$(".center", target).append(div);
 		$(div).metadatapanel({title: "Metadata"});
-		$(div).metadatapanel("load",[{name:"name1", value:"value1"}]);
+		$(div).metadatapanel("load",extendedMetadata);
 		return div;
 	};
 
-	var loadTagPane = function(target){
+	var loadTagPane = function(target, tags){
 		var div = document.createElement("div");
 		$(".center", target).append(div);
 		$(div).tagspanel({title: "Tags"});
-		$(div).tagspanel("load",[{tag:"tag1"}, {tag:"tag2"}, {tag:"tag3"}]);
+		$(div).tagspanel("load",tags);
 		return div;
 	};
 	
@@ -541,7 +539,9 @@ $(document).ready(function() {
 		var contentItems = space.contentItems;
 		setObjectName(detail, space.spaceId);
 		loadProperties(detail, extractSpaceProperties(space));
-		var mp = loadMetadataPane(detail);
+
+		var mp = loadMetadataPane(detail, space.extendedMetadata);
+
 		$(mp).bind("add", function(evt, future){
 			future.success();
 		});
@@ -550,7 +550,7 @@ $(document).ready(function() {
 			future.success();
 		});
 		
-		var tag = loadTagPane(detail);
+		var tag = loadTagPane(detail, space.metadata.tags);
 
 		$(tag).bind("add", function(evt, future){
 			future.success();
@@ -595,6 +595,7 @@ $(document).ready(function() {
 					created: "Jun 10 2009 12:00:00",
 					checksum: "deadbeafdeadbeefdeadbeef",
 					mimetype: "text/plain",
+					tags: ["tag1", "tag2", "tag3", "tag4"],
 					},
 				extendedMetadata: [
 				                   {name: "name1", value: "value1"},
@@ -615,9 +616,27 @@ $(document).ready(function() {
 		var mimetype = contentItem.metadata.mimetype;
 		$(".mime-type .value", pane).text(mimetype);
 		$(".mime-type", pane).addClass(getMimetypeImageClass(mimetype));
-		loadMetadataPane(pane);
-		loadTagPane(pane);
+
+		var mp = loadMetadataPane(pane, contentItem.extendedMetadata);
 		
+		$(mp).bind("add", function(evt, future){
+			future.success();
+		});
+
+		$(mp).bind("remove", function(evt, future){
+			future.success();
+		});
+		
+		var tag = loadTagPane(pane, contentItem.metadata.tags);
+
+		$(tag).bind("add", function(evt, future){
+			future.success();
+		});
+
+		$(tag).bind("remove", function(evt, future){
+			future.success();
+		});
+
 		
 		swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
 	};
@@ -667,12 +686,24 @@ $(document).ready(function() {
 		for(var i = 0; i < contentItems.length; i++){
 			contentItems[i] = spaceId+"/this/is/faux/content/item/" + i;
 		}
+
 		
 		
 		callback.load({
 						spaceId: spaceId,
 						contentItems: contentItems,
-						metadata: {count: 10, created: "Jan 1, 2010 12:00:00 GMT"},
+						metadata: {
+							count: 10, 
+							created: "Jan 1, 2010 12:00:00 GMT",
+							tags: ["tag1", "tag2", "tag3", "tag4"],
+						},
+
+						extendedMetadata: [
+						                   {name: "name1", value: "value1"},
+						                   {name: "name2", value: "value2"},
+						                   {name: "name3", value: "value3"},
+						                   {name: "name4", value: "value4"},
+						                   ],						
 					  });
 	};
 
