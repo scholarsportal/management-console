@@ -35,16 +35,18 @@
 	</div>
 </div>
 
-<div id="page-content">
+<div id="page-content" class="pane-L1-body">
  	<tiles:insertAttribute name="main-content" />
 </div>
-<div class="ui-layout-south outer">
+<div class="ui-layout-south outer footer">
 	<div class="float-r" id="logo-ds"></div>
-	Duracloud Administrator Release 0.4  <span class="sep">|</span>
-	©<script type="text/javascript">document.write(new Date().getFullYear());</script>
-	<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
-	<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
-	<a target="_blank" href="#">Contact Us</a>
+	<div class="footer-content">
+		Duracloud Administrator Release 0.4  <span class="sep">|</span>
+		©<script type="text/javascript">document.write(new Date().getFullYear());</script>
+		<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
+		<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
+		<a target="_blank" href="#">Contact Us</a>
+	</div>
 </div>	
 
 	
