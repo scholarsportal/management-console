@@ -53,18 +53,25 @@ $.widget("ui.metadatapanel",
 					
 					var fSuccess = function(){that._addSuccess(that)};
 
-					//attach listeners
-					$("input[type=button]", addControlsRow).click(function(evt){
-						//alert("clicked add!");
-						
+					var triggerAdd = function(){
 						that.element.trigger("add", { value: that._getValue(), 
 											  success: fSuccess,
 											  failure: that._addFailure});
+					};
+										  
+					//attach listeners
+					$("input[type=button]", addControlsRow).click(function(evt){
+						triggerAdd();
 					});
-
+					
+					$("input[type=text]", addControlsRow).keyup(function(e) {
+							//enter key listener
+							if(e.keyCode == 13) {
+								triggerAdd();
+							}
+						});
 
 					table.append(addControlsRow);
-
 				}
 				
 				this._initializeDataContainer();
@@ -105,6 +112,7 @@ $.widget("ui.metadatapanel",
 					
 				}
 				context._clearForm();
+				$("input[type=text]", context.element).first().focus();
 			},
 			
 			_addFailure: function(){
@@ -114,10 +122,19 @@ $.widget("ui.metadatapanel",
 			_removeSuccess: function(context, data){
 				$(".name",context.element).each(function(index,value){
 					if($(value).html() == data.name){
-						$(value).parent().remove();	
+						context._animateRemove(
+									$(value).parent(), 
+									function(){$(value).parent().remove()});
 					}
 					
 				});	
+			},
+			
+			_animateRemove: function(element, removeComplete){
+				$(element).hide("slow", function(){
+					removeComplete();
+				});
+				
 			},
 			
 			_removeFailure: function(){
@@ -238,10 +255,11 @@ $.widget("ui.tagspanel",
 				},
 
 				_getValue: function(){
-					var fields = { 
-						tag: $(".name-txt",this.element).first().val(),
-					};
-					
+					var tags =  $(".name-txt",this.element).first().val().split(" ");
+					var fields = new Array();
+					for(i in tags){
+						fields.push({tag: tags[i]});
+					}
 					return fields;
 				},
 
@@ -269,13 +287,11 @@ $.widget("ui.tagspanel",
 					$("li",context.element).each(function(index,value){
 						var text = $(value).text();
 						if(text == data.tag){
-							$(value).remove();	
+							context._animateRemove($(value), function(){$(value).remove()});
 						}
 						
 					});	
 				},
-
-
 			}
 		)
 	);

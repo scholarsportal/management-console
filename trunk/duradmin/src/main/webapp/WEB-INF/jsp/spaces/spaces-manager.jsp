@@ -1,5 +1,5 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-<tiles:insertDefinition name="app-base" >
+<tiles:insertDefinition name="app-base">
 	<tiles:putAttribute name="title">
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
@@ -10,6 +10,7 @@
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 	<tiles:insertDefinition name="app-frame">
+		<tiles:putAttribute name="mainTab" value="spaces" />
 		<tiles:putAttribute name="main-content">
 			<div class="center-north" id="center-pane-north">
 				<div class="float-l">
@@ -44,7 +45,7 @@
 						</div>
 						<div class="header">
 							<span class="float-r"><input class="dc-item-list-filter" type="text"/></span>
-							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> prev next
+							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> 
 						</div>
 					</div>
 				
