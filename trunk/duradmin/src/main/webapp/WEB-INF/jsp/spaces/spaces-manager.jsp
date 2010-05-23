@@ -76,7 +76,10 @@
 					</div>
 				</div>
 		   	</div>
-			<div id="detail-pane" class="detail-pane"></div>	
+			<div id="detail-pane" class="detail-pane">
+			
+			
+			</div>	
 		
 		<!-- 
 		Space Detail Pane:  The div is invisible and used as a prototype for displaying specific space
@@ -109,7 +112,6 @@
 			</div>
 			<div class="center">
 			</div>
-			<div class="east"><!-- used for space purposes only --></div>
 	
 		</div>
 	
@@ -183,9 +185,6 @@
 			<div class="center">
 	
 			</div>
-			
-			<div class="east"><!-- used for space purposes only --></div>
-			
 		</div>
 		
 		<div id="add-space-dialog" class="dc-dialog" title="Add Space">
