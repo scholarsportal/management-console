@@ -4,6 +4,10 @@
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="header-extensions">
+			<link rel="stylesheet" href="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.css" type="text/css" media="screen" />
+			<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.pack.js"></script>
+			<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.easing-1.3.pack.js"></script>
+		
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
@@ -177,156 +181,12 @@
 				</div>
 			</div>
 			<div class="center">
-				<div class="dc-expandable-panel">
-					<div class="segment-header clearfix">Preview</div>
-					<div class="segment-content clearfix" style="text-align:center">
-						<a href="#">
-							<img src="xxx" height="200" width="200"/>					
-						</a>
-					</div>
-				</div>
-				<div class="dc-expandable-panel">
-					<div class="segment-header clearfix">Details</div>
-					<div class="segment-content clearfix">
-						<table>
-							<tr>
-								<td class="label">
-									Space
-								</td>
-								<td class="value">
-									<span id="content-space-id">Space ID here</span>
-								</td>
-							</tr>
-							<tr>
-								<td class="label">
-									Size
-								</td>
-								<td class="value">
-									<span id="content-size">Size here</span>
-								</td>
-							</tr>
-							<tr>
-								<td class="label">
-									Created
-								</td>
-								<td class="value">
-									<span id="content-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
-								</td>
-							</tr>
-							<tr>
-								<td class="label">
-									Checksum
-								</td>
-								<td class="value">
-									<span id="content-checksum">Checksum here</span>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
 	
 			</div>
 			
 			<div class="east"><!-- used for space purposes only --></div>
 			
 		</div>
-		
-		<!-- 
-		<div class="dc-expandable-panel" id="properties-panel">
-			<div class="segment-header clearfix">Details</div>
-			<div class="segment-content clearfix">
-				<table>
-					<tr>
-						<td class="label">
-							Items
-						</td>
-						<td class="value">
-							<span id="space-item-count">3</span>
-						</td>
-					</tr>
-					<tr>
-						<td class="label">
-							Created
-						</td>
-						<td class="value">
-							<span id="space-created-date">Fri, 09 Apr 2010 23:13:00 UTC</span>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		-->
-		<!-- 
-		The metadata and tag panels are programmatically generated -
-		this will be removed later, but keeping for reference
-		
-		<div id="metadata-panel" class="dc-expandable-panel" style="display:none">
-				<div class="segment-header clearfix">Metadata</div>
-				<div class="segment-content clearfix">
-					<table>
-						<tr class="dc-mouse-panel-activator">
-							<td class="name">
-								Lorem
-							</td>
-							<td class="value">
-								Ipsum dolor								
-								<span class="dc-mouse-panel float-r">
-									<input type="button"  value="x"/>
-								</span>
-							</td>
-						</tr>
-						<tr>
-							<td class="name">
-								<input type="text" value="" size="15"/>
-							</td>
-							<td class="value">
-								<input type="text" value="" size="20"/>
-								<input type="button" value="+"/>
-							</td>
-						</tr>
-					</table>
-				</div>
-		</div>
-		<div id="tag-panel" class="dc-expandable-panel" style="display:none">
-				<div class="segment-header clearfix">Tags</div>
-				<div class="segment-content clearfix">
-					<table>
-						<tr>
-							<td>
-								<ul class="horizontal-list">
-									<li class="dc-mouse-panel-activator">
-										anicca
-										<span class="dc-mouse-panel">
-											<input type="button"  value="x"/>
-										</span>
-									</li>
-									<li class="dc-mouse-panel-activator">
-										dukkha
-										<span class="dc-mouse-panel">
-											<input type="button"  value="x"/>
-										</span>
-									</li>
-									<li class="dc-mouse-panel-activator">
-										anatta
-										<span class="dc-mouse-panel">
-											<input type="button"  value="x"/>
-										</span>
-									</li>
-									
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<input type="text" value="" size="35"/>
-								<input type="button" value="+"/>
-							</td>
-						</tr>
-					</table>
-				</div>
-		</div>
-		-->
-		
 		
 		<div id="add-space-dialog" class="dc-dialog" title="Add Space">
 			<p class="validateTips">All form fields are required.</p>

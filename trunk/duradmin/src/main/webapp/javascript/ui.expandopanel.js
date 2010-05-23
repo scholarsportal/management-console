@@ -75,3 +75,31 @@ $.widget("ui.expandopanel",{
 	},
 });
 
+/**
+ * Tabular Expando Panel: used for displaying lists of static properties
+ */
+$.widget("ui.tabularexpandopanel", 
+	$.extend({}, $.ui.expandopanel.prototype, 
+		{  //extended definition 
+			_init: function(){ 
+				$.ui.expandopanel.prototype._init.call(this); //call super init first
+				//add the table if it is not null
+				var d = this.options.data;
+				if(d != null){
+					var table = dc.createTable(d, ["label", "value"]);
+					this.append(table);
+				}
+			}, 
+			
+			destroy: function(){ 
+				//tabular destroy here
+				$.ui.expandopanel.prototype.destroy.call(this); // call the original function 
+			}, 
+			
+			options: $.extend({}, $.ui.expandopanel.prototype.options, {
+				data: [["a1","b1"], ["a2","b2"]],
+			}),
+		}
+	)
+); 
+

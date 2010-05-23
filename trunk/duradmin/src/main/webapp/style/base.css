@@ -548,12 +548,40 @@ span.label
 
 .detail-pane .mime-type
 {
-	background:url(../images/icons_mimetypes.gif) no-repeat;
 	font-size:13px;
 	height:40px;
 	line-height:40px;
 	margin:10px 0;
 	padding-left:50px;
+}
+
+.mime-type-image 
+{
+	background:url(../images/icons_mimetypes.gif) no-repeat;
+		
+}
+
+.mime-type-video 
+{
+	background:url(../images/icons_mimetypes.gif) no-repeat;
+		
+}
+
+.mime-type-audio 
+{
+	background:url(../images/icons_mimetypes.gif) no-repeat;
+		
+}
+
+.mime-type-text 
+{
+	background:url(../images/icons_mimetypes.gif) no-repeat;
+		
+}
+
+.preview-image {
+	max-height: 300px;
+	max-width: 400px;	
 }
 
 .detail-pane #mime-jpeg
