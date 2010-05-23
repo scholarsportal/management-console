@@ -462,6 +462,7 @@ $(document).ready(function() {
 		autoOpen: false,
 		show: 'blind',
 		hide: 'blind',
+		resizable: false,
 		height: 300,
 		closeOnEscape:true,
 		modal: false,
