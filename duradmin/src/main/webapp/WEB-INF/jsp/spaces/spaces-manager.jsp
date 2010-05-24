@@ -43,11 +43,11 @@
 		   	<div id="list-browser">
 		   		<div id="spaces-list-view" class="dc-list-item-viewer">
 					<div class="north header list-header clearfix">
-						<div id="header-spaces-list" class="clearfix">
+						<div id="header-spaces-list" class="header-section clearfix">
 							<h2>Spaces</h2>
-							<a class="flex button float-r add-space-button dialog-closed" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Space</i></i></span></a>
+							<a class="flex button float-r add-space-button" href="javascript:void(1);"><span><i class="pre plus">Add Space</i></span></a>
 						</div>
-						<div class="header">
+						<div class="header-section">
 							<span class="float-r"><input class="dc-item-list-filter" type="text"/></span>
 							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> 
 						</div>
@@ -60,11 +60,11 @@
 				</div>
 				<div id="content-item-list-view" class="dc-list-item-viewer">
 					<div class="north header list-header clearfix">
-						<div id="header-content-list" class="clearfix">
+						<div id="header-content-list" class="header-section clearfix">
 							<h2>Content Items</h2>
-							<a class="flex button float-r add-content-item-button dialog-closed" href="javascript:void(1);"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
+							<a class="flex button float-r add-content-item-button" href="javascript:void(1);"><span><i class="pre plus">Add Content Item</i></span></a>
 						</div>
-						<div class="header" >
+						<div class="header-section" >
 							<span class="float-r"><input type="text"/></span>
 							<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> prev next
 						</div>
@@ -105,7 +105,7 @@
 				    </div>
 				</div>
 				<div class="button-bar">
-					<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus"><i class="post arw-down-green">Add Content Item</i></i></span></a>
+					<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus">Add Content Item</i></span></a>
 					<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete Space</i></span></a>
 				</div>
 	
@@ -184,25 +184,31 @@
 			</div>
 		</div>
 		
-		<div id="add-space-dialog" class="dc-dialog" title="Add Space">
-			<p class="validateTips">All form fields are required.</p>
+		<div id="add-space-dialog" class="" title="Add Space">
+			<h1>Add Space</h1>
+			<p class="hint">Add a Space to the current provider. All fields are required.</p>
 			<form>
-			<fieldset>
-				<label for="name">Name</label>
-				<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
-			</fieldset>
+				<div  id="form-fields">
+					<fieldset>
+						<label for="name">Name</label>
+						<input type="text" name="name" id="name" class="field" />
+					</fieldset>
+				</div>
 			</form>
 	
 		</div>
 	
-		<div id="add-content-item-dialog" class="dc-dialog" title="Add Content Item">
+		<div id="add-content-item-dialog" class="" title="Add Content Item">
+			<h1>Add Content Item</h1>
+			<p class="hint">Add a Content Item to the currently selected Space. All fields are required.</p>
 			<form>
-			<fieldset>
-				<label for="name">Item Name</label>
-				<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
-			</fieldset>
-			</form>
-	
+				<div id="form-fields">
+					<fieldset>
+						<label for="name">Item Name</label>
+						<input type="text" name="name" id="name" class="field" />
+					</fieldset>
+				</div>
+			</form>	
 		</div>
 		</tiles:putAttribute>
 		

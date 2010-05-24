@@ -29,17 +29,23 @@ $.fn.toggleOpenClosed = function(){
  * openDialogClass optional - a css class to style the target while dialog is open
  * */
 $.fn.openDialogOverTarget =  function(evt) {
-	var offset = $(evt.target).offset();
-	var coords = [offset.left-20,offset.top+24];
-	this.dialog('option', 'position', coords)
-		.dialog('open');
+	this.dialog('open');
 	
+	/*
+	var offset = $(evt.target).offset();
+	var coords = ['left','center'];
+	this.dialog('option', 'position', coords)
+	.dialog('open');
+	*/
+	
+	/*
 	$(evt.target).toggleOpenClosed();
 	
 	//listen when the dialog closes
 	$(this).bind( "dialogclose", function(event, ui) {
 		$(evt.target).toggleOpenClosed();
 	});
+	*/
 };
 
 

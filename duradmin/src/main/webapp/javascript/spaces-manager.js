@@ -312,7 +312,7 @@ $(document).ready(function() {
 	//detail pane's layout options
 	var spaceDetailLayoutOptions = {
 			north__paneSelector:	".north"
-				,   north__size: 			160
+				,   north__size: 			200
 				,	center__paneSelector:	".center"
 				,   resizable: 				false
 				,   slidable: 				false
@@ -325,7 +325,7 @@ $(document).ready(function() {
 	//the space detail - copy and supply overrides
 	var contentItemDetailLayoutOptions = $.extend(true,{}, 
 													   spaceDetailLayoutOptions, 
-													   {north__size:150});
+													   {north__size:200});
 	
 	
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
@@ -435,8 +435,12 @@ $(document).ready(function() {
 							.attr("href", contentItem.viewerURL)
 							.append(thumbnail);
 		
+		var wrapper = $(document.createElement("div"))
+							.addClass("preview-image-wrapper")
+							.append(viewerLink);
 		
-		$(div).expandopanel("getContent").css("text-align", "center").append(viewerLink);
+		
+		$(div).expandopanel("getContent").append(wrapper);
 
 	
 
@@ -461,9 +465,10 @@ $(document).ready(function() {
 		show: 'blind',
 		hide: 'blind',
 		resizable: false,
-		height: 300,
+		height: 200,
 		closeOnEscape:true,
-		modal: false,
+		modal: true,
+		width:500,
 		buttons: {
 			'Add': function(evt) {
 				alert("implement add functionality");
@@ -479,7 +484,7 @@ $(document).ready(function() {
 		},
 		
 		open: function(e){
-			$(e.target).closeOnLostFocus();
+			//$(e.target).closeOnLostFocus();
 		}
 		
 	});
@@ -497,10 +502,11 @@ $(document).ready(function() {
 		autoOpen: false,
 		show: 'blind',
 		hide: 'blind',
-		height: 300,
+		height: 200,
 		resizable: false,
 		closeOnEscape:true,
-		modal: false,
+		modal: true,
+		width:500,
 		buttons: {
 			'Add': function() {
 				alert("implement add functionality");
@@ -514,7 +520,7 @@ $(document).ready(function() {
 
 		},
 		  open: function(e){
-			 $(e.target).closeOnLostFocus();
+			// $(e.target).closeOnLostFocus();
 		  }
 		
 	});
