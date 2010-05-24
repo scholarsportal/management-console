@@ -4,10 +4,9 @@
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="header-extensions">
-			<link rel="stylesheet" href="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.css" type="text/css" media="screen" />
-			<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.pack.js"></script>
-			<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.easing-1.3.pack.js"></script>
-		
+		<link rel="stylesheet" href="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.fancybox-1.3.1.pack.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/fancybox/jquery.easing-1.3.pack.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
