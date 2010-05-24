@@ -43,13 +43,13 @@
 		   	<div id="list-browser">
 		   		<div id="spaces-list-view" class="dc-list-item-viewer">
 					<div class="north header list-header clearfix">
-						<div id="header-spaces-list" class="header-section clearfix">
-							<h2>Spaces</h2>
+						<div id="header-spaces-list" class="header-section clearfix">						
 							<a class="flex button float-r add-space-button" href="javascript:void(1);"><span><i class="pre plus">Add Space</i></span></a>
+							<h2>Spaces</h2>
 						</div>
 						<div class="header-section">
-							<span class="float-r"><input class="dc-item-list-filter" type="text"/></span>
-							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/> 
+							<span class="float-r"><input class="dc-item-list-filter" value="filter" type="text"/></span>
+							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/>
 						</div>
 					</div>
 				
@@ -61,11 +61,11 @@
 				<div id="content-item-list-view" class="dc-list-item-viewer">
 					<div class="north header list-header clearfix">
 						<div id="header-content-list" class="header-section clearfix">
-							<h2>Content Items</h2>
 							<a class="flex button float-r add-content-item-button" href="javascript:void(1);"><span><i class="pre plus">Add Content Item</i></span></a>
+							<h2>Content Items</h2>
 						</div>
 						<div class="header-section" >
-							<span class="float-r"><input type="text"/></span>
+							<span class="float-r"><input class="dc-item-list-filter" value="filter" type="text"/></span>
 							<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> prev next
 						</div>
 					</div>

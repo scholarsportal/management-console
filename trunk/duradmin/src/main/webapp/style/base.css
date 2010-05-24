@@ -144,7 +144,17 @@ h3 { font-size:1em; }
 	margin:5px;
 }
 
- .dc-item-list-wrapper
+.dc-item-list-filter
+{
+	background-color:#6E6E6E;
+	border:1px solid #999;
+	color:#ccc;
+	font-style:italic;
+	padding:2px;
+	width:143px;
+}
+
+.dc-item-list-wrapper
 {
 	background-color:#cbcbcb;
 	border:1px solid #595959;
@@ -161,21 +171,40 @@ h3 { font-size:1em; }
 
 .list-header
 {
-	padding:5px;
+	padding:5px 5px 5px 10px;
 }
 
 .header-section
 {
-	padding-bottom:2px;
+	padding-bottom:3px;
+	white-space:nowrap;
 }
 
 .list-header h2
 {
-	display:inline;
-	font-size:13px;
+	display:inline-block;
+	font-size:16px;
+	line-height:24px;
 }
 
-.ui-layout-pane		{ 
+.list-header .button,
+.list-header .button span
+{
+	background-image:url(../images/btn_featured_L2.gif);
+}
+
+.list-header .button
+{
+	width:140px;
+}
+
+.list-header .button span
+{
+	width:130px;	
+}
+
+.ui-layout-pane	
+{ 
 	color:#fff;
 }
 
@@ -378,6 +407,11 @@ a#select-provider span i
 
 .dc-selected-list-item {
 	background-color:#7e7e7e;
+}
+
+input.dc-check-all
+{
+	margin-left:0 !important;
 }
 
 .dc-checked-selected-list-item {
