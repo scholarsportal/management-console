@@ -29,7 +29,7 @@
 								<input type="password" name="j_password" class="field"/>
 							</li>
 							<li class="clearfix">
-								<a href="#" id="forgot-password">Forgot Password?</a>
+								<a href="#" id="forgot-password" class="helper-link">Forgot Password?</a>
 								<a id="button-login" class="flex button float-r" href="javascript:document.forms['loginForm'].submit();"><span>Login</span></a>				
 							</li>
 						</ul>

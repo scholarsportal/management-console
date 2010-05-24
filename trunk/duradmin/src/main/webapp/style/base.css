@@ -97,7 +97,7 @@ h3 { font-size:1em; }
 
 .float-l {float:left; }
 .float-r {float:right; }
-
+.content-centered { text-align:center !important; }
 
 
 /* MAIN PAGE ELEMENTS ******************************************/
@@ -164,6 +164,11 @@ h3 { font-size:1em; }
 	padding:5px;
 }
 
+.header-section
+{
+	padding-bottom:2px;
+}
+
 .list-header h2
 {
 	display:inline;
@@ -206,7 +211,18 @@ h3 { font-size:1em; }
 	color:#47c1ff;
 }
 
+.hint
+{
+	font-size:11px;
+}
+
 /* BUTTONS *******************************************/
+
+.button-bar
+{
+	position:absolute;
+	top: 170px;
+}
 
 .std a,
 a.std,
@@ -393,10 +409,12 @@ a#select-provider span i
 	cursor: pointer;
 }
 
+/*
 .dc-dialog {
 	border: 1px solid #DDD;
 	background-color: #EEE;	
 }
+*/
 
 /* PAGE TOP ********************************************************/
 
@@ -494,6 +512,7 @@ a#select-provider span i
 {
 	background:url(../images/bg_details_header.png) repeat-x bottom left;
 	padding:0 10px;
+	position:relative;
 }
 
 .detail-pane .center
@@ -591,10 +610,15 @@ span.label
 		
 }
 
-.preview-image 
+.preview-image-wrapper
 {
-	max-height: 300px;
-	max-width: 400px;	
+	border:1px solid #000;
+	border-bottom-color:#999;
+	display:block;
+	margin:0 auto;
+	overflow:auto;
+	width:300px;
+	height:300px;
 }
 
 
