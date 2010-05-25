@@ -62,12 +62,7 @@ $.widget("ui.selectablelist",{
 		this.element.trigger("selectionChanged", {selectedItems: this._getSelectedItems()});
 	},
 
-	/*
-	_toggleItemSelection: function(item){
-		var checked = $("input[type=checkbox]", item).first().attr("checked");
-		this._changeSelection(item, !checked);
-	},
-	*/
+
 
 	_itemSelectionStateChanged: function(target){
 		var item = $(target).closest("."+this.options.itemClass);
@@ -106,6 +101,12 @@ $.widget("ui.selectablelist",{
 		$("input[type=checkbox]",this.element).attr("checked",select);
 		that._styleItem();
 		that._fireSelectionChanged();
+	},
+	
+	removeById: function(elementId) {
+		var item = $("#" + elementId, this.element).first();
+		item.remove();
+		this._fireCurrentItemChanged($("." + this.options.itemClass, this.element).first());
 	},
 	
 	_changeSelection: function(item, select){

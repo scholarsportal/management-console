@@ -283,6 +283,21 @@ $(document).ready(function() {
 		var contentItems = space.contentItems;
 		setObjectName(detail, space.spaceId);
 		
+		//attach delete button listener
+		$(".delete-space-button",detail).click(function(evt){
+			deleteSpace(space, {
+				success:function(){
+					$("#spaces-list").selectablelist("removeById", space.spaceId);
+				},
+				
+				failure: function(message){
+					//do failure messaging here
+				},
+			});
+		});
+		
+		
+		
 		//create access switch and bind on/off listeners
 		$(".access-switch", detail).onoffswitch({
 					initialState: (space.access=="OPEN"?"on":"off")
@@ -576,6 +591,12 @@ $(document).ready(function() {
 		}
 		
 		
+	};
+	
+	var deleteSpace = function(space, callback){
+		alert("ajax call to delete space" + space.spaceId + "here");
+		var success = true; //ajax call returns true if okay
+		success ? callback.success() : callback.failure("Failed message here");
 	};
 	
 	dcGetSpaces({
