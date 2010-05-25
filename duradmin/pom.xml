@@ -33,15 +33,25 @@
 
   <build>
     <plugins>
-      <!-- 
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <overlays>
             <overlay>
+              <groupId>org.duracloud</groupId>
+              <artifactId>jquery.fancybox</artifactId>
+              <type>zip</type>
+	      <targetPath>jquery/plugins</targetPath>
+	      <includes>
+		<include>**/fancybox/**</include>
+	      </includes>
+            </overlay>
+            <overlay>
               <groupId>org.dojotoolkit</groupId>
               <artifactId>dojo-war</artifactId>
+
               <excludes>
                 <exclude>META-INF/**</exclude>
               </excludes>
@@ -49,7 +59,6 @@
           </overlays>
         </configuration>
       </plugin>
-      -->
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -271,7 +280,6 @@
     </dependency>
 
     <!-- dojo -->
-    <!-- 
     <dependency>
       <groupId>org.dojotoolkit</groupId>
       <artifactId>dojo-war</artifactId>
@@ -280,7 +288,14 @@
       <type>war</type>
       <scope>runtime</scope>
     </dependency>
- 	-->
+
+    <!-- jquery fancybox plugin -->
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>jquery.fancybox</artifactId>
+      <type>zip</type>
+      <version>1.3.1</version>
+    </dependency>
     
     <!-- test -->
     <dependency>
