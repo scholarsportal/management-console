@@ -29,11 +29,11 @@
       <name>ibiblio</name>
       <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
     </repository>
-
   </repositories>
 
   <build>
     <plugins>
+      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -49,6 +49,8 @@
           </overlays>
         </configuration>
       </plugin>
+      -->
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -269,6 +271,7 @@
     </dependency>
 
     <!-- dojo -->
+    <!-- 
     <dependency>
       <groupId>org.dojotoolkit</groupId>
       <artifactId>dojo-war</artifactId>
@@ -277,7 +280,8 @@
       <type>war</type>
       <scope>runtime</scope>
     </dependency>
-
+ 	-->
+    
     <!-- test -->
     <dependency>
       <groupId>org.duracloud</groupId>
