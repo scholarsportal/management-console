@@ -17,7 +17,6 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
 
     private WebAppUtil webappUtil;
     private String SERVICE_ID = "howdy";
-    private String WAR_FILE_NAME = "hellowebapp-1.0.0.war";
     private String BINARIES_FILE_NAME = "apache-tomcat-6.0.20.zip";
 
     private final static String BASE_DIR_PROP = "base.dir";
@@ -59,8 +58,12 @@ public class WebAppUtilTester extends WebAppUtilTestBase {
     }
 
     protected InputStream getWar() throws FileNotFoundException {
-        File zipBagFile = new File(getResourceDir(), WAR_FILE_NAME);
+        File zipBagFile = new File(getResourceDir(), getWarFilename());
         return new FileInputStream(zipBagFile);
+    }
+
+    private String getWarFilename() {
+        return "hellowebapp-" + getVersion() + ".war";
     }
 
     private String getResourceDir() {

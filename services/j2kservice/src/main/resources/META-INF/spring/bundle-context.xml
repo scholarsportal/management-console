@@ -11,9 +11,9 @@
   <bean id="srvJ2kWrapper" class="org.duracloud.services.j2kservice.J2kWebappWrapper"
    destroy-method="stop">
    <!-- init-method="start" destroy-method="stop"> -->
-    <osgix:managed-properties persistent-id="j2kservice-1.0.0.jar"
+    <osgix:managed-properties persistent-id="j2kservice-${project.version}.jar"
         update-strategy="container-managed"/>
-    <property name="serviceId" value="j2kservice-1.0.0" />
+    <property name="serviceId" value="j2kservice-${project.version}" />
     <property name="warName" value="adore-djatoka.war" />
     <property name="webappUtil" ref="osgiWebappUtilSrv" />
     <property name="platform" value="Linux-x86-32" />

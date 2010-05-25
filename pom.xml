@@ -4,7 +4,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>duracloud</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0</version>
+  <version>0.4.0-SNAPSHOT</version>
   <name>DuraCloud</name>
   <url>http://duracloud.org</url>
 
@@ -350,6 +350,10 @@
               <name>unit.database.password</name>
               <value>${unit.database.password.default}</value>
             </property>
+            <property>
+              <name>PROJECT_VERSION</name>
+              <value>${project.version}</value>
+            </property>
           </systemProperties>
           <excludes>
             <exclude>${integrationTests}</exclude>
@@ -377,7 +381,11 @@
                 <property>
                   <name>unit.database.password</name>
                   <value>${unit.database.password.default}</value>
-                </property>              
+                </property>
+                <property>
+                  <name>PROJECT_VERSION</name>
+                  <value>${project.version}</value>
+                </property>
               </systemProperties>
               <excludes>
                 <exclude>${unitTests}</exclude>

@@ -28,12 +28,12 @@ public class ServiceInstallTestBase {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final static String BASE_DIR_PROP = "base.dir";
+    private final static String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     protected final static String DUMMY_BUNDLE_FILE_NAME = "junk-bundle.jar";
 
     protected final static String DUMMY_BUNDLE_TEXT = "normally-bundle-is-a-jar-not-text";
 
-    protected final static String BUNDLE_JAR_FILE_NAME = "helloservice-1.0.0.jar";
 
     protected final static String ZIP_BAG_FILE_NAME = "replicationservice-1.0.0.zip";
 
@@ -44,8 +44,18 @@ public class ServiceInstallTestBase {
     }
 
     protected InputStream getBundleJar() throws FileNotFoundException {
-        File bundleFile = new File(getResourceDir(), BUNDLE_JAR_FILE_NAME);
+        File bundleFile = new File(getResourceDir(), getBundleJarFilename());
         return new FileInputStream(bundleFile);
+    }
+
+    protected String getBundleJarFilename() {
+        return "helloservice-" + getVersion() + ".jar";
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
     protected InputStream getZipBag() throws FileNotFoundException {
@@ -75,7 +85,7 @@ public class ServiceInstallTestBase {
     }
 
     protected void verifyJarInstalled(BundleHome home, boolean exists) {
-        File file = home.getFromContainer(BUNDLE_JAR_FILE_NAME);
+        File file = home.getFromContainer(getBundleJarFilename());
         assertEquals(exists, file.exists());
     }
 
@@ -114,10 +124,10 @@ public class ServiceInstallTestBase {
     }
 
     protected void deleteJarBundle(BundleHome home) {
-        File file = home.getFromContainer(BUNDLE_JAR_FILE_NAME);
+        File file = home.getFromContainer(getBundleJarFilename());
         file.delete();
 
-        File atticFile = home.getFromAttic(BUNDLE_JAR_FILE_NAME);
+        File atticFile = home.getFromAttic(getBundleJarFilename());
         atticFile.delete();
     }
 

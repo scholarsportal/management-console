@@ -1,5 +1,13 @@
 #! /usr/bin/env bash
 
+#-----------------------------------
+# Load environment-specific settings
+#-----------------------------------
+
+scriptdir=`dirname "$0"`
+. "$scriptdir"/osgi/env.sh
+
+
 if [ -z "$MAIN_DATABASE_HOME" ]; then
   echo MAIN_DATABASE_HOME should be set to the location of the main database.
   exit
@@ -20,12 +28,17 @@ if [ -z "$BUILD_HOME" ]; then
   exit
 fi
 
-export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-1.0.0/WEB-INF/lib
+if [ -z "$PROJECT_VERSION" ]; then
+  echo 'PROJECT_VERSION' should be set to the version of duracloud projects \(e.g. 0.4.0-SNAPSHOT\).
+  exit
+fi
+
+export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-$PROJECT_VERSION/WEB-INF/lib
 
 # Set classpath to jars normally found in mainwebapp war
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/aopalliance-1.0.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/asm-3.1.jar
-export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/commons-codec-1.3.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/commons-io-1.4.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/commons-lang-2.4.jar
@@ -47,11 +60,10 @@ export CLASSPATH=$CLASSPATH:$MAIN_LIB/spring-jdbc-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/spring-web-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/standard-1.1.2.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/stax-api-1.0-2.jar
-export CLASSPATH=$CLASSPATH:$MAIN_LIB/storageprovider-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/storageprovider-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$MAIN_LIB/xstream-1.3.1.jar
-export CLASSPATH=$CLASSPATH:$MAIN_LIB/computeprovider-1.0.0.jar
-export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-1.0.0.jar
-
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/computeprovider-$PROJECT_VERSION.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-$PROJECT_VERSION.jar 
 export CLASSPATH=$CLASSPATH:$BUILD_HOME/mainwebapp/target/classes
 
 # Create Main DB

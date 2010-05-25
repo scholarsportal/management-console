@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud.services</groupId>
   <artifactId>imageconversionservice</artifactId>
-  <version>1.0.0</version>
+  <version>0.4.0-SNAPSHOT</version>
 
   <name>DuraCloud Image Conversion Service Bundle</name>
 
@@ -13,7 +13,7 @@
   <parent>
     <artifactId>services</artifactId>
     <groupId>org.duracloud</groupId>
-    <version>1.0.0</version>
+    <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -25,6 +25,17 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -85,6 +96,43 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>profile-systest</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integrationtest</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemProperties>
+                    <property>
+                      <name>base.dir</name>
+                      <value>${basedir}</value>
+                    </property>
+                  </systemProperties>
+                  <trimStackTrace>false</trimStackTrace>
+                  <excludes>
+                    <exclude>${unitTests}</exclude>
+                    <exclude>${instrumentedTests}</exclude>
+                    <exclude>${integrationTests}</exclude>
+                  </excludes>
+                  <includes>
+                    <include>**/*TestServices.class</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <dependencies>
@@ -92,15 +140,28 @@
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>computeservice</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>servicescommon</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>storeclient</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>storageprovider</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- felix -->
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.compendium</artifactId>
@@ -113,40 +174,23 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- other deps -->
     <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>storeclient</artifactId>
+      <groupId>org.jdom</groupId>
+      <artifactId>com.springsource.org.jdom</artifactId>
       <version>1.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>common</artifactId>
-      <version>1.0.0</version>
+      <version>0.4.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>storageprovider</artifactId>
-      <version>1.0.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
-      <version>1.3.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.stream</groupId>
-      <artifactId>com.springsource.javax.xml.stream</artifactId>
-      <version>1.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.xmlpull</groupId>
-      <artifactId>com.springsource.org.xmlpull</artifactId>
-      <version>1.1.3.4-O</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.io</artifactId>
+      <version>1.4.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -162,24 +206,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>com.springsource.org.jdom</artifactId>
-      <version>1.0.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>com.springsource.org.apache.commons.codec</artifactId>
       <version>1.3.0</version>
@@ -189,24 +215,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>com.springsource.org.apache.commons.logging</artifactId>
       <version>1.1.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>2.5.6</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-tx</artifactId>
-      <version>2.5.6</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -246,9 +254,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>com.springsource.org.apache.commons.io</artifactId>
-      <version>1.4.0</version>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
+      <version>1.3.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.stream</groupId>
+      <artifactId>com.springsource.javax.xml.stream</artifactId>
+      <version>1.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xmlpull</groupId>
+      <artifactId>com.springsource.org.xmlpull</artifactId>
+      <version>1.1.3.4-O</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

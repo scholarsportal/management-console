@@ -7,11 +7,14 @@ import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.duraservice.config.DuraServiceConfig;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.junit.Assert;
 
 /**
  * @author Bill Branan
  */
 public class RestTestHelper {
+
+    private static String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     private static String configFileName = "test-duraservice.properties";
 
@@ -75,7 +78,7 @@ public class RestTestHelper {
         String primaryHost = "localhost";
         String primaryServicesAdminPort = "8089";
         String primaryServicesAdminContext =
-            "org.duracloud.services.admin_1.0.0";
+            "org.duracloud.services.admin_" + getVersion().replace("-", ".");
 
         String userStorageHost = "localhost";
         String userStoragePort = getPort();
@@ -85,7 +88,8 @@ public class RestTestHelper {
         String serviceStorageHost = "localhost";
         String serviceStoragePort = getPort();
         String serviceStorageContext = "durastore";
-        String serviceStorageSpaceId = "duracloud-service-repository";
+        String serviceStorageSpaceId =
+            "duracloud-" + getVersion().toLowerCase() + "-service-repo";
 
         String serviceComputeMgrType = "AMAZON_EC2";
         String serviceComputeMgrImage = "1234";
@@ -125,6 +129,12 @@ public class RestTestHelper {
         return xml.toString();
     }
 
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
+    }
+
     public static RestHttpHelper getAuthorizedRestHelper() {
         return new RestHttpHelper(getRootCredential());
     }
@@ -143,7 +153,7 @@ public class RestTestHelper {
                 DuraCloudUserType.ROOT);
             rootCredential = dbUtil.findCredentialForResource(rootUser);
         } catch (Exception e) {
-            System.err.print("ERROR getting credential: " + e.getMessage());
+            System.err.println("ERROR getting credential: " + e.getMessage());
 
         }
         return rootCredential;

@@ -9,9 +9,9 @@
 
   <!-- Spring beans which are used by the bundle are defined here. -->
   <bean id="webAppUtil" class="org.duracloud.services.webapputil.internal.WebAppUtilImpl">
-    <osgix:managed-properties persistent-id="helloservice-1.0.0.jar"
+    <osgix:managed-properties persistent-id="helloservice-${project.version}.jar"
         update-strategy="container-managed"/>
-    <property name="serviceId" value="webapputilservice-1.0.0" />
+    <property name="serviceId" value="webapputilservice-${project.version}" />
     <property name="nextPort" ref="tomcat.port" />
     <property name="tomcatUtil" ref="tomcatUtility" />
   </bean>

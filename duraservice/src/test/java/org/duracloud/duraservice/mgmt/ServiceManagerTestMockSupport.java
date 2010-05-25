@@ -36,18 +36,25 @@ import java.util.HashMap;
  */
 public class ServiceManagerTestMockSupport {
 
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
+
     protected static final String USER_SPACE_1 = "space1";
     protected static final String USER_SPACE_2 = "space2";
     protected static final String USER_CONTENT_STORE = "content-store";
 
-    private final String serviceSpaceId = "duracloud-service-repository";
-    private final String configFileName = serviceSpaceId + ".xml";
+    private final String configFileName = getServiceSpaceId() + ".xml";
     private final String serviceId1 = "service1.zip";
     private final String serviceId2 = "service2.zip";
     private final String config1Name = "config1";
     private final String config2Name = "config2";
     private final String config3Name = "config3";
     private final String config1Value = "Config Value";
+
+    private String getServiceSpaceId() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return "duracloud-" + version.toLowerCase() + "-service-repo";
+    }
 
     public Content getServiceInfoFile() throws Exception {
         List<ServiceInfo> services = new ArrayList<ServiceInfo>();
@@ -312,7 +319,7 @@ public class ServiceManagerTestMockSupport {
         ContentStore mockContentStore = EasyMock.createMock(ContentStore.class);
 
         // Service Config content
-        EasyMock.expect(mockContentStore.getContent(serviceSpaceId,
+        EasyMock.expect(mockContentStore.getContent(getServiceSpaceId(),
                                                     configFileName)).andAnswer(
             new ServiceConfigContent()).
             anyTimes();
@@ -320,10 +327,10 @@ public class ServiceManagerTestMockSupport {
         // Service content
         Content serviceContent = new Content();
         serviceContent.setStream(new ByteArrayInputStream("hello".getBytes()));
-        EasyMock.expect(mockContentStore.getContent(serviceSpaceId, serviceId1))
+        EasyMock.expect(mockContentStore.getContent(getServiceSpaceId(), serviceId1))
             .andReturn(serviceContent)
             .anyTimes();
-        EasyMock.expect(mockContentStore.getContent(serviceSpaceId, serviceId2))
+        EasyMock.expect(mockContentStore.getContent(getServiceSpaceId(), serviceId2))
             .andReturn(serviceContent)
             .anyTimes();
 

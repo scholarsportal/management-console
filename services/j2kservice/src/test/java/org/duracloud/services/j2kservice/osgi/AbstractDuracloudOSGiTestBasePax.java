@@ -26,6 +26,7 @@ public class AbstractDuracloudOSGiTestBasePax {
 
     protected static final String BASE_DIR_PROP = "base.dir";
     protected static final String BUNDLE_HOME_PROP = "BUNDLE_HOME";
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +36,7 @@ public class AbstractDuracloudOSGiTestBasePax {
     @Configuration
     public static Option[] configuration() {
 
-        Option bundles = bundle("file:target/j2kservice-1.0.0.jar");
+        Option bundles = bundle("file:target/j2kservice-"+getVersion()+".jar");
 
         Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
                                                    // Knops does not work for this service.
@@ -59,6 +60,12 @@ public class AbstractDuracloudOSGiTestBasePax {
         return CoreOptions.systemProperties(CoreOptions.systemProperty(
             BASE_DIR_PROP).value(baseDir), CoreOptions.systemProperty(
             BUNDLE_HOME_PROP).value(bundleDir));
+    }
+
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
     protected BundleContext getBundleContext() {

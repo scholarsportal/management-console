@@ -41,7 +41,7 @@ public class ServiceInstallerTester extends ServiceInstallTestBase {
     private void testJarInstall() throws IOException, ServiceException {
         verifyJarInstalled(bundleHome, false);
 
-        installer.install(BUNDLE_JAR_FILE_NAME, getBundleJar());
+        installer.install(getBundleJarFilename(), getBundleJar());
         verifyJarInstalled(bundleHome, true);
 
         deleteJarBundle(bundleHome);

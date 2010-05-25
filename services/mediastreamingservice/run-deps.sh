@@ -1,9 +1,18 @@
 #!/bin/sh
 
+#--------------------------------------------------
+# Load environment-specific settings for all tests
+#--------------------------------------------------
+
+scriptdir=`dirname "$0"`
+. "$scriptdir"/../../resources/scripts/osgi/env.sh
+
+
 cp pom.xml pom.xml.bak
 
 # - DuraCloud -
-pax-import-bundle -g org.duracloud -a common -v 1.0.0 -- -DimportTransitive -DwidenScope
+pax-import-bundle -g org.duracloud -a common -v ${PROJECT_VERSION} -- -DimportTransitive -DwidenScope
+pax-import-bundle -g org.duracloud -a storeclient -v ${PROJECT_VERSION} -- -DimportTransitive -DwidenScope
 
 # - Other -
 pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope

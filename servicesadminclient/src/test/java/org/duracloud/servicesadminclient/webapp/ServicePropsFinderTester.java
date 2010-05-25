@@ -13,6 +13,8 @@ import java.util.Map;
  */
 public class ServicePropsFinderTester extends ServiceInstallTestBase {
 
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
+
     public ServicePropsFinderTester(File testBundle,
                                     ServicesAdminClient client) {
         super(client, testBundle);
@@ -36,9 +38,15 @@ public class ServicePropsFinderTester extends ServiceInstallTestBase {
 
         String value = props.get("serviceId");
         Assert.assertNotNull(value);
-        Assert.assertEquals("helloservice-1.0.0", value);
+        Assert.assertEquals("helloservice-" + getVersion(), value);
 
         uninstallTestBundle();
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
 }

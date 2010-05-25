@@ -14,12 +14,8 @@ public class TestServiceAdminWepApp {
     private final static Logger log = LoggerFactory.getLogger(
         TestServiceAdminWepApp.class);
 
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
     protected static final String BASE_DIR_PROP = "base.dir";
-
-    // Port:8089 is defined in the 'tomcatconfig' project
-    private final static String BASE_URL = "http://localhost:8089/org.duracloud.services.admin_1.0.0";
-
-    private final static String TEST_BUNDLE_FILE_NAME = "helloservice-1.0.0.jar";
 
     private final static String TEST_SERVICE_NAME = "HelloService";
 
@@ -62,19 +58,36 @@ public class TestServiceAdminWepApp {
 
         String resourceDir = baseDir + File.separator + "src/test/resources/";
 
-        return new File(resourceDir, TEST_BUNDLE_FILE_NAME);
+        return new File(resourceDir, getTestBundleFilename());
     }
 
     private ServicesAdminClient getClient() {
         if (client == null) {
             client = new ServicesAdminClient();
             client.setRester(new RestHttpHelper());
-            client.setBaseURL(BASE_URL);
+            client.setBaseURL(getBaseUrl());
         }
         return client;
     }
 
     protected static boolean testServiceFound(String serviceName) {
         return serviceName.contains(TEST_SERVICE_NAME);
+    }
+
+    private String getBaseUrl() {
+        String version = getVersion().replace("-", ".");
+
+        // Port:8089 is defined in the 'tomcatconfig' project
+        return "http://localhost:8089/org.duracloud.services.admin_" + version;
+    }
+
+    private String getTestBundleFilename() {
+        return "helloservice-" + getVersion() + ".jar";
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 }

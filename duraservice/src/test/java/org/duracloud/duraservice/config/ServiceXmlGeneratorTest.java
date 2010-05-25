@@ -14,11 +14,13 @@ import java.util.Properties;
 
 public class ServiceXmlGeneratorTest {
 
-    private final String VER = "1.0.0";
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     @Test
     public void testBuildServiceList() {
-        ServiceXmlGenerator serviceXmlGenerator = new ServiceXmlGenerator();
+        String ver = getVersion();
+
+        ServiceXmlGenerator serviceXmlGenerator = new ServiceXmlGenerator(ver);
         List<ServiceInfo> serviceInfos = serviceXmlGenerator.buildServiceList();
         Assert.assertNotNull(serviceInfos);
 
@@ -37,37 +39,37 @@ public class ServiceXmlGeneratorTest {
         for (ServiceInfo serviceInfo : serviceInfos) {
             String contentId = serviceInfo.getContentId();
             Assert.assertNotNull(contentId);
-            if (contentId.equals("helloservice-" + VER + ".jar")) {
+            if (contentId.equals("helloservice-" + ver + ".jar")) {
                 foundHello = true;
                 verifyHello();
 
-            } else if (contentId.equals("replicationservice-" + VER + ".zip")) {
+            } else if (contentId.equals("replicationservice-" + ver + ".zip")) {
                 foundReplication = true;
                 verifyReplication(serviceInfo);
 
-            } else if (contentId.equals("imagemagickservice-" + VER + ".zip")) {
+            } else if (contentId.equals("imagemagickservice-" + ver + ".zip")) {
                 foundImagemagick = true;
                 verifyImagemagick(serviceInfo);
 
-            } else if (contentId.equals("webapputilservice-" + VER + ".zip")) {
+            } else if (contentId.equals("webapputilservice-" + ver + ".zip")) {
                 foundWebapputil = true;
                 verifyWebapputil(serviceInfo);
 
-            } else if (contentId.equals("hellowebappwrapper-" + VER + ".zip")) {
+            } else if (contentId.equals("hellowebappwrapper-" + ver + ".zip")) {
                 foundHellowebappwrapper = true;
                 verifyHellowebappwrapper(serviceInfo);
 
-            } else if (contentId.equals("j2kservice-" + VER + ".zip")) {
+            } else if (contentId.equals("j2kservice-" + ver + ".zip")) {
                 foundJ2k = true;
                 verifyJ2k(serviceInfo);
 
             } else if (contentId.equals(
-                "imageconversionservice-" + VER + ".zip")) {
+                "imageconversionservice-" + ver + ".zip")) {
                 foundImageconversion = true;
                 verifyImageconversion(serviceInfo);
 
             } else if (contentId.equals(
-                "mediastreamingservice-" + VER + ".zip")) {
+                "mediastreamingservice-" + ver + ".zip")) {
                 foundMediaStreaming = true;
                 verifyMediaStreaming(serviceInfo);
 
@@ -161,8 +163,14 @@ public class ServiceXmlGeneratorTest {
         URI targetDirUri = new URI(targetDir);
         File targetDirFile = new File(targetDirUri);
 
-        ServiceXmlGenerator xmlGenerator = new ServiceXmlGenerator();
+        ServiceXmlGenerator xmlGenerator = new ServiceXmlGenerator(getVersion());
         xmlGenerator.generateServiceXml(targetDirFile.getAbsolutePath());
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
     private class TestConfig extends ApplicationConfig {

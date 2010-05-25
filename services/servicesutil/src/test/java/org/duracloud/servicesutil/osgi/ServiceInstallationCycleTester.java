@@ -5,8 +5,6 @@ import org.duracloud.services.common.util.BundleHome;
 import org.duracloud.servicesutil.util.ServiceInstaller;
 import org.duracloud.servicesutil.util.ServiceUninstaller;
 
-import java.io.FileNotFoundException;
-
 /**
  * @author Andrew Woods
  *         Date: Dec 11, 2009
@@ -34,21 +32,21 @@ public class ServiceInstallationCycleTester extends ServiceInstallTestBase {
         testZipInstallCycle();
     }
 
-    private void testJarInstallCycle() throws Exception, FileNotFoundException {
+    private void testJarInstallCycle() throws Exception {
         verifyJarInstalled(bundleHome, false);
 
-        installer.install(BUNDLE_JAR_FILE_NAME, getBundleJar());
-        installer.install(BUNDLE_JAR_FILE_NAME, getBundleJar());
-        installer.install(BUNDLE_JAR_FILE_NAME, getBundleJar());
+        installer.install(getBundleJarFilename(), getBundleJar());
+        installer.install(getBundleJarFilename(), getBundleJar());
+        installer.install(getBundleJarFilename(), getBundleJar());
         verifyJarInstalled(bundleHome, true);
 
-        uninstaller.uninstall(BUNDLE_JAR_FILE_NAME);
+        uninstaller.uninstall(getBundleJarFilename());
         verifyJarInstalled(bundleHome, true);
 
-        uninstaller.uninstall(BUNDLE_JAR_FILE_NAME);
+        uninstaller.uninstall(getBundleJarFilename());
         verifyJarInstalled(bundleHome, true);
 
-        uninstaller.uninstall(BUNDLE_JAR_FILE_NAME);
+        uninstaller.uninstall(getBundleJarFilename());
         verifyJarInstalled(bundleHome, false);
 
         deleteJarBundle(bundleHome);

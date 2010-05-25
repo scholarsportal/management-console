@@ -22,8 +22,11 @@ import java.util.List;
  */
 public class ServiceXmlGenerator {
 
-    private static final String SERVICES_XML_FILE_NAME =
-        "duracloud-service-repository.xml";
+    private String version;
+
+    public ServiceXmlGenerator(String version) {
+        this.version = version;
+    }
 
     protected List<ServiceInfo> buildServiceList() {
         List<ServiceInfo> servicesList = new ArrayList<ServiceInfo>();
@@ -41,13 +44,13 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildHelloService() {
         ServiceInfo helloService = new ServiceInfo();
         helloService.setId(0);
-        helloService.setContentId("helloservice-1.0.0.jar");
+        helloService.setContentId("helloservice-" + version + ".jar");
         String desc = "The Hello service acts as a simple test case " +
                       "for service deployment.";
         helloService.setDescription(desc);
         helloService.setDisplayName("Hello Service");
         helloService.setUserConfigVersion("1.0");
-        helloService.setServiceVersion("1.0.0");
+        helloService.setServiceVersion(version);
         helloService.setMaxDeploymentsAllowed(1);
 
         helloService.setDeploymentOptions(getSimpleDeploymentOptions());
@@ -58,7 +61,7 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildReplicationService() {
         ServiceInfo repService = new ServiceInfo();
         repService.setId(1);
-        repService.setContentId("replicationservice-1.0.0.zip");
+        repService.setContentId("replicationservice-" + version + ".zip");
         String desc = "The Replication service provides a simple mechanism " +
             "for synchronizing your content between two storage providers. A " +
             "running replication service will listen for updates which occur " +
@@ -66,7 +69,7 @@ public class ServiceXmlGenerator {
         repService.setDescription(desc);
         repService.setDisplayName("Replication Service");
         repService.setUserConfigVersion("1.0");
-        repService.setServiceVersion("1.0.0");
+        repService.setServiceVersion(version);
         repService.setMaxDeploymentsAllowed(1);
 
         // User Configs
@@ -175,14 +178,14 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildImageMagickService() {
         ServiceInfo imService = new ServiceInfo();
         imService.setId(2);
-        imService.setContentId("imagemagickservice-1.0.0.zip");
+        imService.setContentId("imagemagickservice-" + version + ".zip");
         String desc = "The ImageMagick service deploys the ImageMagick " +
             "application which allows other services to take advantage of " +
             "its features.";
         imService.setDescription(desc);
         imService.setDisplayName("ImageMagick Service");
         imService.setUserConfigVersion("1.0");
-        imService.setServiceVersion("1.0.0");
+        imService.setServiceVersion(version);
         imService.setMaxDeploymentsAllowed(1);
 
         imService.setDeploymentOptions(getSimpleDeploymentOptions());
@@ -193,7 +196,8 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildWebappUtilService() {
         ServiceInfo hellowebappService = new ServiceInfo();
         hellowebappService.setId(3);
-        hellowebappService.setContentId("webapputilservice-1.0.0.zip");
+        hellowebappService.setContentId(
+            "webapputilservice-" + version + ".zip");
         String desc = "The Web App Utility service coordinates the " +
             "(de)installation and startup/shutdown of Apache Tomcat instances" +
             " that are created to run web application services that deployed " +
@@ -201,7 +205,7 @@ public class ServiceXmlGenerator {
         hellowebappService.setDescription(desc);
         hellowebappService.setDisplayName("Web App Utility Service");
         hellowebappService.setUserConfigVersion("1.0");
-        hellowebappService.setServiceVersion("1.0.0");
+        hellowebappService.setServiceVersion(version);
         hellowebappService.setMaxDeploymentsAllowed(1);
 
         hellowebappService.setDeploymentOptions(getSimpleDeploymentOptions());
@@ -212,13 +216,13 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildHelloWebappWrapper() {
         ServiceInfo hellowebapp = new ServiceInfo();
         hellowebapp.setId(4);
-        hellowebapp.setContentId("hellowebappwrapper-1.0.0.zip");
+        hellowebapp.setContentId("hellowebappwrapper-" + version + ".zip");
         String desc = "The HelloWebApp wrapper deploys a simple web " +
             "application which prints a pleasant greeting.";
         hellowebapp.setDescription(desc);
         hellowebapp.setDisplayName("Hello WebApp Wrapper");
         hellowebapp.setUserConfigVersion("1.0");
-        hellowebapp.setServiceVersion("1.0.0");
+        hellowebapp.setServiceVersion(version);
         hellowebapp.setMaxDeploymentsAllowed(1);
 
         hellowebapp.setDeploymentOptions(getSimpleDeploymentOptions());
@@ -229,7 +233,7 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildJ2kService() {
         ServiceInfo j2kService = new ServiceInfo();
         j2kService.setId(5);
-        j2kService.setContentId("j2kservice-1.0.0.zip");
+        j2kService.setContentId("j2kservice-" + version + ".zip");
         String desc =
             "The J2K service deploys an instance of the Adore Djatoka web " +
             "application which provides for serving and viewing JPEG2000 " +
@@ -238,7 +242,7 @@ public class ServiceXmlGenerator {
         j2kService.setDescription(desc);
         j2kService.setDisplayName("JPEG 2000 Image Viewer Service");
         j2kService.setUserConfigVersion("1.0");
-        j2kService.setServiceVersion("1.0.0");
+        j2kService.setServiceVersion(version);
         j2kService.setMaxDeploymentsAllowed(1);
 
         j2kService.setDeploymentOptions(getSimpleDeploymentOptions());
@@ -249,7 +253,7 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildImageConversionService() {
         ServiceInfo icService = new ServiceInfo();
         icService.setId(6);
-        icService.setContentId("imageconversionservice-1.0.0.zip");
+        icService.setContentId("imageconversionservice-" + version + ".zip");
         String desc = "The Image Conversion service provides a simple way to " +
             "convert image files from one format to another. A space is " +
             "selected from which image files will be read and converted to " +
@@ -261,7 +265,7 @@ public class ServiceXmlGenerator {
         icService.setDescription(desc);
         icService.setDisplayName("Image Conversion Service");
         icService.setUserConfigVersion("1.0");
-        icService.setServiceVersion("1.0.0");
+        icService.setServiceVersion(version);
         icService.setMaxDeploymentsAllowed(1);
 
         // User Configs
@@ -378,7 +382,7 @@ public class ServiceXmlGenerator {
     private ServiceInfo buildMediaStreamingService() {
         ServiceInfo msService = new ServiceInfo();
         msService.setId(7);
-        msService.setContentId("mediastreamingservice-1.0.0.zip");
+        msService.setContentId("mediastreamingservice-"+version+".zip");
         String desc = "The Media Streaming service provides streaming " +
             "capabilities for video and audio files. The service takes " +
             "advantage of the Amazon Cloudfront streaming capabilities, " +
@@ -393,7 +397,7 @@ public class ServiceXmlGenerator {
         msService.setDescription(desc);
         msService.setDisplayName("Media Streaming Service");
         msService.setUserConfigVersion("1.0");
-        msService.setServiceVersion("1.0.0");
+        msService.setServiceVersion(version);
         msService.setMaxDeploymentsAllowed(1);
 
         // User Configs
@@ -489,7 +493,7 @@ public class ServiceXmlGenerator {
      * @throws IOException
      */
     public void generateServiceXml(String dirPath) throws IOException {
-        String filePath = dirPath + File.separator + SERVICES_XML_FILE_NAME;
+        String filePath = dirPath + File.separator + getRepositoryName();
         System.out.println("Writing Services Xml File to: " + filePath);
         File servicesXmlFile = new File(filePath);
         FileUtils.writeStringToFile(servicesXmlFile,
@@ -497,9 +501,19 @@ public class ServiceXmlGenerator {
                                     "UTF-8");
     }
 
+    private String getRepositoryName() {
+        String name = "duracloud-" + version + "-service-repo.xml";
+        return name.toLowerCase();
+    }
+
     public static void main(String[] args) throws Exception {
         String currentDir = new File(".").getCanonicalPath();
-        ServiceXmlGenerator xmlGenerator = new ServiceXmlGenerator();
+        String version = "0.4.0-SNAPSHOT";
+        if (args.length == 1) {
+            version = args[0];
+        }
+        
+        ServiceXmlGenerator xmlGenerator = new ServiceXmlGenerator(version);
         xmlGenerator.generateServiceXml(currentDir);
     }
 

@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class TomcatInstanceTest extends TomcatTestBase {
 
+    private final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
     private final int port = 12080;
     private final String tomcatURL = "http://localhost:" + port;
     private TomcatUtil tomcatUtil;
@@ -107,11 +108,18 @@ public class TomcatInstanceTest extends TomcatTestBase {
     }
 
     private void doDeploy() throws Exception {
-        File warFile = new File(getResourceDir(), "hellowebapp-1.0.0.war");
+        String filename = "hellowebapp-" + getVersion() + ".war";
+        File warFile = new File(getResourceDir(), filename);
         InputStream war = new FileInputStream(warFile);
 
         tomcatInstance.deploy(context, war);
         IOUtils.closeQuietly(war);
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        junit.framework.Assert.assertNotNull(version);
+        return version;
     }
 
     private boolean expectedDeployState(boolean expected) {

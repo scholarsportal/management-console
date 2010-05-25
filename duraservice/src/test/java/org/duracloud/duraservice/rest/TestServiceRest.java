@@ -59,7 +59,7 @@ public class TestServiceRest {
 
     private int deploymentId = 0;
 
-    private static final String testServiceId = "0";
+    private static final String testServiceId = "1"; // replication service
 
     @Before
     public void setUp() throws Exception {
