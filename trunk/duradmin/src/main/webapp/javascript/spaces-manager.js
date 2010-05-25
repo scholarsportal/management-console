@@ -2,273 +2,9 @@
  * 
  * created by Daniel Bernstein
  */
-
-
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
 
-/**
- * Metadata Panel: used for displaying lists of static properties
- */
-$.widget("ui.metadatapanel", 
-	$.extend({}, $.ui.expandopanel.prototype, 
-		{  //extended definition 
-			_init: function(){ 
-				$.ui.expandopanel.prototype._init.call(this); //call super init first
-				var that = this;
-				
-				//initialize table
-				var table =  $("table", this.element);
-				if(table.size() == 0){
-					table = $(document.createElement("table"));
-					this.getContent().prepend(table);	
-					var addControlsRow = this._createControlsRow();
-					
-					var fSuccess = function(){that._addSuccess(that)};
-
-					var triggerAdd = function(){
-						that.element.trigger("add", { value: that._getValue(), 
-											  success: fSuccess,
-											  failure: that._addFailure});
-					};
-										  
-					//attach listeners
-					$("input[type=button]", addControlsRow).click(function(evt){
-						triggerAdd();
-					});
-					
-					$("input[type=text]", addControlsRow).keyup(function(e) {
-							//enter key listener
-							if(e.keyCode == 13) {
-								triggerAdd();
-							}
-						});
-
-					table.append(addControlsRow);
-				}
-				
-				this._initializeDataContainer();
-			}, 
-			
-			
-			destroy: function(){ 
-				//tabular destroy here
-				$.ui.expandopanel.prototype.destroy.call(this); // call the original function 
-			}, 
-
-			options: $.extend({}, $.ui.expandopanel.prototype.options, {
-				data: [
-				           {name: "name 1", value: "value1"},
-				           {name: "name 2", value: "value2"}
-							],
-			}),
-
-			load: function(data){
-				this.options.data = data;
-				for(i in data){
-					this._add(data[i]);
-				};
-			},
-			
-			_initializeDataContainer: function(){
-				
-			},
-			
-			_addSuccess: function(context){
-				var v = context._getValue();
-				if($.isArray(v)){
-					for(i in v){
-						context._add(v[i]);
-					}
-				}else{
-					context._add(v);
-					
-				}
-				context._clearForm();
-				$("input[type=text]", context.element).first().focus();
-			},
-			
-			_addFailure: function(){
-				alert("add operation failed!");	
-			},
-
-			_removeSuccess: function(context, data){
-				$(".name",context.element).each(function(index,value){
-					if($(value).html() == data.name){
-						context._animateRemove(
-									$(value).parent(), 
-									function(){$(value).parent().remove()});
-					}
-					
-				});	
-			},
-			
-			_animateRemove: function(element, removeComplete){
-				$(element).hide("slow", function(){
-					removeComplete();
-				});
-				
-			},
-			
-			_removeFailure: function(){
-				alert("remove failed!");	
-			},
-			
-			_createControlsRow: function(){
-				var controls = $(document.createElement("tr"));
-				controls.append(
-					$(document.createElement("td"))
-						.addClass("name")
-						.html("<input type='text' class='name-txt' size='15'/>")
-				);
-
-				controls.append(
-						$(document.createElement("td"))
-							.addClass("value")
-							.html("<input type='text' class='value-txt' size='20'/><input type='button' value='+'/>")
-					);
-				
-				return controls;
-				
-			},
-
-			_getValue: function(){
-				var fields = { 
-						name: $(".name-txt",this.element).first().val(),
-						value: $(".value-txt",this.element).val(),
-				};
-				
-				return fields;
-			},
-
-			_getDataContainer: function(){
-				return $("table", this.element);
-			},
-
-			
-			_createDataChild: function(data){
-				var child = $(document.createElement("tr"));
-				//add the name element
-				child.append($(document.createElement("td")).addClass("name").html(data.name));
-				//add the value value
-				var valueCell = $(document.createElement("td"));
-				child.append(valueCell.addClass("value").html(data.value));
-				//append remove button
-				button = $(document.createElement("span")).addClass("dc-mouse-panel float-r").makeHidden().append("<input type='button' value='x'/>");
-				valueCell.append(button);
-				return child;
-			},
-			
-			_appendChild: function (child){
-				this._getDataContainer().children().last().prepend(child);
-				return child;
-			},
-			
-			_add: function(data){
-				var that = this;
-				var child = this._createDataChild(data);
-				child.addClass("dc-mouse-panel-activator");
-				this._appendChild(child);
-				//add click listener 
-				$("input", child).click(function(evt){
-					var props = "";
-					for(p in data){
-						props += p + ": " + data[p] + ", ";
-					}
-					//alert("clicked remove: "  + props);
-					that.element.trigger("remove", { value: that._getValue(), 
-						  success: function(){
-							that._removeSuccess(that,data);
-						  },
-						  failure: that._removeFailure});
-				});
-			},
-			
-			
-			_clearForm: function(){
-				$("input[type='text']", this.element).val('');
-			},
-			
-			destroy: function(){ 
-			}, 
-			
-		}
-	)
-); 
-
-/**
- * Tags panel is substantially the same in display and behavior as metadatapanel
- */
-$.widget("ui.tagspanel", 
-		$.extend({}, $.ui.metadatapanel.prototype, 
-			{  //extended definition 
-				_init: function(){ 
-					$.ui.metadatapanel.prototype._init.call(this); //call super init first
-				}, 
-				
-				_initializeDataContainer: function(){
-					$("table",this.element).prepend("<tr><td><ul class='horizontal-list'></ul></td></tr>");
-				},
-				
-				destroy: function(){ 
-					$.ui.metadatapanel.prototype.destroy.call(this); // call the original function 
-				}, 
-
-				_createControlsRow: function(){
-					var controls = $(document.createElement("tr"));
-
-					controls.append(
-							$(document.createElement("td"))
-								.addClass("value")
-								.html("<input type='text' class='name-txt' size='35'/><input type='button' value='+'/>")
-						);
-					
-					return controls;
-					
-				},
-
-				_getValue: function(){
-					var tag =  $(".name-txt",this.element).first().val();
-					var fields = new Array();
-					fields.push(tag);
-					return fields;
-				},
-
-				_getDataContainer: function(){
-					return $("ul", this.element);
-				},
-
-				
-				_createDataChild: function(data){
-					var child = $(document.createElement("li"));
-					//add the name element
-					child.html(data);
-					//append remove button
-					button = $(document.createElement("span")).addClass("dc-mouse-panel float-r").makeHidden().append("<input type='button' value='x'/>");
-					child.append(button);
-					return child;
-				},
-				
-				_appendChild: function (child){
-					this._getDataContainer().append(child);
-					return child;
-				},
-				
-				_removeSuccess: function(context, data){
-					$("li",context.element).each(function(index,value){
-						var text = $(value).text();
-						if(text == data){
-							context._animateRemove($(value), function(){$(value).remove()});
-						}
-						
-					});	
-				},
-			}
-		)
-	);
-
 $(document).ready(function() {
-
-	
 	centerLayout = $('#page-content').layout({
 		//minSize:				50	// ALL panes
 		north__size: 			50	
@@ -403,16 +139,16 @@ $(document).ready(function() {
 	var loadMetadataPane = function(target, extendedMetadata){
 		var div = document.createElement("div");
 		$(".center", target).append(div);
-		$(div).metadatapanel({title: "Metadata"});
-		$(div).metadatapanel("load",extendedMetadata);
+		$(div).metadataviewer({title: "Metadata"});
+		$(div).metadataviewer("load",extendedMetadata);
 		return div;
 	};
 
 	var loadTagPane = function(target, tags){
 		var div = document.createElement("div");
 		$(".center", target).append(div);
-		$(div).tagspanel({title: "Tags"});
-		$(div).tagspanel("load",tags);
+		$(div).tagsviewer({title: "Tags"});
+		$(div).tagsviewer("load",tags);
 		return div;
 	};
 	
@@ -546,30 +282,47 @@ $(document).ready(function() {
 		var detail = $("#spaceDetailPane").clone();
 		var contentItems = space.contentItems;
 		setObjectName(detail, space.spaceId);
+		
+		//create access switch and bind on/off listeners
+		$(".access-switch", detail).onoffswitch({
+					initialState: (space.access=="OPEN"?"on":"off")
+					,  onStateClass: "unlocked"
+					, onIconClass: "unlock"
+					, offStateClass: "locked"
+					, offIconClass: "lock"
+					, onText: "Open"
+					, offText: "Closed"
+			}).bind("turnOn", function(evt, future){
+				toggleSpaceAccess(space, future);
+			}).bind("turnOff", function(evt, future){
+				toggleSpaceAccess(space, future);
+			});
+
+		
+		
+		
 		loadProperties(detail, extractSpaceProperties(space));
 
 		var mp = loadMetadataPane(detail, space.extendedMetadata);
-
+		
 		$(mp).bind("add", function(evt, future){
-			future.success();
-		});
-
-		$(mp).bind("remove", function(evt, future){
-			future.success();
-		});
+				future.success();
+			}).bind("remove", function(evt, future){
+				future.success();
+			});
 		
 		var tag = loadTagPane(detail, space.metadata.tags);
 
 		$(tag).bind("add", function(evt, future){
 			future.success();
-		});
-
-		$(tag).bind("remove", function(evt, future){
+		}).bind("remove", function(evt, future){
 			future.success();
 		});
 
 		swapDetailPane(detail,"#detail-pane", spaceDetailLayoutOptions);
+
 		loadContentItems(contentItems);
+		
 	};
 
 	
@@ -681,6 +434,18 @@ $(document).ready(function() {
 		}
 	}
 	
+	
+	var toggleSpaceAccess = function(space, callback){
+		var access = space.access;
+		var newAccess = (access == "OPEN") ? "CLOSED":"OPEN";
+		
+		var success = true;//DO AJAX COMMAND HERE
+		alert("ajax call not yet implemented!");
+		//update space object
+		space.access = newAccess;
+		success ? callback.success() : callback.failure();
+	};
+
 	var dcGetSpaces = function(callback){
 		var spaces = new Array(50);
 		for(var i = 0; i < spaces.length; i++){
@@ -699,6 +464,7 @@ $(document).ready(function() {
 		
 		callback.load({
 						spaceId: spaceId,
+						access: 'OPEN',
 						contentItems: contentItems,
 						metadata: {
 							count: 10, 
