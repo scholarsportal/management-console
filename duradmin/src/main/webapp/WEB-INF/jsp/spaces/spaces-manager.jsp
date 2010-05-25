@@ -9,7 +9,11 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.easing-1.3.pack.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.metadataviewer.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.tagsviewer.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
+
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 	<tiles:insertDefinition name="app-frame">
@@ -89,23 +93,12 @@
 				<h1>Space Detail</h1>
 				<h2 class="object-name">Space Name Here</h2>
 				<div class="toggle-control flex switch-holder">
-				    <div class="r">
-				        <span class="flex button-holder button-holder-on">
-				        	<i class="pre unlock unlocked">Open</i><a class="flex button switch"><span><i class="pre lock">Close</i></span></a>
-				        </span>
-				        
-				        <span class="flex button-holder button-holder-off">
-				        	<a class="flex button switch"><span><i class="pre unlock">Open</i></span></a><i class="pre lock locked">Closed</i>
-				        </span>            
-				        
-				        <span class="flex button-holder">
-				        	<a class="flex button switch"><span><i class="pre unlock">Open</i></span></a><a class="flex button switch" style="margin-left:-2px;"><span><i class="pre lock">Close</i></span></a>
-				        </span>
+				    <div class="r access-switch">
 				    </div>
 				</div>
 				<div class="button-bar">
 					<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus">Add Content Item</i></span></a>
-					<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete Space</i></span></a>
+					<a href="javascript:void(1);" class="flex button std delete-space-button"><span><i class="pre trash">Delete Space</i></span></a>
 				</div>
 	
 			</div>

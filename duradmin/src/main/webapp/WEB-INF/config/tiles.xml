@@ -30,7 +30,6 @@
 		<put-attribute name="body" />	
 	</definition>
 
-    <definition name="login-old" template="/WEB-INF/jsp/login.jsp" extends="base"/>
 
 	<definition name="init" template="/WEB-INF/jsp/init.jsp"/>
   <definition name="users" template="/WEB-INF/jsp/users.jsp"/>
@@ -82,10 +81,14 @@
 		<put-attribute name="mainTab" value="dashboard" />
 		<put-attribute name="main-content" value="main-content"/>
 	</definition>
-
- 	<definition name="login" template="/WEB-INF/jsp/login-v2.jsp">
- 	
- 	</definition>
+	<!-- old login -->
+	<definition name="login" template="/WEB-INF/jsp/login.jsp" extends="base"/>
+ 	 
+	<!-- new login screen
+ 	<definition name="login" template="/WEB-INF/jsp/login-v2.jsp"/>
+ 	 -->
+ 	 
+ 	 
  	<definition name="dashboard-manager" template="/WEB-INF/jsp/dashboard-manager.jsp">
  	</definition>
 
