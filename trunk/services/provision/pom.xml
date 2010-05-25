@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>services</artifactId>
-    <version>1.0.0</version>
+    <version>0.4.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -63,21 +63,6 @@
       <version>2.5.6</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>javax.servlet</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>com.springsource.org.apache.derby</artifactId>
       <version>10.5.1000001.764942</version>
@@ -92,11 +77,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.transaction</artifactId>
       <version>2.5.6.A</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
-      <version>1.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -129,11 +109,6 @@
       <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>edu.emory.mathcs.backport</groupId>
-      <artifactId>com.springsource.edu.emory.mathcs.backport</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-    <dependency>
       <groupId>javax.el</groupId>
       <artifactId>com.springsource.javax.el</artifactId>
       <version>2.1.0</version>
@@ -157,6 +132,41 @@
       <groupId>javax.servlet</groupId>
       <artifactId>com.springsource.javax.servlet.jsp</artifactId>
       <version>2.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>2.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>2.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>2.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>2.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>javax.servlet</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -189,16 +199,6 @@
       <version>1.1.1</version>
     </dependency>
     <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>com.springsource.org.jdom</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>2.5.6</version>
@@ -219,6 +219,21 @@
       <version>2.5.6</version>
     </dependency>
     <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>com.springsource.javax.ws.rs</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>com.springsource.org.jdom</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-core</artifactId>
       <version>1.2.0</version>
@@ -232,6 +247,26 @@
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-io</artifactId>
       <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.emory.mathcs.backport</groupId>
+      <artifactId>com.springsource.edu.emory.mathcs.backport</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web-extender</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>
+      <version>1.5.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

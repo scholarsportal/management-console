@@ -17,7 +17,7 @@
   <bean name="replicationService" class="org.duracloud.services.replication.ReplicationService"
 	   destroy-method="stop">
 <!--    init-method="start" destroy-method="stop">-->
-    <osgix:managed-properties persistent-id="replicationservice-1.0.0.zip" update-strategy="container-managed"/>
+    <osgix:managed-properties persistent-id="replicationservice-${project.version}.zip" update-strategy="container-managed"/>
 	  <property name="host" value="localhost"/>  
     <property name="port" value="8080"/>       
     <property name="context" value="durastore"/>
@@ -28,7 +28,7 @@
     <!-- <property name="jmsContainer" ref="jmsContainer" />  -->
     <property name="connectionFactory" ref="connFactory" />
     <property name="destination" ref="ingestDestination" />
-    <property name="serviceId" value="replicationservice-1.0.0" />
+    <property name="serviceId" value="replicationservice-${project.version}" />
   </bean>
 
 </beans>

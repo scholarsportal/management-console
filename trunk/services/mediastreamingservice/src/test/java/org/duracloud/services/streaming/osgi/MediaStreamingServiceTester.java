@@ -30,8 +30,6 @@ public class MediaStreamingServiceTester {
     // including the unit-test-db project in the OSGi container. 
     private String rootPassword = "";
 
-    private final static String BASE_DIR_PROP = "base.dir";
-
     public MediaStreamingServiceTester(MediaStreamingService service)
         throws IOException {
         this.service = service;
@@ -86,11 +84,4 @@ public class MediaStreamingServiceTester {
         return String.valueOf(new Random().nextInt(99999));
     }
 
-    private String getResourceDir() {
-        String baseDir = System.getProperty(BASE_DIR_PROP);
-        assertNotNull(baseDir);
-
-        return baseDir + File.separator + "src/test/resources/";
-    }
-    
 }

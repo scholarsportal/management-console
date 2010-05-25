@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud.services</groupId>
   <artifactId>j2kservice</artifactId>
-  <version>1.0.0</version>
+  <version>0.4.0-SNAPSHOT</version>
   <name>DuraCloud JPEG2000 Server Wrapper Bundle</name>
   <packaging>bundle</packaging>
 
   <parent>
     <artifactId>services</artifactId>
     <groupId>org.duracloud</groupId>
-    <version>1.0.0</version>
+    <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -108,28 +108,28 @@
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>computeservice</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>webapputilservice</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>servicescommon</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>common</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 

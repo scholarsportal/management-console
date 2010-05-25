@@ -14,6 +14,7 @@ import java.util.Map;
 public class ServicesAdminClientCLI {
 
     private ServicesAdminClient client;
+    private static String version;
 
     public static enum ADMIN_OPTION {
         INSTALL("i", "[i]nstall"),
@@ -47,24 +48,27 @@ public class ServicesAdminClientCLI {
     }
 
     public static enum SERVICE {
-        HELLO("h", "[h]elloservice", "helloservice-1.0.0", "jar"),
+        HELLO("h", "[h]elloservice", "helloservice-" + version, "jar"),
         HELLOWEBAPP("hellow",
                     "[hellow]ebapp",
-                    "hellowebappwrapper-1.0.0",
+                    "hellowebappwrapper-" + version,
                     "zip"),
         REPLICATION("rep",
                     "[rep]licationservice",
-                    "replicationservice-1.0.0",
+                    "replicationservice-" + version,
                     "zip"),
-        WEBAPPUTIL("util", "webapp[util]", "webapputilservice-1.0.0", "zip"),
-        J2K("j", "[j]2k", "j2kservice-1.0.0", "zip"),
+        WEBAPPUTIL("util",
+                   "webapp[util]",
+                   "webapputilservice-" + version,
+                   "zip"),
+        J2K("j", "[j]2k", "j2kservice-" + version, "zip"),
         IMAGECONVERSION("i",
                         "[i]mageconversion",
-                        "imageconversionservice-1.0.0",
+                        "imageconversionservice-" + version,
                         "zip"),
         IMAGEMAGICK("magick",
                     "image[magick]",
-                    "imagemagickservice-1.0.0",
+                    "imagemagickservice-" + version,
                     "zip"),
         UNKNOWN("?", "unknown", "unknown-id", "no-ext");
 
@@ -113,7 +117,9 @@ public class ServicesAdminClientCLI {
 
     }
 
-    public ServicesAdminClientCLI(String host) {
+    public ServicesAdminClientCLI(String host, String version) {
+        System.out.println("constructor version-0: '"+version+"'");
+        this.version = version;
         client = new ServicesAdminClient();
         client.setBaseURL(createBaseUrl(host));
         client.setRester(new RestHttpHelper());
@@ -122,7 +128,9 @@ public class ServicesAdminClientCLI {
     private String createBaseUrl(String host) {
         // Port:8089 is defined in the 'tomcatconfig' project
         StringBuilder url = new StringBuilder("http://" + host);
-        url.append(":8089/org.duracloud.services.admin_1.0.0");
+        System.out.println("version: '"+version+"'");
+        url.append(":8089/org.duracloud.services.admin_" + version.replace("-",
+                                                                           "."));
         System.out.println("Using url: '" + url.toString() + "'");
         return url.toString();
     }
@@ -244,24 +252,31 @@ public class ServicesAdminClientCLI {
 
     private static void usage() {
         StringBuilder sb = new StringBuilder("Usage:");
-        sb.append("ServicesAdminClientCLI [host]\n");
-        sb.append("\twhere [host] is optional");
+        sb.append("ServicesAdminClientCLI [host] [service-version]\n");
+        sb.append("\twhere [host] and [service-version] are optional");
+        sb.append("\tbut [service-version] can not be present w/o [host].");
         System.out.println(sb.toString());
     }
 
     public static void main(String[] args) {
-        if (args.length > 1 || (args.length == 1 &&
+        if (args.length > 2 || (args.length == 1 &&
             (args[0].equals("help") || args[0].equals("-h")))) {
             usage();
             System.exit(1);
         }
 
         String host = "localhost";
-        if (args.length == 1) {
+        if (args.length >= 1) {
             host = args[0];
         }
 
-        ServicesAdminClientCLI cli = new ServicesAdminClientCLI(host);
+        String version = "0.4.0-SNAPSHOT";
+        if (args.length == 2) {
+            version = args[1];
+        }
+
+        System.out.println("main version: '"+version+"'");
+        ServicesAdminClientCLI cli = new ServicesAdminClientCLI(host, version);
         cli.inputCommands();
     }
 

@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class HelloWebappWrapperTester {
 
-    private String warName = "hellowebapp-1.0.0.war";
-    private String context = FilenameUtils.getBaseName(warName);
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
+    private String context = FilenameUtils.getBaseName(getWarName());
     private int port = 18080;
 
     private String urlOrig = "http://example.org";
@@ -43,7 +43,13 @@ public class HelloWebappWrapperTester {
         Assert.assertNotNull(baseDir);
 
         String resourceDir = baseDir + File.separator + "src/test/resources/";
-        return new File(resourceDir, warName);
+        return new File(resourceDir, getWarName());
+    }
+
+    private String getWarName() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return "hellowebapp-" + version + ".war";
     }
 
     protected void testHelloWebappWrapper() throws Exception {

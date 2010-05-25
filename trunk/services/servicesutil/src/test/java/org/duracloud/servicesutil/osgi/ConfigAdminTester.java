@@ -1,17 +1,14 @@
 
 package org.duracloud.servicesutil.osgi;
 
-import java.util.Map;
-
+import junit.framework.Assert;
+import static junit.framework.Assert.assertNotNull;
 import org.duracloud.services.ComputeService;
 import org.duracloud.servicesutil.util.DuraConfigAdmin;
-import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import junit.framework.Assert;
-
-import static junit.framework.Assert.assertNotNull;
+import java.util.Map;
 
 public class ConfigAdminTester {
 
@@ -21,8 +18,7 @@ public class ConfigAdminTester {
 
     private final ComputeService hello;
 
-    private final String CONFIG_PID =
-            "helloservice-1.0.0.jar";
+    private final static String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     public ConfigAdminTester(DuraConfigAdmin configAdmin, ComputeService hello) {
         assertNotNull(configAdmin);
@@ -42,12 +38,12 @@ public class ConfigAdminTester {
         assertNotNull(sb.toString(), origText);
         sb.append("origText: '" + origText + "'\n");
 
-        Map<String, String> props = configAdmin.getConfiguration(CONFIG_PID);
+        Map<String, String> props = configAdmin.getConfiguration(getConfigPID());
         assertNotNull(sb.toString(), props);
 
         props.put(key, "tester.text");
 
-        configAdmin.updateConfiguration(CONFIG_PID, props);
+        configAdmin.updateConfiguration(getConfigPID(), props);
 
         // Make sure thread updating container props has time to complete.
         Thread.sleep(100);
@@ -65,9 +61,9 @@ public class ConfigAdminTester {
         log.debug(sb.toString());
     }
 
-    private String configDetailsText() throws Exception, InvalidSyntaxException {
+    private String configDetailsText() throws Exception {
         StringBuffer sb = new StringBuffer();
-        Map<String, String> props = configAdmin.getConfiguration(CONFIG_PID);
+        Map<String, String> props = configAdmin.getConfiguration(getConfigPID());
         sb.append("\tProps: ");
         assertNotNull(props);
         for (String key : props.keySet()) {
@@ -76,6 +72,16 @@ public class ConfigAdminTester {
         }
         sb.append("\n");
         return sb.toString();
+    }
+
+    private String getConfigPID() {
+        return "helloservice-" + getVersion() + ".jar";
+    }
+
+    private String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
 }

@@ -17,6 +17,7 @@ public class DuraServiceConfig
         "test-duraservice.properties";
     
     private static final String PORT_KEY = "port";
+    private static final String VERSION_KEY = "version";
     private static final String SERVICES_ADMIN_URL_KEY = "servicesAdminURL";
 
     private String configFileName = null;
@@ -30,7 +31,9 @@ public class DuraServiceConfig
     }
 
     public String getServicesAdminUrl() {
-        return getProps().getProperty(SERVICES_ADMIN_URL_KEY);
+        String baseUrl = getProps().getProperty(SERVICES_ADMIN_URL_KEY);
+        String version = getProps().getProperty(VERSION_KEY);
+        return baseUrl + version.replace("-", ".");
     }
 
     public void setConfigFileName(String name) {

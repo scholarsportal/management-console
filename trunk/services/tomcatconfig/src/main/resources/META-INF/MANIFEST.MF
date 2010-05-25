@@ -3,7 +3,7 @@ Built-By: awoods
 Created-By: Apache Maven Bundle Plugin
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bnd-LastModified: 1248905574247
-Bundle-Version: 1.0.0
+Bundle-Version: ${project.version}
 Bundle-Name: DuraCloud Tomcat-Config Bundle
 Build-Jdk: 1.5.0_18
 Bundle-DocURL: http://www.duracloud.org

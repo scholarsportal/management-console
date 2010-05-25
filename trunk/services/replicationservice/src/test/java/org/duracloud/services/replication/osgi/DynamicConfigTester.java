@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class DynamicConfigTester {
 
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
+
     private static final String HOST = "host";
 
     private static final String PORT = "port";
@@ -58,9 +60,8 @@ public class DynamicConfigTester {
         newConfig.put(TO_STORE_ID, "6");
         newConfig.put(REPLICATION_TYPE, "1");
 
-        configAdmin
-                .updateConfiguration("replicationservice-1.0.0.zip",
-                                     newConfig);
+        configAdmin.updateConfiguration(
+            "replicationservice-" + getVersion() + ".zip", newConfig);
 
         // Give time for config to propagate
         Thread.sleep(100);
@@ -92,6 +93,12 @@ public class DynamicConfigTester {
         Assert.assertEquals(config.get(FROM_STORE_ID), fromId);
         Assert.assertEquals(config.get(TO_STORE_ID), toId);
         Assert.assertEquals(config.get(REPLICATION_TYPE), type);
+    }
+
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
 }

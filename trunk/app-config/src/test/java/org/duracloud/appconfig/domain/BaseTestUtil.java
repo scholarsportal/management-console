@@ -4,6 +4,7 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ApplicationConfig;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.junit.Assert;
 
 import java.util.Properties;
 
@@ -19,6 +20,7 @@ public class BaseTestUtil extends ApplicationConfig {
     private static final String defaultPort = "8080";
 
     private static final String PORT_KEY = "port";
+    private static final String VERSION_KEY = "version";
     private static final String SERVICES_ADMIN_PORT_KEY = "servicesAdminPort";
     private static final String SERVICES_ADMIN_CONTEXT_KEY = "servicesAdminContext";
 
@@ -45,7 +47,11 @@ public class BaseTestUtil extends ApplicationConfig {
     }
 
     public static String getServicesAdminContext() {
-        return getProps().getProperty(SERVICES_ADMIN_CONTEXT_KEY);
+        String baseUrl = getProps().getProperty(SERVICES_ADMIN_CONTEXT_KEY);
+        String version = getProps().getProperty(VERSION_KEY);
+
+        Assert.assertNotNull(version);
+        return baseUrl + version.replace("-", ".");
     }
 
     protected static Credential getCredential(ResourceType resource) {

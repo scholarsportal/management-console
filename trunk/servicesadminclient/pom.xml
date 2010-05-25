@@ -5,13 +5,13 @@
   <groupId>org.duracloud</groupId>
   <artifactId>servicesadminclient</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>0.4.0-SNAPSHOT</version>
   <name>Services Admin Client</name>
 
   <parent>
     <artifactId>duracloud</artifactId>
     <groupId>org.duracloud</groupId>
-    <version>1.0.0</version>
+    <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -82,6 +82,10 @@
                       <name>base.dir</name>
                       <value>${basedir}</value>
                     </property>
+                    <property>
+                      <name>PROJECT_VERSION</name>
+                      <value>${project.version}</value>
+                    </property>
                   </systemProperties>
 
                   <trimStackTrace>false</trimStackTrace>
@@ -113,7 +117,7 @@
                     <artifactItem>
                       <groupId>org.duracloud.services</groupId>
                       <artifactId>helloservice</artifactId>
-                      <version>1.0.0</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                   </artifactItems>
                   <outputDirectory>src/test/resources</outputDirectory>
@@ -135,13 +139,13 @@
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>common</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>computeservice</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- for HttpClient -->

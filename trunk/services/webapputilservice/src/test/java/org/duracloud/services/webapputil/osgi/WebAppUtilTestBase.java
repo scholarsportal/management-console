@@ -19,6 +19,7 @@ import java.net.URL;
  */
 public class WebAppUtilTestBase {
 
+    private String PROJECT_VERSION_PROP = "PROJECT_VERSION";
     protected InputStream war;
     protected URL url;
 
@@ -68,5 +69,11 @@ public class WebAppUtilTestBase {
             Assert.assertNotNull(body);
             Assert.assertTrue(body, body.contains("Hello from DuraCloud"));
         }
+    }
+
+    protected String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 }

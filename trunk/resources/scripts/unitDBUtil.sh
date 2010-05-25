@@ -1,5 +1,12 @@
 #! /usr/bin/env bash
 
+#-----------------------------------
+# Load environment-specific settings
+#-----------------------------------
+
+scriptdir=`dirname "$0"`
+. "$scriptdir"/../../resources/scripts/osgi/env.sh
+
 if [ -z "$UNIT_DATABASE_HOME" ]; then
   echo 'UNIT_DATABASE_HOME' should be set to the location of the unit database.
   exit
@@ -15,8 +22,13 @@ if [ -z "$BUILD_HOME" ]; then
   exit
 fi
 
-export CUSTOMER_LIB=${BUILD_HOME}/durastore/target/durastore-1.0.0/WEB-INF/lib
-export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-1.0.0/WEB-INF/lib
+if [ -z "$PROJECT_VERSION" ]; then
+  echo 'PROJECT_VERSION' should be set to the version of duracloud projects \(e.g. 0.4.0-SNAPSHOT\).
+  exit
+fi
+
+export CUSTOMER_LIB=${BUILD_HOME}/durastore/target/durastore-$PROJECT_VERSION/WEB-INF/lib
+export MAIN_LIB=${BUILD_HOME}/mainwebapp/target/mainwebapp-$PROJECT_VERSION/WEB-INF/lib
 export UNIT_DB_LIB=${BUILD_HOME}/unit-test-db/target
 
 # Set classpath to jars normally found in durastore war
@@ -24,8 +36,8 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/aopalliance-1.0.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/asm-3.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/cglib-2.2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/cloudfiles-1.3.0.jar
-export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/common-1.0.0.jar
-export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/common-$PROJECT_VERSION.jar
+export CLASSPATH=$CLASSPATH:$MAIN_LIB/common-db-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-codec-1.3.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-fileupload-1.2.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-httpclient-3.1.jar
@@ -40,9 +52,9 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/jaxb-impl-2.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/jdom-1.1.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/log4j-1.2.13.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/ognl-2.7.2.jar
-export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/rackspacestorageprovider-1.0.0.jar
-export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/s3storageprovider-1.0.0.jar
-export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/security-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/rackspacestorageprovider-$PROJECT_VERSION.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/s3storageprovider-$PROJECT_VERSION.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/security-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-aop-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-beans-2.5.6.jar
@@ -56,8 +68,8 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-tx-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/spring-web-2.5.6.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/standard-1.1.2.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/stax-api-1.0-2.jar
-export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/storageprovider-1.0.0.jar
-export CLASSPATH=$CLASSPATH:$UNIT_DB_LIB/unit-test-db-1.0.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/storageprovider-$PROJECT_VERSION.jar
+export CLASSPATH=$CLASSPATH:$UNIT_DB_LIB/unit-test-db-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/xbean-spring-3.5.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-lang-2.4.jar
 

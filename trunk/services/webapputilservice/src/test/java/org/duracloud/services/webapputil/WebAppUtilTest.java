@@ -25,7 +25,7 @@ public class WebAppUtilTest extends WebAppUtilTestBase {
     private String testResourcesPath = "src/test/resources";
     private String serviceId = "hello";
     private String binariesName = "apache-tomcat-6.0.20.zip";
-    private String warName = "hellowebapp-1.0.0.war";
+    private String warName = "hellowebapp-" + getVersion() + ".war";
     private int port = 18080;
 
     @Before

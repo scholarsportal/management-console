@@ -22,6 +22,7 @@ import junit.framework.Assert;
 public class AbstractDuracloudOSGiTestBasePax {
 
     private static final String BUNDLE_HOME_PROP = "BUNDLE_HOME";
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     @Inject
     protected BundleContext bundleContext;
@@ -35,7 +36,7 @@ public class AbstractDuracloudOSGiTestBasePax {
     public static Option[] configuration() {
 
         Option bundles =
-                provision(bundle("file:target/replicationservice-1.0.0.jar"));
+                provision(bundle("file:target/replicationservice-"+getVersion()+".jar"));
 
         Option frameworks = CoreOptions.frameworks(CoreOptions.equinox());
         // Knopflerfish does not like the felix.configadmin bundle
@@ -51,11 +52,19 @@ public class AbstractDuracloudOSGiTestBasePax {
                        profile("log"));
     }
 
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
+    }
+
     private static Option systemProperties() {
         String home = System.getProperty(BUNDLE_HOME_PROP);
         Assert.assertNotNull(home);
 
-        return CoreOptions.systemProperty(BUNDLE_HOME_PROP).value(home);
+        return CoreOptions.systemProperties(CoreOptions.systemProperty(
+            BUNDLE_HOME_PROP).value(home), CoreOptions.systemProperty(
+            PROJECT_VERSION_PROP).value(getVersion()));
     }
 
 }

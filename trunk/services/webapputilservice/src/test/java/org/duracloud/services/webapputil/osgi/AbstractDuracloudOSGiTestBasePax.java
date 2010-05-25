@@ -25,6 +25,7 @@ public class AbstractDuracloudOSGiTestBasePax {
     private BundleContext bundleContext;
 
     private static final String BASE_DIR_PROP = "base.dir";
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
 
     @Before
     public void setUp() throws Exception {
@@ -34,7 +35,8 @@ public class AbstractDuracloudOSGiTestBasePax {
     @Configuration
     public static Option[] configuration() {
 
-        Option bundles = bundle("file:target/webapputilservice-1.0.0.jar");
+        Option bundles = bundle(
+            "file:target/webapputilservice-" + getVersion() + ".jar");
 
         Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
                                                    // Knops does not work for this service.
@@ -52,7 +54,15 @@ public class AbstractDuracloudOSGiTestBasePax {
         String baseDir = System.getProperty(BASE_DIR_PROP);
         Assert.assertNotNull(baseDir);
 
-        return CoreOptions.systemProperty(BASE_DIR_PROP).value(baseDir);
+        return CoreOptions.systemProperties(CoreOptions.systemProperty(
+            BASE_DIR_PROP).value(baseDir), CoreOptions.systemProperty(
+            PROJECT_VERSION_PROP).value(getVersion()));
+    }
+
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
     protected BundleContext getBundleContext() {

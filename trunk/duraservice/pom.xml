@@ -4,14 +4,14 @@
   <groupId>org.duracloud</groupId>
   <artifactId>duraservice</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0</version>
+  <version>0.4.0-SNAPSHOT</version>
   <name>DuraCloud DuraService</name>
   <url>http://localhost:8080/${artifactId}</url>
 
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud</artifactId>
-    <version>1.0.0</version>
+    <version>0.4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -85,55 +85,55 @@
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>common</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>common-rest</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>    
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>security</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
   
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>storeclient</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>computeprovider</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>servicesutil</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>    
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>storageprovider</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
    
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>servicesadminclient</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>serviceconfig</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -218,7 +218,7 @@
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>unit-test-db</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

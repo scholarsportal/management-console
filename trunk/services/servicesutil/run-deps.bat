@@ -6,7 +6,7 @@ call pax-import-bundle -g org.springframework.osgi -a spring-osgi-extender -v 1.
 call pax-import-bundle -g org.springframework.osgi -a spring-osgi-io -v 1.2.0
 
 REM - DuraCloud -
-call pax-import-bundle -g org.duracloud -a common -v 1.0.0 -- -DimportTransitive -DwidenScope
+call pax-import-bundle -g org.duracloud -a common -v 0.4.0-SNAPSHOT -- -DimportTransitive -DwidenScope
 
 REM - Other -
 call pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope
