@@ -26,10 +26,13 @@ $.widget("ui.onoffswitch",{
 	 */
 	_init: function(){
 		var that = this;
+		//clear the element state
+		$(that.element).html("");
 		var o = this.options;
 		var onButtonOnState = this._createButton(o.onText, o.onStateClass, o.onIconClass, false);
 		var offButtonOnState = this._createButton(o.offText, "", o.offIconClass, true);
 		offButtonOnState.click(function(evt){
+			evt.preventDefault();
 			that.element.trigger("turnOff", {
 				success: function(){ 
 					that._switch("off")
@@ -54,6 +57,7 @@ $.widget("ui.onoffswitch",{
 		var offButtonOffState = this._createButton(o.offText, o.offStateClass, o.offIconClass, false);
 
 		onButtonOffState.click(function(evt){
+			evt.preventDefault();
 			that.element.trigger("turnOn", {
 				success:function(evt){ 
 					that._switch("on")
@@ -107,5 +111,35 @@ $.widget("ui.onoffswitch",{
 		}
 	}
 });
+
+
+//an open close switch
+$.widget("ui.accessswitch", 
+		$.extend({}, $.ui.onoffswitch.prototype, 
+			{  //extended definition 
+				_init: function(){ 
+					$.ui.onoffswitch.prototype._init.call(this); //call super init first
+				}, 
+				
+				
+				destroy: function(){ 
+					$.ui.onoffswitch.prototype.destroy.call(this); // call the original function 
+				}, 
+				
+				options: $.extend({}, $.ui.onoffswitch.prototype.options, 
+						{
+					  	      initialState: "on"
+							, onStateClass: "unlocked"
+							, onIconClass: "unlock"
+							, offStateClass: "locked"
+							, offIconClass: "lock"
+							, onText: "Open"
+							, offText: "Closed"
+						}
+				),
+			}
+		)
+	);
+
 
 
