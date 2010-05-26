@@ -9,7 +9,7 @@
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
+a, abbr, acronym, address, big, button, cite, code,
 del, dfn, em, font, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
@@ -110,6 +110,7 @@ h3 { font-size:1em; }
 .pane-L1-body
 {
 	background:url(../images/bg_L1.png) no-repeat top right;
+	padding-top:5px !important;
 }
 
 .pane-L1-body a
@@ -121,7 +122,7 @@ h3 { font-size:1em; }
 {
 	color:#9b9b9b;
 	font-size:13px;
-	padding:10px;
+	padding:5px 10px;
 }
 
 .dc-prototype {
@@ -129,7 +130,7 @@ h3 { font-size:1em; }
 	display:none;	
 }
 
-#list-browser
+.list-browser
 {
 	background:#6e6e6e url(../images/bg_list_browser_header.gif) no-repeat top right;
 }
@@ -137,11 +138,6 @@ h3 { font-size:1em; }
 .ui-layout-pane-west
 {
 	font-size:11px;
-}
-
-.dc-item-list
-{
-	margin:5px;
 }
 
 .dc-item-list-filter
@@ -193,12 +189,14 @@ h3 { font-size:1em; }
 	background-image:url(../images/btn_featured_L2.gif);
 }
 
-.list-header .button
+#spaces-list-view .list-header .button,
+#content-item-list-view .list-header .button
 {
 	width:140px;
 }
 
-.list-header .button span
+#spaces-list-view .list-header .button span,
+#content-item-list-view .list-header .button span
 {
 	width:130px;	
 }
@@ -208,8 +206,9 @@ h3 { font-size:1em; }
 	color:#fff;
 }
 
-.ui-layout-resizer
+.ui-layout-resizer:hover
 {
+	background-color:#257bba !important;
 }
 
 #spaces-list-view-resizer
@@ -395,15 +394,64 @@ a#select-provider span i
 }
 
 
-/* LIST ITEMS **********************************************/
+/* LIST AND ITEMS **********************************************/
 
-.dc-item {
+.dc-item-list
+{
+	margin:5px;
+}
+
+.dc-item-list table
+{
+	width:100%;
+}
+
+.dc-item,
+.dc-item td,
+.dc-item-list th
+{
 	border-bottom:1px solid #bbbbbb;
 	border-collapse:  collapse;
 	color:#000;
-	padding-bottom:2px;	
+	padding-bottom:2px;
 	padding-top:2px;
+	text-align:left;
+	vertical-align:middle;
 }
+
+.dc-item-list td,
+.dc-item-list th
+{
+	padding:3px 5px;	
+}
+
+.dc-item-list td.icon
+{
+	width:38px;
+}
+
+.dc-item-list th
+{
+	background-color:#aaa;
+	border-left:1px solid #ccc;
+}
+
+.dc-item-list td.icon div
+{
+	/* graphics format: art is 32 x 32, horizontal, with 10px between each, so total offset from icon to icon is 42px */
+	background:url(../images/icons_services.png) no-repeat;
+	width:32px;
+	height:32px;
+}
+
+/* replicate 0; general-compute -42; bit-integrity -84; image -126; video -168; file-transform -210; */
+
+.dc-item-list .service-replicate td.icon div { background-position:0 0; }
+.dc-item-list .service-generalcompute td.icon div { background-position:-42px 0; }
+.dc-item-list .service-bitintegrity td.icon div { background-position:-84px 0; }
+.dc-item-list .service-image td.icon div { background-position:-126px 0; }
+.dc-item-list .service-video td.icon div { background-position:-168px 0; }
+.dc-item-list .service-filetransform td.icon div { background-position:-210px 0; }
 
 .dc-selected-list-item {
 	background-color:#7e7e7e;
@@ -438,17 +486,12 @@ input.dc-check-all
 }
 
 
-.dc-item:hover {
+.dc-item:hover,
+.dc-item:hover td
+{
 	background-color:#9b9b9b;
 	cursor: pointer;
 }
-
-/*
-.dc-dialog {
-	border: 1px solid #DDD;
-	background-color: #EEE;	
-}
-*/
 
 /* PAGE TOP ********************************************************/
 

@@ -66,6 +66,7 @@
 i.pre,
 i.post
 {
+	border:none;
 	font-size:11px;
 	height:24px;
 	line-height:22px;
@@ -119,9 +120,9 @@ i.post
 }
 
 .switch a,
-a.switch,
+.switch,
 .switch a span,
-a.switch span
+.switch span
 {
 	background:url(../images/switch_btn.gif) no-repeat;
 	color:#ccc;
@@ -138,20 +139,20 @@ a.switch span
 }
 
 .button a,
-a.button
+.button
 {
 	background-position: top left;
 	padding-left:10px;
 }
 
 .button a:hover,
-a.button:hover
+.button:hover
 {
 	background-position:bottom left;
 }
 
 .button a span,
-a.button span,
+.button span,
 .button-holder span
 {
 	background-position: top right;
@@ -160,7 +161,7 @@ a.button span,
 
 
 .button a:hover span,
-a.button:hover span
+.button:hover span
 {
 	background-position: bottom right;
 }
