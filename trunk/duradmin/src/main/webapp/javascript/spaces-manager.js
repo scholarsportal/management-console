@@ -4,6 +4,8 @@
  */
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
 
+
+
 $(document).ready(function() {
 	centerLayout = $('#page-content').layout({
 		//minSize:				50	// ALL panes
@@ -67,24 +69,6 @@ $(document).ready(function() {
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
 
 	
-	////////////////////////////
-	//this method loads the children of the source
-	//into the target after emptying the contents
-	//with a fade in / fade out effect
-	var swapDetailPane = function(source, target, layoutOptions){
-		$(".dc-expandable-panel",source).expandopanel({});
-
-		$(target).fadeOut("fast", function(){
-			$(target).empty().prepend($(source).children());
-			$(target).fadeIn("fast");
-			$(target).layout(layoutOptions);
-		});
-		
-
-		return $(target);
-	};		
-
-	
 	////////////////////////////////////////////
 	//sets contents of object-name class
 	///
@@ -108,7 +92,7 @@ $(document).ready(function() {
 		var multiSpace = $("#spaceMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
-		swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
+		dc.swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
 		$("#content-item-list").selectablelist("clear");
 	};
 
@@ -116,62 +100,54 @@ $(document).ready(function() {
 		var multiSpace = $("#contentItemMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
-		swapDetailPane(multiSpace,"#detail-pane", contentItemDetailLayoutOptions);
+		dc.swapDetailPane(multiSpace,"#detail-pane", contentItemDetailLayoutOptions);
 
 	};
 
 	var showGenericDetailPane = function(){
-		swapDetailPane($("#genericDetailPane").clone(),"#detail-pane", spaceDetailLayoutOptions);
+		dc.swapDetailPane($("#genericDetailPane").clone(),"#detail-pane", spaceDetailLayoutOptions);
 	};
 
 	//////////////////////////////////////////
 	////functions for loading metadata, tags and properties
-	/*obsolete
-	var appendCopy = function(target, source){
-		var copy = $(source).clone();
-		$(copy).removeAttr("id").show();
-		$(".center", target).append(copy);
-		return copy;
-	};
-	
-	*/
-	
+
 	var loadMetadataPane = function(target, extendedMetadata){
-		var div = document.createElement("div");
-		$(".center", target).append(div);
-		$(div).metadataviewer({title: "Metadata"});
-		$(div).metadataviewer("load",extendedMetadata);
-		return div;
+		var viewerPane = $.fn.create("div")
+						.metadataviewer({title: "Metadata"})
+						.metadataviewer("load",extendedMetadata);
+
+		$(".center", target).append(viewerPane);
+		return viewerPane;
 	};
 
 	var loadTagPane = function(target, tags){
-		var div = document.createElement("div");
-		$(".center", target).append(div);
-		$(div).tagsviewer({title: "Tags"});
-		$(div).tagsviewer("load",tags);
-		return div;
+		var viewerPane = $.fn.create("div")
+						.tagsviewer({title: "Tags"})
+						.tagsviewer("load",tags);
+		$(".center", target).append(viewerPane);
+		return viewerPane;
 	};
 	
 	var loadProperties = function(target, /*array*/ properties){
-		var div = document.createElement("div");
-		$(".center", target).append(div);
-		$(div).tabularexpandopanel({title: "Details", data: properties});
+		$(".center", target)
+			.append($.fn.create("div")
+						.tabularexpandopanel(
+								{title: "Details", data: properties}));
 	};
 
 	var loadPreview = function(target, contentItem){
-		var div = document.createElement("div");
-		$(".center", target).append(div);
-		$(div).expandopanel({title: "Preview"});
+		var div = $.fn.create("div")
+					  .expandopanel({title: "Preview"});
 		
-		var thumbnail = $(document.createElement("img"))
+		var thumbnail = $.fn.create("img")
 							.attr("src", contentItem.thumbnailURL)
 							.addClass("preview-image");
 							
-		var viewerLink = $(document.createElement("a"))
+		var viewerLink = $.fn.create("a")
 							.attr("href", contentItem.viewerURL)
 							.append(thumbnail);
 		
-		var wrapper = $(document.createElement("div"))
+		var wrapper = $.fn.create("div")
 							.addClass("preview-image-wrapper")
 							.append(viewerLink);
 		
@@ -188,6 +164,9 @@ $(document).ready(function() {
 				'speedIn'		:	600, 
 				'speedOut'		:	200, 
 				'overlayShow'	:	false});
+		
+		$(".center", target).append(div);
+
 	};
 	
 	///////////////////////////////////////////
@@ -201,7 +180,7 @@ $(document).ready(function() {
 		show: 'blind',
 		hide: 'blind',
 		resizable: false,
-		height: 200,
+		height: 250,
 		closeOnEscape:true,
 		modal: true,
 		width:500,
@@ -220,7 +199,14 @@ $(document).ready(function() {
 		},
 		
 		open: function(e){
-			//$(e.target).closeOnLostFocus();
+			$("#add-space-dialog .access-switch").accessswitch({})
+						.bind("turnOn", function(evt, future){
+							future.success();
+							evt.stopPropagation();
+						}).bind("turnOff", function(evt, future){
+							future.success();
+							evt.stopPropagation();
+						});
 		}
 		
 	});
@@ -229,7 +215,7 @@ $(document).ready(function() {
 
 	$('.add-space-button').live("click",
 			function(evt){
-				$("#add-space-dialog").openDialogOverTarget(evt);
+				$("#add-space-dialog").dialog("open");
 			}
 		);
 	
@@ -238,7 +224,7 @@ $(document).ready(function() {
 		autoOpen: false,
 		show: 'blind',
 		hide: 'blind',
-		height: 200,
+		height: 250,
 		resizable: false,
 		closeOnEscape:true,
 		modal: true,
@@ -256,7 +242,6 @@ $(document).ready(function() {
 
 		},
 		  open: function(e){
-			// $(e.target).closeOnLostFocus();
 		  }
 		
 	});
@@ -266,7 +251,7 @@ $(document).ready(function() {
 	
 	$('.add-content-item-button').live("click",
 			function(evt){
-				$("#add-content-item-dialog").openDialogOverTarget(evt);
+				$("#add-content-item-dialog").dialog("open");
 			});
 
 	
@@ -299,14 +284,8 @@ $(document).ready(function() {
 		
 		
 		//create access switch and bind on/off listeners
-		$(".access-switch", detail).onoffswitch({
-					initialState: (space.access=="OPEN"?"on":"off")
-					,  onStateClass: "unlocked"
-					, onIconClass: "unlock"
-					, offStateClass: "locked"
-					, offIconClass: "lock"
-					, onText: "Open"
-					, offText: "Closed"
+		$(".access-switch", detail).accessswitch({
+				initialState: (space.access=="OPEN"?"on":"off")
 			}).bind("turnOn", function(evt, future){
 				toggleSpaceAccess(space, future);
 			}).bind("turnOff", function(evt, future){
@@ -334,7 +313,7 @@ $(document).ready(function() {
 			future.success();
 		});
 
-		swapDetailPane(detail,"#detail-pane", spaceDetailLayoutOptions);
+		dc.swapDetailPane(detail,"#detail-pane", spaceDetailLayoutOptions);
 
 		loadContentItems(contentItems);
 		
@@ -414,7 +393,7 @@ $(document).ready(function() {
 		});
 
 		
-		swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
+		dc.swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
 	};
 
 	var getMimetypeImageClass = function(mimetype){

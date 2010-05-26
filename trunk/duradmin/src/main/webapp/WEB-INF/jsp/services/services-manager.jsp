@@ -5,7 +5,8 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="header-extensions">
-		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
+]		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
 	</tiles:putAttribute>
@@ -17,7 +18,9 @@
 	   		<div id="services-list-view" class="list-browser dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 					<div id="header-spaces-list" class="header-section clearfix">						
-						<a class="flex button float-r deploy-service-button" href="javascript:void(1);"><span><i class="pre plus">Deploy a New Service</i></span></a>
+						<a class="flex button float-r deploy-service-button" href="javascript:void(1);">
+							<span><i class="pre plus">Deploy a New Service</i></span>
+						</a>
 						<h2>Services</h2>
 					</div>
 				</div>
@@ -33,7 +36,7 @@
 									<th>Status</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody  id="services-list">
 								<tr class="dc-item service-replicate">
 									<td class="icon"><div></div></td>
 									<td>Service #1 - Replicate</td>
@@ -75,25 +78,34 @@
 					</div>			
 				</div>
 			</div>
+
 			<div id="detail-pane" class="detail-pane" style="padding-top:10px;">
+				
+			</div>	
+
+			<div id="service-detail-pane" style="display:none">
 				<div class="north header">
 					<h1>Service Detail</h1>
-					<h2 class="object-name">Service Name Here</h2>
+					<h2>
+						<span class="service-name"> Name</span> 
+						<span class="service-version">Version</span>
+					</h2>
 					<div class="toggle-control flex switch-holder">
 					    <div class="r">
 					    	<span>
 					    		Status
 					    	</span>
-					    	<span>
+					    	<span class="deploy-switch">
 					    		[deployed] [undeploy]
 					    	</span>
 					    </div>
 					</div>
-		
 				</div>
 				<div class="center">
 				</div>
+
 			</div>	
+			
 		</tiles:putAttribute>
 		
 </tiles:insertDefinition>	

@@ -16,9 +16,14 @@ $.widget("ui.selectablelist",{
 	 * Default values go here
 	 */
 	options: {
+	
 			itemClass: "dc-item"
+		,   selectable: true
 		,   itemActionClass: "dc-action-panel"
+			
 	},
+	
+	dataMap: new Array(),
 	
 	_restyleSiblings: function(siblings){
 		siblings.removeClass("dc-selected-list-item dc-checked-selected-list-item dc-checked-list-item");
@@ -31,11 +36,13 @@ $.widget("ui.selectablelist",{
 			$(item).removeClass("dc-checked-selected-list-item dc-checked-list-item dc-selected-list-item");
 			var checked = $(item).find("input[type=checkbox][checked]").size() > 0;
 			$(item).addClass(checked ? "dc-checked-selected-list-item" : "dc-selected-list-item");
+			/* looks redundant - should be removed.
 			if($("input[type=checkbox][checked]",item).size() > 0){
 				$(item).addClass("dc-checked-selected-list-item");	
 			}else{
 				$(item).addClass("dc-selected-list-item");
 			}
+			*/
 
 			this._restyleSiblings(item.siblings());
 		}else{
@@ -55,9 +62,15 @@ $.widget("ui.selectablelist",{
 	
 	_fireCurrentItemChanged: function(item){
 		this._styleItem(item);
-		this.element.trigger("currentItemChanged",{item:item, selectedItems: this._getSelectedItems()})
+		this.element.trigger(
+			"currentItemChanged",
+			{	item:item, 
+				data: this._getDataById($(item).attr("id")),
+				selectedItems: this._getSelectedItems()
+			}
+		);
 	},
-
+	
 	_fireSelectionChanged: function(){
 		this.element.trigger("selectionChanged", {selectedItems: this._getSelectedItems()});
 	},
@@ -75,6 +88,7 @@ $.widget("ui.selectablelist",{
 	
 	clear: function(){
 		this.element.children().remove();	
+		this.dataMap = new Array();
 	},
 	
 	/**
@@ -85,15 +99,16 @@ $.widget("ui.selectablelist",{
 		var options = this.options;
 		var itemClass = options.itemClass;
 		var actionClass = options.itemActionClass;
+		this.clear();
 		//add item classes to all direct children
 		$(that.element).children().each(function(i,c){
 			that._initItem(c);
 		});
 	},
 	
-	addItem: function(item){
+	addItem: function(item, data){
 		this.element.append(item);
-		this._initItem(item);
+		this._initItem(item,data);
 	},
 	
 	select: function(select){
@@ -105,33 +120,62 @@ $.widget("ui.selectablelist",{
 	
 	removeById: function(elementId) {
 		var item = $("#" + elementId, this.element).first();
+		this._removeDataById(elementId);
 		item.remove();
-		this._fireCurrentItemChanged($("." + this.options.itemClass, this.element).first());
+		this._fireCurrentItemChanged($("." + this.options.itemClass, this.element).first(), this._getDataById(elementId));
 	},
-	
+
+
 	_changeSelection: function(item, select){
 		var checkbox = $("input[type=checkbox]", item).first();
 		checkbox.attr("checked", select);
 		this._itemSelectionStateChanged(checkbox);
 		
 	},
-	_initItem: function(item){
+
+	_getDataById: function(id){
+		for(i in this.dataMap){
+			var e = this.dataMap[i];
+			if(e.key == id){
+				return e.value;
+			};
+		}
+		return null;
+	},
+
+	_removeDataById: function(id){
+		for(i in this.dataMap){
+			var e = this.dataMap[i];
+			if(e.key == id){
+				this.dataMap.splice(i,1);
+				return e.data;
+			};
+		}
+		return null;
+	},
+
+	_putData: function(id,data){
+		this.dataMap[this.dataMap.length] = { key: id, value: data};
+	},
+	
+
+	_initItem: function(item,data){
 		var that = this;
 		var options = this.options;
 		var itemClass = options.itemClass;
 		var actionClass = options.itemActionClass;
-
-		$(item).addClass(itemClass)
-			.prepend("<input type='checkbox'/>")
-			.children()
-			.last()
-			.addClass(actionClass)
-			.addClass("float-r");
-	
-		$(item).children().first().change(function(evt){
-			 that._itemSelectionStateChanged(evt.target);
-		});
+		if(options.selectable){
+			$(item).addClass(itemClass)
+				.prepend("<input type='checkbox'/>")
+				.children()
+				.last()
+				.addClass(actionClass)
+				.addClass("float-r");
 		
+			$(item).children().first().change(function(evt){
+				 that._itemSelectionStateChanged(evt.target);
+			});
+		}
 		//bind mouse action listeners
 		$(item).find("."+actionClass).andSelf().click(function(evt){
 			var item = $(evt.target).nearestOfClass(itemClass);
@@ -154,6 +198,9 @@ $.widget("ui.selectablelist",{
 		//hide all actions to start
 		$(item).find("."+actionClass).makeHidden();	
 		
+		//add the data to the map
+		that._putData($(item).attr("id"), data);
+
 	}
 });
 

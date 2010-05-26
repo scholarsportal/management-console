@@ -25,6 +25,10 @@ $.fn.toggleOpenClosed = function(){
 			.toggleClass("dialog-closed");
 };
 
+$.fn.create = function(tag){
+	return $(document.createElement(tag));
+	
+};
 /**
  * openDialogClass optional - a css class to style the target while dialog is open
  * */

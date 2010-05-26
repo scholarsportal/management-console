@@ -31,6 +31,23 @@ dc.createTable = function(data, /*optional: array*/ columnClasses){
 	return table;
 };
 
+////////////////////////////
+//this method loads the children of the source
+//into the target after emptying the contents
+//with a fade in / fade out effect
+dc.swapDetailPane = function(/*the pane whose contents will be swapped in*/ source, 
+								/*the location where the swapping will occur*/ target, 
+								/*the layout for the target*/ layoutOptions){
+	//$(".dc-expandable-panel",source).expandopanel({});
+
+	$(target).fadeOut("fast", function(){
+		$(target).empty().prepend($(source).children());
+		$(target).fadeIn("fast");
+		$(target).layout(layoutOptions);
+	});
+	return $(target);
+};		
+
 
 $(document).ready(function() {
 

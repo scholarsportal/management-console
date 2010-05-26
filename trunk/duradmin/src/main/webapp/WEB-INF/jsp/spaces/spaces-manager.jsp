@@ -113,20 +113,8 @@
 	
 		<div id="spaceMultiSelectPane" style="display:none">
 			<div class="north">
-				<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/>Space Detail</h3>
-				<h5 class="header object-name">Multiple Spaces Selected</h5>
-				<div class="header toggle-control">
-					Access: 
-					<input type="button" value="Open"/>
-					<input type="button" value="Close"/>
-				</div>
-				<div class="header button-bar">
-					<ul class="horizontal-list">
-						<li>
-							<input type="button" value="Delete"/>
-						</li>
-					</ul>
-				</div>
+				Editing multiple spaces is coming soon!
+
 			</div>
 			<div class="center">
 			</div>
@@ -134,20 +122,7 @@
 	
 		<div id="contentItemMultiSelectPane" style="display:none">
 			<div class="north header">
-				<h3 class="header"><img src="xxx" height="25" width="25" style="background-color:#DDD"/> Content Item Detail</h3>
-				<h5 class="header object-name">Multiple Content Items Selected</h5>
-				<div class="header toggle-control">
-					Access: 
-					<input type="button" value="Open"/>
-					<input type="button" value="Close"/>
-				</div>
-				<div class="header button-bar">
-					<ul class="horizontal-list">
-						<li>
-							<input type="button" value="Delete"/>
-						</li>
-					</ul>
-				</div>
+				Editing multiple content items is coming soon!
 			</div>
 			<div class="center">
 			</div>
@@ -181,8 +156,12 @@
 			<form>
 				<div  id="form-fields">
 					<fieldset>
-						<label for="name">Name</label>
-						<input type="text" name="name" id="name" class="field" />
+						
+							<label for="name">Name</label>
+							<input type="text" name="name" id="name" class="field" />
+							<label for="access">Access</label>
+							<span name="access" class="access-switch">access control here</span>
+						
 					</fieldset>
 				</div>
 			</form>
@@ -192,11 +171,16 @@
 		<div id="add-content-item-dialog" class="" title="Add Content Item">
 			<h1>Add Content Item</h1>
 			<p class="hint">Add a Content Item to the currently selected Space. All fields are required.</p>
-			<form>
+			<form enctype="multipart/form-data">
 				<div id="form-fields">
 					<fieldset>
 						<label for="name">Item Name</label>
 						<input type="text" name="name" id="name" class="field" />
+						<label for="mimetype">Mime Type</label>
+						<input type="text" name="mimetype" id="mimetype" class="field" />
+						<label for="file">File</label>
+						<input  type="file" name="file" id="file"/>
+
 					</fieldset>
 				</div>
 			</form>	
