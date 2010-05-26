@@ -19,7 +19,7 @@ $(document).ready(function() {
 	
 	var servicesListPaneLayout = {
 			north__paneSelector:	".north"
-		,   north__size: 			60
+		,   north__size: 			35
 		,	center__paneSelector:	".center"
 		,   resizable: 				false
 		,   slidable: 				false

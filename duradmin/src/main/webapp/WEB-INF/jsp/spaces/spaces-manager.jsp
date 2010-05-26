@@ -43,7 +43,7 @@
 					</span>	   					
 		   		</div>
 		   	</div>
-		   	<div id="list-browser">
+		   	<div id="list-browser" class="list-browser">
 		   		<div id="spaces-list-view" class="dc-list-item-viewer">
 					<div class="north header list-header clearfix">
 						<div id="header-spaces-list" class="header-section clearfix">						
@@ -93,8 +93,7 @@
 				<h1>Space Detail</h1>
 				<h2 class="object-name">Space Name Here</h2>
 				<div class="toggle-control flex switch-holder">
-				    <div class="r access-switch">
-				    </div>
+				    <div class="r access-switch"></div>
 				</div>
 				<div class="button-bar">
 					<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus">Add Content Item</i></span></a>

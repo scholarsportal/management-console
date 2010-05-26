@@ -87,6 +87,8 @@ $.widget("ui.onoffswitch",{
 	},
 
 	_createButton: function(text, stateClass, iconClass, clickable){
+		var baseSpan =
+				$(document.createElement("span"));
 		var baseInnerButton = 
 				$(document.createElement("i"))
 					.addClass("pre")
@@ -94,11 +96,12 @@ $.widget("ui.onoffswitch",{
 					.addClass(stateClass)
 					.html(text);
 		if(clickable){
-			return $(document.createElement("a"))
+			baseSpan.append(baseInnerButton);
+			return $(document.createElement("button"))
 						.addClass("flex")
 						.addClass("button")
 						.addClass("switch")
-						.append(baseInnerButton);
+						.append(baseSpan);
 		}else{
 			return baseInnerButton;
 		}
