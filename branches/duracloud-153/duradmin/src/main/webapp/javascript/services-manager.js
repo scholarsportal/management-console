@@ -361,6 +361,10 @@ $(document).ready(function() {
 		modal: true,
 		width:500,
 		buttons: {
+			'< Back': function(evt) {
+				$(this).dialog("close");
+			},
+
 			'Deploy': function(evt) {
 				$(this).dialog("close");
 			},
