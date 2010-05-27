@@ -19,7 +19,7 @@ public class SpacesController implements Controller {
     
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-        ModelAndView mav = new ModelAndView("spaces-manager");
+        ModelAndView mav = new ModelAndView("spacesManager");
         return mav;
 	}
 

@@ -36,7 +36,7 @@
         <prop key="/spaces/metadata/remove">removeMetadataController</prop>
         <prop key="/data/spaces/space">spaceDataController</prop>
         <prop key="/changeProvider">changeProviderController</prop>
-        <prop key="/services.htm">servicesController</prop>
+        <prop key="/services">servicesController</prop>
         <prop key="/services/undeploy">undeployServiceController</prop>
         <prop key="/data/services/deployment/properties">serviceDeploymentPropertiesController</prop>
         <prop key="/data/spaces/contentItem">contentItemDataController</prop>
@@ -45,8 +45,7 @@
         <prop key="/security">initSecurityUsersController</prop>
         <prop key="/users.htm">manageSecurityUsersController</prop>
         <prop key="/spaces">spacesController2</prop>
-        <prop key="/services">servicesController2</prop>
- 		<prop key="/dashboard">dashboardController</prop>
+  
       </props>
     </property>
     <property name="order" value="1" />
@@ -63,11 +62,6 @@
   </bean>
 
   <bean id="spacesController2" class="org.duracloud.duradmin.spaces.controller.SpacesController">
-  </bean>
-
-  <bean id="servicesController2" class="org.duracloud.duradmin.services.controller.ServicesController">
-  </bean>
-  <bean id="dashboardController" class="org.duracloud.duradmin.dashboard.controller.DashboardController">
   </bean>
 
   <bean id="contentController" class="org.duracloud.duradmin.control.ContentController" parent="baseFormController">

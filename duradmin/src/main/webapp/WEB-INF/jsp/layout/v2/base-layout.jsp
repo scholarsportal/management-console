@@ -4,49 +4,70 @@
 <%@ page session="false"%>
 <%@include file="/WEB-INF/jsp/include.jsp" %>
 <!-- 
-	created by Daniel Bernstein and CH
+	created by Daniel Bernstein
  -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="language" content="en" />
+    <spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/>
+	<!-- jquery core, ui and css -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" type="text/css" media="all" />
 
-<div id="page-header" class="outer">	
+	<!-- 3rd party jquery plugins start-->
+	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
+	<!-- 3rd party jquery plugins start-->
 
-	<div id="left" class="float-l">
-		<div id="dc-logo-panel"><a href="/duradmin/spaces" id="dc-logo"></a><span id="dc-app-title"></span></div>
-		<div id="dc-tabs-panel">
-		    <ul class="horizontal-list dc-main-tabs flex clearfix">
-		    	<tiles:importAttribute name="mainTab" />
-		        <li class="${mainTab == 'dashboard' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/dashboard"><span>Dashboard</span></a></li>
-		        <li class="${mainTab == 'spaces' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/spaces"><span>Spaces</span></a></li>
-		        <li class="${mainTab == 'services' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/services"><span>Services</span></a></li>
-		        <li class="${mainTab == 'reports' ? 'selected':'' }"><a href="javascript:void(1); alert('Reports click')"><span>Reports</span></a></li>
-		    </ul>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
+	<!-- page level header extensions 
+	  -- reserved for pages that wish to inject page specific scripts into the header
+	  -->
+	<tiles:insertAttribute name="header-extensions" ignore="true"/>
+		
+</head>
+<body>
+	<div id="page-header">
+		<div id="header-center">
+			<div id="dc-logo-panel"> 
+				<img id="dc-logo" alt="[Duracloud Logo]" src="http://www.duracloud.org"/>
+			</div>
+			<div id="dc-tabs-panel">
+				<ul class="horizontal-list dc-main-tabs">
+					<li><a href="">Dashboard</a></li>
+					<li class="selected"><a href="">Spaces</a></li>
+					<li><a href="">Services</a></li>
+				</ul>
+			</div>
+		</div>	
+		<div id="header-east">
+			<div style="float:right; padding-left:1em; border-left:2px solid #DDD">
+				<img id="dc-partner-logo" alt="[Partner Logo]" src="http://www.duracloud.org"/>
+			</div>			
+			<div style="float:right; padding-right:1em;">
+				<div>
+					Charles Stross, Administrator <input type="button" value=">"/>		
+				</div>
+				<div style="text-align:right">
+					<ul class="horizontal-list">
+						<li><a href="">Help</a></li>
+						<li><a href="">Logout</a></li>
+					</ul>		
+				</div>
+			</div>
+			
 		</div>
+	</div>
+	
+	<div id="page-content">
+	 	<tiles:insertAttribute name="main-content" />
+	</div>
+	<div class="ui-layout-south">
+		Duracloud http://www.duracloud.org  Duraspace http://www.duraspace.org
 	</div>	
-	<div id="right" class="float-r">
-		<img class="float-r" id="dc-partner-logo" src="/duradmin/images/partner_logo_nypl.png"/>
-		<div id="dc-user" class="float-r">
-			${pageContext.request.userPrincipal.name}
-			<ul class="horizontal-list">
-				<li id="help"><a href="">Help</a></li>
-	            <li>
-		            <a href='<c:url value="/logout"/>' class="logout">Logout</a>
-	            </li>
-			</ul>		
-		</div>			
-	</div>
-</div>
-
-<div id="page-content" class="pane-L1-body">
- 	<tiles:insertAttribute name="main-content" />
-</div>
-<div class="ui-layout-south outer footer">
-	<div class="float-r" id="logo-ds"></div>
-	<div class="footer-content">
-		Duracloud Administrator Release 0.4  <span class="sep">|</span>
-		©<script type="text/javascript">document.write(new Date().getFullYear());</script>
-		<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
-		<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
-		<a target="_blank" href="#">Contact Us</a>
-	</div>
-</div>	
 
 	
+</body>
+</html>
