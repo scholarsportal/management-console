@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class EMCStorageProviderTest {
+public class TestEMCStorageProvider {
 
     private EMCStorageProvider emcProvider;
 
@@ -541,7 +541,7 @@ public class EMCStorageProviderTest {
         System.err.println("==================");
         System.err.println("This test is not run because it " +
             "uploads 16MB of data to EMC: " +
-            "EMCStorageProviderTest.testAddContentLarge()");
+            "TestEMCStorageProvider.testAddContentLarge()");
         System.err.println("==================");
 
         if (false) {
