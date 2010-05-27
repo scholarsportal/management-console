@@ -51,7 +51,7 @@
 							<h2>Spaces</h2>
 						</div>
 						<div class="header-section">
-							<span class="float-r"><input class="dc-item-list-filter" value="filter" type="text"/></span>
+							<span class="float-r"><input class="dc-item-list-filter "  value="filter" type="text"/></span>
 							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/>
 						</div>
 					</div>
@@ -156,12 +156,12 @@
 			<form>
 				<div  id="form-fields">
 					<fieldset>
-						
+							
 							<label for="name">Name</label>
 							<input type="text" name="name" id="name" class="field" />
 							<label for="access">Access</label>
 							<span name="access" class="access-switch">access control here</span>
-						
+							<input type="hidden" name="access" id="access"/>
 					</fieldset>
 				</div>
 			</form>

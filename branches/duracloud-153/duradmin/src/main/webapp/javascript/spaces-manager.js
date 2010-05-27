@@ -203,10 +203,13 @@ $(document).ready(function() {
 						.bind("turnOn", function(evt, future){
 							future.success();
 							evt.stopPropagation();
+							$("#add-space-dialog #access").val("OPEN");
+							
 						}).bind("turnOff", function(evt, future){
 							future.success();
 							evt.stopPropagation();
-						});
+							$("#add-space-dialog #access").val("CLOSED");
+						}).accessswitch("on");
 		}
 		
 	});
@@ -254,6 +257,7 @@ $(document).ready(function() {
 				$("#add-content-item-dialog").dialog("open");
 			});
 
+	
 	
 	
 	/////////////////////////////////////////////////////////////
@@ -478,16 +482,29 @@ $(document).ready(function() {
 
 	$("#content-item-list").selectablelist({});
 	$("#spaces-list").selectablelist({});
-
+	
+	$(".dc-item-list-filter").focus(function(){
+		if($(this).val() == "filter"){
+			$(this).val('');
+		};
+	}).blur(function(){
+		if($(this).val() == ""){
+			$(this).val('filter');
+		};
+	});
 	
 	///////////////////////////////////////////
 	///click on a space list item
 
 	$("#spaces-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
-			dcGetSpace($(state.item).attr("id"),{
-				load: loadSpace
-			});
+			if(state.item !=null && state.item != undefined){
+				dcGetSpace($(state.item).attr("id"),{
+					load: loadSpace
+				});
+			}else{
+				showGenericDetailPane();
+			}
 		}else{
 			showMultiSpaceDetail();
 		}
@@ -505,6 +522,10 @@ $(document).ready(function() {
 		}
 	});
 
+
+	$("#spaces-list").bind("itemRemoved", function(evt,state){
+		refreshSpaces();
+	});
 	///////////////////////////////////////////
 	///click on a content list item
 	$("#content-item-list").bind("currentItemChanged", function(evt,state){
@@ -521,6 +542,8 @@ $(document).ready(function() {
 		}
 	});
 
+	
+	
 	$("#content-item-list").bind("selectionChanged", function(evt,state){
 		if(state.selectedItems.length == 0){
 			showGenericDetailPane();
@@ -549,23 +572,25 @@ $(document).ready(function() {
 
 	var loadSpaces = function(spaces,filter) {
 		$("#spaces-list").selectablelist("clear");
-			
+		
+		var firstMatchFound = false;
 		for(s in spaces){
 			var space = spaces[s];
 			if(filter === undefined || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
-				var node =  document.createElement("div");
-				var actions = document.createElement("div");
-				$(actions).append("<button class='delete-space-button'>-</button>");
-				$(node).attr("id", space.spaceId)
+				var node =  $.fn.create("div");
+				var actions = $.fn.create("div");
+				actions.append("<button class='delete-space-button'>-</button>");
+				node.attr("id", space.spaceId)
 					   .html(space.spaceId)
 					   .append(actions);
 				
 				$("#spaces-list").selectablelist('addItem',node);	   
+				if(!firstMatchFound){
+					$("#spaces-list").selectablelist('setCurrentItemById',node.attr("id"));	   
+					firstMatchFound = true;
+				}
 			}
 			
-			if(s == 0){
-				dcGetSpace(spaces[0].spaceId, {load:loadSpace});
-			}		
 
 		}
 		
@@ -578,17 +603,20 @@ $(document).ready(function() {
 		success ? callback.success() : callback.failure("Failed message here");
 	};
 	
-	dcGetSpaces({
-		load: function(spaces){
-			spacesArray = spaces;
-			spacesIdArray = new Array();
-			for(s in spacesArray){
-				spacesIdArray[s] = spacesArray[s].spaceId;
-			}
-			loadSpaces(spacesArray);
-
-		}
-	});
+	var refreshSpaces = function(){
+		dcGetSpaces({
+			load: function(spaces){
+				spacesArray = spaces;
+				spacesIdArray = new Array();
+				for(s in spacesArray){
+					spacesIdArray[s] = spacesArray[s].spaceId;
+				}
+				loadSpaces(spacesArray);
 	
+			}
+		});
+	};
+	
+	refreshSpaces();
 	
 });

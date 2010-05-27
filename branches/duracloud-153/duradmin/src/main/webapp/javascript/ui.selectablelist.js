@@ -36,14 +36,6 @@ $.widget("ui.selectablelist",{
 			$(item).removeClass("dc-checked-selected-list-item dc-checked-list-item dc-selected-list-item");
 			var checked = $(item).find("input[type=checkbox][checked]").size() > 0;
 			$(item).addClass(checked ? "dc-checked-selected-list-item" : "dc-selected-list-item");
-			/* looks redundant - should be removed.
-			if($("input[type=checkbox][checked]",item).size() > 0){
-				$(item).addClass("dc-checked-selected-list-item");	
-			}else{
-				$(item).addClass("dc-selected-list-item");
-			}
-			*/
-
 			this._restyleSiblings(item.siblings());
 		}else{
 			this._restyleSiblings(this.element.children());
@@ -73,6 +65,10 @@ $.widget("ui.selectablelist",{
 	
 	_fireSelectionChanged: function(){
 		this.element.trigger("selectionChanged", {selectedItems: this._getSelectedItems()});
+	},
+
+	_fireItemRemoved: function(item){
+		this.element.trigger("itemRemoved", {item: item});
 	},
 
 
@@ -122,7 +118,10 @@ $.widget("ui.selectablelist",{
 		var item = $("#" + elementId, this.element).first();
 		this._removeDataById(elementId);
 		item.remove();
-		this._fireCurrentItemChanged($("." + this.options.itemClass, this.element).first(), this._getDataById(elementId));
+		//var firstItem = $("." + this.options.itemClass, this.element).first();
+		//var data = this._getDataById(elementId);
+		this._fireCurrentItemChanged(null,null);
+		this._fireItemRemoved(item);
 	},
 
 
@@ -156,6 +155,10 @@ $.widget("ui.selectablelist",{
 
 	_putData: function(id,data){
 		this.dataMap[this.dataMap.length] = { key: id, value: data};
+	},
+	
+	setCurrentItemById: function(id){
+		 this._fireCurrentItemChanged($("#"+id, this.element));
 	},
 	
 

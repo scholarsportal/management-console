@@ -8,11 +8,12 @@ $(document).ready(function() {
 
 	var serviceDetailPaneId = "#service-detail-pane";
 	var detailPaneId = "#detail-pane";
-
+	var servicesListViewId = "#services-list-view";
+	var servicesListId = "#services-list";
 	
 	var centerLayout = $('#page-content').layout({
 		west__size:				800
-	,   west__paneSelector:     "#services-list-view"
+	,   west__paneSelector:     servicesListViewId
 	,   west__onresize:         "servicesListPane.resizeAll"
 	,	center__paneSelector:	detailPaneId
 	,   center__onresize:       "detailPane.resizeAll"
@@ -30,7 +31,7 @@ $(document).ready(function() {
 		,	togglerLength_open:		0	
 	};
 			
-	var servicesListPane = $('#services-list-view').layout(servicesListPaneLayout);
+	var servicesListPane = $(servicesListViewId).layout(servicesListPaneLayout);
 	
 	//detail pane's layout options
 	var detailLayoutOptions = {
@@ -53,9 +54,11 @@ $(document).ready(function() {
 		future.success();
 	};
 
-	var undeploy = function(service, future){
+	var undeploy = function(service, deployment, future){
 		//alert("ajax call here");
+		
 		future.success();
+		$(servicesListId).selectablelist("removeById", deriveDeploymentId(service,deployment));
 	};
 	
 	
@@ -66,6 +69,13 @@ $(document).ready(function() {
 	
 	var loadDeploymentDetail = function(service,deployment){
 		
+		if(service == null){
+			
+			$(detailPaneId).fadeOut("slow", function(){
+				$(this).html('');
+			});
+			return;
+		};
 		var serviceDetailPane = $(serviceDetailPaneId).clone();
 
 		
@@ -85,10 +95,8 @@ $(document).ready(function() {
 					, offIconClass: "x"
 					, onText: "Deploy"
 					, offText: "Undeploy"		
-		}).bind("turnOn", function(evt, future){
-			deploy(service, future);
 		}).bind("turnOff", function(evt, future){
-			undeploy(service, future);
+			undeploy(service, deployment,future);
 		});
 
 		getServiceDeploymentConfig(service, deployment, {
@@ -176,7 +184,7 @@ $(document).ready(function() {
 	};
 
 	var loadDeployedServiceList = function(services){
-		var servicesList = $("#services-list");
+		var servicesList = $(servicesListId);
 		servicesList.selectablelist({selectable: false});
 		servicesList.selectablelist("clear");
 		var defaultServiceSet = false;
@@ -205,8 +213,17 @@ $(document).ready(function() {
 		
 		//bind for current item change listener
 		servicesList.bind("currentItemChanged", function(evt,state){
+			
 			var data = state.data;
-			loadDeploymentDetail(data.service,data.deployment);
+			var service = null;
+			var deployment = null;
+			
+			if(data != null || data != undefined){
+				service = data.service;
+				deployment = data.deployment;
+			}
+
+			loadDeploymentDetail(service,deployment);
 		});
 
 	};
