@@ -1,9 +1,5 @@
 package org.duracloud.emcstorage;
 
-import com.emc.esu.api.EsuApi;
-import com.emc.esu.api.Identifier;
-import com.emc.esu.api.ObjectMetadata;
-import com.emc.esu.api.rest.EsuRestApi;
 import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -22,7 +18,7 @@ import static org.duracloud.storage.util.StorageProviderUtil.contains;
 import static org.duracloud.storage.util.StorageProviderUtil.count;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;
 import org.duracloud.unittestdb.domain.ResourceType;
-import org.junit.After;
+import org.junit.AfterClass;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +35,9 @@ import java.util.Random;
 
 public class TestEMCStorageProvider {
 
-    private EMCStorageProvider emcProvider;
+    private static EMCStorageProvider emcProvider;
 
-    private final List<String> spaceIds = new ArrayList<String>();
+    private final static List<String> spaceIds = new ArrayList<String>();
 
     private final String contentId = "contentid";
 
@@ -81,13 +77,13 @@ public class TestEMCStorageProvider {
             type));
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void afterClass() throws Exception {
         clean();
         emcProvider = null;
     }
 
-    private void clean() {
+    private static void clean() {
         assertNotNull(emcProvider);
 
         for (String spaceId : spaceIds) {
@@ -102,7 +98,7 @@ public class TestEMCStorageProvider {
         }
     }
 
-    private void deleteSpace(String id) {
+    private static void deleteSpace(String id) {
         try {
             emcProvider.deleteSpace(id);
         } catch (Exception e) {
@@ -367,11 +363,9 @@ public class TestEMCStorageProvider {
 
         assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_CREATED));
         assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_COUNT));
-        assertTrue(spaceMd.containsKey(StorageProvider.METADATA_SPACE_ACCESS));
 
         assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_CREATED));
         assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_COUNT));
-        assertNotNull(spaceMd.get(StorageProvider.METADATA_SPACE_ACCESS));
     }
 
     @Test
@@ -461,7 +455,7 @@ public class TestEMCStorageProvider {
         assertNotNull(prop);
         assertEquals(AccessType.CLOSED.toString(), prop);
 
-        // Close access, and test again.
+        // Open access, and test again.
         emcProvider.setSpaceAccess(spaceId0, AccessType.OPEN);
         access = emcProvider.getSpaceAccess(spaceId0);
         assertEquals(AccessType.OPEN, access);
@@ -775,91 +769,15 @@ public class TestEMCStorageProvider {
     @Test
     public void testSpaceAccess() throws Exception {
         String spaceId1 = getNewSpaceId();
-
         emcProvider.createSpace(spaceId1);
-        Identifier rootId = emcProvider.getRootId(spaceId1);
-
         emcProvider.setSpaceAccess(spaceId1, AccessType.OPEN);
 
         AccessType access = emcProvider.getSpaceAccess(spaceId1);
         assertEquals(AccessType.OPEN, access);
 
-        // FIXME: The test below would work if metadata were available across users.
-        //        List<String> spaces = createVisitorProvider().getSpaces();
-        //        assertNotNull(spaces);
-        //        assertTrue(spaces.contains(spaceId1));
-
-        // FIXME: The 'createVisitor' test should be removed when the above works.
-        EsuApi visitor = createVisitor();
-        ObjectMetadata allMd = visitor.getAllMetadata(rootId);
-        assertNotNull(allMd);
-
         emcProvider.setSpaceAccess(spaceId1, AccessType.CLOSED);
         access = emcProvider.getSpaceAccess(spaceId1);
         assertEquals(AccessType.CLOSED, access);
-
-        // FIXME: The test below would work if metadata were available across users.
-        //        List<String> spaces = createVisitorProvider().getSpaces();
-        //        assertEquals(null, spaces);
-
-        // FIXME: The 'createVisitor' test should be removed when the above works.
-        try {
-            visitor.getAllMetadata(rootId);
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
-    }
-
-    @Test
-    public void testContentAccess() throws Exception {
-        String spaceId1 = getNewSpaceId();
-
-        emcProvider.createSpace(spaceId1);
-        addContent(spaceId1,
-                   contentId1,
-                   mimeText,
-                   "testing-content".getBytes());
-        Identifier objId = emcProvider.getObjectPath(spaceId1, contentId1);
-
-        emcProvider.setSpaceAccess(spaceId1, AccessType.OPEN);
-
-        AccessType access = emcProvider.getSpaceAccess(spaceId1);
-        assertEquals(AccessType.OPEN, access);
-
-        // FIXME: The test below would work if metadata were available across users.
-        //        List<String> spaces = createVisitorProvider().getSpaces();
-        //        assertNotNull(spaces);
-        //        assertTrue(spaces.contains(spaceId1));
-
-        // FIXME: The 'createVisitor' test should be removed when the above works.
-        EsuApi visitor = createVisitor();
-        ObjectMetadata allMd = visitor.getAllMetadata(objId);
-        assertNotNull(allMd);
-
-        emcProvider.setSpaceAccess(spaceId1, AccessType.CLOSED);
-        access = emcProvider.getSpaceAccess(spaceId1);
-        assertEquals(AccessType.CLOSED, access);
-
-        // FIXME: The test below would work if metadata were available across users.
-        //        List<String> spaces = createVisitorProvider().getSpaces();
-        //        assertEquals(null, spaces);
-
-        // FIXME: The 'createVisitor' test should be removed when the above works.
-        try {
-            visitor.getAllMetadata(objId);
-            fail("Exception expected.");
-        } catch (Exception e) {
-        }
-    }
-
-    private EsuApi createVisitor() throws Exception {
-        Credential visitorCredential = getCredential(StorageProviderType.EMC_SECONDARY);
-
-        String username = visitorCredential.getUsername();
-        String password = visitorCredential.getPassword();
-        assertNotNull(username);
-        assertNotNull(password);
-        return new EsuRestApi(ESU_HOST, ESU_PORT, username, password);
     }
 
     @Test
