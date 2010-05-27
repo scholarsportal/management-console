@@ -82,11 +82,11 @@
 		<put-attribute name="main-content" value="main-content"/>
 	</definition>
 	<!-- old login -->
+	<!-- 
 	<definition name="login" template="/WEB-INF/jsp/login.jsp" extends="base"/>
- 	 
-	<!-- new login screen
- 	<definition name="login" template="/WEB-INF/jsp/login-v2.jsp"/>
  	 -->
+	 
+	<definition name="login" template="/WEB-INF/jsp/login-v2.jsp"/>
  	 
  	 
  	<definition name="dashboard-manager" template="/WEB-INF/jsp/dashboard-manager.jsp">
