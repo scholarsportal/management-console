@@ -14,6 +14,7 @@ cp pom.xml pom.xml.bak
 pax-import-bundle -g org.duracloud -a common -v ${PROJECT_VERSION} -- -DimportTransitive -DwidenScope
 
 # - Other -
+pax-import-bundle -g org.springframework -a org.springframework.beans -v 2.5.6.A
 pax-import-bundle -g org.slf4j -a com.springsource.slf4j.log4j -v 1.5.0 -- -DimportTransitive -DwidenScope
 pax-import-bundle -g com.thoughtworks.xstream -a com.springsource.com.thoughtworks.xstream -v 1.3.0 -- -DimportTransitive -DwidenScope
 
