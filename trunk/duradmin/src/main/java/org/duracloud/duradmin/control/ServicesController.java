@@ -1,4 +1,4 @@
-	package org.duracloud.duradmin.control;
+package org.duracloud.duradmin.control;
 
 import java.util.List;
 

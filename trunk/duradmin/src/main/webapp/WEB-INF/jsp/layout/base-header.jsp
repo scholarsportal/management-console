@@ -16,10 +16,6 @@
 	            <li>
 		             | <a href='<c:url value="/logout"/>' class="logout">Logout</a>
 	            </li>
-				<li>
-					 | <a href="<c:url value='/spaces'/>">New Version</a>
-				</li>
-	            
             </ul>
 		</c:if>
 	</div>

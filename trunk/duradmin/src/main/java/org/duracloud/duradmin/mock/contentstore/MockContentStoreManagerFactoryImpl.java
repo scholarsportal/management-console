@@ -3,13 +3,13 @@ package org.duracloud.duradmin.mock.contentstore;
 
 import org.apache.commons.codec.binary.Hex;
 import org.duracloud.client.ContentStore;
-import org.duracloud.error.ContentStoreException;
-import org.duracloud.error.InvalidIdException;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.common.model.Credential;
+import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
 import org.duracloud.domain.Content;
 import org.duracloud.domain.Space;
-import org.duracloud.duradmin.contentstore.ContentStoreManagerFactory;
-import org.duracloud.common.model.Credential;
+import org.duracloud.error.ContentStoreException;
+import org.duracloud.error.InvalidIdException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
