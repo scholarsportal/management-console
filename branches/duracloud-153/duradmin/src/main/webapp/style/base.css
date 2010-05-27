@@ -110,7 +110,7 @@ h3 { font-size:1em; }
 .pane-L1-body
 {
 	background:url(../images/bg_L1.png) no-repeat top right;
-	padding-top:5px !important;
+	padding-top:5px;
 }
 
 .pane-L1-body a
@@ -648,8 +648,7 @@ span.label
 	width:70%;
 }
 
-.detail-pane .segment-content input,
-#login-content .field
+.detail-pane .segment-content input
 {
 	background-color:#484747;
 	border:1px solid #727576;
@@ -709,6 +708,13 @@ span.label
  	color:#ccc;
  	margin-bottom:10px;
  	padding:10px;
+ }
+ 
+ /* MISC **********************************************************/
+ 
+ .first-of-type
+ {
+ 	border-top:none !important;
  }
  
  

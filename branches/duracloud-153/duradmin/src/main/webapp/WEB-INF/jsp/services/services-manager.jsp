@@ -86,7 +86,7 @@
 
 			<div id="detail-pane" class="detail-pane" style="padding-top:10px;">
 				
-			</div>	
+			</div>
 
 			<div id="service-detail-pane" style="display:none">
 				<div class="north header">
@@ -111,16 +111,65 @@
 
 			</div>	
 			
-			<div id="available-services-dialog" class="" title="Deploy Service">
+			<div id="available-services-dialog" class="dialog" title="Deploy Service">
 				<h1>Select a Service</h1>
-				<form>
-				</form>
+				<p class="hint">Select a service, then click "Next >"</p>
+				<form enctype="multipart/form-data">
+					<div id="form-fields" class="form-fields h400">
+						
+					</div>
+				</form>	
 			</div>
 
-			<div id="configure-service-dialog" class="" title="Configure Service">
+			<div id="configure-service-dialog" class="dialog" title="Configure Service">
 				<h1>Configure the Service</h1>
-				<form>
-				</form>
+				<p class="hint">Configure your service, then click "Deploy"</p>
+				<form enctype="multipart/form-data">
+					<div id="form-fields" class="form-fields h400">
+						<fieldset>
+							<ul>
+								<li class="row clearfix first-of-type">
+									<label for="host">Select Host</label>
+									<select name="host" id="host" class="field" />
+										<option value="null default">- Select one -</option>
+										<option value="1">First option</option>
+										<option value="2">Second option</option>
+									</select>
+								</li>
+								<li class="row clearfix"><label for="textinput1">Text Input</label><input type="text" name="textinput1" id="dropdown1" class="field" /></li>
+								<li class="row clearfix">
+									<label for="dropdown1">Dropdown with a really long name that wraps</label>
+									<select name="dropdown1" id="dropdown1" class="field" />
+										<option value="null default">- Select one -</option>
+										<option value="1">First option</option>
+										<option value="2">Second option</option>
+									</select>
+								</li>
+								<li class="row clearfix">
+								<label for="checkboxes">Checkboxes</label>
+									<ul class="field">
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+									</ul>
+								</li>
+							</ul>
+						</fieldset>
+					</div>
+				</form>	
 			</div>
 			
 		</tiles:putAttribute>

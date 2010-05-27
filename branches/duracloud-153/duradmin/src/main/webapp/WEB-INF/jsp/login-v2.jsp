@@ -17,7 +17,7 @@
 			
 				<div id="login-content" class="pane-L1-body clearfix">
 					<h1 id="title" class="float-l">Login</h1>
-					<div id="form-fields" class="float-r">
+					<div id="form-fields" class="form-fields float-r">
 						<div id="msg-error" class="error" style="display:none">Username/Password combination not valid. Please try again.</div>
 						<ul>
 							<li class="clearfix">
@@ -29,7 +29,7 @@
 								<input type="password" name="j_password" class="field"/>
 							</li>
 							<li class="clearfix">
-								<a href="#" id="forgot-password" class="helper-link">Forgot Password?</a>
+								<label><a href="#" id="forgot-password" class="helper-link">Forgot Password?</a></label>
 								<a id="button-login" class="flex button float-r" href="javascript:document.forms['loginForm'].submit();"><span>Login</span></a>				
 							</li>
 						</ul>

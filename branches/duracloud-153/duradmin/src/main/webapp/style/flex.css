@@ -57,9 +57,7 @@
 /* BUTTONS AND HOLDERS **********************************************/
 /* Extends .flex *****/
 
-.button a,
 .button,
-.button a span,
 .button span,
 .button-holder,
 .button-holder span,
@@ -73,9 +71,8 @@ i.post
 }
 
 
-.button a,
+
 .button,
-.button a span,
 .button span
 {
 	background:url(../images/btn_featured.gif) no-repeat;
@@ -119,9 +116,7 @@ i.post
 	background-position:bottom right;
 }
 
-.switch a,
 .switch,
-.switch a span,
 .switch span
 {
 	background:url(../images/switch_btn.gif) no-repeat;
@@ -138,20 +133,17 @@ i.post
 	color:#ccc !important;
 }
 
-.button a,
 .button
 {
 	background-position: top left;
 	padding-left:10px;
 }
 
-.button a:hover,
 .button:hover
 {
 	background-position:bottom left;
 }
 
-.button a span,
 .button span,
 .button-holder span
 {
@@ -159,8 +151,6 @@ i.post
 	/*padding-right:10px;*/
 }
 
-
-.button a:hover span,
 .button:hover span
 {
 	background-position: bottom right;

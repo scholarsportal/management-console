@@ -26,10 +26,10 @@
 		
 				<!-- <div class="float-l">
 		        	<ul>
-		        		<li>
+		        		<li class="row clearfix">
 				        	<input type="button" value="Browse"/>
 				    	</li>
-			       		<li>
+			       		<li class="row clearfix">
 				        	<input type="button" value="Search"/>
 				    	</li>
 		        	</ul>
@@ -154,33 +154,30 @@
 			<h1>Add Space</h1>
 			<p class="hint">Add a Space to the current provider. All fields are required.</p>
 			<form>
-				<div  id="form-fields">
+				<div id="form-fields" class="form-fields">
 					<fieldset>
-							
-							<label for="name">Name</label>
-							<input type="text" name="name" id="name" class="field" />
-							<label for="access">Access</label>
-							<span name="access" class="access-switch">access control here</span>
+						<ul>
+							<li class="row clearfix first-of-type"><label for="name">Name</label><input type="text" name="name" id="name" class="field" /></li>
+							<li class="row clearfix"><label for="access">Access</label><span name="access" class="access-switch">access control here</span></li>
 							<input type="hidden" name="access" id="access"/>
+						</ul>
 					</fieldset>
 				</div>
 			</form>
 	
 		</div>
 	
-		<div id="add-content-item-dialog" class="" title="Add Content Item">
+		<div id="add-content-item-dialog" class="dialog" title="Add Content Item">
 			<h1>Add Content Item</h1>
 			<p class="hint">Add a Content Item to the currently selected Space. All fields are required.</p>
 			<form enctype="multipart/form-data">
-				<div id="form-fields">
+				<div id="form-fields" class="form-fields">
 					<fieldset>
-						<label for="name">Item Name</label>
-						<input type="text" name="name" id="name" class="field" />
-						<label for="mimetype">Mime Type</label>
-						<input type="text" name="mimetype" id="mimetype" class="field" />
-						<label for="file">File</label>
-						<input  type="file" name="file" id="file"/>
-
+						<ul>
+						<li class="row clearfix first-of-type"><label for="name">Item Name</label><input type="text" name="name" id="name" class="field" /></li>
+						<li class="row clearfix"><label for="mimetype">Mime Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
+						<li class="row clearfix"><label for="file">File</label><input  type="file" name="file" id="file" class="field"/></li>
+						</ul>
 					</fieldset>
 				</div>
 			</form>	
