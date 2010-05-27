@@ -18,9 +18,14 @@
 	   		<div id="services-list-view" class="list-browser dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 					<div id="header-spaces-list" class="header-section clearfix">						
+						<a class="flex button float-r configure-service-button" href="javascript:void(1);">
+							<span><i class="pre plus">[Configure Service Mockup]</i></span>
+						</a>
+						
 						<a class="flex button float-r deploy-service-button" href="javascript:void(1);">
 							<span><i class="pre plus">Deploy a New Service</i></span>
 						</a>
+						
 						<h2>Services</h2>
 					</div>
 				</div>
@@ -105,6 +110,18 @@
 				</div>
 
 			</div>	
+			
+			<div id="available-services-dialog" class="" title="Deploy Service">
+				<h1>Select a Service</h1>
+				<form>
+				</form>
+			</div>
+
+			<div id="configure-service-dialog" class="" title="Configure Service">
+				<h1>Configure the Service</h1>
+				<form>
+				</form>
+			</div>
 			
 		</tiles:putAttribute>
 		

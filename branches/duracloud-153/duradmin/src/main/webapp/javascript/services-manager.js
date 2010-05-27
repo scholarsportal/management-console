@@ -314,4 +314,75 @@ $(document).ready(function() {
 		
 	};
 	getDeployedServices({load: loadDeployedServiceList});
+	
+	
+	//dialogs
+	
+	$('#available-services-dialog').dialog({
+		autoOpen: false,
+		show: 'blind',
+		hide: 'blind',
+		resizable: false,
+		height: 250,
+		closeOnEscape:true,
+		modal: true,
+		width:500,
+		buttons: {
+			'Next': function(evt) {
+				$(this).dialog("close");
+			},
+			Cancel: function(evt) {
+				$(this).dialog('close');
+			}
+		},
+		
+		close: function() {
+	
+		},
+		
+		open: function(e){
+		
+		}
+		
+	});
+
+	$(".deploy-service-button").click(function(){
+		$("#available-services-dialog").dialog("open");
+	});
+
+	
+	$('#configure-service-dialog').dialog({
+		autoOpen: false,
+		show: 'blind',
+		hide: 'blind',
+		resizable: false,
+		height: 250,
+		closeOnEscape:true,
+		modal: true,
+		width:500,
+		buttons: {
+			'Deploy': function(evt) {
+				$(this).dialog("close");
+			},
+			Cancel: function(evt) {
+				$(this).dialog('close');
+			}
+		},
+		
+		close: function() {
+	
+		},
+		
+		open: function(e){
+		
+		}
+		
+	});
+	
+	$(".configure-service-button").click(function(){
+			$("#configure-service-dialog").dialog("open");
+	});
+
+	
+
 });

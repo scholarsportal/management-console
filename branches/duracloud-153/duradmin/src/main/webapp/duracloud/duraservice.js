@@ -67,7 +67,7 @@ duracloud.duraservice = {
 	_getServices: function (/*type deployed|available*/listType, node,/*Function loadFunc*/loadFunc){
 		clearFlashMessage();
 		duracloud.showWaitMessage(node,"loading");
-		var theUrl = "/duradmin/services?format=json&show=" + listType;
+		var theUrl = "/duradmin/services.htm?format=json&show=" + listType;
 		//theUrl = "/duradmin/test/services.json";
 		dojo.xhrGet({
 		    url: theUrl,
