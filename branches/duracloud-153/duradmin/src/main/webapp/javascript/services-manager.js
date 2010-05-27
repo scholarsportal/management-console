@@ -383,6 +383,7 @@ $(document).ready(function() {
 			$("#configure-service-dialog").dialog("open");
 	});
 
-	
+	$(".ui-dialog-titlebar").hide();
+
 
 });
