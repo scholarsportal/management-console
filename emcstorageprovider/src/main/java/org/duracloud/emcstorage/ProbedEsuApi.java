@@ -1,33 +1,19 @@
 
 package org.duracloud.emcstorage;
 
-import java.net.URL;
-
-import java.util.Date;
-import java.util.List;
-
-import com.emc.esu.api.Acl;
-import com.emc.esu.api.BufferSegment;
-import com.emc.esu.api.DirectoryEntry;
-import com.emc.esu.api.EsuApi;
-import com.emc.esu.api.Extent;
-import com.emc.esu.api.Identifier;
-import com.emc.esu.api.MetadataList;
-import com.emc.esu.api.MetadataTag;
-import com.emc.esu.api.MetadataTags;
-import com.emc.esu.api.ObjectId;
-import com.emc.esu.api.ObjectMetadata;
-import com.emc.esu.api.ObjectPath;
-import com.emc.esu.api.ObjectResult;
+import com.emc.esu.api.*;
 import com.emc.esu.api.rest.EsuRestApi;
-
 import org.duracloud.common.util.metrics.Metric;
 import org.duracloud.common.util.metrics.MetricException;
 import org.duracloud.common.util.metrics.MetricsProbed;
 import org.duracloud.common.util.metrics.MetricsTable;
-
 import static org.duracloud.emcstorage.EMCStorageProvider.ESU_HOST;
 import static org.duracloud.emcstorage.EMCStorageProvider.ESU_PORT;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.List;
 
 public class ProbedEsuApi
         implements EsuApi, MetricsProbed {
@@ -77,6 +63,14 @@ public class ProbedEsuApi
         ObjectId result = esuApi.createObject(arg0, arg1, arg2, arg3);
         stopMetric("createObject");
         return result;
+    }
+
+    public ObjectId createObjectFromStream(Acl acl, MetadataList metadataList,
+                                           InputStream inputStream,
+                                           int i,
+                                           String s) {
+        // Default method body
+        return null;
     }
 
     public ObjectId createObjectFromSegment(Acl arg0,
@@ -242,6 +236,11 @@ public class ProbedEsuApi
         return result;
     }
 
+    public InputStream readObjectStream(Identifier identifier, Extent extent) {
+        // Default method body
+        return null;
+    }
+
     public void setAcl(Identifier arg0, Acl arg1) {
         startMetric("setAcl");
         esuApi.setAcl(arg0, arg1);
@@ -263,6 +262,15 @@ public class ProbedEsuApi
         startMetric("updateObject");
         esuApi.updateObject(arg0, arg1, arg2, arg3, arg4, arg5);
         stopMetric("updateObject");
+    }
+
+    public void updateObjectFromStream(Identifier identifier, Acl acl,
+                                       MetadataList metadataList, Extent extent,
+                                       InputStream inputStream,
+                                       int i,
+                                       String s) {
+        // Default method body
+
     }
 
     public void updateObjectFromSegment(Identifier arg0,

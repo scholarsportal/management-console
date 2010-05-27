@@ -11,7 +11,7 @@ import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
-import org.duracloud.storage.provider.StorageProvider;
+import org.duracloud.storage.provider.StorageProviderBase;
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author Andrew Woods
  */
-public class EMCStorageProvider implements StorageProvider {
+public class EMCStorageProvider extends StorageProviderBase {
 
     private final Logger log = Logger.getLogger(EMCStorageProvider.class);
 
@@ -190,7 +190,7 @@ public class EMCStorageProvider implements StorageProvider {
         }
     }
 
-    private void throwIfSpaceNotExist(String spaceId) {
+    protected void throwIfSpaceNotExist(String spaceId) {
         if (!spaceExists(spaceId)) {
             String msg = "Error: Space does not exist: " + spaceId;
             throw new NotFoundException(msg);
@@ -332,8 +332,6 @@ public class EMCStorageProvider implements StorageProvider {
         // Over-write managed metadata.
         spaceMetadata.put(METADATA_SPACE_CREATED, getCreationDate(spacePath));
         spaceMetadata.put(METADATA_SPACE_COUNT, getContentObjCount(spaceId));
-        spaceMetadata.put(METADATA_SPACE_ACCESS,
-                          doGetSpaceAccess(spacePath).toString());
 
         return spaceMetadata;
     }
@@ -359,6 +357,15 @@ public class EMCStorageProvider implements StorageProvider {
             log.info("Obj-count not found: " + spaceId + ", " + e.getMessage());
         }
         return String.valueOf(contentIds.size());
+    }
+
+    private Acl getAcl(Identifier objId) {
+        try {
+            return emcService.getAcl(objId);
+        } catch (Exception e) {
+            String err = "Error finding Acl: " + objId + ", " + e.getMessage();
+            throw new StorageException(err, e, RETRY);
+        }
     }
 
     /**
@@ -436,87 +443,6 @@ public class EMCStorageProvider implements StorageProvider {
                 "Error setting user metadata: " + objId + ", " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public AccessType getSpaceAccess(String spaceId) {
-        log.debug("getSpaceAccess(" + spaceId + ")");
-        throwIfSpaceNotExist(spaceId);
-
-        return doGetSpaceAccess(getSpacePath(spaceId));
-    }
-
-    private AccessType doGetSpaceAccess(Identifier spaceObjId) {
-        AccessType spaceAccess = AccessType.CLOSED;
-        Acl acl = getAcl(spaceObjId);
-        for (Grant grant : acl) {
-            if (Grantee.OTHER.equals(grant.getGrantee())) {
-                if (!Permission.NONE.equals(grant.getPermission())) {
-                    spaceAccess = AccessType.OPEN;
-                }
-            }
-        }
-        return spaceAccess;
-    }
-
-    private Acl getAcl(Identifier objId) {
-        try {
-            return emcService.getAcl(objId);
-        } catch (Exception e) {
-            String err = "Error finding Acl: " + objId + ", " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSpaceAccess(String spaceId, AccessType access) {
-        log.debug("setSpaceAccess(" + spaceId + ")");
-
-        throwIfSpaceNotExist(spaceId);
-
-        // Default is 'closed'.
-        String permission = Permission.NONE;
-        if (AccessType.OPEN.equals(access)) {
-            permission = Permission.READ;
-        }
-
-        Identifier spacePath = getSpacePath(spaceId);
-        Acl newAcl = new Acl();
-        Acl oldAcl = getAcl(spacePath);
-        for (Grant grant : oldAcl) {
-            Grant g = grant;
-            if (isGroup(grant)) {
-                g = new Grant(grant.getGrantee(), permission);
-            }
-            newAcl.addGrant(g);
-        }
-
-        // Set ACL for root.
-        setObjectAcl(spacePath, newAcl);
-
-        // Set ACL for all objects contained in the space.
-        List<Identifier> spaceContents = getCompleteSpaceContents(spaceId);
-        for (Identifier id : spaceContents) {
-            setObjectAcl(id, newAcl);
-        }
-    }
-
-    private void setObjectAcl(Identifier objId, Acl newAcl) {
-        try {
-            emcService.setAcl(objId, newAcl);
-        } catch (Exception e) {
-            String err =
-                "Error setting acl: " + objId + ", due to: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
-        }
-    }
-
-    private boolean isGroup(Grant grant) {
-        return Grantee.GRANT_TYPE.GROUP.equals(grant.getGrantee().getType());
     }
 
     /**
