@@ -1,22 +1,20 @@
 package org.duracloud.mainwebapp.domain.repo;
 
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.mainwebapp.domain.model.ComputeAcct;
 import org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil;
-
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class TestComputeAcctRepositoryDBImpl {
 
@@ -134,7 +132,7 @@ public class TestComputeAcctRepositoryDBImpl {
             String nsNew = ns + "test";
             String iiNew = ii + "test";
             String cpNew = cp;
-            ComputeProviderType tyNew = ComputeProviderType.SUN;
+            ComputeProviderType tyNew = ComputeProviderType.RACKSPACE_CLOUDSERVERS;
             acctNew.setNamespace(nsNew);
             acctNew.setInstanceId(iiNew);
             acctNew.setXmlProps(cpNew);

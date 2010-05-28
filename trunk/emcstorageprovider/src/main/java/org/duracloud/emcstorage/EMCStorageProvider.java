@@ -239,6 +239,9 @@ public class EMCStorageProvider extends StorageProviderBase {
         metadataList.addMetadata(new Metadata(SPACE_ROOT_TAG_NAME,
                                               spaceId,
                                               true));
+        metadataList.addMetadata(new Metadata(METADATA_SPACE_ACCESS,
+                                              AccessType.CLOSED.name(),
+                                              true));
         return metadataList;
     }
 

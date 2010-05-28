@@ -1,22 +1,20 @@
 package org.duracloud.mainwebapp.domain.repo;
 
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.mainwebapp.domain.model.ComputeProvider;
 import org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil;
-
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class TestComputeProviderRepositoryDBImpl {
 
@@ -159,7 +157,7 @@ public class TestComputeProviderRepositoryDBImpl {
                     providerTypeX = ComputeProviderType.MICROSOFT_AZURE;
                     break;
                 case 2:
-                    providerTypeX = ComputeProviderType.SUN;
+                    providerTypeX = ComputeProviderType.RACKSPACE_CLOUDSERVERS;
                     break;
                 default:
                     providerTypeX = ComputeProviderType.AMAZON_EC2;

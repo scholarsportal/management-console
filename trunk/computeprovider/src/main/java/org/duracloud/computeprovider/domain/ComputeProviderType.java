@@ -7,7 +7,6 @@ public enum ComputeProviderType {
                            "http://www.rackspacecloud.com/cloud_hosting_products/servers"),
     EMC_ATMOS("emc-atmos",
               "http://www.emc.com/products/category/subcategory/cloud-infrastructure.htm"),
-    SUN("sun", "http://www.sun.com/cloud"),
     LOCAL("local", "http://localhost:8080"),
     UNKNOWN("unknown", "http://www.google.com");
 
