@@ -386,6 +386,34 @@ $(document).ready(function() {
 					
 				});
 			}
+			
+			$("#available-services-dialog").listdetailviewer(
+				{
+						selectableListId: "available-services-list"
+					,	detailId:  "service-detail"
+					,   detailPreparer: function(data){
+							return $.fn.create("div")
+										.append($.fn.create("h1").html(data.displayName))
+										.append($.fn.create("p").html(data.description));
+						}
+				}
+			);
+			
+			
+			$("#available-services-list")
+				.selectablelist("addItem", $.fn.create("tr")
+											.attr("id", "item-1")
+											.addClass("service-replicate")
+											.append($.fn.create("td").addClass("icon").append($.fn.create("div")))
+											.append($.fn.create("td").html("hello world")), 
+											{displayName: "Hello World Service", description: "Hello is all."})
+				.selectablelist("addItem", $.fn.create("tr")
+						.attr("id", "item-2")
+						.addClass("service-replicate")
+						.append($.fn.create("td").addClass("icon").append($.fn.create("div")))
+						.append($.fn.create("td").html("goodbye world")), 
+						{displayName: "Goodbye World Service", description: "Goodbye is all."});
+			
 
 		},
 		

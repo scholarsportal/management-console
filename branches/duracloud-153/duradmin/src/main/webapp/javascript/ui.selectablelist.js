@@ -167,9 +167,10 @@ $.widget("ui.selectablelist",{
 		var options = this.options;
 		var itemClass = options.itemClass;
 		var actionClass = options.itemActionClass;
+		$(item).addClass(itemClass);
+
 		if(options.selectable){
-			$(item).addClass(itemClass)
-				.prepend("<input type='checkbox'/>")
+			$(item).prepend("<input type='checkbox'/>")
 				.children()
 				.last()
 				.addClass(actionClass)

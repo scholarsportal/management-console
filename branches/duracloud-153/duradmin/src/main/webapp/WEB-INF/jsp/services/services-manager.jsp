@@ -15,6 +15,8 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.listdetailviewer.js"></script>
+
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
@@ -124,71 +126,27 @@
 						<h1>Select a Service</h1>
 					</div>
 					<div class="ui-layout-west" style="display: none;"> 
-						<div id="available-services-list" class="ui-layout-content ui-widget-content">
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
-							<div>Service 1</div>
-							<div>Service 2</div>
-							<div>Service 3</div>
-							<div>Service 4</div>
-							<div>Service 5</div>
-							<div>Service 6</div>
+						<div id="available-services-list" class="ui-layout-content ui-widget-content dc-item-list">
+							<table>
+								<thead>
+									<tr>
+										<th>&nbsp;</th>
+										<th>Service</th>
+									</tr>
+								</thead>
+								<tbody  id="available-services-list">
+								</tbody>							
+							
+							</table>
+
 
 						</div>
 					 </div> 
 				
-					<div id="service-detail" class="ui-layout-center" style="display: none;"> 
-						<h1>{Service Name</h1>
-						<div class="ui-layout-content ui-widget-content" style="border: 0;">
+					<div class="ui-layout-center" style="display: none;"> 
+						<div id="service-detail" class="ui-layout-content ui-widget-content" style="border: 0;">
+							<h1>{Service Name</h1>
+
 							<p>{
 							service description service description service description service description service description 							
 							service description service description service description service description service description 							
