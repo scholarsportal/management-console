@@ -9,6 +9,7 @@
 .ui-dialog
 {
 	-moz-border-radius:5px;
+	border-radius:5px;
 	background:url("../images/bg_L1.png") no-repeat center top transparent;
 	border:1px solid #333;
 	color:#ccc;
@@ -68,6 +69,35 @@
 .ui-dialog-buttonpane
 {
 
+}
+
+.ui-dialog .dc-item-list-wrapper
+{
+	background-color:#575757;
+}
+
+.ui-dialog .dc-item,
+.ui-dialog .dc-item td
+{
+	border-color:#666
+}
+
+.ui-dialog .dc-item,
+.ui-dialog .dc-item td
+{
+	color:#ccc;
+}
+
+.ui-dialog .dc-item:hover,
+.ui-dialog .dc-item:hover td
+{
+	background-color:#666;
+	color:#fff;
+}
+
+.ui-dialog .dialog-detail
+{
+	padding:0 10px;
 }
 
 /* OVERLAY **********************************/
@@ -192,7 +222,7 @@ select.field
 	color:#fff;
 }
 
-/*
+/* doing this via jquery to support IE, so turned off here
 #select-provider-wrapper:hover ul
 {
 	display:block;
@@ -200,10 +230,6 @@ select.field
 */
 
 
-#select-provider
-{
-
-}
 
 #select-provider,
 #select-provider span

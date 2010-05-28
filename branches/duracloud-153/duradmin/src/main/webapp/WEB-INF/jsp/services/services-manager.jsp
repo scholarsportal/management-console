@@ -121,32 +121,30 @@
 
 			</div>	
 			
-			<div id="available-services-dialog" class="dialog">
+			<div id="available-services-dialog" class="dialog detail-pane">
 					<div class="ui-layout-north" > 
 						<h1>Select a Service</h1>
 					</div>
-					<div class="ui-layout-west" style="display: none;"> 
+					<div class="ui-layout-west dc-item-list-wrapper" style="display: none;"> 
 						<div id="available-services-list" class="ui-layout-content ui-widget-content dc-item-list">
 							<table>
-								<thead>
-									<tr>
-										<th>&nbsp;</th>
-										<th>Service</th>
+								<tbody id="available-services-list">
+									<tr class="dc-item service-replicate">
+										<td class="icon"><div></div></td>
+										<td>Service #1 - Replicate</td>
 									</tr>
-								</thead>
-								<tbody  id="available-services-list">
-								</tbody>							
-							
+									<tr class="dc-item service-generalcompute">
+										<td class="icon"><div></div></td>
+										<td>Service #1 - General compute</td>
+									</tr>
+								</tbody>
 							</table>
-
-
 						</div>
 					 </div> 
 				
 					<div class="ui-layout-center" style="display: none;"> 
-						<div id="service-detail" class="ui-layout-content ui-widget-content" style="border: 0;">
-							<h1>{Service Name</h1>
-
+						<div id="service-detail" class="ui-layout-content ui-widget-content dialog-detail" style="border: 0;">
+							<h2>{Service Name}</h2>
 							<p>{
 							service description service description service description service description service description 							
 							service description service description service description service description service description 							
