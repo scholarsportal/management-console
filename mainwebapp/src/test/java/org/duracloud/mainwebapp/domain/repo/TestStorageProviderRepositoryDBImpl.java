@@ -1,22 +1,20 @@
 package org.duracloud.mainwebapp.domain.repo;
 
-import java.util.List;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.mainwebapp.domain.model.StorageProvider;
 import org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil;
 import org.duracloud.storage.domain.StorageProviderType;
-
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class TestStorageProviderRepositoryDBImpl {
 
@@ -159,7 +157,7 @@ public class TestStorageProviderRepositoryDBImpl {
                     providerType = StorageProviderType.MICROSOFT_AZURE;
                     break;
                 case 2:
-                    providerType = StorageProviderType.SUN;
+                    providerType = StorageProviderType.RACKSPACE;
             }
             dbUtil.getOps().update("INSERT INTO " + tablename
                     + " (providerName,providerType,url) VALUES (" + "'"

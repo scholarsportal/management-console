@@ -64,12 +64,7 @@ public class TestStoreRest extends BaseRestTester {
             String acctId = acctIds.next();
             StorageProviderType type =
                 manager.getStorageAccount(acctId).getType();
-            if(!type.equals(StorageProviderType.EMC_SECONDARY) &&
-               // TODO: Enable this when EMC provider is working
-               !type.equals(StorageProviderType.EMC) &&
-               // TODO: Enable this when Sun provider is working
-               !type.equals(StorageProviderType.SUN) &&
-               // Test types
+            if(// Test types
                !type.equals(StorageProviderType.TEST_RETRY) &&
                !type.equals(StorageProviderType.TEST_VERIFY_CREATE) &&
                !type.equals(StorageProviderType.TEST_VERIFY_DELETE)) {

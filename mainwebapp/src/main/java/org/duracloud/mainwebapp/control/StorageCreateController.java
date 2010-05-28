@@ -1,14 +1,7 @@
 package org.duracloud.mainwebapp.control;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.mainwebapp.domain.cmd.DuraAcctWrapper;
 import org.duracloud.mainwebapp.domain.cmd.StorageCreateCmd;
@@ -19,6 +12,10 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StorageCreateController
         extends SimpleFormController {
@@ -50,7 +47,7 @@ public class StorageCreateController
         String[] storageProviderList =
                 {StorageProviderType.AMAZON_S3.toString(),
                         StorageProviderType.MICROSOFT_AZURE.toString(),
-                        StorageProviderType.SUN.toString()};
+                        StorageProviderType.RACKSPACE.toString()};
 
         providers.put("storageProviders", storageProviderList);
         return providers;

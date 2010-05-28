@@ -20,6 +20,11 @@ public class TestVerifyDeletionAdvice extends TestCase {
     private static RestHttpHelper restHelper = RestTestHelper.getAuthorizedRestHelper();
     private static String baseUrl;
 
+    // NOTE: The store-id maps to a provider from StorageProviderTypes, and its
+    //       position in the order of that enumeration (minus one for providers
+    //       over the position of UNKNOWN).
+    private static final String STORE_ID = "5"; // TEST_VERIFY_CREATE
+    
     // Should be set to the same value as maxRetries in Verify*Advice
     private static final int MAX_RETRIES = 3;
 
@@ -37,7 +42,7 @@ public class TestVerifyDeletionAdvice extends TestCase {
     public void testVerifySpaceDeletion() throws Exception {
         // Tests for verification checks up to the maximum number of failures
         for(int i=0; i<MAX_RETRIES; i++) {
-            String url = baseUrl + "/" + i + "?storeID=7";
+            String url = baseUrl + "/" + i + "?storeID=" + STORE_ID;
             HttpResponse response = restHelper.delete(url);
             assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         }

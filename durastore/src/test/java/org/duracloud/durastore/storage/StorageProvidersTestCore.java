@@ -668,16 +668,6 @@ public class StorageProvidersTestCore
     //        } catch (Exception e) {
     //        }
     //    }
-    //
-    //    private EsuApi createVisitor() throws Exception {
-    //        Credential visitorCredential =
-    //                getCredential(StorageProviderType.EMC_SECONDARY);
-    //
-    //        String username = visitorCredential.getUsername();
-    //        String password = visitorCredential.getPassword();
-    //        assertNotNull(username);
-    //        assertNotNull(password);
-    //        return new EsuRestApi(ESU_HOST, ESU_PORT, username, password);
-    //    }
+
 
 }

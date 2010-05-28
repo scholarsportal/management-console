@@ -1,18 +1,16 @@
 package org.duracloud.mainwebapp.domain.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.computeprovider.mgmt.ComputeProviderFactory;
-
+import org.junit.After;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CustomerAcctTest {
 
@@ -40,7 +38,7 @@ public class CustomerAcctTest {
 
     private final String lastnameB = "lastnameB";
 
-    private final ComputeProviderType MOCK_PROVIDER = ComputeProviderType.SUN;
+    private final ComputeProviderType MOCK_PROVIDER = ComputeProviderType.RACKSPACE_CLOUDSERVERS;
 
     private final String MOCK_PROVIDER_CLASSNAME =
             "org.duracloud.serviceprovider.mgmt.mock.MockComputeProviderImpl";

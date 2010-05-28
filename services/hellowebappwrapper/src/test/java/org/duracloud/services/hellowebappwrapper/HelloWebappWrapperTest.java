@@ -21,11 +21,13 @@ import java.util.Map;
  */
 public class HelloWebappWrapperTest {
 
+    private static final String PROJECT_VERSION_PROP = "PROJECT_VERSION";
+
     private HelloWebappWrapper wrapper;
     private String serviceId = "howdywrapper";
     private String url = "http://example.org";
     private BundleHome bundleHome = new BundleHome();
-    private String warName = "hellowebapp-1.0.0.war";
+    private String warName = "hellowebapp-"+getVersion()+".war";
 
     private WebAppUtilImpl webappUtil;
     private int port = 38080;
@@ -40,7 +42,7 @@ public class HelloWebappWrapperTest {
         tomcatUtil = new TomcatUtil();
         tomcatUtil.setBinariesZipName(binariesZipName);
 
-        String webappUtilServiceId = "webapputilservice-1.0.0";
+        String webappUtilServiceId = "webapputilservice-"+getVersion();
         webappUtil = new WebAppUtilImpl();
         webappUtil.setServiceId(webappUtilServiceId);
         webappUtil.setNextPort(port);
@@ -108,6 +110,12 @@ public class HelloWebappWrapperTest {
         String urlProp = props.get("url");
         Assert.assertNotNull(urlProp);
         Assert.assertTrue(urlProp.matches(expectedURL));
+    }
+
+    private static String getVersion() {
+        String version = System.getProperty(PROJECT_VERSION_PROP);
+        Assert.assertNotNull(version);
+        return version;
     }
 
 }

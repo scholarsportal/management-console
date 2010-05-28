@@ -1,10 +1,6 @@
 package org.duracloud.mainwebapp.domain.repo.db;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.mainwebapp.domain.model.Address;
@@ -18,6 +14,9 @@ import org.duracloud.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.duracloud.mainwebapp.domain.repo.StorageProviderRepository;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
 import org.duracloud.storage.domain.StorageProviderType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainDatabaseLoader {
 
@@ -270,9 +269,9 @@ public class MainDatabaseLoader {
         ComputeAcct acctSandyMichelle = new ComputeAcct();
         acctSandyMichelle.setNamespace("namespaceSM");
         acctSandyMichelle.setXmlProps(EC2_PROPS);
-        acctSandyMichelle.setComputeProviderType(ComputeProviderType.SUN);
+        acctSandyMichelle.setComputeProviderType(ComputeProviderType.RACKSPACE_CLOUDSERVERS);
         acctSandyMichelle.setComputeProviderId(computeProviderIds
-                .get(ComputeProviderType.SUN.toString()));
+                .get(ComputeProviderType.RACKSPACE_CLOUDSERVERS.toString()));
         acctSandyMichelle.setDuraAcctId(duraAcctIds.get(SANDY));
 
         int acctIdBillChris =
@@ -304,8 +303,8 @@ public class MainDatabaseLoader {
         providerMS.setUrl("http://www.microsoft.com/azure");
 
         StorageProvider providerSun = new StorageProvider();
-        providerSun.setProviderName(StorageProviderType.SUN.toString());
-        providerSun.setProviderType(StorageProviderType.SUN);
+        providerSun.setProviderName(StorageProviderType.RACKSPACE.toString());
+        providerSun.setProviderType(StorageProviderType.RACKSPACE);
         providerSun.setUrl("http://www.sun.com/cloud");
 
         StorageProvider providerUnknown = new StorageProvider();
@@ -319,7 +318,7 @@ public class MainDatabaseLoader {
         storageProviderIds.put(StorageProviderType.MICROSOFT_AZURE.toString(),
                                getStorageProviderRepository()
                                        .saveStorageProvider(providerMS));
-        storageProviderIds.put(StorageProviderType.SUN.toString(),
+        storageProviderIds.put(StorageProviderType.RACKSPACE.toString(),
                                getStorageProviderRepository()
                                        .saveStorageProvider(providerSun));
         storageProviderIds.put(StorageProviderType.UNKNOWN.toString(),
@@ -345,9 +344,9 @@ public class MainDatabaseLoader {
 
         StorageAcct acctSandyMichelle = new StorageAcct();
         acctSandyMichelle.setNamespace("namespaceSM");
-        acctSandyMichelle.setStorageProviderType(StorageProviderType.SUN);
+        acctSandyMichelle.setStorageProviderType(StorageProviderType.RACKSPACE);
         acctSandyMichelle.setStorageProviderId(storageProviderIds
-                .get(StorageProviderType.SUN.toString()));
+                .get(StorageProviderType.RACKSPACE.toString()));
         acctSandyMichelle.setDuraAcctId(duraAcctIds.get(SANDY));
 
         int acctIdBillChris =
