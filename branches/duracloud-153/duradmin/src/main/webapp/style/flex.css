@@ -1,7 +1,6 @@
 /* FLEX BASE CLASSES *********************************/
 
 .flex a,
-.flex a span,
 .flex,
 .flex span,
 .icon-only
@@ -21,7 +20,6 @@
 	padding-left:10px;
 }
 
-.flex a span,
 .flex span
 {
 	cursor:pointer;
@@ -56,6 +54,25 @@
 
 /* BUTTONS AND HOLDERS **********************************************/
 /* Extends .flex *****/
+
+button 
+{ 
+	background-color:green;
+	background-position:right top;
+	background-repeat:no-repeat;
+	position: relative;
+	border: 0; 
+	padding: 0;
+	cursor: pointer;
+	overflow: visible; /* removes extra side padding in IE */
+	width:auto;
+}
+
+button::-moz-focus-inner
+{
+	border: none;  /* overrides extra padding in Firefox */
+	padding:0 !important;
+}
 
 .button,
 .button span,

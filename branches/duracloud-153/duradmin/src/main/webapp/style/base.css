@@ -315,17 +315,18 @@ a.std span
 {
 	background:url(../images/switch_holder.gif) no-repeat;
 	display:block;
-	height:35px;
 }
 
 .switch-holder div.r
 {
 	background-position:top right;
+	height:30px;
 	padding-top:5px;
 }
 
 .switch-holder
 {
+	height:35px;
 	margin:20px;
 }
 

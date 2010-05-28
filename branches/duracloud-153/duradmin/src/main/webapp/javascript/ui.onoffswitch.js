@@ -91,12 +91,12 @@ $.widget("ui.onoffswitch",{
 	},
 
 	_switch: function(state){
-		$(".button-holder", this.element).hide();
+		$(".button-holder", this.element).css("display","none");
 
 		if(state =="on"){
-			$(".button-holder-on", this.element).show();
+			$(".button-holder-on", this.element).css("display","inline-block");
 		}else{
-			$(".button-holder-off", this.element).show();
+			$(".button-holder-off", this.element).css("display","inline-block");
 		}
 	},
 	
