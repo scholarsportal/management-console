@@ -5,8 +5,15 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="header-extensions">
+	<!-- 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.history.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.form.wizard-2.0.1-min.js"></script>
+ 	<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
+	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+	-->
+	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
-]		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
 	</tiles:putAttribute>
@@ -18,10 +25,6 @@
 	   		<div id="services-list-view" class="list-browser dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 					<div id="header-spaces-list" class="header-section clearfix">						
-						<a class="flex button float-r configure-service-button" href="javascript:void(1);">
-							<span><i class="pre plus">[Configure Service Mockup]</i></span>
-						</a>
-						
 						<a class="flex button float-r deploy-service-button" href="javascript:void(1);">
 							<span><i class="pre plus">Deploy a New Service</i></span>
 						</a>
@@ -105,20 +108,149 @@
 					    	</span>
 					    </div>
 					</div>
+
+					<div class="button-bar">
+						<button class="flex button reconfigure-button"><span><i class="pre pencil">Reconfigure</i></span></button>
+					</div>
+
 				</div>
 				<div class="center">
 				</div>
 
 			</div>	
 			
-			<div id="available-services-dialog" class="dialog" title="Deploy Service">
-				<h1>Select a Service</h1>
-				<p class="hint">Select a service, then click "Next >"</p>
-				<form enctype="multipart/form-data">
-					<div id="form-fields" class="form-fields h400">
-						
+			<div id="available-services-dialog" class="dialog">
+					<div class="ui-layout-north" > 
+						<h1>Select a Service</h1>
 					</div>
-				</form>	
+					<div class="ui-layout-west" style="display: none;"> 
+						<div id="available-services-list" class="ui-layout-content ui-widget-content">
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+							<div>Service 1</div>
+							<div>Service 2</div>
+							<div>Service 3</div>
+							<div>Service 4</div>
+							<div>Service 5</div>
+							<div>Service 6</div>
+
+						</div>
+					 </div> 
+				
+					<div id="service-detail" class="ui-layout-center" style="display: none;"> 
+						<h1>{Service Name</h1>
+						<div class="ui-layout-content ui-widget-content" style="border: 0;">
+							<p>{
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							service description service description service description service description service description 							
+							}</p>
+						</div>
+					</div> 
+			</div>
+
+			<div id="reconfigure-service-dialog" class="dialog" title="Reconfigure Service">
+				<h1>Reconfigure the Service</h1>
+								<form enctype="multipart/form-data">
+					<div id="form-fields" class="form-fields h400">
+						<fieldset>
+							<ul>
+								<li class="row clearfix first-of-type">
+									<label for="host">Select Host</label>
+									<select name="host" id="host" class="field" />
+										<option value="null default">- Select one -</option>
+										<option value="1">First option</option>
+										<option value="2">Second option</option>
+									</select>
+								</li>
+								<li class="row clearfix"><label for="textinput1">Text Input</label><input type="text" name="textinput1" id="dropdown1" class="field" /></li>
+								<li class="row clearfix">
+									<label for="dropdown1">Dropdown with a really long name that wraps</label>
+									<select name="dropdown1" id="dropdown1" class="field" />
+										<option value="null default">- Select one -</option>
+										<option value="1">First option</option>
+										<option value="2">Second option</option>
+									</select>
+								</li>
+								<li class="row clearfix">
+								<label for="checkboxes">Checkboxes</label>
+									<ul class="field">
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+										<li><input type="checkbox" id="c1" />Checkbox 1</li>
+										<li><input type="checkbox" id="c2" />Checkbox 2</li>
+										<li><input type="checkbox" id="c3" />Checkbox 3</li>
+										<li><input type="checkbox" id="c4" />Checkbox 4</li>
+									</ul>
+								</li>
+							</ul>
+						</fieldset>
+					</div>
+				</form>
 			</div>
 
 			<div id="configure-service-dialog" class="dialog" title="Configure Service">

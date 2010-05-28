@@ -29,6 +29,23 @@ $.fn.create = function(tag){
 	return $(document.createElement(tag));
 	
 };
+
+////////////////////////////
+//this method loads the children of the new contents
+//into the target after emptying the contents
+//with a fade in / fade out effect
+$.fn.replaceContents = function(/*the pane whose contents will be swapped in*/ newContents,  
+								/*the layout for the target*/ layoutOptions){
+	var target = this;
+	$(target).fadeOut("fast", function(){
+		$(target).empty().prepend($(newContents).children());
+		$(target).fadeIn("fast");
+		if(layoutOptions != null && layoutOptions != undefined){
+			$(target).layout(layoutOptions);
+		}
+	});
+	return $(target);
+};	
 /**
  * openDialogClass optional - a css class to style the target while dialog is open
  * */

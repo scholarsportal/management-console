@@ -35,8 +35,8 @@ $(document).ready(function() {
 	
 	//detail pane's layout options
 	var detailLayoutOptions = {
-			north__paneSelector:	".north"
-				,   north__size: 			130
+				north__paneSelector:	".north"
+				,   north__size: 			200
 				,	center__paneSelector:	".center"
 				,   resizable: 				false
 				,   slidable: 				false
@@ -44,7 +44,6 @@ $(document).ready(function() {
 				,	togglerLength_open:		0
 				
 	};
-	
 	
 	var detailPane = $(detailPaneId).layout(detailLayoutOptions);
 
@@ -97,6 +96,10 @@ $(document).ready(function() {
 					, offText: "Undeploy"		
 		}).bind("turnOff", function(evt, future){
 			undeploy(service, deployment,future);
+		});
+		
+		$(".reconfigure-button",serviceDetailPane.first()).click(function(){
+			$("#reconfigure-service-dialog").dialog("open");
 		});
 
 		getServiceDeploymentConfig(service, deployment, {
@@ -228,6 +231,8 @@ $(document).ready(function() {
 
 	};
 	
+	
+	
 	var getDeployedServices = function(callback){
 		var services = [
 		                
@@ -335,74 +340,126 @@ $(document).ready(function() {
 	
 	//dialogs
 	
+	var dialogLayout; 
+	
 	$('#available-services-dialog').dialog({
 		autoOpen: false,
-		show: 'blind',
-		hide: 'blind',
+		show: 'fade',
+		hide: 'fade',
 		resizable: false,
 		height: 500,
 		closeOnEscape:true,
 		modal: true,
-		width:500,
+		width:700,
+		resize:		function () { dialogLayout.resizeAll(); },
+		
 		buttons: {
-			'Next': function(evt) {
+			Cancel: function(){
 				$(this).dialog("close");
 			},
-			Cancel: function(evt) {
-				$(this).dialog('close');
+			Next: function(){
+				$(this).dialog("close");
+				$("#configure-service-dialog").dialog("open");
+				
 			}
-		},
 		
+		},
 		close: function() {
 	
 		},
 		
-		open: function(e){
 		
-		}
+		
+		open: function(e){	
+			if(!dialogLayout){
+				dialogLayout = $(this).layout({
+					resizeWithWindow:	false	// resizes with the dialog, not the window
+					,  spacing_open:  0
+					,  spacing_closed: 0
+					,	west__spacing_open:		6
+					,	west__spacing_closed:	6
+					,	west__size:			300
+					,   north__resizable: 			false
+					,	north__slidable: 			false
+					,   west__slidable: 		true
+					,   west__resizable:        true
+					
+				});
+			}
+
+		},
 		
 	});
 
+	
+	
 	$(".deploy-service-button").click(function(){
 		$("#available-services-dialog").dialog("open");
 	});
 
-	
-	$('#configure-service-dialog').dialog({
+
+	$('#reconfigure-service-dialog').dialog({
 		autoOpen: false,
-		show: 'blind',
-		hide: 'blind',
+		show: 'fade',
+		hide: 'fade',
 		resizable: false,
 		height: 500,
 		closeOnEscape:true,
 		modal: true,
 		width:500,
 		buttons: {
-			'< Back': function(evt) {
-				$(this).dialog("close");
+			"Redeploy": function(){
+				$("#reconfigure-service-dialog").dialog("close");
 			},
+			
+			"Cancel": function(){
+				$("#reconfigure-service-dialog").dialog("close");
+			}
+		},
 
-			'Deploy': function(evt) {
-				$(this).dialog("close");
+		close: function() {
+		
+		},
+		open: function(e){
+		},
+	});
+	
+
+
+	
+	$('#configure-service-dialog').dialog({
+		autoOpen: false,
+		show: 'fade',
+		hide: 'fade',
+		resizable: false,
+		height: 500,
+		closeOnEscape:true,
+		modal: true,
+		width:700,
+		close: function() {
+		
+		},
+		
+		buttons: {
+			"< Back": function(){
+				$("#configure-service-dialog").dialog("close");
+				$("#available-services-dialog").dialog("open");
+
 			},
-			Cancel: function(evt) {
-				$(this).dialog('close');
+			
+			"Deploy": function(){
+				$("#configure-service-dialog").dialog("close");
+			},
+			
+			"Cancel": function(){
+				$("#configure-service-dialog").dialog("close");
 			}
 		},
 		
-		close: function() {
-	
-		},
-		
 		open: function(e){
-		
-		}
-		
+		},
 	});
 	
-	$(".configure-service-button").click(function(){
-			$("#configure-service-dialog").dialog("open");
-	});
 
 	$(".ui-dialog-titlebar").hide();
 
