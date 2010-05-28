@@ -79,7 +79,7 @@ $.widget("ui.onoffswitch",{
 
 	_fireOffEvent: function(){
 		var that = this;
-		this.element.trigger("turnOn", {
+		this.element.trigger("turnOff", {
 			success:function(evt){ 
 				that._switch("off")
 			},
