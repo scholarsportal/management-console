@@ -30,7 +30,7 @@
 							</li>
 							<li class="clearfix">
 								<label><a href="#" id="forgot-password" class="helper-link">Forgot Password?</a></label>
-								<a id="button-login" class="flex button float-r" href="javascript:document.forms['loginForm'].submit();"><span>Login</span></a>				
+								<button id="button-login" class="flex button float-r"><span>Login</span></a>				
 							</li>
 						</ul>
 					

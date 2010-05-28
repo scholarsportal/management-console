@@ -21,7 +21,15 @@
 		<tiles:putAttribute name="main-content">
 			<div class="center-north" id="center-pane-north">
 				<div class="float-l">
-					Provider: <a class="flex button" id="select-provider" href="#"><span><i class="post arw-down-liteblue">Amazon S3</i></span></a>
+						Provider:
+						<span id="select-provider-wrapper">
+							<a class="flex button" id="select-provider" href="#"><span><i class="post arw-down-liteblue">AAAA</i></span></a>
+							<ul>							
+							<li class="first-of-type"><a href="#">Amazon S3</a></li>	
+							<li><a href="#">Rackspace</a></li>								
+							<li><a href="#">AAAA Putcha Data Here An' Fuhget About It Storage</a></li>
+							</ul>
+						</span>
 				</div>
 		
 				<!-- <div class="float-l">

@@ -67,7 +67,14 @@ $(document).ready(function() {
 	
 	
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
-
+	
+	////////////////////////////////////////////
+	// functionality for provider selection
+	///
+	$('#select-provider-wrapper').hover(
+		function() { $('ul', this).css('display', 'block'); },
+		function() { $('ul', this).css('display', 'none'); }
+	);
 	
 	////////////////////////////////////////////
 	//sets contents of object-name class

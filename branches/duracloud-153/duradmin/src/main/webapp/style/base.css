@@ -50,6 +50,12 @@ table {
 	border-spacing: 0;
 }
 
+/* set input color for autofill */
+input:-webkit-autofill {
+    color: #000 !important;
+}
+
+
 
 
 
@@ -123,6 +129,7 @@ h3 { font-size:1em; }
 	color:#9b9b9b;
 	font-size:13px;
 	padding:5px 10px;
+	z-index:4 !important; /* needed to list spaces provider menu above elements below it */
 }
 
 .dc-prototype {
@@ -305,6 +312,11 @@ a.std span
 	background:url(../images/icon_sm_arw_blue.gif) no-repeat top right;
 }
 
+.arw-down-liteblue
+{
+	background:url(../images/icon_sm_arw_liteblue.gif) no-repeat top right;
+}
+
 .arw-down-green
 {
 	background:url(../images/icon_sm_arw_green.gif) no-repeat top right;
@@ -329,19 +341,6 @@ a.std span
 	height:35px;
 	margin:20px;
 }
-
-#select-provider,
-#select-provider span
-{
-	background-image:url(../images/btn_provider.gif);
-}
-
-a#select-provider span i
-{
-	color:#76e8ff !important;
-	padding-right:100px;
-}
-
 
 .dialog-open {
 	border:1px solid  red !important;
@@ -393,7 +392,6 @@ a#select-provider span i
 	background:url(../images/tab.gif) no-repeat top right;
 	color:#fff !important;
 }
-
 
 /* LIST AND ITEMS **********************************************/
 

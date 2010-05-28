@@ -173,13 +173,13 @@ i.post
 	background-position: bottom right;
 }
 
-a:hover .pre,
-a:hover .icon-only
+.button:hover .pre,
+.button:hover .icon-only
 {
 	background-position: bottom left;
 }
 
-a:hover .post
+.button:hover .post
 {
 	background-position: bottom right;
 }

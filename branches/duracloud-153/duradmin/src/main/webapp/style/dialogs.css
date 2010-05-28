@@ -147,3 +147,72 @@ select.field
 {
 	color:#ccc;
 }
+
+/* PROVIDER SELECTION ******************************************/
+
+#select-provider-wrapper
+{
+	display:inline-block;
+	position:relative;
+}
+
+#select-provider-wrapper ul
+{ 
+	-moz-border-radius:3px;
+	border-radius:3px;
+	-webkit-border-radius:3px;
+	background-color:#2886c0;
+	border:1px solid #257ab9;
+	border-bottom-color:#0c293f;
+	border-top-color:#2e9acc;
+	display:none;
+	padding:10px;
+	opacity:0.95;
+	position:absolute;
+}
+
+#select-provider-wrapper li
+{
+	border-top:1px solid #2e9acc;
+	white-space:nowrap;
+}
+
+#select-provider-wrapper li a
+{
+	color:#56ffff;
+	display:block;
+	font-size:11px;
+	padding:6px 3px;
+	text-decoration:none;
+}
+
+#select-provider-wrapper li a:hover
+{
+	background-color:#2e9acc;
+	color:#fff;
+}
+
+/*
+#select-provider-wrapper:hover ul
+{
+	display:block;
+}
+*/
+
+
+#select-provider
+{
+
+}
+
+#select-provider,
+#select-provider span
+{
+	background-image:url(../images/btn_provider.gif);
+}
+
+a#select-provider span i
+{
+	color:#76e8ff !important;
+	min-width:100px;
+}
