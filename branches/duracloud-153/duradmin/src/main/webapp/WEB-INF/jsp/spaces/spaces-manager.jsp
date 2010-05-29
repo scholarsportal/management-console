@@ -12,6 +12,7 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.metadataviewer.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.tagsviewer.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.flyoutselect.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
 
 	</tiles:putAttribute>
@@ -22,14 +23,20 @@
 			<div class="center-north" id="center-pane-north">
 				<div class="float-l">
 						Provider:
+						<span id="provider-select-box" class="provider-widget">
+						</span>
+						
+						<!-- 
 						<span id="select-provider-wrapper">
 							<a class="flex button" id="select-provider" href="#"><span><i class="post arw-down-liteblue">AAAA</i></span></a>
 							<ul>							
-							<li class="first-of-type"><a href="#">Amazon S3</a></li>	
-							<li><a href="#">Rackspace</a></li>								
-							<li><a href="#">AAAA Putcha Data Here An' Fuhget About It Storage</a></li>
+								<li class="first-of-type"><a href="?storeId=0">Amazon S3</a></li>	
+								<li><a href="?storeId=1">Rackspace</a></li>								
+								<li><a href="?storeId=2">AAAA Putcha Data Here An' Fuhget About It Storage</a></li>
 							</ul>
 						</span>
+						 -->
+						
 				</div>
 		
 				<!-- <div class="float-l">

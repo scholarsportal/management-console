@@ -71,10 +71,8 @@ $(document).ready(function() {
 	////////////////////////////////////////////
 	// functionality for provider selection
 	///
-	$('#select-provider-wrapper').hover(
-		function() { $('ul', this).css('display', 'block'); },
-		function() { $('ul', this).css('display', 'none'); }
-	);
+
+	$('#provider-select-box').flyoutselect({});
 	
 	////////////////////////////////////////////
 	//sets contents of object-name class

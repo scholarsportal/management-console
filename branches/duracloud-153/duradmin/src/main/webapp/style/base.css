@@ -744,12 +744,76 @@ span.label
  
  /* MISC **********************************************************/
  
- .first-of-type
- {
+ 
+ 
+ /*flyout select default styling ******************************************/
+
+.provider-widget
+{
+	display:inline-block;
+	position:relative;
+}
+
+.provider-widget ul
+{ 
+	-moz-border-radius:3px;
+	border-radius:3px;
+	-webkit-border-radius:3px;
+	background-color:#2886c0;
+	border:1px solid #257ab9;
+	border-bottom-color:#0c293f;
+	border-top-color:#2e9acc;
+	display:none;
+	padding:10px;
+	opacity:0.95;
+	position:absolute;
+}
+
+.provider-widget li
+{
+	border-top:1px solid #2e9acc;
+	white-space:nowrap;
+	min-width:200px;
+}
+
+.provider-widget li a
+{
+	color:#56ffff;
+	display:block;
+	font-size:11px;
+	padding:6px 3px;
+	text-decoration:none;
+}
+
+.provider-widget li a:hover
+{
+	background-color:#2e9acc;
+	color:#fff;
+}
+
+/* doing this via jquery to support IE, so turned off here
+#select-provider-wrapper:hover ul
+{
+	display:block;
+}
+*/
+
+ .provider-widget li:first-child{
  	border-top:none !important;
  }
- 
- 
- 
+
+
+
+.provider-widget > a,
+.provider-widget > a span
+{
+	background-image:url(../images/btn_provider.gif);
+}
+
+.provider-widget > a span i
+{
+	color:#76e8ff !important;
+	min-width:150px;
+}
 
 	
