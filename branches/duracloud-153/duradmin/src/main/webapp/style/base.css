@@ -260,9 +260,9 @@ h3 { font-size:1em; }
 }
 
 .std a,
-a.std,
+.std,
 .std a span,
-a.std span
+.std span
 {
 	background-image:url(../images/btn_std.gif) !important;
 	color:#ccc;
@@ -330,6 +330,16 @@ a.std span
 .arw-down-green
 {
 	background:url(../images/icon_sm_arw_green.gif) no-repeat top right;
+}
+
+.outer .help
+{
+	background-image:url(../images/icon_sm_help_blue.gif);
+}
+
+.outer .logoff
+{
+	background-image:url(../images/icon_sm_logoff_blue.gif);
 }
 
 .switch-holder,
@@ -552,6 +562,11 @@ input.dc-check-all
 {
 	color:#4c4c4c;
 	font-size:11px;
+}
+
+.outer .icon-link:hover
+{
+	color:#000;
 }
 
 

@@ -19,9 +19,9 @@
 		<div id="dc-user" class="float-r">
 			${pageContext.request.userPrincipal.name}
 			<ul class="horizontal-list">
-				<li id="help"><a href="">Help</a></li>
+				<li id="help"><a class="flex icon-link" href="#"><i class="pre help">Help</i></a></li>
 	            <li>
-		            <a href='<c:url value="/logout"/>' class="logout">Logout</a>
+		            <a class="flex icon-link" href='<c:url value="/logout"/>' class="logout"><i class="pre logoff">Logout</i></a>
 	            </li>
 			</ul>		
 		</div>			
