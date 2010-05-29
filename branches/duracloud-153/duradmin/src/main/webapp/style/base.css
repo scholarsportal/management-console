@@ -317,6 +317,8 @@ h3 { font-size:1em; }
 	background:url(../images/icon_sm_x.gif) no-repeat center left;
 }
 
+.download { background-image:url(../images/icon_sm_download.gif); }
+
 .arw-down-blue
 {
 	background:url(../images/icon_sm_arw_blue.gif) no-repeat top right;
@@ -398,6 +400,8 @@ h3 { font-size:1em; }
 .dc-main-tabs a span
 {
 	margin:0 -2px;
+	padding-left:2px;
+	font-weight:bold;
 }
 
 .dc-main-tabs .selected a,
@@ -581,10 +585,13 @@ input.dc-check-all
 	
 .dc-toggler {
 	float:right;
-	background: url(../images/icon_sm_arw_liteblue.gif) no-repeat top left;
-	width:25px;
+	background: url(../images/icon_sm_arw_blue_updown.gif) no-repeat right top;
+	width:11px;
 	height:25px;
 }
+
+.dc-toggler-close { background-position:left top; }
+	
 
 .dc-expandable-panel div:first-child{
 	cursor: pointer;		
@@ -633,6 +640,7 @@ input.dc-check-all
 	background:url(../images/bg_segment_header.gif) repeat-x top left;
 	border-bottom:1px solid #333;
 	color:#999;
+	cursor:pointer;
 	font-size:13px;
 	height:28px;
 	line-height:25px;

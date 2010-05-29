@@ -17,6 +17,7 @@ $.widget("ui.expandopanel",{
 	 */
 	options: {
 			togglerClass: "dc-toggler",
+			togglerClassClose: "dc-toggler-close",
 			title: null,
 			headerClass: "segment-header",
 			contentClass: "segment-content",
@@ -48,8 +49,10 @@ $.widget("ui.expandopanel",{
 		
 		//add toggle button
 		if($("."+togglerClass,this.element).size() == 0){
-			header.append("<a class='"+togglerClass+"'> </a>");
+			header.append("<a class='"+togglerClass+"'></a>");
 		}
+		
+		var toggler = header.children().first();
 		
 		//style the header
 		header.addClass(options.headerClass);
@@ -57,6 +60,7 @@ $.widget("ui.expandopanel",{
 		
 		//add toggle to the header 
 		header.click(function(evt){
+			toggler.toggleClass(options.togglerClassClose);
 			content.slideToggle("fast");
 		});
 		

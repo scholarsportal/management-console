@@ -149,7 +149,7 @@
 				
 				<div class="button-bar">
 					<a href="javascript:void(1);" class="flex button"><span><i class="pre pencil">Edit</i></span></a>
-					<a href="javascript:void(1);" class="flex button"><span>Download</span></a>
+					<a href="javascript:void(1);" class="flex button"><span><i class="pre download">Download</i></span></a>
 					<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete</i></span></a>
 				</div>
 			</div>
