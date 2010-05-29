@@ -1,11 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<%@ page session="false"%>
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-<!-- 
-	created by Daniel Bernstein and CH
- -->
 
 <div id="page-header" class="outer">	
 

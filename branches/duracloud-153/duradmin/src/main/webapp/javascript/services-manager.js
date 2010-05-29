@@ -89,10 +89,10 @@ $(document).ready(function() {
 		$(".deploy-switch",serviceDetailPane.first()).onoffswitch({
 			   		initialState: "on"
 					, onStateClass: "unlocked"
-					, onIconClass: "x"
-					, offStateClass: "unlocked"
+					, onIconClass: "checkbox"
+					, offStateClass: "locked"
 					, offIconClass: "x"
-					, onText: "Deploy"
+					, onText: "Deployed"
 					, offText: "Undeploy"		
 		}).bind("turnOff", function(evt, future){
 			undeploy(service, deployment,future);
