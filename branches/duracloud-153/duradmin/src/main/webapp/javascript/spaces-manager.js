@@ -72,7 +72,7 @@ var dc;
 						                   ],						
 					  });
 		
-		dc.hideLoading();
+		//dc.hideLoading();
 		//t.toaster("close");
 	};
 
