@@ -126,7 +126,7 @@
 						<h1>Select a Service</h1>
 					</div>
 					<div class="ui-layout-west dc-item-list-wrapper" style="display: none;"> 
-						<div id="available-services-list" class="ui-layout-content ui-widget-content dc-item-list">
+						<div id="available-services-list-wrapper" class="ui-layout-content ui-widget-content dc-item-list">
 							<table>
 								<tbody id="available-services-list">
 									<tr class="dc-item service-replicate">
