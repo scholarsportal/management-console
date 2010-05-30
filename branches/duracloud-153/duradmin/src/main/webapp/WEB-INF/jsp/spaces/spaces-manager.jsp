@@ -131,9 +131,9 @@
 		</div>
 	
 		<div id="spaceMultiSelectPane" style="display:none">
-			<div class="north">
-				Editing multiple spaces is coming soon!
-
+			<div class="north header">
+				<h1>Spaces</h1>
+				<h2 class="object-name">Multiple spaces selected</h2>
 			</div>
 			<div class="center">
 			</div>
@@ -141,7 +141,8 @@
 	
 		<div id="contentItemMultiSelectPane" style="display:none">
 			<div class="north header">
-				Editing multiple content items is coming soon!
+				<h1>Content Items</h1>
+				<h2 class="object-name">Multiple content items selected</h2>
 			</div>
 			<div class="center">
 			</div>
@@ -159,7 +160,7 @@
 				</div>
 				
 				<div class="button-bar">
-					<a href="javascript:void(1);" class="flex button"><span><i class="pre pencil">Edit</i></span></a>
+					<a href="javascript:void(1);" class="flex button edit-content-item-button"><span><i class="pre pencil">Edit</i></span></a>
 					<a href="javascript:void(1);" class="flex button"><span><i class="pre download">Download</i></span></a>
 					<a href="javascript:void(1);" class="flex button std"><span><i class="pre trash">Delete</i></span></a>
 				</div>
@@ -195,7 +196,22 @@
 						<ul>
 						<li class="row clearfix first-of-type"><label for="name">Item Name</label><input type="text" name="name" id="name" class="field" /></li>
 						<li class="row clearfix"><label for="mimetype">Mime Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
-						<li class="row clearfix"><label for="file">File</label><input  type="file" name="file" id="file" class="field"/></li>
+						<li class="row clearfix"><label for="file">File</label><input class="field" type="file" name="file" id="file" class="field"/></li>
+						</ul>
+					</fieldset>
+				</div>
+			</form>	
+		</div>
+	
+		<div id="edit-content-item-dialog" class="dialog" title="Edit Content Item">
+			<h1>Edit Content Item</h1>
+			<p class="hint">All fields are required.</p>
+			<form enctype="multipart/form-data">
+				<div id="form-fields" class="form-fields">
+					<fieldset>
+						<ul>
+						<li class="row clearfix first-of-type"><label for="name">Item Name</label><input type="text" name="name" id="name" class="field" /></li>
+						<li class="row clearfix"><label for="mimetype">Mime Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
 						</ul>
 					</fieldset>
 				</div>

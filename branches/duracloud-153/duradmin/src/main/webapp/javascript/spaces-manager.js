@@ -365,9 +365,35 @@ $(document).ready(function() {
 
 		},
 		  open: function(e){
-		  }
-		
+		}
 	});
+	
+
+	$('#edit-content-item-dialog').dialog({
+		autoOpen: false,
+		show: 'blind',
+		hide: 'blind',
+		height: 250,
+		resizable: false,
+		closeOnEscape:true,
+		modal: true,
+		width:500,
+		buttons: {
+			'Save': function() {
+				alert("implement edit Save functionality");
+				$(this).dialog("close");
+			},
+			Cancel: function() {
+				$(this).dialog('close');
+			}
+		},
+		close: function() {
+
+		},
+		  open: function(e){
+		}
+	});
+	
 	//hides the title bar on all dialogs;
 	
 	$(".ui-dialog-titlebar").hide();
@@ -375,6 +401,11 @@ $(document).ready(function() {
 	$('.add-content-item-button').live("click",
 			function(evt){
 				$("#add-content-item-dialog").dialog("open");
+			});
+	
+	$('.edit-content-item-button').live("click",
+			function(evt){
+				$("#edit-content-item-dialog").dialog("open");
 			});
 
 	
