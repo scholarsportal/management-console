@@ -14,6 +14,8 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.tagsviewer.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.flyoutselect.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
+	 	<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
+		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
@@ -173,11 +175,11 @@
 		<div id="add-space-dialog" class="" title="Add Space">
 			<h1>Add Space</h1>
 			<p class="hint">Add a Space to the current provider. All fields are required.</p>
-			<form>
+			<form id="add-space-form">
 				<div id="form-fields" class="form-fields">
 					<fieldset>
 						<ul>
-							<li class="row clearfix first-of-type"><label for="name">Name</label><input type="text" name="name" id="name" class="field" /></li>
+							<li class="row clearfix first-of-type"><label for="spacename">Name</label><input type="text" name="spacename" id="spacename" class="field" /></li>
 							<li class="row clearfix"><label for="access">Access</label><span name="access" class="access-switch">access control here</span></li>
 							<input type="hidden" name="access" id="access"/>
 						</ul>

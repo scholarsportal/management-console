@@ -306,8 +306,10 @@ $(document).ready(function() {
 		width:500,
 		buttons: {
 			'Add': function(evt) {
-				alert("implement add functionality");
-				$(this).dialog("close");
+				if($("#add-space-form").valid()){
+					alert("Adding new space ajax impl goes here");
+					$(this).dialog("close");
+				}
 			},
 			Cancel: function(evt) {
 				$(this).dialog('close');
@@ -330,6 +332,40 @@ $(document).ready(function() {
 							evt.stopPropagation();
 							$("#add-space-dialog #access").val("CLOSED");
 						}).accessswitch("on");
+			
+			$("#add-space-form").validate({
+				rules: {
+					spacename: {
+						rangelength: [3,63],
+						startswith: true,
+						endswith: true,
+						spacelower: true,
+						notip: true,
+						misc: true,
+					},
+				},
+				messages: {
+						
+				}
+			});
+			
+			$.validator
+				.addMethod("startswith", function(value, element) { 
+				  return  /^[a-z0-9]/.test(value); 
+				}, "A Space ID must begin with a lowercase letter or number");
+			$.validator
+				.addMethod("endswith", function(value, element) { 
+				  return  /[a-z0-9.]$/.test(value); 
+				}, "A Space ID must end with a lowercase letter, number, or period");
+			$.validator.addMethod("spacelower", function(value,element){return /^[a-z0-9.-]*$/.test(value);}, 
+					"Only lowercase letters, numbers, periods, and dashes may be used in a Space ID");
+			$.validator.addMethod("notip", function(value,element){return !(/^[0-9]+.[0-9]+.[0-9]+.[0-9]+$/.test(value));}, 
+					"A Space ID must not be formatted as an IP address");
+			$.validator.addMethod("misc", function(value,element){return !(/^.*([.][.-]|[-][.]).*$/.test(value));}, 
+					"A Space ID must not contain '..' '-.' or '.-'");
+
+			
+			
 		}
 		
 	});
