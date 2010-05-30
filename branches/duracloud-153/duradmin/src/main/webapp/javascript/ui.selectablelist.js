@@ -23,6 +23,8 @@ $.widget("ui.selectablelist",{
 			
 	},
 	
+	_currentItem: null,
+	
 	dataMap: new Array(),
 	
 	_restyleSiblings: function(siblings){
@@ -54,10 +56,16 @@ $.widget("ui.selectablelist",{
 	
 	_fireCurrentItemChanged: function(item){
 		this._styleItem(item);
+		this._currentItem = {
+			item:item, 
+			data: this._getDataById($(item).attr("id")),
+		};
+		
 		this.element.trigger(
 			"currentItemChanged",
-			{	item:item, 
-				data: this._getDataById($(item).attr("id")),
+			{	
+				item:this._currentItem.item, 
+				data: this._currentItem.data,
 				selectedItems: this._getSelectedItems()
 			}
 		);
@@ -159,6 +167,10 @@ $.widget("ui.selectablelist",{
 	
 	setCurrentItemById: function(id){
 		 this._fireCurrentItemChanged($("#"+id, this.element));
+	},
+	
+	getCurrentItem:function(){
+		return this._currentItem;
 	},
 	
 

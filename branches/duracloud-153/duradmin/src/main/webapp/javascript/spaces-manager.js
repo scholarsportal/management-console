@@ -1,6 +1,128 @@
 /**
  * 
- * created by Daniel Bernstein
+ * @author Daniel Bernstein
+ */
+
+/**
+ * Durastore API 
+ */
+var dc; 
+(function(){
+	if(dc == undefined){
+		dc ={};
+	}
+	
+	dc.store = {};
+
+	
+	/**
+	 * @param String spaceId  space id 
+	 * @param Object callback The callback must implement success and failure methods.
+	 * @option Function success(spaces) spaces is an array of spaces objects
+	 * @option Function failure(info) 
+	 * @param Object options
+	 * @option String marker - the last content item id of the previous page
+	 * @option String prefix - a filters the results to show only those matching the prefix
+	 */
+
+	 dc.store.GetSpace = function(spaceId,callback,options){
+		 
+		if(options == undefined){
+			options = {};
+		}
+		
+		var marker = null;
+		if(options.marker != undefined){
+			marker = options.marker;
+		}
+
+		var prefix = null;
+			if(options.prefix != undefined){
+				prefix = options.prefix;
+			}
+
+		var contentItems = new Array();
+		
+		for(var i = 0; i < 100; i++){
+			var contentId = spaceId+"/this/is/faux/content/item/" + i;
+			if(prefix == null || contentId.toLowerCase().indexOf(prefix.toLowerCase()) == 0){
+				contentItems.push(contentId);
+			}
+			
+
+		}
+		
+		dc.showLoading();
+
+		callback.success({
+						spaceId: spaceId,
+						access: 'OPEN',
+						contentItems: contentItems,
+						metadata: {
+							count: 10, 
+							created: "Jan 1, 2010 12:00:00 GMT",
+							tags: ["tag1", "tag2", "tag3", "tag4"],
+						},
+
+						extendedMetadata: [
+						                   {name: "name1", value: "value1"},
+						                   {name: "name2", value: "value2"},
+						                   {name: "name3", value: "value3"},
+						                   {name: "name4", value: "value4"},
+						                   ],						
+					  });
+		
+		dc.hideLoading();
+		//t.toaster("close");
+	};
+
+	/**
+	 * Returns a list of spaces
+	 * @param Number | String storeProviderId The id of the store provider
+	 * @param Object callback
+	 * @option Function success(spaces) a handler for an array of spaces
+	 * @option Function failure(info) a handler that returns failure info 
+	 */
+	dc.store.GetSpaces = function(storeProviderId, callback){
+		var spaces = new Array(50);
+		for(var i = 0; i < spaces.length; i++){
+			spaces[i] = {spaceId:"Space-" + i + "-from-provider"+storeProviderId};
+		}
+		callback.success(spaces);
+	};
+	
+	
+	/**
+	 * returns contentItem details
+	 */
+	dc.store.GetContentItem = function(contentItemId, spaceId, callback){
+		var contentItem = {
+				contentId: contentItemId, 
+				spaceId:   spaceId, 
+				thumbnailURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe.jpg",
+				viewerURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe_b.jpg",
+				metadata:  {
+					size: "1234567", 
+					created: "Jun 10 2009 12:00:00",
+					checksum: "deadbeafdeadbeefdeadbeef",
+					mimetype: "text/plain",
+					tags: ["tag1", "tag2", "tag3", "tag4"],
+					},
+				extendedMetadata: [
+				                   {name: "name1", value: "value1"},
+				                   {name: "name2", value: "value2"},
+				                   {name: "name3", value: "value3"},
+				                   {name: "name4", value: "value4"},
+				                   ],
+			};
+		callback.success(contentItem);
+	};
+	
+})();
+
+
+/**
+ * 
  */
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
 
@@ -69,12 +191,6 @@ $(document).ready(function() {
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
 	
 	////////////////////////////////////////////
-	// functionality for provider selection
-	///
-
-	$('#provider-select-box').flyoutselect({});
-	
-	////////////////////////////////////////////
 	//sets contents of object-name class
 	///
 	var setObjectName = function(pane, name){
@@ -97,7 +213,7 @@ $(document).ready(function() {
 		var multiSpace = $("#spaceMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
-		dc.swapDetailPane(multiSpace,"#detail-pane", spaceDetailLayoutOptions);
+		$("#detail-pane").replaceContents(multiSpace, spaceDetailLayoutOptions);
 		$("#content-item-list").selectablelist("clear");
 	};
 
@@ -105,12 +221,11 @@ $(document).ready(function() {
 		var multiSpace = $("#contentItemMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
 		loadTagPane(multiSpace);
-		dc.swapDetailPane(multiSpace,"#detail-pane", contentItemDetailLayoutOptions);
-
+		$("#detail-pane").replaceContents(multiSpace, contentItemDetailLayoutOptions);
 	};
 
 	var showGenericDetailPane = function(){
-		dc.swapDetailPane($("#genericDetailPane").clone(),"#detail-pane", spaceDetailLayoutOptions);
+		$("#detail-pane").replaceContents($("#genericDetailPane").clone(), spaceDetailLayoutOptions);
 	};
 
 	//////////////////////////////////////////
@@ -322,7 +437,7 @@ $(document).ready(function() {
 			future.success();
 		});
 
-		dc.swapDetailPane(detail,"#detail-pane", spaceDetailLayoutOptions);
+		$("#detail-pane").replaceContents(detail, spaceDetailLayoutOptions);
 
 		loadContentItems(contentItems);
 		
@@ -345,31 +460,6 @@ $(document).ready(function() {
 			        ["Checksum", m.checksum],
 		       ];
 	};
-	/**
-	 * returns contentItem details
-	 */
-	var getContentItem = function(contentItemId, spaceId, callback){
-		var contentItem = {
-				contentId: contentItemId, 
-				spaceId:   spaceId, 
-				thumbnailURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe.jpg",
-				viewerURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe_b.jpg",
-				metadata:  {
-					size: "1234567", 
-					created: "Jun 10 2009 12:00:00",
-					checksum: "deadbeafdeadbeefdeadbeef",
-					mimetype: "text/plain",
-					tags: ["tag1", "tag2", "tag3", "tag4"],
-					},
-				extendedMetadata: [
-				                   {name: "name1", value: "value1"},
-				                   {name: "name2", value: "value2"},
-				                   {name: "name3", value: "value3"},
-				                   {name: "name4", value: "value4"},
-				                   ],
-			};
-		callback.load(contentItem);
-	};
 
 	var loadContentItem = function(contentItem){
 		var pane = $("#contentItemDetailPane").clone();
@@ -379,7 +469,7 @@ $(document).ready(function() {
 		//load the details panel
 		var mimetype = contentItem.metadata.mimetype;
 		$(".mime-type .value", pane).text(mimetype);
-		$(".mime-type", pane).addClass(getMimetypeImageClass(mimetype));
+		$(".mime-type", pane).addClass(dc.getMimetypeImageClass(mimetype));
 
 		var mp = loadMetadataPane(pane, contentItem.extendedMetadata);
 		
@@ -402,25 +492,28 @@ $(document).ready(function() {
 		});
 
 		
-		dc.swapDetailPane(pane, "#detail-pane",contentItemDetailLayoutOptions);
+		$("#detail-pane").replaceContents(pane,contentItemDetailLayoutOptions);
 	};
 
-	var getMimetypeImageClass = function(mimetype){
-		var mtc = "";
-		if(mimetype.indexOf("image") > -1){
-			mtc = "image";
-		}else if(mimetype.indexOf("video") > -1){
-			mtc = "video";
-		}else if(mimetype.indexOf("audio") > -1){
-			mtc ="audio";
-		}else{
-			mtc = "text";
-		}
-		
-		return "mime-type-" + mtc;
-		
-	};
+
 	
+	$("#content-item-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(250, false, function(evt){
+		var currentItem = $("#spaces-list").selectablelist("getCurrentItem");
+		var spaceId = currentItem.data.spaceId;
+		dc.store.GetSpace(
+				spaceId, 
+				{
+					success: function(space){
+						loadContentItems(space.contentItems);
+					}, 
+					failure:function(info){
+						alert("onkeyup failure not handled: " + info);
+					},
+			
+				},
+				{prefix: evt.target.value});
+	}));
+
 	var loadContentItems = function(contentItems){
 		$("#content-item-list").selectablelist("clear");
 		
@@ -449,40 +542,8 @@ $(document).ready(function() {
 		success ? callback.success() : callback.failure();
 	};
 
-	var dcGetSpaces = function(callback){
-		var spaces = new Array(50);
-		for(var i = 0; i < spaces.length; i++){
-			spaces[i] = {spaceId:"Space-" + i};
-		}
-		callback.load(spaces);
-	};
 	
-	var dcGetSpace = function(spaceId,callback){
-		var contentItems = new Array(10);
-		for(var i = 0; i < contentItems.length; i++){
-			contentItems[i] = spaceId+"/this/is/faux/content/item/" + i;
-		}
 
-		
-		
-		callback.load({
-						spaceId: spaceId,
-						access: 'OPEN',
-						contentItems: contentItems,
-						metadata: {
-							count: 10, 
-							created: "Jan 1, 2010 12:00:00 GMT",
-							tags: ["tag1", "tag2", "tag3", "tag4"],
-						},
-
-						extendedMetadata: [
-						                   {name: "name1", value: "value1"},
-						                   {name: "name2", value: "value2"},
-						                   {name: "name3", value: "value3"},
-						                   {name: "name4", value: "value4"},
-						                   ],						
-					  });
-	};
 
 
 	$("#content-item-list").selectablelist({});
@@ -504,8 +565,8 @@ $(document).ready(function() {
 	$("#spaces-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
 			if(state.item !=null && state.item != undefined){
-				dcGetSpace($(state.item).attr("id"),{
-					load: loadSpace
+				dc.store.GetSpace($(state.item).attr("id"),{
+					success: loadSpace
 				});
 			}else{
 				showGenericDetailPane();
@@ -519,8 +580,8 @@ $(document).ready(function() {
 		if(state.selectedItems.length == 0){
 			showGenericDetailPane();
 		}else if(state.selectedItems.length == 1){
-			dcGetSpace($(state.item).attr("id"),{
-				load: loadSpace
+			dc.store.GetSpace($(state.item).attr("id"),{
+				success: loadSpace
 			});
 		}else{
 			showMultiSpaceDetail();
@@ -539,8 +600,8 @@ $(document).ready(function() {
 			 * @FIXME 
 			 */
 			var spaceId = "XXXXXX";
-			getContentItem($(state.item).attr("id"),spaceId,{
-				load: loadContentItem
+			dc.store.GetContentItem($(state.item).attr("id"),spaceId,{
+				success: loadContentItem
 			});
 		}else{
 			showMultiContentItemDetail();
@@ -557,8 +618,8 @@ $(document).ready(function() {
 			/**
 			 * @FIXME 
 			 */
-			getContentItem($(state.item).attr("id"),spaceId,{
-				load: loadContentItem
+			dc.store.GetContentItem($(state.item).attr("id"),spaceId,{
+				success: loadContentItem
 			});
 		}else{
 			showMultiContentItemDetail();
@@ -571,9 +632,9 @@ $(document).ready(function() {
 	var spacesIdArray = new Array();
 
 	
-	$(".dc-item-list-filter").bind("keyup", $.throttle(400, false, function(evt){
+	$("#spaces-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(250, false, function(evt){
 			loadSpaces(spacesArray, evt.target.value);
-		}));
+	}));
 
 	var loadSpaces = function(spaces,filter) {
 		$("#spaces-list").selectablelist("clear");
@@ -589,7 +650,7 @@ $(document).ready(function() {
 					   .html(space.spaceId)
 					   .append(actions);
 				
-				$("#spaces-list").selectablelist('addItem',node);	   
+				$("#spaces-list").selectablelist('addItem',node,space);	   
 				if(!firstMatchFound){
 					$("#spaces-list").selectablelist('setCurrentItemById',node.attr("id"));	   
 					firstMatchFound = true;
@@ -608,20 +669,65 @@ $(document).ready(function() {
 		success ? callback.success() : callback.failure("Failed message here");
 	};
 	
-	var refreshSpaces = function(){
-		dcGetSpaces({
-			load: function(spaces){
+	
+
+	
+	var refreshSpaces = function(providerId){
+		dc.store.GetSpaces(providerId,{
+			success: function(spaces){
 				spacesArray = spaces;
 				spacesIdArray = new Array();
 				for(s in spacesArray){
 					spacesIdArray[s] = spacesArray[s].spaceId;
 				}
+				//clear filters
+				$(".dc-item-list-filter").val('');
+				
 				loadSpaces(spacesArray);
 	
 			}
 		});
 	};
+
+	var PROVIDER_SELECT_ID = "provider-select-box";
+	var initSpacesManager =  function(){
+		////////////////////////////////////////////
+		// initialize provider selection
+		///
+		var PROVIDER_COOKIE_ID = "providerId";
+		var options = {
+			data: [
+ 			       {id:"1", label:"Amazon S3"},
+			       {id:"2", label:"Rackspace"},
+			       {id:"3", label:"EMC with a very long name"}],
+			selectedIndex: 0
+		};
+
+		var currentProviderId = options.data[options.selectedIndex].id;
+		var cookie = $.cookie(PROVIDER_COOKIE_ID);
+		
+		if(cookie != undefined){
+			for(i in options.data)
+			{
+				var pid = options.data[i].id;
+				if(pid == cookie){
+					options.selectedIndex = i;
+					currentProviderId = pid; 
+					break;
+				}
+			}
+		}
+
+		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
+			$.cookie(PROVIDER_COOKIE_ID, state.value.id);
+			console.debug("value changed: new value=" + state.value.label);
+			refreshSpaces(state.value.id);
+		});		
+		
+		refreshSpaces(currentProviderId);
+	};
 	
-	refreshSpaces();
 	
+	
+	initSpacesManager();
 });

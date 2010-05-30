@@ -27,7 +27,6 @@
 		</div>			
 	</div>
 </div>
-
 <div id="page-content" class="pane-L1-body">
  	<tiles:insertAttribute name="main-content" />
 </div>
@@ -42,4 +41,7 @@
 	</div>
 </div>	
 
+<div id="loading-message" style="display:none">
+Loading...
+</div>
 	

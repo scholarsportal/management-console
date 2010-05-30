@@ -14,7 +14,12 @@
 				<div id="login-header" class="outer clearfix">
 					<div id="dc-logo-panel"><a href="/duradmin/spaces" id="dc-logo"></a><span id="dc-app-title"></span></div>			
 				</div>
-			
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#username").focus();
+					});
+				
+				</script>
 				<div id="login-content" class="pane-L1-body clearfix">
 					<h1 id="title" class="float-l">Login</h1>
 					<div id="form-fields" class="form-fields float-r">
@@ -22,7 +27,7 @@
 						<ul>
 							<li class="clearfix">
 								<label for="j_username">Username</label>							
-								<input type="text" name="j_username" class="field"/>	
+								<input type="text" id="username" name="j_username" class="field"/>	
 							</li>
 							<li class="clearfix">
 								<label for="j_password">Password</label>

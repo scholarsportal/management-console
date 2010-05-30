@@ -133,7 +133,7 @@ $(document).ready(function() {
 			)
 		);
 		
-		serviceDetailPane = dc.swapDetailPane(serviceDetailPane,detailPaneId, detailLayoutOptions);
+		$(detailPaneId).replaceContents(serviceDetailPane, detailLayoutOptions);
 
 	};
 	

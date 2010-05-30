@@ -51,11 +51,14 @@
 		        </div> -->
 	
 				<div class="float-r" id="pinned">
+				<!-- 
 					<span>
 					4 Items
 					<input type="button" value="+"/>   			
 					<input type="button" value="^"/>   	
-					</span>	   					
+					</span>
+				 -->
+					   					
 		   		</div>
 		   	</div>
 		   	<div id="list-browser" class="list-browser">
@@ -70,6 +73,7 @@
 							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/>
 						</div>
 					</div>
+					
 				
 					<div class="center dc-item-list-wrapper">
 						<div class="dc-item-list" id="spaces-list">
@@ -84,7 +88,7 @@
 						</div>
 						<div class="header-section" >
 							<span class="float-r"><input class="dc-item-list-filter" value="filter" type="text"/></span>
-							<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> prev next
+							<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> 
 						</div>
 					</div>
 				

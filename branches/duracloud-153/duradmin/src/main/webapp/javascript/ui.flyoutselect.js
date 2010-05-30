@@ -53,15 +53,24 @@ $.widget("ui.flyoutselect",
 						var data = that.options.data;
 						for(d in data){
 							if(data[d].label == itemTextHolder.html()){
-								that._selectedIndex = d;	
-								$("ul", that.element).fadeOut("fast",function(){
-									that._rerender(data);
-								});
+								that._changeValueByIndex(d);
 							}
 						}
 					});
 				}
 			}
+		},
+		
+		_changeValueByIndex: function(/*index of new value*/i){
+			var that = this;
+			var data = this.options.data;
+			this._selectedIndex = i;	
+			$("ul", that.element).fadeOut("slow",function(){
+				that._rerender(data);
+			});
+
+			this.element.trigger("changed", {target: that.element, value: data[i]});
+
 		},
 		
 		_selectedIndex: 0,
@@ -73,9 +82,9 @@ $.widget("ui.flyoutselect",
 		options: {
 			widgetClass: "fos-widget",
 			data: [
-			       {id:"1", label:"Amazon S3"},
-			       {id:"2", label:"Rackspace"},
-			       {id:"3", label:"EMC - with a very long name here"}],
+			       {id:"1", label:"First Item"},
+			       {id:"2", label:"Second Item"},
+			       {id:"3", label:"Third Item with a very long name here"}],
 			selectedIndex: 0, 
 			
 			       
