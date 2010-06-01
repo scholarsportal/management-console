@@ -91,7 +91,7 @@ public class TestEMCStorageProvider {
         }
     }
 
-    private void fullClean() {
+    private static void fullClean() {
         Iterator<String> spaces = emcProvider.getSpaces();
         while (spaces.hasNext()) {
             deleteSpace(spaces.next());
