@@ -45,6 +45,9 @@ public class EMCStorageProvider extends StorageProviderBase {
 
     protected static final int ESU_PORT = 80;
 
+    // All ATMOS_* codes are defined in the emc/esu javadocs
+    private static final int ATMOS_NO_OBJECTS_FOUND = 1003;
+
     private EsuApi emcService = null;
     private final String uid;
 
@@ -84,8 +87,13 @@ public class EMCStorageProvider extends StorageProviderBase {
             return emcService.listObjects(spaceRootTag());
 
         } catch (EsuException e) {
-            String err = "Unable to find any spaces: " + e.getMessage();
-            throw new StorageException(err, e, RETRY);
+            if (e.getAtmosCode() == ATMOS_NO_OBJECTS_FOUND) {
+                return new ArrayList<Identifier>();
+
+            } else {
+                String err = "Unable to find any spaces: " + e.getMessage();
+                throw new StorageException(err, e, RETRY);
+            }
         }
     }
 
