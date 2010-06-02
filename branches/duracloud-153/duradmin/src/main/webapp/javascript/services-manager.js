@@ -351,7 +351,7 @@ $(document).ready(function() {
 		closeOnEscape:true,
 		modal: true,
 		width:700,
-		resize:		function () { dialogLayout.resizeAll(); },
+		//resize:		function () { dialogLayout.resizeAll(); },
 		
 		buttons: {
 			Cancel: function(){
@@ -393,7 +393,7 @@ $(document).ready(function() {
 					,	detailId:  "service-detail"
 					,   detailPreparer: function(data){
 							return $.fn.create("div")
-										.append($.fn.create("h1").html(data.displayName))
+										.append($.fn.create("h2").html(data.displayName))
 										.append($.fn.create("p").html(data.description));
 						}
 				}

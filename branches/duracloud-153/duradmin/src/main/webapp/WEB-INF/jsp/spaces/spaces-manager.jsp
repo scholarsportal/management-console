@@ -175,6 +175,12 @@
 		<div id="add-space-dialog" class="" title="Add Space">
 			<h1>Add Space</h1>
 			<p class="hint">Add a Space to the current provider. All fields are required.</p>
+			<div id="add-space-help-content" class="hint">
+				<h3>About Adding a New Space</h3>
+				<div>
+				<p>here's some help text</p>
+				</div>
+			</div>
 			<form id="add-space-form">
 				<div id="form-fields" class="form-fields">
 					<fieldset>

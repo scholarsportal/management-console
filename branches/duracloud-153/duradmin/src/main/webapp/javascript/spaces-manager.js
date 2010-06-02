@@ -130,7 +130,7 @@ var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailP
 
 $(document).ready(function() {
 	centerLayout = $('#page-content').layout({
-		//minSize:				50	// ALL panes
+	//	minWidth:				300	// ALL panes
 		north__size: 			50	
 	,	north__paneSelector:     ".center-north"
 	,   north__resizable:   false
@@ -140,6 +140,7 @@ $(document).ready(function() {
 	,	north__togglerLength_closed:	0			
 
 	,   west__size:				800
+	,	west__minSize:			600
 	,   west__paneSelector:     "#list-browser"
 	,   west__onresize:         "listBrowserLayout.resizeAll"
 	,	center__paneSelector:	"#detail-pane"
@@ -148,9 +149,10 @@ $(document).ready(function() {
 
 
 	listBrowserLayout = $('#list-browser').layout({
-	    	west__size:				400
+	    	west__size:				300
+	    ,	west__minSize:			260
 		,   west__paneSelector:     "#spaces-list-view"
-		,   west__onresize:         "spacesListPane.resizeAll"
+	//	,   west__onresize:         "spacesListPane.resizeAll"
 		,	center__paneSelector:	"#content-item-list-view"
 		,   center__onresize:       "contentItemListPane.resizeAll"
 	});
@@ -402,6 +404,10 @@ $(document).ready(function() {
 		},
 		  open: function(e){
 		}
+	});
+	
+	$('#add-space-help-content').expandopanel({
+		
 	});
 	
 

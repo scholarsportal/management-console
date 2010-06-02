@@ -122,41 +122,21 @@
 			</div>	
 			
 			<div id="available-services-dialog" class="dialog detail-pane">
-					<div class="ui-layout-north" > 
-						<h1>Select a Service</h1>
+				<h1>Select a Service</h1>
+				<div class="dc-item-list-wrapper" id="dc-item-list-wrapper"> 
+					<div id="available-services-list-wrapper" class="dc-item-list">
+						<table>
+							<tbody id="available-services-list">
+							</tbody>
+						</table>
 					</div>
-					<div class="ui-layout-west dc-item-list-wrapper" style="display: none;"> 
-						<div id="available-services-list-wrapper" class="ui-layout-content ui-widget-content dc-item-list">
-							<table>
-								<tbody id="available-services-list">
-									<tr class="dc-item service-replicate">
-										<td class="icon"><div></div></td>
-										<td>Service #1 - Replicate</td>
-									</tr>
-									<tr class="dc-item service-generalcompute">
-										<td class="icon"><div></div></td>
-										<td>Service #1 - General compute</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					 </div> 
-				
-					<div class="ui-layout-center" style="display: none;"> 
-						<div id="service-detail" class="ui-layout-content ui-widget-content dialog-detail" style="border: 0;">
-							<h2>{Service Name}</h2>
-							<p>{
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							service description service description service description service description service description 							
-							}</p>
-						</div>
-					</div> 
+				 </div> 
+			
+				<div class="dc-service-detail-wrapper" id="dc-service-detail-wrapper"> 
+					<div id="service-detail" class="dialog-detail">
+						<p>Select a service to get more details about it</p>
+					</div>
+				</div> 
 			</div>
 
 			<div id="reconfigure-service-dialog" class="dialog" title="Reconfigure Service">
@@ -266,6 +246,3 @@
 	</tiles:putAttribute>
 	
 </tiles:insertDefinition>
-
-
-
