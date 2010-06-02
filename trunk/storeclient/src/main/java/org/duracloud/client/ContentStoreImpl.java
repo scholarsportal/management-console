@@ -644,24 +644,4 @@ public class ContentStoreImpl implements ContentStore{
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getTaskStatus(String taskName)
-        throws ContentStoreException {
-        String url = buildTaskURL(taskName);
-        try {
-            HttpResponse response = restHelper.get(url);
-            checkResponse(response, HttpStatus.SC_OK);
-            return response.getResponseBody();
-        } catch(InvalidIdException e) {
-            throw new UnsupportedTaskException(taskName, e);
-        } catch(UnauthorizedException e) {
-            throw new UnauthorizedException("Not authorized to get task " +
-                                            "status: " + taskName, e);
-        } catch (Exception e) {
-            throw new ContentStoreException("Error getting task status: " +
-                                            taskName + e.getMessage(), e);
-        }
-    }
 }

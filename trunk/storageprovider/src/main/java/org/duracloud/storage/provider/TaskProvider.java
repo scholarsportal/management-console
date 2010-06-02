@@ -15,6 +15,4 @@ public interface TaskProvider {
 
     public String performTask(String taskName, String taskParameters);
 
-    public String getTaskStatus(String taskName);
-
 }

@@ -97,29 +97,4 @@ public class TaskRest extends BaseRest {
         return taskParams;
     }
 
-    /**
-     * Provides information about a task
-     *
-     * @return 200 response
-     */
-    @Path("/{taskName}")
-    @GET
-    public Response getTask(@PathParam("taskName")
-                            String taskName,
-                            @QueryParam("storeID")
-                            String storeID) {
-        try {
-            TaskProvider taskProvider =
-                TaskProviderFactory.getTaskProvider(storeID);
-            String responseText =
-                taskProvider.getTaskStatus(taskName);
-            return Response.ok(responseText, TEXT_PLAIN).build();
-        } catch (UnsupportedTaskException e) {
-            return Response.status(HttpStatus.SC_BAD_REQUEST).
-                   entity(e.getMessage()).build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    }
-
 }
