@@ -49,10 +49,12 @@ $.widget("ui.flyoutselect",
 					var itemTextHolder = $.fn.create("a").html(data[i].label);
 					item.append(itemTextHolder);
 					ul.append(item);
-					item.click(function(){
+					item.click(function(evt){
+						var label = $(evt.target).html();
+
 						var data = that.options.data;
 						for(d in data){
-							if(data[d].label == itemTextHolder.html()){
+							if(data[d].label == label){
 								that._changeValueByIndex(d);
 							}
 						}
@@ -75,16 +77,17 @@ $.widget("ui.flyoutselect",
 		
 		_selectedIndex: 0,
 		
+		value: function(){
+			return this.options.data[this._selectedIndex];
+		},
+		
 		destroy: function(){ 
 
 		}, 
 		
 		options: {
 			widgetClass: "fos-widget",
-			data: [
-			       {id:"1", label:"First Item"},
-			       {id:"2", label:"Second Item"},
-			       {id:"3", label:"Third Item with a very long name here"}],
+			data: null,
 			selectedIndex: 0, 
 			
 			       

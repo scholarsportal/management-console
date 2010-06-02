@@ -24,6 +24,17 @@ public class ContentItem
 
     private String contentId;
 
+    public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+
+	private String storeId;
+
     private String contentMimetype;
 
     private String viewerURL;

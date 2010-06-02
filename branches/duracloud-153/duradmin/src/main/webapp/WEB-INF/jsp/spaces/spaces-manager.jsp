@@ -4,9 +4,30 @@
 		<spring:message code="spaces" />	
 	</tiles:putAttribute>
 	<tiles:putAttribute name="header-extensions">
+			
+			<script type="text/javascript">
+			  var storeProviders = null;
+			  $(document).ready(function(){
+					storeProviders =
+						 [
+							<c:forEach var="storeOption" items="${contentStores}">
+							{
+							id: ${storeOption.storeId},
+							label: '<spring:message code="${fn:toLowerCase(storeOption.storageProviderType)}"/>'
+							},
+							</c:forEach>				
+						];
+			  });
+			</script>
+			
+		<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
+		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.ba-throttle-debounce/jquery.ba-throttle-debounce.min.js"></script>
+
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.pack.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.easing-1.3.pack.js"></script>
+	 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
@@ -14,31 +35,18 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.tagsviewer.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.flyoutselect.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
-	 	<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
-		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 	<tiles:insertDefinition name="app-frame">
 		<tiles:putAttribute name="mainTab" value="spaces" />
 		<tiles:putAttribute name="main-content">
+
+		
 			<div class="center-north" id="center-pane-north">
 				<div class="float-l">
 						Provider:
-						<span id="provider-select-box" class="provider-widget">
-						</span>
-						
-						<!-- 
-						<span id="select-provider-wrapper">
-							<a class="flex button" id="select-provider" href="#"><span><i class="post arw-down-liteblue">AAAA</i></span></a>
-							<ul>							
-								<li class="first-of-type"><a href="?storeId=0">Amazon S3</a></li>	
-								<li><a href="?storeId=1">Rackspace</a></li>								
-								<li><a href="?storeId=2">AAAA Putcha Data Here An' Fuhget About It Storage</a></li>
-							</ul>
-						</span>
-						 -->
-						
+						<span id="provider-select-box" class="provider-widget"></span>
 				</div>
 		
 				<!-- <div class="float-l">
@@ -73,6 +81,8 @@
 						<div class="header-section">
 							<span class="float-r"><input class="dc-item-list-filter "  value="filter" type="text"/></span>
 							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/>
+							<span id="space-list-status" class="dc-status" style="display:none"></span> 
+							
 						</div>
 					</div>
 					
@@ -89,8 +99,10 @@
 							<h2>Content Items</h2>
 						</div>
 						<div class="header-section" >
-							<span class="float-r"><input class="dc-item-list-filter" value="filter" type="text"/></span>
+							<span class="float-r"><input id="content-item-filter" class="dc-item-list-filter" value="filter" type="text"/></span>
 							<input id="check-all-content-items" class="dc-check-all" type="checkbox"/> 
+							<span id="content-item-list-status" class="dc-status" style="display:none"></span> 
+
 						</div>
 					</div>
 				
@@ -198,14 +210,15 @@
 		<div id="add-content-item-dialog" class="dialog" title="Add Content Item">
 			<h1>Add Content Item</h1>
 			<p class="hint">Add a Content Item to the currently selected Space. All fields are required.</p>
-			<form enctype="multipart/form-data">
+			<form enctype="multipart/form-data" id="add-content-item-form">
 				<div id="form-fields" class="form-fields">
 					<fieldset>
 						<ul>
-						<li class="row clearfix first-of-type"><label for="name">Item Name</label><input type="text" name="name" id="name" class="field" /></li>
+						<li class="row clearfix first-of-type"><label for="name">Item Id</label><input type="text" name="contentItemId" id="contentItemId" class="field" /></li>
 						<li class="row clearfix"><label for="mimetype">Mime Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
 						<li class="row clearfix"><label for="file">File</label><input class="field" type="file" name="file" id="file" class="field"/></li>
 						</ul>
+						<input type="hidden" id="key" name="key"/>
 					</fieldset>
 				</div>
 			</form>	

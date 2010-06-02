@@ -71,7 +71,7 @@ public class ContentController
             }
         }
 
-        SpaceUtil.populateContentItem(contentItem,
+        SpaceUtil.populateContentItem("",contentItem,
                                       spaceId,
                                       contentId,
                                       store,

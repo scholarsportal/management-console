@@ -169,7 +169,7 @@ $.widget("ui.selectablelist",{
 		 this._fireCurrentItemChanged($("#"+id, this.element));
 	},
 	
-	getCurrentItem:function(){
+	currentItem:function(){
 		return this._currentItem;
 	},
 	

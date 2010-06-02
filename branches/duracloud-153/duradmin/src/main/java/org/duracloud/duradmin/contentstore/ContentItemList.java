@@ -78,7 +78,7 @@ public class ContentItemList
             ContentItem contentItem = new ContentItem();
             contentItem.setSpaceId(spaceId);
             contentItem.setContentId(result);
-            contentItem.setDownloadURL(SpaceUtil.formatDownloadURL(contentItem, contentStore, true));
+            contentItem.setDownloadURL(SpaceUtil.formatDownloadURL("",contentItem, contentStore, true));
             contentItemList.add(contentItem);
         }
         

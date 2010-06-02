@@ -32,7 +32,7 @@ public class ContentItemDataController
         String contentId = contentItem.getContentId();
         ControllerUtils.checkContentItemId(spaceId, contentId);
         ContentStore store = getContentStore();
-        SpaceUtil.populateContentItem(contentItem,
+        SpaceUtil.populateContentItem("",contentItem,
                                       spaceId,
                                       contentId,
                                       store,

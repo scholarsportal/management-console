@@ -42,44 +42,48 @@ public class SpaceUtil {
         return spaceMetadata;
     }
 
-    public static void populateContentItem(ContentItem contentItem,
+    public static void populateContentItem(String duradminBaseURL,
+    									   ContentItem contentItem,
                                            String spaceId,
                                            String contentId,
                                            ContentStore store,
                                            ServicesManager servicesManager)
             throws ContentStoreException {
+    	contentItem.setSpaceId(spaceId);
+    	contentItem.setContentId(contentId);
+    	contentItem.setStoreId(store.getStoreId());
         Map<String, String> contentMetadata =
                 store.getContentMetadata(spaceId, contentId);
         ContentMetadata metadata = populateContentMetadata(contentMetadata);
         contentItem.setMetadata(metadata);
         contentItem.setExtendedMetadata(contentMetadata);
-        populateURLs(contentItem, store, servicesManager);
+        populateURLs(duradminBaseURL,contentItem, store, servicesManager);
         
     }
 
-    private static void populateURLs(ContentItem contentItem,
+    private static void populateURLs(String duradminBaseURL,
+    								ContentItem contentItem,
                                      ContentStore store,
                                      ServicesManager servicesManager) {
         String j2KBaseURL = null;
         j2KBaseURL = resolveJ2KServiceBaseURL(servicesManager);
-    	contentItem.setTinyThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 1));
-        contentItem.setThumbnailURL(formatThumbnail(contentItem, store, j2KBaseURL, 2));
-        contentItem.setViewerURL(formatViewerURL(contentItem, store, j2KBaseURL));
-
-        contentItem.setDownloadURL(formatDownloadURL(contentItem,store,true));
+    	contentItem.setTinyThumbnailURL(formatThumbnail(duradminBaseURL, contentItem, store, j2KBaseURL, 1));
+        contentItem.setThumbnailURL(formatThumbnail(duradminBaseURL, contentItem, store, j2KBaseURL, 2));
+        contentItem.setViewerURL(formatViewerURL(duradminBaseURL, contentItem, store, j2KBaseURL));
+        contentItem.setDownloadURL(formatDownloadURL(duradminBaseURL, contentItem,store,true));
     }
 
     
 
 
 
-	private static String formatViewerURL(ContentItem contentItem, ContentStore store, String j2KBaseURL) {
+	private static String formatViewerURL(String duradminBaseURL, ContentItem contentItem, ContentStore store, String j2KBaseURL) {
          if(j2KBaseURL !=null && contentItem.getMetadata().getMimetype().startsWith("image/")){
              return MessageFormat.format("{0}/viewer.html?rft_id={1}", 
                      j2KBaseURL, 
                      EncodeUtil.urlEncode(formatDurastoreURL(contentItem,store)));
          }else{
-        	 return formatDownloadURL(contentItem,store,false);
+        	 return formatDownloadURL(duradminBaseURL, contentItem,store,false);
              
          }
     }
@@ -99,7 +103,7 @@ public class SpaceUtil {
 
 
 	private static String[] GENERIC_THUMBNAIL_PREFIXES = {"image", "video", "text", "pdf"}; 
-    private static String formatThumbnail(ContentItem contentItem, ContentStore store, String j2KBaseURL, int size) {
+    private static String formatThumbnail(String duradminBaseURL,ContentItem contentItem, ContentStore store, String j2KBaseURL, int size) {
         String mimetype = contentItem.getMetadata().getMimetype();
         if(mimetype.toLowerCase().startsWith("image/") && j2KBaseURL != null){
 	    	String pattern = "{0}/resolver?url_ver=Z39.88-2004&rft_id={1}&" + 
@@ -114,27 +118,28 @@ public class SpaceUtil {
         }else{
         	for(String gtf : GENERIC_THUMBNAIL_PREFIXES){
         		if(mimetype.startsWith(gtf)){
-        			return "/duradmin/images/generic-thumb-" + gtf + ".png";
+        			return duradminBaseURL+"/images/generic-thumb-" + gtf + ".png";
         		}
         	}
         	
-        	return "/duradmin/images/generic-thumb-other.png";
+        	return duradminBaseURL+"/images/generic-thumb-other.png";
         }
         
         
     }
 
-    private static String formatDownloadURL(String spaceId, String contentId, String storeId, boolean asAttachment) {
-       	String pattern = "/duradmin/download/contentItem?spaceId={0}&contentId={1}&storeID={2}&attachment={3}";
+    private static String formatDownloadURL(String duradminBaseURL, String spaceId, String contentId, String storeId, boolean asAttachment) {
+       	String pattern = "{0}/download/contentItem?spaceId={1}&contentId={2}&storeID={3}&attachment={4}";
         return MessageFormat.format(pattern,
+        							duradminBaseURL,
                                     spaceId,
                                     EncodeUtil.urlEncode(contentId),
                                     storeId,
                                     asAttachment);
     }
     
-    public static String formatDownloadURL(ContentItem contentItem, ContentStore store, boolean asAttachment) {
-    	return formatDownloadURL(contentItem.getSpaceId(), contentItem.getContentId(), store.getStoreId(), asAttachment);
+    public static String formatDownloadURL(String duradminBaseURL, ContentItem contentItem, ContentStore store, boolean asAttachment) {
+    	return formatDownloadURL(duradminBaseURL, contentItem.getSpaceId(), contentItem.getContentId(), store.getStoreId(), asAttachment);
      }
 
     /**

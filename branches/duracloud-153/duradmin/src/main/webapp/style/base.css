@@ -848,7 +848,6 @@ span.label
     list-style-type:none;
     padding:0;
     text-decoration:none;
-    z-index:1000;
     -moz-border-radius:3px;
 }
 
@@ -861,6 +860,7 @@ body > #ui-toaster-bl,
 body > #ui-toaster-br { 
     position:fixed; 
     *absolute;
+    z-index:1000;
 }
 
 #ui-toaster-tl { top:    0px; left:  400px; } /* Top Left */

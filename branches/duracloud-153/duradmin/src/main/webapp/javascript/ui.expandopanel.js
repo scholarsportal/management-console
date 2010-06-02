@@ -16,6 +16,7 @@ $.widget("ui.expandopanel",{
 	 * Default values go here
 	 */
 	options: {
+			open: true,
 			togglerClass: "dc-toggler",
 			togglerClassClose: "dc-toggler-close",
 			title: null,
@@ -58,6 +59,7 @@ $.widget("ui.expandopanel",{
 		header.addClass(options.headerClass);
 		header.addClass(options.clearfix);
 		
+		
 		//add toggle to the header 
 		header.click(function(evt){
 			toggler.toggleClass(options.togglerClassClose);
@@ -67,6 +69,10 @@ $.widget("ui.expandopanel",{
 		//style the content 
 		content.addClass(options.contentClass);
 		content.addClass(options.clearfix);
+
+		if(!options.open){
+			content.css("display", "none");
+		}
 
 	},
 	

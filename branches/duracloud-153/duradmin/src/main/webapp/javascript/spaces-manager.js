@@ -25,7 +25,7 @@ var dc;
 	 * @option String prefix - a filters the results to show only those matching the prefix
 	 */
 
-	 dc.store.GetSpace = function(spaceId,callback,options){
+	 dc.store.GetSpace = function(storeProviderId,spaceId,callback,options){
 		 
 		if(options == undefined){
 			options = {};
@@ -40,7 +40,8 @@ var dc;
 			if(options.prefix != undefined){
 				prefix = options.prefix;
 			}
-
+		
+		/*
 		var contentItems = new Array();
 		
 		for(var i = 0; i < 100; i++){
@@ -51,9 +52,9 @@ var dc;
 			
 
 		}
+		*/
 		
-		dc.showLoading();
-
+		/*
 		callback.success({
 						spaceId: spaceId,
 						access: 'OPEN',
@@ -71,9 +72,23 @@ var dc;
 						                   {name: "name4", value: "value4"},
 						                   ],						
 					  });
+		*/
+		if(callback.begin != undefined){
+			callback.begin();
+		}
 		
-		//dc.hideLoading();
-		//t.toaster("close");
+		$.ajax({ url: "/duradmin/spaces", 
+			data: "storeId="+storeProviderId+"&spaceId="+spaceId+"&prefix="+(prefix==null?'':prefix)+"&f=json",
+			cache: false,
+			context: document.body, 
+			success: function(data){
+				callback.success(data.space);
+			},
+		    error: function(xhr, textStatus, errorThrown){
+		    	alert("get spaces failed: " + textStatus);
+		    },
+		});		
+		
 	};
 
 	/**
@@ -84,18 +99,30 @@ var dc;
 	 * @option Function failure(info) a handler that returns failure info 
 	 */
 	dc.store.GetSpaces = function(storeProviderId, callback){
-		var spaces = new Array(50);
-		for(var i = 0; i < spaces.length; i++){
-			spaces[i] = {spaceId:"Space-" + i + "-from-provider"+storeProviderId};
+		if(callback.begin != undefined){
+			callback.begin();
 		}
-		callback.success(spaces);
+
+		$.ajax({ url: "/duradmin/spaces", 
+				data: "storeId="+storeProviderId+"&f=json",
+				cache: false,
+				context: document.body, 
+				success: function(data){
+					callback.success(data.spaces);
+			    },
+			    error: function(xhr, textStatus, errorThrown){
+			    	alert("get spaces failed: " + textStatus);
+			    },
+		});
+		
 	};
 	
 	
 	/**
 	 * returns contentItem details
 	 */
-	dc.store.GetContentItem = function(contentItemId, spaceId, callback){
+	dc.store.GetContentItem = function(storeProviderId, spaceId, contentItemId, callback){
+		/*
 		var contentItem = {
 				contentId: contentItemId, 
 				spaceId:   spaceId, 
@@ -116,8 +143,101 @@ var dc;
 				                   ],
 			};
 		callback.success(contentItem);
+		*/
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+
+		$.ajax({ url: "/duradmin/spaces/content", 
+				data: "storeId="+storeProviderId+"&spaceId="+spaceId+"&contentId="+contentItemId,
+				cache: false,
+				context: document.body, 
+				success: function(data){
+					callback.success(data.contentItem);
+			    },
+			    error: function(xhr, textStatus, errorThrown){
+			    	alert("get contentItem failed: " + textStatus);
+			    },
+		});
+
 	};
 	
+	
+	dc.store.AddContentItem = function(storeId,spaceId, form, future){
+		var addContentItemUrl = "";
+		
+		var key = new Date().valueOf();
+		var t = $("<div><p id='"+key+"'>Sending</p></div>")
+			.toaster({
+			sticky: true,
+			position:'br',
+			show: $.fn.slideIn,
+			closable: false,
+		});
+		
+
+		var filename = $("#file", form).val();
+		var contentItemId = $("#contentItemId").val();
+		
+		$("#key", form).val(key);
+		var count = 0;
+		var success =  function(){
+			$('#'+key).html(filename+ " upload complete.")
+					   .append($.fn.create("a")
+							   .html("View")
+							   .attr("href", "javascript:void(0)")
+							   .click(function(evt){
+									setTimeout(function(){
+										t.toaster("close");
+									},2*1000);
+
+								   future.view();
+							   }));
+			
+			
+			setTimeout(function(){
+				t.toaster("close");
+			},60*1000);
+
+ 		};
+ 		/*
+		 $.ajax({
+	            type: "POST", // get type of request from 'method'
+	            url: addContentItemUrl, // get url of request from 'action'
+	            data: $(form).serialize(), // serialize the form's data
+				success: success,
+	        });
+		*/
+		var checkProgressURL = "url";
+
+		var callback = {
+				update: function(data){
+					$('#'+key).html(filename+ ": " + data.bytesSoFar/1024 + " of " + data.totalBytes/1024 + " KB uploaded");
+				},
+				
+				failure: function(){
+					alert("upload failed!");
+				},
+				
+				success: success
+		};
+		
+		dc.checkProgress(checkProgressURL, key, callback);
+		
+	};
+	
+	/**
+	 * checks if the content item already exists
+	 * @param spaceId
+	 * @param contentId
+	 * @param storeId 
+	 * 
+	 */
+	dc.store.checkIfContentItemExists = function(spaceId,contentId, storeId, callback){
+		alert("implement check if content item exists!");
+		callback.success(true);
+	};
+		
 })();
 
 
@@ -125,7 +245,6 @@ var dc;
  * 
  */
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
-
 
 
 $(document).ready(function() {
@@ -363,10 +482,11 @@ $(document).ready(function() {
 					"Only lowercase letters, numbers, periods, and dashes may be used in a Space ID");
 			$.validator.addMethod("notip", function(value,element){return !(/^[0-9]+.[0-9]+.[0-9]+.[0-9]+$/.test(value));}, 
 					"A Space ID must not be formatted as an IP address");
-			$.validator.addMethod("misc", function(value,element){return !(/^.*([.][.-]|[-][.]).*$/.test(value));}, 
+			$.validator.addMethod("misc", function(value,element){return !(/^.*([.][-]|[-][.]|[.][.]).*$/.test(value));}, 
 					"A Space ID must not contain '..' '-.' or '.-'");
 
-			
+			$("#add-space-form").resetForm();
+
 			
 		}
 		
@@ -380,6 +500,20 @@ $(document).ready(function() {
 			}
 		);
 	
+	
+
+
+	var getCurrentSpaceId = function(){
+		var currentItem = $("#spaces-list").selectablelist("currentItem");
+		var spaceId = currentItem.data.spaceId;
+		return spaceId;
+	};
+
+	var getCurrentProviderStoreId = function(){
+		var provider = $("#provider-select-box").flyoutselect("value");
+		return provider.id;
+	};
+
 
 	$('#add-content-item-dialog').dialog({
 		autoOpen: false,
@@ -392,8 +526,43 @@ $(document).ready(function() {
 		width:500,
 		buttons: {
 			'Add': function() {
-				alert("implement add functionality");
-				$(this).dialog("close");
+				var that = this;
+				if($("#add-content-item-form").valid()){
+					var form = $("#add-content-item-form");
+
+					var contentId = $("#contentItemId", form).val();
+					var spaceId	  =	getCurrentSpaceId();
+					var storeId	  =	getCurrentProviderStoreId();
+
+					dc.store.checkIfContentItemExists(
+							spaceId, contentId, storeId, 
+							{ 
+								success: function(exists){
+									if(exists){
+										if(!confirm("A content ID with this name already exists. Overwrite?")){
+											return;
+										}
+									}
+									
+									$(that).dialog("close");
+									var callback = {
+										success: function(){},
+										view: function(){
+											dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,contentId,{
+												success: loadContentItem
+											});
+
+										},
+									};
+									dc.store.AddContentItem(storeId,spaceId,form, callback);
+								},
+								
+								failure: function(){
+									
+								}
+							});
+					
+				}
 			},
 			Cancel: function() {
 				$(this).dialog('close');
@@ -403,6 +572,32 @@ $(document).ready(function() {
 
 		},
 		  open: function(e){
+			var overwrite = false;
+			var that = this;
+			$("#add-content-item-form").validate({
+				rules: {
+					contentItemId: {
+						required:true,
+						minlength: 1,
+						illegalchars: true,
+					},
+					
+					file: {
+						required:true,
+					}
+					
+				},
+				messages: {
+						
+				}
+			});
+			
+			$.validator
+				.addMethod("illegalchars", function(value, element) { 
+				  return  /^[^\\?]*$/.test(value); 
+				}, "A Content ID cannot contain  '?' or '\\'");
+			
+			$("#add-content-item-form").resetForm();
 		}
 	});
 	
@@ -462,7 +657,6 @@ $(document).ready(function() {
 	 */
 	var loadSpace = function(space){
 		var detail = $("#spaceDetailPane").clone();
-		var contentItems = space.contentItems;
 		setObjectName(detail, space.spaceId);
 		
 		//attach delete button listener
@@ -473,7 +667,7 @@ $(document).ready(function() {
 				},
 				
 				failure: function(message){
-					//do failure messaging here
+					alert("failed to delete space!");
 				},
 			});
 		});
@@ -482,7 +676,7 @@ $(document).ready(function() {
 		
 		//create access switch and bind on/off listeners
 		$(".access-switch", detail).accessswitch({
-				initialState: (space.access=="OPEN"?"on":"off")
+				initialState: (space.metadata.access=="OPEN"?"on":"off")
 			}).bind("turnOn", function(evt, future){
 				toggleSpaceAccess(space, future);
 			}).bind("turnOff", function(evt, future){
@@ -512,7 +706,7 @@ $(document).ready(function() {
 
 		$("#detail-pane").replaceContents(detail, spaceDetailLayoutOptions);
 
-		loadContentItems(contentItems);
+		loadContentItems(space.contents);
 		
 	};
 
@@ -568,23 +762,39 @@ $(document).ready(function() {
 		$("#detail-pane").replaceContents(pane,contentItemDetailLayoutOptions);
 	};
 
-
+	var contentItemListStatusId = "#content-item-list-status";
 	
-	$("#content-item-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(250, false, function(evt){
-		var currentItem = $("#spaces-list").selectablelist("getCurrentItem");
-		var spaceId = currentItem.data.spaceId;
+	var getSpace = function(spaceId, loadHandler){
+		clearContents();
+		$("#detail-pane").fadeOut("slow");
+		var prefix = $("#content-item-filter").val();
+		if(prefix == DEFAULT_FILTER_TEXT){
+			prefix = null;
+		}
+		
 		dc.store.GetSpace(
+				getCurrentProviderStoreId(),
 				spaceId, 
 				{
+					begin: function(){
+						$(contentItemListStatusId).html("Loading...").fadeIn("slow");
+					},
 					success: function(space){
-						loadContentItems(space.contentItems);
+						loadHandler(space);
+						$(contentItemListStatusId).fadeOut("fast");
 					}, 
 					failure:function(info){
-						alert("onkeyup failure not handled: " + info);
+						alert("Get Space failed: " + info);
 					},
-			
 				},
-				{prefix: evt.target.value});
+				{
+					prefix: prefix,
+				});
+	};
+	
+	$("#content-item-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(500, function(evt){
+		var spaceId = getCurrentSpaceId();
+		getSpace(spaceId, function(space){loadContentItems(space.contents)});
 	}));
 
 	var loadContentItems = function(contentItems){
@@ -621,16 +831,18 @@ $(document).ready(function() {
 
 	$("#content-item-list").selectablelist({});
 	$("#spaces-list").selectablelist({});
-	
+
+	var DEFAULT_FILTER_TEXT = "filter";
+
 	$(".dc-item-list-filter").focus(function(){
-		if($(this).val() == "filter"){
+		if($(this).val() == DEFAULT_FILTER_TEXT){
 			$(this).val('');
 		};
 	}).blur(function(){
 		if($(this).val() == ""){
-			$(this).val('filter');
+			$(this).val(DEFAULT_FILTER_TEXT);
 		};
-	});
+	}).val(DEFAULT_FILTER_TEXT);
 	
 	///////////////////////////////////////////
 	///click on a space list item
@@ -638,9 +850,7 @@ $(document).ready(function() {
 	$("#spaces-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
 			if(state.item !=null && state.item != undefined){
-				dc.store.GetSpace($(state.item).attr("id"),{
-					success: loadSpace
-				});
+				getSpace($(state.item).attr("id"), loadSpace);
 			}else{
 				showGenericDetailPane();
 			}
@@ -653,9 +863,7 @@ $(document).ready(function() {
 		if(state.selectedItems.length == 0){
 			showGenericDetailPane();
 		}else if(state.selectedItems.length == 1){
-			dc.store.GetSpace($(state.item).attr("id"),{
-				success: loadSpace
-			});
+			getSpace($(state.item).attr("id"),loadSpace);
 		}else{
 			showMultiSpaceDetail();
 		}
@@ -672,8 +880,8 @@ $(document).ready(function() {
 			/**
 			 * @FIXME 
 			 */
-			var spaceId = "XXXXXX";
-			dc.store.GetContentItem($(state.item).attr("id"),spaceId,{
+			var spaceId = getCurrentSpaceId();
+			dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"),{
 				success: loadContentItem
 			});
 		}else{
@@ -691,7 +899,7 @@ $(document).ready(function() {
 			/**
 			 * @FIXME 
 			 */
-			dc.store.GetContentItem($(state.item).attr("id"),spaceId,{
+			dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"),{
 				success: loadContentItem
 			});
 		}else{
@@ -702,12 +910,15 @@ $(document).ready(function() {
 	///////////////////////////////////////////
 	///click on a space list item
 	var spacesArray = new Array();
-	var spacesIdArray = new Array();
 
 	
-	$("#spaces-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(250, false, function(evt){
+	$("#spaces-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(500,function(evt){
 			loadSpaces(spacesArray, evt.target.value);
 	}));
+
+	var clearContents = function(){
+		$("#content-item-list").selectablelist("clear");
+	};
 
 	var loadSpaces = function(spaces,filter) {
 		$("#spaces-list").selectablelist("clear");
@@ -715,13 +926,14 @@ $(document).ready(function() {
 		var firstMatchFound = false;
 		for(s in spaces){
 			var space = spaces[s];
-			if(filter === undefined || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
+			if(filter === undefined || filter == DEFAULT_FILTER_TEXT || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
 				var node =  $.fn.create("div");
 				var actions = $.fn.create("div");
 				actions.append("<button class='delete-space-button'>-</button>");
 				node.attr("id", space.spaceId)
 					   .html(space.spaceId)
-					   .append(actions);
+					   .append(actions)
+					   ;
 				
 				$("#spaces-list").selectablelist('addItem',node,space);	   
 				if(!firstMatchFound){
@@ -746,19 +958,27 @@ $(document).ready(function() {
 
 	
 	var refreshSpaces = function(providerId){
+		clearContents();
 		dc.store.GetSpaces(providerId,{
+			begin: function(){
+				$("#space-list-status").html("Loading...").fadeIn("slow");
+			},
 			success: function(spaces){
-				spacesArray = spaces;
-				spacesIdArray = new Array();
-				for(s in spacesArray){
-					spacesIdArray[s] = spacesArray[s].spaceId;
+				spacesArray = new Array();
+				for(s in spaces){
+					spacesArray[s] = {spaceId: spaces[s]};
 				}
 				//clear filters
-				$(".dc-item-list-filter").val('');
-				
+				$(".dc-item-list-filter").val(DEFAULT_FILTER_TEXT);
 				loadSpaces(spacesArray);
-	
+				$("#space-list-status").fadeOut("fast");
+
+			},
+			failure: function(xhr, message){
+				alert("error:" + message);
+				$("#space-list-status").fadeOut("fast");
 			}
+			
 		});
 	};
 
@@ -769,15 +989,12 @@ $(document).ready(function() {
 		///
 		var PROVIDER_COOKIE_ID = "providerId";
 		var options = {
-			data: [
- 			       {id:"1", label:"Amazon S3"},
-			       {id:"2", label:"Rackspace"},
-			       {id:"3", label:"EMC with a very long name"}],
+			data: storeProviders, //this variable is defined in a script in the head of spaces-manager.jsp
 			selectedIndex: 0
 		};
 
 		var currentProviderId = options.data[options.selectedIndex].id;
-		var cookie = $.cookie(PROVIDER_COOKIE_ID);
+		var cookie = $.fn.cookie(PROVIDER_COOKIE_ID);
 		
 		if(cookie != undefined){
 			for(i in options.data)
@@ -792,7 +1009,7 @@ $(document).ready(function() {
 		}
 
 		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
-			$.cookie(PROVIDER_COOKIE_ID, state.value.id);
+			$.fn.cookie(PROVIDER_COOKIE_ID, state.value.id);
 			console.debug("value changed: new value=" + state.value.label);
 			refreshSpaces(state.value.id);
 		});		

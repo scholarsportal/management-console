@@ -18,7 +18,6 @@
 
 	<!-- 3rd party jquery plugins start-->
 	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
-	<script type="text/javascript" src="http://github.com/cowboy/jquery-throttle-debounce/raw/master/jquery.ba-throttle-debounce.js"></script>
 
 	<!-- 3rd party jquery plugins end-->
 

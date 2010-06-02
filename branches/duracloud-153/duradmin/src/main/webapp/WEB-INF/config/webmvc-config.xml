@@ -45,6 +45,8 @@
         <prop key="/security">initSecurityUsersController</prop>
         <prop key="/users.htm">manageSecurityUsersController</prop>
         <prop key="/spaces">spacesController2</prop>
+        <prop key="/spaces/content">contentItemController</prop>
+
         <prop key="/services">servicesController2</prop>
  		<prop key="/dashboard">dashboardController</prop>
       </props>
@@ -63,7 +65,13 @@
   </bean>
 
   <bean id="spacesController2" class="org.duracloud.duradmin.spaces.controller.SpacesController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
   </bean>
+  <bean id="contentItemController" class="org.duracloud.duradmin.spaces.controller.ContentItemController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="servicesManager" ref="servicesManager"/>
+  </bean>
+
 
   <bean id="servicesController2" class="org.duracloud.duradmin.services.controller.ServicesController">
   </bean>
