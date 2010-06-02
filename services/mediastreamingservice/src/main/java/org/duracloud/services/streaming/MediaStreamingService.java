@@ -6,6 +6,7 @@ import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.util.MimetypeUtil;
+import org.duracloud.common.util.SerializationUtil;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
@@ -56,6 +57,7 @@ public class MediaStreamingService extends BaseService implements ComputeService
     private ContentStore contentStore;
 
     private String streamHost;
+    private String enableStreamingResult;
 
     @Override
     public void start() throws Exception {
@@ -71,11 +73,15 @@ public class MediaStreamingService extends BaseService implements ComputeService
 
         File workDir = new File(getServiceWorkDir());
         workDir.setWritable(true);
-
-        // Create/enable distribution
-        streamHost =
+       
+        // Create/enable distribution        
+        String enableStreamingResponse =
             contentStore.performTask(ENABLE_STREAMING_TASK, mediaSourceSpaceId);
-        
+        Map<String, String> responseMap =
+            SerializationUtil.deserializeMap(enableStreamingResponse);
+        streamHost = responseMap.get("domain-name");
+        enableStreamingResult = responseMap.get("results");
+
         // Create playlist in work dir
         PlaylistCreator creator = new PlaylistCreator();
         String playlistXml =
@@ -194,11 +200,9 @@ public class MediaStreamingService extends BaseService implements ComputeService
         // Add stream host
         props.put("streamHost", streamHost);
 
-        String streamingStatus;
-        try {
-            streamingStatus = contentStore.getTaskStatus(ENABLE_STREAMING_TASK);
-        } catch(ContentStoreException e) {
-            streamingStatus = "unknown";
+        String streamingStatus = enableStreamingResult;
+        if(streamingStatus == null) {
+            streamingStatus = "Enabling Streaming...";
         }
 
         props.put("streamingStatus", streamingStatus);

@@ -21,8 +21,4 @@ public class NoopTaskRunner implements TaskRunner {
         return "Success";
     }
 
-    public String getStatus() {
-        return "Success";
-    }
-
 }

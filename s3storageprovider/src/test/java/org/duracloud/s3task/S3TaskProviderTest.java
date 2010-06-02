@@ -30,11 +30,6 @@ public class S3TaskProviderTest extends S3ProviderTestBase {
         List<String> supportedTasks = taskProvider.getSupportedTasks();
         assertNotNull(supportedTasks);
 
-        for(String taskName : supportedTasks) {
-            String result = taskProvider.getTaskStatus(taskName);
-            assertNotNull(result);
-        }
-
         String noopResult = taskProvider.performTask("noop", "");
         assertNotNull(noopResult);
 

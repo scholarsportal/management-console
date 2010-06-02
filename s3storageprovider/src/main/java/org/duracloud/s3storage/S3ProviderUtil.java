@@ -2,6 +2,8 @@ package org.duracloud.s3storage;
 
 import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.RETRY;
+import org.jets3t.service.CloudFrontService;
+import org.jets3t.service.CloudFrontServiceException;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
@@ -18,8 +20,20 @@ public class S3ProviderUtil {
         try {
             return new RestS3Service(awsCredentials);
         } catch (S3ServiceException e) {
-            String err = "Could not create connection to S3 due to error: "
-                    + e.getMessage();
+            String err = "Could not create connection to Amazon S3 due " +
+                         "to error: " + e.getMessage();
+            throw new StorageException(err, e, RETRY);
+        }
+    }
+
+    public static CloudFrontService getCloudFrontService(String accessKey,
+                                                         String secretKey) {
+        AWSCredentials awsCredentials = new AWSCredentials(accessKey, secretKey);
+        try {
+            return new CloudFrontService(awsCredentials);
+        } catch (CloudFrontServiceException e) {
+            String err = "Could not create connection to Amazon CloudFront " +
+                         "due to error: " + e.getMessage();
             throw new StorageException(err, e, RETRY);
         }
     }

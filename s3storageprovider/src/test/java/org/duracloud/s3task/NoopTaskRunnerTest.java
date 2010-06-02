@@ -19,8 +19,5 @@ public class NoopTaskRunnerTest {
 
         String response = noop.performTask("");
         assertNotNull(response);
-
-        response = noop.getStatus();
-        assertNotNull(response);
     }
 }

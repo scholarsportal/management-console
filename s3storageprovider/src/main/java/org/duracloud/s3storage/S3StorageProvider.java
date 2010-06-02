@@ -706,7 +706,10 @@ public class S3StorageProvider extends StorageProviderBase {
         return contentMetadata;
     }
 
-    protected String getBucketName(String spaceId) {
+    /**
+     * Converts a DuraCloud spaceId into its corresponding Amazon S3 bucket name
+     */
+    public String getBucketName(String spaceId) {
         return S3ProviderUtil.getBucketName(accessKeyId, spaceId);
     }
 

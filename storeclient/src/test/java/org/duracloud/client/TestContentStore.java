@@ -621,8 +621,6 @@ public class TestContentStore {
 
         String response = store.performTask(taskName, taskParams);
         assertNotNull(response);
-        response = store.getTaskStatus(taskName);
-        assertNotNull(response);
 
         // Invalid tasks
         taskName = "invalid-task";
@@ -630,12 +628,6 @@ public class TestContentStore {
 
         try {            
             store.performTask(taskName, taskParams);
-        } catch(UnsupportedTaskException expected) {
-            assertNotNull(expected);
-        }
-
-        try {
-            store.getTaskStatus(taskName);
         } catch(UnsupportedTaskException expected) {
             assertNotNull(expected);
         }

@@ -315,15 +315,4 @@ public interface ContentStore {
     public String performTask(String taskName, String taskParameters)
         throws ContentStoreException;
 
-    /**
-     * For task which are long-running, this method is used to query the status
-     * of the activites being performed. This method is used after a call to
-     * performTask() using the same task name.
-     *
-     * @param taskName the name of the task which is in process
-     * @return the status of the task
-     */
-    public String getTaskStatus(String taskName)
-        throws ContentStoreException;
-
 }
