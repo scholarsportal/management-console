@@ -10,25 +10,24 @@ import org.duracloud.services.streaming.MediaStreamingService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
 
 /**
  * Performs a test of the Media Streaming Service from within an OSGi
- * container. This test requires that a DuraStore application be available
- * on localhost:8080.
+ * container. Note that this test only ensures that the service can be
+ * deployed into the container properly, it does not actually test the
+ * setting up of a streaming distribution, as it can take up to 15 min
+ * before streaming is actually available, and can take up to 24 hours
+ * before streaming is disabled.
  *
  * @author Bill Branan
- *         Date: May 13, 2010
+ *         Date: June 4, 2010
  */
 public class MediaStreamingServiceTester {
 
     private MediaStreamingService service;
     private String workDir;
-
-    // This needs to be set (and should not be included in commit) in order
-    // for this test to pass. This is available for testing in lieu of
-    // including the unit-test-db project in the OSGi container. 
-    private String rootPassword = "";
 
     public MediaStreamingServiceTester(MediaStreamingService service)
         throws IOException {
@@ -47,41 +46,8 @@ public class MediaStreamingServiceTester {
     }
 
     public void testStartStopCycle() throws Exception {
-        // Set Up
-        String random = getRandom();
-        String sourceSpaceId = "media-source-" + random;
-        String viewerSpaceId = "media-viewer-" + random;
-        service.setMediaSourceSpaceId(sourceSpaceId);
-        service.setMediaViewerSpaceId(viewerSpaceId);
-        service.setUsername("root");
-        service.setPassword(rootPassword);
-
-        ContentStore contentStore = getContentStore();
-
-        // TODO: Test
-        
-//        } finally {
-//            // Clean up
-//            try {
-//                contentStore.deleteSpace(sourceSpaceId);
-//                contentStore.deleteSpace(destSpaceId);
-//            } catch(ContentStoreException e) {
-//                // Ignore
-//            }
-//        }
-    }
-
-    private ContentStore getContentStore() throws Exception {
-        ContentStoreManager storeManager =
-            new ContentStoreManagerImpl(service.getDuraStoreHost(),
-                                        service.getDuraStorePort(),
-                                        service.getDuraStoreContext());
-        storeManager.login(new Credential("root", rootPassword));
-        return storeManager.getPrimaryContentStore();
-    }
-
-    private String getRandom() {
-        return String.valueOf(new Random().nextInt(99999));
+        Map<String, String> props = service.getServiceProps();
+        assertNotNull(props);
     }
 
 }

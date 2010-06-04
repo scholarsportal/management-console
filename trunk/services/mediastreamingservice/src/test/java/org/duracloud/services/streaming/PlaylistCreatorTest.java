@@ -1,6 +1,5 @@
 package org.duracloud.services.streaming;
 
-import static junit.framework.Assert.assertTrue;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 import org.easymock.EasyMock;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author: Bill Branan
@@ -47,13 +48,13 @@ public class PlaylistCreatorTest {
         EasyMock
             .expect(contentStore.getSpaceContents(EasyMock.isA(String.class)))
             .andReturn(files.iterator())
-            .anyTimes();
+            .times(1);
 
         EasyMock
             .expect(contentStore.getContentMetadata(EasyMock.isA(String.class),
                                                     EasyMock.isA(String.class)))
             .andReturn(metadata)
-            .anyTimes();
+            .times(3);
 
         EasyMock.replay(contentStore);
         return contentStore;

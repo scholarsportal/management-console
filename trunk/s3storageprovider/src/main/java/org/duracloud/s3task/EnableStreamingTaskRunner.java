@@ -1,9 +1,8 @@
 package org.duracloud.s3task;
 
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.common.util.SerializationUtil;
-import org.duracloud.s3storage.S3ProviderUtil;
 import org.duracloud.s3storage.S3StorageProvider;
-import org.duracloud.storage.provider.TaskRunner;
 import org.jets3t.service.CloudFrontService;
 import org.jets3t.service.CloudFrontServiceException;
 import org.jets3t.service.S3Service;
@@ -12,9 +11,12 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.CanonicalGrantee;
 import org.jets3t.service.acl.GrantAndPermission;
 import org.jets3t.service.acl.Permission;
+import org.jets3t.service.model.cloudfront.DistributionConfig;
 import org.jets3t.service.model.cloudfront.OriginAccessIdentity;
 import org.jets3t.service.model.cloudfront.StreamingDistribution;
 import org.jets3t.service.model.cloudfront.StreamingDistributionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import java.util.Set;
  * Date: May 21, 2010
  */
 public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());    
 
     private static final String TASK_NAME = "enable-streaming";
 
@@ -45,7 +49,9 @@ public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
 
     // Enable streaming
     public String performTask(String taskParameters) {
-        String spaceId = taskParameters;
+        String spaceId = getSpaceId(taskParameters);       
+        log.info("Performing " + TASK_NAME + " task on space " + spaceId);
+
         String bucketName = s3Provider.getBucketName(spaceId);
 
         String domainName = null;
@@ -62,6 +68,10 @@ public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
 
                 oaIdentityId = getDistributionOriginAccessId(distId);
                 if(oaIdentityId != null) {
+                    // Currently, a disabled distribution will not return a
+                    // valid oaIdentity, so getting to this point indicates that
+                    // the distirbution is enabled. The call to enable is being
+                    // left here just in case this changes. 
                     if(!existingDist.isEnabled()) {
                         // Enable the existing distribution
                         cfService.updateStreamingDistributionConfig(distId,
@@ -95,17 +105,21 @@ public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
             String aclResults =
                 setContentAccessIdentity(spaceId, bucketName, oaIdentityId);
 
-            results = "Enable Streaming Task completed successfully, " +
+            results = "Enable Streaming Task completed, " +
                       "results: " + aclResults;
         } catch(CloudFrontServiceException e) {
-            results = "Enable Streaming Task failed due to " + e.getMessage();
+            log.warn("Error encountered running " + TASK_NAME + " task: " +
+                     e.getMessage(), e);
+            results = "Enable Streaming Task failed due to: " + e.getMessage();
         }
 
         // Return results
         Map<String, String> returnInfo = new HashMap<String, String>();
         returnInfo.put("domain-name", domainName);
         returnInfo.put("results", results);
-        return SerializationUtil.serializeMap(returnInfo);
+        String toReturn = SerializationUtil.serializeMap(returnInfo);
+        log.debug("Result of " + TASK_NAME + " task: " + toReturn);
+        return toReturn;
     }
 
     /*
@@ -158,9 +172,13 @@ public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
      * @return results of the ACL setting activity
      */
     private String setContentAccessIdentity(String spaceId,
-                                          String bucketName,
-                                          String oaIdentityId)
+                                            String bucketName,
+                                            String oaIdentityId)
         throws CloudFrontServiceException {
+        // Clean up the origin access id if necessary
+        oaIdentityId = StringUtils.removeStart(oaIdentityId,
+            DistributionConfig.ORIGIN_ACCESS_IDENTITY_PREFIX);
+
         // Get the origin access identity to use
         OriginAccessIdentity oaIdentity =
             cfService.getOriginAccessIdentity(oaIdentityId);
@@ -171,7 +189,7 @@ public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
         Iterator<String> contentIds =
             s3Provider.getSpaceContents(spaceId, null);
 
-        // Attempt to set an new ACL permission allowing read for origin
+        // Attempt to set a new ACL permission allowing read for origin
         // access identity to each content item
         int successfulSet = 0;
         List<String> failedSet = new ArrayList<String>();

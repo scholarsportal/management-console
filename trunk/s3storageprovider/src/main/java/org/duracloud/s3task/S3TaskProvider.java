@@ -7,6 +7,8 @@ import org.duracloud.storage.provider.TaskProvider;
 import org.duracloud.storage.provider.TaskRunner;
 import org.jets3t.service.CloudFrontService;
 import org.jets3t.service.S3Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
  * Date: May 20, 2010
  */
 public class S3TaskProvider implements TaskProvider {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private List<TaskRunner> taskList = new ArrayList<TaskRunner>();
 
@@ -36,9 +40,14 @@ public class S3TaskProvider implements TaskProvider {
         taskList.add(new DisableStreamingTaskRunner(s3Provider,
                                                     s3Service,
                                                     cfService));
+        taskList.add(new DeleteStreamingTaskRunner(s3Provider,
+                                                   s3Service,
+                                                   cfService));        
     }
 
     public List<String> getSupportedTasks() {
+        log.debug("getSupportedTasks()");
+
         List<String> supportedTasks = new ArrayList<String>();
         for(TaskRunner runner : taskList) {
             supportedTasks.add(runner.getName());
@@ -47,6 +56,8 @@ public class S3TaskProvider implements TaskProvider {
     }
 
     public String performTask(String taskName, String taskParameters) {
+        log.debug("performTask(" + taskName + ", " + taskParameters + ")");
+
         for(TaskRunner runner : taskList) {
             if(runner.getName().equals(taskName)) {
                 return runner.performTask(taskParameters);

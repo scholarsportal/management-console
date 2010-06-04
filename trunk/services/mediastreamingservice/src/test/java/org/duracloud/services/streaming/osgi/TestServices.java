@@ -21,7 +21,7 @@ import java.io.File;
  * @author Bill Branan
  *         Date: May 13, 2010
  */
-public class NotRunTestServices extends AbstractDuracloudOSGiTestBasePax {
+public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
