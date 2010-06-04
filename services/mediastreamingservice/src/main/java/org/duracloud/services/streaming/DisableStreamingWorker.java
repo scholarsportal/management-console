@@ -1,0 +1,53 @@
+package org.duracloud.services.streaming;
+
+import org.duracloud.client.ContentStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+/**
+ * @author: Bill Branan
+ * Date: Jun 3, 2010
+ */
+public class DisableStreamingWorker implements Runnable {
+
+    private static final String DISABLE_STREAMING_TASK = "disable-streaming";    
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private ContentStore contentStore;
+    private String mediaSourceSpaceId;
+
+    public DisableStreamingWorker(ContentStore contentStore,
+                                  String mediaSourceSpaceId) {
+        this.contentStore = contentStore;
+        this.mediaSourceSpaceId = mediaSourceSpaceId;
+    }
+
+    @Override
+    public void run() {
+        try {
+            // Disable distribution
+            String results =
+                contentStore.performTask(DISABLE_STREAMING_TASK,
+                                         mediaSourceSpaceId);
+            log("Results of performing " + DISABLE_STREAMING_TASK + " task: " +
+                results);
+        } catch(Exception e) {
+            log("Error encountered performing " + DISABLE_STREAMING_TASK +
+                " task: " + e.getMessage(), e);
+        }
+    }
+
+    private void log(String logMsg) {
+        log.info(logMsg);
+        System.out.println(logMsg);
+    }
+
+    private void log(String logMsg, Exception e) {
+        log.error(logMsg, e);
+        System.err.println(logMsg);
+        e.printStackTrace(System.err);
+    }
+}

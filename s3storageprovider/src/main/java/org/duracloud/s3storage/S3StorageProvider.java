@@ -1,7 +1,5 @@
 package org.duracloud.s3storage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.NotFoundException;
@@ -18,6 +16,8 @@ import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -37,7 +37,7 @@ import java.util.TimeZone;
  */
 public class S3StorageProvider extends StorageProviderBase {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private String accessKeyId = null;
     private S3Service s3Service = null;
@@ -205,7 +205,7 @@ public class S3StorageProvider extends StorageProviderBase {
                           " to be available, loop " + loops);
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                log.warn(e);
+                log.warn(e.getMessage(), e);
             }
         }
     }

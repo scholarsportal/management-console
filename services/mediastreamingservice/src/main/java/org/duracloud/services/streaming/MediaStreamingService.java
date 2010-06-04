@@ -4,10 +4,6 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStoreManagerImpl;
 import org.duracloud.common.model.Credential;
-import org.duracloud.common.util.IOUtil;
-import org.duracloud.common.util.MimetypeUtil;
-import org.duracloud.common.util.SerializationUtil;
-import org.duracloud.error.ContentStoreException;
 import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
@@ -16,15 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +21,8 @@ import java.util.Map;
  * @author Bill Branan
  *         Date: May 12, 2010
  */
-public class MediaStreamingService extends BaseService implements ComputeService, ManagedService {
+public class MediaStreamingService extends BaseService implements ComputeService,
+                                                                  ManagedService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -42,9 +31,6 @@ public class MediaStreamingService extends BaseService implements ComputeService
     private static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
     private static final String DEFAULT_MEDIA_SOURCE_SPACE_ID = "media-source";
     private static final String DEFAULT_MEDIA_VIEWER_SPACE_ID = "media-viewer";
-
-    private static final String ENABLE_STREAMING_TASK = "enable-streaming";
-    private static final String DISABLE_STREAMING_TASK = "disable-streaming";    
 
     private String duraStoreHost;
     private String duraStorePort;
@@ -55,9 +41,7 @@ public class MediaStreamingService extends BaseService implements ComputeService
     private String mediaSourceSpaceId;
 
     private ContentStore contentStore;
-
-    private String streamHost;
-    private String enableStreamingResult;
+    private EnableStreamingWorker worker;
 
     @Override
     public void start() throws Exception {
@@ -71,124 +55,33 @@ public class MediaStreamingService extends BaseService implements ComputeService
         storeManager.login(new Credential(username, password));
         contentStore = storeManager.getPrimaryContentStore();
 
+        PlaylistCreator playlistCreator = new PlaylistCreator();
+
         File workDir = new File(getServiceWorkDir());
         workDir.setWritable(true);
        
-        // Create/enable distribution        
-        String enableStreamingResponse =
-            contentStore.performTask(ENABLE_STREAMING_TASK, mediaSourceSpaceId);
-        Map<String, String> responseMap =
-            SerializationUtil.deserializeMap(enableStreamingResponse);
-        streamHost = responseMap.get("domain-name");
-        enableStreamingResult = responseMap.get("results");
-
-        // Create playlist in work dir
-        PlaylistCreator creator = new PlaylistCreator();
-        String playlistXml =
-            creator.createPlaylist(contentStore, mediaSourceSpaceId);
-        storePlaylist(playlistXml, workDir);
-
-        // Replace variables in example player html files
-        String sampleMediaId =
-            getIdFromSpace(contentStore, mediaSourceSpaceId);
-        updatePlayers(workDir, streamHost, sampleMediaId);
-
-        // Move files from work dir to media viewer space
-        moveFilesToSpace(workDir.listFiles(), contentStore, mediaViewerSpaceId);
+        // Start worker thread
+        worker = new EnableStreamingWorker(contentStore,
+                                           mediaViewerSpaceId,
+                                           mediaSourceSpaceId,
+                                           playlistCreator,
+                                           workDir);
+        Thread workerThread = new Thread(worker);
+        workerThread.start();
 
         this.setServiceStatus(ServiceStatus.STARTED);        
     }
 
-    private File storePlaylist(String playlistXml, File workDir) {
-        File playlist = new File(workDir, "playlist.xml");
-
-        FileOutputStream fileStream;
-        try {
-            fileStream = new FileOutputStream(playlist);
-        } catch(FileNotFoundException e) {
-            throw new RuntimeException("Unable to create playlist due to: " +
-                                       e.getMessage());
-        }
-
-        OutputStreamWriter writer = new OutputStreamWriter(fileStream);
-        try {
-            writer.write(playlistXml, 0, playlistXml.length());
-            writer.close();
-        } catch(IOException e) {
-            throw new RuntimeException("Unable to create playlist due to: " +
-                                       e.getMessage());
-        }
-
-        return playlist;
-    }
-
-    private void updatePlayers(File workDir,
-                               String streamHost,
-                               String sampleMediaId) {
-        File singlePlayer = new File(workDir, "singleplayer.html");
-        File playlistPlayer = new File(workDir, "playlistplayer.html");
-
-        try {
-            IOUtil.fileFindReplace(singlePlayer, "$STREAM-HOST", streamHost);
-            IOUtil.fileFindReplace(singlePlayer, "$MEDIA-FILE", sampleMediaId);
-            IOUtil.fileFindReplace(playlistPlayer, "$STREAM-HOST", streamHost);
-        } catch(IOException e) {
-            throw new RuntimeException("Unable to update player files due to: "
-                                       + e.getMessage());
-        }
-    }
-
-    private String getIdFromSpace(ContentStore contentStore, String spaceId)
-        throws ContentStoreException {
-        Iterator<String> contents = contentStore.getSpaceContents(spaceId);
-        String contentId = "";
-        if(contents.hasNext()) {
-            contentId = contents.next();
-        }
-        return contentId;
-    }
-
-    private void moveFilesToSpace(File[] files,
-                                  ContentStore contentStore,
-                                  String spaceId)
-        throws ContentStoreException, FileNotFoundException {
-        MimetypeUtil mimeUtil = new MimetypeUtil();
-
-        List<File> toAdd = new ArrayList<File>();
-        for (File file : files) {
-            toAdd.add(file);
-        }
-
-        int maxloops = 20;
-        int loops;
-        for (loops = 0; !toAdd.isEmpty() && loops < maxloops; loops++) {
-            File file = toAdd.remove(0);
-            try {
-                contentStore.addContent(spaceId,
-                                        file.getName(),
-                                        new FileInputStream(file),
-                                        file.length(),
-                                        mimeUtil.getMimeType(file),
-                                        null,
-                                        null);
-            } catch (ContentStoreException e) {
-                log(e.getMessage());
-                toAdd.add(file);
-            }
-        }
-
-        if(loops == maxloops) {
-            log("Unable to complete loading of files into " + spaceId);
-        }
-    }
-
     @Override
     public void stop() throws Exception {
-        System.out.println("Stopping Media Streaming Service");
+        log("Stopping Media Streaming Service");
         this.setServiceStatus(ServiceStatus.STOPPING);
         
-        // Disable distribution
-        contentStore.performTask(DISABLE_STREAMING_TASK, mediaSourceSpaceId);
+        // Start worker thread
+        DisableStreamingWorker worker =
+            new DisableStreamingWorker(contentStore, mediaSourceSpaceId);
+        Thread workerThread = new Thread(worker);
+        workerThread.start();
         
         this.setServiceStatus(ServiceStatus.STOPPED);
     }
@@ -196,16 +89,33 @@ public class MediaStreamingService extends BaseService implements ComputeService
     @Override
     public Map<String, String> getServiceProps() {
         Map<String, String> props = super.getServiceProps();
-        
-        // Add stream host
-        props.put("streamHost", streamHost);
 
-        String streamingStatus = enableStreamingResult;
-        if(streamingStatus == null) {
-            streamingStatus = "Enabling Streaming...";
+        boolean complete = false;
+        if(worker != null) {
+            String streamHost = worker.getStreamHost();
+            String enableStreamingResult = worker.getEnableStreamingResult();
+            String error = worker.getError();
+            complete = worker.isComplete();
+
+            if(streamHost != null) {
+                props.put("Streaming Host", streamHost);
+            }
+
+            if(enableStreamingResult != null) {
+                props.put("Results of Enabling Streaming",
+                          enableStreamingResult);
+            }
+
+            if(error != null) {
+                props.put("Errors Encountered", error);
+            }
         }
 
-        props.put("streamingStatus", streamingStatus);
+        if(complete) {
+            props.put("Service Status", "Complete");
+        } else {
+            props.put("Service Status", "Enabling Streaming...");
+        }
         
         return props;
     }
