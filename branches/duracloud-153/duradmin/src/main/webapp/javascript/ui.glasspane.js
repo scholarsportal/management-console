@@ -22,7 +22,7 @@
 			this._glassPane.width(this.element.width());
 		},
 		
-		show: function() {
+		show: function(message) {
 			if(this._glassPane != null){
 				this.hide();
 			}
@@ -30,6 +30,9 @@
 			var that = this;
 			var o 	 = this.options;
 			this._glassPane = $.fn.create("div");
+			if(message != null && message != undefined){
+				this._glassPane.html("<h1>"+message+"</h1>");
+			}
 			this._positionGlassPane();
 			var listener = function(evt){
 				evt.stopPropagation();

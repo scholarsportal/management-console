@@ -1,7 +1,5 @@
 package org.duracloud.duradmin.spaces.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -13,17 +11,13 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.controller.AbstractRestController;
-import org.duracloud.controller.UploadManager;
-import org.duracloud.domain.Content;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.util.FileData;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.error.ContentStoreException;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 /**

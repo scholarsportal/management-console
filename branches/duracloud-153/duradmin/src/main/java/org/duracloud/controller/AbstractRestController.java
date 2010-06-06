@@ -30,10 +30,23 @@ public class AbstractRestController<T> extends AbstractCommandController{
 			HttpServletResponse response, Object command, BindException errors)
 			throws Exception {
 		String method = request.getMethod().toUpperCase();
+		String action = request.getParameter("action");
+		if(action == null){
+			action = "";
+		}
+		
+		action = action.toLowerCase();
+
 		if(method.equals("GET")){
 			return get(request, response, (T)command, errors);
 		}else if(method.equals("POST")){
-			return post(request, response, (T)command, errors);
+			if("delete".equals(action)){
+				return delete(request, response, (T)command, errors);
+			}else if("put".equals(action)){
+				return put(request, response, (T)command, errors);
+			}else{
+				return post(request, response, (T)command, errors);
+			}
 		}else if(method.equals("PUT")){
 			return put(request, response, (T)command, errors);
 		}else if(method.equals("DELETE")){

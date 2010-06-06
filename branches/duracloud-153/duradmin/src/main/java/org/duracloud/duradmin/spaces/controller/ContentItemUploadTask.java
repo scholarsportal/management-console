@@ -3,6 +3,7 @@ package org.duracloud.duradmin.spaces.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +71,9 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		}
 		
 		public String getId() {
-			return this.contentItem.getStoreId()+"-"+this.contentItem.getSpaceId()+"-"+this.contentItem.getContentId();
+			return this.contentItem.getStoreId()+"-"+
+					this.contentItem.getSpaceId()+"-"+
+						this.contentItem.getContentId();
 		}
 		
 		private void cleanup(){

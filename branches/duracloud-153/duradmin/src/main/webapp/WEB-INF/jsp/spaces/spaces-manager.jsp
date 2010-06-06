@@ -85,7 +85,7 @@
 							<h2>Spaces</h2>
 						</div>
 						<div class="header-section">
-							<span class="float-r"><input class="dc-item-list-filter "  value="filter" type="text"/></span>
+							<span class="float-r"><input id="space-filter" class="dc-item-list-filter "  value="filter" type="text"/></span>
 							<input id="check-all-spaces" class="dc-check-all" type="checkbox"/>
 							<span id="space-list-status" class="dc-status" style="display:none"></span> 
 							
@@ -203,7 +203,7 @@
 				<div id="form-fields" class="form-fields">
 					<fieldset>
 						<ul>
-							<li class="row clearfix first-of-type"><label for="spacename">Name</label><input type="text" name="spacename" id="spacename" class="field" /></li>
+							<li class="row clearfix first-of-type"><label for="spacename">Name</label><input type="text" name="spaceId" id="spaceId" class="field" /></li>
 							<li class="row clearfix"><label for="access">Access</label><span name="access" class="access-switch">access control here</span></li>
 							<input type="hidden" name="access" id="access"/>
 						</ul>

@@ -39,27 +39,9 @@ public class SpacesController implements Controller {
 		if("json".equals(request.getParameter("f"))){
 			String storeId = request.getParameter("storeId");	
 	        ContentStore c = contentStoreManager.getContentStore(storeId);
-
 	        ModelAndView mav = new ModelAndView("jsonView");
-			
-			String spaceId = request.getParameter("spaceId");
-			if(spaceId != null){
-				String prefix = request.getParameter("prefix");
-				if(prefix != null){
-					prefix = ("".equals(prefix.trim())?null:prefix);
-				}
-				String marker = request.getParameter("marker");
-				Space space = new Space();
-				org.duracloud.domain.Space cloudSpace = 
-					c.getSpace(spaceId, prefix, 200, marker);
-		        SpaceUtil.populateSpace(space, cloudSpace);
-				mav.addObject("space", space);
-			}else{
-				mav.addObject("spaces",c.getSpaces());
-			}
-	        return mav;
-
-		
+			mav.addObject("spaces",c.getSpaces());
+			return mav;
 		}else{
 	        ModelAndView mav = new ModelAndView("spaces-manager");
 	        mav.addObject("contentStores",contentStoreManager.getContentStores().values());

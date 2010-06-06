@@ -45,18 +45,65 @@ var dc;
 			callback.begin();
 		}
 		
-		$.ajax({ url: "/duradmin/spaces", 
-			data: "storeId="+storeProviderId+"&spaceId="+spaceId+"&prefix="+(prefix==null?'':prefix)+"&f=json",
+		$.ajax({ url: "/duradmin/spaces/space", 
+			data: "storeId="+storeProviderId+"&spaceId="+escape(spaceId)+"&prefix="+escape(prefix==null?'':prefix),
 			cache: false,
 			context: document.body, 
 			success: function(data){
 				callback.success(data.space);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-		    	alert("get spaces failed: " + textStatus);
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		alert("get spaces failed: " + textStatus);
 		    },
 		});		
 		
+	};
+	
+	/**
+	 * @param String storeId  store id 
+	 * @param String spaceId  space id 
+	 * @param Object callback The callback must implement success and failure methods. options begin method is supported.
+	 */
+	dc.store.DeleteSpace = function(space, callback){
+
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+
+		$.ajax({
+			url: "/duradmin/spaces/space", 
+			data: "action=delete&storeId="+space.storeId+"&spaceId="+escape(space.spaceId),
+			type: "POST",
+			success: callback.success,
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+			},
+		});
+	};
+
+	/**
+	 * @param String space  space
+	 * @param String access  access 
+	 * @param Object callback The callback must implement success and failure methods. options begin method is supported.
+	 */
+	dc.store.AddSpace = function(space, callback){
+
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+
+		$.ajax({
+			url: "/duradmin/spaces/space", 
+			data: "storeId="+space.storeId+"&spaceId="+escape(space.spaceId)+"&access="+space.access,
+			type: "POST",
+			success: function(data){callback.success(data.space)},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+			},
+		});
 	};
 
 	/**
@@ -95,7 +142,7 @@ var dc;
 		}
 
 		$.ajax({ url: "/duradmin/spaces/content", 
-				data: "storeId="+storeProviderId+"&spaceId="+spaceId+"&contentId="+contentItemId,
+				data: "storeId="+storeProviderId+"&spaceId="+escape(spaceId)+"&contentId="+escape(contentItemId),
 				cache: false,
 				type: "GET",
 				context: document.body, 
@@ -393,6 +440,7 @@ $(document).ready(function() {
 		var percentComplete = parseInt(parseInt(props.bytesRead)/parseInt(props.totalBytes)*100);
 
 		var item = 	$.fn.create("div")
+						.addClass("upload-item")
 						.append(
 							$.fn.create("h2").html(props.contentId)
 						).append(
@@ -418,9 +466,11 @@ $(document).ready(function() {
 				var that = this;
 				evt.stopPropagation();
 				$.ajax({
-					url: "/duradmin/spaces/upload?action=remove&taskId="+props.storeId+"-"+props.spaceId+"-"+props.contentId,
+					url: "/duradmin/spaces/upload",
+					data: "action=remove&taskId="+task.id,
+					type:"POST",
 					success: function(){
-						$(that).closest(".dc-item").fadeOut("slow");
+						$(that).closest(".upload-item").fadeOut("slow");
 					},
 					
 					error: function(){
@@ -503,8 +553,31 @@ $(document).ready(function() {
 		buttons: {
 			'Add': function(evt) {
 				if($("#add-space-form").valid()){
-					alert("Adding new space ajax impl goes here");
-					$(this).dialog("close");
+					var space = {
+						storeId: getCurrentProviderStoreId(),
+						spaceId: $("#add-space-dialog #spaceId").val(),
+						access:  $("#add-space-dialog #access").val(),
+					};
+					dc.store.AddSpace(
+						space,
+						{
+							begin: function(){
+								$("#page-content").glasspane("show", "Adding space...");
+							},
+							success: function(space){
+								$("#page-content").glasspane("hide");
+								$("#spaces-list-view #space-filter").val(space.spaceId);
+								refreshSpaces(space.storeId);
+							},
+							failure: function(text){
+								$("#add-space-dialog").dialog().glasspane("hide");
+								alert("add space failed: " + text);
+							},
+						}
+					);
+				
+					$("#add-space-dialog").dialog("close");
+
 				}
 			},
 			Cancel: function(evt) {
@@ -531,7 +604,7 @@ $(document).ready(function() {
 			
 			$("#add-space-form").validate({
 				rules: {
-					spacename: {
+					spaceId: {
 						rangelength: [3,63],
 						startswith: true,
 						endswith: true,
@@ -567,6 +640,7 @@ $(document).ready(function() {
 		
 	});
 
+	$("#add-space-dialog").dialog().glasspane({});
 
 
 	$('.add-space-button').live("click",
@@ -643,7 +717,7 @@ $(document).ready(function() {
 									};
 									
 	
-									var key = storeId+"-"+spaceId+"-"+ contentId;
+									var key = escape(storeId+"-"+spaceId+"-"+ contentId);
 
 									var t = $("<div id='"+key+"'><div id='"+key+"-inside'>Sending...</div></div>")
 										.toaster({
@@ -775,12 +849,20 @@ $(document).ready(function() {
 		
 		//attach delete button listener
 		$(".delete-space-button",detail).click(function(evt){
-			deleteSpace(space, {
+			
+			dc.store.DeleteSpace(space, {
+				begin: function(){
+					$("#page-content").glasspane("show", "Deleting space...");
+				},
+				
 				success:function(){
+					$("#page-content").glasspane("hide");
+
 					$("#spaces-list").selectablelist("removeById", space.spaceId);
 				},
 				
 				failure: function(message){
+					$("#page-content").glasspane("hide");
 					alert("failed to delete space!");
 				},
 			});
@@ -1003,7 +1085,8 @@ $(document).ready(function() {
 
 
 	$("#spaces-list").bind("itemRemoved", function(evt,state){
-		refreshSpaces();
+		clearContents();
+		showGenericDetailPane();
 	});
 	///////////////////////////////////////////
 	///click on a content list item
@@ -1087,11 +1170,6 @@ $(document).ready(function() {
 		
 	};
 	
-	var deleteSpace = function(space, callback){
-		alert("ajax call to delete space" + space.spaceId + "here");
-		var success = true; //ajax call returns true if okay
-		success ? callback.success() : callback.failure("Failed message here");
-	};
 	
 	
 
@@ -1110,9 +1188,9 @@ $(document).ready(function() {
 				for(s in spaces){
 					spacesArray[s] = {spaceId: spaces[s]};
 				}
-				//clear filters
-				$(".dc-item-list-filter").val(DEFAULT_FILTER_TEXT);
-				loadSpaces(spacesArray);
+				//clear content filters
+				$("#content-item-filter").val(DEFAULT_FILTER_TEXT);
+				loadSpaces(spacesArray, $("#space-filter").val());
 				$("#space-list-status").fadeOut("fast");
 
 			},
