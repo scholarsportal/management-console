@@ -842,13 +842,17 @@ $(document).ready(function() {
 		       ];
 	};
 
+	var isPdf = function(mimetype){
+		return(mimetype.toLowerCase().indexOf("pdf") > -1);
+	};
+	
 	var loadContentItem = function(contentItem){
 		var pane = $("#contentItemDetailPane").clone();
 		setObjectName(pane, contentItem.contentId);
 		
 		var mimetype = contentItem.metadata.mimetype;
 		
-		if(mimetype.indexOf("image") == 0 || mimetype.indexOf("text") == 0){
+		if(mimetype.indexOf("image") == 0 || mimetype.indexOf("text") == 0 || isPdf(mimetype)){
 			loadPreview(pane, contentItem);
 		}else if(mimetype.indexOf("video") == 0){
 			loadVideo(pane, contentItem);
