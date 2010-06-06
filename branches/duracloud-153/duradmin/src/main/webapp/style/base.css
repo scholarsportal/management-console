@@ -834,6 +834,37 @@ span.label
 	min-width:150px;
 }
 
+.dc-progressbar .dc-progressbar-value{
+	background-color: orange;	
+	text-align:center;
+}
+
+.dc-progressbar {
+	padding:1px;
+	border: 1px solid #green;	
+	width:100%;
+}
+
+#upload-viewer .dc-progressbar{
+	width: 70%;
+	float:left;
+}
+#upload-viewer .dc-controls {
+	float:right;
+	color: white;
+}
+
+.ui-glasspane {
+	/*
+	filter:alpha(opacity=0.25);
+	-moz-opacity:0.25;
+	-khtml-opacity: 0.25;
+	opacity: 0.25;
+	*/
+	background: url('../images/wait.gif') no-repeat center center;
+	position: absolute;
+		
+}
 /*
 *UI Toaster
 */

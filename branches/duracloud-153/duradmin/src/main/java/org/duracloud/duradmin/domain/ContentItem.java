@@ -173,5 +173,9 @@ public class ContentItem
         this.tinyThumbnailURL = tinyThumbnailURL;
     }
 
-
+    public String toString(){
+    	return "{storeId: " + storeId + ", spaceId: " + spaceId + ", contentId: " + contentId + 
+    				", viewerURL: " + viewerURL + ", downloadURL: " + downloadURL + ", thumbnailURL: " + thumbnailURL + 
+    				", metadata: " + metadata + ", contentMimetype: " + contentMimetype +"}";
+    }
 }

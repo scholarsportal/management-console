@@ -40,39 +40,7 @@ var dc;
 			if(options.prefix != undefined){
 				prefix = options.prefix;
 			}
-		
-		/*
-		var contentItems = new Array();
-		
-		for(var i = 0; i < 100; i++){
-			var contentId = spaceId+"/this/is/faux/content/item/" + i;
-			if(prefix == null || contentId.toLowerCase().indexOf(prefix.toLowerCase()) == 0){
-				contentItems.push(contentId);
-			}
-			
 
-		}
-		*/
-		
-		/*
-		callback.success({
-						spaceId: spaceId,
-						access: 'OPEN',
-						contentItems: contentItems,
-						metadata: {
-							count: 10, 
-							created: "Jan 1, 2010 12:00:00 GMT",
-							tags: ["tag1", "tag2", "tag3", "tag4"],
-						},
-
-						extendedMetadata: [
-						                   {name: "name1", value: "value1"},
-						                   {name: "name2", value: "value2"},
-						                   {name: "name3", value: "value3"},
-						                   {name: "name4", value: "value4"},
-						                   ],						
-					  });
-		*/
 		if(callback.begin != undefined){
 			callback.begin();
 		}
@@ -122,28 +90,6 @@ var dc;
 	 * returns contentItem details
 	 */
 	dc.store.GetContentItem = function(storeProviderId, spaceId, contentItemId, callback){
-		/*
-		var contentItem = {
-				contentId: contentItemId, 
-				spaceId:   spaceId, 
-				thumbnailURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe.jpg",
-				viewerURL: "http://farm5.static.flickr.com/4024/4605414261_db2e6d8cbe_b.jpg",
-				metadata:  {
-					size: "1234567", 
-					created: "Jun 10 2009 12:00:00",
-					checksum: "deadbeafdeadbeefdeadbeef",
-					mimetype: "text/plain",
-					tags: ["tag1", "tag2", "tag3", "tag4"],
-					},
-				extendedMetadata: [
-				                   {name: "name1", value: "value1"},
-				                   {name: "name2", value: "value2"},
-				                   {name: "name3", value: "value3"},
-				                   {name: "name4", value: "value4"},
-				                   ],
-			};
-		callback.success(contentItem);
-		*/
 		if(callback.begin != undefined){
 			callback.begin();
 		}
@@ -151,6 +97,7 @@ var dc;
 		$.ajax({ url: "/duradmin/spaces/content", 
 				data: "storeId="+storeProviderId+"&spaceId="+spaceId+"&contentId="+contentItemId,
 				cache: false,
+				type: "GET",
 				context: document.body, 
 				success: function(data){
 					callback.success(data.contentItem);
@@ -164,65 +111,25 @@ var dc;
 	
 	
 	dc.store.AddContentItem = function(storeId,spaceId, form, future){
-		var addContentItemUrl = "";
-		
-		var key = new Date().valueOf();
-		var t = $("<div><p id='"+key+"'>Sending</p></div>")
-			.toaster({
-			sticky: true,
-			position:'br',
-			show: $.fn.slideIn,
-			closable: false,
+		$(form).ajaxForm({
+			iframe: true,
+			dataType: "json",
+			success: function(data){
+				alert("success!" + data);
+		    },
+		    error: function(xhr, textStatus, errorThrown){
+		    	alert("get contentItem failed: " + textStatus);
+		    },
 		});
-		
 
-		var filename = $("#file", form).val();
-		var contentItemId = $("#contentItemId").val();
-		
-		$("#key", form).val(key);
-		var count = 0;
-		var success =  function(){
-			$('#'+key).html(filename+ " upload complete.")
-					   .append($.fn.create("a")
-							   .html("View")
-							   .attr("href", "javascript:void(0)")
-							   .click(function(evt){
-									setTimeout(function(){
-										t.toaster("close");
-									},2*1000);
+		$(form).ajaxSubmit();
+ 		
+ 		var checkProgressURL = "/duradmin/spaces/upload?taskId="+future.key;
 
-								   future.view();
-							   }));
-			
-			
-			setTimeout(function(){
-				t.toaster("close");
-			},60*1000);
 
- 		};
- 		/*
-		 $.ajax({
-	            type: "POST", // get type of request from 'method'
-	            url: addContentItemUrl, // get url of request from 'action'
-	            data: $(form).serialize(), // serialize the form's data
-				success: success,
-	        });
-		*/
-		var checkProgressURL = "url";
-
-		var callback = {
-				update: function(data){
-					$('#'+key).html(filename+ ": " + data.bytesSoFar/1024 + " of " + data.totalBytes/1024 + " KB uploaded");
-				},
-				
-				failure: function(){
-					alert("upload failed!");
-				},
-				
-				success: success
-		};
-		
-		dc.checkProgress(checkProgressURL, key, callback);
+		setTimeout(function(){
+			dc.checkProgress(checkProgressURL, future.key, future);
+		},2000);
 		
 	};
 	
@@ -234,7 +141,7 @@ var dc;
 	 * 
 	 */
 	dc.store.checkIfContentItemExists = function(spaceId,contentId, storeId, callback){
-		alert("implement check if content item exists!");
+		//alert("implement check if content item exists!");
 		callback.success(true);
 	};
 		
@@ -376,7 +283,64 @@ $(document).ready(function() {
 								{title: "Details", data: properties}));
 	};
 
+	var loadVideo = function(target, contentItem){
+		var viewer = $.fn.create("embed")
+		.attr("src", contentItem.viewerURL)
+		.attr("height", "400px")
+		.attr("width", "600px");
+		
+		var wrapper = $.fn.create("div")
+				.addClass("preview-image-wrapper")
+				.append(viewer);
+		
+		var div = $.fn.create("div")
+		.expandopanel({title: "Watch"});
+		
+		$(div).expandopanel("getContent").append(viewer);
+		
+		$(".center", target).append(div);
+
+	};
+
+	var loadAudio = function(target, contentItem){
+		var viewer = $.fn.create("embed")
+		.attr("src", contentItem.viewerURL)
+		var wrapper = $.fn.create("div")
+				.addClass("preview-image-wrapper")
+				.append(viewer);
+		
+		var div = $.fn.create("div")
+		.expandopanel({title: "Listen"});
+		
+		$(div).expandopanel("getContent").append(viewer);
+		
+		$(".center", target).append(div);
+		
+	};
+
+
+	
 	var loadPreview = function(target, contentItem){
+		var mimetype = contentItem.metadata.mimetype;
+		var isExternalViewer =  contentItem.viewerURL.indexOf('djatok') > 0;
+		var isImage = (contentItem.metadata.mimetype.indexOf('image') == 0)
+		var viewerType = 'iframe';
+		var options = {
+				'transitionIn'	:	'elastic',
+				'transitionOut'	:	'elastic',
+				'speedIn'		:	600, 
+				'speedOut'		:	200, 
+				'overlayShow'	:	false};
+		
+		if(isExternalViewer || !isImage){
+			options['width'] = $(document).width()*0.8;
+			options['height'] = $(document).height()*0.8;
+			options['type'] = 'iframe';
+		}else{
+			options['type'] = 'image';
+		}
+
+		
 		var div = $.fn.create("div")
 					  .expandopanel({title: "Preview"});
 		
@@ -394,22 +358,133 @@ $(document).ready(function() {
 		
 		
 		$(div).expandopanel("getContent").append(wrapper);
-
-	
-
-		/* This is basic - uses default settings */
 		
-		viewerLink.fancybox({
-				'transitionIn'	:	'elastic',
-				'transitionOut'	:	'elastic',
-				'speedIn'		:	600, 
-				'speedOut'		:	200, 
-				'overlayShow'	:	false});
+		
+		viewerLink.fancybox(options);
 		
 		$(".center", target).append(div);
 
 	};
+
+	var options = {
+			'type'			:   'inline',
+			'transitionIn'	:	'elastic',
+			'transitionOut'	:	'elastic',
+			'speedIn'		:	600, 
+			'speedOut'		:	200, 
+			'overlayShow'	:	false,
+			'content'			:   "Test Content"	
+			
+	};	
 	
+	var getStoreName = function(storeId) {
+		for(i in storeProviders){
+			var store = storeProviders[i];
+			if(storeId == store.id){
+				return store.label;
+			}
+		}
+		
+		return 'no provider found with id = ' + storeId;
+	};
+	
+	var createTaskPanel = function(task) {
+		var props = task.properties;
+		var percentComplete = parseInt(parseInt(props.bytesRead)/parseInt(props.totalBytes)*100);
+
+		var item = 	$.fn.create("div")
+						.append(
+							$.fn.create("h2").html(props.contentId)
+						).append(
+								$.fn.create("h3").html(getStoreName(parseInt(props.storeId)) + " >> " + props.spaceId)
+						).append(
+								$.fn.create("div").html(parseInt(parseInt(props.bytesRead)/1024)+"KB"+ "/" + parseInt(parseInt(props.totalBytes)/1024) + "KB")
+						).append(
+							$.fn.create("div").addClass("dc-progressbar").html("&nbsp;")
+								.append(
+									$.fn.create("div").addClass("dc-progressbar-value"))
+						).append(
+							$.fn.create("div").addClass("dc-controls")
+						);
+
+		//configure progress bar
+		item.find(".dc-progressbar-value").css("width", percentComplete+"%").html(percentComplete+"%");			
+		
+		var actionCell = item.find(".dc-controls");	
+		if(props.state == 'running'){
+			actionCell.append($.fn.create("button").html("cancel").click(function(){ alert("implement cancel here");}));
+		}else{
+			actionCell.append($.fn.create("button").html("x").click(function(evt){
+				var that = this;
+				evt.stopPropagation();
+				$.ajax({
+					url: "/duradmin/spaces/upload?action=remove&taskId="+props.storeId+"-"+props.spaceId+"-"+props.contentId,
+					success: function(){
+						$(that).closest(".dc-item").fadeOut("slow");
+					},
+					
+					error: function(){
+						alert("failed to remove task");
+					},
+				});	
+			}));
+		}
+		
+		return item;
+		
+	};
+	
+	
+	$("#view-uploads").click(function(){
+		$("#upload-viewer").dialog("open");
+	});
+
+    $("#upload-viewer").dialog({
+		autoOpen: false,
+		show: 'blind',
+		hide: 'blind',
+		resizable: false,
+		height: 250,
+		closeOnEscape:true,
+		modal: false,
+		width:500,
+		closable: false,
+		buttons: {
+			"Close": function(){
+				$(this).dialog("close");
+			}
+		},
+		beforeclose: function(event, ui){
+			stopPolling = false;
+		},
+		open: function(event,ui){
+		    var stopPolling = false;
+
+			var poller = function(){
+				$.ajax({
+					cache:false,
+					url: "/duradmin/spaces/upload",
+					success: function(data){
+						if(!stopPolling){
+							var upload = $("#upload-viewer");
+							upload.empty();
+							var list = $.fn.create("div");
+							upload.append(list);
+							for(i in data.taskList){
+								var t = data.taskList[i];
+								list.append(createTaskPanel(t));
+							}
+							
+							setTimeout(poller, 5000);
+						}
+					}
+				});
+			};
+						
+			poller();
+		},
+	});
+
 	///////////////////////////////////////////
 	///open add space dialog
 	$.fx.speeds._default = 10;
@@ -530,10 +605,15 @@ $(document).ready(function() {
 				if($("#add-content-item-form").valid()){
 					var form = $("#add-content-item-form");
 
-					var contentId = $("#contentItemId", form).val();
+					var contentId = $("#contentId", form).val();
+					
 					var spaceId	  =	getCurrentSpaceId();
 					var storeId	  =	getCurrentProviderStoreId();
+					var filename = $("#file", form).val();
 
+					$("#spaceId", form).val(spaceId);
+					$("#storeId", form).val(storeId);
+					
 					dc.store.checkIfContentItemExists(
 							spaceId, contentId, storeId, 
 							{ 
@@ -554,6 +634,36 @@ $(document).ready(function() {
 
 										},
 									};
+									
+	
+									var key = storeId+"-"+spaceId+"-"+ contentId;
+
+									var t = $("<div id='"+key+"'><div id='"+key+"-inside'>Sending...</div></div>")
+										.toaster({
+										sticky: true,
+										position:'br',
+										show: $.fn.slideIn,
+										closable: true,
+									});
+									
+	
+							 		
+									var renderToaster =  function(data){
+										$('#'+key+"-inside",document).empty().append(createTaskPanel(data.task));
+							 		};
+
+									var callback = {
+											key: key, 
+											update: renderToaster,
+											
+											failure: function(){
+												alert("upload failed!");
+											},
+											
+											success: renderToaster,
+									};
+
+									
 									dc.store.AddContentItem(storeId,spaceId,form, callback);
 								},
 								
@@ -631,9 +741,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	//hides the title bar on all dialogs;
-	
-	$(".ui-dialog-titlebar").hide();
 	
 	$('.add-content-item-button').live("click",
 			function(evt){
@@ -731,7 +838,17 @@ $(document).ready(function() {
 	var loadContentItem = function(contentItem){
 		var pane = $("#contentItemDetailPane").clone();
 		setObjectName(pane, contentItem.contentId);
-		loadPreview(pane, contentItem);
+		
+		var mimetype = contentItem.metadata.mimetype;
+		
+		if(mimetype.indexOf("image") == 0 || mimetype.indexOf("text") == 0){
+			loadPreview(pane, contentItem);
+		}else if(mimetype.indexOf("video") == 0){
+			loadVideo(pane, contentItem);
+		}else if(mimetype.indexOf("audio") == 0){
+			loadAudio(pane, contentItem);
+		}
+		
 		loadProperties(pane, extractContentItemProperties(contentItem));
 		//load the details panel
 		var mimetype = contentItem.metadata.mimetype;
@@ -961,9 +1078,12 @@ $(document).ready(function() {
 		clearContents();
 		dc.store.GetSpaces(providerId,{
 			begin: function(){
+				//$("#spaces-list-view").glasspane("show");
 				$("#space-list-status").html("Loading...").fadeIn("slow");
 			},
 			success: function(spaces){
+				$("#spaces-list-view").glasspane("hide");
+
 				spacesArray = new Array();
 				for(s in spaces){
 					spacesArray[s] = {spaceId: spaces[s]};
@@ -975,6 +1095,8 @@ $(document).ready(function() {
 
 			},
 			failure: function(xhr, message){
+				$("#spaces-list-view").glasspane("hide");
+
 				alert("error:" + message);
 				$("#space-list-status").fadeOut("fast");
 			}
@@ -1018,6 +1140,15 @@ $(document).ready(function() {
 	};
 	
 	
+	//$("#spaces-list-view").glasspane({});
+	//$("#content-item-list-view").glasspane({});
+	//$("#detail-pane").glasspane({});
+
+	
 	
 	initSpacesManager();
+
+	//hides the title bar on all dialogs;
+	$(".ui-dialog-titlebar").hide();
+
 });

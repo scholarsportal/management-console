@@ -247,9 +247,13 @@ var dc;
 		t.toaster("hide");
 	};
 
+
 	/**
 	 * checks the progress of a remote task and notifies caller of results.
 	 */
+	
+	var DEFAULT_POLL_INTERVAL = 5000;
+	
 	dc.checkProgress = function(url, key, callback){
 		
 		if(callback.count == undefined){
@@ -262,24 +266,40 @@ var dc;
 				progressCallback.failure(message);
 				return;
 			}
-
+			
 			progressCallback.update(data);
-			if(data.bytesSoFar < data.totalBytes){
-				setTimeout(function(){ dc.checkProgress(url,key, progressCallback); },1000);
-			}else{
+			var state = data.task.properties.state;
+			
+			if(state == 'running'){
+				setTimeout(function(){ dc.checkProgress(url,key, progressCallback); }, DEFAULT_POLL_INTERVAL);
+			}else if(state == 'success'){
 				if(progressCallback.success != undefined){
-					progressCallback.success();
+					progressCallback.success(data);
+				}
+			}else if(state == 'cancelled'){
+				if(progressCallback.cancel != undefined){
+					progressCallback.cancel();
+				}
+				
+			}else{
+				if(progressCallback.failure != undefined){
+					progressCallback.failure();
 				}
 			}
 		};
 		
-		//do the ajax call here:
-		callback.count++;
-		var response = {};
-		response.bytesSoFar=callback.count*1024;
-		response.totalBytes=5*1024;
-		//ajax response gets set here
-		updater(callback, response);
+		$.ajax({ url: url, 
+			cache: false,
+			method: "GET",
+			context: document.body, 
+			success: function(data){
+				//ajax response gets set here
+				updater(callback, data);
+		    },
+		    error: function(xhr, textStatus, errorThrown){
+		    	alert("updater failed: " + textStatus);
+		    },
+		});		
 	};
 
 

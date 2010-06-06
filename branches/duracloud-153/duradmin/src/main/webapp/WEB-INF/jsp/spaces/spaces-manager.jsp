@@ -20,14 +20,19 @@
 			  });
 			</script>
 			
-		<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.ba-throttle-debounce/jquery.ba-throttle-debounce.min.js"></script>
 
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.pack.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.easing-1.3.pack.js"></script>
-	 	
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.form-2.4.3.js"></script>
+
+		<!-- 
+		<script type="text/javascript" src="${pageContext.request.contextPath}/thirdparty/flowplayer/flowplayer-3.2.2.min.js"></script>
+	 	 -->
+
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.glasspane.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
@@ -68,7 +73,8 @@
 					<input type="button" value="^"/>   	
 					</span>
 				 -->
-					   					
+					<a  href="javascript:void(0)" id="view-uploads">Uploads</a>   					
+					<div id="upload-viewer"></div>
 		   		</div>
 		   	</div>
 		   	<div id="list-browser" class="list-browser">
@@ -210,12 +216,15 @@
 		<div id="add-content-item-dialog" class="dialog" title="Add Content Item">
 			<h1>Add Content Item</h1>
 			<p class="hint">Add a Content Item to the currently selected Space. All fields are required.</p>
-			<form enctype="multipart/form-data" id="add-content-item-form">
+			<form enctype="multipart/form-data" id="add-content-item-form" action="/duradmin/spaces/content" method="POST">
+				<input id="spaceId" name="spaceId" type="hidden"/>
+				<input id="storeId" name="storeId" type="hidden"/>
+
 				<div id="form-fields" class="form-fields">
 					<fieldset>
 						<ul>
-						<li class="row clearfix first-of-type"><label for="name">Item Id</label><input type="text" name="contentItemId" id="contentItemId" class="field" /></li>
-						<li class="row clearfix"><label for="mimetype">Mime Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
+						<li class="row clearfix first-of-type"><label for="contentId">Item Id</label><input type="text" name="contentId" id="contentId" class="field" /></li>
+						<li class="row clearfix"><label for="contentMimetype">Mime Type</label><input type="text" name="contentMimetype" id="contentMimetype" class="field" /></li>
 						<li class="row clearfix"><label for="file">File</label><input class="field" type="file" name="file" id="file" class="field"/></li>
 						</ul>
 						<input type="hidden" id="key" name="key"/>

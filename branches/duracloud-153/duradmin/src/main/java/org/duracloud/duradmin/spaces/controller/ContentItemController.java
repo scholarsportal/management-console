@@ -1,5 +1,8 @@
 package org.duracloud.duradmin.spaces.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,28 +12,62 @@ import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.controller.AbstractRestController;
+import org.duracloud.controller.UploadManager;
+import org.duracloud.domain.Content;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.util.ControllerUtils;
+import org.duracloud.duradmin.util.FileData;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.duracloud.error.ContentStoreException;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * 
  * @author Daniel Bernstein
  *
  */
-public class ContentItemController implements Controller {
+public class ContentItemController extends  AbstractRestController<ContentItem> {
 
     protected final Logger log = Logger.getLogger(getClass());
 
 	private ContentStoreManager contentStoreManager;
+	
+	public ContentItemController(){
+		super(null);
+		setValidator(new Validator(){
+			@Override
+			public boolean supports(Class clazz) {
+				return clazz == ContentItem.class;
+			}
+			
+			@Override
+			public void validate(Object target, Errors errors) {
+				ContentItem command = (ContentItem)target;
 
+		        if (!StringUtils.hasText(command.getStoreId())) {
+		            errors.rejectValue("storeId","required");
+		        }
+
+				if (!StringUtils.hasText(command.getSpaceId())) {
+		            errors.rejectValue("spaceId","required");
+		        }
+
+		        if (!StringUtils.hasText(command.getContentId())) {
+		            errors.rejectValue("contentId","required");
+		        }
+			}
+		});
+
+	}
     
     public ContentStoreManager getContentStoreManager() {
 		return contentStoreManager;
 	}
-
 
 	public void setContentStoreManager(ContentStoreManager contentStoreManager) {
 		this.contentStoreManager = contentStoreManager;
@@ -49,40 +86,51 @@ public class ContentItemController implements Controller {
 		this.servicesManager = servicesManager;
 	}
 
-
-	public ModelAndView handleRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		ContentItem ci = new ContentItem();
-		String method = request.getMethod();
-
-		if(method == "GET"){
-			return handleGet(request,response);
-		}
-
-		return new ModelAndView("jsonView", "contentItem",ci);
-
-	}
 	
 	
 
-
-	private ModelAndView handleGet(HttpServletRequest request,
-			HttpServletResponse response) throws Exception{
-		ContentItem ci = create(request);
-        ContentStore c = contentStoreManager.getContentStore(ci.getStoreId());
-
-		URL url = new URL(request.getRequestURL().toString());
-		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(url.getPort() != 80 ? url.getPort() : "") + request.getContextPath();
+	@Override
+	protected ModelAndView get(HttpServletRequest request,
+			HttpServletResponse response, ContentItem ci,
+			BindException errors) throws Exception {
+		ContentItem contentItem = new ContentItem();
         SpaceUtil.populateContentItem(
-        							  baseURL,
-        							  ci,
+        							  getBaseURL(request),
+        							  contentItem,
                                       ci.getSpaceId(),
                                       ci.getContentId(),
-                                      c,
+                                      getContentStore(ci),
                                       getServicesManager());
-		
+        return createModel(contentItem);
+	}
+	
+	
+	@Override
+	protected ModelAndView post(HttpServletRequest request,
+			HttpServletResponse response, ContentItem ci,
+			BindException errors) throws Exception {
+        ContentStore contentStore = getContentStore(ci);
+        
+        ContentUploadHelper.executeUploadTask(request, ci,contentStore);
+        ContentItem result = new ContentItem();
+        SpaceUtil.populateContentItem(getBaseURL(request),result, ci.getSpaceId(), ci.getContentId(),contentStore, servicesManager);
+        return createModel(ci);
+	}
+	
+	private String getBaseURL(HttpServletRequest request) throws MalformedURLException{
+		URL url = new URL(request.getRequestURL().toString());
+		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(url.getPort() != 80 ? url.getPort() : "") + request.getContextPath();
+		return baseURL;
+	}
+
+	private ModelAndView createModel(ContentItem ci){
         return new ModelAndView("jsonView", "contentItem",ci);
 	}
+	
+	protected ContentStore getContentStore(ContentItem contentItem) throws ContentStoreException{
+		return contentStoreManager.getContentStore(contentItem.getStoreId());
+	}
+
 
 
 	private ContentItem create(HttpServletRequest request) {
@@ -90,7 +138,6 @@ public class ContentItemController implements Controller {
 		ci.setStoreId(request.getParameter("storeId"));	
 		ci.setSpaceId(request.getParameter("spaceId"));
 		ci.setContentId(request.getParameter("contentId"));
-		ControllerUtils.checkContentItemId(ci.getSpaceId(), ci.getContentId());
 		return ci;
 	}
 

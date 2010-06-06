@@ -1,5 +1,4 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-
 <div id="page-header" class="outer">	
 
 	<div id="left" class="float-l">

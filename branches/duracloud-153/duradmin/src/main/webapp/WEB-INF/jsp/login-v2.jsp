@@ -35,7 +35,7 @@
 							</li>
 							<li class="clearfix">
 								<label><a href="#" id="forgot-password" class="helper-link">Forgot Password?</a></label>
-								<button id="button-login" class="flex button float-r"><span>Login</span></a>				
+								<button id="button-login" class="flex button float-r"><span>Login</span></button>				
 							</li>
 						</ul>
 					
