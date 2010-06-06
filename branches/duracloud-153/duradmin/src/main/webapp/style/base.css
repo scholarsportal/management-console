@@ -855,13 +855,11 @@ span.label
 }
 
 .ui-glasspane {
-	/*
-	filter:alpha(opacity=0.25);
-	-moz-opacity:0.25;
-	-khtml-opacity: 0.25;
-	opacity: 0.25;
-	*/
-	background: url('../images/wait.gif') no-repeat center center;
+	filter:alpha(opacity=0.50);
+	-moz-opacity:0.50;
+	-khtml-opacity: 0.50;
+	opacity: 0.50;
+	background: #DDF url('../images/wait.gif') no-repeat center center;
 	position: absolute;
 		
 }

@@ -626,7 +626,14 @@ $(document).ready(function() {
 									
 									$(that).dialog("close");
 									var callback = {
-										success: function(){},
+										success: function(){
+										
+										},
+										
+										failure: function(){
+											alert("an error occurred");
+										},
+										
 										view: function(){
 											dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,contentId,{
 												success: loadContentItem
@@ -894,13 +901,17 @@ $(document).ready(function() {
 				spaceId, 
 				{
 					begin: function(){
+						$("#page-content").glasspane("show");
 						$(contentItemListStatusId).html("Loading...").fadeIn("slow");
 					},
 					success: function(space){
+						$("#page-content").glasspane("hide");
+
 						loadHandler(space);
 						$(contentItemListStatusId).fadeOut("fast");
 					}, 
 					failure:function(info){
+						$("#page-content").glasspane("hide");
 						alert("Get Space failed: " + info);
 					},
 				},
@@ -998,8 +1009,15 @@ $(document).ready(function() {
 			 * @FIXME 
 			 */
 			var spaceId = getCurrentSpaceId();
+
 			dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"),{
-				success: loadContentItem
+				begin: function(){
+					$("#page-content").glasspane("show");
+				},
+				success: function(contentItem) {
+					$("#page-content").glasspane("hide");
+					loadContentItem(contentItem);
+				}
 			});
 		}else{
 			showMultiContentItemDetail();
@@ -1078,11 +1096,11 @@ $(document).ready(function() {
 		clearContents();
 		dc.store.GetSpaces(providerId,{
 			begin: function(){
-				//$("#spaces-list-view").glasspane("show");
+				$("#page-content").glasspane("show");
 				$("#space-list-status").html("Loading...").fadeIn("slow");
 			},
 			success: function(spaces){
-				$("#spaces-list-view").glasspane("hide");
+				$("#page-content").glasspane("hide");
 
 				spacesArray = new Array();
 				for(s in spaces){
@@ -1095,7 +1113,7 @@ $(document).ready(function() {
 
 			},
 			failure: function(xhr, message){
-				$("#spaces-list-view").glasspane("hide");
+				$("#page-content").glasspane("hide");
 
 				alert("error:" + message);
 				$("#space-list-status").fadeOut("fast");
@@ -1143,6 +1161,7 @@ $(document).ready(function() {
 	//$("#spaces-list-view").glasspane({});
 	//$("#content-item-list-view").glasspane({});
 	//$("#detail-pane").glasspane({});
+	$("#page-content").glasspane({});
 
 	
 	
