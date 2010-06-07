@@ -43,7 +43,7 @@ $.widget("ui.tagsviewer",
 
 				
 				_createDataChild: function(data){
-					var child = $(document.createElement("li"));
+					var child = $.fn.create("li");
 					//add the name element
 					child.html(data);
 					//append remove button

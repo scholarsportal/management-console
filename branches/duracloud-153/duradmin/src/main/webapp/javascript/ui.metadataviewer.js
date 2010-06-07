@@ -191,11 +191,14 @@ $.widget("ui.metadataviewer",
 
 					var value = that._getValue();
 					
+					child.addClass("dc-removing");
 					that.element.trigger("remove", { value: value, 
 						  success: function(){
+							child.removeClass("dc-removing");
 							that._removeSuccess(that,data);
 						  },
 						  failure: function(){
+							  child.removeClass("dc-removing");
 							  that._removeFailure();
 						  }
 					});

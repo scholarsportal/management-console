@@ -855,6 +855,15 @@ span.label
 	background: #0F0 url('../images/wait.gif') no-repeat center center;
 }
 
+.dc-removing {
+	background-color: orange;	
+	filter:alpha(opacity=0.25);
+	-moz-opacity:0.25;
+	-khtml-opacity: 0.25;
+	opacity: 0.25;
+	
+}
+
 #upload-viewer .dc-progressbar{
 	width: 70%;
 	float:left;
