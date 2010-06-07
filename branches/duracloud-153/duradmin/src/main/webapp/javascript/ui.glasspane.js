@@ -16,7 +16,7 @@
 		},
 		
 		_positionGlassPane: function(){
-			this._glassPane.css("z-index", this.element.css("z-index")+1000);
+			this._glassPane.css("z-index", this.element.css("z-index")+10);
 			this._glassPane.offset(this.element.offset());
 			this._glassPane.height(this.element.height());
 			this._glassPane.width(this.element.width());

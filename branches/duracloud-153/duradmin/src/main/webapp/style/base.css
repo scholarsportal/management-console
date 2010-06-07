@@ -845,6 +845,16 @@ span.label
 	width:100%;
 }
 
+.dc-expando-status {
+	height:20px;
+	width:30px;
+	float: right;
+}
+
+.dc-busy {
+	background: #0F0 url('../images/wait.gif') no-repeat center center;
+}
+
 #upload-viewer .dc-progressbar{
 	width: 70%;
 	float:left;
@@ -870,6 +880,8 @@ span.label
 	text-align: center;
 	vertical-align: center;	
 }
+
+
 /*
 *UI Toaster
 */

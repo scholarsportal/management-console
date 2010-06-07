@@ -887,17 +887,20 @@ $(document).ready(function() {
 		var mp = loadMetadataPane(detail, space.extendedMetadata);
 		
 		$(mp).bind("add", function(evt, future){
-				future.success();
+				var value = future.value;
+				addSpaceMetadata(space.spaceId, value.name, value.value, future);
 			}).bind("remove", function(evt, future){
-				future.success();
+				removeSpaceMetadata(space.spaceId, future.value.name,future);
 			});
 		
 		var tag = loadTagPane(detail, space.metadata.tags);
 
 		$(tag).bind("add", function(evt, future){
-			future.success();
+			var value = future.value[0];
+			addSpaceTag(space.spaceId, value, future);
 		}).bind("remove", function(evt, future){
-			future.success();
+			var value = future.value[0];
+			removeSpaceTag(space.spaceId, value, future);
 		});
 
 		$("#detail-pane").replaceContents(detail, spaceDetailLayoutOptions);
@@ -950,22 +953,22 @@ $(document).ready(function() {
 
 		var mp = loadMetadataPane(pane, contentItem.extendedMetadata);
 		
+		
 		$(mp).bind("add", function(evt, future){
-			future.success();
-		});
-
-		$(mp).bind("remove", function(evt, future){
-			future.success();
-		});
+				var value = future.value;
+				addContentItemMetadata(contentItem.spaceId, contentItem.contentId, value.name, value.value, future);
+			}).bind("remove", function(evt, future){
+				removeContentItemMetadata(contentItem.spaceId, contentItem.contentId, future.value.name,future);
+			});
 		
 		var tag = loadTagPane(pane, contentItem.metadata.tags);
 
 		$(tag).bind("add", function(evt, future){
-			future.success();
-		});
-
-		$(tag).bind("remove", function(evt, future){
-			future.success();
+			var value = future.value[0];
+			addContentItemTag(contentItem.spaceId, contentItem.contentId, value, future);
+		}).bind("remove", function(evt, future){
+			var value = future.value[0];
+			removeContentItemTag(contentItem.spaceId, contentItem.contentId, value, future);
 		});
 
 		
@@ -1029,19 +1032,128 @@ $(document).ready(function() {
 	
 	
 	var toggleSpaceAccess = function(space, callback){
-		var access = space.access;
+		var access = space.metadata.access;
 		var newAccess = (access == "OPEN") ? "CLOSED":"OPEN";
-		
-		var success = true;//DO AJAX COMMAND HERE
-		alert("ajax call not yet implemented!");
-		//update space object
-		space.access = newAccess;
-		success ? callback.success() : callback.failure();
+		$("#page-content").glasspane("show", "Changing space access..."); 
+		$.ajax({ url: "/duradmin/spaces/space?storeId="+space.storeId+"&spaceId="+escape(space.spaceId), 
+			data: "access="+newAccess+"&action=put&method=changeAccess",
+			type: "POST",
+			cache: false,
+			context: document.body, 
+			success: function(data){
+				$("#page-content").glasspane("hide");
+				callback.success(data.space);
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+				$("#page-content").glasspane("hide");
+	    		callback.failure(textStatus);
+		    },
+		});		
 	};
 
+	var createSpaceMetadataCall = function(spaceId, data, method,callback){
+		var newData = data + "&method=" + method;
+		var storeId = getCurrentProviderStoreId();
+		return {
+			url: "/duradmin/spaces/space?storeId="+storeId+"&spaceId="+escape(spaceId) +"&action=put", 
+			type: "POST",
+			data: newData,
+			cache: false,
+			context: document.body, 
+			success: function(data){
+				callback.success();
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+		    },
+		};
+	};
 	
 
+	/////////////////////////////////////////////////////////////////////////////////
+	///space metadata functions
+	var createSpaceMetadataCall = function(spaceId, data, method,callback){
+		var newData = data + "&method=" + method;
+		var storeId = getCurrentProviderStoreId();
+		return {
+			url: "/duradmin/spaces/space?storeId="+storeId+"&spaceId="+escape(spaceId) +"&action=put", 
+			type: "POST",
+			data: newData,
+			cache: false,
+			context: document.body, 
+			success: function(data){
+				callback.success();
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+		    },
+		};
+	};
+	
+	var addSpaceMetadata = function(spaceId, name, value, callback){
+		var data = "metadata-name=" + escape(name) +"&metadata-value="+escape(value);
+		$.ajax(createSpaceMetadataCall(spaceId, data, "addMetadata", callback));		
+	};
 
+	var removeSpaceMetadata = function(spaceId, name,callback){
+		var data = "metadata-name=" + escape(name);
+		$.ajax(createSpaceMetadataCall(spaceId, data, "removeMetadata", callback));		
+	};
+
+	var addSpaceTag = function(spaceId, tag, callback){
+		var data = "tag="+ escape(tag);
+		$.ajax(createSpaceMetadataCall(spaceId, data, "addTag", callback));		
+	};
+
+	var removeSpaceTag = function(spaceId, tag,callback){
+		var data = "tag="+escape(tag);
+		$.ajax(createSpaceMetadataCall(spaceId, data, "removeTag", callback));		
+	};
+
+	/////////////////////////////////////////////////////////////////////////////////
+	///content metadata functions
+	var createContentItemMetadataCall = function(spaceId, contentId, data, method,callback){
+		var newData = data + "&method=" + method;
+		var storeId = getCurrentProviderStoreId();
+		return {
+			url: "/duradmin/spaces/content?storeId="+storeId+"&spaceId="+escape(spaceId) +"&contentId="+escape(contentId) +"&action=put", 
+			type: "POST",
+			data: newData,
+			cache: false,
+			context: document.body, 
+			success: function(data){
+				callback.success();
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+		    },
+		};
+	};
+	
+	var addContentItemMetadata = function(spaceId, contentId, name, value, callback){
+		var data = "metadata-name=" + escape(name) +"&metadata-value="+escape(value);
+		$.ajax(createContentItemMetadataCall(spaceId, contentId, data, "addMetadata", callback));		
+	};
+
+	var removeContentItemMetadata = function(spaceId, contentId, name,callback){
+		var data = "metadata-name=" + escape(name);
+		$.ajax(createContentItemMetadataCall(spaceId,contentId, data, "removeMetadata", callback));		
+	};
+
+	var addContentItemTag = function(spaceId, contentId, tag, callback){
+		var data = "tag="+ escape(tag);
+		$.ajax(createContentItemMetadataCall(spaceId,contentId, data, "addTag", callback));		
+	};
+
+	var removeContentItemTag = function(spaceId, contentId, tag,callback){
+		var data = "tag="+escape(tag);
+		$.ajax(createContentItemMetadataCall(spaceId, contentId, data, "removeTag", callback));		
+	};
+	
 
 	$("#content-item-list").selectablelist({});
 	$("#spaces-list").selectablelist({});

@@ -2,6 +2,7 @@ package org.duracloud.duradmin.spaces.controller;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,8 +11,11 @@ import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
+import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.controller.AbstractRestController;
 import org.duracloud.duradmin.domain.ContentItem;
+import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.error.ContentStoreException;
 import org.springframework.util.StringUtils;
@@ -111,6 +115,32 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
         return createModel(ci);
 	}
 	
+	
+	@Override
+	protected ModelAndView put(HttpServletRequest request,
+			HttpServletResponse response, ContentItem contentItem,
+			BindException errors) throws Exception {
+		String spaceId = contentItem.getSpaceId();
+		String contentId = contentItem.getContentId();
+		ContentStore contentStore = getContentStore(contentItem);
+        ContentItem result = new ContentItem();
+        String method = request.getParameter("method");
+        if(method == "changeMimetype"){
+            String mimetype = contentItem.getContentMimetype();
+            if(mimetype !=null){
+            }
+        }else{ 
+        	Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
+        	MetadataUtils.handle("method", "space ["+spaceId+"]",  metadata, request);
+        	contentStore.setContentMetadata(spaceId, contentId, metadata);
+        }
+
+        SpaceUtil.populateContentItem(getBaseURL(request),result, contentItem.getSpaceId(), 
+				contentItem.getContentId(),contentStore, servicesManager);
+		return createModel(result);
+	}
+
+
 	private String getBaseURL(HttpServletRequest request) throws MalformedURLException{
 		URL url = new URL(request.getRequestURL().toString());
 		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(url.getPort() != 80 ? url.getPort() : "") + request.getContextPath();

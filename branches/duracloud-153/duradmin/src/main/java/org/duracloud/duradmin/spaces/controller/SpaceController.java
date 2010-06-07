@@ -1,17 +1,21 @@
 package org.duracloud.duradmin.spaces.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.controller.AbstractRestController;
-import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
+import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.duracloud.duradmin.util.TagUtil;
 import org.duracloud.error.ContentStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -25,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class SpaceController extends  AbstractRestController<Space> {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private ContentStoreManager contentStoreManager;
 	
@@ -84,6 +88,32 @@ public class SpaceController extends  AbstractRestController<Space> {
 	
 	
 	@Override
+	protected ModelAndView put(HttpServletRequest request,
+			HttpServletResponse response, Space space,
+			BindException errors) throws Exception {
+		String spaceId = space.getSpaceId();
+        ContentStore contentStore = getContentStore(space);
+        
+        String method = request.getParameter("method");
+        if(method == "changeAccess"){
+            String access = space.getAccess();
+            if(access !=null){
+                contentStore.setSpaceAccess(spaceId, AccessType.valueOf(access));
+                SpaceUtil.populateSpace(space, contentStore.getSpace(spaceId,
+                        null,
+                        0,
+                        null));
+            }
+        }else{ 
+        	Map<String,String> metadata  = contentStore.getSpaceMetadata(spaceId);
+        	MetadataUtils.handle("method", "space ["+spaceId+"]",  metadata, request);
+        	contentStore.setSpaceMetadata(spaceId, metadata);
+        }
+       
+
+		return createModel(space);
+	}
+
 	protected ModelAndView post(HttpServletRequest request,
 			HttpServletResponse response, Space space,
 			BindException errors) throws Exception {
@@ -98,6 +128,7 @@ public class SpaceController extends  AbstractRestController<Space> {
                                                              null));
 		return createModel(space);
 	}
+
 	
 	protected ModelAndView delete(HttpServletRequest request,
 			HttpServletResponse response, Space space,
