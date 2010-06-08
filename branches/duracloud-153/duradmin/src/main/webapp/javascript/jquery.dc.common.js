@@ -223,7 +223,9 @@ var dc;
 	return table;
 	};
 	
-	
+	dc.getServiceTypeImageClass = function(serviceName){
+		return "service-replicate";
+	};
 	dc.getMimetypeImageClass = function(mimetype){
 	var mtc = "";
 	if(mimetype.indexOf("image") > -1){
@@ -247,6 +249,18 @@ var dc;
 		$("#page-content").glasspane("hide");
 	};
 
+	
+	dc.confirm = function(message,evt){
+		if(!confirm(message)){
+			if(evt != undefined){
+				evt.stopPropagation();
+				evt.preventDefault();
+			}
+			return false;
+		};
+		
+		return true;
+	};
 	
 
 	/**
@@ -303,6 +317,33 @@ var dc;
 		});		
 	};
 
+	dc.ajax = function(params,callback){
+		var ajaxParameters = {
+			url: params.url,
+			success: function(data){
+				console.debug("success: {url: "+ params.url +"}: data returned: " + data);
+				callback.success(data);
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("error: {url: " + params.url + ", xhr.status: " + status + "," + textStatus + ", error: " + errorThrown);
+	    		callback.failure(textStatus);
+		    },
+		};
+		
+		if(params.type != undefined){
+			ajaxParameters.type = params.type;
+		}
+		
+		if(params.data != undefined){
+			ajaxParameters.data = params.data;
+		}
+		
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+			
+		$.ajax(ajaxParameters);
+	}
 
 
 })();

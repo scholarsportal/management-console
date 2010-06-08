@@ -136,7 +136,7 @@
 				</div>
 				<div class="button-bar">
 					<a href="javascript:void(1);" class="flex button add-content-item-button"><span><i class="pre plus">Add Content Item</i></span></a>
-					<a href="javascript:void(1);" class="flex button std delete-space-button"><span><i class="pre trash">Delete Space</i></span></a>
+					<a href="javascript:void(1);" class="flex button std delete-space-button dc-delete-button"><span><i class="pre trash">Delete Space</i></span></a>
 				</div>
 	
 			</div>
@@ -182,7 +182,7 @@
 				<div class="button-bar">
 					<a href="javascript:void(1);" class="flex button edit-content-item-button"><span><i class="pre pencil">Edit</i></span></a>
 					<a href="" class="flex button download-content-item-button"><span><i class="pre download">Download</i></span></a>
-					<a href="javascript:void(1);" class="flex button std delete-content-item-button"><span><i class="pre trash">Delete</i></span></a>
+					<a href="javascript:void(1);" class="flex button std delete-content-item-button  dc-delete-button"><span><i class="pre trash">Delete</i></span></a>
 				</div>
 			</div>
 			<div class="center">

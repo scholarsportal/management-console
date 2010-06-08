@@ -879,6 +879,9 @@ $(document).ready(function() {
 		
 		//attach delete button listener
 		$(".delete-space-button",detail).click(function(evt){
+			if(!dc.confirm("Are you sure you want to delete \n" + space.spaceId + "?")){
+				return;
+			}
 			
 			dc.store.DeleteSpace(space, {
 				begin: function(){
@@ -969,6 +972,9 @@ $(document).ready(function() {
 
 		//attach delete button listener
 		$(".delete-content-item-button",pane).click(function(evt){
+			if(!dc.confirm("Are you sure you want to delete \n" + contentItem.contentId + "?")){
+				return;
+			}
 			dc.store.DeleteContentItem(contentItem, {
 				begin: function(){
 					dc.busy( "Deleting content item...");
@@ -1040,12 +1046,14 @@ $(document).ready(function() {
 				spaceId, 
 				{
 					begin: function(){
-						dc.busy();
+						dc.busy("Loading space...");
 						$(contentItemListStatusId).html("Loading...").fadeIn("slow");
 					},
 					success: function(space){
+						if(space != undefined || space == null){
+							$(contentItemListStatusId).html("Error: space not found.").fadeIn("slow");
+						}
 						dc.done();
-
 						loadHandler(space);
 						$(contentItemListStatusId).fadeOut("fast");
 					}, 

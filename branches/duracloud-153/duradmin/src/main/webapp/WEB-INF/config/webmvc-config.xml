@@ -82,7 +82,9 @@
 
 
   <bean id="servicesController2" class="org.duracloud.duradmin.services.controller.ServicesController">
+  	<property name="servicesManager" ref="servicesManager"/>
   </bean>
+  
   <bean id="dashboardController" class="org.duracloud.duradmin.dashboard.controller.DashboardController">
   </bean>
 

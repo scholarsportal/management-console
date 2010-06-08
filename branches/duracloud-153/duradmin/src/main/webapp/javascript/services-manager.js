@@ -1,4 +1,41 @@
 /**
+ * Duraserivce AJAX API
+ * @author Daniel Bernstein
+ */
+var dc; 
+
+(function(){
+	if(dc == undefined){
+		dc ={};
+	}
+	
+	dc.service = {};
+	
+	var APP_CONTEXT = "/duradmin";
+	var SERVICES_URL_BASE = APP_CONTEXT+"/services?f=json&method=";
+
+	/**
+	 * Returns a list of available services.
+	 */
+	 dc.service.GetAvailableServices = function(callback){
+		 dc.ajax({
+			 url: SERVICES_URL_BASE + "available",
+		 }, callback);
+	 };
+
+	/**
+	 * Returns a list of deployed services.
+	 */
+	 dc.service.GetDeployedServices = function(callback){
+		 dc.ajax({
+			 url: SERVICES_URL_BASE + "deployed",
+		 }, callback);
+	 };
+
+})();
+
+
+/**
  * 
  * created by Daniel Bernstein
  */
@@ -195,7 +232,6 @@ $(document).ready(function() {
 			var service = services[s];
 			for(d in service.deployments){
 				var deployment = service.deployments[d];
-				
 				var item =  $.fn.create(("tr"))
 								.attr("id", deriveDeploymentId(service,deployment))
 								.addClass("dc-item")
@@ -216,7 +252,6 @@ $(document).ready(function() {
 		
 		//bind for current item change listener
 		servicesList.bind("currentItemChanged", function(evt,state){
-			
 			var data = state.data;
 			var service = null;
 			var deployment = null;
@@ -358,6 +393,16 @@ $(document).ready(function() {
 				$(this).dialog("close");
 			},
 			Next: function(){
+				var currentItem = $("#available-services-list").selectablelist("currentItem");
+
+				if(currentItem == null || currentItem == undefined){
+					alert("You must select a service.");
+					return;
+				}
+				
+				var service = currentItem.data;
+				
+				alert("configuring service " + service);
 				$(this).dialog("close");
 				$("#configure-service-dialog").dialog("open");
 				
@@ -371,6 +416,8 @@ $(document).ready(function() {
 		
 		
 		open: function(e){	
+			var that = this;
+			
 			if(!dialogLayout){
 				dialogLayout = $(this).layout({
 					resizeWithWindow:	false	// resizes with the dialog, not the window
@@ -400,19 +447,38 @@ $(document).ready(function() {
 			);
 			
 			
-			$("#available-services-list")
-				.selectablelist("addItem", $.fn.create("tr")
-											.attr("id", "item-1")
-											.addClass("service-replicate")
-											.append($.fn.create("td").addClass("icon").append($.fn.create("div")))
-											.append($.fn.create("td").html("hello world")), 
-											{displayName: "Hello World Service", description: "Hello is all."})
-				.selectablelist("addItem", $.fn.create("tr")
-						.attr("id", "item-2")
-						.addClass("service-replicate")
-						.append($.fn.create("td").addClass("icon").append($.fn.create("div")))
-						.append($.fn.create("td").html("goodbye world")), 
-						{displayName: "Goodbye World Service", description: "Goodbye is all."});
+			$("#available-services-dialog").glasspane({});
+			
+			dc.service.GetAvailableServices({ 
+				begin: function(){
+					$("#available-services-dialog").glasspane("show", "Retrieving available services...")
+				},
+				success: function(data){
+					$("#available-services-dialog").glasspane("hide");
+					var services = data.services;
+					if(services == undefined){
+						alert("No available services!");
+						this.close();
+						return;
+					}
+					for(i in services){
+						var service = services[i];
+						$("#available-services-list")
+							.selectablelist("addItem", $.fn.create("tr")
+												.attr("id", service.id)
+												.addClass(dc.getServiceTypeImageClass(service.serviceName))
+												.append($.fn.create("td").addClass("icon").append($.fn.create("div")))
+												.append($.fn.create("td").html(service.displayName)), service);
+
+					}
+				},
+				failure: function(text){
+					$("#available-services-dialog").glasspane("hide");
+					alert("get available services failed: " + text);
+				},
+				
+			});
+			
 			
 
 		},

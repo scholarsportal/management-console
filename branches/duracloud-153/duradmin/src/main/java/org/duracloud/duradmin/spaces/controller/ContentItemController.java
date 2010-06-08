@@ -72,19 +72,25 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	}
 
 	private ServicesManager servicesManager;
-	
-    
     
 	public ServicesManager getServicesManager() {
 		return servicesManager;
 	}
-
 
 	public void setServicesManager(ServicesManager servicesManager) {
 		this.servicesManager = servicesManager;
 	}
 
 	
+	protected ModelAndView delete(HttpServletRequest request,
+			HttpServletResponse response, ContentItem contentItem,
+			BindException errors) throws Exception {
+		String spaceId = contentItem.getSpaceId();
+        ContentStore contentStore = getContentStore(contentItem);
+        contentStore.deleteContent(spaceId, contentItem.getContentId());
+        return createModel(contentItem);
+	}
+
 	
 
 	@Override
