@@ -72,7 +72,7 @@ var dc;
 		*/
 	};
 	
-
+	
 	/**
 	 * Cookie plugin
 	 *
@@ -239,14 +239,15 @@ var dc;
 	
 	};
 	
-	dc.showLoading = function(){
-		return $('<span>Loading...</span>').toaster({delay:0.5});
+	dc.busy = function(message){
+		$("#page-content").glasspane("show", message);
 	};
 	
-	dc.hideLoading = function(/*toaster node*/t){
-		t.toaster("hide");
+	dc.done = function(){
+		$("#page-content").glasspane("hide");
 	};
 
+	
 
 	/**
 	 * checks the progress of a remote task and notifies caller of results.

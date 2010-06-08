@@ -54,15 +54,14 @@ var dc;
 			},
 		    error: function(xhr, textStatus, errorThrown){
 	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
-	    		alert("get spaces failed: " + textStatus);
+	    		alert("get space failed: " + textStatus);
 		    },
 		});		
 		
 	};
 	
 	/**
-	 * @param String storeId  store id 
-	 * @param String spaceId  space id 
+	 * @param Object space
 	 * @param Object callback The callback must implement success and failure methods. options begin method is supported.
 	 */
 	dc.store.DeleteSpace = function(space, callback){
@@ -77,7 +76,7 @@ var dc;
 			type: "POST",
 			success: callback.success,
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		console.error("delete space failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 			},
 		});
@@ -100,7 +99,7 @@ var dc;
 			type: "POST",
 			success: function(data){callback.success(data.space)},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		console.error("add space failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 			},
 		});
@@ -156,6 +155,27 @@ var dc;
 
 	};
 	
+	/**
+	 * @param Object contentItem
+	 * @param Object callback The callback must implement success and failure methods. options begin method is supported.
+	 */
+	dc.store.DeleteContentItem = function(contentItem, callback){
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+		$.ajax({
+			url: "/duradmin/spaces/content", 
+			data: "action=delete&storeId="+contentItem.storeId+"&spaceId="+escape(contentItem.spaceId)+"&contentId="+escape(contentItem.contentId),
+			type: "POST",
+			success: callback.success,
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("delete content item failed: " + textStatus + ", error: " + errorThrown +", contentItem: " + contentItem);
+	    		callback.failure(textStatus);
+			},
+		});
+	};
+
+	
 	
 	dc.store.AddContentItem = function(storeId,spaceId, form, future){
 		$(form).ajaxForm({
@@ -165,7 +185,7 @@ var dc;
 				alert("success!" + data);
 		    },
 		    error: function(xhr, textStatus, errorThrown){
-		    	alert("get contentItem failed: " + textStatus);
+		    	alert("add contentItem failed: " + textStatus);
 		    },
 		});
 
@@ -187,9 +207,22 @@ var dc;
 	 * @param storeId 
 	 * 
 	 */
-	dc.store.checkIfContentItemExists = function(spaceId,contentId, storeId, callback){
-		//alert("implement check if content item exists!");
-		callback.success(true);
+	dc.store.checkIfContentItemExists = function(contentItem, callback){
+		dc.store.GetContentItem(contentItem.storeId,contentItem.spaceId,contentItem.contentId,{
+			begin: function(){
+				dc.busy("Checking for duplicates...");
+			},
+			
+			failure: function(text){
+				dc.done();
+				callback.success(true);
+			},
+
+			success: function(contentItem){
+				dc.done();
+				callback.success(contentItem != undefined);
+			},
+		});
 	};
 		
 })();
@@ -562,10 +595,10 @@ $(document).ready(function() {
 						space,
 						{
 							begin: function(){
-								$("#page-content").glasspane("show", "Adding space...");
+								dc.busy( "Adding space...");
 							},
 							success: function(space){
-								$("#page-content").glasspane("hide");
+								dc.done();
 								$("#spaces-list-view #space-filter").val(space.spaceId);
 								refreshSpaces(space.storeId);
 							},
@@ -689,7 +722,7 @@ $(document).ready(function() {
 					$("#storeId", form).val(storeId);
 					
 					dc.store.checkIfContentItemExists(
-							spaceId, contentId, storeId, 
+							{spaceId: spaceId, contentId: contentId, storeId:storeId}, 
 							{ 
 								success: function(exists){
 									if(exists){
@@ -709,10 +742,7 @@ $(document).ready(function() {
 										},
 										
 										view: function(){
-											dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,contentId,{
-												success: loadContentItem
-											});
-
+											getContentItem(getCurrentProviderStoreId(),spaceId,contentId);
 										},
 									};
 									
@@ -852,17 +882,17 @@ $(document).ready(function() {
 			
 			dc.store.DeleteSpace(space, {
 				begin: function(){
-					$("#page-content").glasspane("show", "Deleting space...");
+					dc.busy( "Deleting space...");
 				},
 				
 				success:function(){
-					$("#page-content").glasspane("hide");
+					dc.done();
 
 					$("#spaces-list").selectablelist("removeById", space.spaceId);
 				},
 				
 				failure: function(message){
-					$("#page-content").glasspane("hide");
+					dc.done();
 					alert("failed to delete space!");
 				},
 			});
@@ -935,6 +965,26 @@ $(document).ready(function() {
 		var pane = $("#contentItemDetailPane").clone();
 		setObjectName(pane, contentItem.contentId);
 		
+		$(".download-content-item-button", pane).attr("href", contentItem.downloadURL);
+
+		//attach delete button listener
+		$(".delete-content-item-button",pane).click(function(evt){
+			dc.store.DeleteContentItem(contentItem, {
+				begin: function(){
+					dc.busy( "Deleting content item...");
+				},
+				success:function(){
+					dc.done();
+					$("#content-item-list").selectablelist("removeById", contentItem.contentId);
+				},
+				failure: function(message){
+					dc.done();
+					alert("failed to delete contentItem: " + message);
+				},
+			});
+		});
+		
+		
 		var mimetype = contentItem.metadata.mimetype;
 		
 		if(mimetype.indexOf("image") == 0 || mimetype.indexOf("text") == 0 || isPdf(mimetype)){
@@ -990,17 +1040,17 @@ $(document).ready(function() {
 				spaceId, 
 				{
 					begin: function(){
-						$("#page-content").glasspane("show");
+						dc.busy();
 						$(contentItemListStatusId).html("Loading...").fadeIn("slow");
 					},
 					success: function(space){
-						$("#page-content").glasspane("hide");
+						dc.done();
 
 						loadHandler(space);
 						$(contentItemListStatusId).fadeOut("fast");
 					}, 
 					failure:function(info){
-						$("#page-content").glasspane("hide");
+						dc.done();
 						alert("Get Space failed: " + info);
 					},
 				},
@@ -1009,6 +1059,23 @@ $(document).ready(function() {
 				});
 	};
 	
+	var getContentItem = function(storeId, spaceId, contentId){
+		dc.store.GetContentItem(storeId,spaceId,contentId,{
+			begin: function(){
+				dc.busy("Loading...");
+			},
+			
+			failure: function(text){
+				dc.done();
+				alert("get item failed: " + text);
+			},
+
+			success: function(data){
+				dc.done();
+				loadContentItem(data);
+			},
+		});
+	};
 	$("#content-item-list-view").find(".dc-item-list-filter").bind("keyup", $.debounce(500, function(evt){
 		var spaceId = getCurrentSpaceId();
 		getSpace(spaceId, function(space){loadContentItems(space.contents)});
@@ -1034,19 +1101,19 @@ $(document).ready(function() {
 	var toggleSpaceAccess = function(space, callback){
 		var access = space.metadata.access;
 		var newAccess = (access == "OPEN") ? "CLOSED":"OPEN";
-		$("#page-content").glasspane("show", "Changing space access..."); 
+		dc.busy( "Changing space access..."); 
 		$.ajax({ url: "/duradmin/spaces/space?storeId="+space.storeId+"&spaceId="+escape(space.spaceId), 
 			data: "access="+newAccess+"&action=put&method=changeAccess",
 			type: "POST",
 			cache: false,
 			context: document.body, 
 			success: function(data){
-				$("#page-content").glasspane("hide");
+				dc.done();
 				callback.success(data.space);
 			},
 		    error: function(xhr, textStatus, errorThrown){
 	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
-				$("#page-content").glasspane("hide");
+				dc.done();
 	    		callback.failure(textStatus);
 		    },
 		});		
@@ -1072,26 +1139,6 @@ $(document).ready(function() {
 	};
 	
 
-	/////////////////////////////////////////////////////////////////////////////////
-	///space metadata functions
-	var createSpaceMetadataCall = function(spaceId, data, method,callback){
-		var newData = data + "&method=" + method;
-		var storeId = getCurrentProviderStoreId();
-		return {
-			url: "/duradmin/spaces/space?storeId="+storeId+"&spaceId="+escape(spaceId) +"&action=put", 
-			type: "POST",
-			data: newData,
-			cache: false,
-			context: document.body, 
-			success: function(data){
-				callback.success();
-			},
-		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
-	    		callback.failure(textStatus);
-		    },
-		};
-	};
 	
 	var addSpaceMetadata = function(spaceId, name, value, callback){
 		var data = "metadata-name=" + escape(name) +"&metadata-value="+escape(value);
@@ -1204,20 +1251,12 @@ $(document).ready(function() {
 	///click on a content list item
 	$("#content-item-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
-			/**
-			 * @FIXME 
-			 */
-			var spaceId = getCurrentSpaceId();
-
-			dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"),{
-				begin: function(){
-					$("#page-content").glasspane("show");
-				},
-				success: function(contentItem) {
-					$("#page-content").glasspane("hide");
-					loadContentItem(contentItem);
-				}
-			});
+			if(state.item != null && state.item != undefined){
+				var spaceId = getCurrentSpaceId();
+				getContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"));
+			}else{
+				showGenericDetailPane();
+			}
 		}else{
 			showMultiContentItemDetail();
 		}
@@ -1233,9 +1272,7 @@ $(document).ready(function() {
 			/**
 			 * @FIXME 
 			 */
-			dc.store.GetContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"),{
-				success: loadContentItem
-			});
+			getContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"));
 		}else{
 			showMultiContentItemDetail();
 		}
@@ -1290,11 +1327,11 @@ $(document).ready(function() {
 		clearContents();
 		dc.store.GetSpaces(providerId,{
 			begin: function(){
-				$("#page-content").glasspane("show");
+				dc.busy("Loading spaces...");
 				$("#space-list-status").html("Loading...").fadeIn("slow");
 			},
 			success: function(spaces){
-				$("#page-content").glasspane("hide");
+				dc.done();
 
 				spacesArray = new Array();
 				for(s in spaces){
@@ -1307,8 +1344,7 @@ $(document).ready(function() {
 
 			},
 			failure: function(xhr, message){
-				$("#page-content").glasspane("hide");
-
+				dc.done();
 				alert("error:" + message);
 				$("#space-list-status").fadeOut("fast");
 			}

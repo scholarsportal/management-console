@@ -131,7 +131,7 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
             }
         }else{ 
         	Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
-        	MetadataUtils.handle("method", "space ["+spaceId+"]",  metadata, request);
+        	MetadataUtils.handle(method, "space ["+spaceId+"]",  metadata, request);
         	contentStore.setContentMetadata(spaceId, contentId, metadata);
         }
 
