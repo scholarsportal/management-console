@@ -5,12 +5,8 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="header-extensions">
-	<!-- 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.history.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.form.wizard-2.0.1-min.js"></script>
- 	<script type="text/javascript" src="http://github.com/malsup/form/raw/master/jquery.form.js?v2.43"></script>
-	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
-	-->
+		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.form/jquery.form-2.4.3.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.glasspane.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
@@ -36,8 +32,8 @@
 				</div>
 			
 				<div class="center dc-item-list-wrapper">
-					<div class="dc-item-list">
-						<table>
+					<div id="deployed-services" class="dc-item-list">
+						<table id="deployed-services-table" style="display:none">
 							<thead>
 								<tr>
 									<th>&nbsp;</th>
@@ -47,42 +43,6 @@
 								</tr>
 							</thead>
 							<tbody  id="services-list">
-								<tr class="dc-item service-replicate">
-									<td class="icon"><div></div></td>
-									<td>Service #1 - Replicate</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-generalcompute">
-									<td class="icon"><div></div></td>
-									<td>Service #1 - General compute</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-bitintegrity">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-image">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-video">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-filetransform">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>	
 							</tbody>
 						</table>
 					</div>			
@@ -125,6 +85,7 @@
 				<h1>Select a Service</h1>
 				<div class="dc-item-list-wrapper" id="dc-item-list-wrapper"> 
 					<div id="available-services-list-wrapper" class="dc-item-list">
+						<span class="dc-message">Loading...</span>
 						<table>
 							<tbody id="available-services-list">
 							</tbody>
@@ -192,52 +153,8 @@
 			<div id="configure-service-dialog" class="dialog" title="Configure Service">
 				<h1>Configure the Service</h1>
 				<p class="hint">Configure your service, then click "Deploy"</p>
-				<form enctype="multipart/form-data">
-					<div id="form-fields" class="form-fields h400">
-						<fieldset>
-							<ul>
-								<li class="row clearfix first-of-type">
-									<label for="host">Select Host</label>
-									<select name="host" id="host" class="field" />
-										<option value="null default">- Select one -</option>
-										<option value="1">First option</option>
-										<option value="2">Second option</option>
-									</select>
-								</li>
-								<li class="row clearfix"><label for="textinput1">Text Input</label><input type="text" name="textinput1" id="dropdown1" class="field" /></li>
-								<li class="row clearfix">
-									<label for="dropdown1">Dropdown with a really long name that wraps</label>
-									<select name="dropdown1" id="dropdown1" class="field" />
-										<option value="null default">- Select one -</option>
-										<option value="1">First option</option>
-										<option value="2">Second option</option>
-									</select>
-								</li>
-								<li class="row clearfix">
-								<label for="checkboxes">Checkboxes</label>
-									<ul class="field">
-										<li><input type="checkbox" id="c1" />Checkbox 1</li>
-										<li><input type="checkbox" id="c2" />Checkbox 2</li>
-										<li><input type="checkbox" id="c3" />Checkbox 3</li>
-										<li><input type="checkbox" id="c4" />Checkbox 4</li>
-										<li><input type="checkbox" id="c1" />Checkbox 1</li>
-										<li><input type="checkbox" id="c2" />Checkbox 2</li>
-										<li><input type="checkbox" id="c3" />Checkbox 3</li>
-										<li><input type="checkbox" id="c4" />Checkbox 4</li>
-										<li><input type="checkbox" id="c1" />Checkbox 1</li>
-										<li><input type="checkbox" id="c2" />Checkbox 2</li>
-										<li><input type="checkbox" id="c3" />Checkbox 3</li>
-										<li><input type="checkbox" id="c4" />Checkbox 4</li>
-										<li><input type="checkbox" id="c1" />Checkbox 1</li>
-										<li><input type="checkbox" id="c2" />Checkbox 2</li>
-										<li><input type="checkbox" id="c3" />Checkbox 3</li>
-										<li><input type="checkbox" id="c4" />Checkbox 4</li>
-									</ul>
-								</li>
-							</ul>
-						</fieldset>
-					</div>
-				</form>	
+				<div id="service-config">
+				</div>
 			</div>
 			
 		</tiles:putAttribute>

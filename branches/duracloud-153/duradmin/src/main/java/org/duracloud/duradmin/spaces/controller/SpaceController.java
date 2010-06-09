@@ -100,19 +100,21 @@ public class SpaceController extends  AbstractRestController<Space> {
             if(access !=null){
                 contentStore.setSpaceAccess(spaceId, AccessType.valueOf(access));
             }
+            return createModel(space);
         }else{ 
         	Map<String,String> metadata  = contentStore.getSpaceMetadata(spaceId);
         	MetadataUtils.handle(method, "space ["+spaceId+"]",  metadata, request);
         	contentStore.setSpaceMetadata(spaceId, metadata);
+            Space newSpace = new Space();
+            SpaceUtil.populateSpace(newSpace, contentStore.getSpace(spaceId,
+                    null,
+                    0,
+                    null));
+
+    		return createModel(newSpace);
+
         }
        
-        Space newSpace = new Space();
-        SpaceUtil.populateSpace(newSpace, contentStore.getSpace(spaceId,
-                null,
-                0,
-                null));
-
-		return createModel(space);
 	}
 
 	protected ModelAndView post(HttpServletRequest request,

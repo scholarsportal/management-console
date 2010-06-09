@@ -34,7 +34,143 @@ var dc;
 
 })();
 
+/**
+ * Service Widgets
+ */
+(function(){
+	$.widget('ui.serviceconfig', { 
+		_service: null,
+		_controlContainer: null,
+		_init: function(){
+			this.element.html("");
+			this._controlContainer =  $.fn.create("fieldset");
+			this.element.append(
+				$.fn.create("span").addClass("dc-message")
+			).append(
+				$.fn.create("form").append(
+					$.fn.create("div").addClass("form-fields h400").append(
+							this._controlContainer
+					)
+				)
+			);
+		},
 
+		
+		_destroy: function(){
+			$(".dc-message", this.element).html("");
+			
+		},
+		options: {},
+		_createControl: function(/*userConfig object*/uc){
+			return $.fn.create("input").attr("type", "text").attr("id", uc.name);
+		},
+		
+		_createListItem: function(fieldId, displayName){
+			var li = $.fn.create("li").addClass("row clearfix");
+			
+			li.append(
+					$.fn.create("label").attr("for", fieldId).html(displayName)
+			);
+			
+			return li;
+		},
+
+		service: function(){
+			return this._service;
+		},
+		
+		configure: function(service){
+			this._service = service;
+			console.debug("loading service: " + service.displayName);
+			var userConfigs = service.userConfigs;
+			this._controlContainer.html("");
+			this._controlContainer.append(
+				$.fn.create("input").attr("type", "hidden").val(service.id)
+			);
+
+
+			
+			var list = $.fn.create("ul");
+			this._controlContainer.append(list);
+			
+			var dOptions = service.deploymentOptions;
+			var locationSelect = $.fn.create("select").attr("id","location");
+			for(i in dOptions){
+				var o = dOptions[i];
+				locationSelect.append($.fn.create("option").attr("value", o.hostname).html(o.displayName + " - " + o.hostname + " - " + o.location));
+			}
+			
+			list.append(
+				this._createListItem("location", "Location").append(locationSelect)
+			);
+			
+			
+			if(userConfigs != undefined && userConfigs != null && userConfigs.length > 0){
+				for(i in userConfigs){
+					var uc = userconfigs[i];
+					
+					list.append(
+							this._createListItem(uc.id, uc.displayName)
+								.append(this._createControl(uc))
+					);
+				}	
+			}
+			/*
+			<form enctype="multipart/form-data">
+			<div id="form-fields" class="form-fields h400">
+				<fieldset>
+					<ul>
+						<li class="row clearfix first-of-type">
+							<label for="host">Select Host</label>
+							<select name="host" id="host" class="field" />
+								<option value="null default">- Select one -</option>
+								<option value="1">First option</option>
+								<option value="2">Second option</option>
+							</select>
+						</li>
+						<li class="row clearfix"><label for="textinput1">Text Input</label><input type="text" name="textinput1" id="dropdown1" class="field" /></li>
+						<li class="row clearfix">
+							<label for="dropdown1">Dropdown with a really long name that wraps</label>
+							<select name="dropdown1" id="dropdown1" class="field" />
+								<option value="null default">- Select one -</option>
+								<option value="1">First option</option>
+								<option value="2">Second option</option>
+							</select>
+						</li>
+						<li class="row clearfix">
+						<label for="checkboxes">Checkboxes</label>
+							<ul class="field">
+								<li><input type="checkbox" id="c1" />Checkbox 1</li>
+								<li><input type="checkbox" id="c2" />Checkbox 2</li>
+								<li><input type="checkbox" id="c3" />Checkbox 3</li>
+								<li><input type="checkbox" id="c4" />Checkbox 4</li>
+								<li><input type="checkbox" id="c1" />Checkbox 1</li>
+								<li><input type="checkbox" id="c2" />Checkbox 2</li>
+								<li><input type="checkbox" id="c3" />Checkbox 3</li>
+								<li><input type="checkbox" id="c4" />Checkbox 4</li>
+								<li><input type="checkbox" id="c1" />Checkbox 1</li>
+								<li><input type="checkbox" id="c2" />Checkbox 2</li>
+								<li><input type="checkbox" id="c3" />Checkbox 3</li>
+								<li><input type="checkbox" id="c4" />Checkbox 4</li>
+								<li><input type="checkbox" id="c1" />Checkbox 1</li>
+								<li><input type="checkbox" id="c2" />Checkbox 2</li>
+								<li><input type="checkbox" id="c3" />Checkbox 3</li>
+								<li><input type="checkbox" id="c4" />Checkbox 4</li>
+							</ul>
+						</li>
+					</ul>
+				</fieldset>
+			</div>
+		</form>
+		*/
+		
+		},
+		reconfigure: function(service,deployment){
+			this.element.html("loading service: " + service.displayName + ", deployment: " + deployment.id);
+		},
+
+	});
+})();
 /**
  * 
  * created by Daniel Bernstein
@@ -225,8 +361,20 @@ $(document).ready(function() {
 
 	var loadDeployedServiceList = function(services){
 		var servicesList = $(servicesListId);
+		var panel = $("#deployed-services");
+		var table = $("#deployed-services-table");
+		
+		table.hide();
+		$(".dc-message", panel).remove();
+		
 		servicesList.selectablelist({selectable: false});
 		servicesList.selectablelist("clear");
+		
+		if(services == null || services == undefined || services.length == 0){
+			panel.append($.fn.create("span").addClass("dc-message").html("No services are currently deployed."));
+			return;
+		}
+		
 		var defaultServiceSet = false;
 		for(s in services){
 			var service = services[s];
@@ -267,7 +415,7 @@ $(document).ready(function() {
 	};
 	
 	
-	
+/*	
 	var getDeployedServices = function(callback){
 		var services = [
 		                
@@ -354,7 +502,7 @@ $(document).ready(function() {
 		//implement ajax call here and remove the above mock data
 		callback.load(services);
 	};
-
+	*/
 	
 	var getServiceDeploymentConfig = function(service, deployment, callback){
 		//implement ajax call here
@@ -370,11 +518,24 @@ $(document).ready(function() {
 		callback.success(config);
 		
 	};
-	getDeployedServices({load: loadDeployedServiceList});
 	
-	
+	var refreshDeployedServices = function(){
+		dc.service.GetDeployedServices({
+			begin: function(){
+				dc.busy("Retrieving available services...");
+			},
+			success: function(data){
+				dc.done();
+				loadDeployedServiceList(data.services);
+			},
+			failure: function(text){
+				dc.done();
+				alert("get available services failed: " + text);
+			},
+		});
+	};
+
 	//dialogs
-	
 	var dialogLayout; 
 	
 	$('#available-services-dialog').dialog({
@@ -399,12 +560,13 @@ $(document).ready(function() {
 					alert("You must select a service.");
 					return;
 				}
+
+				$(this).dialog("close");
 				
 				var service = currentItem.data;
-				
-				alert("configuring service " + service);
-				$(this).dialog("close");
-				$("#configure-service-dialog").dialog("open");
+				var confElement = $("#configure-service-dialog");
+				$("#service-config").serviceconfig({}).serviceconfig("configure", service);
+				confElement.dialog("open");
 				
 			}
 		
@@ -447,22 +609,20 @@ $(document).ready(function() {
 			);
 			
 			
-			$("#available-services-dialog").glasspane({});
-			
 			dc.service.GetAvailableServices({ 
 				begin: function(){
-					$("#available-services-dialog").glasspane("show", "Retrieving available services...")
+					$("#available-services-dialog .dc-message").html("Loading...");
 				},
 				success: function(data){
-					$("#available-services-dialog").glasspane("hide");
+					$("#available-services-dialog .dc-message").html("");
 					var services = data.services;
 					if(services == undefined){
-						alert("No available services!");
-						this.close();
+						$("#available-services-dialog .dc-message").html("There are no available services.");
 						return;
 					}
 					for(i in services){
 						var service = services[i];
+						
 						$("#available-services-list")
 							.selectablelist("addItem", $.fn.create("tr")
 												.attr("id", service.id)
@@ -473,10 +633,9 @@ $(document).ready(function() {
 					}
 				},
 				failure: function(text){
-					$("#available-services-dialog").glasspane("hide");
-					alert("get available services failed: " + text);
+					$("#available-services-dialog .dc-message").hide();
+					$("#available-services-dialog .dc-message").html("Unable to load services: " + text);
 				},
-				
 			});
 			
 			
@@ -538,11 +697,28 @@ $(document).ready(function() {
 			"< Back": function(){
 				$("#configure-service-dialog").dialog("close");
 				$("#available-services-dialog").dialog("open");
-
 			},
 			
 			"Deploy": function(){
+				
+				var service = $("#configure-service-dialog .service-config")
+									.serviceconfig("service");
 				$("#configure-service-dialog").dialog("close");
+				
+				var form = $("#configure-service-dialog form");
+
+				$(form).ajaxSubmit(
+					{
+						url: "/duradmin/services/service?action=post",
+						success: function(){
+							dc.showTransientStatus("successfully deployed the service");
+							refreshDeployedServices();
+						},
+					
+						error: function(xhr, textStatus, errorThrown){
+					    	alert("failed: " + textStatus);
+					    },
+					});
 			},
 			
 			"Cancel": function(){
@@ -557,5 +733,7 @@ $(document).ready(function() {
 
 	$(".ui-dialog-titlebar").hide();
 
+
+	refreshDeployedServices();
 
 });
