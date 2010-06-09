@@ -1,6 +1,5 @@
 <%@include file="/WEB-INF/jsp/include.jsp" %>
-<div id="page-header" class="outer">	
-
+<div id="page-header" class="outer">
 	<div id="left" class="float-l">
 		<div id="dc-logo-panel"><a href="/duradmin/spaces" id="dc-logo"></a><span id="dc-app-title"></span></div>
 		<div id="dc-tabs-panel">
@@ -29,15 +28,22 @@
 <div id="page-content" class="pane-L1-body">
  	<tiles:insertAttribute name="main-content" />
 </div>
-<div class="ui-layout-south outer footer">
-	<div class="float-r" id="logo-ds"></div>
-	<div class="footer-content">
+<div class="ui-layout-south footer">
+	<div id="status-holder">
+		<a  href="javascript:void(0)" id="view-uploads">Upload Status:
+			<span id="progress-bar"></span>
+		</a>				
+		<div id="upload-viewer"></div>
+	</div>
+	<div class="outer" id="footer-content">
+		<div class="float-r" id="logo-ds"></div>
 		Duracloud Administrator Release 0.4  <span class="sep">|</span>
 		©<script type="text/javascript">document.write(new Date().getFullYear());</script>
 		<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
 		<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
 		<a target="_blank" href="#">Contact Us</a>
 	</div>
+
 </div>	
 
 <div id="loading-message" style="display:none">

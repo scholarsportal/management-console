@@ -60,9 +60,10 @@
 
 #login-footer
 {
-
-
+	background-position:right -30px;
 }
+
+#login-wrapper .footer-content { padding-top:20px; }
 
 
 #form-fields #button-login,

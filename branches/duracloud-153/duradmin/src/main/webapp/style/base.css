@@ -243,17 +243,49 @@ h3 { font-size:1em; }
 
 .ui-layout-toggler
 {
-	background:url(../images/grippy.gif) no-repeat top left;
+	background:url(../images/grippy.gif) no-repeat left top;
 	height:100px !important;
 }
 
 .footer
 {
-	background:url(../images/bg_L1_btm.png) no-repeat top right;
-	padding:15px 10px 10px 10px;
+	background:url(../images/bg_L1_btm.png) no-repeat right -8px;
+	height:70px !important;
+	padding:0px 10px;
 }
 
-.ui-layout-south .sep
+.footer #status-holder
+{
+	color:#ccc;
+	font-size:11px;
+	height:27px;
+	padding-top:2px;
+	text-align:right;
+}
+
+.footer #status-holder a { color:#ccc; text-decoration:none; }
+.footer #status-holder a:hover { color:#fff; }
+
+#status-holder #progress-bar
+{
+	background:url("/duradmin/images/uploading.gif") no-repeat left 2px;
+	display:inline-block;
+	height:18px;
+	width:100px;
+}
+
+
+#footer-content { margin-top:15px; }
+
+#logo-ds
+{
+	background:url(../images/logo_duraspace_onwhite.gif) no-repeat top left;
+	margin-top:-5px;
+	width:98px;
+	height:18px;
+}
+
+.footer .sep
 {
 	color:#47c1ff;
 }
@@ -564,13 +596,6 @@ input.dc-check-all
 	padding-right:20px;
 	text-align:right;
 	width:400px;
-}
-
-#logo-ds
-{
-	background:url(../images/logo_duraspace_onwhite.gif) no-repeat top left;
-	width:98px;
-	height:18px;
 }
 
 .outer,

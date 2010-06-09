@@ -73,8 +73,6 @@
 					<input type="button" value="^"/>   	
 					</span>
 				 -->
-					<a  href="javascript:void(0)" id="view-uploads">Uploads</a>   					
-					<div id="upload-viewer"></div>
 		   		</div>
 		   	</div>
 		   	<div id="list-browser" class="list-browser">
