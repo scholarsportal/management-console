@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ConfigAdminTester {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ConfigAdminTester.class);
 
     private final DuraConfigAdmin configAdmin;
 

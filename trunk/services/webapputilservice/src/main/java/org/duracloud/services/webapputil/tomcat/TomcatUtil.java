@@ -25,7 +25,7 @@ import java.util.zip.ZipFile;
  */
 public class TomcatUtil {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(TomcatUtil.class);
 
     private File binaries;
     private File resourceDir;

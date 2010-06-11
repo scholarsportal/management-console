@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class ImageConversionService extends BaseService implements ComputeService, ManagedService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ImageConversionService.class);
 
     private static final String DEFAULT_DURASTORE_HOST = "localhost";
     private static final String DEFAULT_DURASTORE_PORT = "8080";
@@ -52,7 +52,7 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     @Override
     public void start() throws Exception {
-        System.out.println("Starting Image Conversion Service as " + username +
+        log.info("Starting Image Conversion Service as " + username +
                            ", with " + threads + " worker threads");
         this.setServiceStatus(ServiceStatus.STARTING);
         
@@ -80,7 +80,7 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     @Override
     public void stop() throws Exception {
-        System.out.println("Stopping Image Conversion Service");    
+        log.info("Stopping Image Conversion Service");
         this.setServiceStatus(ServiceStatus.STOPPING);
         if(conversionThread != null) {
             conversionThread.stopConversion();
@@ -261,6 +261,5 @@ public class ImageConversionService extends BaseService implements ComputeServic
 
     private void log(String logMsg) {
         log.warn(logMsg);
-        System.out.println(logMsg);
     }
 }

@@ -1,11 +1,12 @@
 package org.duracloud.chunk;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.stream.CountingDigestInputStream;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ import java.util.Iterator;
  */
 public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<ChunkInputStream> {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ChunkableContent.class);
 
     private CountingDigestInputStream largeStream;
     private String contentId;
@@ -157,7 +158,7 @@ public class ChunkableContent implements Iterable<ChunkInputStream>, Iterator<Ch
             StringBuilder sb = new StringBuilder("Error: ");
             sb.append("Previous chunk not fully read: ");
             sb.append(currentChunk.getChunkId());
-            log.error(sb);
+            log.error(sb.toString());
             throw new DuraCloudRuntimeException(sb.toString());
         }
     }

@@ -2,9 +2,9 @@ package org.duracloud.computeprovider.mgmt;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.computeprovider.domain.ComputeProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a factory for creating instances of ComputeProviders.
@@ -20,7 +20,7 @@ import org.duracloud.computeprovider.domain.ComputeProviderType;
 public class ComputeProviderFactory {
 
     protected static final Logger log =
-            Logger.getLogger(ComputeProviderFactory.class);
+            LoggerFactory.getLogger(ComputeProviderFactory.class);
 
     private static Map<String, String> typeToClassMap;
 
@@ -54,7 +54,7 @@ public class ComputeProviderFactory {
         try {
             className = typeToClassMap.get(providerType.toString());
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error retrieving from map", e);
             throw e;
         }
         return className;
@@ -65,8 +65,7 @@ public class ComputeProviderFactory {
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            log.error("No class found for classname: '" + className + "'");
-            log.error(e);
+            log.error("No class found for classname: '" + className + "'", e);
             exception = e;
         }
         return clazz;
@@ -78,10 +77,10 @@ public class ComputeProviderFactory {
         try {
             provider = (ComputeProvider) clazz.newInstance();
         } catch (InstantiationException e) {
-            log.error(e);
+            log.error("Error with instantiation", e);
             exception = e;
         } catch (IllegalAccessException e) {
-            log.error(e);
+            log.error("Illegal access", e);
             exception = e;
         }
         return provider;

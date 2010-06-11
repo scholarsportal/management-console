@@ -1,6 +1,7 @@
 package org.duracloud.durastore.aop;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.core.Ordered;
 import org.springframework.jms.core.JmsTemplate;
@@ -11,7 +12,7 @@ import java.lang.reflect.Method;
 public class IngestAdvice
         implements AfterReturningAdvice, Ordered {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(IngestAdvice.class);
 
     protected static final int STORE_ID_INDEX = 1;
 

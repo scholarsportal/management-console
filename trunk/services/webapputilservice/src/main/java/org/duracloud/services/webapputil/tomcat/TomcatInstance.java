@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class TomcatInstance {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(TomcatInstance.class);
 
     private File catalinaHome;
     private int port;

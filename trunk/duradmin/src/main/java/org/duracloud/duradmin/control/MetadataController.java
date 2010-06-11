@@ -7,11 +7,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.domain.MetadataItem;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MetadataUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class MetadataController
         extends BaseCommandController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(MetadataController.class);
 
     public MetadataController() {
         setCommandClass(MetadataItem.class);

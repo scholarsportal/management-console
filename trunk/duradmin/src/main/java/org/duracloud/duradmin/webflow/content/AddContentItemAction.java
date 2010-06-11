@@ -1,8 +1,6 @@
 
 package org.duracloud.duradmin.webflow.content;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.ContentItem;
@@ -10,6 +8,8 @@ import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.FileData;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.error.ContentStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
@@ -25,7 +25,7 @@ public class AddContentItemAction
      */
     private static final long serialVersionUID = 1L;
 
-    private static Log log = LogFactory.getLog(AddContentItemAction.class);
+    private static Logger log = LoggerFactory.getLogger(AddContentItemAction.class);
 
     private transient ContentStoreProvider contentStoreProvider;
 
@@ -74,7 +74,7 @@ public class AddContentItemAction
                                                                  null));
             return true;
         } catch (ContentStoreException e) {
-            log.error(e);
+            log.error("Error adding content item", e);
             messageContext.addMessage(new MessageBuilder().error()
                     .code("transaction.failure").arg(e.getMessage()).build());
             return false;

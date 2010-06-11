@@ -3,17 +3,17 @@ package org.duracloud.mainwebapp.domain.cmd;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.mainwebapp.domain.model.ComputeAcct;
 import org.duracloud.mainwebapp.domain.model.DuraCloudAcct;
 import org.duracloud.mainwebapp.domain.model.StorageAcct;
 import org.duracloud.mainwebapp.domain.model.User;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DuraAcctWrapper {
 
-    protected static final Logger log = Logger.getLogger(DuraAcctWrapper.class);
+    protected static final Logger log = LoggerFactory.getLogger(DuraAcctWrapper.class);
 
     private DuraCloudAcct duraAcct;
 

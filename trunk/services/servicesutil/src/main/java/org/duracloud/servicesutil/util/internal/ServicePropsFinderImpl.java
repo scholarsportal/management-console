@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class ServicePropsFinderImpl implements ServicePropsFinder {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServicePropsFinderImpl.class);
 
     private List<ComputeService> duraServices;
     private ServiceHelper helper = new ServiceHelper();

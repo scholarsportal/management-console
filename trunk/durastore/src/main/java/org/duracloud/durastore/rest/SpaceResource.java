@@ -1,6 +1,5 @@
 package org.duracloud.durastore.rest;
 
-import org.apache.log4j.Logger;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
@@ -13,6 +12,8 @@ import org.duracloud.storage.util.IdUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public class SpaceResource {
 
-    protected static final Logger log = Logger.getLogger(SpaceResource.class);
+    protected static final Logger log = LoggerFactory.getLogger(SpaceResource.class);
 
     /**
      * Provides a listing of all spaces for a customer. Open spaces are
@@ -37,6 +38,7 @@ public class SpaceResource {
      */
     public static String getSpaces(String storeID)
     throws ResourceException {
+        log.debug("Enter");
         Element spacesElem = new Element("spaces");
 
         try {

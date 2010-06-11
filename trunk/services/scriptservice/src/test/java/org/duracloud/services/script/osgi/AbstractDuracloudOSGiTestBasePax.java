@@ -37,10 +37,10 @@ public class AbstractDuracloudOSGiTestBasePax {
 
         Option bundles = bundle("file:target/scriptservice-"+getVersion()+".jar");
 
-        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
+        Option frameworks = CoreOptions.frameworks(CoreOptions.equinox());
                                                    // Knops does not work for this service.
                                                    // CoreOptions.knopflerfish(),
-                                                   CoreOptions.felix());
+//                                                   CoreOptions.felix());
 
         return options(bundles,
                        mavenConfiguration(),

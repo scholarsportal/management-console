@@ -25,7 +25,7 @@ import java.util.zip.ZipFile;
  */
 public class ServiceInstallTestBase {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceInstallTestBase.class);
 
     private final static String BASE_DIR_PROP = "base.dir";
     private final static String PROJECT_VERSION_PROP = "PROJECT_VERSION";

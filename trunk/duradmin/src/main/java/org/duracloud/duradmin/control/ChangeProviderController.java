@@ -1,10 +1,10 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.duradmin.domain.StorageProvider;
 import org.duracloud.duradmin.util.MessageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.Message;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ChangeProviderController
         extends BaseCommandController {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ChangeProviderController.class);
 
     public ChangeProviderController() {
         setCommandClass(StorageProvider.class);

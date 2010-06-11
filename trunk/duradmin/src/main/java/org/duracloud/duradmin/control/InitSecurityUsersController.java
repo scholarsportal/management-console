@@ -1,11 +1,13 @@
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import static org.duracloud.common.util.ExceptionUtil.getStackTraceAsString;
 import org.duracloud.security.DuracloudUserDetailsService;
 import org.duracloud.security.domain.SecurityUserBean;
 import static org.duracloud.security.xml.SecurityUsersDocumentBinding.createSecurityUsersFrom;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -29,7 +31,7 @@ import java.util.List;
  */
 public class InitSecurityUsersController extends AbstractController {
 
-    private final Logger log = Logger.getLogger(InitSecurityUsersController.class);
+    private final Logger log = LoggerFactory.getLogger(InitSecurityUsersController.class);
 
     private DuracloudUserDetailsService userDetailsService;
 

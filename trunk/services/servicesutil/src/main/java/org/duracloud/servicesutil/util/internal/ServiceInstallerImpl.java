@@ -24,7 +24,7 @@ import java.util.zip.ZipFile;
  */
 public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceInstaller {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ServiceInstallerImpl.class);
 
     public void init() throws Exception {
         log.info("initializing SerivceInstallerImpl");

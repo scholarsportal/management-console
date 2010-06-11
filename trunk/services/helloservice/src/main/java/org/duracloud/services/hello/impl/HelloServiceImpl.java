@@ -6,48 +6,52 @@ import org.duracloud.services.BaseService;
 import org.duracloud.services.ComputeService;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Enumeration;
 
 public class HelloServiceImpl extends BaseService
         implements ComputeService, ManagedService {
 
+    private final Logger log = LoggerFactory.getLogger(HelloServiceImpl.class);
+
     private String text;
 
     @Override
     public void start() throws Exception {
-        System.out.println("HelloService is Starting");
+        log.info("HelloService is Starting");
         super.start();
     }
 
     @Override
     public void stop() throws Exception {
-        System.out.println("HelloService is Stopping");
+        log.info("HelloService is Stopping");
         super.stop();
     }
 
     @Override
     public String describe() throws Exception {
-        System.out.println("HelloServiceImpl: Calling describe().");
+        log.info("HelloServiceImpl: Calling describe().");
         String baseDescribe = super.describe();
         return baseDescribe + "; Service message: '" + text + "'";
     }
 
     @SuppressWarnings("unchecked")
     public void updated(Dictionary config) throws ConfigurationException {
-        System.out.print("HelloService updating config: ");
+        log.info("HelloService updating config: ");
         if (config != null) {
             Enumeration keys = config.keys();
             {
                 while (keys.hasMoreElements()) {
                     String key = (String) keys.nextElement();
                     String val = (String) config.get(key);
-                    System.out.print(" [" + key + "|" + val + "] ");
+                    log.info(" [" + key + "|" + val + "] ");
                 }
             }
         } else {
-            System.out.print("config is null.");
+            log.info("config is null.");
         }
-        System.out.println();
 
     }
 
@@ -56,7 +60,7 @@ public class HelloServiceImpl extends BaseService
     }
 
     public void setText(String text) {
-        System.out.println("HelloServiceImpl: setText (" + text + ")");
+        log.info("HelloServiceImpl: setText (" + text + ")");
         this.text = text;
     }
 

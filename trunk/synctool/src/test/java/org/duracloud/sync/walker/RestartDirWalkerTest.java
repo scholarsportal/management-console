@@ -54,7 +54,7 @@ public class RestartDirWalkerTest extends SyncTestBase {
         File sub3file1 = File.createTempFile("subdir3", "file1", subDir3);
 
         long restartTime = System.currentTimeMillis();
-        Thread.sleep(500);
+        Thread.sleep(800);
 
         // Add a file to subdir 2
         File sub2file2 = File.createTempFile("subdir2", "file2", subDir2);

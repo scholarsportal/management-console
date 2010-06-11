@@ -1,7 +1,8 @@
 package org.duracloud.common.web;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.error.DuraCloudCheckedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -11,7 +12,7 @@ import java.util.Enumeration;
 
 public class NetworkUtil {
 
-    protected static final Logger log = Logger.getLogger(NetworkUtil.class);
+    protected static final Logger log = LoggerFactory.getLogger(NetworkUtil.class);
 
     /**
      * <pre>
@@ -27,7 +28,7 @@ public class NetworkUtil {
         try {
             netInterfaces = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException e) {
-            log.error(e);
+            log.error("Error getting network interfaces", e);
         }
 
         while (netInterfaces.hasMoreElements()) {
@@ -44,7 +45,7 @@ public class NetworkUtil {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            log.warn(e);
+            log.warn("Error getting localhost address", e);
             return "127.0.0.1";
         }
     }

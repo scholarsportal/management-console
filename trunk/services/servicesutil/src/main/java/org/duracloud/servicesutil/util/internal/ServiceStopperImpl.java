@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ServiceStopperImpl implements ServiceStopper {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceStopperImpl.class);
 
     private List<ComputeService> duraServices;
     private ServiceHelper helper = new ServiceHelper();

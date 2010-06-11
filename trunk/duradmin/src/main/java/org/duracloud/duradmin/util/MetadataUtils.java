@@ -5,16 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 public class MetadataUtils {
 
     static final String NAME_KEY_PREFIX = "ext-metadata-";
-    private static Log log = LogFactory.getLog(MetadataUtils.class);
+    private static Logger log = LoggerFactory.getLogger(MetadataUtils.class);
     
     public static void setMetadata(ContentStore contentStore,
                                    String spaceId,

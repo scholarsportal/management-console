@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ServiceInstallUninstallFlowTester extends ServiceInstallTestBase {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceInstallUninstallFlowTester.class);
     
     private ServiceSerializer serializer;
 

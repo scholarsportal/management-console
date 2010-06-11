@@ -1,13 +1,13 @@
 package org.duracloud.mainwebapp.control;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.mainwebapp.domain.cmd.flow.DuraAcctCreateWrapper;
 import org.duracloud.mainwebapp.domain.model.Address;
 import org.duracloud.mainwebapp.domain.model.DuraCloudAcct;
 import org.duracloud.mainwebapp.domain.model.User;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class SaveDuraAcctController
         implements Action {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(SaveDuraAcctController.class);
 
     private DuraCloudAcctManager duraCloudAcctManager;
 

@@ -1,7 +1,6 @@
 package org.duracloud.mainwebapp.control;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.mainwebapp.domain.cmd.DuraAcctWrapper;
 import org.duracloud.mainwebapp.domain.cmd.StorageCreateCmd;
@@ -9,6 +8,8 @@ import org.duracloud.mainwebapp.domain.model.StorageAcct;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
 import org.duracloud.mainwebapp.mgmt.StorageAcctManager;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class StorageCreateController
         extends SimpleFormController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(StorageCreateController.class);
 
     private DuraCloudAcctManager duraCloudAcctManager;
 

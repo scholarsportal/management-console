@@ -29,7 +29,7 @@ import java.util.Properties;
  *         Date: Apr 22, 2010
  */
 public class ApplicationInitializer extends BaseConfig {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ApplicationInitializer.class);
 
     public static final String QUALIFIER = "app";
 

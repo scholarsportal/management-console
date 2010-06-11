@@ -21,7 +21,7 @@ import java.util.Date;
  */
 public class ConversionResultProcessor implements ConversionResultListener {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ConversionResultProcessor.class);
     public static String newline = System.getProperty("line.separator");
 
     private ContentStore contentStore;
@@ -128,6 +128,5 @@ public class ConversionResultProcessor implements ConversionResultListener {
 
     private void log(String logMsg) {
         log.error(logMsg);
-        System.out.println(logMsg);
     }
 }

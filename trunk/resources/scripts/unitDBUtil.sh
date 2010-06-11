@@ -72,6 +72,11 @@ export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/storageprovider-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$UNIT_DB_LIB/unit-test-db-$PROJECT_VERSION.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/xbean-spring-3.5.jar
 export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/commons-lang-2.4.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/slf4j-api-1.6.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/logback-classic-0.9.21.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/logback-core-0.9.21.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/log4j-over-slf4j-1.6.0.jar
+export CLASSPATH=$CLASSPATH:$CUSTOMER_LIB/jcl-over-slf4j-1.6.0.jar
 
 export CLASSPATH=$CLASSPATH:$BUILD_HOME/durastore/target/classes
 

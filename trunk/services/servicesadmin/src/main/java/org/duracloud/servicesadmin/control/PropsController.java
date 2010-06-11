@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class PropsController extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(PropsController.class);
 
     private ServicePropsFinder servicePropsFinder;
     private HttpRequestHelper requestHelper;

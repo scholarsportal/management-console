@@ -28,7 +28,7 @@ import java.util.Map;
  *         Date: Mar 11, 2010
  */
 public class UserDetailsServiceImpl implements DuracloudUserDetailsService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private Map<String, User> usersTable = new HashMap<String, User>();
 

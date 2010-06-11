@@ -1,7 +1,6 @@
 package org.duracloud.client;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.duracloud.client.error.NotFoundException;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
@@ -15,6 +14,8 @@ import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class TestServicesManager
         extends TestCase {
 
     protected static final Logger log =
-        Logger.getLogger(TestServicesManager.class);
+        LoggerFactory.getLogger(TestServicesManager.class);
 
     private static String host = "localhost";
 

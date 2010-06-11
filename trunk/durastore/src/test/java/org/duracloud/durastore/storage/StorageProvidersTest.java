@@ -1,7 +1,6 @@
 
 package org.duracloud.durastore.storage;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.emcstorage.ProbedEMCStorageProvider;
 import org.duracloud.rackspacestorage.ProbedRackspaceStorageProvider;
@@ -18,6 +17,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.Random;
 public class StorageProvidersTest {
 
     protected final static Logger log =
-            Logger.getLogger(StorageProvidersTest.class);
+            LoggerFactory.getLogger(StorageProvidersTest.class);
 
     private final static StorageProvidersTestInterface tester =
             new StorageProvidersTestProxyPipe();
@@ -106,7 +107,7 @@ public class StorageProvidersTest {
         try {
             cleanSpaces();
         } catch (Exception e) {
-            log.info(e);
+            log.info(e.getMessage());
         }
     }
 
@@ -133,7 +134,7 @@ public class StorageProvidersTest {
         try {
             cleanSpaces();
         } catch (Exception e) {
-            log.info(e);
+            log.info(e.getMessage());
         }
     }
 
@@ -142,7 +143,7 @@ public class StorageProvidersTest {
         try {
             removeSpaces();
         } catch (Exception e) {
-            log.info(e);
+            log.info(e.getMessage());
         }
 
         tester.close();

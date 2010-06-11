@@ -2,13 +2,14 @@ package org.duracloud.durastore.aop;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
 import org.duracloud.storage.error.StorageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 public class RetryAdvice implements MethodInterceptor, Ordered {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(RetryAdvice.class);
 
     private int maxRetries;
 

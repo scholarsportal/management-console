@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ServiceStarterImpl implements ServiceStarter {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceStarterImpl.class);
 
     private List<ComputeService> duraServices;
     private ServiceHelper helper = new ServiceHelper();

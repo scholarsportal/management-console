@@ -1,7 +1,6 @@
 package org.duracloud.durastore.rest;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
@@ -12,6 +11,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,7 +28,7 @@ import java.util.Iterator;
 public class TestStoreRest extends BaseRestTester {
 
     protected static final Logger log =
-        Logger.getLogger(TestStoreRest.class);
+        LoggerFactory.getLogger(TestStoreRest.class);
 
     private static final String CONTENT = "<content />";
 

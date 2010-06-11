@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class S3TaskProvider implements TaskProvider {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(S3TaskProvider.class);
 
     private List<TaskRunner> taskList = new ArrayList<TaskRunner>();
 

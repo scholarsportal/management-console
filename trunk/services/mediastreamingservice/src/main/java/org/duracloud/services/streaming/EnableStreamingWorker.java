@@ -3,6 +3,7 @@ package org.duracloud.services.streaming;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.duracloud.client.ContentStore;
+import org.duracloud.common.util.ExceptionUtil;
 import org.duracloud.common.util.IOUtil;
 import org.duracloud.common.util.MimetypeUtil;
 import org.duracloud.common.util.SerializationUtil;
@@ -30,7 +31,7 @@ public class EnableStreamingWorker implements Runnable {
 
     private static final String ENABLE_STREAMING_TASK = "enable-streaming";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(EnableStreamingWorker.class);
 
     private ContentStore contentStore;
     private String mediaViewerSpaceId;
@@ -208,12 +209,10 @@ public class EnableStreamingWorker implements Runnable {
 
     private void log(String logMsg) {
         log.warn(logMsg);
-        System.out.println(logMsg);
     }
 
     private void log(String logMsg, Exception e) {
         log.error(logMsg, e);
-        System.err.println(logMsg);
-        e.printStackTrace(System.err);
+        log.error(ExceptionUtil.getStackTraceAsString(e));
     }
 }

@@ -39,7 +39,7 @@ public class ChangedListBackupManagerTest  extends SyncTestBase {
         new Thread(bkMan).start();
         String testFileName = "testfile";
         changedList.addChangedFile(new File(testFileName));
-        Thread.sleep(200);
+        Thread.sleep(800);
         bkMan.endBackup();
 
         ChangedFile changedFile = changedList.getChangedFile();

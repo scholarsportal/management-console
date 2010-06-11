@@ -1,6 +1,5 @@
 package org.duracloud.durastore.rest;
 
-import org.apache.log4j.Logger;
 import org.duracloud.durastore.error.ResourceException;
 import org.duracloud.durastore.error.ResourceNotFoundException;
 import org.duracloud.durastore.util.StorageProviderFactory;
@@ -9,6 +8,8 @@ import org.duracloud.storage.error.NotFoundException;
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.util.IdUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -20,7 +21,7 @@ import java.util.Map;
  */
 public class ContentResource {
 
-    private static final Logger log = Logger.getLogger(ContentResource.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentResource.class);
 
     /**
      * Retrieves content from a space.

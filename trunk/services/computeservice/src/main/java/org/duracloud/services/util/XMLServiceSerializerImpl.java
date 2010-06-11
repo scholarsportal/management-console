@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class XMLServiceSerializerImpl
         implements ServiceSerializer {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(XMLServiceSerializerImpl.class);
 
     public String serialize(List<ComputeService> services) throws Exception {
         List<String> beans = new ArrayList<String>();

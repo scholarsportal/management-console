@@ -1,7 +1,8 @@
 
 package org.duracloud.common.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class ChecksumUtil {
 
-    private final Logger log = Logger.getLogger(ChecksumUtil.class);
+    private final Logger log = LoggerFactory.getLogger(ChecksumUtil.class);
 
     private final MessageDigest digest;
 
@@ -21,7 +22,7 @@ public class ChecksumUtil {
         try {
             digest = MessageDigest.getInstance(alg.toString());
         } catch (NoSuchAlgorithmException e) {
-            log.error(e);
+            log.error("Error getting msg digest instance", e);
             throw new RuntimeException(e);
         }
     }
@@ -56,7 +57,7 @@ public class ChecksumUtil {
         try {
             numRead = inStream.read(buf);
         } catch (IOException e) {
-            log.error(e);
+            log.error("Error reading stream", e);
             throw new RuntimeException(e);
         }
         return numRead;

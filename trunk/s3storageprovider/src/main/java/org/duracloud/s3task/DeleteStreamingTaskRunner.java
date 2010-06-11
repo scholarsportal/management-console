@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DeleteStreamingTaskRunner extends BaseStreamingTaskRunner {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DeleteStreamingTaskRunner.class);
 
     private static final String TASK_NAME = "delete-streaming";
 

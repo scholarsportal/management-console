@@ -4,18 +4,18 @@ import java.io.FileInputStream;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.computeprovider.mgmt.InstanceDescription;
 import org.duracloud.ec2typicacomputeprovider.mgmt.EC2ComputeProvider;
 import org.duracloud.ec2typicacomputeprovider.mgmt.EC2ComputeProviderProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertNotNull;
 
 public class EC2ComputeProviderDriver {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(EC2ComputeProviderDriver.class);
 
     private EC2ComputeProvider service;
 

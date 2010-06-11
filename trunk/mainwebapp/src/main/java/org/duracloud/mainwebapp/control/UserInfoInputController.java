@@ -5,11 +5,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.mainwebapp.domain.cmd.flow.DuraAcctCreateWrapper;
 import org.duracloud.mainwebapp.domain.model.Address;
 import org.duracloud.mainwebapp.domain.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class UserInfoInputController
         implements Action {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(UserInfoInputController.class);
 
 
     public Event execute(RequestContext context) throws Exception {

@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public class InstallController
         extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(InstallController.class);
 
     private ServiceInstaller serviceInstaller;
 

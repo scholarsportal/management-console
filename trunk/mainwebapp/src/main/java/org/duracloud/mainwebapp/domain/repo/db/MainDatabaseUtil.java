@@ -3,8 +3,6 @@ package org.duracloud.mainwebapp.domain.repo.db;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.common.util.ExceptionUtil;
@@ -19,12 +17,14 @@ import org.duracloud.mainwebapp.domain.repo.DuraCloudAcctRepositoryDBImpl;
 import org.duracloud.mainwebapp.domain.repo.StorageAcctRepositoryDBImpl;
 import org.duracloud.mainwebapp.domain.repo.StorageProviderRepositoryDBImpl;
 import org.duracloud.mainwebapp.domain.repo.UserRepositoryDBImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainDatabaseUtil
         extends DatabaseUtil {
 
     protected static final Logger log =
-            Logger.getLogger(MainDatabaseUtil.class);
+            LoggerFactory.getLogger(MainDatabaseUtil.class);
 
     private final List<TableSpec> tableSpecs =
             Arrays.asList(AddressRepositoryDBImpl.getTableSpec(),

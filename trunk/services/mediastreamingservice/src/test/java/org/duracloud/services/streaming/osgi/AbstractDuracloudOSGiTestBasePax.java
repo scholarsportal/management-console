@@ -36,7 +36,7 @@ public class AbstractDuracloudOSGiTestBasePax {
         Option bundles = bundle("file:target/mediastreamingservice-"+getVersion()+".jar");
 
         Option frameworks = CoreOptions.frameworks(CoreOptions.equinox(),
-                                                   CoreOptions.knopflerfish(),
+                                                  // CoreOptions.knopflerfish(),
                                                    CoreOptions.felix());
 
         return options(bundles,

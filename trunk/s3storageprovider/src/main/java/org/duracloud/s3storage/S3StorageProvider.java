@@ -37,7 +37,7 @@ import java.util.TimeZone;
  */
 public class S3StorageProvider extends StorageProviderBase {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(S3StorageProvider.class);
 
     private String accessKeyId = null;
     private S3Service s3Service = null;

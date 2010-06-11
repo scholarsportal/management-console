@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
@@ -19,6 +17,8 @@ import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
@@ -33,7 +33,7 @@ public class AddContentItemFlowHandler
 
     private static final String SPACE = "space";
 
-    private static Log log = LogFactory.getLog(AddContentItemFlowHandler.class);
+    private static Logger log = LoggerFactory.getLogger(AddContentItemFlowHandler.class);
 
     private transient ContentStoreProvider contentStoreProvider;
 
@@ -71,7 +71,7 @@ public class AddContentItemFlowHandler
             Space space = getSpace(spaceId);
             map.put(SPACE, space);
         } catch (Exception ex) {
-            log.error(ex);
+            log.error("Error creating execution map", ex);
         }
         return map;
     }

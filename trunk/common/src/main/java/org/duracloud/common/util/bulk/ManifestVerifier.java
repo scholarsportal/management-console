@@ -2,8 +2,9 @@ package org.duracloud.common.util.bulk;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.log4j.Logger;
 import org.duracloud.common.error.ManifestVerifyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public class ManifestVerifier {
 
-    private final Logger log = Logger.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(ManifestVerifier.class);
 
     private File file0;
     private File file1;

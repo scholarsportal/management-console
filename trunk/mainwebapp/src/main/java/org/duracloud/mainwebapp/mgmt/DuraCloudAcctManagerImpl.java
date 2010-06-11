@@ -2,8 +2,6 @@ package org.duracloud.mainwebapp.mgmt;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.mainwebapp.domain.model.Address;
 import org.duracloud.mainwebapp.domain.model.ComputeAcct;
@@ -11,12 +9,14 @@ import org.duracloud.mainwebapp.domain.model.DuraCloudAcct;
 import org.duracloud.mainwebapp.domain.model.StorageAcct;
 import org.duracloud.mainwebapp.domain.model.User;
 import org.duracloud.mainwebapp.domain.repo.DuraCloudAcctRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DuraCloudAcctManagerImpl
         implements DuraCloudAcctManager {
 
     protected static final Logger log =
-            Logger.getLogger(DuraCloudAcctManagerImpl.class);
+            LoggerFactory.getLogger(DuraCloudAcctManagerImpl.class);
 
     private ComputeAcctManager computeAcctManager;
 

@@ -18,7 +18,7 @@ import java.util.Map;
  *         Date: Apr 20, 2010
  */
 public class SecurityConfig extends BaseConfig implements AppConfig {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final static String INIT_RESOURCE = "/security";
 

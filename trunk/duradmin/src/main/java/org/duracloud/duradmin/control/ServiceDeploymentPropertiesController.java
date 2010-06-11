@@ -1,8 +1,9 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
 import org.duracloud.duradmin.domain.ServiceCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,7 +17,7 @@ import java.util.Map;
 public class ServiceDeploymentPropertiesController
         extends BaseCommandController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ServiceDeploymentPropertiesController.class);
 
     public ServiceDeploymentPropertiesController() {
         setCommandClass(ServiceCommand.class);

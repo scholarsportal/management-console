@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class DisableStreamingTaskRunner extends BaseStreamingTaskRunner {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());    
+    private final Logger log = LoggerFactory.getLogger(DisableStreamingTaskRunner.class);    
 
     private static final String TASK_NAME = "disable-streaming";
 

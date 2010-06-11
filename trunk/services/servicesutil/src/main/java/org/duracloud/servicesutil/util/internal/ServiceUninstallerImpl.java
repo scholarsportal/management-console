@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 public class ServiceUninstallerImpl extends ServiceInstallBase
         implements ServiceUninstaller {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceUninstallerImpl.class);
 
 
     public void uninstall(String name) throws Exception {

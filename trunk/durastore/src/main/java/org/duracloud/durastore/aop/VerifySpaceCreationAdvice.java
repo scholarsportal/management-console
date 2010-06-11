@@ -2,11 +2,11 @@ package org.duracloud.durastore.aop;
 
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.storage.error.StorageException;
 import org.duracloud.storage.provider.StatelessStorageProvider;
 import org.duracloud.storage.provider.StorageProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.core.Ordered;
 
@@ -20,7 +20,7 @@ import org.springframework.core.Ordered;
 public class VerifySpaceCreationAdvice
         implements AfterReturningAdvice, Ordered {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(VerifySpaceCreationAdvice.class);
 
     private int maxRetries;
 

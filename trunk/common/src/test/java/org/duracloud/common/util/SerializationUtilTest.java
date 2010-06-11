@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertEquals;
@@ -23,7 +23,7 @@ import static junit.framework.Assert.assertNotNull;
 public class SerializationUtilTest {
 
     protected static final Logger log =
-            Logger.getLogger(SerializationUtilTest.class);
+            LoggerFactory.getLogger(SerializationUtilTest.class);
 
     @Before
     public void setUp() throws Exception {

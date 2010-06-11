@@ -1,13 +1,14 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.duradmin.contentstore.ContentItemListCache;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.Message;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +20,7 @@ import java.text.MessageFormat;
 public class ChangeSpaceAccessController
         extends BaseCommandController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ChangeSpaceAccessController.class);
 
     public ChangeSpaceAccessController() {
         setCommandClass(Space.class);

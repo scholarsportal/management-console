@@ -1,15 +1,14 @@
 
 package org.duracloud.duradmin.view;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tiles.Attribute;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
-import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A view preparer to be invoked by every page in the application.
@@ -20,7 +19,7 @@ import org.duracloud.duradmin.util.SpaceUtil;
 public class BaseViewPreparer
         implements ViewPreparer {
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(BaseViewPreparer.class);
 
     private ContentStoreProvider contentStoreProvider;
 

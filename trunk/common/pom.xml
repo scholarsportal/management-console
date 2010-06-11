@@ -61,7 +61,6 @@
         <dependency>
           <groupId>org.apache.commons</groupId>
           <artifactId>com.springsource.org.apache.commons.io</artifactId>
-          <version>1.4.0</version>
         </dependency>
       </dependencies>
 
@@ -73,42 +72,36 @@
     <!-- OSGi bundles -->
     <dependency>
       <groupId>org.apache.commons</groupId>  
-      <artifactId>com.springsource.org.apache.commons.io</artifactId>  
-      <version>1.4.0</version>
+      <artifactId>com.springsource.org.apache.commons.io</artifactId>
       <scope>provided</scope>
     </dependency>
 
     <dependency>  
       <groupId>com.thoughtworks.xstream</groupId>  
-      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>  
-      <version>1.3.0</version>  
+      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>  
       <groupId>javax.xml.stream</groupId>  
-      <artifactId>com.springsource.javax.xml.stream</artifactId>  
-      <version>1.0.1</version> 
+      <artifactId>com.springsource.javax.xml.stream</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>  
       <groupId>org.xmlpull</groupId>  
-      <artifactId>com.springsource.org.xmlpull</artifactId>  
-      <version>1.1.3.4-O</version> 
+      <artifactId>com.springsource.org.xmlpull</artifactId>
       <scope>provided</scope>
     </dependency>    
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
-      <version>3.1.0</version>
       <scope>provided</scope>
-    </dependency>    
+    </dependency>
 
     <!-- Spring -->
     
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>2.5.6</version>
     </dependency>
 
     <!-- test -->

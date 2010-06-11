@@ -25,7 +25,7 @@ import java.io.File;
  */
 public class NotRunTestServices extends AbstractDuracloudOSGiTestBasePax {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(NotRunTestServices.class);
 
     private final int MAX_TRIES = 10;
 

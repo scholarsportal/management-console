@@ -34,7 +34,7 @@ import java.util.Enumeration;
  */
 public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(WebAppUtilImpl.class);
 
     private int nextPort;
     private TomcatUtil tomcatUtil;
@@ -257,12 +257,11 @@ public class WebAppUtilImpl extends BaseService implements WebAppUtil, ManagedSe
                 while (keys.hasMoreElements()) {
                     String key = (String) keys.nextElement();
                     String val = (String) config.get(key);
-                    System.out.print(" [" + key + "|" + val + "] ");
+                    log.info(" [" + key + "|" + val + "] ");
                 }
             }
         } else {
-            System.out.print("config is null.");
+            log.info("config is null.");
         }
-        System.out.println();
     }
 }

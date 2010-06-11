@@ -18,7 +18,7 @@ import org.springframework.security.userdetails.UserDetails;
  */
 public class SecurityContextUtil {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(SecurityContextUtil.class);
 
     public Credential getCurrentUser() throws NoUserLoggedInException {
         Credential credential = null;

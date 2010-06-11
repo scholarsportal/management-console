@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *         Date: Apr 20, 2010
  */
 public class DuraserviceConfig extends BaseConfig implements AppConfig {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DuraserviceConfig.class);
 
     private static final String INIT_RESOURCE = "/services";
 

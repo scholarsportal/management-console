@@ -94,14 +94,12 @@
     <dependency>
         <groupId>org.jdom</groupId>
         <artifactId>jdom</artifactId>
-        <version>1.1</version>
     </dependency>
     
     <!-- for HttpClient -->
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
     </dependency>    
 
     <!-- test -->
@@ -115,14 +113,12 @@
     <dependency>
       <groupId>org.apache.commons</groupId>  
       <artifactId>com.springsource.org.apache.commons.io</artifactId>  
-      <version>1.4.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>  
       <groupId>com.thoughtworks.xstream</groupId>  
-      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>  
-      <version>1.3.0</version>  
+      <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
       <scope>provided</scope>
     </dependency>    
 
