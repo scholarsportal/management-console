@@ -4,7 +4,8 @@ import org.apache.commons.fileupload.FileItemHeaders;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class RestUtil {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(RestUtil.class);
 
     /**
      * Retrieves the contents of the HTTP Request.

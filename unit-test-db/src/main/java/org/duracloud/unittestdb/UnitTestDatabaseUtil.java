@@ -1,11 +1,12 @@
 package org.duracloud.unittestdb;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.common.util.TableSpec;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +15,7 @@ public class UnitTestDatabaseUtil
         extends DatabaseUtil {
 
     protected static final Logger log =
-            Logger.getLogger(UnitTestDatabaseUtil.class);
+            LoggerFactory.getLogger(UnitTestDatabaseUtil.class);
 
     private final List<TableSpec> tableSpecs =
             Arrays.asList(PasswordRepositoryDBImpl.getTableSpec());
@@ -40,6 +41,7 @@ public class UnitTestDatabaseUtil
     }
 
     private PasswordRepositoryDBImpl createRepo() {
+        log.debug("creating Password DB");
         PasswordRepositoryDBImpl repo = new PasswordRepositoryDBImpl();
         repo.setDataSource(getDataSource());
         return repo;

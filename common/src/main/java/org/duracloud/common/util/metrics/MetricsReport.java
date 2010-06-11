@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.util.metrics.Metric.MetricElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class writes the contents of a MetricsTable to the provided
@@ -22,7 +22,7 @@ import org.duracloud.common.util.metrics.Metric.MetricElement;
  */
 public class MetricsReport {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(MetricsReport.class);
 
     private final String title;
 
@@ -62,7 +62,7 @@ public class MetricsReport {
                 try {
                     writeMetrics(table.getSubTable(parent, elem), level + 1);
                 } catch (MetricException e) {
-                    log.debug(e);
+                    log.debug("Error writing metrics", e);
                 }
             }
             separator('-');

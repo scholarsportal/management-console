@@ -1,14 +1,14 @@
 
 package org.duracloud.duradmin.webflow.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.serviceconfig.ServiceInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.validation.ValidationContext;
 
 public class ServiceConfigurationValidator {
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(ServiceConfigurationValidator.class);
 
     public void validateConfigureService(ServiceInfo service,
                                          ValidationContext context) {

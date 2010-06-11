@@ -3,7 +3,6 @@ package org.duracloud.emcstorage;
 import com.emc.esu.api.*;
 import com.emc.esu.api.rest.EsuRestApi;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.ContentIterator;
@@ -12,6 +11,9 @@ import org.duracloud.storage.error.StorageException;
 import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProviderBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 
 import java.io.ByteArrayInputStream;
@@ -31,7 +33,7 @@ import java.util.Set;
  */
 public class EMCStorageProvider extends StorageProviderBase {
 
-    private final Logger log = Logger.getLogger(EMCStorageProvider.class);
+    private final Logger log = LoggerFactory.getLogger(EMCStorageProvider.class);
 
     private static final String SPACE_ROOT_TAG_NAME = "emc-space-root-tag";
 

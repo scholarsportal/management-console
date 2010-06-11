@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class EnableStreamingTaskRunner extends BaseStreamingTaskRunner  {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());    
+    private final Logger log = LoggerFactory.getLogger(EnableStreamingTaskRunner.class);    
 
     private static final String TASK_NAME = "enable-streaming";
 

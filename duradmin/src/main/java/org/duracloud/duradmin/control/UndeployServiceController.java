@@ -1,10 +1,10 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.domain.ServiceCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public class UndeployServiceController
         extends BaseCommandController {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(UndeployServiceController.class);
     public UndeployServiceController() {
         setCommandClass(ServiceCommand.class);
         setCommandName("service");

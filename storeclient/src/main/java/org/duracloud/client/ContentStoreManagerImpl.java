@@ -1,7 +1,6 @@
 package org.duracloud.client;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.Securable;
 import org.duracloud.common.web.RestHttpHelper;
@@ -11,6 +10,8 @@ import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageAccountManager;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.storage.error.StorageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @author Bill Branan
  */
 public class ContentStoreManagerImpl implements ContentStoreManager, Securable {
-    private final Logger log = Logger.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String DEFAULT_CONTEXT = "durastore";
 

@@ -1,11 +1,12 @@
 package org.duracloud.duraservice.mgmt;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.duraservice.domain.ServiceComputeInstance;
 import org.duracloud.duraservice.error.ServiceException;
 import org.duracloud.servicesadminclient.ServicesAdminClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class encapsulates the logic for a ServiceComputeInstance object.
@@ -15,7 +16,7 @@ import org.duracloud.servicesadminclient.ServicesAdminClient;
  */
 public class ServiceComputeInstanceUtil {
 
-    private final Logger log = Logger.getLogger(ServiceComputeInstanceUtil.class);
+    private final Logger log = LoggerFactory.getLogger(ServiceComputeInstanceUtil.class);
 
     /**
      * @param hostName    of instance
@@ -38,7 +39,7 @@ public class ServiceComputeInstanceUtil {
         StringBuilder msg = new StringBuilder("creating instance: ");
         msg.append(displayName);
         msg.append(" [" + hostName + ":" + port + "/" + context + "]");
-        log.debug(msg);
+        log.debug(msg.toString());
 
         return new ServiceComputeInstance(hostName, displayName, servicesAdmin);
     }

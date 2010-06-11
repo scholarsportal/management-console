@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class ServicesAdminClient {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServicesAdminClient.class);
 
     private RestHttpHelper rester;
 

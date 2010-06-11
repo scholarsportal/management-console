@@ -1,6 +1,5 @@
 package org.duracloud.chunk.writer;
 
-import org.apache.log4j.Logger;
 import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.error.ContentNotAddedException;
 import org.duracloud.chunk.error.NotFoundException;
@@ -10,6 +9,8 @@ import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public class DuracloudContentWriter implements ContentWriter {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DuracloudContentWriter.class);
 
     private ContentStore contentStore;
     private Set<String> existingSpaces = new HashSet<String>();

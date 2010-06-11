@@ -9,16 +9,16 @@ import java.util.List;
 import com.xerox.amazonws.ec2.ReservationDescription;
 import com.xerox.amazonws.ec2.ReservationDescription.Instance;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.util.ExceptionUtil;
 import org.duracloud.computeprovider.mgmt.InstanceDescription;
 import org.duracloud.computeprovider.mgmt.InstanceState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EC2InstanceDescription
         extends InstanceDescription {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(EC2InstanceDescription.class);
 
     private EC2ComputeProviderProperties props;
 

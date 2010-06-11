@@ -1,8 +1,9 @@
 package org.duracloud.unittestdb;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.unittestdb.domain.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,7 +11,7 @@ import java.io.InputStreamReader;
 public class UnitTestDatabaseLoaderCLI {
 
     protected static final Logger log =
-            Logger.getLogger(UnitTestDatabaseUtil.class);
+            LoggerFactory.getLogger(UnitTestDatabaseUtil.class);
 
     private final UnitTestDatabaseUtil dbUtil;
 

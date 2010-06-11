@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ApplicationConfig;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
@@ -20,6 +18,8 @@ import org.duracloud.mainwebapp.domain.cmd.DuraAcctWrapper;
 import org.duracloud.mainwebapp.domain.model.ComputeAcct;
 import org.duracloud.mainwebapp.mgmt.ComputeAcctManager;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -27,7 +27,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public class ComputeCreateController
         extends SimpleFormController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ComputeCreateController.class);
 
     private final String defaultComputePropsResource =
             "defaultEC2Config.properties";

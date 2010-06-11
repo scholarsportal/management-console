@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class TestServices
         extends AbstractDuracloudOSGiTestBasePax {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(TestServices.class);
 
     private final int MAX_TRIES = 10;
 
@@ -26,11 +26,11 @@ public class TestServices
         //        ReplicationTester is fixed.
         Bundle[] bundles = bundleContext.getBundles();
         Assert.assertNotNull(bundles);
-        System.out.println("num bundles: " + bundles.length);
+        log.info("num bundles: " + bundles.length);
         for (Bundle bundle : bundles) {
             String name = bundle.getSymbolicName();
             int state = bundle.getState();
-            System.out.println("bundle: '" + name + "' [" + state + "]");
+            log.info("bundle: '" + name + "' [" + state + "]");
             if (name.contains("activemq") || name.contains("jms")) {
 //                bundle.uninstall();
             }

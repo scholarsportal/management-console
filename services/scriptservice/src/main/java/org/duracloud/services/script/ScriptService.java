@@ -30,19 +30,19 @@ public class ScriptService extends BaseService implements ComputeService, Manage
     private static final String WIN_EXT = ".bat";
     private static final String LIN_EXT = ".sh";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ScriptService.class);
 
     @Override
     public void start() throws Exception {
         File workDir = new File(getServiceWorkDir());
-        System.out.println("Starting Script Service: " + workDir.getName());
+        log.info("Starting Script Service: " + workDir.getName());
 
         this.setServiceStatus(ServiceStatus.STARTING);
 
         String startScriptName = getScriptName(START_SCRIPT);
         checkScriptExists(startScriptName);
         String script = new File(workDir, startScriptName).getAbsolutePath();
-        System.out.println("Running Script: " + script);
+        log.info("Running Script: " + script);
 
         ProcessBuilder pb = new ProcessBuilder(script);
         pb.directory(workDir);
@@ -54,14 +54,14 @@ public class ScriptService extends BaseService implements ComputeService, Manage
     @Override
     public void stop() throws Exception {
         File workDir = new File(getServiceWorkDir());
-        System.out.println("Stopping Script Service: " + workDir.getName());
+        log.info("Stopping Script Service: " + workDir.getName());
 
         this.setServiceStatus(ServiceStatus.STOPPING);
 
         String stopScriptName = getScriptName(STOP_SCRIPT);
         checkScriptExists(stopScriptName);
         String script = new File(workDir, stopScriptName).getAbsolutePath();
-        System.out.println("Running Script: " + script);
+        log.info("Running Script: " + script);
 
         ProcessBuilder pb = new ProcessBuilder(script);
         pb.directory(workDir);

@@ -3,10 +3,11 @@ package org.duracloud.common.util;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertEquals;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,7 +21,7 @@ import java.io.InputStream;
 public class IOUtilTest {
 
     protected static final Logger log =
-            Logger.getLogger(SerializationUtilTest.class);
+            LoggerFactory.getLogger(SerializationUtilTest.class);
 
     @Before
     public void setUp() throws Exception {

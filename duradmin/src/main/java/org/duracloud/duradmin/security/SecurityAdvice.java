@@ -4,8 +4,9 @@ import org.duracloud.common.model.Securable;
 import org.duracloud.common.model.Credential;
 import org.duracloud.security.context.SecurityContextUtil;
 import org.duracloud.security.error.NoUserLoggedInException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.MethodBeforeAdvice;
-import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 
@@ -19,7 +20,7 @@ import java.lang.reflect.Method;
  */
 public class SecurityAdvice implements MethodBeforeAdvice {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(SecurityAdvice.class);
 
     private SecurityContextUtil securityContextUtil;
 

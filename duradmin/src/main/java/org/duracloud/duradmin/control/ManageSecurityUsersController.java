@@ -1,11 +1,12 @@
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
 import org.duracloud.appconfig.domain.Application;
 import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.domain.SecurityUserCommand;
 import org.duracloud.security.DuracloudUserDetailsService;
 import org.duracloud.security.domain.SecurityUserBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class ManageSecurityUsersController extends BaseFormController {
 
-    private final Logger log = Logger.getLogger(ManageSecurityUsersController.class);
+    private final Logger log = LoggerFactory.getLogger(ManageSecurityUsersController.class);
 
     private DuracloudUserDetailsService userDetailsService;
 

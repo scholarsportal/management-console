@@ -40,7 +40,6 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
     </dependency>    
 
     <!-- Jets3t, library for accessing Amazon S3 -->
@@ -48,6 +47,12 @@
       <groupId>net.java.dev.jets3t</groupId>
       <artifactId>jets3t</artifactId>
       <version>0.7.3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>   
 
     <!-- Dependency of Jets3t but for some reason not included
@@ -58,31 +63,11 @@
       <version>0.3</version>
     </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.6</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.5.6</version>
-    </dependency>    
-
     <!-- test -->
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>unit-test-db</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
-      <version>2.4</version>
       <scope>test</scope>
     </dependency>
 

@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class ConversionWorker implements Runnable {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ConversionWorker.class);
 
     private ContentStore contentStore;
     private String sourceSpaceId;
@@ -210,7 +210,6 @@ public class ConversionWorker implements Runnable {
 
     private void log(String logMsg) {
         log.info(logMsg);
-        System.out.println(logMsg);
     }
 
 }

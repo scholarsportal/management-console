@@ -4,9 +4,9 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.util.ApplicationConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * POJO container for EC2-specific configuration information. -load/store is
@@ -18,7 +18,7 @@ public class EC2ComputeProviderProperties
         extends ApplicationConfig {
 
     protected static final Logger log =
-            Logger.getLogger(EC2ComputeProviderProperties.class);
+            LoggerFactory.getLogger(EC2ComputeProviderProperties.class);
 
     private Properties props;
 
@@ -96,7 +96,7 @@ public class EC2ComputeProviderProperties
         try {
             val = Integer.parseInt(props.getProperty(minInstanceCountKey));
         } catch (NumberFormatException e) {
-            log.error(e);
+            log.error("Prop should be numeric: " + minInstanceCountKey, e);
         }
         return val;
     }
@@ -106,7 +106,7 @@ public class EC2ComputeProviderProperties
         try {
             val = Integer.parseInt(props.getProperty(maxInstanceCountKey));
         } catch (NumberFormatException e) {
-            log.error(e);
+            log.error("Prop should be numeric: " + maxInstanceCountKey, e);
         }
         return val;
     }
@@ -116,7 +116,7 @@ public class EC2ComputeProviderProperties
         try {
             val = Integer.parseInt(props.getProperty(maxAsyncThreadsKey));
         } catch (NumberFormatException e) {
-            log.error(e);
+            log.error("Prop should be numeric: " + maxAsyncThreadsKey, e);
         }
         return val;
     }
@@ -130,7 +130,7 @@ public class EC2ComputeProviderProperties
         try {
             val = Integer.parseInt(props.getProperty(webappPortKey));
         } catch (NumberFormatException e) {
-            log.error(e);
+            log.error("Prop should be numeric: " + webappPortKey , e);
         }
         return val;
     }

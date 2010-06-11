@@ -14,11 +14,11 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
-
 import org.apache.derby.jdbc.EmbeddedDataSource;
 
 import org.duracloud.common.model.Credential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  */
 public abstract class DatabaseUtil {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(DatabaseUtil.class);
 
     private final EmbeddedDataSource dataSource;
 
@@ -72,6 +72,7 @@ public abstract class DatabaseUtil {
      * @throws Exception
      */
     public void initializeDB() throws Exception {
+        log.debug("initializing db");
         ensureDatabaseExists();
         ensureTablesExist();
         ensureTablesCleared();

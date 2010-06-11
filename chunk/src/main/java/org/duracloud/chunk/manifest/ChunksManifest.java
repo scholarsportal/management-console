@@ -1,9 +1,10 @@
 package org.duracloud.chunk.manifest;
 
-import org.apache.log4j.Logger;
 import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.chunk.manifest.xml.ManifestDocumentBinding;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  */
 public class ChunksManifest extends ChunksManifestBean {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ChunksManifest.class);
 
     public static final String SCHEMA_VERSION = "0.2";
 
@@ -75,7 +76,7 @@ public class ChunksManifest extends ChunksManifestBean {
             StringBuilder msg = new StringBuilder("ChunkId's must be");
             msg.append("formatted with trailing index: " + chunkId + ", ");
             msg.append(e.getMessage());
-            log.error(msg, e);
+            log.error(msg.toString(), e);
             throw new DuraCloudRuntimeException(msg.toString(), e);
         }
     }

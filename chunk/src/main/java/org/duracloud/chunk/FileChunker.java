@@ -4,7 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.log4j.Logger;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.writer.AddContentResult;
@@ -12,6 +11,8 @@ import org.duracloud.chunk.writer.ContentWriter;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.util.ExceptionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.security.DigestInputStream;
@@ -32,7 +33,7 @@ import java.util.Random;
  */
 public class FileChunker {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(FileChunker.class);
 
     private ContentWriter contentWriter;
     private FileChunkerOptions options;
@@ -133,7 +134,7 @@ public class FileChunker {
                 sb.append(e.getMessage());
                 sb.append("\n");
                 sb.append(ExceptionUtil.getStackTraceAsString(e));
-                log.error(sb);
+                log.error(sb.toString());
             }
         }
     }

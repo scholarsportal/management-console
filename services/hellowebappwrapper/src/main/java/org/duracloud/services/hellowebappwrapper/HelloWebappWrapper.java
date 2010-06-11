@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class HelloWebappWrapper extends BaseService implements ComputeService, ManagedService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(HelloWebappWrapper.class);
 
     private String webappWarName;
     private URL url; // of running webapp
@@ -96,14 +96,12 @@ public class HelloWebappWrapper extends BaseService implements ComputeService, M
                 while (keys.hasMoreElements()) {
                     String key = (String) keys.nextElement();
                     String val = (String) config.get(key);
-                    System.out.print(" [" + key + "|" + val + "] ");
+                    log.info(" [" + key + "|" + val + "] ");
                 }
             }
         } else {
-            System.out.print("config is null.");
+            log.info("config is null.");
         }
-        System.out.println();
-
     }
 
     public String toString() {

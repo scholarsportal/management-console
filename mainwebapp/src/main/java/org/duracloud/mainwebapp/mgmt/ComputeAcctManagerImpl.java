@@ -11,8 +11,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.EncryptionUtil;
 import org.duracloud.common.util.ExceptionUtil;
@@ -24,11 +22,13 @@ import org.duracloud.mainwebapp.domain.model.ComputeProvider;
 import org.duracloud.mainwebapp.domain.model.StorageAcct;
 import org.duracloud.mainwebapp.domain.repo.ComputeAcctRepository;
 import org.duracloud.mainwebapp.domain.repo.ComputeProviderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComputeAcctManagerImpl
         implements ComputeAcctManager {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ComputeAcctManagerImpl.class);
 
     private ComputeAcctRepository computeAcctRepository;
 

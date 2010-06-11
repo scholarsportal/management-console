@@ -24,7 +24,7 @@ import java.util.zip.ZipFile;
  */
 public class J2kInstallHelper {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(J2kInstallHelper.class);
 
     private File djatokaHome;
 

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class DuraConfigAdminImpl
         implements DuraConfigAdmin {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DuraConfigAdminImpl.class);
 
     private ConfigurationAdmin osgiConfigAdmin;
 

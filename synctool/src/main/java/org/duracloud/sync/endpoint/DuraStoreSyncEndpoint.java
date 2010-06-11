@@ -69,10 +69,18 @@ public class DuraStoreSyncEndpoint implements SyncEndpoint {
                 spaceExists = true;
                 break;
             }
+            sleep(300);
         }
         if(!spaceExists) {
             throw new RuntimeException("Could not connect to space with ID '" +
                 spaceId + "'.");
+        }
+    }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {            
         }
     }
 

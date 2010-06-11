@@ -13,7 +13,7 @@ import org.springframework.security.vote.RoleVoter;
  *         Date: Mar 12, 2010
  */
 public class RoleVoterImpl extends RoleVoter {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(RoleVoterImpl.class);
 
     /**
      * This method is a pass-through for Spring-RoleVoter.

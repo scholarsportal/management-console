@@ -1,7 +1,8 @@
 
 package org.duracloud.common.util.metrics;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ import java.util.Stack;
  */
 public class Metric {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(Metric.class);
 
     private final String header;
 

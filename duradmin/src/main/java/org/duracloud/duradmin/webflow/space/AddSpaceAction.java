@@ -1,14 +1,14 @@
 
 package org.duracloud.duradmin.webflow.space;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStore.AccessType;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
@@ -22,7 +22,7 @@ public class AddSpaceAction
      */
     private static final long serialVersionUID = 1L;
 
-    private static Log log = LogFactory.getLog(AddSpaceAction.class);
+    private static Logger log = LoggerFactory.getLogger(AddSpaceAction.class);
 
     private transient ContentStoreProvider contentStoreProvider;
 
@@ -52,7 +52,7 @@ public class AddSpaceAction
                                                                  null));
             return true;
         } catch (ContentStoreException e) {
-            log.error(e);
+            log.error("Error adding space", e);
             context.addMessage(new MessageBuilder().error()
                     .code("spaceNotAdded")
                     .defaultText("Space cannot be added:{0}").resolvableArg(e

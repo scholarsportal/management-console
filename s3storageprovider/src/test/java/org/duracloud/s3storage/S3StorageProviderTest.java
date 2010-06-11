@@ -7,7 +7,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.common.web.RestHttpHelper;
@@ -22,6 +21,8 @@ import org.jets3t.service.model.S3Object;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -42,7 +43,7 @@ import java.util.Random;
  */
 public class S3StorageProviderTest extends S3ProviderTestBase {
 
-    protected static final Logger log = Logger.getLogger(S3StorageProviderTest.class);
+    protected static final Logger log = LoggerFactory.getLogger(S3StorageProviderTest.class);
 
     private S3StorageProvider s3Provider;
     private final List<String> spaceIds = new ArrayList<String>();

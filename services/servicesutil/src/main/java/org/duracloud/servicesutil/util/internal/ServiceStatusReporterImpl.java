@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ServiceStatusReporterImpl implements ServiceStatusReporter {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ServiceStatusReporterImpl.class);
 
     private List<ComputeService> duraServices;
     private ServiceHelper helper = new ServiceHelper();

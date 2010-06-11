@@ -23,7 +23,7 @@ import java.io.File;
  */
 public class TestServices extends AbstractDuracloudOSGiTestBasePax {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(TestServices.class);
 
     private final int MAX_TRIES = 10;
 

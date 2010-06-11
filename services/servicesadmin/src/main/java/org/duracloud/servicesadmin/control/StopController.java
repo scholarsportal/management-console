@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public class StopController
         extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(StopController.class);
 
     private ServiceStopper serviceStopper;
 

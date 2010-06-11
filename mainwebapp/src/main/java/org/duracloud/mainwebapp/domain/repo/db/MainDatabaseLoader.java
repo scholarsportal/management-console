@@ -1,6 +1,5 @@
 package org.duracloud.mainwebapp.domain.repo.db;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.mainwebapp.domain.model.Address;
@@ -14,6 +13,8 @@ import org.duracloud.mainwebapp.domain.repo.ComputeProviderRepository;
 import org.duracloud.mainwebapp.domain.repo.StorageProviderRepository;
 import org.duracloud.mainwebapp.mgmt.DuraCloudAcctManager;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class MainDatabaseLoader {
 
     protected static final Logger log =
-            Logger.getLogger(MainDatabaseLoader.class);
+            LoggerFactory.getLogger(MainDatabaseLoader.class);
 
     private DuraCloudAcctManager duraCloudAcctManager;
 

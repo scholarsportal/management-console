@@ -8,7 +8,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -23,6 +22,8 @@ import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -43,7 +44,7 @@ import java.util.Random;
 public class RackspaceStorageProviderTest {
 
     protected static final Logger log =
-            Logger.getLogger(RackspaceStorageProviderTest.class);
+            LoggerFactory.getLogger(RackspaceStorageProviderTest.class);
 
     RackspaceStorageProvider rackspaceProvider;
 
@@ -240,7 +241,8 @@ public class RackspaceStorageProviderTest {
         assertEquals(CONTENT_META_VALUE, cMetadata.get(CONTENT_META_NAME));
         // Mime type was not included when setting content metadata
         // so its value should have been maintained
-        assertEquals(CONTENT_MIME_VALUE, cMetadata.get(CONTENT_MIME_NAME));
+        String mime = CONTENT_MIME_VALUE + "; charset=UTF-8";
+        assertEquals(mime, cMetadata.get(CONTENT_MIME_NAME));
 
         // test setContentMetadata() - mimetype
         log.debug("Test setContentMetadata() - mimetype");

@@ -2,13 +2,13 @@
 package org.duracloud.duradmin.webflow.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.NavigationUtils;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.ServiceInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.Message;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -28,7 +28,7 @@ public class DeployServiceFlowHandler
 
     private static final String SERVICE_ID = "serviceId";
 
-    private static Log log = LogFactory.getLog(DeployServiceFlowHandler.class);
+    private static Logger log = LoggerFactory.getLogger(DeployServiceFlowHandler.class);
 
     private ServicesManager servicesManager;
 
@@ -58,7 +58,7 @@ public class DeployServiceFlowHandler
             }
 
         } catch (Exception ex) {
-            log.error(ex);
+            log.error("Error creating execution map", ex);
         }
         return map;
     }

@@ -21,7 +21,7 @@ import java.util.Map;
  *         Date: Mar 19, 2010
  */
 public abstract class SpaceAccessVoter implements AccessDecisionVoter {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(SpaceAccessVoter.class);
 
     private Map<String, ContentStore.AccessType> spaceCache = new HashMap<String, ContentStore.AccessType>();
 

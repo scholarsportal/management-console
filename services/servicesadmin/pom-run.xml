@@ -143,57 +143,63 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>2.5.6</version>
+      <!--<version>2.5.6</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>2.5.6</version>
+      <!--<version>2.5.6</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>2.5.6</version>
+      <!--<version>2.5.6</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>2.5.6</version>
+      <!--<version>2.5.6</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.core</artifactId>
-      <version>2.5.6.A</version>
+      <!--<version>2.5.6.A</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.context</artifactId>
-      <version>2.5.6.A</version>
+      <!--<version>2.5.6.A</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.beans</artifactId>
-      <version>2.5.6.A</version>
+      <!--<version>2.5.6.A</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>2.5.6</version>
+      <!--<version>2.5.6</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.aop</artifactId>
-      <version>2.5.6.A</version>
+      <!--<version>2.5.6.A</version>-->
       <scope>provided</scope>
     </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.apache.commons</groupId>-->
+    <!--<artifactId>com.springsource.org.apache.commons.logging</artifactId>-->
+    <!--<version>1.1.1</version>-->
+    <!--<scope>provided</scope>      -->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.fileinstall</artifactId>
@@ -218,12 +224,30 @@
       <version>1.0.0</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>log4j.osgi</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.apache.log4j</groupId>-->
+    <!--<artifactId>com.springsource.org.apache.log4j</artifactId>-->
+    <!--<version>1.2.15</version>-->
+    <!--<scope>provided</scope>      -->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.slf4j</groupId>-->
+    <!--<artifactId>com.springsource.slf4j.api</artifactId>-->
+    <!--<version>1.5.0</version>-->
+    <!--<scope>provided</scope>      -->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.slf4j</groupId>-->
+    <!--<artifactId>com.springsource.slf4j.log4j</artifactId>-->
+    <!--<version>1.5.0</version>-->
+    <!--<scope>provided</scope>      -->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.springframework.osgi</groupId>-->
+    <!--<artifactId>log4j.osgi</artifactId>-->
+    <!--<version>1.2.15-SNAPSHOT</version>-->
+    <!--<scope>provided</scope>      -->
+    <!--</dependency>-->
     <!-- webapp container artifacts -->
     <dependency>
       <groupId>org.springframework.osgi</groupId>
@@ -238,21 +262,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-web</artifactId>
-      <version>1.2.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-web-extender</artifactId>
-      <version>1.2.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.web</artifactId>
-      <version>2.5.6.A</version>
+      <!--<version>2.5.6.A</version>-->
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -261,24 +273,36 @@
       <version>2.5.6.A</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>log4j.osgi</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.springframework.osgi</groupId>-->
+    <!--<artifactId>log4j.osgi</artifactId>-->
+    <!--<version>1.2.15-SNAPSHOT</version>-->
+    <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <!-- for FileUpload -->
+    <!--<dependency>-->
+    <!--<groupId>org.slf4j</groupId>-->
+    <!--<artifactId>slf4j-log4j12</artifactId>-->
+    <!--<version>1.5.6</version>-->
+    <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.slf4j</groupId>-->
+    <!--<artifactId>slf4j-api</artifactId>-->
+    <!--<version>1.5.6</version>-->
+    <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <!-- mock objects -->
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
-      <version>2.4</version>
-      <scope>test</scope>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.easymock</groupId>-->
+    <!--<artifactId>easymockclassextension</artifactId>-->
+    <!--<version>2.4</version>-->
+    <!--<scope>test</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
-      <version>2.0.8</version>
+      <!--<version>2.0.8</version>-->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -299,6 +323,30 @@
       <version>1.2.0</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>edu.emory.mathcs.backport</groupId>
+      <artifactId>com.springsource.edu.emory.mathcs.backport</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.osgi</groupId>
+      <artifactId>spring-osgi-web-extender</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.slf4j</groupId>-->
+      <!--<artifactId>com.springsource.slf4j.org.apache.commons.logging</artifactId>-->
+      <!--<version>1.6.0</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.duracloud.services</groupId>
       <artifactId>servicesutil</artifactId>
@@ -342,15 +390,31 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.6</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>0.9.21</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.5.6</version>
+      <version>1.6.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.21</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -365,24 +429,24 @@
       <version>1.1.1</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.log4j</artifactId>
-      <version>1.5.0</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.slf4j</groupId>-->
+      <!--<artifactId>com.springsource.slf4j.log4j</artifactId>-->
+      <!--<version>1.6.0</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.log4j</groupId>
       <artifactId>com.springsource.org.apache.log4j</artifactId>
       <version>1.2.15</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>com.springsource.slf4j.api</artifactId>
-      <version>1.5.0</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.slf4j</groupId>-->
+      <!--<artifactId>com.springsource.slf4j.api</artifactId>-->
+      <!--<version>1.6.0</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>com.springsource.javax.jms</artifactId>

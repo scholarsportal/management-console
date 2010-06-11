@@ -1,7 +1,6 @@
 package org.duracloud.client;
 
 import junit.framework.Assert;
-import org.apache.log4j.Logger;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.util.ChecksumUtil;
@@ -24,6 +23,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -42,7 +43,7 @@ import java.util.Random;
 public class TestContentStore {
 
     protected static final Logger log =
-        Logger.getLogger(TestContentStore.class);
+        LoggerFactory.getLogger(TestContentStore.class);
 
     private static String host = "localhost";
 

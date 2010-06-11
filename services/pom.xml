@@ -205,33 +205,299 @@
 
   </repositories>
 
+  <properties>
+    <spring.maven.artifact.version>2.5.6</spring.maven.artifact.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>0.9.21</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-default</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-junit</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.osgi.compendium</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>com.springsource.org.apache.activemq</artifactId>
+        <version>5.2.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
+        <version>3.1.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.maven.artifact.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.maven.artifact.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.context</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.maven.artifact.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.core</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.beans</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.aop</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.web</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.web.servlet</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.maven.artifact.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.jdbc</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.transaction</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>org.springframework.test</artifactId>
+        <version>2.5.6.A</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <!-- Pax Exam -->
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-default</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>  
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.5</version>
-      <scope>test</scope>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>

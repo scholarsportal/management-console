@@ -1,6 +1,7 @@
 package org.duracloud.services.streaming;
 
 import org.duracloud.client.ContentStore;
+import org.duracloud.common.util.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ public class DisableStreamingWorker implements Runnable {
 
     private static final String DISABLE_STREAMING_TASK = "disable-streaming";    
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DisableStreamingWorker.class);
 
     private ContentStore contentStore;
     private String mediaSourceSpaceId;
@@ -42,12 +43,10 @@ public class DisableStreamingWorker implements Runnable {
 
     private void log(String logMsg) {
         log.info(logMsg);
-        System.out.println(logMsg);
     }
 
     private void log(String logMsg, Exception e) {
         log.error(logMsg, e);
-        System.err.println(logMsg);
-        e.printStackTrace(System.err);
+        log.error(ExceptionUtil.getStackTraceAsString(e));
     }
 }

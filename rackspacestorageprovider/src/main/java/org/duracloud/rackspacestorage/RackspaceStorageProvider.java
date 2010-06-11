@@ -8,8 +8,6 @@ import com.rackspacecloud.client.cloudfiles.FilesContainerInfo;
 import com.rackspacecloud.client.cloudfiles.FilesNotFoundException;
 import com.rackspacecloud.client.cloudfiles.FilesObject;
 import com.rackspacecloud.client.cloudfiles.FilesObjectMetaData;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.common.stream.ChecksumInputStream;
 import org.duracloud.storage.domain.ContentIterator;
 import org.duracloud.storage.error.NotFoundException;
@@ -18,6 +16,9 @@ import static org.duracloud.storage.error.StorageException.NO_RETRY;
 import static org.duracloud.storage.error.StorageException.RETRY;
 import org.duracloud.storage.provider.StorageProvider;
 import org.duracloud.storage.provider.StorageProviderBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.duracloud.storage.util.StorageProviderUtil.compareChecksum;
 import static org.duracloud.storage.util.StorageProviderUtil.loadMetadata;
 import static org.duracloud.storage.util.StorageProviderUtil.storeMetadata;
@@ -41,7 +42,7 @@ import java.util.TimeZone;
  */
 public class RackspaceStorageProvider extends StorageProviderBase {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(RackspaceStorageProvider.class);
 
     private FilesClient filesClient = null;
 
@@ -204,7 +205,7 @@ public class RackspaceStorageProvider extends StorageProviderBase {
                                                                  limit,
                                                                  marker);
             } catch(IOException e) {
-                log.error(e);
+                log.error("Error listing objects.", e);
                 objectList = null;                
                 if(retries < retryLimit) {
                     retries++;

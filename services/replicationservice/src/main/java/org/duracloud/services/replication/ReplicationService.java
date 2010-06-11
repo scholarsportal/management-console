@@ -64,17 +64,16 @@ public class ReplicationService extends BaseService
 
         Credential credential = new Credential(username, password);
 
-        //TODO: Convert to log msg
-        System.out.println("**********");
-        System.out.println("Starting replication service");
-        System.out.println("host: " + host);
-        System.out.println("port: " + port);
-        System.out.println("context: " + context);
-        System.out.println("brokerURL: " + brokerURL);
-        System.out.println("credential: " + credential);
-        System.out.println("fromStoreId: " + fromStoreId);
-        System.out.println("toStoreId: " + toStoreId);
-        System.out.println("replicationType: " + replicationType);
+        log.info("**********");
+        log.info("Starting replication service");
+        log.info("host: " + host);
+        log.info("port: " + port);
+        log.info("context: " + context);
+        log.info("brokerURL: " + brokerURL);
+        log.info("credential: " + credential);
+        log.info("fromStoreId: " + fromStoreId);
+        log.info("toStoreId: " + toStoreId);
+        log.info("replicationType: " + replicationType);
 
         jmsContainer = new DefaultMessageListenerContainer();
         connectionFactory.setBrokerURL(brokerURL);
@@ -92,9 +91,9 @@ public class ReplicationService extends BaseService
                                     fromStoreId,
                                     toStoreId);
 
-        System.out.print("Listener container started: ");
-        System.out.println("jmsContainer.isRunning()");
-        System.out.println("**********");
+        log.info("Listener container started: ");
+        log.info("jmsContainer.isRunning()");
+        log.info("**********");
         log.info("Replication Service Listener Started");
         setServiceStatus(ServiceStatus.STARTED);
     }
@@ -126,7 +125,6 @@ public class ReplicationService extends BaseService
         if (log.isDebugEnabled()) {
             log.debug("Message recieved in Replication Service: " + message);
         }
-        System.out.println("Message Received: " + message); //TODO: Remove once logging works
 
         if (message instanceof MapMessage) {
             handleMapMessage((MapMessage) message);
@@ -136,7 +134,6 @@ public class ReplicationService extends BaseService
             String error =
                     "Message received which cannot be processed: " + message;
             log.warn(error);
-            System.out.println(error); //TODO: Remove once logging works
         }
     }
 
@@ -146,7 +143,6 @@ public class ReplicationService extends BaseService
             String msg =
                     "Text message received in replication service: " + msgText;
             log.warn(msg);
-            System.out.println(msg); //TODO: Remove once logging works
         } catch (JMSException je) {
             String error =
                     "Error occured processing text message: " + je.getMessage();

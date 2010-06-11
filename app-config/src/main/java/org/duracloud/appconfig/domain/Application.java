@@ -21,7 +21,7 @@ import java.util.Collection;
  *         Date: Apr 22, 2010
  */
 public class Application {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(Application.class);
 
     private String host;
     private String port;

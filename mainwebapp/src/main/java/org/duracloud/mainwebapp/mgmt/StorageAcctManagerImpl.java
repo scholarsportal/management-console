@@ -3,19 +3,19 @@ package org.duracloud.mainwebapp.mgmt;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.mainwebapp.domain.model.StorageAcct;
 import org.duracloud.mainwebapp.domain.model.StorageProvider;
 import org.duracloud.mainwebapp.domain.repo.StorageAcctRepository;
 import org.duracloud.mainwebapp.domain.repo.StorageProviderRepository;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageAcctManagerImpl
         implements StorageAcctManager {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(StorageAcctManagerImpl.class);
 
     private StorageAcctRepository storageAcctRepository;
 
@@ -41,7 +41,7 @@ public class StorageAcctManagerImpl
                         .findStorageProviderById(storageProviderId));
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error finding acct: " + duraAcctId, e);
         }
         return accts;
     }

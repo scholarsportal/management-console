@@ -1,13 +1,13 @@
 
 package org.duracloud.duradmin.control;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ContentStore;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.util.ControllerUtils;
 import org.duracloud.duradmin.util.MessageUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,7 +21,7 @@ public class ContentController
 
     private static final String CONTENT_ITEM = "contentItem";
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(ContentController.class);
 
     public ContentController() {
         setCommandClass(ContentItem.class);

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class StatusController extends AbstractController {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(StatusController.class);
 
     private ServiceStatusReporter serviceStatusReporter;
     private HttpRequestHelper requestHelper;

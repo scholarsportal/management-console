@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.util.TableSpec;
 import org.duracloud.mainwebapp.domain.model.StorageProvider;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
@@ -24,7 +24,7 @@ public class StorageProviderRepositoryDBImpl
         extends SimpleJdbcDaoSupport
         implements StorageProviderRepository {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(StorageProviderRepositoryDBImpl.class);
 
     private final static String tablename = "StorageProvider";
 

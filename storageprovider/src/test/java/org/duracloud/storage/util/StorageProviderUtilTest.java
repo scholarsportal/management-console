@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertFalse;
@@ -24,8 +24,8 @@ import static junit.framework.Assert.assertEquals;
  */
 public class StorageProviderUtilTest {
 
-    protected static final Logger log =
-            Logger.getLogger(StorageProviderUtilTest.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(StorageProviderUtilTest.class);
 
     @Before
     public void setUp() throws Exception {

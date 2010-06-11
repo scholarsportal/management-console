@@ -1,13 +1,14 @@
 package org.duracloud.chunk.writer;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.duracloud.chunk.ChunkableContent;
 import org.duracloud.chunk.error.NotFoundException;
 import org.duracloud.chunk.manifest.ChunksManifest;
 import org.duracloud.chunk.stream.ChunkInputStream;
 import org.duracloud.chunk.stream.KnownLengthInputStream;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class FilesystemContentWriter implements ContentWriter {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(FilesystemContentWriter.class);
     private static final long TWO_GB = 2000000000;
 
     private List<AddContentResult> results = new ArrayList<AddContentResult>();

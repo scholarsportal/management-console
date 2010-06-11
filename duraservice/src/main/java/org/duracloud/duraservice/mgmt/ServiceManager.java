@@ -1,7 +1,6 @@
 package org.duracloud.duraservice.mgmt;
 
 import org.apache.commons.httpclient.util.HttpURLConnection;
-import org.apache.log4j.Logger;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
@@ -30,6 +29,8 @@ import org.duracloud.servicesadminclient.ServicesAdminClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,7 @@ import java.util.Map;
  */
 public class ServiceManager {
 
-    private static final Logger log = Logger.getLogger(ServiceManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ServiceManager.class);
 
     protected static final String PRIMARY_HOST_DISPLAY = "Primary Service Instance";
     protected static final String NEW_HOST_DISPLAY = "New Service Instance";

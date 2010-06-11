@@ -18,7 +18,7 @@ import java.util.Map;
  *         Date: Apr 20, 2010
  */
 public class DurastoreConfig extends BaseConfig implements AppConfig {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(DurastoreConfig.class);
 
     private static final String INIT_RESOURCE = "/stores";
     public static final String QUALIFIER = "durastore";

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public class NoopServiceStarterImpl
         implements ServiceStarter {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(NoopServiceStarterImpl.class);
 
     /**
      * {@inheritDoc}

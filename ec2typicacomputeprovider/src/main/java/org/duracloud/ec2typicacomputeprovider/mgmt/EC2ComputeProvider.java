@@ -10,8 +10,6 @@ import com.xerox.amazonws.ec2.Jec2;
 import com.xerox.amazonws.ec2.LaunchConfiguration;
 import com.xerox.amazonws.ec2.ReservationDescription;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ExceptionUtil;
 import org.duracloud.common.web.RestHttpHelper;
@@ -19,11 +17,13 @@ import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.mgmt.ComputeProvider;
 import org.duracloud.computeprovider.mgmt.InstanceDescription;
 import org.duracloud.computeprovider.mgmt.InstanceState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EC2ComputeProvider
         implements ComputeProvider {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(EC2ComputeProvider.class);
 
     private Jec2 ec2;
 
@@ -90,7 +90,7 @@ public class EC2ComputeProvider
             description = new EC2InstanceDescription(response, getProps());
 
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error getting instance description for: " + instanceId, e);
             description = new EC2InstanceDescription(e);
         }
 
@@ -157,7 +157,7 @@ public class EC2ComputeProvider
             HttpResponse resp = helper.get(url.toString());
             statusCode = resp.getStatusCode();
         } catch (Exception e) {
-            log.warn(e);
+            log.warn("Error pinging: "+ url.toString(), e);
         }
         log.info("ping url: " + url + ", status: " + statusCode);
 
@@ -194,9 +194,9 @@ public class EC2ComputeProvider
         try {
             this.props.loadFromXml(xmlProps);
         } catch (Exception e) {
-            log.fatal("Unable to load properties: " + xmlProps);
-            log.fatal(e.getMessage());
-            log.fatal(ExceptionUtil.getStackTraceAsString(e));
+            log.error("Unable to load properties: " + xmlProps);
+            log.error(e.getMessage());
+            log.error(ExceptionUtil.getStackTraceAsString(e));
         }
     }
 

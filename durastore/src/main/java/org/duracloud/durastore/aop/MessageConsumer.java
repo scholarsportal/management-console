@@ -1,7 +1,7 @@
 package org.duracloud.durastore.aop;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public class MessageConsumer {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(MessageConsumer.class);
 
     private JmsTemplate jmsTemplate;
 

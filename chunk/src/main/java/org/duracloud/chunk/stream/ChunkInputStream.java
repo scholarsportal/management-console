@@ -1,7 +1,8 @@
 package org.duracloud.chunk.stream;
 
-import org.apache.log4j.Logger;
 import org.duracloud.common.util.MimetypeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import java.io.InputStream;
  *         Date: Feb 2, 2010
  */
 public class ChunkInputStream extends InputStream {
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ChunkInputStream.class);
     private static final MimetypeUtil mimeUtil = new MimetypeUtil();
 
     private String chunkId;

@@ -15,7 +15,7 @@ import java.util.Map;
  *         Date: Apr 20, 2010
  */
 public abstract class BaseConfig {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(BaseConfig.class);
 
     /**
      * This method loads this class with the configuration provided in props.

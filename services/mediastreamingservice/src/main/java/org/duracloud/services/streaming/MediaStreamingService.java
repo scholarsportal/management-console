@@ -24,7 +24,7 @@ import java.util.Map;
 public class MediaStreamingService extends BaseService implements ComputeService,
                                                                   ManagedService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(MediaStreamingService.class);
 
     private static final String DEFAULT_DURASTORE_HOST = "localhost";
     private static final String DEFAULT_DURASTORE_PORT = "8080";
@@ -218,6 +218,5 @@ public class MediaStreamingService extends BaseService implements ComputeService
 
     private void log(String logMsg) {
         log.warn(logMsg);
-        System.out.println(logMsg);
     }
 }

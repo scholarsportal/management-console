@@ -1,8 +1,6 @@
 
 package org.duracloud.duradmin.webflow.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.client.error.InvalidServiceConfigurationException;
 import org.duracloud.client.error.InvalidServiceConfigurationException.ValidationError;
@@ -13,6 +11,8 @@ import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
 import org.duracloud.serviceconfig.user.UserConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,7 +27,7 @@ public class DeployServiceAction
 
     private static final long serialVersionUID = 1L;
 
-    private static Log log = LogFactory.getLog(DeployServiceAction.class);
+    private static Logger log = LoggerFactory.getLogger(DeployServiceAction.class);
 
     private ServicesManager servicesManager;
 

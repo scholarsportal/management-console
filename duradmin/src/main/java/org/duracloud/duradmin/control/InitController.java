@@ -1,12 +1,13 @@
 package org.duracloud.duradmin.control;
 
-import org.apache.log4j.Logger;
 import static org.duracloud.appconfig.xml.DuradminInitDocumentBinding.createDuradminConfigFrom;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import static org.duracloud.common.util.ExceptionUtil.getStackTraceAsString;
 import org.duracloud.duradmin.config.DuradminConfig;
 import org.duracloud.duradmin.contentstore.ContentStoreProvider;
 import org.duracloud.duradmin.domain.AdminInit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,7 +30,7 @@ import java.io.IOException;
  */
 public class InitController extends BaseCommandController {
 
-    private final Logger log = Logger.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(InitController.class);
 
     public InitController() {
     	setCommandClass(AdminInit.class);

@@ -22,8 +22,6 @@ import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tiles.TilesApplicationContext;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.TilesException;
@@ -38,6 +36,8 @@ import org.apache.tiles.preparer.BasicPreparerFactory;
 import org.apache.tiles.servlet.context.ServletTilesApplicationContext;
 import org.apache.tiles.servlet.context.wildcard.WildcardServletTilesApplicationContextFactory;
 import org.apache.tiles.web.util.ServletContextAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
@@ -95,8 +95,8 @@ import org.springframework.web.servlet.view.tiles2.TilesView;
 public class TilesConfigurer
         implements ServletContextAware, InitializingBean, DisposableBean {
 
-    protected final static Log logger =
-            LogFactory.getLog(TilesConfigurer.class);
+    protected final static Logger logger =
+            LoggerFactory.getLogger(TilesConfigurer.class);
 
     private final Properties tilesPropertyMap = new Properties();
 

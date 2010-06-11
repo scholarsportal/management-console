@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public class NoopServiceStopperImpl
         implements ServiceStopper {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(NoopServiceStopperImpl.class);
 
     /**
      * {@inheritDoc}

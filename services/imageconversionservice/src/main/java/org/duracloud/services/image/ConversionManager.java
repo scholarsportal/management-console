@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConversionManager {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(ConversionManager.class);
 
     private boolean conversionComplete = false;
     private boolean continueConversion = true;
@@ -166,13 +166,11 @@ public class ConversionManager {
         startMsg.append(nameSuffix);
         startMsg.append("'.");
 
-        // TODO: Convert to log msg
-        System.out.println(startMsg.toString());
+        log.info(startMsg.toString());
     }
 
     private void printEndMessage() {
-        // TODO: Convert to log msg
-        System.out.println(getConversionStatus());
+        log.info(getConversionStatus());
     }
 
     protected String getConversionStatus() {

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *         Date: Mar 12, 2010
  */
 public class SpaceAccessVoterImpl extends SpaceAccessVoter {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(SpaceAccessVoterImpl.class);
 
     protected ContentStore getContentStore(String host,
                                            String port,

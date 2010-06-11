@@ -1,9 +1,9 @@
 package org.duracloud.mainwebapp.control;
 
-import org.apache.log4j.Logger;
-
 import org.duracloud.mainwebapp.domain.model.Address;
 import org.duracloud.mainwebapp.domain.repo.AddressRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public class AddressController
         extends SimpleFormController {
 
-    protected final Logger log = Logger.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(AddressController.class);
 
     private AddressRepository addressRepository;
 

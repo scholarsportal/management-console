@@ -2,7 +2,8 @@
 package org.duracloud.common.util;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +18,7 @@ import java.util.Properties;
 public class ApplicationConfig {
 
     protected static final Logger log =
-            Logger.getLogger(ApplicationConfig.class);
+            LoggerFactory.getLogger(ApplicationConfig.class);
 
     protected static Properties getPropsFromResource(String resourceName) {
         Properties props = new Properties();
