@@ -44,20 +44,4 @@ public class TestTaskRest extends BaseRestTester {
         assertTrue(responseText.contains(taskId));
     }
 
-    @Test
-    public void testGetTask() throws Exception {
-        // Noop Task
-        String taskId = "noop";
-        String url = baseUrl + "/task/" + taskId;
-        RestHttpHelper.HttpResponse response = restHelper.get(url);
-        String responseText = checkResponse(response, HttpStatus.SC_OK);
-        assertNotNull(responseText);
-
-        // Unsupported Task
-        taskId = "unsupported-task";
-        url = baseUrl + "/task/" + taskId;
-        response = restHelper.get(url);
-        responseText = checkResponse(response, HttpStatus.SC_BAD_REQUEST);
-        assertTrue(responseText.contains(taskId));
-    }
 }
