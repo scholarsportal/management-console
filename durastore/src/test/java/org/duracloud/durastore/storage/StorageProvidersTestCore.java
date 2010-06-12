@@ -506,8 +506,10 @@ public class StorageProvidersTestCore
 
         assertTrue(metadata.containsKey(key1.toLowerCase()));
         assertEquals(val1, metadata.get(key1.toLowerCase()));
-        assertEquals(mimeText,
-                     metadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE));
+
+        String mime = metadata.get(StorageProvider.METADATA_CONTENT_MIMETYPE);
+        assertNotNull(mime);
+        assertTrue(mime.startsWith(mimeText));
 
         // Set MIME and check.
         contentMetadata.put(StorageProvider.METADATA_CONTENT_MIMETYPE,
@@ -577,7 +579,9 @@ public class StorageProvidersTestCore
         assertTrue(metadata.containsKey(cksumKey));
 
         // Mimetype value is unchanged.
-        assertEquals(mimeText, metadata.get(mimeKey));
+        String mime = metadata.get(mimeKey);
+        assertNotNull(mime);
+        assertTrue(mime.startsWith(mimeText));
         assertEquals(data.length, Integer.parseInt(metadata.get(sizeKey)));
         assertNotNull(metadata.get(modifiedKey));
         assertEquals(digest, metadata.get(cksumKey));

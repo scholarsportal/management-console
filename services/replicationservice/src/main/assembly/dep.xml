@@ -16,6 +16,7 @@
         <include>org.apache.geronimo.specs:com.springsource.javax.management.j2ee</include>
         <include>javax.xml.rpc:com.springsource.javax.xml.rpc</include>
         <include>javax.xml.soap:com.springsource.javax.xml.soap</include>
+        <include>javax.jms:com.springsource.javax.jms</include>        
         <include>org.apache.activemq:com.springsource.org.apache.activemq</include>
         <include>org.apache.xmlcommons:com.springsource.org.apache.xmlcommons</include>
         <include>org.jdom:com.springsource.org.jdom</include>
