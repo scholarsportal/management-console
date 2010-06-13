@@ -33,7 +33,10 @@
 		<a  href="javascript:void(0)" id="view-uploads">Upload Status:
 			<span id="progress-bar"></span>
 		</a>				
-		<div id="upload-viewer"></div>
+		<div id="upload-viewer">
+			<h1>Upload Status</h1>
+			<div id="upload-list-wrapper"></div>
+		</div>
 	</div>
 	<div class="outer" id="footer-content">
 		<div class="float-r" id="logo-ds"></div>

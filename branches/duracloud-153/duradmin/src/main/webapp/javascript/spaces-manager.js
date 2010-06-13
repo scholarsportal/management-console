@@ -473,29 +473,45 @@ $(document).ready(function() {
 		var percentComplete = parseInt(parseInt(props.bytesRead)/parseInt(props.totalBytes)*100);
 
 		var item = 	$.fn.create("div")
-						.addClass("upload-item")
+						.addClass("upload-item clearfix")
 						.append(
-							$.fn.create("h2").html(props.contentId)
+							$.fn.create("span").addClass("upload-item-id").html(props.contentId)
 						).append(
-								$.fn.create("h3").html(getStoreName(parseInt(props.storeId)) + " >> " + props.spaceId)
+								$.fn.create("span").addClass("upload-item-store-space").html("Store: " + getStoreName(parseInt(props.storeId)) + " | Space: " + props.spaceId)
 						).append(
-								$.fn.create("div").html(parseInt(parseInt(props.bytesRead)/1024)+"KB"+ "/" + parseInt(parseInt(props.totalBytes)/1024) + "KB")
-						).append(
-							$.fn.create("div").addClass("dc-progressbar").html("&nbsp;")
-								.append(
-									$.fn.create("div").addClass("dc-progressbar-value"))
+								$.fn.create("div").addClass("dc-progressbar-wrapper")
+									.append(
+											$.fn.create("div").addClass("dc-progressbar")
+												.append(
+														$.fn.create("div").addClass("dc-progressbar-value")))
 						).append(
 							$.fn.create("div").addClass("dc-controls")
 						);
 
 		//configure progress bar
-		item.find(".dc-progressbar-value").css("width", percentComplete+"%").html(percentComplete+"%");			
+		item.find(".dc-progressbar-value").css("width", percentComplete*.5+"%").html(parseInt(parseInt(props.bytesRead)/1024)+" of " + parseInt(parseInt(props.totalBytes)/1024) + " KB / " + percentComplete+"%");			
 		
 		var actionCell = item.find(".dc-controls");	
+
+		/*
+		// temp for styling
+		actionCell.append(
+				$.fn.create("button")
+				.addClass("flex button")
+				.html("<span>Cancel</span>")
+				.click(function(){ alert("implement cancel here");})
+				);
+		*/
+		
 		if(props.state == 'running'){
-			actionCell.append($.fn.create("button").html("cancel").click(function(){ alert("implement cancel here");}));
+			actionCell.append(
+					$.fn.create("button")
+					.addClass("flex button")
+					.html("<span>Cancel</span>")
+					.click(function(){ alert("implement cancel here");})
+					);
 		}else{
-			actionCell.append($.fn.create("button").html("x").click(function(evt){
+			actionCell.append($.fn.create("button").addClass("flex button").html("<span>Remove</span>").click(function(evt){
 				var that = this;
 				evt.stopPropagation();
 				$.ajax({
@@ -527,7 +543,7 @@ $(document).ready(function() {
 		show: 'blind',
 		hide: 'blind',
 		resizable: false,
-		height: 250,
+		height: 500,
 		closeOnEscape:true,
 		modal: false,
 		width:500,
@@ -549,15 +565,12 @@ $(document).ready(function() {
 					url: "/duradmin/spaces/upload",
 					success: function(data){
 						if(!stopPolling){
-							var upload = $("#upload-viewer");
+							var upload = $("#upload-list-wrapper");
 							upload.empty();
-							var list = $.fn.create("div");
-							upload.append(list);
 							for(i in data.taskList){
 								var t = data.taskList[i];
-								list.append(createTaskPanel(t));
-							}
-							
+								upload.append(createTaskPanel(t));
+							}							
 							setTimeout(poller, 5000);
 						}
 					}

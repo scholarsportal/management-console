@@ -859,17 +859,6 @@ span.label
 	min-width:150px;
 }
 
-.dc-progressbar .dc-progressbar-value{
-	background-color: orange;	
-	text-align:center;
-}
-
-.dc-progressbar {
-	padding:1px;
-	border: 1px solid #green;	
-	width:100%;
-}
-
 .dc-expando-status {
 	height:20px;
 	width:30px;
@@ -886,14 +875,32 @@ span.label
 	-moz-opacity:0.25;
 	-khtml-opacity: 0.25;
 	opacity: 0.25;
-	
 }
 
-#upload-viewer .dc-progressbar{
-	width: 70%;
-	float:left;
+.dc-progressbar
+{
+	display:block;	
+	background-color:#003300;
+	border:1px solid #000;
+	border-bottom-color:#454545;
 }
-#upload-viewer .dc-controls {
+
+.dc-progressbar .dc-progressbar-value
+{
+	background-color:#227722;
+	border:1px solid #228822;
+	border-top-color:#339933;
+	border-bottom-width:0;
+	color:#00cc00;
+	display:block;
+	overflow:visible;
+	padding:1px 2px 3px 5px;
+	text-align:left;
+	white-space:nowrap;
+}
+
+.dc-controls
+{
 	float:right;
 	color: white;
 }
