@@ -116,6 +116,7 @@
       <groupId>org.duracloud.services</groupId>
       <artifactId>servicesutil</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>    
 
     <dependency>
