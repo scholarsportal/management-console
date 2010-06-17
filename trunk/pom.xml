@@ -80,6 +80,7 @@
     <module>servicesadminclient</module>
     <module>chunk</module>
     <module>synctool</module>
+    <module>integration-test</module>
   </modules>
 
   <profiles>

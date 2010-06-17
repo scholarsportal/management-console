@@ -16,7 +16,7 @@ import java.util.Properties;
  * Date: Nov 23, 2009
  */
 public class StoreClientConfig extends ApplicationConfig {
-    private String propName = "test-storeclient.properties";
+    private String propName = "test.properties";
 
     private Properties getProps() throws Exception {
         return getPropsFromResource(propName);
