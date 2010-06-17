@@ -133,10 +133,13 @@ public class ServiceInstallerImpl extends ServiceInstallBase implements ServiceI
             ZipEntry entry = (ZipEntry) entries.nextElement();
             String entryName = FilenameUtils.getName(entry.getName());
 
-            if (isJar(entryName) && BundleCatalog.register(entryName)) {
-                InputStream entryStream = getZipEntryStream(zip, entry);
-                installBundleFromStream(entryName, entryStream);
-
+            if (isJar(entryName)) {
+                if(BundleCatalog.register(entryName)) {
+                    InputStream entryStream = getZipEntryStream(zip, entry);
+                    installBundleFromStream(entryName, entryStream);
+                } else {
+                    // Ignore Jars which are already deployed
+                }
             } else {
                 InputStream entryStream = getZipEntryStream(zip, entry);
                 String serviceId = FilenameUtils.getBaseName(name);
