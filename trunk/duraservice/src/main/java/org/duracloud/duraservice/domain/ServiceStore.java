@@ -7,6 +7,8 @@
  */
 package org.duracloud.duraservice.domain;
 
+import org.duracloud.common.model.Credential;
+
 /**
  * Contains the information necessary to connect to a DuraCloud
  * store which houses service packages
@@ -16,6 +18,8 @@ package org.duracloud.duraservice.domain;
 public class ServiceStore extends Store {
 
     private String spaceId;
+    private String username;
+    private String password;
 
     public String getSpaceId() {
         return spaceId;
@@ -25,4 +29,15 @@ public class ServiceStore extends Store {
         this.spaceId = spaceId;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Credential getCredential() {
+        return new Credential(username, password);
+    }
 }
