@@ -10,6 +10,7 @@ package org.duracloud.duraservice.mgmt;
 import org.apache.commons.httpclient.util.HttpURLConnection;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
+import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.domain.Content;
@@ -183,8 +184,15 @@ public class ServiceManager {
             serviceCompute.setImageId(serviceComputeProvider.getChildText("imageId"));
             Element computeCredential =
                 serviceComputeProvider.getChild("computeProviderCredential");
-            serviceCompute.setUsername(computeCredential.getChildText("username"));
-            serviceCompute.setPassword(computeCredential.getChildText("password"));
+            String serviceComputeUsername = computeCredential.getChildText("username");
+            String serviceComputePassword = computeCredential.getChildText("password");
+            serviceCompute.setUsername(serviceComputeUsername);
+            serviceCompute.setPassword(serviceComputePassword);
+
+            // FIXME: These credentials should come from a 'service-store' config element.
+            serviceStore.setUsername(serviceComputeUsername);
+            serviceStore.setPassword(serviceComputePassword);
+
         } catch (Exception e) {
             String error = "Error encountered attempting to parse DuraService " +
             		       "configuration xml " + e.getMessage();
@@ -197,10 +205,11 @@ public class ServiceManager {
      * Reviews the list of content available in the DuraCloud
      * service storage location and builds a service registry.
      */
-    private void initializeServicesList()
-    throws ContentStoreException {
-        ContentStoreManager storeManager = contentStoreManagerUtil.getContentStoreManager(
-            serviceStore);
+    private void initializeServicesList() throws ContentStoreException {
+        ContentStoreManager storeManager;
+        storeManager = contentStoreManagerUtil.getContentStoreManager(
+            serviceStore,
+            serviceStore.getCredential());
         serviceStoreClient = storeManager.getPrimaryContentStore();
 
         refreshServicesList();

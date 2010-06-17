@@ -7,6 +7,7 @@
  */
 package org.duracloud.duraservice.mgmt;
 
+import org.duracloud.common.model.Credential;
 import org.duracloud.domain.Content;
 import org.duracloud.serviceconfig.DeploymentOption;
 import org.duracloud.serviceconfig.ServiceInfo;
@@ -311,7 +312,8 @@ public class ServiceManagerTestMockSupport {
         ContentStoreManager storeMgr = createMockContentStoreMgr();
         ContentStoreManagerUtil util = EasyMock.createMock(
             ContentStoreManagerUtil.class);
-        EasyMock.expect(util.getContentStoreManager(EasyMock.isA(Store.class)))
+        EasyMock.expect(util.getContentStoreManager(EasyMock.isA(Store.class),
+                                                    EasyMock.isA(Credential.class)))
             .andReturn(storeMgr);
         EasyMock.replay(util);
         return util;
