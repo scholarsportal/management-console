@@ -9,6 +9,7 @@ package org.duracloud.appconfig.domain;
 
 import org.duracloud.appconfig.ApplicationInitializer;
 import org.duracloud.common.model.Credential;
+import org.duracloud.common.model.DuraCloudUserType;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.domain.ResourceType;
@@ -144,11 +145,13 @@ public class TestApplicationInitializer extends BaseTestUtil {
         props.put(p2 + DuraserviceConfig.spaceIdKey,
                   "duracloud-service-repository");
 
+        Credential credential = getCredential(ResourceType.fromDuraCloudUserType(
+            DuraCloudUserType.ROOT));
         props.put(p3 + DuraserviceConfig.typeKey,
                   StorageProviderType.AMAZON_S3.name());
         props.put(p3 + DuraserviceConfig.imageIdKey, "1");
-        props.put(p3 + DuraserviceConfig.usernameKey, "username");
-        props.put(p3 + DuraserviceConfig.passwordKey, "password");
+        props.put(p3 + DuraserviceConfig.usernameKey, credential.getUsername());
+        props.put(p3 + DuraserviceConfig.passwordKey, credential.getPassword());
 
         return props;
     }
