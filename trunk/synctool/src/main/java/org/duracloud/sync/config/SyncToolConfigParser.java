@@ -43,7 +43,7 @@ public class SyncToolConfigParser {
     protected static final String BACKUP_FILE_NAME = "synctool.config";
     protected static final String PREV_BACKUP_FILE_NAME = "synctool.config.bak";
 
-    protected static final int DEFAULT_PORT = 8080;
+    protected static final int DEFAULT_PORT = 80;
     protected static final long DEFAULT_POLL_FREQUENCY = 10000;
     protected static final int DEFAULT_NUM_THREADS = 3;
     protected static final int DEFAULT_MAX_FILE_SIZE = 1; // 1 GB
