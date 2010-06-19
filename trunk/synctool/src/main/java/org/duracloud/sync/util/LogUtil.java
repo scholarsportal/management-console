@@ -61,7 +61,7 @@ public class LogUtil {
 
         logLocation = logDir.getAbsolutePath();
 
-        // Set up other duracloud logs
+        // Set up log to capture all duracloud logs
         File dcLogFile = new File(logDir, "duracloud.log");
         RollingFileAppender dcFileAppender;
         try {
@@ -74,6 +74,20 @@ public class LogUtil {
             throw new RuntimeException(e);
         }
         dcLogger.addAppender(dcFileAppender);
+
+        // Set up log to capture all logs
+        File depLogFile = new File(logDir, "complete.log");
+        RollingFileAppender depFileAppender;
+        try {
+            depFileAppender = new RollingFileAppender(layout,
+                                                      depLogFile.getAbsolutePath(),
+                                                      true);
+            depFileAppender.setMaxFileSize("20MB");
+            depFileAppender.setMaxBackupIndex(5);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+        rootLogger.addAppender(depFileAppender);
     }
 
     public String getLogLocation() {
