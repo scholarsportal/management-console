@@ -281,9 +281,10 @@
 
     <!-- webapp container artifacts -->
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
+      <groupId>org.duracloud</groupId>
       <artifactId>catalina.osgi</artifactId>
-      <version>5.5.23-20081003.025534-17</version>
+      <version>5.5.23</version>
+      <classifier>duracloud</classifier>
       <scope>provided</scope>
     </dependency>  
 
