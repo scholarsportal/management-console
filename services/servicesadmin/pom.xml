@@ -283,7 +283,7 @@
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>catalina.osgi</artifactId>
-      <version>5.5.23-SNAPSHOT</version>
+      <version>5.5.23-20081003.025534-17</version>
       <scope>provided</scope>
     </dependency>  
 
