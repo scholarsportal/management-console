@@ -247,6 +247,7 @@
 
   <scm>
     <connection>scm:svn:https://www.fedora-commons.org/svn/duracloud/trunk</connection>
+    <developerConnection>scm:svn:https://www.fedora-commons.org/svn/duracloud/trunk</developerConnection>
   </scm>
 
   <build>
