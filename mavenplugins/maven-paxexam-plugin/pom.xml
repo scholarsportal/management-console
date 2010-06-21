@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ops4j.pax.exam</groupId>
   <artifactId>maven-paxexam-plugin</artifactId>
-  <version>1.1.0-duracloud</version>
+  <version>0.4.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>OPS4J Pax Exam - Maven Plugin</name>
@@ -101,4 +101,9 @@
       <version>1.1</version>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://www.fedora-commons.org/svn/duracloud/tags/release-0.4/pax/exam-1.1.0/maven-paxexam-plugin</connection>
+    <developerConnection>scm:svn:https://www.fedora-commons.org/svn/duracloud/tags/release-0.4/pax/exam-1.1.0/maven-paxexam-plugin</developerConnection>
+  </scm>
 </project>
