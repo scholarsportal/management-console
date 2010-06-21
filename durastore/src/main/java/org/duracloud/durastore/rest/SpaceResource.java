@@ -159,12 +159,43 @@ public class SpaceResource {
             StorageProvider storage =
                 StorageProviderFactory.getStorageProvider(storeID);
             storage.createSpace(spaceID);
+            
+            waitForSpaceCreation(storage, spaceID);
             updateSpaceMetadata(spaceID,
                                 spaceAccess,
                                 userMetadata,
                                 storeID);
         } catch (StorageException e) {
             throw new ResourceException("add space", spaceID, e);
+        }
+    }
+
+    private static void waitForSpaceCreation(StorageProvider storage,
+                                             String spaceID) {
+        int maxTries = 10;
+        int tries = 0;
+        long millis = 500;
+        while (tries < maxTries) {
+            tries++;
+            try {
+                storage.getSpaceAccess(spaceID);
+                return; // success
+            } catch (Exception e) {
+                sleep(millis);
+            }
+        }
+
+        long elapsed = millis * maxTries;
+        String msg = "Space " + spaceID + " !created in " + elapsed + " millis";
+        log.error(msg);
+        throw new StorageException(msg);
+    }
+
+    private static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // do nothing
         }
     }
 
@@ -216,7 +247,7 @@ public class SpaceResource {
                                                 spaceID,
                                                 e);
         } catch (StorageException e) {
-            throw new ResourceException("update space metadata fort",
+            throw new ResourceException("update space metadata for",
                                         spaceID,
                                         e);
         }
