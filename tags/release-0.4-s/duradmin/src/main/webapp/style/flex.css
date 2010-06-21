@@ -1,0 +1,178 @@
+/* FLEX BASE CLASSES *********************************/
+
+.flex a,
+.flex a span,
+.flex,
+.flex span,
+.icon-only
+{
+	color:#ccc;
+	display:inline-block;
+	height:24px;
+	font-size:11px;
+	font-weight:bold;
+	line-height:22px;
+	text-decoration:none;
+}
+
+.flex a,
+.flex
+{
+	padding-left:10px;
+}
+
+.flex a span,
+.flex span
+{
+	cursor:pointer;
+	padding-right:10px;
+}
+
+.flex i
+{
+	display:inline-block;
+	font-style:normal;
+}
+
+.flex i.pre
+{
+	margin-left:-5px;
+	padding-left:20px;
+}
+
+
+.flex i.post
+{
+	padding-right:20px;
+}
+
+.flex i.icon-only
+{
+	padding-left:10px;
+}
+
+
+
+
+/* BUTTONS AND HOLDERS **********************************************/
+/* Extends .flex *****/
+
+.button a,
+.button,
+.button a span,
+.button span,
+.button-holder,
+.button-holder span,
+i.pre,
+i.post
+{
+	border:none;
+	font-size:11px;
+	height:24px;
+	line-height:22px;
+}
+
+
+.button a,
+.button,
+.button a span,
+.button span
+{
+	background:url(../images/btn_featured.gif) no-repeat;
+	color:#000;
+}
+
+.button-holder,
+.button-holder span
+{
+	background:url(../images/switch_base.gif) no-repeat;
+	color:#999;
+	cursor:inherit;
+	padding:0 !important;
+}
+
+.button-holder .pre
+{
+	margin:0 5px !important;
+}
+
+.switch .pre
+{
+	margin:0 !important;
+}
+
+.button-holder-on
+{
+	background-position:center left;
+	color:#66FF00 !important;
+}
+
+.button-holder-off
+{
+	background-position:bottom right;
+	color:#ff5959 !important;
+}
+
+
+.button-holder-off span
+{
+	background-position:bottom right;
+}
+
+.switch a,
+.switch,
+.switch a span,
+.switch span
+{
+	background:url(../images/switch_btn.gif) no-repeat;
+	color:#ccc;
+}
+
+.switch span
+{
+	padding-right:10px !important;
+}
+
+.switch i
+{
+	color:#ccc !important;
+}
+
+.button a,
+.button
+{
+	background-position: top left;
+	padding-left:10px;
+}
+
+.button a:hover,
+.button:hover
+{
+	background-position:bottom left;
+}
+
+.button a span,
+.button span,
+.button-holder span
+{
+	background-position: top right;
+	/*padding-right:10px;*/
+}
+
+
+.button a:hover span,
+.button:hover span
+{
+	background-position: bottom right;
+}
+
+a:hover .pre,
+a:hover .icon-only
+{
+	background-position: bottom left;
+}
+
+a:hover .post
+{
+	background-position: bottom right;
+}

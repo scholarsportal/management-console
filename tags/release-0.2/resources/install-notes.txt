@@ -1,0 +1,123 @@
+
+::Tomcat::
+To use the tomcat-maven plugin to (re)deploy the webapp, add the user to 'tomcat-users.xml' :
+
+<tomcat-users>
+  <role rolename="manager"/>
+  <role rolename="admin"/>
+  <user username="tomcat" password="password" roles="admin,manager"/>
+</tomcat-users>
+
+
+::Maven::
+There are several maven configuration items that need to be set based on the local machines settings. 
+These items are set in $M2_HOME/conf/settings.xml.
+There is an example of a complete settings.xml file at resources/conf/settings.xml that can be used as is (with the elements populated with local values).
+
+To use the tomcat plugin, also add the 'server' to your maven 'settings.xml' (see resources/conf/settings.xml):
+
+<server>
+  <id>tomcat-server</id>
+  <username>tomcat</username>
+  <password>password</password>
+</server>
+
+
+::Eclipse::
+To make your .classpath resolve, from trunk run:
+mvn clean install
+
+Then in the 'Libraries' tab of the 'build-path-configuration' add a new 'variable' named 'M2_REPO'.
+>Name: 'M2_REPO'
+>Path: '/home/awoods/.m2/repository' [or wherever your repository is]
+
+::Sources::
+To download source jars for all dependent libraries run:
+mvn dependency:sources
+
+::Database::
+The mainwebapp requires account information stored in an underlying database.
+Until there is an automated way of the application creating the database for us, it needs to be done with the following steps:
+>Run the following java-app: org.duracloud.mainwebapp.domain.repo.db.MainDatabaseUtil <location-of-new-DB>
+To ensure that the classpath is setup properly, either run this from within eclipse or use the script: resources/scripts/mainDBUtil.sh.
+
+>Now the mainwebapp needs to know where this newly created database is.
+ Spring injects the dataSource which it receives with a jndi lookup from the container.
+ To let the container know where the database is, set the same location that you used above (<location-of-new-DB>) at build-time:
+>mvn clean install -Ddatabase.home.default=<location-of-new-DB>
+>This sets a variable defining the database resource in the context.xml. 
+>Finally, tomcat needs to have access to the derby jdbc driver.
+ So put a copy of the derbyxxx.jar that is found in the mainwebapp/WEB-INF/lib under CATALINA_HOME/lib.
+
+::Unit Test Database::
+Several storage provider unit tests need to connect to the actual storage providers with real credentials.
+These credentials should be stored in a local database that is accessed by the unit tests.
+To create the unit-test-database, run the following script: resources/scripts/unitDBUtil.sh (or run UnitTestDatabaseLoaderCLI.java from eclipse).
+Once the database has been created, the unit tests being run through maven need to know where the database is located, 
+ and what the boot-password is (since it is an encrypted database).
+Add the <profile> with <id>always</id> found in 'resources/conf/settings.xml' to your settings.xml.
+
+<profile>
+  <id>always</id>
+  <properties>
+    <unit.database.home.default>[location-of-unit-test-db]</unit.database.home.default>
+    <unit.database.password.default>[boot-password]</unit.database.password.default>
+  </properties>
+</profile>
+
+Also add the <activeProfiles> element found in 'resources/conf/settings.xml' to your settings.xml.
+
+<activeProfiles>
+  <activeProfile>always</activeProfile>
+</activeProfiles>
+
+::Services::
+Services (projects in the /services directory) were built using PAX Construct, see http://www.ops4j.org/projects/pax/construct/ 
+for more info on using these tools. These projects are built as usual by using "mvn clean install". In order to deploy them all
+into an OSGi container at once, from the services directory use: 
+
+mvn clean install pax:provision                      (Equinox)
+mvn clean install pax:provision "-Dframework=felix"  (Felix)   (quotes necessary only on Windows)
+
+OR (to deploy without building)
+
+pax-provision           (Equinox)
+pax-provision -f felix  (Felix)
+
+In order to deploy them independently, from the directory of the specific service use:
+
+run-deps.(sh|bat)
+(the run-deps script includes this line at the end, which creates the runner directory: mvn clean install -f pom-run.xml pax:provision)
+Note: It is necessary to set an environment variable named BUNDLE_HOME to the directory in which ServicesAdmin will do its work
+Note: On Windows the runner/run.bat script created includes a variable $BUNDLE_HOME which needs to be changed to %BUNDLE_HOME%
+
+Note: For 'services/servicesadmin', after running the pax:provision command above, 
+to start the osgi container run:
+ cd services/servicesadmin/runner
+ ./run.[sh|bat]
+
+
+The run-deps script creates pom-run.xml by importing the OSGi bundle dependencies necessary to run the service. 
+The run-deps script depends on pax-construct, which is available for download here: 
+http://wiki.ops4j.org/display/paxconstruct/Pax+Construct
+
+In order to persist services deployed into the services-framework, please make sure the following directory exists:
+ ${duracloud.home}/osgi-bundles
+
+..where ${duracloud.home} is already defined in settings.xml
+
+:: BagIt Manifest Verifier Utility ::
+There is a commandline utility that can be used to verify the equality of two BagIt-style checksum manifest files.
+To create an executable jar file of the utility, from within the /common project run:
+
+mvn install -P manifest-verifier
+
+The executable jar will be found at /common/target/manifest-verifier.jar.
+
+
+:: StoreClient Package ::
+To create a distributable zip of the storeclient and its dependencies, from within storeclient run:
+
+mvn install -P package-client
+
+The zip will be found at /storeclient/target/store-client.zip
