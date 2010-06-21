@@ -1,0 +1,24 @@
+
+<!--  CONTEXT added per JNDI How-to for datasource setup  -->
+<Context reloadable="false">
+
+    <!--  Disable Manager session persistance - causes failures w/iBATIS
+    <Manager pathname=""/>
+    -->
+
+    <!-- 
+        NOTE: This file is replaced at build-time by 
+                src/main/resources/war/META-INF/context.xml 
+    -->
+    <Resource name="jdbc/mainDatasource" 
+              auth="Container" 
+              type="javax.sql.DataSource"              
+              username="duracloud" 
+              password="duracloud" 
+              driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+              url="jdbc:derby:/opt/derby/duracloudDB"
+              maxActive="100" 
+              maxIdle="30" 
+              maxWait="10000"/>
+
+</Context>
