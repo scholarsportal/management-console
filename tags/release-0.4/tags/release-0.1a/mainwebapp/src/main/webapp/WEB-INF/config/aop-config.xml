@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+  <!-- AOP - Advice -->
+  
+  <bean id="loggingAdvice" class="org.duracloud.computeprovider.aop.LoggingAdvice">
+  </bean>
+  
+  <bean id="loggingAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice" ref="loggingAdvice"/>
+    <property name="pattern" value=".*findUser"/>
+  </bean>
+   <!-- 
+  <bean id="userMgr" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target" ref="userMgrTarget"/>
+    <property name="interceptorNames" value="loggingAdvisor"/>
+    <property name="proxyInterfaces" value="org.duracloud.mainwebapp.mgmt.UserManager"/>
+  </bean>
+  --> 
+  
+  <!-- Enables AOP AutoProxies -->
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+  
+</beans>

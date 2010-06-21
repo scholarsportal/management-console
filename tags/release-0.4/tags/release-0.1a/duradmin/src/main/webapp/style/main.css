@@ -1,0 +1,355 @@
+body{
+	padding:0;
+	margin:0;	
+}
+
+body, #footer{
+	/*slate gray*/
+	background-color:#B9D3EE;
+	font-family: "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	color:#555;
+}
+
+table{
+	width:100%;	
+}
+
+
+#header {
+	width:100%;
+	/*deep sky blue*/
+	background-color:#00B2EE;
+	color:#FFF;
+}
+
+#top-header{
+	padding:1em;
+}
+
+
+#main-menu {
+	width:100%;
+	background: #333;
+	border-collapse:collapse;
+}
+
+#main-menu td  {
+	padding:0;
+} 
+
+#main-menu-left {
+	font-size: 67.5%;
+	
+	width:33%;
+	text-align:left;
+}
+
+#main-menu-center {
+	width:33%;
+	text-align:center;
+	vertical-align:middle;
+}
+
+
+#main-menu-right {
+	width:34%;
+	text-align:right;
+	vertical-align:middle;
+	
+}
+
+#main-menu-right select {
+}
+
+
+
+table.body{
+	min-height:40em;	
+	width:100%	
+}
+
+
+
+td#menu-div {
+	width:10em;
+	min-width:10em;
+	background-color:#F5DEB3;
+	padding:0.5em;
+}
+
+#main-content {
+}
+
+#menu-div, td#main-content  {
+	vertical-align:top;
+}
+
+td#main-content{
+	padding:0;
+	margin:0;
+}
+
+/* Main Content Header */
+
+.main-content-header{
+	background-color:#FFFFDD;
+	padding:0.5em;
+}
+
+.main-content-header div.subtitle{
+	padding:0.50em;
+	font-size:0.9em;	
+	margin:0;
+	border-top:1px solid #EEE;
+	background-color: #FFFFCC;
+	
+}
+
+.main-content-header  .subtitle ul {
+	display: inline;
+	list-style-type: none;
+	margin: 0;
+	padding:0;
+} 
+
+.main-content-header  .subtitle li{
+	display: inline;
+	padding-right:0em;
+}
+div.main-content-header{
+	min-height:3em;	
+	padding:0.25;
+}
+
+.main-content-header h1{
+	font-size:1.5em;	
+	margin:0;
+	padding:0.25em;
+}
+
+.main-content-header h2{
+	
+}
+
+
+
+
+.main-content-body {
+	padding:0.5em;
+	background-color:#FFFFEE;
+	min-height:10em;
+}
+
+#global-message-div {
+	min-height:1.5em; 
+	
+	background-color:#1E90FF;
+	                 
+}
+
+#message-div {
+	min-height:1em; 
+	width:100%; 
+	background-color:#FFFF99; 
+}
+
+.message-info, .message-error{
+	padding:0.25em 0.5em;
+	font-size:0.8em;
+	font-weight:bold;
+	border-collapse: collapse;
+	border:1px solid #AAA;
+}
+
+.message-info{
+	background-color:#9ACD32;	
+	
+}
+
+.message-error{
+	background-color:#FA8072;	
+	
+}
+
+
+#footer {
+	width:100%;
+	font-size:0.8em;
+	float:left;
+}
+
+/*The default header style*/
+div.header {
+	background-color: #FFFFAA;
+	padding: 10px;
+}
+
+table.space {
+  border:1px solid;
+}
+
+div.service {
+  margin-right: 20px;   
+  margin-bottom: 20px;
+}
+
+div.space {
+  float: left;
+  margin-right: 20px;	
+  margin-bottom: 20px;
+}
+
+
+#contents {
+  float:left;
+  margin-right:20px;
+}
+
+
+table{
+  border-collapse: collapse;
+}
+
+
+
+td, th {
+  padding:0.5em; 
+	text-align:left;
+	vertical-align: top;
+}
+
+
+.standard > tbody > tr > th {
+  background-color:#EEE;	
+	
+}
+
+.standard > tbody > tr.evenRow {
+	background-color:#FFEEFF;	
+}
+
+.standard > tbody > tr.hover {
+	background-color: #CCC;	
+}
+
+
+
+.standard > tbody > tr, .standard > tr > th {
+	border-bottom: 1px solid #CCC;	
+}
+
+.standard  th > a {
+	text-decoration: none;	
+}
+
+
+table.basic-form, table.property-list {
+	border:1px solid #CCC;
+}
+
+div.basic-form-buttons{
+	padding-top:0.5em;
+	
+}
+
+.basic-form tr, .property-list tr  {
+	border-bottom: 1px solid #CCC;	
+}
+td.label {
+	width:15%;	
+	background-color:#DDD;
+}
+
+.property-list td.label {
+	width:30%;	
+}
+
+
+td.input {
+	width:40%;	
+	background-color:#EEE;
+	
+}
+
+td.field-help {
+	width:*;
+	background-color:#FFF;
+}
+
+.field-help {
+	font-size:0.8em;	
+}
+
+div.actions {
+	visibility:hidden;
+}
+
+.actions ul{
+	padding:0.25em;
+	background-color:#DDD;
+	list-style-type:square;
+	
+}
+
+.actions  li {
+	display: inline;
+	font-size:0.8em;	
+	margin-right:2.0em;
+}
+
+#error {
+  font-size: 1.2em;
+  color: red;
+  margin: 20px 0px; 
+}
+
+table#spacesTable > tbody > tr > td#actionColumn {
+	max-width:50%;
+	min-width:50%;
+}
+
+table#spacesTable > tbody > tr > td#contentId {
+	vertical-align: top;
+}
+
+.sidebar-actions {
+	font-size: 0.9em;	
+}
+
+.sidebar-actions ul {
+	list-style-type: none;
+	padding:0;
+}
+
+.sidebar-actions li {
+	border-bottom: 1px solid #ccc;
+	padding:0.25em;
+}
+
+.sidebar-actions li:hover {
+	background-color:#EECFA1;
+}
+
+.sidebar-actions p {
+	font-size: 0.9em;	
+}
+
+#help {
+	width:15%; 
+	background-color:#FFFFAA; 
+	border-left:1px solid #CCC
+		
+}
+

@@ -1,0 +1,22 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/commons-discovery/commons-discovery/0.4/commons-discovery-0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.5/junit-4.5.jar" sourcepath="M2_REPO/junit/junit/4.5/junit-4.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar" sourcepath="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/base/ops4j-base-lang/1.0.0/ops4j-base-lang-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/base/ops4j-base-monitors/1.0.0/ops4j-base-monitors-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/base/ops4j-base-net/1.0.0/ops4j-base-net-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam/1.0.0/pax-exam-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-container-default/1.0.0/pax-exam-container-default-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-container-rbc/1.0.0/pax-exam-container-rbc-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-container-rbc-client/1.0.0/pax-exam-container-rbc-client-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-junit/1.0.0/pax-exam-junit-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-junit-extender/1.0.0/pax-exam-junit-extender-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-runtime/1.0.0/pax-exam-runtime-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/exam/pax-exam-spi/1.0.0/pax-exam-spi-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/ops4j/pax/runner/pax-runner-no-jcl/1.0.0/pax-runner-no-jcl-1.0.0.jar"/>
+</classpath>
