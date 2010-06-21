@@ -1,5 +1,4 @@
 <assembly>
-  <id>store-client</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
     <format>zip</format>
@@ -14,13 +13,14 @@
       </includes>      
     </fileSet>  
     <fileSet>
-      <directory>src/main/resources</directory>
+      <directory>resources</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>*.properties</include>
         <include>readme.txt</include>
         <include>build.xml</include>
         <include>ExampleClient.java</include>
+        <include>logback.xml</include>
       </includes>
     </fileSet>
   </fileSets>
