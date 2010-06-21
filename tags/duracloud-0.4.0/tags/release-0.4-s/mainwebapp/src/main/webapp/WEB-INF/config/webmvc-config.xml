@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <!-- URL to flow mapping rules -->
+  <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="/createAcct.htm">flowController</prop>
+      </props>
+    </property>
+    <property name="order" value="0" />
+  </bean>
+
+
+  <bean
+    class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="/home.htm">homeController</prop>
+        <prop key="/aboutMarketing.htm">homeController</prop>
+        <prop key="/aboutTech.htm">homeController</prop>
+        <prop key="/contactUs.htm">homeController</prop>
+        <prop key="/login.htm">loginController</prop>
+<!--        <prop key="/acctStatus.htm">acctStatusController</prop> TODO enable soon -->
+        <prop key="/computeStatus.htm">computeStatusController</prop>
+        <prop key="/storageStatus.htm">storageStatusController</prop>
+        <prop key="/computeCreate.htm">computeCreateController</prop>
+        <prop key="/storageCreate.htm">storageCreateController</prop>
+      </props>
+    </property>
+    <property name="order" value="1" />
+  </bean>
+
+
+  <bean id="exceptionResolver" class="org.duracloud.mainwebapp.control.DuraHandlerExceptionResolver">
+    <property name="exceptionMappings">
+      <props>
+        <prop key="java.lang.Exception">error</prop>
+      </props>
+    </property>
+    <property name="order" value="2" />
+  </bean>
+
+  <bean id="homeController" class="org.duracloud.mainwebapp.control.SubDirController">
+    <property name="prefix" value="/home/" />
+  </bean>
+
+  <bean id="loginController" class="org.duracloud.mainwebapp.control.LoginController">
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
+    <property name="formView" value="/acctUpdate/login" />
+    <property name="successView" value="/acctUpdate/acctStatus" />
+  </bean>
+  
+<!--  <bean id="acctStatusController" class="org.duracloud.mainwebapp.control.AcctStatusController" >-->
+<!--    <property name="duraAcctManager" ref="duraCloudAcctMgr" />-->
+<!--  </bean>-->
+
+  <bean id="computeStatusController" class="org.duracloud.mainwebapp.control.ComputeStatusController" >
+    <property name="computeManager" ref="computeAcctMgr" />
+  </bean>
+
+  <bean id="storageStatusController" class="org.duracloud.mainwebapp.control.StorageStatusController" >
+    <property name="storageManager" ref="storageAcctMgr" />
+  </bean>
+  
+  <bean id="computeCreateController" class="org.duracloud.mainwebapp.control.ComputeCreateController" >
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
+    <property name="computeAcctManager" ref="computeAcctMgr" />
+    <property name="formView" value="/acctCreate/provider/inputComputeAcctInfo" />
+    <property name="successView" value="/acctUpdate/acctStatus" />
+  </bean>
+  
+  <bean id="storageCreateController" class="org.duracloud.mainwebapp.control.StorageCreateController" >
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
+    <property name="storageAcctManager" ref="storageAcctMgr" />
+    <property name="formView" value="/acctCreate/provider/inputStorageAcctInfo" />
+    <property name="successView" value="/acctUpdate/acctStatus" />
+  </bean>
+  
+
+  <bean id="duraViewResolver"
+    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+    <property name="prefix" value="/WEB-INF/jsp/"></property>
+    <property name="suffix" value=".jsp"></property>
+  </bean>
+
+
+  <!-- domain beans --> 
+  
+  <bean id="credentialMgr" class="org.duracloud.mainwebapp.mgmt.CredentialManagerImpl">
+    <property name="credentialRepository" ref="credentialRepo" />
+    <property name="authorityRepository" ref="authorityRepo" />
+  </bean>
+ 
+  <bean id="computeAcctMgr" class="org.duracloud.mainwebapp.mgmt.ComputeAcctManagerImpl">
+    <property name="computeAcctRepository" ref="computeAcctRepo" />
+    <property name="computeProviderRepository" ref="computeProviderRepo" />
+    <property name="credentialManager" ref="credentialMgr" />
+  </bean>
+    
+  <bean id="storageAcctMgr" class="org.duracloud.mainwebapp.mgmt.StorageAcctManagerImpl">
+    <property name="storageAcctRepository" ref="storageAcctRepo" />
+    <property name="storageProviderRepository" ref="storageProviderRepo" /> 
+    <property name="credentialManager" ref="credentialMgr" />
+  </bean>
+  
+  <bean id="duraCloudAcctMgr" class="org.duracloud.mainwebapp.mgmt.DuraCloudAcctManagerImpl">
+    <property name="computeAcctManager" ref="computeAcctMgr" />
+    <property name="storageAcctManager" ref="storageAcctMgr" />
+    <property name="duraCloudAcctRepository" ref="duraCloudAcctRepo" />
+    <property name="userManager" ref="userMgr" />
+  </bean>
+  
+  <bean id="userMgr" class="org.duracloud.mainwebapp.mgmt.UserManagerImpl">
+    <property name="userRepository" ref="userRepo" />
+    <property name="addressRepository" ref="addressRepo" />
+    <property name="credentialManager" ref="credentialMgr" />
+  </bean>
+  
+  <bean id="computeProviderFactory" class="org.duracloud.computeprovider.mgmt.ComputeProviderFactory">
+    <property name="idToClassMap">
+      <map>
+        <entry key="amazon-ec2" value="org.duracloud.ec2typicacomputeprovider.mgmt.EC2ComputeProvider" />
+        <entry key="local" value="org.duracloud.computeprovider.mgmt.mock.LocalComputeProviderImpl" />
+      </map>
+    </property>
+  </bean>
+  
+  <bean id="dbLoader" class="org.duracloud.mainwebapp.domain.repo.db.MainDatabaseLoader">
+    <property name="duraCloudAcctManager" ref="duraCloudAcctMgr" />
+    <property name="computeProviderRepository" ref="computeProviderRepo" />
+    <property name="storageProviderRepository" ref="storageProviderRepo" />
+  </bean>
+  
+    
+  <!-- Enables plain Controllers -->
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+</beans>

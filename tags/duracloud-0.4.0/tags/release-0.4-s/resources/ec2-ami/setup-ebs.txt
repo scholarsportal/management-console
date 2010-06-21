@@ -1,0 +1,25 @@
+----
+Creating an EBS and managing it
+----
+
+:: on local ::
+
+./aws describe-volumes
+./aws create-volume --size 2 --zone us-east-1b
+
+./aws attach-volume <vol-id> -i <instance-id> -d <dev-name>
+./aws attach-volume vol-06af4f6f -i i-20ee8849 -d /dev/sdh
+
+
+
+:: on instance ::
+
+yes | mkfs -t ext3 /dev/sdh 
+mkdir /mnt/db
+mount /dev/sdh /mnt/db
+
+-create derby-db on /mnt/db
+
+:: init.d ::
+created /etc/init.d/ebs to start/stop mount and volume attachment
+

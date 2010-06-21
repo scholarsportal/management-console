@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		   http://www.springframework.org/schema/aop 
+		   http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+           >
+  <!--
+    Imports the configurations of the different infrastructure systems
+    of the application
+  -->
+  <bean id="contentStoreManagerFactory" class="org.duracloud.duradmin.contentstore.ContentStoreManagerFactoryImpl"/>
+  <!-- 
+  <bean id="contentStoreManagerFactory" class="org.duracloud.duradmin.mock.contentstore.MockContentStoreManagerFactoryImpl"/>
+   -->  
+
+
+  
+  <bean id="contentStoreManager"  factory-bean="contentStoreManagerFactory" factory-method="create" />
+
+  <bean id="contentStoreSelector" 
+  	class="org.duracloud.duradmin.contentstore.ContentStoreSelector"
+  	scope="session">
+  	<aop:scoped-proxy/>
+    <property name="contentStoreManager" ref="contentStoreManager"/>  
+  </bean>
+
+  <bean id="contentStoreProvider"  class="org.duracloud.duradmin.contentstore.ContentStoreProvider">
+    <property name="contentStoreManager" ref="contentStoreManager"/>  
+    <property name="contentStoreSelector" ref="contentStoreSelector" />  
+  </bean>
+
+</beans>

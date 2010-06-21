@@ -1,0 +1,45 @@
+<computeAccts>
+  <computeAcct>
+    <id>computeAcctId0</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>mockProvider</computeProviderId>
+    <computeCredential>
+      <username>username0</username>
+      <password>password0</password>
+    </computeCredential>
+    <props class="org.duracloud.serviceprovider.mgmt.mock.MockServiceProviderProperties">
+      <prop0>propA</prop0>
+      <prop1>propB</prop1>
+      <prop2>propC</prop2>
+    </props>
+  </computeAcct>
+  <computeAcct>
+    <id>id1</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>provider</computeProviderId>
+    <computeCredential>
+      <username>username1</username>
+      <password>password1</password>
+    </computeCredential>
+    <props class="org.duracloud.serviceprovider.mgmt.mock.MockServiceProviderProperties">
+      <prop0>propA</prop0>
+      <prop1>propB</prop1>
+      <prop2>propC</prop2>
+    </props>
+  </computeAcct>
+  <computeAcct>
+    <id>id2</id>
+    <namespace>namespace0</namespace>
+    <computeProviderId>provider</computeProviderId>
+    <computeCredential>
+      <username>username2</username>
+      <password>password2</password>
+    </computeCredential>
+    <instanceId>instanceId</instanceId>
+    <props class="org.duracloud.serviceprovider.mgmt.mock.MockServiceProviderProperties">
+      <prop0>propA</prop0>
+      <prop1>propB</prop1>
+      <prop2>propC</prop2>
+    </props>
+  </computeAcct>
+</computeAccts>
