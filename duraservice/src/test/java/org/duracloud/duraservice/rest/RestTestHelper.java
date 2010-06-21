@@ -100,8 +100,8 @@ public class RestTestHelper {
 
         String serviceComputeMgrType = "AMAZON_EC2";
         String serviceComputeMgrImage = "1234";
-        String serviceComputeMgrUser = "username";
-        String serviceComputeMgrPass = "password";
+        String serviceComputeMgrUser = getRootCredential().getUsername();
+        String serviceComputeMgrPass = getRootCredential().getPassword();
 
         StringBuilder xml = new StringBuilder();
         xml.append("<servicesConfig>");
