@@ -3,36 +3,6 @@
  * created by Daniel Bernstein
  */
 
-////////////////////////////////////////////////////////////////////
-//Opens any dialog by id over the event's target
-////////////////////////////////////////////////////////////////////
-var dcOpenDialogOverTarget =  function(evt, dialogId) {
-	var offset = $(evt.target).offset();
-	var coords = [offset.left,offset.top];
-	coords[1] = coords[1] + evt.target.height;
-	$(dialogId)
-		.dialog('option', 'position', coords)
-		.dialog('open');
-	return false;
-};
-
-var dcNearestDcItem = function(node){
-	return($(node).hasClass("dc-item")) ? $(node).first() : $(node).closest(".dc-item");
-};
-
-var dcStyleItem =  function(target){
-	var dcItem = dcNearestDcItem(target);
-	$(dcItem).removeClass("dc-checked-selected-list-item dc-checked-list-item dc-selected-list-item");
-	var checked = $(dcItem).find("input[type=checkbox][checked]").size() > 0;
-	$(dcItem).addClass(checked ? "dc-checked-selected-list-item" : "dc-selected-list-item");
-	dcRestyleDcItemSiblings(dcItem);
-};
-
-//style the list items
-var dcRestyleDcItemSiblings = function(dcItem){
-	$(dcItem).siblings().removeClass("dc-selected-list-item dc-checked-selected-list-item dc-checked-list-item");
-	$(dcItem).siblings().find("input[type=checkbox][checked]").closest(".dc-item").addClass("dc-checked-list-item");
-};
 
 
 

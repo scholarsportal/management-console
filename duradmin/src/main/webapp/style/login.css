@@ -60,9 +60,10 @@
 
 #login-footer
 {
-
-
+	background-position:right -30px;
 }
+
+#login-wrapper .footer-content { padding-top:20px; }
 
 
 #form-fields #button-login,
@@ -80,7 +81,28 @@
 	padding-right:50px;
 }
 
-#form-fields #login-submit
-{
 
+/* LOGIN STYLES ****************************/
+
+.ui-dialog fieldset
+{
+	padding:20px 0;
+}
+
+
+#login-content .form-fields
+{
+	margin-right:20%;
+	width:350px;
+}
+
+#login-content label
+{
+	width:100px;
+}
+
+#login-content .form-fields .field
+{
+	float:right;
+	width:200px;
 }

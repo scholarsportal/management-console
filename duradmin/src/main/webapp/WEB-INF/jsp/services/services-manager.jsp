@@ -5,9 +5,14 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="header-extensions">
+		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/jquery/plugins/jquery.form/jquery.form-2.4.3.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.glasspane.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
-]		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.listdetailviewer.js"></script>
+
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
@@ -21,13 +26,14 @@
 						<a class="flex button float-r deploy-service-button" href="javascript:void(1);">
 							<span><i class="pre plus">Deploy a New Service</i></span>
 						</a>
+						
 						<h2>Services</h2>
 					</div>
 				</div>
 			
 				<div class="center dc-item-list-wrapper">
-					<div class="dc-item-list">
-						<table>
+					<div id="deployed-services" class="dc-item-list">
+						<table id="deployed-services-table" style="display:none">
 							<thead>
 								<tr>
 									<th>&nbsp;</th>
@@ -37,42 +43,6 @@
 								</tr>
 							</thead>
 							<tbody  id="services-list">
-								<tr class="dc-item service-replicate">
-									<td class="icon"><div></div></td>
-									<td>Service #1 - Replicate</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-generalcompute">
-									<td class="icon"><div></div></td>
-									<td>Service #1 - General compute</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-bitintegrity">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-image">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-video">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>
-								<tr class="dc-item service-filetransform">
-									<td class="icon"><div></div></td>
-									<td>Service #1</td>
-									<td>127.0.0.1</td>
-									<td>OK</td>
-								</tr>	
 							</tbody>
 						</table>
 					</div>			
@@ -81,7 +51,7 @@
 
 			<div id="detail-pane" class="detail-pane" style="padding-top:10px;">
 				
-			</div>	
+			</div>
 
 			<div id="service-detail-pane" style="display:none">
 				<div class="north header">
@@ -100,18 +70,58 @@
 					    	</span>
 					    </div>
 					</div>
+
+					<div class="button-bar">
+						<button class="flex button reconfigure-button"><span><i class="pre pencil">Reconfigure</i></span></button>
+					</div>
+
 				</div>
 				<div class="center">
 				</div>
 
 			</div>	
 			
+			<div id="available-services-dialog" class="dialog detail-pane">
+				<h1>Select a Service</h1>
+				<div class="dc-item-list-wrapper" id="dc-item-list-wrapper"> 
+					<div id="available-services-list-wrapper" class="dc-item-list">
+						<span class="dc-message">Loading...</span>
+						<table>
+							<tbody id="available-services-list">
+							</tbody>
+						</table>
+					</div>
+				 </div> 
+			
+				<div class="dc-service-detail-wrapper" id="dc-service-detail-wrapper"> 
+					<div id="service-detail" class="dialog-detail">
+						<p>Select a service to get more details about it</p>
+					</div>
+				</div> 
+			</div>
+
+			<div id="reconfigure-service-dialog" class="dialog" title="Reconfigure Service">
+				<h1>Reconfigure the Service</h1>
+				<div id="reconfigure-service-config">
+				</div>
+			</div>
+
+			<div id="configure-service-dialog" class="dialog" title="Configure Service">
+				<h1>Configure the Service</h1>
+				<p class="hint">Configure your service, then click "Deploy"</p>
+				<div id="deploy-service-config">
+				</div>
+			</div>
+			
 		</tiles:putAttribute>
+		<tiles:putAttribute name="main-footer">
+				<div id="status-holder">
+				</div>
+
+		</tiles:putAttribute>
+		
 		
 </tiles:insertDefinition>	
 	</tiles:putAttribute>
 	
 </tiles:insertDefinition>
-
-
-

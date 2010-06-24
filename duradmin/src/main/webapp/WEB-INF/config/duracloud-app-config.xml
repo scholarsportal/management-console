@@ -14,5 +14,4 @@
   <import resource="security-config.xml" />
   <import resource="service-config.xml"  />
   <import resource="webmvc-config.xml" />
-  <import resource="webflow-config.xml" />
 </beans>

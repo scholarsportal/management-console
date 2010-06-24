@@ -23,7 +23,7 @@ $.widget("ui.tagsviewer",
 					controls.append(
 							$(document.createElement("td"))
 								.addClass("value")
-								.html("<input type='text' class='name-txt' size='35'/><input type='button' value='+'/>")
+								.html("<input type='text' class='name-txt' size='35'/><input type='button' value='+'/><div class='dc-expando-status'></div>")
 						);
 					
 					return controls;
@@ -43,7 +43,7 @@ $.widget("ui.tagsviewer",
 
 				
 				_createDataChild: function(data){
-					var child = $(document.createElement("li"));
+					var child = $.fn.create("li");
 					//add the name element
 					child.html(data);
 					//append remove button

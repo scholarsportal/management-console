@@ -7,9 +7,12 @@
  */
 package org.duracloud.duradmin.util;
 
-import java.util.LinkedList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.serviceconfig.user.MultiSelectUserConfig;
@@ -90,6 +93,21 @@ public class ServiceInfoUtil {
             applyValues(userConfig,parameters);
         }
     }
+
+    public static void applyValues(List<UserConfig> userConfigs,
+           	HttpServletRequest request) {
+    	Map<String,String> map = new HashMap<String,String>();
+    	Map parameters = request.getParameterMap();
+    	Enumeration<String> e = request.getParameterNames();
+    	while(e.hasMoreElements()){
+    		String key = e.nextElement();
+    		map.put(key, request.getParameter(key));
+    	}
+    	
+		for(UserConfig userConfig : userConfigs){
+			applyValues(userConfig,map);
+		}
+	}
 
     private static boolean applyValues(UserConfig userConfig,
                                     Map<String, String> parameters) {

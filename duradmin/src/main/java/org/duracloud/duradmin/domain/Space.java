@@ -20,6 +20,17 @@ public class Space
 
     private static final long serialVersionUID = 3008516494814826947L;
 
+	private String storeId;
+
+    public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+    
     private String action;
 
     private String spaceId;

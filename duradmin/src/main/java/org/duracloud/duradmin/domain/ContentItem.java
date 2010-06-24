@@ -30,6 +30,17 @@ public class ContentItem
 
     private String contentId;
 
+    public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+
+	private String storeId;
+
     private String contentMimetype;
 
     private String viewerURL;
@@ -168,5 +179,9 @@ public class ContentItem
         this.tinyThumbnailURL = tinyThumbnailURL;
     }
 
-
+    public String toString(){
+    	return "{storeId: " + storeId + ", spaceId: " + spaceId + ", contentId: " + contentId + 
+    				", viewerURL: " + viewerURL + ", downloadURL: " + downloadURL + ", thumbnailURL: " + thumbnailURL + 
+    				", metadata: " + metadata + ", contentMimetype: " + contentMimetype +"}";
+    }
 }

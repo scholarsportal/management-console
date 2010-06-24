@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import org.duracloud.client.ContentStore;
 import org.duracloud.error.ContentStoreException;
 import org.slf4j.Logger;
@@ -21,6 +22,9 @@ public class MetadataUtils {
 
     static final String NAME_KEY_PREFIX = "ext-metadata-";
     private static Logger log = LoggerFactory.getLogger(MetadataUtils.class);
+    
+    
+    
     
     public static void setMetadata(ContentStore contentStore,
                                    String spaceId,
@@ -94,5 +98,27 @@ public class MetadataUtils {
     public static Object getValue(String key, Map<String, String> metadata) {
         return metadata.get(NAME_KEY_PREFIX+key);
     }
+
+	public static void handle(String method, String context, Map<String, String> metadata,
+			HttpServletRequest request) {
+    	String tag = request.getParameter("tag");
+    	String name = request.getParameter("metadata-name");
+    	String value = request.getParameter("metadata-value");
+    	if(method.equals("addTag")){
+        	TagUtil.addTag(tag, metadata);
+        	log.info("added tag [{}] to [{}]", tag, context);
+        }else if(method.equals("removeTag")){
+        	TagUtil.removeTag(tag, metadata);
+        	log.info("removed tag [{}] from [{}]", tag, context);
+        }else if(method.equals("addMetadata")){
+        	MetadataUtils.add(name, value, metadata);
+        	log.info("added metadata [{}] to  [{}]", name+":"+value,context);
+        }else if(method.equals("removeMetadata")){
+        	MetadataUtils.remove(name,metadata);
+        	log.info("removed metadata [{}] from  [{}]", name+":"+value,context);
+        }else{
+        	log.warn("unexpected method parameter: " + method);
+        }
+	}
 
 }

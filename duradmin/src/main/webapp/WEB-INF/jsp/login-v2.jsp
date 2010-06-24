@@ -14,23 +14,28 @@
 				<div id="login-header" class="outer clearfix">
 					<div id="dc-logo-panel"><a href="/duradmin/spaces" id="dc-logo"></a><span id="dc-app-title"></span></div>			
 				</div>
-			
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#username").focus();
+					});
+				
+				</script>
 				<div id="login-content" class="pane-L1-body clearfix">
 					<h1 id="title" class="float-l">Login</h1>
-					<div id="form-fields" class="float-r">
+					<div id="form-fields" class="form-fields float-r">
 						<div id="msg-error" class="error" style="display:none">Username/Password combination not valid. Please try again.</div>
 						<ul>
 							<li class="clearfix">
 								<label for="j_username">Username</label>							
-								<input type="text" name="j_username" class="field"/>	
+								<input type="text" id="username" name="j_username" class="field"/>	
 							</li>
 							<li class="clearfix">
 								<label for="j_password">Password</label>
 								<input type="password" name="j_password" class="field"/>
 							</li>
 							<li class="clearfix">
-								<a href="#" id="forgot-password" class="helper-link">Forgot Password?</a>
-								<a id="button-login" class="flex button float-r" href="javascript:document.forms['loginForm'].submit();"><span>Login</span></a>				
+								<label><a href="#" id="forgot-password" class="helper-link">Forgot Password?</a></label>
+								<button id="button-login" class="flex button float-r"><span>Login</span></button>				
 							</li>
 						</ul>
 					
@@ -38,8 +43,8 @@
 				</div>
 				
 				<div id="login-footer" class="outer footer clearfix">
-					<div class="float-r" id="logo-ds"></div>
-					<div class="footer-content">
+					<div class="footer-content">					
+						<div class="float-r" id="logo-ds"></div>
 						Duracloud Administrator Release 0.4  <span class="sep">|</span>
 						©<script type="text/javascript">document.write(new Date().getFullYear());</script>
 						<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>

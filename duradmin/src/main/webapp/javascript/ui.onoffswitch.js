@@ -33,15 +33,7 @@ $.widget("ui.onoffswitch",{
 		var offButtonOnState = this._createButton(o.offText, "", o.offIconClass, true);
 		offButtonOnState.click(function(evt){
 			evt.preventDefault();
-			that.element.trigger("turnOff", {
-				success: function(){ 
-					that._switch("off")
-				},
-				
-				failure: function(){
-					alert("no failure handler defined");
-				},
-			});
+			that._fireOffEvent();
 		});
 		
 		var onState = $(document.createElement("span"))
@@ -58,15 +50,7 @@ $.widget("ui.onoffswitch",{
 
 		onButtonOffState.click(function(evt){
 			evt.preventDefault();
-			that.element.trigger("turnOn", {
-				success:function(evt){ 
-					that._switch("on")
-				},
-				
-				failure: function(evt){
-					alert("no failure handler defined");
-				},
-			});
+			that._fireOnEvent(evt);
 		});
 		var offState = $(document.createElement("span"))
 							.addClass("flex")
@@ -80,14 +64,45 @@ $.widget("ui.onoffswitch",{
 		this._switch(o.initialState);
 	},
 	
+	_fireOnEvent: function(evt){
+		var that = this;
+		this.element.trigger("turnOn", {
+			success:function(evt){ 
+				that._switch("on")
+			},
+			
+			failure: function(evt){
+				alert("no turn on failure handler defined");
+			},
+		});
+	},
+
+	_fireOffEvent: function(){
+		var that = this;
+		this.element.trigger("turnOff", {
+			success:function(evt){ 
+				that._switch("off")
+			},
+			
+			failure: function(evt){
+				alert("no turn offfailure handler defined");
+			},
+		});
+	},
+
 	_switch: function(state){
-		$(".button-holder", this.element).hide();
+		$(".button-holder", this.element).css("display","none");
 
 		if(state =="on"){
-			$(".button-holder-on", this.element).show();
+			$(".button-holder-on", this.element).css("display","inline-block");
 		}else{
-			$(".button-holder-off", this.element).show();
+			$(".button-holder-off", this.element).css("display","inline-block");
 		}
+	},
+	
+	on: function(){
+		this._switch("on");
+		this._fireOnEvent();
 	},
 
 	_createButton: function(text, stateClass, iconClass, clickable){

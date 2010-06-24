@@ -19,10 +19,6 @@
 
     <intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <intercept-url pattern="/style/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/dojo/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/dojox/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/dijit/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/duracloud/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
     <intercept-url pattern="/**" access="ROLE_USER" />

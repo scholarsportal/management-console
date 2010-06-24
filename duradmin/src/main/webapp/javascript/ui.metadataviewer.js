@@ -15,13 +15,34 @@ $.widget("ui.metadataviewer",
 					table = $(document.createElement("table"));
 					this.getContent().prepend(table);	
 					var addControlsRow = this._createControlsRow();
-					
-					var fSuccess = function(){that._addSuccess(that)};
 
+					var disableControls = function(){
+						$("input, button", that.element).attr("disabled", "disabled");
+						$(".dc-expando-status", addControlsRow).addClass("dc-busy");
+					};
+						
+					var enableControls = function(){
+						$("input,button", that.element).removeAttr("disabled");
+						$(".dc-expando-status", addControlsRow).removeClass("dc-busy");
+
+					};
+
+					var fSuccess = function(){
+						enableControls();
+						that._addSuccess(that)
+					};
+
+					
+					
 					var triggerAdd = function(){
-						that.element.trigger("add", { value: that._getValue(), 
+						disableControls();
+						that.element.trigger("add", { 
+											  value: that._getValue(), 
 											  success: fSuccess,
-											  failure: that._addFailure});
+											  failure: function(text){
+												enableControls();
+												that._addFailure(text);
+											  },});
 					};
 										  
 					//attach listeners
@@ -117,7 +138,7 @@ $.widget("ui.metadataviewer",
 				controls.append(
 						$(document.createElement("td"))
 							.addClass("value")
-							.html("<input type='text' class='value-txt' size='20'/><input type='button' value='+'/>")
+							.html("<input type='text' class='value-txt' size='20'/><input type='button' value='+'/><div class='dc-expando-status'></div>")
 					);
 				
 				return controls;
@@ -167,12 +188,20 @@ $.widget("ui.metadataviewer",
 					for(p in data){
 						props += p + ": " + data[p] + ", ";
 					}
-					//alert("clicked remove: "  + props);
-					that.element.trigger("remove", { value: that._getValue(), 
+
+					var value = that._getValue();
+					
+					child.addClass("dc-removing");
+					that.element.trigger("remove", { value: value, 
 						  success: function(){
+							child.removeClass("dc-removing");
 							that._removeSuccess(that,data);
 						  },
-						  failure: that._removeFailure});
+						  failure: function(){
+							  child.removeClass("dc-removing");
+							  that._removeFailure();
+						  }
+					});
 				});
 			},
 			

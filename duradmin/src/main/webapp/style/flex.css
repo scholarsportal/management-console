@@ -1,7 +1,6 @@
 /* FLEX BASE CLASSES *********************************/
 
 .flex a,
-.flex a span,
 .flex,
 .flex span,
 .icon-only
@@ -10,7 +9,6 @@
 	display:inline-block;
 	height:24px;
 	font-size:11px;
-	font-weight:bold;
 	line-height:22px;
 	text-decoration:none;
 }
@@ -21,7 +19,6 @@
 	padding-left:10px;
 }
 
-.flex a span,
 .flex span
 {
 	cursor:pointer;
@@ -57,15 +54,35 @@
 /* BUTTONS AND HOLDERS **********************************************/
 /* Extends .flex *****/
 
-.button a,
+button 
+{ 
+	background-color:green;
+	background-position:right top;
+	background-repeat:no-repeat;
+	position: relative;
+	border: 0; 
+	padding: 0;
+	cursor: pointer;
+	overflow: visible; /* removes extra side padding in IE */
+	width:auto;
+}
+
+button::-moz-focus-inner
+{
+	border: none;  /* overrides extra padding in Firefox */
+	padding:0 !important;
+}
+
 .button,
-.button a span,
 .button span,
 .button-holder,
 .button-holder span,
+.icon-link,
+.icon-link span,
 i.pre,
 i.post
 {
+	background-repeat:no-repeat;
 	border:none;
 	font-size:11px;
 	height:24px;
@@ -73,9 +90,8 @@ i.post
 }
 
 
-.button a,
+
 .button,
-.button a span,
 .button span
 {
 	background:url(../images/btn_featured.gif) no-repeat;
@@ -101,6 +117,11 @@ i.post
 	margin:0 !important;
 }
 
+.icon-link .pre
+{
+	padding-left:15px !important;
+}
+
 .button-holder-on
 {
 	background-position:center left;
@@ -119,9 +140,7 @@ i.post
 	background-position:bottom right;
 }
 
-.switch a,
 .switch,
-.switch a span,
 .switch span
 {
 	background:url(../images/switch_btn.gif) no-repeat;
@@ -138,20 +157,12 @@ i.post
 	color:#ccc !important;
 }
 
-.button a,
 .button
 {
 	background-position: top left;
 	padding-left:10px;
 }
 
-.button a:hover,
-.button:hover
-{
-	background-position:bottom left;
-}
-
-.button a span,
 .button span,
 .button-holder span
 {
@@ -160,19 +171,25 @@ i.post
 }
 
 
-.button a:hover span,
+.button:hover
+{
+	background-position:bottom left;
+}
+
 .button:hover span
 {
 	background-position: bottom right;
 }
 
-a:hover .pre,
-a:hover .icon-only
+.button:hover .pre,
+.button:hover .icon-only,
+.icon-link:hover .pre
 {
 	background-position: bottom left;
 }
 
-a:hover .post
+.button:hover .post
 {
 	background-position: bottom right;
 }
+
