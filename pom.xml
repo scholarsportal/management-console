@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.duracloud</groupId>
-  <artifactId>duracloud</artifactId>
+  <artifactId>duracloud-priv</artifactId>
   <packaging>pom</packaging>
   <version>0.5.0-SNAPSHOT</version>
-  <name>DuraCloud</name>
+  <name>DuraCloud Internal</name>
   <url>http://duracloud.org</url>
 
   <prerequisites>
@@ -55,31 +55,8 @@
   </organization>
 
   <modules>
-    <module>mavenplugins</module>
-    <module>common</module>
-    <module>common-db</module>
-    <module>common-rest</module>
-    <module>serviceconfig</module>
-    <module>storageprovider</module>
-    <module>unit-test-db</module>
-    <module>storeclient</module>
-    <module>security</module>
-    <module>computeprovider</module>
-    <module>ec2typicacomputeprovider</module>
-    <module>s3storageprovider</module>
-    <module>rackspacestorageprovider</module>
-    <module>emcstorageprovider</module>
     <module>mainwebapp</module>
-    <module>durastore</module>
     <module>duradmin</module>
-    <module>hellowebapp</module>
-    <module>services</module>
-    <module>duraservice</module>
-    <module>app-config</module>
-    <module>serviceclient</module>
-    <module>servicesadminclient</module>
-    <module>chunk</module>
-    <module>synctool</module>
     <module>integration-test</module>
   </modules>
 
@@ -204,7 +181,7 @@
     <repository>
       <id>duraspace-thirdparty</id>
       <name>DuraSpace Thirdparty</name>
-      <url>https://fedora-commons.org/m2/content/repositories/thirdparty</url>
+      <url>https://m2.duraspace.org/content/repositories/thirdparty</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -246,8 +223,8 @@
   </repositories>
 
   <scm>
-    <connection>scm:svn:https://www.fedora-commons.org/svn/duracloud/trunk</connection>
-    <developerConnection>scm:svn:https://www.fedora-commons.org/svn/duracloud/trunk</developerConnection>
+    <connection>scm:svn:https://svn.duraspace.org/duracloud-priv/trunk</connection>
+    <developerConnection>scm:svn:https://svn.duraspace.org/duracloud-priv/trunk</developerConnection>
   </scm>
 
   <build>
@@ -305,7 +282,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0</version>
         <configuration>
-          <tagBase>https://www.fedora-commons.org/svn/duracloud/tags</tagBase>
+          <tagBase>https://svn.duraspace.org/duracloud-priv/tags</tagBase>
         </configuration>
       </plugin>
 
