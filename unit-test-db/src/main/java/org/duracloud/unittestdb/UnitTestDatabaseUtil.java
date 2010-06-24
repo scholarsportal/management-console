@@ -8,6 +8,7 @@
 package org.duracloud.unittestdb;
 
 import org.apache.commons.lang.StringUtils;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.DatabaseUtil;
 import org.duracloud.common.util.TableSpec;
@@ -93,11 +94,19 @@ public class UnitTestDatabaseUtil
     }
 
     private static String getBootPassword() {
-        return System.getProperty("unit.database.password");
+        String password = System.getProperty("unit.database.password");
+        if (null == password) {
+            throw new DuraCloudRuntimeException(usage());
+        }
+        return password;
     }
 
     private static String getDatabaseHome() {
-        return System.getProperty("unit.database.home");
+        String home = System.getProperty("unit.database.home");
+        if (null == home) {
+            throw new DuraCloudRuntimeException(usage());
+        }
+        return home;
     }
 
     public static String usage() {
