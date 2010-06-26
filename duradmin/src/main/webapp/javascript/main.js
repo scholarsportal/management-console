@@ -17,7 +17,6 @@ $(document).ready(function() {
 				success: function(exists){
 					if(exists){
 						$("#dc-partner-logo").attr('src',"/duradmin/download/contentItem?spaceId=x-duracloud-admin&contentId=logo&storeID=0").load(function() {
-							//alert("load complete");
 						});
 					}
 				},

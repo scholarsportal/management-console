@@ -12,8 +12,8 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.listdetailviewer.js"></script>
-
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
+
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 	<tiles:insertDefinition name="app-frame">

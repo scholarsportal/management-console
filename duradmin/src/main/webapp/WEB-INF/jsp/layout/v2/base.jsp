@@ -13,10 +13,6 @@
 	<!-- jquery core, ui and css -->
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.js"></script>
-	<!-- 
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" type="text/css" media="all" />
-	 -->
-
 	<!-- 3rd party jquery plugins start-->
 	<script type="text/javascript" src="http://layout.jquery-dev.net/download/jquery.layout.min-1.2.0.js"></script>
 
@@ -25,6 +21,7 @@
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/jquery.dc.common.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/durastore-api.js"></script>
 
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
