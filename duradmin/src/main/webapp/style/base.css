@@ -1,14 +1,47 @@
-/**
-* created by Daniel Bernstein
+/*
+* Created by Daniel Bernstein
+* Modified by Charles Hacskaylo
 */
+
+/* RESETTERS *************************************************/
+/* Eric Meyer: 
+/* v1.0 | 20080212 */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, button, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
 body {
-	font-family: Arial, Helvetica, sans-serif;
-	*font-size:	90%; /* IE only */
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
 }
 
-.horizontal-list {
-	padding:0;
-	margin:0;
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
 }
 
 /* tables still need 'cellspacing="0"' in the markup */
@@ -44,12 +77,9 @@ input:-webkit-autofill {
 /* close commented backslash hack */
 
 	
-.horizontal-list li{
-	display:inline; 
-	list-style-type:none;	
-	padding-left:0;
-	margin-left:0;
-	margin-bottom:0;
+.horizontal-list li
+{
+	display:inline-block;
 }
 
 
@@ -105,10 +135,12 @@ h3 { font-size:1em; }
 
 .dc-prototype {
 	
+	display:none;	
 }
 
-.dc-main-tabs .selected {
-	background-color: #FFF;
+.list-browser
+{
+	background:#6e6e6e url(../images/bg_list_browser_header.gif) no-repeat top right;
 }
 
 .ui-layout-pane-west
@@ -489,7 +521,12 @@ h3 { font-size:1em; }
 .dc-item-list .service-filetransform td.icon div { background-position:-210px 0; }
 
 .dc-selected-list-item {
-	background-color:#DDD;
+	background-color:#7e7e7e;
+}
+
+input.dc-check-all
+{
+	margin-left:0 !important;
 }
 
 .dc-checked-selected-list-item {
@@ -508,42 +545,52 @@ h3 { font-size:1em; }
 
 .dc-item-list .dc-action-panel{
 	float:right;
-	z-index:10;
 }
 
-.dc-item {
-	padding-top:0.25em;
-	padding-bottom:0.25em;
-	
-	border-collapse:  collapse;
+.dc-action-panel
+{
+	margin-right:20px;
 }
 
-.dc-item:hover {
-	border-bottom: 1px solid orange;
+
+.dc-item:hover,
+.dc-item:hover td
+{
+	background-color:#9b9b9b;
 	cursor: pointer;
 }
 
+/* PAGE TOP ********************************************************/
 
-.dc-dialog {
-	border: 1px solid #DDD;
-	background-color: #EEE;	
+#dc-logo-panel
+{
+	padding-left:10px;
 }
 
-/*
- * ADD BORDERS & COLORS TO LAYOUT ELEMENTS
- */
-/* use 'generic classes' to add default backgrounds & borders */
-.ui-layout-pane		{ 
-	background: #FFF; 
-	border: 1px dashed #999;
-	padding: 0px; 
-	overflow: auto;
+#dc-logo,
+#dc-app-title
+{
+	background-repeat:no-repeat;
+	display:inline-block;
+	float:left;
+	height:45px;
 }
-.ui-layout-resizer	{ background: #FFF; }
-.ui-layout-toggler	{ background: #999; }
-/* give specific elements their own colors */
 
-#dc-logo, #dc-partner-logo {
+#dc-logo
+{
+	background-image:url(../images/logo_top_duracloud.png);
+	width:110px;
+}
+
+#dc-app-title
+{
+	background-image:url(../images/app_title.png);
+	width:280px;
+}
+
+#dc-user
+{	
+	border-right:solid 1px #ccc;
 	height:60px;
 	margin-right:10px;
 	padding-right:20px;
@@ -551,9 +598,11 @@ h3 { font-size:1em; }
 	width:400px;
 }
 
-#dc-partner-logo {
-	float:right;
-	width:100px;
+.outer,
+.outer a
+{
+	color:#4c4c4c;
+	font-size:11px;
 }
 
 .outer .icon-link:hover
@@ -566,6 +615,11 @@ h3 { font-size:1em; }
 	visibility: hidden;
 }
 
+.dc-mouse-panel-activator
+{
+	cursor:pointer;	
+}	
+	
 .dc-toggler {
 	float:right;
 	background: url(../images/icon_sm_arw_blue_updown.gif) no-repeat right top;

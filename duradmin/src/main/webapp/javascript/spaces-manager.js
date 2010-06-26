@@ -53,8 +53,9 @@ var dc;
 				callback.success(data.space);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
-	    		alert("get space failed: " + textStatus);
+	    		console.error("get space failed: " + textStatus + ", error: " + errorThrown);
+	    		//alert("get space failed: " + textStatus);
+	    		callback.failure(textStatus);
 		    },
 		});		
 		
@@ -125,7 +126,9 @@ var dc;
 					callback.success(data.spaces);
 			    },
 			    error: function(xhr, textStatus, errorThrown){
-			    	alert("get spaces failed: " + textStatus);
+			    	console.error("get spaces failed: " + textStatus + "; error: " + errorThrown + "; xhr=" + xhr);
+			    	callback.failure(textStatus);
+			    	
 			    },
 		});
 		
@@ -235,7 +238,6 @@ var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailP
 
 
 $(document).ready(function() {
-
 	centerLayout = $('#page-content').layout({
 	//	minWidth:				300	// ALL panes
 		north__size: 			50	
@@ -262,14 +264,12 @@ $(document).ready(function() {
 	//	,   west__onresize:         "spacesListPane.resizeAll"
 		,	center__paneSelector:	"#content-item-list-view"
 		,   center__onresize:       "contentItemListPane.resizeAll"
-
-
 	});
 	
 
 	var spacesAndContentLayoutOptions = {
 			north__paneSelector:	".north"
-		,   north__size: 			100
+		,   north__size: 			60
 		,	center__paneSelector:	".center"
 		,   resizable: 				false
 		,   slidable: 				false
@@ -283,41 +283,23 @@ $(document).ready(function() {
 	//detail pane's layout options
 	var spaceDetailLayoutOptions = {
 			north__paneSelector:	".north"
-				,   north__size: 			175
-				,	center__paneSelector:	".center"
-				,   resizable: 				false
-				,   slidable: 				false
-				,   spacing_open:			0
-				,	togglerLength_open:		0
-	};
-
-	var contentItemDetailLayoutOptions = {
-			north__paneSelector:	".north"
 				,   north__size: 			200
 				,	center__paneSelector:	".center"
 				,   resizable: 				false
 				,   slidable: 				false
 				,   spacing_open:			0
 				,	togglerLength_open:		0
+				
 	};
-
+	
+	//content item detail layout is slightly different from 
+	//the space detail - copy and supply overrides
+	var contentItemDetailLayoutOptions = $.extend(true,{}, 
+													   spaceDetailLayoutOptions, 
+													   {north__size:200});
+	
 	
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
-	
-	////////////////////////////
-	//this method loads the children of the source
-	//into the target after emptying the contents
-	//with a fade in / fade out effect
-	var swapDetailPane = function(source, target, layoutOptions){
-		var detail = $(source).clone();
-		$(target).fadeOut("fast", function(){
-			$(target).empty().prepend(detail.children());
-			$(target).fadeIn("fast");
-			$(target).layout(layoutOptions);
-		});
-		return $(source);
-	};		
-
 	
 	////////////////////////////////////////////
 	//sets contents of object-name class
@@ -328,18 +310,16 @@ $(document).ready(function() {
 			
 	///////////////////////////////////////////
 	///check/uncheck all spaces
-	$("#check-all-spaces").click(
+	$(".dc-check-all").click(
 		function(evt){
 			var checked = $(evt.target).attr("checked");
-			$("#spaces-list input[type=checkbox]").attr("checked", checked);
-			dcStyleItem($("#spaces-list .dc-item").first());
-			if(checked){
-				showMultiSpaceDetail();
-			}else{
-				showGenericDetailPane();
-			}
-		});
+			$(evt.target)
+				.closest(".dc-list-item-viewer")
+				.find(".dc-item-list")
+				.selectablelist("select", checked);
+	});
 
+	
 	var showMultiSpaceDetail = function(){
 		var multiSpace = $("#spaceMultiSelectPane").clone();
 		loadMetadataPane(multiSpace);
@@ -447,24 +427,20 @@ $(document).ready(function() {
 		var div = $.fn.create("div")
 					  .expandopanel({title: "Preview"});
 		
-			if(multiChecked){
-				showMultiSpaceDetail();
-			}else{
-				$("#contentItemList > .dc-item").removeClass("dc-selected-list-item dc-checked-list-item dc-checked-selected-list-item")
-				$("#contentItemList > .dc-item").find("input[type][checked]").attr("checked", false);
-				var spaceId = $(dcNearestDcItem(evt.target)).attr("id");
-				
-				dcGetSpace(spaceId,{
-					load: function(space){
-						setObjectName("#spaceDetailPane", space.spaceId);
-						swapDetailPane("#spaceDetailPane","#detail-pane", spaceDetailLayoutOptions);
-					}
-				});
-			}
+		var thumbnail = $.fn.create("img")
+							.attr("src", contentItem.thumbnailURL)
+							.addClass("preview-image");
+							
+		var viewerLink = $.fn.create("a")
+							.attr("href", contentItem.viewerURL)
+							.append(thumbnail);
+		
+		var wrapper = $.fn.create("div")
+							.addClass("preview-image-wrapper")
+							.append(viewerLink);
 		
 		
-		}
-	);
+		$(div).expandopanel("getContent").append(wrapper);
 		
 		
 		viewerLink.fancybox(options);
@@ -632,16 +608,21 @@ $(document).ready(function() {
 
 	///////////////////////////////////////////
 	///open add space dialog
-	$.fx.speeds._default = 1000;
+	$.fx.speeds._default = 10;
+
+
+	
 	$('#add-space-dialog').dialog({
 		autoOpen: false,
 		show: 'blind',
 		hide: 'blind',
-		height: 300,
+		resizable: false,
+		height: 250,
 		closeOnEscape:true,
-		modal: false,
+		modal: true,
+		width:500,
 		buttons: {
-			'Add': function() {
+			'Add': function(evt) {
 				if($("#add-space-form").valid()){
 					var space = {
 						storeId: getCurrentProviderStoreId(),
@@ -670,10 +651,11 @@ $(document).ready(function() {
 
 				}
 			},
-			Cancel: function() {
+			Cancel: function(evt) {
 				$(this).dialog('close');
 			}
 		},
+		
 		close: function() {
 	
 		},
@@ -726,14 +708,15 @@ $(document).ready(function() {
 
 			
 		}
+		
 	});
 
 	$("#add-space-dialog").dialog().glasspane({});
 
 
-	$('.add-space-button').click(
+	$('.add-space-button').live("click",
 			function(evt){
-				dcOpenDialogOverTarget(evt,"#add-space-dialog");
+				$("#add-space-dialog").dialog("open");
 			}
 		);
 	
@@ -756,9 +739,11 @@ $(document).ready(function() {
 		autoOpen: false,
 		show: 'blind',
 		hide: 'blind',
-		height: 300,
+		height: 250,
+		resizable: false,
 		closeOnEscape:true,
-		modal: false,
+		modal: true,
+		width:500,
 		buttons: {
 			'Add': function() {
 				var that = this;
@@ -910,7 +895,7 @@ $(document).ready(function() {
 	
 	$('.add-content-item-button').live("click",
 			function(evt){
-					dcOpenDialogOverTarget(evt,"#add-content-item-dialog");
+				$("#add-content-item-dialog").dialog("open");
 			});
 	
 	$('.edit-content-item-button').live("click",
@@ -1201,6 +1186,7 @@ $(document).ready(function() {
 		};
 	};
 	
+
 	
 	var addSpaceMetadata = function(spaceId, name, value, callback){
 		var data = "metadata-name=" + escape(name) +"&metadata-value="+escape(value);
@@ -1441,13 +1427,15 @@ $(document).ready(function() {
 		}
 
 		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
-			$.fn.cookie(PROVIDER_COOKIE_ID, state.value.id);
+			dc.cookie(PROVIDER_COOKIE_ID, state.value.id);
 			console.debug("value changed: new value=" + state.value.label);
 			refreshSpaces(state.value.id);
-		});		
+		});		 
 		
 		refreshSpaces(currentProviderId);
 	};
+	
+	
 	//$("#spaces-list-view").glasspane({});
 	//$("#content-item-list-view").glasspane({});
 	//$("#detail-pane").glasspane({});
