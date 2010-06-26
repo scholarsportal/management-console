@@ -38,6 +38,11 @@ public class ContentItemDownloadController
             throws Exception {
     	
     	String storeId = request.getParameter("storeID");
+    	if(storeId == null){
+    	    storeId = request.getParameter("storeId");;
+    	}
+    	
+    	
     	String spaceId = request.getParameter("spaceId");
     	String contentId = request.getParameter("contentId");
     	String attachment = request.getParameter("attachment");

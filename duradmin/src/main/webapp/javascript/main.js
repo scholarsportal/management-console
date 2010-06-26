@@ -7,8 +7,26 @@
 
 $(document).ready(function() {
 
+	///////////////////////////////////////////////////////////////////////
+	////load partner logo
+	///////////////////////////////////////////////////////////////////////
 	
+	dc.store.checkIfContentItemExists(
+			{spaceId: "x-duracloud-admin", contentId: "logo", storeId:"0"}, 
+			{ 
+				success: function(exists){
+					if(exists){
+						$("#dc-partner-logo").attr('src',"/duradmin/download/contentItem?spaceId=x-duracloud-admin&contentId=logo&storeID=0").load(function() {
+							//alert("load complete");
+						});
+					}
+				},
+				failure: function(text){
+					console.error("failed to check if content item exists:" +  text);
+				}
+			});
 	
+
 	///////////////////////////////////////////////////////////////////////
 	////controls rollovers on tags and metadata
 	///////////////////////////////////////////////////////////////////////

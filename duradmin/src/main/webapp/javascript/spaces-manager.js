@@ -13,7 +13,6 @@ var dc;
 	}
 	
 	dc.store = {};
-
 	
 	/**
 	 * @param String spaceId  space id 
@@ -142,8 +141,8 @@ var dc;
 		if(callback.begin != undefined){
 			callback.begin();
 		}
-
-		$.ajax({ url: "/duradmin/spaces/content", 
+		
+		$.ajax({ url: "/duradmin/spaces/content",
 				data: "storeId="+storeProviderId+"&spaceId="+escape(spaceId)+"&contentId="+escape(contentItemId),
 				cache: false,
 				type: "GET",
@@ -152,7 +151,8 @@ var dc;
 					callback.success(data.contentItem);
 			    },
 			    error: function(xhr, textStatus, errorThrown){
-			    	alert("get contentItem failed: " + textStatus);
+			    	console.error("get contentItem failed: " + textStatus);
+			    	callback.failure(textStatus);
 			    },
 		});
 
@@ -218,7 +218,7 @@ var dc;
 			
 			failure: function(text){
 				dc.done();
-				callback.success(true);
+				callback.success(false);
 			},
 
 			success: function(contentItem){
@@ -786,20 +786,8 @@ $(document).ready(function() {
 									
 									var key = escape(storeId+"-"+spaceId+"-"+ contentId);
 									
-									/*
-									var t = $("<div id='"+key+"'><div id='"+key+"-inside'>Sending...</div></div>")
-										.toaster({
-										sticky: true,
-										position:'br',
-										show: $.fn.slideIn,
-										closable: true,
-									});
-									*/
-	
 									var renderToaster =  function(data){
-										//$('#'+key+"-inside",document).empty().append(createTaskPanel(data.task));
 										poller();
-
 									};
 							 		
 

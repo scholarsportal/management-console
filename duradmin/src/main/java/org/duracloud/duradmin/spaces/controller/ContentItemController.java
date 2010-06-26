@@ -12,15 +12,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.httpclient.HttpStatus;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
 import org.duracloud.client.ContentStore.AccessType;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.controller.AbstractRestController;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.domain.Space;
@@ -108,14 +111,19 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 			HttpServletResponse response, ContentItem ci,
 			BindException errors) throws Exception {
 		ContentItem contentItem = new ContentItem();
-        SpaceUtil.populateContentItem(
-        							  getBaseURL(request),
-        							  contentItem,
-                                      ci.getSpaceId(),
-                                      ci.getContentId(),
-                                      getContentStore(ci),
-                                      getServicesManager());
-        return createModel(contentItem);
+		try{
+            SpaceUtil.populateContentItem(
+            							  getBaseURL(request),
+            							  contentItem,
+                                          ci.getSpaceId(),
+                                          ci.getContentId(),
+                                          getContentStore(ci),
+                                          getServicesManager());
+            return createModel(contentItem);
+		}catch(ContentStoreException ex){
+		    response.setStatus(HttpStatus.SC_NOT_FOUND);
+		    return new ModelAndView("jsonView", "contentItem", null);
+		}
 	}
 	
 	
