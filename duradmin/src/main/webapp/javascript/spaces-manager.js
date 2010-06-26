@@ -366,11 +366,12 @@ $(document).ready(function() {
 								{title: "Details", data: properties}));
 	};
 
-	var loadVideo = function(target, contentItem){
+	var loadVideo = function(target, contentItem){		
 		var viewer = $.fn.create("embed")
 		.attr("src", contentItem.viewerURL)
 		.attr("height", "400px")
-		.attr("width", "600px");
+		.attr("width", "600px")
+		.attr("autoplay", "false");
 		
 		var wrapper = $.fn.create("div")
 				.addClass("preview-image-wrapper")
