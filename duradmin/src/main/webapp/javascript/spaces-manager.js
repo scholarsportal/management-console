@@ -157,6 +157,8 @@ $(document).ready(function() {
 	var loadAudio = function(target, contentItem){
 		var viewer = $.fn.create("embed")
 		.attr("src", contentItem.viewerURL)
+		.attr("autoplay", "false");
+		
 		var wrapper = $.fn.create("div")
 				.addClass("preview-image-wrapper")
 				.append(viewer);
