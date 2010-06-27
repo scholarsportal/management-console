@@ -266,10 +266,6 @@ $(document).ready(function() {
 	};
 	
 	var detailPane = $(detailPaneId).layout(detailLayoutOptions);
-
-	
-
-	
 	
 	var resolveServiceCssClass = function(services){
 		return "service-replicate";

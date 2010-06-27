@@ -22,7 +22,7 @@
 			this._glassPane.width(this.element.width());
 		},
 		
-		show: function(message) {
+		show: function(messageHeader, messageBody) {
 			if(this._glassPane != null){
 				this.hide();
 			}
@@ -30,9 +30,17 @@
 			var that = this;
 			var o 	 = this.options;
 			this._glassPane = $.fn.create("div");
-			if(message != null && message != undefined){
-				this._glassPane.html("<h1>"+message+"</h1>");
+			var messageDiv = $.fn.create("div").addClass(this.options.glasspaneMessageClass);
+			this._glassPane.append(messageDiv);
+
+			if(messageHeader != null && messageHeader != undefined){
+				messageDiv.append("<h1>"+messageHeader+"</h1>");
 			}
+
+			if(messageBody != null && messageBody != undefined){
+				messageDiv.append("<p>"+messageBody+"</p>");
+			}
+
 			this._positionGlassPane();
 			var listener = function(evt){
 				evt.stopPropagation();
@@ -52,7 +60,7 @@
 			$(document.body).append(this._glassPane);
 			
 			this._glassPane.css("visibility: visible");
-			this._glassPane.addClass(this.options.glassPaneClass);
+			this._glassPane.addClass(this.options.glasspaneClass);
 			
 	    },
 	
@@ -63,7 +71,8 @@
 	    },
 	
 		options: {
-			glassPaneClass: "ui-glasspane",
+			glasspaneClass: "ui-glasspane",
+			glasspaneMessageClass: "ui-glasspane-message",
 				
 		}
 	});	

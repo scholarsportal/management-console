@@ -282,8 +282,22 @@ $(document).ready(function() {
 					$.fn.create("button")
 					.addClass("flex button")
 					.html("<span>Cancel</span>")
-					.click(function(){ alert("implement cancel here");})
-					);
+					.click(function(evt){ 
+						var that = this;
+						evt.stopPropagation();
+						$.ajax({
+							url: "/duradmin/spaces/upload",
+							data: "action=cancel&taskId="+task.id,
+							type:"POST",
+							success: function(){
+								$(that).closest(".upload-item").fadeOut("slow");
+							},
+							
+							error: function(){
+								alert("failed to remove task");
+							},
+						});	
+					}));
 		}else{
 			actionCell.append($.fn.create("button").addClass("flex button").html("<span>Remove</span>").click(function(evt){
 				var that = this;
@@ -820,12 +834,14 @@ $(document).ready(function() {
 		
 		var mimetype = contentItem.metadata.mimetype;
 		
-		if(mimetype.indexOf("image") == 0 || mimetype.indexOf("text") == 0 || isPdf(mimetype)){
+		if(mimetype.indexOf("image") == 0){
 			loadPreview(pane, contentItem);
 		}else if(mimetype.indexOf("video") == 0){
 			loadVideo(pane, contentItem);
 		}else if(mimetype.indexOf("audio") == 0){
 			loadAudio(pane, contentItem);
+		}else {
+			$(".view-content-item-button", pane).attr("href", contentItem.viewerURL).css("display", "inline-block");
 		}
 		
 		loadProperties(pane, extractContentItemProperties(contentItem));

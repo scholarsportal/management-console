@@ -56,11 +56,24 @@ public class UploadManager {
 	}
 	
 	public List<UploadTask> getUploadTaskList(){
-		List<UploadTask> list = new LinkedList<UploadTask>();
-		list.addAll(this.uploadTaskMap.values());
-		Collections.sort(list);
-		return list;
+	    return getUploadTaskList(null);
 	}
+
+    @SuppressWarnings("unchecked")
+    public List<UploadTask> getUploadTaskList(String username) {
+        List<UploadTask> list = new LinkedList<UploadTask>();
+        list.addAll(this.uploadTaskMap.values());
+        if(username != null){
+            for(UploadTask t : this.uploadTaskMap.values()){
+                if(!username.equals(t.getUsername())){
+                    list.remove(t);
+                }
+            }
+        }
+
+        Collections.sort(list);
+        return list;
+    }
 	
 
 }

@@ -170,11 +170,17 @@
 					class="label">Mime Type:</span> <span class="value">image/jpg</span>
 				</div>
 
-				<div class="button-bar"><a href="javascript:void(1);"
+				<div class="button-bar">
+					<a href="javascript:void(1);"
 					class="flex button edit-content-item-button"><span><i
-					class="pre pencil">Edit</i></span></a> <a href=""
+					class="pre pencil">Edit</i></span></a> 
+					<a href="" style="display:none"
+						class="flex button view-content-item-button"><span><i
+						class="pre download">View</i></span></a>
+					<a href=""
 					class="flex button download-content-item-button"><span><i
-					class="pre download">Download</i></span></a> <a href="javascript:void(1);"
+					class="pre download">Download</i></span></a> 
+					<a href="javascript:void(1);"
 					class="flex button std delete-content-item-button  dc-delete-button"><span><i
 					class="pre trash">Delete</i></span></a></div>
 				</div>

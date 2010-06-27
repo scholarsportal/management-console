@@ -45,11 +45,12 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		
 		private State state = null;
 		
-		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore) throws Exception{
+		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore, String username) throws Exception{
 			this.contentItem = contentItem;
 			this.contentStore = contentStore;
 			this.totalBytes = this.contentItem.getFileData().getData().length();
 			this.state = State.INITIALIZED;
+			this.username = username;
 		}
 
 		public void execute() throws ContentStoreException, IOException{
@@ -153,5 +154,12 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 								
 								"}";
 		}
+
+        private String username;
+
+		@Override
+        public String getUsername() {
+            return this.username;
+        }
 
 }

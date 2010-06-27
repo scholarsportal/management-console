@@ -35,6 +35,9 @@ public class UploadController implements Controller{
 		if("cancel".equals(action)){
 			log.debug("cancelling {}", taskId);
 			manager.get(taskId).cancel();
+            manager.remove(taskId);
+            log.debug("cancelled and removed {}", taskId);
+
 		}else if("remove".equals(action)){
 			log.debug("removing {}" + taskId);
 			manager.remove(taskId);
@@ -43,7 +46,7 @@ public class UploadController implements Controller{
 		if(taskId != null){
 			return new ModelAndView("jsonView", "task", manager.get(taskId));
 		}else{
-			return new ModelAndView("jsonView", "taskList", manager.getUploadTaskList());
+			return new ModelAndView("jsonView", "taskList", manager.getUploadTaskList(request.getUserPrincipal().getName()));
 			
 		}
 	}

@@ -23,7 +23,7 @@ import org.duracloud.duradmin.domain.ContentItem;
 public class ContentUploadHelper {
 
 	public static void executeUploadTask(HttpServletRequest request, ContentItem contentItem, ContentStore contentStore) throws Exception{
-		ContentItemUploadTask task = new ContentItemUploadTask(contentItem, contentStore);
+		ContentItemUploadTask task = new ContentItemUploadTask(contentItem, contentStore, request.getUserPrincipal().getName());
 		getManager(request).addUploadTask(task);
 		task.execute();
 	}

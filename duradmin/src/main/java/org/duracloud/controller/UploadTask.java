@@ -27,6 +27,9 @@ public interface UploadTask extends Comparable{
 
 
 	public Date getStartDate();
+
+
+    public String getUsername();
 	
 	
 }

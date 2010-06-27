@@ -906,10 +906,10 @@ span.label
 }
 
 .ui-glasspane {
-	filter:alpha(opacity=0.25);
-	-moz-opacity:0.25;
-	-khtml-opacity: 0.25;
-	opacity: 0.25;
+	filter:alpha(opacity=0.10);
+	-moz-opacity:0.10;
+	-khtml-opacity: 0.10;
+	opacity: 0.10;
 	background: #2886c0 url('../images/wait.gif') no-repeat center center;
 	position: absolute;
 	text-align:center;
@@ -917,9 +917,25 @@ span.label
 		
 }
 
+div.ui-glasspane-message {
+	filter:alpha(opacity=1.0);
+	-moz-opacity:1.0;
+	-khtml-opacity: 1.0;
+	border: 1px solid blue;
+	background: white;
+	width:300px;	
+	float:right;
+}
+
 .ui-glasspane h1 {
-	text-align: center;
-	vertical-align: center;	
+	filter:alpha(opacity=1.0);
+	-moz-opacity:1.0;
+	-khtml-opacity: 1.0;
+	
+	background: white;
+	font-size: 1.5em;
+	padding:5px;
+	text-align:left;	
 }
 
 

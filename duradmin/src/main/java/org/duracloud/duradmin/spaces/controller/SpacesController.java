@@ -43,18 +43,25 @@ public class SpacesController implements Controller {
     
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-
-		if("json".equals(request.getParameter("f"))){
-			String storeId = request.getParameter("storeId");	
-	        ContentStore c = contentStoreManager.getContentStore(storeId);
-	        ModelAndView mav = new ModelAndView("jsonView");
-			mav.addObject("spaces",c.getSpaces());
-			return mav;
-		}else{
-	        ModelAndView mav = new ModelAndView("spaces-manager");
-	        mav.addObject("contentStores",contentStoreManager.getContentStores().values());
-	        return mav;
-		}
+	    try { 
+	        
+	        if("json".equals(request.getParameter("f"))){
+	            String storeId = request.getParameter("storeId");   
+	            ContentStore c = contentStoreManager.getContentStore(storeId);
+	            ModelAndView mav = new ModelAndView("jsonView");
+	            mav.addObject("spaces",c.getSpaces());
+	            return mav;
+	        }else{
+	            ModelAndView mav = new ModelAndView("spaces-manager");
+	            mav.addObject("contentStores",contentStoreManager.getContentStores().values());
+	            return mav;
+	        }
+	        
+	        
+	    } catch(Exception ex){
+	        ex.printStackTrace();
+	        throw ex;
+	    }
 		
 	}
 
