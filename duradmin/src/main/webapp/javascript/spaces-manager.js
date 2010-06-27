@@ -520,16 +520,12 @@ $(document).ready(function() {
 				var that = this;
 				if($("#add-content-item-form").valid()){
 					var form = $("#add-content-item-form");
-
 					var contentId = $("#contentId", form).val();
-					
 					var spaceId	  =	getCurrentSpaceId();
 					var storeId	  =	getCurrentProviderStoreId();
 					var filename = $("#file", form).val();
-
 					$("#spaceId", form).val(spaceId);
 					$("#storeId", form).val(storeId);
-					
 					dc.store.checkIfContentItemExists(
 							{spaceId: spaceId, contentId: contentId, storeId:storeId}, 
 							{ 
@@ -637,8 +633,27 @@ $(document).ready(function() {
 		width:500,
 		buttons: {
 			'Save': function() {
-				alert("implement edit Save functionality");
-				$(this).dialog("close");
+				var form = $("#edit-content-item-form");
+				var data = form.serialize();
+								
+				if(form.valid()){
+					var callback = {
+							success: function(contentItem){
+								dc.done();
+								loadContentItem(contentItem);
+							},
+							
+							failure: function(){
+								dc.done();
+								alert("an error occurred");
+							},
+						};
+
+					$(this).dialog("close");
+					dc.busy("Updating...");
+					dc.store.UpdateContentItemMimetype(data, callback)
+				}
+	
 			},
 			Cancel: function() {
 				$(this).dialog('close');
@@ -647,7 +662,20 @@ $(document).ready(function() {
 		close: function() {
 
 		},
-		  open: function(e){
+		open: function(e){
+			$("#edit-content-item-form").validate({
+				rules: {
+					contentMimetype: {
+					    required:true,
+						minlength: 3,
+					},
+				},
+				messages: {
+						
+				}
+			});
+			
+			
 		}
 	});
 	
@@ -826,7 +854,13 @@ $(document).ready(function() {
 			removeContentItemTag(contentItem.spaceId, contentItem.contentId, value, future);
 		});
 
-		
+		//prepare edit dialog
+		var editDialog = $("#edit-content-item-dialog");
+		editDialog.find("input[name=storeId]").val(contentItem.storeId);
+		editDialog.find("input[name=spaceId]").val(contentItem.spaceId);
+		editDialog.find("input[name=contentId]").val(contentItem.contentId);
+		editDialog.find("input[name=contentMimetype]").val(mimetype);
+			
 		$("#detail-pane").replaceContents(pane,contentItemDetailLayoutOptions);
 	};
 

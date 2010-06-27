@@ -139,15 +139,30 @@ var dc;
 			return li;
 		},
 
+		data: function(){
+			var result =  { service: this._service};
+			if(this._deployment != undefined){
+				result.deployment = this._deployment;
+			}
+			return result;
+		},
 		
-		service: function(service){
+		load: function(service, deployment){
 			if(service == undefined){
 				return this._service;
 			}
 			
 			this._service = service;
-			console.debug("loading service: " + service.displayName);
+
+			console.debug("loading service: " + service.id);
 			var userConfigs = service.userConfigs;
+
+			if(deployment != undefined){
+				this._deployment = deployment;
+				console.debug("loading deployment: " + deployment.id);
+				userConfigs = deployment.userConfigs;
+			}
+			
 			this._controlContainer.html("");
 			this._controlContainer.append(
 				$.fn.create("input").attr("type", "hidden")
@@ -156,24 +171,33 @@ var dc;
 									.val(service.id)
 			);
 
-
-			
 			var list = $.fn.create("ul");
 			this._controlContainer.append(list);
-			
-			var dOptions = service.deploymentOptions;
-			var locationSelect = $.fn.create("select").attr("name","deploymentOption");
-			for(i in dOptions){
-				var o = dOptions[i];
-				locationSelect.append($.fn.create("option")
-											.attr("value", o.hostname + "-" + 
-																o.locationType[0]).html(
-																		o.displayName + " - " + o.hostname + " (" + o.locationType+")"));
+
+			if(deployment != undefined){
+				this._controlContainer.append(
+						$.fn.create("input").attr("type", "hidden")
+						.attr("id", "deploymentid-" + deployment.id)
+						.attr("name", "deploymentId")
+						.val(deployment.id)
+				);
+			}else{
+				var dOptions = service.deploymentOptions;
+				var locationSelect = $.fn.create("select").attr("name","deploymentOption");
+				for(i in dOptions){
+					var o = dOptions[i];
+					locationSelect.append($.fn.create("option")
+												.attr("value", o.hostname + "-" + 
+																	o.locationType[0]).html(
+																			o.displayName + " - " + o.hostname + " (" + o.locationType+")"));
+				}
+				
+				list.append(
+					this._createListItem("location", "Location").append(locationSelect)
+				);
 			}
+
 			
-			list.append(
-				this._createListItem("location", "Location").append(locationSelect)
-			);
 			
 			
 			if(userConfigs != undefined && userConfigs != null && userConfigs.length > 0){
@@ -486,7 +510,6 @@ $(document).ready(function() {
 		closeOnEscape:true,
 		modal: true,
 		width:700,
-		//resize:		function () { dialogLayout.resizeAll(); },
 		
 		buttons: {
 			Cancel: function(){
@@ -494,7 +517,6 @@ $(document).ready(function() {
 			},
 			Next: function(){
 				var currentItem = $("#available-services-list").selectablelist("currentItem");
-
 				if(currentItem == null || currentItem == undefined){
 					alert("You must select a service.");
 					return;
@@ -503,9 +525,8 @@ $(document).ready(function() {
 				$(this).dialog("close");
 				
 				var service = currentItem.data;
-				deployServiceConfig.serviceconfig("service", service);
+				deployServiceConfig.serviceconfig("load", service);
 				$("#configure-service-dialog").dialog("open");
-				
 			}
 		
 		},
@@ -588,6 +609,7 @@ $(document).ready(function() {
 		$("#available-services-dialog").dialog("open");
 	});
 
+	var serviceConfig = $("#reconfigure-service-config").serviceconfig({});
 
 	$('#reconfigure-service-dialog').dialog({
 		autoOpen: false,
@@ -600,7 +622,28 @@ $(document).ready(function() {
 		width:500,
 		buttons: {
 			"Redeploy": function(){
+		
+				var data = serviceConfig.serviceconfig("data");
 				$("#reconfigure-service-dialog").dialog("close");
+				
+				var form = $("#reconfigure-service-dialog form");
+				var formData = form.serialize();
+				dc.busy("Reploying " + data.service.displayName);
+				$.ajax({
+					url: "/duradmin/services/service?method=reconfigure",
+					data: formData, 
+					type: "POST",
+					success: function(data){
+						dc.done();
+						refreshDeployedServices();
+					},
+				
+					error: function(xhr, textStatus, errorThrown){
+						dc.done();
+				    	alert("failed: " + textStatus);
+				    },
+				});
+
 			},
 			
 			"Cancel": function(){
@@ -612,6 +655,19 @@ $(document).ready(function() {
 		
 		},
 		open: function(e){
+			var currentItem = $(servicesListId).selectablelist("currentItem");
+			
+			
+			if(currentItem == null || currentItem == undefined){
+				$(this).dialog("close");
+				alert("You must select a service deployment.");
+				return;
+			}
+
+			var data = currentItem.data;
+
+			serviceConfig.serviceconfig("load", data.service, data.deployment);
+			
 		},
 	});
 	
@@ -639,7 +695,7 @@ $(document).ready(function() {
 			
 			"Deploy": function(){
 				
-				var service = deployServiceConfig.serviceconfig("service");
+				var service = deployServiceConfig.serviceconfig("data").service;
 				$("#configure-service-dialog").dialog("close");
 				
 				var form = $("#configure-service-dialog form");

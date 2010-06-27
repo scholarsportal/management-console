@@ -149,15 +149,18 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 		ContentStore contentStore = getContentStore(contentItem);
         ContentItem result = new ContentItem();
         String method = request.getParameter("method");
-        if(method == "changeMimetype"){
+        Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
+
+        if("changeMimetype".equals(method)){
             String mimetype = contentItem.getContentMimetype();
             if(mimetype !=null){
+                metadata.put(ContentStore.CONTENT_MIMETYPE, mimetype);
             }
         }else{ 
-        	Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
         	MetadataUtils.handle(method, "space ["+spaceId+"]",  metadata, request);
-        	contentStore.setContentMetadata(spaceId, contentId, metadata);
         }
+
+        contentStore.setContentMetadata(spaceId, contentId, metadata);
 
         SpaceUtil.populateContentItem(getBaseURL(request),result, contentItem.getSpaceId(), 
 				contentItem.getContentId(),contentStore, servicesManager);

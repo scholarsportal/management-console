@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.duracloud.client.ServicesManager;
+import org.duracloud.client.error.NotFoundException;
+import org.duracloud.client.error.ServicesException;
 import org.duracloud.duradmin.util.ServiceInfoUtil;
 import org.duracloud.serviceconfig.Deployment;
 import org.duracloud.serviceconfig.DeploymentOption;
@@ -101,17 +103,62 @@ public class ServiceController implements Controller {
     }
 
     private ModelAndView reconfigure(Integer serviceId, Integer deploymentId,
-			HttpServletRequest request, HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response)  throws ServicesException, NotFoundException{
 
-    	return null;
+        List<ServiceInfo> services = this.servicesManager.getDeployedServices();
+        ServiceInfo serviceInfo = getServiceInfo(serviceId, services);
+        Deployment deployment = getDeployment(serviceInfo, deploymentId);
+        List<UserConfig> userConfigs = deployment.getUserConfigs();
+        
+        if(userConfigs!=null){
+            ServiceInfoUtil.applyValues(userConfigs, request);
+        }
+
+        String version = serviceInfo.getUserConfigVersion();
+
+        log.info( MessageFormat
+                  .format("about to redeploy serviceInfo [id={0}, userConfigVersion={1}, deployment[{2}] ",
+                          serviceInfo.getId(),
+                          version,
+                          deploymentId));
+
+        this.servicesManager.updateServiceConfig(serviceId, deploymentId, version, userConfigs);
+        log.info(MessageFormat
+                 .format("redeployed service [id={0}, userConfigVersion={1}, deployment[{2}] -  id returned: [{3}] ",
+                         serviceInfo.getId(),
+                         version,
+                         deploymentId));
+        
+        ServiceInfo newServiceInfo = this.servicesManager.getService(serviceId);
+        Deployment newDeployment = getDeployment(newServiceInfo, deploymentId);
+        
+        ModelAndView mav = new ModelAndView("jsonView", "deployment", newDeployment);
+        mav.addObject("serviceInfo", newServiceInfo);
+        return mav;
+    }
+
+	private Deployment getDeployment(ServiceInfo serviceInfo,
+                                     Integer deploymentId) {
+	    for(Deployment d : serviceInfo.getDeployments()){
+            if(deploymentId == d.getId()){
+                return d;
+            }
+        }
+	    
+	    return null;
 	}
 
-	private ModelAndView undeploy(Integer serviceId, Integer deploymentId,
+    private ModelAndView undeploy(Integer serviceId, Integer deploymentId,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.servicesManager.undeployService(serviceId, deploymentId);
 		return new ModelAndView("jsonView", "serviceInfo", servicesManager.getService(serviceId));
 	}
 
+	
+
+
+
+	
 	private ModelAndView deploy(Integer serviceId, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<ServiceInfo> services = this.servicesManager.getAvailableServices();
 		ServiceInfo serviceInfo = getServiceInfo(serviceId,services);

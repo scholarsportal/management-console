@@ -179,7 +179,30 @@ var dc;
 		});
 	};
 
-	
+
+	/**
+	 * @param Object serialized form data
+	 * @param Object callback The callback must implement success and failure methods. options begin method is supported.
+	 */
+	dc.store.UpdateContentItemMimetype = function(data, callback){
+		if(callback.begin != undefined){
+			callback.begin();
+		}
+		$.ajax({
+			url: "/duradmin/spaces/content", 
+			data: data + "&action=put&method=changeMimetype",
+			type: "POST",
+			success: function(data){
+				callback.success(data.contentItem);
+			},
+		    error: function(xhr, textStatus, errorThrown){
+	    		console.error("failed to update content item mimetype: " + textStatus + 
+	    						", error: " + errorThrown + "; xhr.status = " + xhr.status);
+	    		callback.failure(textStatus);
+			},
+		});
+	};
+
 	
 	dc.store.AddContentItem = function(storeId,spaceId, form, future){
 		$(form).ajaxForm({

@@ -20,14 +20,6 @@
 			  });
 			</script>
 
-		<script type="text/javascript"
-			src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/jquery/plugins/jquery.form/jquery.form-2.4.3.js"></script>
-
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/jquery/plugins/jquery.ba-throttle-debounce/jquery.ba-throttle-debounce.min.js"></script>
-
 		<link rel="stylesheet"
 			href="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.css"
 			type="text/css" media="screen" />
@@ -40,14 +32,6 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/thirdparty/flowplayer/flowplayer-3.2.2.min.js"></script>
 	 	 -->
 
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/javascript/ui.glasspane.js"></script>
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
-		<script type="text/javascript"
-			src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/javascript/ui.metadataviewer.js"></script>
 		<script type="text/javascript"
@@ -253,14 +237,16 @@
 					title="Edit Content Item">
 				<h1>Edit Content Item</h1>
 				<p class="hint">All fields are required.</p>
-				<form enctype="multipart/form-data">
+				<form enctype="multipart/form-data" id="edit-content-item-form">
+				<input type="hidden" name="spaceId"/>
+				<input type="hidden" name="contentId"/>
+				<input type="hidden" name="storeId"/>
 				<div id="form-fields" class="form-fields">
 				<fieldset>
+				
 				<ul>
-					<li class="row clearfix first-of-type"><label for="name">Item
-					Name</label><input type="text" name="name" id="name" class="field" /></li>
 					<li class="row clearfix"><label for="mimetype">Mime
-					Type</label><input type="text" name="mimetype" id="mimetype" class="field" /></li>
+					Type</label><input type="text" name="contentMimetype" id="contentMimetype" class="field" /></li>
 				</ul>
 				</fieldset>
 				</div>
