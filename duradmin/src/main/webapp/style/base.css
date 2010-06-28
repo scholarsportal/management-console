@@ -101,8 +101,8 @@ h2 { font-size:1.3em; font-weight:normal; }
 h3 { font-size:1em; }
 
 
-.float-l {float:left; }
-.float-r {float:right; }
+.float-l {float:left; margin-left:0; }
+.float-r {float:right; margin-right:0; }
 .content-centered { text-align:center !important; }
 
 
@@ -293,119 +293,6 @@ h3 { font-size:1em; }
 .hint
 {
 	font-size:11px;
-}
-
-/* BUTTONS *******************************************/
-
-.button-bar
-{
-	position:absolute;
-	top: 170px;
-}
-
-.std a,
-.std,
-.std a span,
-.std span
-{
-	background-image:url(../images/btn_std.gif) !important;
-	color:#ccc;
-}
-
-.plus
-{
-	background:url(../images/icon_sm_plus.gif) no-repeat top left;
-}
-
-.std .plus
-{
-	background:url(../images/icon_sm_plus_std.gif) no-repeat top left;
-}
-
-
-.pencil
-{
-	background:url(../images/icon_sm_pencil.gif) no-repeat top left;
-}
-
-.trash
-{
-	background:url(../images/icon_sm_trash.gif) no-repeat top left;
-}
-
-
-.lock
-{
-	background:url(../images/icon_sm_locked.gif) no-repeat center left;
-	padding-left:15px !important;
-}
-
-.unlock
-{
-	background:url(../images/icon_sm_unlocked.gif) no-repeat center left;
-}
-
-.locked,
-.unlocked
-{	
-	background-position:top left !important;
-}
-
-.checkbox
-{
-	background:url(../images/icon_sm_checkbox.gif) no-repeat center left;
-}
-
-.x
-{
-	background:url(../images/icon_sm_x.gif) no-repeat center left;
-}
-
-.download { background-image:url(../images/icon_sm_download.gif); }
-
-.arw-down-blue
-{
-	background:url(../images/icon_sm_arw_blue.gif) no-repeat top right;
-}
-
-.arw-down-liteblue
-{
-	background:url(../images/icon_sm_arw_liteblue.gif) no-repeat top right;
-}
-
-.arw-down-green
-{
-	background:url(../images/icon_sm_arw_green.gif) no-repeat top right;
-}
-
-.outer .help
-{
-	background-image:url(../images/icon_sm_help_blue.gif);
-}
-
-.outer .logoff
-{
-	background-image:url(../images/icon_sm_logoff_blue.gif);
-}
-
-.switch-holder,
-.switch-holder div.r
-{
-	background:url(../images/switch_holder.gif) no-repeat;
-	display:block;
-}
-
-.switch-holder div.r
-{
-	background-position:top right;
-	height:30px;
-	padding-top:5px;
-}
-
-.switch-holder
-{
-	height:35px;
-	margin:20px 0;
 }
 
 .dialog-open {

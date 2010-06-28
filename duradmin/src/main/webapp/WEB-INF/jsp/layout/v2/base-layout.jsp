@@ -16,11 +16,9 @@
 		<img class="float-r" id="dc-partner-logo" src="/duradmin/images/partner_logo_placeholder.png"/>
 		<div id="dc-user" class="float-r">
 			${pageContext.request.userPrincipal.name}
-			<ul class="horizontal-list">
-				<li id="help"><a class="flex icon-link" href="#"><i class="pre help">Help</i></a></li>
-	            <li>
-		            <a class="flex icon-link" href='<c:url value="/logout"/>' class="logout"><i class="pre logoff">Logout</i></a>
-	            </li>
+			<ul class="horizontal-list" style="margin-top:10px;">
+				<li id="help"><a class="button icon-link" href="#"><i class="pre help"></i>Help</a></li>
+	            <li><a class="button icon-link" href='<c:url value="/logout"/>' class="logout"><i class="pre logoff"></i>Logout</a></li>
 			</ul>		
 		</div>			
 	</div>

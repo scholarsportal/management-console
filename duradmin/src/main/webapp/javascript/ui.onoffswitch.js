@@ -29,35 +29,34 @@ $.widget("ui.onoffswitch",{
 		//clear the element state
 		$(that.element).html("");
 		var o = this.options;
-		var onButtonOnState = this._createButton(o.onText, o.onStateClass, o.onIconClass, false);
-		var offButtonOnState = this._createButton(o.offText, "", o.offIconClass, true);
-		offButtonOnState.click(function(evt){
+		var leftButtonOnState = this._createButton(o.onText, o.onStateClass, o.onIconClass, false);
+		var rightButtonOnState = this._createButton(o.offText, o.offStateClass, o.offIconClass, true);
+		var leftButtonOffState = this._createButton(o.onText, o.onStateClass, o.onIconClass, true);
+		var rightButtonOffState = this._createButton(o.offText, o.offStateClass, o.offIconClass, false);
+		
+		rightButtonOnState.click(function(evt){
 			evt.preventDefault();
 			that._fireOffEvent();
 		});
 		
 		var onState = $(document.createElement("span"))
-							.addClass("flex")
 							.addClass("button-holder")
 							.addClass("button-holder-on")
-							.append(onButtonOnState)
-							.append(offButtonOnState);
+							.append(leftButtonOnState)
+							.append(rightButtonOnState);
 		
 		$(this.element).append(onState);
 
-		var onButtonOffState = this._createButton(o.onText, "", o.onIconClass, true);
-		var offButtonOffState = this._createButton(o.offText, o.offStateClass, o.offIconClass, false);
 
-		onButtonOffState.click(function(evt){
+		leftButtonOffState.click(function(evt){
 			evt.preventDefault();
 			that._fireOnEvent(evt);
 		});
 		var offState = $(document.createElement("span"))
-							.addClass("flex")
 							.addClass("button-holder")
 							.addClass("button-holder-off")
-							.append(onButtonOffState)
-							.append(offButtonOffState);
+							.append(leftButtonOffState)
+							.append(rightButtonOffState);
 		$(this.element).append(offState);
 
 		
@@ -104,26 +103,27 @@ $.widget("ui.onoffswitch",{
 		this._switch("on");
 		this._fireOnEvent();
 	},
-
-	_createButton: function(text, stateClass, iconClass, clickable){
-		var baseSpan =
-				$(document.createElement("span"));
-		var baseInnerButton = 
-				$(document.createElement("i"))
-					.addClass("pre")
-					.addClass(iconClass)
-					.addClass(stateClass)
-					.html(text);
-		if(clickable){
-			baseSpan.append(baseInnerButton);
-			return $(document.createElement("button"))
-						.addClass("flex")
-						.addClass("button")
-						.addClass("switch")
-						.append(baseSpan);
-		}else{
-			return baseInnerButton;
+	
+	_createButton: function(text, stateClass, iconClass, clickable)
+	{
+		var button;
+		var icon = $(document.createElement("i"))
+			.addClass("pre")
+			.addClass(iconClass);
+		if (clickable)
+		{
+			button = $(document.createElement("button"));
 		}
+		else
+		{
+			button = $(document.createElement("span"));	
+		}
+		button
+			.addClass("switch")
+			.addClass(stateClass) // need to change to be "left" for on, "right" for off
+			.append(icon)
+			.append(text);
+		return button;
 	}
 });
 
@@ -144,9 +144,9 @@ $.widget("ui.accessswitch",
 				options: $.extend({}, $.ui.onoffswitch.prototype.options, 
 						{
 					  	      initialState: "on"
-							, onStateClass: "unlocked"
+							, onStateClass: "on left"
 							, onIconClass: "unlock"
-							, offStateClass: "locked"
+							, offStateClass: "off right"
 							, offIconClass: "lock"
 							, onText: "Open"
 							, offText: "Closed"

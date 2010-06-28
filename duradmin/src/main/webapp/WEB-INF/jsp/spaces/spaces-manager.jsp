@@ -4,7 +4,6 @@
 		<spring:message code="spaces" />
 	</tiles:putAttribute>
 	<tiles:putAttribute name="header-extensions">
-
 		<script type="text/javascript">
 			  var storeProviders = null;
 			  $(document).ready(function(){
@@ -46,8 +45,6 @@
 		<tiles:insertDefinition name="app-frame">
 			<tiles:putAttribute name="mainTab" value="spaces" />
 			<tiles:putAttribute name="main-content">
-
-
 				<div class="center-north" id="center-pane-north">
 				<div class="float-l">Provider: <span id="provider-select-box"
 					class="provider-widget"></span></div>
@@ -75,9 +72,7 @@
 				<div id="spaces-list-view" class="dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 				<div id="header-spaces-list" class="header-section clearfix">
-				<a class="flex button float-r add-space-button"
-					href="javascript:void(1);"><span><i class="pre plus">Add
-				Space</i></span></a>
+				<button class="featured float-r add-space-button"><i class="pre plus"></i>Add Space</button>
 				<h2>Spaces</h2>
 				</div>
 				<div class="header-section"><span class="float-r"><input
@@ -95,9 +90,7 @@
 				<div id="content-item-list-view" class="dc-list-item-viewer">
 				<div class="north header list-header clearfix">
 				<div id="header-content-list" class="header-section clearfix">
-				<a class="flex button float-r add-content-item-button"
-					href="javascript:void(1);"><span><i class="pre plus">Add
-				Content Item</i></span></a>
+				<button class="featured float-r add-content-item-button"><i class="pre plus"></i>Add Content Item</button>
 				<h2>Content Items</h2>
 				</div>
 				<div class="header-section"><span class="float-r"><input
@@ -115,27 +108,20 @@
 				</div>
 				<div id="detail-pane" class="detail-pane"></div>
 
-				<!-- 
-		Space Detail Pane:  The div is invisible and used as a prototype for displaying specific space
-							details.
-		 -->
-				<div id="spaceDetailPane" class="dc-detail-pane"
-					style="display: none">
-				<div class="north header">
-				<h1>Space Detail</h1>
-				<h2 class="object-name">Space Name Here</h2>
-				<div class="toggle-control flex switch-holder">
-				<div class="r access-switch"></div>
-				</div>
-				<div class="button-bar"><a href="javascript:void(1);"
-					class="flex button add-content-item-button"><span><i
-					class="pre plus">Add Content Item</i></span></a> <a href="javascript:void(1);"
-					class="flex button std delete-space-button dc-delete-button"><span><i
-					class="pre trash">Delete Space</i></span></a></div>
-
-				</div>
-				<div class="center"></div>
-
+				<!-- Space Detail Pane:  The div is invisible and used as a prototype for displaying specific space details.-->
+				<div id="spaceDetailPane" class="dc-detail-pane" style="display: none">
+					<div class="north header">
+						<h1>Space Detail</h1>
+						<h2 class="object-name">Space Name Here</h2>
+						<div class="toggle-control switch-holder">
+							<div class="r access-switch"></div>
+						</div>
+						<div class="button-bar">
+							<button class="featured add-content-item-button"><i class="pre plus"></i>Add Content Item</button>
+							<button class="delete-space-button dc-delete-button"><i class="pre trash"></i>Delete Space</button>
+						</div>
+					</div>
+					<div class="center"></div>
 				</div>
 
 				<div id="genericDetailPane" style="display: none">
@@ -159,34 +145,24 @@
 				<div class="center"></div>
 				</div>
 
-				<!-- 
-			an invisible  prototype for content items details.
-		 -->
+				<!-- an invisible  prototype for content items details.-->
 				<div id="contentItemDetailPane" style="display: none">
-				<div class="north header">
-				<h1>Content Detail</h1>
-				<h2 class="object-name">Content Name Here</h2>
-				<div class="mime-type mime-type-image" id="mime-image"><span
-					class="label">Mime Type:</span> <span class="value">image/jpg</span>
+					<div class="north header">
+						<h1>Content Detail</h1>
+						<h2 class="object-name">Content Name Here</h2>
+						<div class="mime-type mime-type-image" id="mime-image"><span
+							class="label">Mime Type:</span> <span class="value">image/jpg</span>
+						</div>		
+						<div class="button-bar">				
+							<button class="featured edit-content-item-button"><i class="pre pencil"></i>Edit</button>
+							<button class="view-content-item-button" style="display:none"><i class="pre download"></i>View</button>
+							<button class="download-content-item-button"><i class="pre download"></i>Download</button>
+							<button class="delete-space-button dc-delete-button"><i class="pre trash"></i>Delete</button>						
+						</div>
+					</div>
+					<div class="center"></div>
 				</div>
-
-				<div class="button-bar">
-					<a href="javascript:void(1);"
-					class="flex button edit-content-item-button"><span><i
-					class="pre pencil">Edit</i></span></a> 
-					<a href="" style="display:none"
-						class="flex button view-content-item-button"><span><i
-						class="pre download">View</i></span></a>
-					<a href=""
-					class="flex button download-content-item-button"><span><i
-					class="pre download">Download</i></span></a> 
-					<a href="javascript:void(1);"
-					class="flex button std delete-content-item-button  dc-delete-button"><span><i
-					class="pre trash">Delete</i></span></a></div>
-				</div>
-				<div class="center"></div>
-				</div>
-
+				
 				<div id="add-space-dialog" class="" title="Add Space">
 				<h1>Add Space</h1>
 				<p class="hint">Add a Space to the current provider. All fields

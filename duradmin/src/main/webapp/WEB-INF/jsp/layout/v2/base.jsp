@@ -33,9 +33,10 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/durastore-api.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />	
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
-	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />
 	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/dialogs.css" type="text/css" />
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/buttons.css" type="text/css" />
 	<!-- page level header extensions reserved for pages that wish to inject page specific scripts into the header -->
 	<tiles:insertAttribute name="header-extensions" ignore="true"/>
 		

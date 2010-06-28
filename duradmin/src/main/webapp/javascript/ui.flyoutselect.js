@@ -11,13 +11,10 @@
 				var widgetClass = o.widgetClass;
 				
 				$(this.element).addClass(widgetClass)
-				var selection = $.fn.create("a")
-							.addClass("flex button")
-							.addClass(widgetClass + "-selected")
-							.append($.fn.create("span").append(
-												$.fn.create("i")
-													.addClass("post arw-down-liteblue")
-													.addClass(widgetClass+"-selected-text")));
+				var selection = $.fn.create("button")
+							.addClass("primary")
+							.append($.fn.create("span").addClass(widgetClass + "-selected-text"));
+				selection.append($.fn.create("i").addClass("post arw-down-liteblue"));
 				
 				$(this.element).append(selection);
 				
