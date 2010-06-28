@@ -945,7 +945,7 @@ $(document).ready(function() {
 			var ci = contentItems[i];
 			var node =  document.createElement("div");
 			var actions = document.createElement("div");
-			$(actions).append("<button class='delete-space-button'>-</button>");
+			$(actions).append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
 			$(node).attr("id", ci)
 				   .html(ci)
 				   .append(actions);
@@ -1157,7 +1157,7 @@ $(document).ready(function() {
 			if(filter === undefined || filter == DEFAULT_FILTER_TEXT || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
 				var node =  $.fn.create("div");
 				var actions = $.fn.create("div");
-				actions.append("<button class='delete-space-button'>-</button>");
+				actions.append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
 				node.attr("id", space.spaceId)
 					   .html(space.spaceId)
 					   .append(actions)

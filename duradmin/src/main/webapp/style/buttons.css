@@ -66,7 +66,7 @@ button.featured
 	background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#999999)); 	/* For WebKit (Safari, Google Chrome etc) */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FF999999); /* For Internet Explorer 5.5 - 7 */
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FF999999)";	/* For Internet Explorer 8 */
-	color:#555;
+	color:#444;
 }
 
 button.primary
@@ -236,6 +236,13 @@ span.off i,
 .arw-down-green { background:url(../images/icon_sm_arw_green.gif) no-repeat top right; }
 .outer .help { background-image:url(../images/icon_sm_help_blue.gif); }
 .outer .logoff { background-image:url(../images/icon_sm_logoff_blue.gif); }
+
+/* BUTTONS IN SPECIFIC AREAS *******************************/
+.dc-item button
+{
+	height:auto;
+}
+
 
 /* ICON LINKS **********************************************/
 
