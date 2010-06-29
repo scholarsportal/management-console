@@ -10,6 +10,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
     <title><spring:message code="application.title" /> :: <tiles:insertAttribute name="title"/></title>
+
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />	
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/dialogs.css" type="text/css" />
+	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/buttons.css" type="text/css" />
+
 	<!-- jquery core, ui and css -->
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.js"></script>
@@ -26,17 +32,11 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.glasspane.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.onoffswitch.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.selectablelist.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.listdetailviewer.js"></script>
-
-
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/durastore-api.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 
-	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/base.css" type="text/css" />	
-	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/flex.css" type="text/css" />
-	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/dialogs.css" type="text/css" />
-	<link rel="stylesheet"  href="${pageContext.request.contextPath}/style/buttons.css" type="text/css" />
 	<!-- page level header extensions reserved for pages that wish to inject page specific scripts into the header -->
 	<tiles:insertAttribute name="header-extensions" ignore="true"/>
 		

@@ -155,9 +155,9 @@
 						</div>		
 						<div class="button-bar">				
 							<button class="featured edit-content-item-button"><i class="pre pencil"></i>Edit</button>
-							<button class="view-content-item-button" style="display:none"><i class="pre download"></i>View</button>
-							<button class="download-content-item-button"><i class="pre download"></i>Download</button>
-							<button class="delete-space-button dc-delete-button"><i class="pre trash"></i>Delete</button>						
+							<a class="button download-content-item-button"><i class="pre download"></i>Download</a>
+							<a class="button view-content-item-button" style="display:none"><i class="pre download"></i>View</a>
+							<button class="delete-content-item-button dc-delete-button"><i class="pre trash"></i>Delete</button>						
 						</div>
 					</div>
 					<div class="center"></div>

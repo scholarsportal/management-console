@@ -144,27 +144,34 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	protected ModelAndView put(HttpServletRequest request,
 			HttpServletResponse response, ContentItem contentItem,
 			BindException errors) throws Exception {
-		String spaceId = contentItem.getSpaceId();
-		String contentId = contentItem.getContentId();
-		ContentStore contentStore = getContentStore(contentItem);
-        ContentItem result = new ContentItem();
-        String method = request.getParameter("method");
-        Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
-
-        if("changeMimetype".equals(method)){
-            String mimetype = contentItem.getContentMimetype();
-            if(mimetype !=null){
-                metadata.put(ContentStore.CONTENT_MIMETYPE, mimetype);
+	    try{
+	        String spaceId = contentItem.getSpaceId();
+	        String contentId = contentItem.getContentId();
+	        ContentStore contentStore = getContentStore(contentItem);
+	        ContentItem result = new ContentItem();
+	        String method = request.getParameter("method");
+	        Map<String,String> metadata  = contentStore.getContentMetadata(spaceId, contentId);
+	        if("changeMimetype".equals(method)){
+	            String mimetype = contentItem.getContentMimetype();
+	            String oldMimetype = metadata.get(ContentStore.CONTENT_MIMETYPE);
+	            if(StringUtils.hasText(mimetype) && !mimetype.equals(oldMimetype)){
+	                metadata.put(ContentStore.CONTENT_MIMETYPE, mimetype);
+	                contentStore.setContentMetadata(spaceId, contentId, metadata);
+	            }
+	        }else{ 
+                MetadataUtils.handle(method, "space ["+spaceId+"]",  metadata, request);
+                contentStore.setContentMetadata(spaceId, contentId, metadata);
             }
-        }else{ 
-        	MetadataUtils.handle(method, "space ["+spaceId+"]",  metadata, request);
-        }
 
-        contentStore.setContentMetadata(spaceId, contentId, metadata);
 
-        SpaceUtil.populateContentItem(getBaseURL(request),result, contentItem.getSpaceId(), 
-				contentItem.getContentId(),contentStore, servicesManager);
-		return createModel(result);
+	        SpaceUtil.populateContentItem(getBaseURL(request),result, contentItem.getSpaceId(), 
+	                contentItem.getContentId(),contentStore, servicesManager);
+	        return createModel(result);
+	        
+	    }catch(Exception ex){
+	        ex.printStackTrace();
+	        throw ex;
+	    }
 	}
 
 

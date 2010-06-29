@@ -362,7 +362,7 @@ $(document).ready(function() {
 					var inprogress = false;
 					for(i in data.taskList){
 						var props = data.taskList[i].properties;
-						if(props.bytesRead < props.totalBytes){
+						if(props.bytesRead < props.totalBytes && props.totalBytes > 0 && props.status != 'cancelled'){
 							inprogress = true;
 						}
 					}
@@ -573,7 +573,11 @@ $(document).ready(function() {
 							 		
 
 									var callback = {
-											key: key, 
+											key: key,
+											
+											begin: function(){
+												setTimeout(function(){poller},2000);
+											},
 											update: renderToaster,
 											
 											failure: function(){
@@ -585,6 +589,7 @@ $(document).ready(function() {
 
 									
 									dc.store.AddContentItem(storeId,spaceId,form, callback);
+									
 								},
 								
 								failure: function(){

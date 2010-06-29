@@ -209,22 +209,22 @@ var dc;
 			iframe: true,
 			dataType: "json",
 			success: function(data){
-				alert("success!" + data);
+				future.success(data);
 		    },
 		    error: function(xhr, textStatus, errorThrown){
-		    	alert("add contentItem failed: " + textStatus);
+		    	future.failure(data);
 		    },
 		});
+		future.begin();
 
 		$(form).ajaxSubmit();
- 		
+		
  		var checkProgressURL = "/duradmin/spaces/upload?taskId="+future.key;
 
 
 		setTimeout(function(){
 			dc.checkProgress(checkProgressURL, future.key, future);
 		},2000);
-		
 	};
 	
 	/**

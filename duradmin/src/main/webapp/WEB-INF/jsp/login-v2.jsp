@@ -35,7 +35,7 @@
 							</li>
 							<li class="clearfix">
 								<label><a href="#" id="forgot-password" class="helper-link">Forgot Password?</a></label>
-								<button id="button-login" class="flex button float-r"><span>Login</span></button>				
+								<button id="button-login" class="primary  float-r">Login</button>											
 							</li>
 						</ul>
 					
@@ -53,32 +53,6 @@
 					</div>
 				</div>
 			</div>
-		
-			<!-- 
-			<div id="old-layout">
-				<table class="basic-form" style="max-width:400px">
-					<tr>
-						<td class="label">
-							<label for="j_username">Username</label>
-						</td>
-						<td class="input">
-							<input type="text" name="j_username"/>								
-						</td>
-					</tr>
-					<tr>
-						<td class="label">
-							<label for="j_password">Password</label>
-						</td>
-						<td class="input">
-							<input type="password" name="j_password"/>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div class="basic-form-buttons" >
-				<input type="submit" value="Login" />					
-			</div>
-			-->
 		</form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

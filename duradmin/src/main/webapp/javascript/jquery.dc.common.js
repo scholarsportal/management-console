@@ -240,7 +240,6 @@ var dc;
 	/**
 	 * checks the progress of a remote task and notifies caller of results.
 	 */
-	
 	var DEFAULT_POLL_INTERVAL = 5000;
 	
 	dc.checkProgress = function(url, key, callback){
@@ -257,22 +256,23 @@ var dc;
 			}
 			
 			progressCallback.update(data);
-			var state = data.task.properties.state;
-			
-			if(state == 'running'){
-				setTimeout(function(){ dc.checkProgress(url,key, progressCallback); }, DEFAULT_POLL_INTERVAL);
-			}else if(state == 'success'){
-				if(progressCallback.success != undefined){
-					progressCallback.success(data);
-				}
-			}else if(state == 'cancelled'){
-				if(progressCallback.cancel != undefined){
-					progressCallback.cancel();
-				}
+			if(data.task != undefined){
+				var state = data.task.properties.state;
 				
-			}else{
-				if(progressCallback.failure != undefined){
-					progressCallback.failure();
+				if(state == 'running' || state == 'initialized'){
+					setTimeout(function(){ dc.checkProgress(url,key, progressCallback); }, DEFAULT_POLL_INTERVAL);
+				}else if(state == 'success'){
+					if(progressCallback.success != undefined){
+						progressCallback.success(data);
+					}
+				}else if(state == 'cancelled'){
+					if(progressCallback.cancel != undefined){
+						progressCallback.cancel();
+					}
+				}else{
+					if(progressCallback.failure != undefined){
+						progressCallback.failure();
+					}
 				}
 			}
 		};
@@ -290,7 +290,8 @@ var dc;
 		    },
 		});		
 	};
-
+	
+	
 	dc.ajax = function(params,callback){
 		var ajaxParameters = {
 			url: params.url,

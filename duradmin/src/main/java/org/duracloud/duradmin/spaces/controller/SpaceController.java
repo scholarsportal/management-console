@@ -103,7 +103,7 @@ public class SpaceController extends  AbstractRestController<Space> {
         ContentStore contentStore = getContentStore(space);
         
         String method = request.getParameter("method");
-        if(method == "changeAccess"){
+        if("changeAccess".equals(method)){
             String access = space.getAccess();
             if(access !=null){
                 contentStore.setSpaceAccess(spaceId, AccessType.valueOf(access));

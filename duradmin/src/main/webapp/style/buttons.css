@@ -6,8 +6,14 @@ button::-moz-focus-inner
 	padding:0 !important;
 }
 
+button a
+{
+	text-decoration:none;
+}
+
 button,
 .button,
+.icon-link,
 .switch-holder,
 .switch
 {
@@ -20,6 +26,7 @@ button,
 
 button,
 .button,
+.icon-link,
 .switch
 {
 	color:#ccc;
@@ -28,14 +35,13 @@ button,
 	overflow: visible; /* removes extra side padding in IE */
 	text-align:center;
 	text-decoration:none;
-	vertical-align:middle;	
+	vertical-align:middle;
 }
 
-
 button,
+.button,
 .switch
 {
-
 	-moz-border-radius:5px;	
 	-webkit-border-radius:5px;
 	border-radius:5px;
@@ -46,7 +52,8 @@ button,
 
 }
 
-button
+button,
+.button
 {	
 	background-color:#515151;
 	background: -moz-linear-gradient(top, #797979, #515151);
@@ -59,7 +66,14 @@ button
 
 }
 
-button.featured
+.button
+{
+	padding-top:4px;
+	height:19px;
+}
+
+button.featured,
+.button.featured
 { 
 	background-color:#999999;
 	background: -moz-linear-gradient(top, #e4e4e4, #999999);
@@ -69,7 +83,8 @@ button.featured
 	color:#444;
 }
 
-button.primary
+button.primary,
+.button.primary
 {
 
 	background-color:#2375b2;
@@ -80,7 +95,8 @@ button.primary
 	color:#56ffff;
 }
 
-button.primary:hover
+button.primary:hover,
+.button.primary:hover
 {
 
 	background-color:#3793d6;
@@ -92,12 +108,14 @@ button.primary:hover
 	color:#ffffff;
 }
 
-button.small
+button.small,
+.button.small
 {
 	height:20px;
 }
 
-button:hover
+button:hover,
+.button:hover
 {
 	background-color:#757575;
 	background: -moz-linear-gradient(top, #8e8e8e, #757575);
@@ -108,7 +126,8 @@ button:hover
 	color:#fff;
 }
 
-button.featured:hover
+button.featured:hover,
+.button.featured:hover
 { 
 	background-color:#c9c9c9;
 	background: -moz-linear-gradient(top, #f8f8f8, #c9c9c9);
@@ -120,7 +139,8 @@ button.featured:hover
 
 button i,
 span.switch i,
-.button i
+.button i,
+.icon-link i
 {
 	background-position:0 0;
 	background-repeat:no-repeat;
@@ -131,9 +151,16 @@ span.switch i,
 	width:14px;
 }
 
+.icon-link:hover i
+{
+	background-position:left 0;
+}
+
 span.switch i, .button i { margin-top:0; }
 
 button i.pre,
+.button i.pre,
+.icon-link i,
 span.switch i.pre
 {
 	margin-left:-5px;
@@ -141,6 +168,7 @@ span.switch i.pre
 }
 
 button i.post,
+.button i.post,
 span.switch i.post
 {
 	margin-left:3px;
@@ -215,7 +243,7 @@ span.off
 
 span.on i,
 span.off i,
-.button:hover i
+.icon-link i
 {
 	background-position:left -20px;
 }

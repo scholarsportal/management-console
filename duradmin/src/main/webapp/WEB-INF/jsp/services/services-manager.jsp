@@ -15,11 +15,8 @@
 		<tiles:putAttribute name="main-content">
 	   		<div id="services-list-view" class="list-browser dc-list-item-viewer">
 				<div class="north header list-header clearfix">
-					<div id="header-spaces-list" class="header-section clearfix">						
-						<a class="flex button float-r deploy-service-button" href="javascript:void(1);">
-							<span><i class="pre plus">Deploy a New Service</i></span>
-						</a>
-						
+					<div id="header-spaces-list" class="header-section clearfix">							
+						<button class="float-r deploy-service-button"><i class="pre plus"></i>Deploy a New Service</button>
 						<h2>Services</h2>
 					</div>
 				</div>
