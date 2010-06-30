@@ -197,6 +197,10 @@ $(document).ready(function() {
 										}
 									},
 									
+									failure: function(text){
+										alert("failed to get deployment config for " + streamingService.serviceId + " deployed on " + deployment.hostname + ": " + text);
+									},
+									
 								});
 							}
 						}
@@ -1028,7 +1032,7 @@ $(document).ready(function() {
 				callback.success(data.space);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
 				dc.done();
 	    		callback.failure(textStatus);
 		    },
@@ -1048,7 +1052,7 @@ $(document).ready(function() {
 				callback.success();
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 		    },
 		};
@@ -1091,7 +1095,7 @@ $(document).ready(function() {
 				callback.success();
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("get spaces failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 		    },
 		};
@@ -1297,7 +1301,7 @@ $(document).ready(function() {
 
 		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
 			dc.cookie(PROVIDER_COOKIE_ID, state.value.id);
-			console.debug("value changed: new value=" + state.value.label);
+			//console.debug("value changed: new value=" + state.value.label);
 			refreshSpaces(state.value.id);
 		});		 
 		

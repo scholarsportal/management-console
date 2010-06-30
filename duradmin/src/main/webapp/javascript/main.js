@@ -21,7 +21,7 @@ $(document).ready(function() {
 					}
 				},
 				failure: function(text){
-					console.error("failed to check if content item exists:" +  text);
+					//console.error("failed to check if content item exists:" +  text);
 				}
 			});
 	

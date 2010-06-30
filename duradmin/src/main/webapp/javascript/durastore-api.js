@@ -53,7 +53,7 @@ var dc;
 				callback.success(data.space);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("get space failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("get space failed: " + textStatus + ", error: " + errorThrown);
 	    		//alert("get space failed: " + textStatus);
 	    		callback.failure(textStatus);
 		    },
@@ -77,7 +77,7 @@ var dc;
 			type: "POST",
 			success: callback.success,
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("delete space failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("delete space failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 			},
 		});
@@ -100,7 +100,7 @@ var dc;
 			type: "POST",
 			success: function(data){callback.success(data.space)},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("add space failed: " + textStatus + ", error: " + errorThrown);
+	    		//console.error("add space failed: " + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 			},
 		});
@@ -126,7 +126,7 @@ var dc;
 					callback.success(data.spaces);
 			    },
 			    error: function(xhr, textStatus, errorThrown){
-			    	console.error("get spaces failed: " + textStatus + "; error: " + errorThrown + "; xhr=" + xhr);
+			    	//console.error("get spaces failed: " + textStatus + "; error: " + errorThrown + "; xhr=" + xhr);
 			    	callback.failure(textStatus);
 			    	
 			    },
@@ -152,7 +152,7 @@ var dc;
 					callback.success(data.contentItem);
 			    },
 			    error: function(xhr, textStatus, errorThrown){
-			    	console.error("get contentItem failed: " + textStatus);
+			    	//console.error("get contentItem failed: " + textStatus);
 			    	callback.failure(textStatus);
 			    },
 		});
@@ -173,7 +173,7 @@ var dc;
 			type: "POST",
 			success: callback.success,
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("delete content item failed: " + textStatus + ", error: " + errorThrown +", contentItem: " + contentItem);
+	    		//console.error("delete content item failed: " + textStatus + ", error: " + errorThrown +", contentItem: " + contentItem);
 	    		callback.failure(textStatus);
 			},
 		});
@@ -196,7 +196,7 @@ var dc;
 				callback.success(data.contentItem);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("failed to update content item mimetype: " + textStatus + 
+	    		//console.error("failed to update content item mimetype: " + textStatus + 
 	    						", error: " + errorThrown + "; xhr.status = " + xhr.status);
 	    		callback.failure(textStatus);
 			},
