@@ -6,7 +6,6 @@
 
 	<tiles:putAttribute name="header-extensions">
 		<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/services-manager.js"></script>
-
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 	<tiles:insertDefinition name="app-frame">

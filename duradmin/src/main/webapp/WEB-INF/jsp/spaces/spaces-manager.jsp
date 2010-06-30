@@ -38,7 +38,6 @@
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/javascript/ui.flyoutselect.js"></script>
         <script type='text/javascript' src='${pageContext.request.contextPath}/jwplayer/swfobject.js'></script>
-        <script type='text/javascript' src='${pageContext.request.contextPath}/jwplayer/viewer.js'></script>
 			
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>

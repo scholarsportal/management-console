@@ -146,17 +146,77 @@ $(document).ready(function() {
 		$(div).expandopanel("getContent").css("text-align", "center").append(viewer);
 		$(".center", target).append(div);
 
-		setTimeout(function(){
-			var streamHost = "s3i8j0alxo57q2.cloudfront.net";
-		    var so = new SWFObject('/duradmin/jwplayer/player.swf','ply','350','216','9','#ffffff');
-		    so.addParam('allowfullscreen','true');
-		    so.addParam('allowscriptaccess','always');
-		    so.addParam('wmode','opaque');
-		    so.addVariable('skin','/duradmin/jwplayer/stylish.swf');
-		    so.addVariable('file', contentItem.contentId);
-		    so.addVariable('streamer', 'rtmp://' + streamHost + '/cfx/st');
-		    so.write('mediaspace');
-		},1000);
+		var streamHost = "s3i8j0alxo57q2.cloudfront.net";
+		
+		dc.service.GetDeployedServices({
+			success: function(data){
+				var services = data.services;
+				var streamingService = null;
+				var i;
+				for(i in services){
+					var service = services[i];
+					if(service.contentId.indexOf('mediastreamingservice') > -1){
+						streamingService = service;
+						var deployments = streamingService.deployments;
+						var sourceMediaSpace = null;
+						var j;
+						for(j in deployments){
+							var deployment = deployments[j];
+
+							var userConfigs = deployment.userConfigs;
+							var m;
+							for(m in userConfigs){
+								var uc = userConfigs[m];
+								if(uc.name == "mediaSourceSpaceId"){
+									sourceMediaSpace = uc.displayValue;
+									break;
+								}
+							}
+
+							if(sourceMediaSpace != null){
+								dc.service.GetServiceDeploymentConfig(streamingService, deployment,{
+									success: function(data) {
+										var streamingHost = null;
+										var k;
+										for(k in data.properties){
+											var prop = data.properties[k];
+											if(prop.name == 'Streaming Host'){
+												streamingHost = prop.value;
+												setTimeout(function(){
+													//async necessary to let the DOM update itself so that the mediaspace dom element is present.
+													var so = new SWFObject('/duradmin/jwplayer/player.swf','ply','350','216','9','#ffffff');
+												    so.addParam('allowfullscreen','true');
+												    so.addParam('allowscriptaccess','always');
+												    so.addParam('wmode','opaque');
+												    so.addVariable('skin','/duradmin/jwplayer/stylish.swf');
+												    so.addVariable('file', contentItem.contentId);
+												    so.addVariable('streamer', 'rtmp://' +streamingHost+ '/cfx/st');
+												    so.write('mediaspace');
+												},1000);
+											}
+										}
+									},
+									
+								});
+							}
+						}
+						
+						if(sourceMediaSpace == null){
+							viewer.html("<p>No streaming service is running against this space. " + 
+							"Please reconfigure the streaming service to use this space as the source.</p>");
+						}
+					}
+				}
+				
+				if(streamingService == null){
+					viewer.html("The media stream services must be running to view video for this space.");
+				}
+			},
+			failure: function(text){
+				alert("failed to get deployed services: " + text);
+			},
+		});
+
 	};
 
 	var loadAudio = function(target, contentItem){

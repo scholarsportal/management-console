@@ -35,6 +35,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.listdetailviewer.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/ui.expandopanel.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/durastore-api.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/duraservice-api.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 
 	<!-- page level header extensions reserved for pages that wish to inject page specific scripts into the header -->
