@@ -197,7 +197,7 @@ var dc;
 			},
 		    error: function(xhr, textStatus, errorThrown){
 	    		//console.error("failed to update content item mimetype: " + textStatus + 
-	    						", error: " + errorThrown + "; xhr.status = " + xhr.status);
+				//", error: " + errorThrown + "; xhr.status = " + xhr.status);
 	    		callback.failure(textStatus);
 			},
 		});
