@@ -11,11 +11,11 @@ $.widget("ui.onoffswitch",{
 	 * Default values go here
 	 */
 	options: {
-		   initialState: "on"
-		,  onStateClass: "onffswitch-on-state"
-		, onIconClass: "icon-on"
-		, offStateClass: "onoffswitch-off-state"
-		, offIconClass: "icon-off"
+      initialState: "on"
+		, onStateClass: "on left"
+		, onIconClass: "unlock"
+		, offStateClass: "off right"
+		, offIconClass: "lock"
 		, onText: "On"
 		, offText: "Off"
 	},

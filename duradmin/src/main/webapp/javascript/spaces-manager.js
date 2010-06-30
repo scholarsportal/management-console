@@ -1,5 +1,6 @@
 /**
  * Spaces Manager
+ * 
  * @author Daniel Bernstein
  */
 var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailPane, spacesManagerToolbar;
@@ -7,7 +8,7 @@ var centerLayout, listBrowserLayout, spacesListPane, contentItemListPane,detailP
 
 $(document).ready(function() {
 	centerLayout = $('#page-content').layout({
-	//	minWidth:				300	// ALL panes
+	// minWidth: 300 // ALL panes
 		north__size: 			50	
 	,	north__paneSelector:     ".center-north"
 	,   north__resizable:   false
@@ -29,7 +30,7 @@ $(document).ready(function() {
 	    	west__size:				300
 	    ,	west__minSize:			260
 		,   west__paneSelector:     "#spaces-list-view"
-	//	,   west__onresize:         "spacesListPane.resizeAll"
+	// , west__onresize: "spacesListPane.resizeAll"
 		,	center__paneSelector:	"#content-item-list-view"
 		,   center__onresize:       "contentItemListPane.resizeAll"
 	});
@@ -48,7 +49,7 @@ $(document).ready(function() {
 	spacesListPane = $('#spaces-list-view').layout(spacesAndContentLayoutOptions);
 	contentItemListPane = $("#content-item-list-view").layout(spacesAndContentLayoutOptions);
 
-	//detail pane's layout options
+	// detail pane's layout options
 	var spaceDetailLayoutOptions = {
 			north__paneSelector:	".north"
 				,   north__size: 			200
@@ -60,8 +61,8 @@ $(document).ready(function() {
 				
 	};
 	
-	//content item detail layout is slightly different from 
-	//the space detail - copy and supply overrides
+	// content item detail layout is slightly different from
+	// the space detail - copy and supply overrides
 	var contentItemDetailLayoutOptions = $.extend(true,{}, 
 													   spaceDetailLayoutOptions, 
 													   {north__size:200});
@@ -69,15 +70,15 @@ $(document).ready(function() {
 	
 	detailPane = $('#detail-pane').layout(spaceDetailLayoutOptions);
 	
-	////////////////////////////////////////////
-	//sets contents of object-name class
-	///
+	// //////////////////////////////////////////
+	// sets contents of object-name class
+	// /
 	var setObjectName = function(pane, name){
 		$(".object-name", pane).empty().prepend(name);	
 	};
 			
-	///////////////////////////////////////////
-	///check/uncheck all spaces
+	// /////////////////////////////////////////
+	// /check/uncheck all spaces
 	$(".dc-check-all").click(
 		function(evt){
 			var checked = $(evt.target).attr("checked");
@@ -107,8 +108,8 @@ $(document).ready(function() {
 		$("#detail-pane").replaceContents($("#genericDetailPane").clone(), spaceDetailLayoutOptions);
 	};
 
-	//////////////////////////////////////////
-	////functions for loading metadata, tags and properties
+	// ////////////////////////////////////////
+	// //functions for loading metadata, tags and properties
 
 	var loadMetadataPane = function(target, extendedMetadata){
 		var viewerPane = $.fn.create("div")
@@ -127,7 +128,7 @@ $(document).ready(function() {
 		return viewerPane;
 	};
 	
-	var loadProperties = function(target, /*array*/ properties){
+	var loadProperties = function(target, /* array */ properties){
 		$(".center", target)
 			.append($.fn.create("div")
 						.tabularexpandopanel(
@@ -135,23 +136,27 @@ $(document).ready(function() {
 	};
 
 	var loadVideo = function(target, contentItem){		
-		var viewer = $.fn.create("embed")
-		.attr("src", contentItem.viewerURL)
-		.attr("height", "400px")
-		.attr("width", "600px")
-		.attr("autoplay", "false");
 		
-		var wrapper = $.fn.create("div")
-				.addClass("preview-image-wrapper")
-				.append(viewer);
+		
+		var viewer = $.fn.create("div").attr("id", "mediaspace");
 		
 		var div = $.fn.create("div")
 		.expandopanel({title: "Watch"});
 		
-		$(div).expandopanel("getContent").append(viewer);
-		
+		$(div).expandopanel("getContent").css("text-align", "center").append(viewer);
 		$(".center", target).append(div);
 
+		setTimeout(function(){
+			var streamHost = "s3i8j0alxo57q2.cloudfront.net";
+		    var so = new SWFObject('/duradmin/jwplayer/player.swf','ply','350','216','9','#ffffff');
+		    so.addParam('allowfullscreen','true');
+		    so.addParam('allowscriptaccess','always');
+		    so.addParam('wmode','opaque');
+		    so.addVariable('skin','/duradmin/jwplayer/stylish.swf');
+		    so.addVariable('file', contentItem.contentId);
+		    so.addVariable('streamer', 'rtmp://' + streamHost + '/cfx/st');
+		    so.write('mediaspace');
+		},1000);
 	};
 
 	var loadAudio = function(target, contentItem){
@@ -262,26 +267,15 @@ $(document).ready(function() {
 							$.fn.create("div").addClass("dc-controls")
 						);
 
-		//configure progress bar
-		item.find(".dc-progressbar-value").css("width", percentComplete*.5+"%").html(parseInt(parseInt(props.bytesRead)/1024)+" of " + parseInt(parseInt(props.totalBytes)/1024) + " KB / " + percentComplete+"%");			
+		// configure progress bar
+		item.find(".dc-progressbar-value").css("width", percentComplete+"%").html(parseInt(parseInt(props.bytesRead)/1024)+" of " + parseInt(parseInt(props.totalBytes)/1024) + " KB / " + percentComplete+"%");			
 		
 		var actionCell = item.find(".dc-controls");	
 
-		/*
-		// temp for styling
-		actionCell.append(
-				$.fn.create("button")
-				.addClass("flex button")
-				.html("<span>Cancel</span>")
-				.click(function(){ alert("implement cancel here");})
-				);
-		*/
-		
 		if(props.state == 'running'){
 			actionCell.append(
 					$.fn.create("button")
-					.addClass("flex button")
-					.html("<span>Cancel</span>")
+					.html("Cancel")
 					.click(function(evt){ 
 						var that = this;
 						evt.stopPropagation();
@@ -299,7 +293,7 @@ $(document).ready(function() {
 						});	
 					}));
 		}else{
-			actionCell.append($.fn.create("button").addClass("flex button").html("<span>Remove</span>").click(function(evt){
+			actionCell.append($.fn.create("button").html("Remove").click(function(evt){
 				var that = this;
 				evt.stopPropagation();
 				$.ajax({
@@ -391,8 +385,8 @@ $(document).ready(function() {
 	
 	poller(5000);
 
-	///////////////////////////////////////////
-	///open add space dialog
+	// /////////////////////////////////////////
+	// /open add space dialog
 	$.fx.speeds._default = 10;
 
 
@@ -712,9 +706,9 @@ $(document).ready(function() {
 	
 	
 	
-	/////////////////////////////////////////////////////////////
-	//Spaces / Content Ajax calls
-	/////////////////////////////////////////////////////////////
+	// ///////////////////////////////////////////////////////////
+	// Spaces / Content Ajax calls
+	// ///////////////////////////////////////////////////////////
 
 	/**
 	 * loads the space data into the detail pane
@@ -723,7 +717,7 @@ $(document).ready(function() {
 		var detail = $("#spaceDetailPane").clone();
 		setObjectName(detail, space.spaceId);
 		
-		//attach delete button listener
+		// attach delete button listener
 		$(".delete-space-button",detail).click(function(evt){
 			if(!dc.confirm("Are you sure you want to delete \n" + space.spaceId + "?")){
 				return;
@@ -749,7 +743,7 @@ $(document).ready(function() {
 		
 		
 		
-		//create access switch and bind on/off listeners
+		// create access switch and bind on/off listeners
 		$(".access-switch", detail).accessswitch({
 				initialState: (space.metadata.access=="OPEN"?"on":"off")
 			}).bind("turnOn", function(evt, future){
@@ -816,7 +810,7 @@ $(document).ready(function() {
 		
 		$(".download-content-item-button", pane).attr("href", contentItem.downloadURL);
 
-		//attach delete button listener
+		// attach delete button listener
 		$(".delete-content-item-button",pane).click(function(evt){
 			if(!dc.confirm("Are you sure you want to delete \n" + contentItem.contentId + "?")){
 				return;
@@ -850,7 +844,7 @@ $(document).ready(function() {
 		}
 		
 		loadProperties(pane, extractContentItemProperties(contentItem));
-		//load the details panel
+		// load the details panel
 		var mimetype = contentItem.metadata.mimetype;
 		$(".mime-type .value", pane).text(mimetype);
 		$(".mime-type", pane).addClass(dc.getMimetypeImageClass(mimetype));
@@ -875,7 +869,7 @@ $(document).ready(function() {
 			removeContentItemTag(contentItem.spaceId, contentItem.contentId, value, future);
 		});
 
-		//prepare edit dialog
+		// prepare edit dialog
 		var editDialog = $("#edit-content-item-dialog");
 		editDialog.find("input[name=storeId]").val(contentItem.storeId);
 		editDialog.find("input[name=spaceId]").val(contentItem.spaceId);
@@ -1022,8 +1016,8 @@ $(document).ready(function() {
 		$.ajax(createSpaceMetadataCall(spaceId, data, "removeTag", callback));		
 	};
 
-	/////////////////////////////////////////////////////////////////////////////////
-	///content metadata functions
+	// ///////////////////////////////////////////////////////////////////////////////
+	// /content metadata functions
 	var createContentItemMetadataCall = function(spaceId, contentId, data, method,callback){
 		var newData = data + "&method=" + method;
 		var storeId = getCurrentProviderStoreId();
@@ -1079,8 +1073,8 @@ $(document).ready(function() {
 		};
 	}).val(DEFAULT_FILTER_TEXT);
 	
-	///////////////////////////////////////////
-	///click on a space list item
+	// /////////////////////////////////////////
+	// /click on a space list item
 
 	$("#spaces-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
@@ -1109,8 +1103,8 @@ $(document).ready(function() {
 		clearContents();
 		showGenericDetailPane();
 	});
-	///////////////////////////////////////////
-	///click on a content list item
+	// /////////////////////////////////////////
+	// /click on a content list item
 	$("#content-item-list").bind("currentItemChanged", function(evt,state){
 		if(state.selectedItems.length < 2){
 			if(state.item != null && state.item != undefined){
@@ -1132,7 +1126,7 @@ $(document).ready(function() {
 		}else if(state.selectedItems.length == 1){
 			var spaceId = "YYYYYYY";
 			/**
-			 * @FIXME 
+			 * @FIXME
 			 */
 			getContentItem(getCurrentProviderStoreId(),spaceId,$(state.item).attr("id"));
 		}else{
@@ -1140,8 +1134,8 @@ $(document).ready(function() {
 		}
 	});
 
-	///////////////////////////////////////////
-	///click on a space list item
+	// /////////////////////////////////////////
+	// /click on a space list item
 	var spacesArray = new Array();
 
 	
@@ -1199,7 +1193,7 @@ $(document).ready(function() {
 				for(s in spaces){
 					spacesArray[s] = {spaceId: spaces[s]};
 				}
-				//clear content filters
+				// clear content filters
 				$("#content-item-filter").val(DEFAULT_FILTER_TEXT);
 				loadSpaces(spacesArray, $("#space-filter").val());
 				$("#space-list-status").fadeOut("fast");
@@ -1216,12 +1210,13 @@ $(document).ready(function() {
 
 	var PROVIDER_SELECT_ID = "provider-select-box";
 	var initSpacesManager =  function(){
-		////////////////////////////////////////////
+		// //////////////////////////////////////////
 		// initialize provider selection
-		///
+		// /
 		var PROVIDER_COOKIE_ID = "providerId";
 		var options = {
-			data: storeProviders, //this variable is defined in a script in the head of spaces-manager.jsp
+			data: storeProviders, // this variable is defined in a script in
+									// the head of spaces-manager.jsp
 			selectedIndex: 0
 		};
 
@@ -1250,16 +1245,16 @@ $(document).ready(function() {
 	};
 	
 	
-	//$("#spaces-list-view").glasspane({});
-	//$("#content-item-list-view").glasspane({});
-	//$("#detail-pane").glasspane({});
+	// $("#spaces-list-view").glasspane({});
+	// $("#content-item-list-view").glasspane({});
+	// $("#detail-pane").glasspane({});
 	$("#page-content").glasspane({});
 
 	
 	
 	initSpacesManager();
 
-	//hides the title bar on all dialogs;
+	// hides the title bar on all dialogs;
 	$(".ui-dialog-titlebar").hide();
 
 });

@@ -18,7 +18,7 @@
 						];
 			  });
 			</script>
-
+			
 		<link rel="stylesheet"
 			href="${pageContext.request.contextPath}/jquery/plugins/jquery.fancybox-1.3.1/fancybox/jquery.fancybox-1.3.1.css"
 			type="text/css" media="screen" />
@@ -37,6 +37,9 @@
 			src="${pageContext.request.contextPath}/javascript/ui.tagsviewer.js"></script>
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/javascript/ui.flyoutselect.js"></script>
+        <script type='text/javascript' src='${pageContext.request.contextPath}/jwplayer/swfobject.js'></script>
+        <script type='text/javascript' src='${pageContext.request.contextPath}/jwplayer/viewer.js'></script>
+			
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/javascript/spaces-manager.js"></script>
 
@@ -46,27 +49,10 @@
 			<tiles:putAttribute name="mainTab" value="spaces" />
 			<tiles:putAttribute name="main-content">
 				<div class="center-north" id="center-pane-north">
-				<div class="float-l">Provider: <span id="provider-select-box"
-					class="provider-widget"></span></div>
-
-				<!-- <div class="float-l">
-		        	<ul>
-		        		<li class="row clearfix">
-				        	<input type="button" value="Browse"/>
-				    	</li>
-			       		<li class="row clearfix">
-				        	<input type="button" value="Search"/>
-				    	</li>
-		        	</ul>
-		        </div> -->
-
-				<div class="float-r" id="pinned"><!-- 
-					<span>
-					4 Items
-					<input type="button" value="+"/>   			
-					<input type="button" value="^"/>   	
-					</span>
-				 --></div>
+					<div class="float-l">Provider: <span id="provider-select-box"
+						class="provider-widget"></span></div>
+	
+					<div class="float-r" id="pinned"></div>
 				</div>
 				<div id="list-browser" class="list-browser">
 				<div id="spaces-list-view" class="dc-list-item-viewer">

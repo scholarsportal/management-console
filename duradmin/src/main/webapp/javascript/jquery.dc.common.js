@@ -6,7 +6,24 @@
 var dc;
 
 (function(){
-	
+	var _log = function(message){
+		if(window.console){
+			console.log(message);
+		}
+	};
+
+	var _debug = function(message){
+		if(window.console){
+			console.debug(message);
+		}
+	};
+
+	var _error = function(message){
+		if(window.console){
+			console.error(message);
+		}
+	};
+
 	////////////////////////////////////////////////////////////////////
 	//jquery extensions
 	///////////////////////////////////////////////////////////////////
@@ -104,6 +121,7 @@ var dc;
 	if(dc == undefined){
 		dc = {};
 	}
+	
 	
 	/**
 	 * Create a cookie with the given name and value and other optional parameters.
@@ -250,7 +268,7 @@ var dc;
 
 		var updater = function(progressCallback, data){
 			if(data.error){
-				console.error(data.message);
+				_error(data.message);
 				progressCallback.failure(message);
 				return;
 			}
@@ -296,11 +314,10 @@ var dc;
 		var ajaxParameters = {
 			url: params.url,
 			success: function(data){
-				console.debug("success: {url: "+ params.url +"}: data returned: " + data);
 				callback.success(data);
 			},
 		    error: function(xhr, textStatus, errorThrown){
-	    		console.error("error: {url: " + params.url + ", xhr.status: " + status + "," + textStatus + ", error: " + errorThrown);
+	    		_error("error: {url: " + params.url + ", xhr.status: " + status + "," + textStatus + ", error: " + errorThrown);
 	    		callback.failure(textStatus);
 		    },
 		};

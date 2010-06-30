@@ -154,12 +154,12 @@ var dc;
 			
 			this._service = service;
 
-			console.debug("loading service: " + service.id);
+			//console.debug("loading service: " + service.id);
 			var userConfigs = service.userConfigs;
 
 			if(deployment != undefined){
 				this._deployment = deployment;
-				console.debug("loading deployment: " + deployment.id);
+				//console.debug("loading deployment: " + deployment.id);
 				userConfigs = deployment.userConfigs;
 			}
 			
@@ -223,15 +223,18 @@ var dc;
  * created by Daniel Bernstein
  */
 
-
+var centerLayout;
+var servicesListPane;
+var detailPane;
 $(document).ready(function() {
 
+	//alert("starting jquery execution");
 	var serviceDetailPaneId = "#service-detail-pane";
 	var detailPaneId = "#detail-pane";
 	var servicesListViewId = "#services-list-view";
 	var servicesListId = "#services-list";
 	
-	var centerLayout = $('#page-content').layout({
+	centerLayout = $('#page-content').layout({
 		west__size:				800
 	,   west__paneSelector:     servicesListViewId
 	,   west__onresize:         "servicesListPane.resizeAll"
@@ -251,7 +254,7 @@ $(document).ready(function() {
 		,	togglerLength_open:		0	
 	};
 			
-	var servicesListPane = $(servicesListViewId).layout(servicesListPaneLayout);
+	servicesListPane = $(servicesListViewId).layout(servicesListPaneLayout);
 	
 	//detail pane's layout options
 	var detailLayoutOptions = {
@@ -265,7 +268,7 @@ $(document).ready(function() {
 				
 	};
 	
-	var detailPane = $(detailPaneId).layout(detailLayoutOptions);
+	detailPane = $(detailPaneId).layout(detailLayoutOptions);
 	
 	var resolveServiceCssClass = function(services){
 		return "service-replicate";
@@ -294,12 +297,12 @@ $(document).ready(function() {
 		//deploy/undeploy switch definition and bindings
 		$(".deploy-switch",serviceDetailPane.first()).onoffswitch({
 			   		initialState: "on"
-					, onStateClass: "unlocked"
-					, onIconClass: "checkbox"
-					, offStateClass: "locked"
-					, offIconClass: "x"
-					, onText: "Deployed"
-					, offText: "Undeploy"		
+								, onStateClass: "on left"
+								, onIconClass: "unlock"
+								, offStateClass: "off right"
+								, offIconClass: "lock"
+								, onText: "Deploy"
+								, offText: "Undeploy"
 		}).bind("turnOff", function(evt, future){
 			
 			var callback = {
@@ -419,6 +422,7 @@ $(document).ready(function() {
 	};
 
 	var loadDeployedServiceList = function(services){
+		//alert("services count = " + services.length);
 		var servicesList = $(servicesListId);
 		var panel = $("#deployed-services");
 		var table = $("#deployed-services-table");
@@ -477,12 +481,14 @@ $(document).ready(function() {
 	
 	
 	var refreshDeployedServices = function(){
+		
 		dc.service.GetDeployedServices({
 			begin: function(){
 				dc.busy("Retrieving services...");
 			},
 			success: function(data){
 				dc.done();
+				//alert("deployed services returned!");
 				loadDeployedServiceList(data.services);
 			},
 			failure: function(text){
@@ -728,7 +734,10 @@ $(document).ready(function() {
 
 	$("#page-content").glasspane({});
 
-
-	refreshDeployedServices();
+	
+	//alert("about to execute refresh");
+	setTimeout(function(){
+		refreshDeployedServices();
+	}, 1000);
 
 });

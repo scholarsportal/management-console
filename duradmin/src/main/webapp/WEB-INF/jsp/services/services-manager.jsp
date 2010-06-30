@@ -62,7 +62,7 @@
 					</div>
 
 					<div class="button-bar">
-						<button class="flex button reconfigure-button"><span><i class="pre pencil">Reconfigure</i></span></button>
+						<button class="reconfigure-button">Reconfigure</button>
 					</div>
 
 				</div>
