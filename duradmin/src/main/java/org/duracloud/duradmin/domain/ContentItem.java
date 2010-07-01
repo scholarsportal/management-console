@@ -100,7 +100,12 @@ public class ContentItem
         if (StringUtils.hasText(this.contentMimetype)) {
             return this.contentMimetype;
         }
-        return this.file.getContentType();
+        
+        if(this.file != null){
+            return this.file.getContentType();
+        }
+        
+        return null;
     }
 
     public void setContentMimetype(String contentMimetype) {
