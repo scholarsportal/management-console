@@ -11,6 +11,7 @@ package org.duracloud.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.duracloud.duradmin.spaces.controller.ContentItemUploadTask;
 import org.duracloud.duradmin.spaces.controller.ContentUploadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class UploadController implements Controller{
 		if("cancel".equals(action)){
 			log.debug("cancelling {}", taskId);
 			manager.get(taskId).cancel();
-            manager.remove(taskId);
+            ContentItemUploadTask t = (ContentItemUploadTask)manager.remove(taskId);
             log.debug("cancelled and removed {}", taskId);
 
 		}else if("remove".equals(action)){

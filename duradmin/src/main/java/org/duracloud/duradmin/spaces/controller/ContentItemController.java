@@ -177,7 +177,8 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 
 	private String getBaseURL(HttpServletRequest request) throws MalformedURLException{
 		URL url = new URL(request.getRequestURL().toString());
-		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(url.getPort() != 80 ? url.getPort() : "") + request.getContextPath();
+		int port =  url.getPort();
+		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(port > 0 && port != 80 ? url.getPort() : "") + request.getContextPath();
 		return baseURL;
 	}
 

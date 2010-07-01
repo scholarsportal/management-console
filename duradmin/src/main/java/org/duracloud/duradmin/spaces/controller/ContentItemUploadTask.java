@@ -11,7 +11,7 @@ package org.duracloud.duradmin.spaces.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +20,7 @@ import org.duracloud.client.ContentStore;
 import org.duracloud.controller.UploadTask;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.error.ContentStoreException;
+import org.duracloud.io.ByteCountingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,9 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		Logger log = LoggerFactory.getLogger(ContentItemUploadTask.class);
 		private ContentItem contentItem;
 		private ContentStore contentStore;
-		private FileInputStream inputStream;
 		private long totalBytes = 0;
 		private long bytesRead = 0;
-
+		private ByteCountingInputStream inputStream = null;
 		public static enum State {
 			INITIALIZED,
 			RUNNING,
@@ -48,24 +48,23 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore, String username) throws Exception{
 			this.contentItem = contentItem;
 			this.contentStore = contentStore;
-			this.totalBytes = this.contentItem.getFileData().getData().length();
+			this.totalBytes = this.contentItem.getFile().getSize();
+			this.inputStream = new ByteCountingInputStream(this.contentItem.getFile().getInputStream());
 			this.state = State.INITIALIZED;
 			this.username = username;
 		}
 
 		public void execute() throws ContentStoreException, IOException{
 			this.startDate = new Date();
+
+			ContentItem ci = this.contentItem;
 			
 			try{
-				this.inputStream = new FileInputStream(this.contentItem.getFileData().getData());
-				ContentItem ci = this.contentItem;
-				File file = ci.getFileData().getData();
-				this.inputStream = new FileInputStream(file);
 				state = State.RUNNING;
 				contentStore.addContent(ci.getSpaceId(),
 	                    ci.getContentId(),
 	                    this.inputStream,
-	                    file.length(),
+	                    this.totalBytes,
 	                    ci.getContentMimetype(),
 	                    null,
 	                    null);
@@ -73,13 +72,8 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 				this.bytesRead = this.totalBytes;
 				state = State.SUCCESS;
 			}catch(ContentStoreException ex){
-				ex.printStackTrace();
+				log.error("failed to upload content item [ " + ci.getContentId() + "]", ex);;
 				state = State.FAILURE;
-			}catch(IOException ex){
-				ex.printStackTrace();
-				state = State.FAILURE;
-			}finally{
-				cleanup();
 			}
 		}
 		
@@ -89,20 +83,14 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 						this.contentItem.getContentId();
 		}
 		
-		private void cleanup(){
-			try{
-				this.contentItem.getFileData().dereferenceFileData();
-				this.inputStream.close();
-			}catch(Exception ex){
-			}finally{
-				this.inputStream = null;
-			}
-		}
-		
 		public void cancel(){
 			if(state == State.RUNNING){
 				state = State.CANCELLED;
-				cleanup();
+				try {
+					this.inputStream.close();
+				} catch (IOException e) {
+					log.error("failed to close input stream of content item in upload process.", e);
+				}
 			}
 		}
 		
@@ -122,12 +110,7 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		}
 
 		private void updateBytesRead() {
-			try{
-				this.bytesRead = this.inputStream.getChannel().position();
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-			
+			this.bytesRead = this.inputStream.getBytesRead();
 		}
 
 		private Date startDate = null;
