@@ -12,25 +12,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
-import org.duracloud.client.ContentStore.AccessType;
-import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.duracloud.controller.AbstractRestController;
 import org.duracloud.duradmin.domain.ContentItem;
-import org.duracloud.duradmin.domain.Space;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.SpaceUtil;
 import org.duracloud.error.ContentStoreException;
-import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -60,15 +56,15 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 			public void validate(Object target, Errors errors) {
 				ContentItem command = (ContentItem)target;
 
-		        if (!StringUtils.hasText(command.getStoreId())) {
+		        if (!StringUtils.isBlank(command.getStoreId())) {
 		            errors.rejectValue("storeId","required");
 		        }
 
-				if (!StringUtils.hasText(command.getSpaceId())) {
+				if (!StringUtils.isBlank(command.getSpaceId())) {
 		            errors.rejectValue("spaceId","required");
 		        }
 
-		        if (!StringUtils.hasText(command.getContentId())) {
+		        if (!StringUtils.isBlank(command.getContentId())) {
 		            errors.rejectValue("contentId","required");
 		        }
 			}
@@ -119,7 +115,12 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
                                           ci.getContentId(),
                                           getContentStore(ci),
                                           getServicesManager());
-            return createModel(contentItem);
+            
+            if(!StringUtils.isBlank(contentItem.getContentId())){
+                return createModel(contentItem);
+            }else{
+            	return new ModelAndView("jsonView", "contentItem", null);
+            }
 		}catch(ContentStoreException ex){
 		    response.setStatus(HttpStatus.SC_NOT_FOUND);
 		    return new ModelAndView("jsonView", "contentItem", null);
@@ -127,17 +128,6 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	}
 	
 	
-	@Override
-	protected ModelAndView post(HttpServletRequest request,
-			HttpServletResponse response, ContentItem ci,
-			BindException errors) throws Exception {
-        ContentStore contentStore = getContentStore(ci);
-        
-        ContentUploadHelper.executeUploadTask(request, ci,contentStore);
-        ContentItem result = new ContentItem();
-        SpaceUtil.populateContentItem(getBaseURL(request),result, ci.getSpaceId(), ci.getContentId(),contentStore, servicesManager);
-        return createModel(ci);
-	}
 	
 	
 	@Override
@@ -154,7 +144,7 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	        if("changeMimetype".equals(method)){
 	            String mimetype = contentItem.getContentMimetype();
 	            String oldMimetype = metadata.get(ContentStore.CONTENT_MIMETYPE);
-	            if(StringUtils.hasText(mimetype) && !mimetype.equals(oldMimetype)){
+	            if(StringUtils.isBlank(mimetype) && !mimetype.equals(oldMimetype)){
 	                metadata.put(ContentStore.CONTENT_MIMETYPE, mimetype);
 	                contentStore.setContentMetadata(spaceId, contentId, metadata);
 	            }
@@ -175,7 +165,7 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	}
 
 
-	private String getBaseURL(HttpServletRequest request) throws MalformedURLException{
+	public static String getBaseURL(HttpServletRequest request) throws MalformedURLException{
 		URL url = new URL(request.getRequestURL().toString());
 		int port =  url.getPort();
 		String baseURL = url.getProtocol() + "://" + url.getHost() + ":" +(port > 0 && port != 80 ? url.getPort() : "") + request.getContextPath();

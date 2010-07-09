@@ -7,7 +7,6 @@
  */
 package org.duracloud.duradmin.domain;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import java.util.Map;
 import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.NameValuePair;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 public class ContentItem
         implements Serializable {
@@ -53,9 +50,6 @@ public class ContentItem
     
     private List<NameValuePair> extendedMetadata;
 
-    private transient MultipartFile file;
-
-
     private ContentMetadata metadata;
 
     public String getAction() {
@@ -75,15 +69,7 @@ public class ContentItem
     }
 
     public String getContentId() {
-        if (StringUtils.hasText(contentId)) {
-            return contentId;
-        }
-        
-        if(file != null){
-        	return file.getOriginalFilename();
-        }
-        
-        return null;
+        return this.contentId;
     }
 
     public void setContentId(String contentId) {
@@ -97,15 +83,7 @@ public class ContentItem
     }
 
     public String getContentMimetype() {
-        if (StringUtils.hasText(this.contentMimetype)) {
-            return this.contentMimetype;
-        }
-        
-        if(this.file != null){
-            return this.file.getContentType();
-        }
-        
-        return null;
+        return this.contentMimetype;
     }
 
     public void setContentMimetype(String contentMimetype) {
@@ -118,18 +96,6 @@ public class ContentItem
 
     public void setMetadata(ContentMetadata metadata) {
         this.metadata = metadata;
-    }
-
-    public void setFile(MultipartFile file) throws IOException {
-        if (file == null) {
-            return;
-        }
-
-        this.file = file;
-    }
-
-    public MultipartFile getFile() {
-        return file;
     }
 
     public List<NameValuePair> getExtendedMetadata() {

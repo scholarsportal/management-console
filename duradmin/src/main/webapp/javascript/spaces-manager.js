@@ -314,7 +314,16 @@ $(document).ready(function() {
 	var createTaskPanel = function(task) {
 		var props = task.properties;
 		var percentComplete = parseInt(parseInt(props.bytesRead)/parseInt(props.totalBytes)*100);
-
+		var state = props.state;
+		var modifierClass = null;
+		if(state == "cancelled"){
+			modifierClass = "dc-cancelled";
+		}else if(state == "failure"){
+			modifierClass = "dc-failure";
+		}else{
+			modifierClass = "";
+		}
+		
 		var item = 	$.fn.create("div")
 						.addClass("upload-item clearfix")
 						.append(
@@ -324,9 +333,9 @@ $(document).ready(function() {
 						).append(
 								$.fn.create("div").addClass("dc-progressbar-wrapper")
 									.append(
-											$.fn.create("div").addClass("dc-progressbar")
+											$.fn.create("div").addClass("dc-progressbar " + modifierClass)
 												.append(
-														$.fn.create("div").addClass("dc-progressbar-value")))
+														$.fn.create("div").addClass("dc-progressbar-value " + modifierClass)))
 						).append(
 							$.fn.create("div").addClass("dc-controls")
 						);
@@ -335,8 +344,9 @@ $(document).ready(function() {
 		item.find(".dc-progressbar-value").css("width", percentComplete+"%").html(parseInt(parseInt(props.bytesRead)/1024)+" of " + parseInt(parseInt(props.totalBytes)/1024) + " KB / " + percentComplete+"%");			
 		
 		var actionCell = item.find(".dc-controls");	
-
-		if(props.state == 'running'){
+		actionCell.append($.fn.create("span").addClass("dc-progress-state").html(state));
+		
+		if(state == 'running'){
 			actionCell.append(
 					$.fn.create("button")
 					.html("Cancel")
@@ -384,6 +394,8 @@ $(document).ready(function() {
 		$("#upload-viewer").dialog("open");
 	});
 
+	var runPoller = false;
+	
     $("#upload-viewer").dialog({
 		autoOpen: false,
 		show: 'blind',
@@ -397,12 +409,22 @@ $(document).ready(function() {
 		buttons: {
 			"Close": function(){
 				$(this).dialog("close");
+				runPoller = false;
 			}
 		},
 		beforeclose: function(event, ui){
 		},
 		open: function(event,ui){
-			poller();
+			runPoller = true;
+			var poll = function(){
+				if(runPoller){
+					poller();
+					setTimeout(function(){
+						poll();
+					},2000);
+				}
+			};
+			poll();
 		},
 	});
 
@@ -418,9 +440,10 @@ $(document).ready(function() {
 				
 				if(data.taskList.length > 0){
 					var inprogress = false;
+					var error = false;
 					for(i in data.taskList){
 						var props = data.taskList[i].properties;
-						if(props.bytesRead < props.totalBytes && props.totalBytes > 0 && props.status != 'cancelled'){
+						if(props.bytesRead < props.totalBytes && props.totalBytes > 0 && props.state =='running'){
 							inprogress = true;
 						}
 					}
@@ -447,7 +470,7 @@ $(document).ready(function() {
 		});
 	};
 	
-	poller(5000);
+	poller(60*1000);
 
 	// /////////////////////////////////////////
 	// /open add space dialog
@@ -598,12 +621,14 @@ $(document).ready(function() {
 					var filename = $("#file", form).val();
 					$("#spaceId", form).val(spaceId);
 					$("#storeId", form).val(storeId);
-					dc.store.checkIfContentItemExists(
+					$("#add-content-item-dialog").hide();
+					dc.store.CheckIfContentItemExists(
 							{spaceId: spaceId, contentId: contentId, storeId:storeId}, 
 							{ 
 								success: function(exists){
 									if(exists){
 										if(!confirm("A content ID with this name already exists. Overwrite?")){
+											$("#add-content-item-dialog").show();
 											return;
 										}
 									}
@@ -634,7 +659,7 @@ $(document).ready(function() {
 											key: key,
 											
 											begin: function(){
-												setTimeout(function(){poller},2000);
+												setTimeout(function(){poller()},2000);
 											},
 											update: renderToaster,
 											

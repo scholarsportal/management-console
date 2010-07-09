@@ -13,9 +13,11 @@
   </bean>
   
   <!-- Handles Multipart Requests -->
+  <!-- 
   <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
-
+   -->
+  
   
   <!-- Map URLs to Controllers -->
   <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -28,6 +30,8 @@
         <prop key="/users.htm">manageSecurityUsersController</prop>
         <prop key="/spaces">spacesController</prop>
         <prop key="/spaces/content">contentItemController</prop>
+        <prop key="/spaces/content/upload">contentItemUploadController</prop>
+
         <prop key="/spaces/space">spaceController</prop>
         <prop key="/spaces/upload">uploadController</prop>
         <prop key="/services">servicesController</prop>
@@ -52,6 +56,12 @@
   	<property name="contentStoreManager" ref="contentStoreManager"/>
   	<property name="servicesManager" ref="servicesManager"/>
   </bean>
+
+  <bean id="contentItemUploadController" class="org.duracloud.duradmin.spaces.controller.ContentItemUploadController">
+  	<property name="contentStoreManager" ref="contentStoreManager"/>
+  	<property name="servicesManager" ref="servicesManager"/>
+  </bean>
+
   <bean id="spaceController" class="org.duracloud.duradmin.spaces.controller.SpaceController">
   	<property name="contentStoreManager" ref="contentStoreManager"/>
   </bean>

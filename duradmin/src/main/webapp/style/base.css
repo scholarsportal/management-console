@@ -786,6 +786,25 @@ span.label
 	white-space:nowrap;
 }
 
+.dc-failure, .dc-progressbar .dc-failure {
+	background-color:#772222;
+	border:1px solid #882222;
+	border-top-color:#993333;
+	color:#cc0000;
+}
+
+.dc-cancelled, .dc-progress-bar .dc-cancelled {
+	background-color:#222277;
+	border:1px solid #222288;
+	border-top-color:#333399;
+	color:#0000cc;
+}
+
+
+.dc-progress-state {
+	padding-right:1em;	
+}
+
 .dc-controls
 {
 	float:right;

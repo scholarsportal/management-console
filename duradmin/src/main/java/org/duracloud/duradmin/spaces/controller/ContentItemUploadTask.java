@@ -8,19 +8,21 @@
 
 package org.duracloud.duradmin.spaces.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
 import org.duracloud.client.ContentStore;
 import org.duracloud.controller.UploadTask;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.error.ContentStoreException;
-import org.duracloud.io.ByteCountingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +30,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Daniel Bernstein
  */
-public class ContentItemUploadTask implements UploadTask, Comparable{
+public class ContentItemUploadTask implements UploadTask, Comparable, ProgressListener{
 		Logger log = LoggerFactory.getLogger(ContentItemUploadTask.class);
 		private ContentItem contentItem;
 		private ContentStore contentStore;
 		private long totalBytes = 0;
 		private long bytesRead = 0;
-		private ByteCountingInputStream inputStream = null;
 		public static enum State {
 			INITIALIZED,
 			RUNNING,
@@ -44,38 +45,50 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 		}
 		
 		private State state = null;
-		
-		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore, String username) throws Exception{
+		private InputStream stream = null;
+		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore, InputStream stream, String username) throws Exception{
+			this.stream = stream;
 			this.contentItem = contentItem;
 			this.contentStore = contentStore;
-			this.totalBytes = this.contentItem.getFile().getSize();
-			this.inputStream = new ByteCountingInputStream(this.contentItem.getFile().getInputStream());
 			this.state = State.INITIALIZED;
 			this.username = username;
+			this.totalBytes = -1;
 		}
 
-		public void execute() throws ContentStoreException, IOException{
-			this.startDate = new Date();
-
-			ContentItem ci = this.contentItem;
-			
+		public void execute() throws ContentStoreException, IOException, FileUploadException, Exception{
 			try{
+				this.startDate = new Date();
 				state = State.RUNNING;
-				contentStore.addContent(ci.getSpaceId(),
-	                    ci.getContentId(),
-	                    this.inputStream,
+				contentStore.addContent(contentItem.getSpaceId(),
+	                    contentItem.getContentId(),
+	                    this.stream,
 	                    this.totalBytes,
-	                    ci.getContentMimetype(),
+	                    contentItem.getContentMimetype(),
 	                    null,
 	                    null);
-
-				this.bytesRead = this.totalBytes;
-				state = State.SUCCESS;
-			}catch(ContentStoreException ex){
-				log.error("failed to upload content item [ " + ci.getContentId() + "]", ex);;
-				state = State.FAILURE;
+				state = State.SUCCESS;				
+			}catch(Exception ex){
+				//TODO Investigate: Exception is being thrown even when the add content is successful.
+				ex.printStackTrace();
+				log.error("failed to upload content item [ " + this.contentItem.getContentId() + "]", ex);
+				if(this.bytesRead != this.totalBytes && this.state != State.CANCELLED){
+					state = State.FAILURE;
+					throw ex;
+				}
+			}finally{
+				if(bytesRead == totalBytes){
+					state = State.SUCCESS;
+				}
 			}
+			
 		}
+		
+		public void update(long pBytesRead, long pContentLength,
+				int pItems) {
+			bytesRead = pBytesRead;
+			totalBytes = pContentLength;
+		}
+	
 		
 		public String getId() {
 			return this.contentItem.getStoreId()+"-"+
@@ -87,19 +100,15 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 			if(state == State.RUNNING){
 				state = State.CANCELLED;
 				try {
-					this.inputStream.close();
+					stream.close();
 				} catch (IOException e) {
-					log.error("failed to close input stream of content item in upload process.", e);
+					log.error("failed to close item input stream of content item in upload process.", e);
 				}
 			}
 		}
 		
 		public Map<String,String> getProperties(){
 			Map<String,String> map = new HashMap<String,String>();
-			if(state == State.RUNNING){
-				updateBytesRead();
-			}
-			
 			map.put("bytesRead", String.valueOf(this.bytesRead));
 			map.put("totalBytes", String.valueOf(this.totalBytes));
 			map.put("state", String.valueOf(this.state.toString().toLowerCase()));
@@ -109,9 +118,6 @@ public class ContentItemUploadTask implements UploadTask, Comparable{
 			return map;
 		}
 
-		private void updateBytesRead() {
-			this.bytesRead = this.inputStream.getBytesRead();
-		}
 
 		private Date startDate = null;
 

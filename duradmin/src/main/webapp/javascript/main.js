@@ -11,7 +11,7 @@ $(document).ready(function() {
 	////load partner logo
 	///////////////////////////////////////////////////////////////////////
 	
-	dc.store.checkIfContentItemExists(
+	dc.store.CheckIfContentItemExists(
 			{spaceId: "x-duracloud-admin", contentId: "logo", storeId:"0"}, 
 			{ 
 				success: function(exists){

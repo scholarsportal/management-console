@@ -234,19 +234,19 @@ var dc;
 	 * @param storeId 
 	 * 
 	 */
-	dc.store.checkIfContentItemExists = function(contentItem, callback){
+	dc.store.CheckIfContentItemExists = function(contentItem, callback){
 		dc.store.GetContentItem(contentItem.storeId,contentItem.spaceId,contentItem.contentId,{
 			begin: function(){
-				dc.busy("Checking for duplicates...");
+				//dc.busy("Checking for duplicates...");
 			},
 			
 			failure: function(text){
-				dc.done();
+				//dc.done();
 				callback.success(false);
 			},
 
 			success: function(contentItem){
-				dc.done();
+				//dc.done();
 				callback.success(contentItem != undefined);
 			},
 		});
