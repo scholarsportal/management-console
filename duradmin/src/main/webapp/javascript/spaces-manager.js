@@ -621,19 +621,21 @@ $(document).ready(function() {
 					var filename = $("#file", form).val();
 					$("#spaceId", form).val(spaceId);
 					$("#storeId", form).val(storeId);
-					$("#add-content-item-dialog").hide();
+					$("#add-content-item-dialog").dialog("disable");
 					dc.store.CheckIfContentItemExists(
 							{spaceId: spaceId, contentId: contentId, storeId:storeId}, 
 							{ 
 								success: function(exists){
 									if(exists){
 										if(!confirm("A content ID with this name already exists. Overwrite?")){
-											$("#add-content-item-dialog").show();
+											$("#add-content-item-dialog").dialog("enable");
 											return;
 										}
 									}
-									
+
+									$(that).dialog("enable");
 									$(that).dialog("close");
+
 									var callback = {
 										success: function(){
 										

@@ -87,6 +87,9 @@ public class ContentItemUploadTask implements UploadTask, Comparable, ProgressLi
 				int pItems) {
 			bytesRead = pBytesRead;
 			totalBytes = pContentLength;
+			if(bytesRead > 0 && bytesRead == totalBytes && this.state == State.RUNNING) {
+				this.state = State.SUCCESS;
+			}
 		}
 	
 		
