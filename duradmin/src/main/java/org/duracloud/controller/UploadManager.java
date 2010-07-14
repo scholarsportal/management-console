@@ -9,7 +9,6 @@
 package org.duracloud.controller;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,9 +33,14 @@ public class UploadManager {
 	
 	public UploadTask addUploadTask(UploadTask uploadTask) throws UploadTaskExistsException{
 		if(this.uploadTaskMap.containsKey(uploadTask.getId())){
-			throw new UploadTaskExistsException();
+			UploadTask t = this.uploadTaskMap.get(uploadTask.getId());
+			if(t.getState().equals(UploadTask.State.RUNNING)){
+				throw new UploadTaskExistsException();
+			}
 		}
-		return this.uploadTaskMap.put(uploadTask.getId(), uploadTask);
+		UploadTask t =  this.uploadTaskMap.put(uploadTask.getId(), uploadTask);
+		log.info("upload task added {}", uploadTask.getId());
+		return t;
 	}
 	
 	public UploadTask get(String id){

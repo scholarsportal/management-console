@@ -20,9 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreManager;
 import org.duracloud.client.ServicesManager;
-import org.duracloud.controller.UploadController;
 import org.duracloud.duradmin.domain.ContentItem;
 import org.duracloud.duradmin.util.SpaceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -32,6 +33,9 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 
 public class ContentItemUploadController implements Controller{
+
+    protected final Logger log = 
+        LoggerFactory.getLogger(ContentItemUploadController.class);
 
 	
 	private ServicesManager servicesManager;
@@ -80,6 +84,8 @@ public class ContentItemUploadController implements Controller{
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		try{
+			log.debug("handling request...");
+			
 			ContentItem ci = new ContentItem();
 			ServletFileUpload upload = new ServletFileUpload();
 			
@@ -92,38 +98,43 @@ public class ContentItemUploadController implements Controller{
 			    if(item.isFormField()){
 			    	String value = Streams.asString(item.openStream());
 			    	if(item.getFieldName().equals("contentId")){
-						ci.setContentId(value);
+						log.debug("setting contentId: {}", value);
+			    		ci.setContentId(value);
 			    	}else if(item.getFieldName().equals("contentMimetype")){
+						log.debug("setting mimetype: {}", value);
 			    		ci.setContentMimetype(value);
 			    	}else if(item.getFieldName().equals("spaceId")){
+						log.debug("setting spaceId: {}", value);
 			    		ci.setSpaceId(value);
 			    	}else if(item.getFieldName().equals("storeId")){
+						log.debug("setting storeId: {}", value);
 			    		ci.setStoreId(value);
 			    	}
 			    }else{
+					log.debug("setting fileStream: {}", item);
 			    	fileStream = item;
 			    	break;
 			    }
 			}
 
 			if(StringUtils.isBlank(ci.getContentId())){
+				log.debug("contentId is blank. using upload filename: {}", fileStream.getName());
 				ci.setContentId(fileStream.getName());
 			}
 			
 			if(StringUtils.isBlank(ci.getContentMimetype())){
+				log.debug("contentMimetype is blank. using content from header: {}", fileStream.getContentType());
 				ci.setContentMimetype(fileStream.getContentType());
 			}
 
 			ContentStore contentStore = contentStoreManager.getContentStore(ci.getStoreId());
 			ContentItemUploadTask task = new ContentItemUploadTask(ci, contentStore, fileStream.openStream(), request.getUserPrincipal().getName());
 			progress.setListener(task);
-			
-			
 			ContentUploadHelper.getManager(request).addUploadTask(task);
 			task.execute();
 	        ContentItem result = new ContentItem();
 	        SpaceUtil.populateContentItem(ContentItemController.getBaseURL(request),result, ci.getSpaceId(), ci.getContentId(),contentStore, servicesManager);
-	        return new ModelAndView("jsonView", "contentItem", ci);
+	        return new ModelAndView("javascriptJsonView", "contentItem", ci);
 			
 		}catch(Exception ex){
 			ex.printStackTrace();

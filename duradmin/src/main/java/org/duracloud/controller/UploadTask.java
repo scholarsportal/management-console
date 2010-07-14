@@ -16,6 +16,8 @@ import java.util.Map;
  * @author Daniel Bernstein
  */
 
+
+@SuppressWarnings("unchecked")
 public interface UploadTask extends Comparable{
 	public String getId();
 	
@@ -31,5 +33,14 @@ public interface UploadTask extends Comparable{
 
     public String getUsername();
 	
+	public static enum State {
+		INITIALIZED,
+		RUNNING,
+		SUCCESS,
+		FAILURE,
+		CANCELLED
+	}
+	
+	public State getState();
 	
 }

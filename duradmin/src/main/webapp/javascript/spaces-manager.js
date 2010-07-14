@@ -438,7 +438,7 @@ $(document).ready(function() {
 				$("#progress-bar", link).remove();
 				$("#uploads-status-text", link).remove();
 				
-				if(data.taskList.length > 0){
+				if(data != null && data.taskList != null && data.taskList.length > 0){
 					var inprogress = false;
 					var error = false;
 					for(i in data.taskList){
@@ -621,14 +621,15 @@ $(document).ready(function() {
 					var filename = $("#file", form).val();
 					$("#spaceId", form).val(spaceId);
 					$("#storeId", form).val(storeId);
-					$("#add-content-item-dialog").dialog("disable");
+					var dialog = $("#add-content-item-dialog").find(".ui-dialog");
+					dialog.hide();
 					dc.store.CheckIfContentItemExists(
 							{spaceId: spaceId, contentId: contentId, storeId:storeId}, 
 							{ 
 								success: function(exists){
 									if(exists){
 										if(!confirm("A content ID with this name already exists. Overwrite?")){
-											$("#add-content-item-dialog").dialog("enable");
+											dialog.show();
 											return;
 										}
 									}
@@ -636,49 +637,34 @@ $(document).ready(function() {
 									$(that).dialog("enable");
 									$(that).dialog("close");
 
-									var callback = {
-										success: function(){
-										
-										},
-										
-										failure: function(){
-											alert("an error occurred");
-										},
-										
-										view: function(){
-											getContentItem(getCurrentProviderStoreId(),spaceId,contentId);
-										},
-									};
 									
-									var key = escape(storeId+"-"+spaceId+"-"+ contentId);
-									
-									var renderToaster =  function(data){
+									var updateFunc =  function(data){
 										poller();
+										//add to content item list
+										var contentId = data.contentItem.contentId;
+										addContentItemToList(contentId);
 									};
 							 		
-
 									var callback = {
-											key: key,
-											
+											key: escape(storeId+"/"+spaceId+"/"+ contentId),
 											begin: function(){
-												setTimeout(function(){poller()},2000);
+												$("#upload-viewer").dialog("open");
 											},
-											update: renderToaster,
-											
+
 											failure: function(){
-												alert("upload failed!");
+												alert("upload failed for " + storeId + "/" + spaceId + "/" + contentId);
 											},
 											
-											success: renderToaster,
+											success: updateFunc,
 									};
 
 									
-									dc.store.AddContentItem(storeId,spaceId,form, callback);
+									dc.store.AddContentItem(form, callback);
 									
 								},
 								
-								failure: function(){
-									
+								failure: function(message){
+									alert("check for existing content item failed: " + message);
 								}
 							});
 					
@@ -1033,17 +1019,20 @@ $(document).ready(function() {
 		
 		for(i in contentItems){
 			var ci = contentItems[i];
-			var node =  document.createElement("div");
-			var actions = document.createElement("div");
-			$(actions).append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
-			$(node).attr("id", ci)
-				   .html(ci)
-				   .append(actions);
-			$("#content-item-list").selectablelist('addItem',node);	   
-
+			addContentItemToList(ci);
 		}
 	}
 	
+	var addContentItemToList = function(contentItemId){
+		var node =  document.createElement("div");
+		var actions = document.createElement("div");
+		$(actions).append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
+		$(node).attr("id", contentItemId)
+			   .html(contentItemId)
+			   .append(actions);
+		$("#content-item-list").selectablelist('addItem',node);	   
+	
+	};
 	
 	var toggleSpaceAccess = function(space, callback){
 		var access = space.metadata.access;

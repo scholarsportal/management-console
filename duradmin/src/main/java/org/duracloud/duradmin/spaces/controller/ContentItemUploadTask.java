@@ -14,9 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.duracloud.client.ContentStore;
@@ -36,15 +33,8 @@ public class ContentItemUploadTask implements UploadTask, Comparable, ProgressLi
 		private ContentStore contentStore;
 		private long totalBytes = 0;
 		private long bytesRead = 0;
-		public static enum State {
-			INITIALIZED,
-			RUNNING,
-			SUCCESS,
-			FAILURE,
-			CANCELLED
-		}
-		
-		private State state = null;
+
+		private UploadTask.State state = null;
 		private InputStream stream = null;
 		public ContentItemUploadTask(ContentItem contentItem, ContentStore contentStore, InputStream stream, String username) throws Exception{
 			this.stream = stream;
@@ -53,49 +43,49 @@ public class ContentItemUploadTask implements UploadTask, Comparable, ProgressLi
 			this.state = State.INITIALIZED;
 			this.username = username;
 			this.totalBytes = -1;
+			log.info("new task created for {} by {}", contentItem, username);
 		}
 
 		public void execute() throws ContentStoreException, IOException, FileUploadException, Exception{
 			try{
+				log.info("executing file upload: {}" , contentItem);
 				this.startDate = new Date();
 				state = State.RUNNING;
 				contentStore.addContent(contentItem.getSpaceId(),
 	                    contentItem.getContentId(),
 	                    this.stream,
-	                    this.totalBytes,
+	                    -1,
 	                    contentItem.getContentMimetype(),
 	                    null,
 	                    null);
 				state = State.SUCCESS;				
+				log.info("file upload completed successfully: {}" , contentItem);
 			}catch(Exception ex){
-				//TODO Investigate: Exception is being thrown even when the add content is successful.
-				ex.printStackTrace();
-				log.error("failed to upload content item [ " + this.contentItem.getContentId() + "]", ex);
-				if(this.bytesRead != this.totalBytes && this.state != State.CANCELLED){
+
+				log.error("failed to upload content item: {}, bytesRead={}, totalBytes={}, state={}, message: {}", 
+						new Object[]{contentItem, this.bytesRead, this.totalBytes, this.state.name(), ex.getMessage()});
+
+				if(this.state == State.CANCELLED){
+					log.debug("This upload was previously cancelled - the closing of the input stream is the likely cause of the exception");
+				}else{
+					ex.printStackTrace();
 					state = State.FAILURE;
 					throw ex;
 				}
-			}finally{
-				if(bytesRead == totalBytes){
-					state = State.SUCCESS;
-				}
 			}
-			
 		}
 		
 		public void update(long pBytesRead, long pContentLength,
 				int pItems) {
 			bytesRead = pBytesRead;
 			totalBytes = pContentLength;
-			if(bytesRead > 0 && bytesRead == totalBytes && this.state == State.RUNNING) {
-				this.state = State.SUCCESS;
-			}
+			log.debug("updating progress: bytesRead = {}, totalBytes = {}", bytesRead, totalBytes);
 		}
 	
 		
 		public String getId() {
-			return this.contentItem.getStoreId()+"-"+
-					this.contentItem.getSpaceId()+"-"+
+			return this.contentItem.getStoreId()+"/"+
+					this.contentItem.getSpaceId()+"/"+
 						this.contentItem.getContentId();
 		}
 		
@@ -108,6 +98,10 @@ public class ContentItemUploadTask implements UploadTask, Comparable, ProgressLi
 					log.error("failed to close item input stream of content item in upload process.", e);
 				}
 			}
+		}
+		
+		public State getState(){
+			return this.state;
 		}
 		
 		public Map<String,String> getProperties(){

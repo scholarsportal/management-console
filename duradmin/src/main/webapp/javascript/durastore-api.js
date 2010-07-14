@@ -204,27 +204,19 @@ var dc;
 	};
 
 	
-	dc.store.AddContentItem = function(storeId,spaceId, form, future){
-		$(form).ajaxForm({
+	dc.store.AddContentItem = function(form, future){
+		future.begin();
+
+		$(form).ajaxSubmit({
 			iframe: true,
-			dataType: "json",
+			dataType: 'json',
 			success: function(data){
 				future.success(data);
 		    },
 		    error: function(xhr, textStatus, errorThrown){
-		    	future.failure(data);
+		    	future.failure(textStatus);
 		    },
 		});
-		future.begin();
-
-		$(form).ajaxSubmit();
-		
- 		var checkProgressURL = "/duradmin/spaces/upload?taskId="+future.key;
-
-
-		setTimeout(function(){
-			dc.checkProgress(checkProgressURL, future.key, future);
-		},2000);
 	};
 	
 	/**

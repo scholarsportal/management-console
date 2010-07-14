@@ -15,12 +15,13 @@ import org.duracloud.common.web.EncodeUtil;
 import org.duracloud.duradmin.util.MetadataUtils;
 import org.duracloud.duradmin.util.NameValuePair;
 
+
 public class ContentItem
         implements Serializable {
 
     private static final long serialVersionUID = -5835779644282347055L;
 
-    private String action;
+	private String action;
 
     private String spaceId;
 

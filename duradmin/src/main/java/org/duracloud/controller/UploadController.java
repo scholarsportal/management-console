@@ -36,9 +36,7 @@ public class UploadController implements Controller{
 		if("cancel".equals(action)){
 			log.debug("cancelling {}", taskId);
 			manager.get(taskId).cancel();
-            //ContentItemUploadTask t = (ContentItemUploadTask)manager.remove(taskId);
             log.debug("cancelled", taskId);
-
 		}else if("remove".equals(action)){
 			log.debug("removing {}" + taskId);
 			manager.remove(taskId);

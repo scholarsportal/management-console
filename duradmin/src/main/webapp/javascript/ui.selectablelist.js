@@ -123,7 +123,7 @@ $.widget("ui.selectablelist",{
 	},
 	
 	removeById: function(elementId) {
-		var item = $("#" + elementId, this.element).first();
+		var item = $("[id='"+elementId+"']", this.element).first();
 		this._removeDataById(elementId);
 		item.remove();
 		//var firstItem = $("." + this.options.itemClass, this.element).first();
