@@ -619,33 +619,35 @@ span.label
 
 .detail-pane .mime-type
 {
-	background:url(../images/icons_mimetypes.gif) no-repeat top left;
 	font-size:13px;
 	height:40px;
 	line-height:40px;
 	margin:10px 0;
-	padding-left:50px;
 }
 
-.mime-type-image
+.detail-pane .mime-type-image-holder
 {
-	background-position:0 0 !important;
+	background:url(../images/icons_mimetypes.png) no-repeat;
+	background-position:-40px 0;
+	height:40px;
+	margin-right:10px;
+	width:40px;
 }
 
-.mime-type-video 
-{
-		
-}
-
-.mime-type-audio 
-{
-		
-}
-
-.mime-type-text 
-{
-		
-}
+.mime-type-application { background-position:-80px 0 !important; }
+.mime-type-audio { background-position:-240px 0 !important; }
+.mime-type-compression { background-position:-480px 0 !important; }
+.mime-type-drawing { background-position:-200px 0 !important; }
+.mime-type-generic { background-position:0 0 !important; }
+.mime-type-globe { background-position:-160px 0 !important; }
+.mime-type-image { background-position:-200px 0 !important; }
+.mime-type-message { background-position:-280px 0 !important; }
+.mime-type-text { background-position:-320px 0 !important; }
+.mime-type-music { background-position:-360px 0 !important; }
+.mime-type-spreadsheet { background-position:-440px 0 !important; }
+.mime-type-unknown { background-position:-40px 0 !important; }
+.mime-type-xml { background-position:-520px 0 !important; }
+.mime-type-video { background-position:-120px 0 !important; }
 
 .preview-image-wrapper
 {

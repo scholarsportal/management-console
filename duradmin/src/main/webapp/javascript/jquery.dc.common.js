@@ -220,14 +220,18 @@ var dc;
 	};
 	dc.getMimetypeImageClass = function(mimetype){
 	var mtc = "";
-	if(mimetype.indexOf("image") > -1){
-		mtc = "image";
+	if(mimetype.indexOf("audio") > -1){
+		mtc = "audio";
+	}else if(mimetype.indexOf("image") > -1){
+		mtc ="image";
 	}else if(mimetype.indexOf("video") > -1){
 		mtc = "video";
-	}else if(mimetype.indexOf("audio") > -1){
-		mtc ="audio";
+	}else if(mimetype.indexOf("xml") > -1){
+		mtc = "xml";
+	}else if(mimetype.indexOf("zip") > -1){
+		mtc = "compression";
 	}else{
-		mtc = "text";
+		mtc = "generic";
 	}
 	return "mime-type-" + mtc;
 	

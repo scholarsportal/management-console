@@ -135,8 +135,9 @@
 					<div class="north header">
 						<h1>Content Detail</h1>
 						<h2 class="object-name">Content Name Here</h2>
-						<div class="mime-type mime-type-image" id="mime-image"><span
-							class="label">Mime Type:</span> <span class="value">image/jpg</span>
+						<div class="mime-type" id="mime-image">						
+							<div class="mime-type-image-holder float-l"></div>
+							<span class="label">Mime Type:</span> <span class="value">image/jpg</span>
 						</div>		
 						<div class="button-bar">				
 							<button class="featured edit-content-item-button"><i class="pre pencil"></i>Edit</button>

@@ -924,7 +924,7 @@ $(document).ready(function() {
 		// load the details panel
 		var mimetype = contentItem.metadata.mimetype;
 		$(".mime-type .value", pane).text(mimetype);
-		$(".mime-type", pane).addClass(dc.getMimetypeImageClass(mimetype));
+		$(".mime-type-image-holder", pane).addClass(dc.getMimetypeImageClass(mimetype));
 
 		var mp = loadMetadataPane(pane, contentItem.extendedMetadata);
 		
