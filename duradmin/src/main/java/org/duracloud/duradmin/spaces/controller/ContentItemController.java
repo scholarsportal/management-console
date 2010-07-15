@@ -144,7 +144,7 @@ public class ContentItemController extends  AbstractRestController<ContentItem> 
 	        if("changeMimetype".equals(method)){
 	            String mimetype = contentItem.getContentMimetype();
 	            String oldMimetype = metadata.get(ContentStore.CONTENT_MIMETYPE);
-	            if(StringUtils.isBlank(mimetype) && !mimetype.equals(oldMimetype)){
+	            if(!StringUtils.isBlank(mimetype) && !mimetype.equals(oldMimetype)){
 	                metadata.put(ContentStore.CONTENT_MIMETYPE, mimetype);
 	                contentStore.setContentMetadata(spaceId, contentId, metadata);
 	            }
