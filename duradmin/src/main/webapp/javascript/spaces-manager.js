@@ -634,6 +634,10 @@ $(document).ready(function() {
 					var spaceId	  =	getCurrentSpaceId();
 					var storeId	  =	getCurrentProviderStoreId();
 					var filename = $("#file", form).val();
+					
+					if(contentId == null || contentId.trim() == ''){
+						contentId = filename;
+					}
 					$("#spaceId", form).val(spaceId);
 					$("#storeId", form).val(storeId);
 					var dialog = $("#add-content-item-dialog").find(".ui-dialog");
@@ -657,7 +661,12 @@ $(document).ready(function() {
 										poller();
 										//add to content item list
 										var contentId = data.contentItem.contentId;
-										addContentItemToList(contentId);
+										
+										if($("#content-item-list [id='"+contentId+"']").size() == 0){
+											addContentItemToList(contentId);
+										}
+										
+										
 									};
 							 		
 									var callback = {
@@ -1432,6 +1441,22 @@ $(document).ready(function() {
 									// the head of spaces-manager.jsp
 			selectedIndex: 0
 		};
+
+		var currentProviderId = options.data[options.selectedIndex].id;
+		var cookie = dc.cookie(PROVIDER_COOKIE_ID);
+		
+		if(cookie != undefined){
+			for(i in options.data)
+			{
+				var pid = options.data[i].id;
+				if(pid == cookie){
+					options.selectedIndex = i;
+					currentProviderId = pid; 
+					break;
+				}
+			}
+		}
+		
 		
 		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
 			dc.cookie(PROVIDER_COOKIE_ID, state.value.id);
@@ -1447,23 +1472,7 @@ $(document).ready(function() {
 			loadWhatYouCan(phash);
 			return;
 		}
-		
-		var currentProviderId = options.data[options.selectedIndex].id;
-		var cookie = dc.cookie(PROVIDER_COOKIE_ID);
-		
-		if(cookie != undefined){
-			for(i in options.data)
-			{
-				var pid = options.data[i].id;
-				if(pid == cookie){
-					options.selectedIndex = i;
-					currentProviderId = pid; 
-					break;
-				}
-			}
-		}
 
-		
 		refreshSpaces(currentProviderId);
 	};
 	

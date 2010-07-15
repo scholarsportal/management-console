@@ -238,7 +238,6 @@ var dc;
 			},
 
 			success: function(contentItem){
-				//dc.done();
 				callback.success(contentItem != undefined);
 			},
 		});
