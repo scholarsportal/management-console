@@ -91,16 +91,16 @@ $(document).ready(function() {
 	
 	var showMultiSpaceDetail = function(){
 		var multiSpace = $("#spaceMultiSelectPane").clone();
-		loadMetadataPane(multiSpace);
-		loadTagPane(multiSpace);
+		//loadMetadataPane(multiSpace);
+		//loadTagPane(multiSpace);
 		$("#detail-pane").replaceContents(multiSpace, spaceDetailLayoutOptions);
 		$("#content-item-list").selectablelist("clear");
 	};
 
 	var showMultiContentItemDetail = function(){
 		var multiSpace = $("#contentItemMultiSelectPane").clone();
-		loadMetadataPane(multiSpace);
-		loadTagPane(multiSpace);
+		//loadMetadataPane(multiSpace);
+		//loadTagPane(multiSpace);
 		$("#detail-pane").replaceContents(multiSpace, contentItemDetailLayoutOptions);
 	};
 
@@ -346,6 +346,14 @@ $(document).ready(function() {
 		var actionCell = item.find(".dc-controls");	
 		actionCell.append($.fn.create("span").addClass("dc-progress-state").html(state));
 		
+		if(state == 'success'){
+			item.click(function(){
+				$("#upload-viewer").dialog("close");
+				loadWhatYouCan(props);
+			}).css("cursor", "pointer");
+			
+		}
+		
 		if(state == 'running'){
 			actionCell.append(
 					$.fn.create("button")
@@ -503,8 +511,15 @@ $(document).ready(function() {
 							},
 							success: function(space){
 								dc.done();
-								$("#spaces-list-view #space-filter").val(space.spaceId);
-								refreshSpaces(space.storeId);
+								addSpaceToList(space);
+								spacesArray.push(space);
+								spacesArray.sort(function(a,b){
+								   return a.spaceId > b.spaceId;
+								});
+							
+								$("spaces-list").selectablelist("setCurrentItemById", space.spaceId);
+								scrollToCurrentSpace();
+								
 							},
 							failure: function(text){
 								$("#add-space-dialog").dialog().glasspane("hide");
@@ -781,12 +796,77 @@ $(document).ready(function() {
 			});
 
 	
-	
+	var scrollToCurrentSpace = function(){
+		var spacesList = $("#spaces-list");
+		var element = spacesList.selectablelist("currentItem").item;
+		var scrollpane = spacesList.closest(".dc-item-list-wrapper");
+		scrollpane.scrollTo(element);
+	};
 	
 	// ///////////////////////////////////////////////////////////
 	// Spaces / Content Ajax calls
 	// ///////////////////////////////////////////////////////////
+	var notEmpty = function(value){
+		return value != null && value != undefined && value.length != 0;
+	};
 
+	var loadWhatYouCan = function(obj){
+		var storeId = obj.storeId;
+		var spaceId = obj.spaceId;
+		var contentId = obj.contentId;
+		
+		if(notEmpty(storeId)){
+			changeProviderStore(storeId);
+			refreshSpaces(storeId, function(){
+				if(notEmpty(spaceId)){
+					var spacesList = $("#spaces-list");
+					spacesList.selectablelist("setCurrentItemById", spaceId, false);
+					scrollToCurrentSpace();
+					getSpace(spaceId, 
+						function(space){
+							if(notEmpty(contentId)){
+								getContentItem(storeId,spaceId,contentId);
+								loadContentItems(space.contents);
+							}else{
+								loadSpace(space);
+							}
+						}
+					);
+				}
+			});
+			
+		}
+
+
+	};
+	
+	var changeProviderStore = function(storeId){
+		$("#"+PROVIDER_SELECT_ID).flyoutselect("setValueById", storeId, false);
+	};
+	
+	var deleteSpace = function(evt, space) {
+		evt.stopPropagation();
+		if(!dc.confirm("Are you sure you want to delete \n" + space.spaceId + "?")){
+			return;
+		}
+		
+		dc.store.DeleteSpace(space, {
+			begin: function(){
+				dc.busy( "Deleting space...");
+			},
+			
+			success:function(){
+				dc.done();
+
+				$("#spaces-list").selectablelist("removeById", space.spaceId);
+			},
+			
+			failure: function(message){
+				dc.done();
+				alert("failed to delete space!");
+			},
+		});
+	};
 	/**
 	 * loads the space data into the detail pane
 	 */
@@ -796,26 +876,7 @@ $(document).ready(function() {
 		
 		// attach delete button listener
 		$(".delete-space-button",detail).click(function(evt){
-			if(!dc.confirm("Are you sure you want to delete \n" + space.spaceId + "?")){
-				return;
-			}
-			
-			dc.store.DeleteSpace(space, {
-				begin: function(){
-					dc.busy( "Deleting space...");
-				},
-				
-				success:function(){
-					dc.done();
-
-					$("#spaces-list").selectablelist("removeById", space.spaceId);
-				},
-				
-				failure: function(message){
-					dc.done();
-					alert("failed to delete space!");
-				},
-			});
+			deleteSpace(evt,space);
 		});
 		
 		
@@ -882,6 +943,8 @@ $(document).ready(function() {
 	};
 	
 	var loadContentItem = function(contentItem){
+		
+		setHash(contentItem);
 		var pane = $("#contentItemDetailPane").clone();
 		setObjectName(pane, contentItem.contentId);
 		
@@ -975,11 +1038,13 @@ $(document).ready(function() {
 						$(contentItemListStatusId).html("Loading...").fadeIn("slow");
 					},
 					success: function(space){
-						if(space != undefined || space == null){
-							$(contentItemListStatusId).html("Error: space not found.").fadeIn("slow");
-						}
 						dc.done();
-						loadHandler(space);
+						if(space == undefined || space == null){
+							$(contentItemListStatusId).html("Error: space not found.").fadeIn("slow");
+						}else{
+							setHash(space);
+							loadHandler(space);
+						}
 						$(contentItemListStatusId).fadeOut("fast");
 					}, 
 					failure:function(info){
@@ -1227,6 +1292,26 @@ $(document).ready(function() {
 		$("#content-item-list").selectablelist("clear");
 	};
 
+	var clearSpaces = function(){
+		$("#spaces-list").selectablelist("clear");
+		showGenericDetailPane();
+	};
+
+	
+	var addSpaceToList = function(space){
+		var node =  $.fn.create("div");
+		var actions = $.fn.create("div");
+		actions.append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
+		node.attr("id", space.spaceId)
+			   .html(space.spaceId)
+			   .append(actions);
+		$("#spaces-list").selectablelist('addItem',node,space);	   
+		
+		$(".delete-space-button", node).click(function(evt){
+			deleteSpace(evt,space);
+		});
+	};
+	
 	var loadSpaces = function(spaces,filter) {
 		$("#spaces-list").selectablelist("clear");
 		
@@ -1234,17 +1319,9 @@ $(document).ready(function() {
 		for(s in spaces){
 			var space = spaces[s];
 			if(filter === undefined || filter == DEFAULT_FILTER_TEXT || space.spaceId.toLowerCase().indexOf(filter.toLowerCase()) > -1){
-				var node =  $.fn.create("div");
-				var actions = $.fn.create("div");
-				actions.append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
-				node.attr("id", space.spaceId)
-					   .html(space.spaceId)
-					   .append(actions)
-					   ;
-				
-				$("#spaces-list").selectablelist('addItem',node,space);	   
+				addSpaceToList(space);
 				if(!firstMatchFound){
-					$("#spaces-list").selectablelist('setCurrentItemById',node.attr("id"));	   
+					//$("#spaces-list").selectablelist('setCurrentItemById',space.spaceId);	   
 					firstMatchFound = true;
 				}
 			}
@@ -1259,8 +1336,9 @@ $(document).ready(function() {
 	
 
 	
-	var refreshSpaces = function(providerId){
+	var refreshSpaces = function(providerId, /*optional*/successFunc){
 		clearContents();
+		clearSpaces();
 		dc.store.GetSpaces(providerId,{
 			begin: function(){
 				dc.busy("Loading spaces...");
@@ -1268,16 +1346,18 @@ $(document).ready(function() {
 			},
 			success: function(spaces){
 				dc.done();
-
 				spacesArray = new Array();
 				for(s in spaces){
-					spacesArray[s] = {spaceId: spaces[s]};
+					spacesArray[s] = {spaceId: spaces[s], storeId: providerId};
 				}
 				// clear content filters
 				$("#content-item-filter").val(DEFAULT_FILTER_TEXT);
 				loadSpaces(spacesArray, $("#space-filter").val());
 				$("#space-list-status").fadeOut("fast");
-
+				
+				if(successFunc != undefined){
+					successFunc();
+				}
 			},
 			failure: function(xhr, message){
 				dc.done();
@@ -1289,6 +1369,59 @@ $(document).ready(function() {
 	};
 
 	var PROVIDER_SELECT_ID = "provider-select-box";
+	
+	var setHash = function(obj){
+		window.location.hash = buildHash(obj);
+	};
+	
+	var buildHash = function(obj) {
+		var hash = obj.storeId;
+		var spaceId = obj.spaceId;
+		if(spaceId != null && spaceId != undefined){
+			hash += "/" + spaceId;
+		}
+		
+		var contentId = obj.contentId;
+		if(contentId != null && contentId != undefined){
+			hash += "/" + contentId;
+		}
+		
+		return hash;
+	};
+
+	var parseHash = function(hash) {
+		var pHash = {
+			storeId: null,
+			spaceId: null,
+			contentId: null,
+		};
+		
+		pHash.toString = function(){
+			return "storeId: " + this.storeId + ", spaceId: " + this.spaceId + ", contentId: " + this.contentId;
+		};
+
+		if(hash != undefined && hash != null){
+			var first = hash.indexOf("/");
+			if(first > 1){
+				pHash.storeId = hash.slice(1, first);
+				var second = first + hash.substring(first+1).indexOf("/");
+				if(second > first){
+					pHash.spaceId = hash.slice(first+1, second+1);
+					if(hash.length > second){
+						pHash.contentId = unescape(hash.substring(second+2));
+					}
+				}else{
+					pHash.spaceId = hash.substring(second+2);
+				}
+			}else if(hash.length > 1){
+				pHash.storeId = hash.substring(1);
+			}
+		}
+		
+		//alert(pHash);
+		return pHash;
+	};
+
 	var initSpacesManager =  function(){
 		// //////////////////////////////////////////
 		// initialize provider selection
@@ -1299,7 +1432,22 @@ $(document).ready(function() {
 									// the head of spaces-manager.jsp
 			selectedIndex: 0
 		};
+		
+		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
+			dc.cookie(PROVIDER_COOKIE_ID, state.value.id);
+			//console.debug("value changed: new value=" + state.value.label);
+			refreshSpaces(state.value.id);
+		});		 
 
+
+		var phash = parseHash(window.location.hash);
+		
+
+		if(phash.storeId != null){
+			loadWhatYouCan(phash);
+			return;
+		}
+		
 		var currentProviderId = options.data[options.selectedIndex].id;
 		var cookie = dc.cookie(PROVIDER_COOKIE_ID);
 		
@@ -1315,11 +1463,6 @@ $(document).ready(function() {
 			}
 		}
 
-		$("#"+PROVIDER_SELECT_ID).flyoutselect(options).bind("changed",function(evt,state){
-			dc.cookie(PROVIDER_COOKIE_ID, state.value.id);
-			//console.debug("value changed: new value=" + state.value.label);
-			refreshSpaces(state.value.id);
-		});		 
 		
 		refreshSpaces(currentProviderId);
 	};

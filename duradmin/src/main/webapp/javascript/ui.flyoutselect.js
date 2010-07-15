@@ -61,16 +61,22 @@
 				}
 			},
 			
-			_changeValueByIndex: function(/*index of new value*/i){
+			_changeValueByIndex: function(/*index of new value*/i, notify){
+				var fire = true;
+				if(notify != undefined & notify != null){
+					fire = notify;
+				}
+
 				var that = this;
 				var data = this.options.data;
 				this._selectedIndex = i;	
 				$("ul", that.element).fadeOut("slow",function(){
 					that._rerender(data);
 				});
-	
-				this.element.trigger("changed", {target: that.element, value: data[i]});
-	
+				
+				if(fire){
+					this.element.trigger("changed", {target: that.element, value: data[i]});
+				}
 			},
 			
 			_selectedIndex: 0,
@@ -78,7 +84,25 @@
 			value: function(){
 				return this.options.data[this._selectedIndex];
 			},
-			
+
+			setValueById: function(id, /*optional*/ notify){
+				var data = this.options.data;
+				var index = null;
+				for(i in data){
+					if(data[i].id == id){
+						index = i;
+					}
+				}
+					
+				if(index == null){
+					throw("id [" + id + "] not associated with any elements in this list");
+				}
+					
+				if(this._selectedIndex != index){
+					this._changeValueByIndex(index, notify);
+				}
+			},
+
 			destroy: function(){ 
 	
 			}, 

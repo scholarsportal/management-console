@@ -51,6 +51,12 @@ var dc;
 		
 	};
 	
+	$.fn.scrollTo = function(element){
+		var top = $(element).position().top;
+		this.animate({scrollTop: top});
+
+	};
+	
 	////////////////////////////
 	//this method loads the children of the new contents
 	//into the target after emptying the contents

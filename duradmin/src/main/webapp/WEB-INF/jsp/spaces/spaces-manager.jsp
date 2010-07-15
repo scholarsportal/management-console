@@ -119,7 +119,9 @@
 				<h1>Spaces</h1>
 				<h2 class="object-name">Multiple spaces selected</h2>
 				</div>
-				<div class="center"></div>
+				<div class="center">
+					Coming soon.					
+				</div>
 				</div>
 
 				<div id="contentItemMultiSelectPane" style="display: none">
@@ -128,6 +130,7 @@
 				<h2 class="object-name">Multiple content items selected</h2>
 				</div>
 				<div class="center"></div>
+					Coming soon.
 				</div>
 
 				<!-- an invisible  prototype for content items details.-->
@@ -227,7 +230,7 @@
 					id="view-uploads"><span id="upload-status-label">Upload Status:</span> 
 				</a>
 				<div id="upload-viewer">
-				<h1>Upload Status</h1>
+				<h1>Uploads</h1>
 				<div id="upload-list-wrapper"></div>
 				</div>
 				</div>

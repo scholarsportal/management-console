@@ -54,21 +54,24 @@ $.widget("ui.selectablelist",{
 		return array;
 	},
 	
-	_fireCurrentItemChanged: function(item){
+	_fireCurrentItemChanged: function(item, notify){
 		this._styleItem(item);
 		this._currentItem = {
 			item:item, 
 			data: this._getDataById($(item).attr("id")),
 		};
 		
-		this.element.trigger(
-			"currentItemChanged",
-			{	
-				item:this._currentItem.item, 
-				data: this._currentItem.data,
-				selectedItems: this._getSelectedItems()
-			}
-		);
+		var fire = (notify == undefined || notify == null || notify == true);
+		if(fire){
+			this.element.trigger(
+				"currentItemChanged",
+				{	
+					item:this._currentItem.item, 
+					data: this._currentItem.data,
+					selectedItems: this._getSelectedItems()
+				}
+			);
+		}
 	},
 	
 	_fireSelectionChanged: function(){
@@ -165,8 +168,8 @@ $.widget("ui.selectablelist",{
 		this.dataMap[this.dataMap.length] = { key: id, value: data};
 	},
 	
-	setCurrentItemById: function(id){
-		 this._fireCurrentItemChanged($("#"+id, this.element));
+	setCurrentItemById: function(id, notify){
+		 this._fireCurrentItemChanged($("#"+id, this.element), notify);
 	},
 	
 	currentItem:function(){
