@@ -27,11 +27,10 @@
         <prop key="/init">initController</prop>
         <prop key="/download/contentItem">contentItemDownloadController</prop>
         <prop key="/security">initSecurityUsersController</prop>
-        <prop key="/users.htm">manageSecurityUsersController</prop>
+        <prop key="/admin">manageSecurityUsersController</prop>
         <prop key="/spaces">spacesController</prop>
         <prop key="/spaces/content">contentItemController</prop>
         <prop key="/spaces/content/upload">contentItemUploadController</prop>
-
         <prop key="/spaces/space">spaceController</prop>
         <prop key="/spaces/upload">uploadController</prop>
         <prop key="/services">servicesController</prop>
@@ -85,13 +84,10 @@
     <constructor-arg ref="userDetailsSvc"/>
   </bean>
 
-  <bean id="manageSecurityUsersController" class="org.duracloud.duradmin.control.ManageSecurityUsersController" parent="baseFormController">
-    <constructor-arg ref="userDetailsSvc"/>
+  <bean id="manageSecurityUsersController" class="org.duracloud.duradmin.control.ManageSecurityUsersController" >
+  	<property name="userDetailsService" ref="userDetailsSvc"/>
   </bean>
 
-  <!--
-  <bean id="serviceDeploymentPropertiesController" class="org.duracloud.duradmin.control.ServiceDeploymentPropertiesController" parent="baseCommandController"/>
-  -->
   
     <bean id="tilesConfigurer"
           class="org.duracloud.duradmin.view.tiles2.TilesConfigurer" >

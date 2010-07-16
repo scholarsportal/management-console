@@ -40,4 +40,7 @@
  	<definition name="services-manager" template="/WEB-INF/jsp/services/services-manager.jsp">
  	</definition>
 
+ 	<definition name="admin-manager" template="/WEB-INF/jsp/admin/admin-manager.jsp">
+ 	</definition>
+
 </tiles-definitions>
