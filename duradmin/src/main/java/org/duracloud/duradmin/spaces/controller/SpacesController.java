@@ -54,13 +54,15 @@ public class SpacesController implements Controller {
 	            return mav;
 	        }else{
 	            ModelAndView mav = new ModelAndView("spaces-manager");
-	            List<ContentStore> stores = new LinkedList<ContentStore>(contentStoreManager.getContentStores().values());
-	            for(ContentStore store : stores){
-	            	if(store.getStoreId() == contentStoreManager.getPrimaryContentStore().getStoreId()){
-	            		stores.remove(store);
-	            		stores.add(0, store);
-	            		break;
+	            List<ContentStore> stores = new LinkedList<ContentStore>();
+	            String primaryStoreId = contentStoreManager.getPrimaryContentStore().getStoreId();
+	            for(ContentStore store : contentStoreManager.getContentStores().values()){
+	            	if(store.getStoreId().equals(primaryStoreId)){
+	            		stores.add(0,store);
+	            	}else{
+	            		stores.add(store);
 	            	}
+	            	
 	            }
 	            mav.addObject("contentStores", stores);
 	            return mav;
