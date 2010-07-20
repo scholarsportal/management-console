@@ -271,9 +271,8 @@ $(document).ready(function() {
 							.attr("src", contentItem.thumbnailURL)
 							.addClass("preview-image");
 							
-		var viewerLink = $.fn.create("a")
-							.attr("href", contentItem.viewerURL)
-							.append(thumbnail);
+		var viewerLink = $.fn.create("a").append(thumbnail);
+							
 		
 		var wrapper = $.fn.create("div")
 							.addClass("preview-image-wrapper")
@@ -283,7 +282,14 @@ $(document).ready(function() {
 		$(div).expandopanel("getContent").append(wrapper);
 		
 		
-		viewerLink.fancybox(options);
+		//viewerLink.fancybox(options);
+		
+		$(".view-content-item-button", target)
+			.removeAttr("target") //prevent viewer from opening in new window
+			.css("display","inline-block")
+			.add(viewerLink)
+			.attr("href", contentItem.viewerURL)
+			.fancybox(options);
 		
 		$(".center", target).append(div);
 
@@ -853,6 +859,27 @@ $(document).ready(function() {
 		$("#"+PROVIDER_SELECT_ID).flyoutselect("setValueById", storeId, false);
 	};
 	
+	
+	var deleteContentItem = function(evt, contentItem){
+		evt.stopPropagation();
+		if(!dc.confirm("Are you sure you want to delete \n" + contentItem.contentId + "?")){
+			return;
+		}
+		dc.store.DeleteContentItem(contentItem, {
+			begin: function(){
+				dc.busy( "Deleting content item...");
+			},
+			success:function(){
+				dc.done();
+				$("#content-item-list").selectablelist("removeById", contentItem.contentId);
+			},
+			failure: function(message){
+				dc.done();
+				alert("failed to delete contentItem: " + message);
+			},
+		});
+	};
+	
 	var deleteSpace = function(evt, space) {
 		evt.stopPropagation();
 		if(!dc.confirm("Are you sure you want to delete \n" + space.spaceId + "?")){
@@ -961,22 +988,7 @@ $(document).ready(function() {
 
 		// attach delete button listener
 		$(".delete-content-item-button",pane).click(function(evt){
-			if(!dc.confirm("Are you sure you want to delete \n" + contentItem.contentId + "?")){
-				return;
-			}
-			dc.store.DeleteContentItem(contentItem, {
-				begin: function(){
-					dc.busy( "Deleting content item...");
-				},
-				success:function(){
-					dc.done();
-					$("#content-item-list").selectablelist("removeById", contentItem.contentId);
-				},
-				failure: function(message){
-					dc.done();
-					alert("failed to delete contentItem: " + message);
-				},
-			});
+			deleteContentItem(evt,contentItem);
 		});
 		
 		
@@ -1100,7 +1112,15 @@ $(document).ready(function() {
 	var addContentItemToList = function(contentItemId){
 		var node =  document.createElement("div");
 		var actions = document.createElement("div");
-		$(actions).append("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
+		
+		var deleteButton = $("<button class='delete-space-button featured icon-only'><i class='pre trash'></i></button>");
+		deleteButton.click(function(evt){
+			deleteContentItem(evt,
+								{storeId: getCurrentProviderStoreId(), 
+								 spaceId: getCurrentSpaceId(), 
+								 contentId: contentItemId});
+		});
+		$(actions).append(deleteButton);
 		$(node).attr("id", contentItemId)
 			   .html(contentItemId)
 			   .append(actions);
@@ -1212,8 +1232,8 @@ $(document).ready(function() {
 	};
 	
 
-	$("#content-item-list").selectablelist({});
-	$("#spaces-list").selectablelist({});
+	$("#content-item-list").selectablelist({selectable: false});
+	$("#spaces-list").selectablelist({selectable: false});
 
 	var DEFAULT_FILTER_TEXT = "filter";
 
@@ -1488,5 +1508,7 @@ $(document).ready(function() {
 
 	// hides the title bar on all dialogs;
 	$(".ui-dialog-titlebar").hide();
-
+	
+	//temporarily hide all the checkboxes;
+	$("input[type=checkbox]").css("visibility", "hidden");
 });

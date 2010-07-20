@@ -132,13 +132,13 @@ $.widget("ui.metadataviewer",
 				controls.append(
 					$(document.createElement("td"))
 						.addClass("name")
-						.html("<input type='text' class='name-txt' size='15'/>")
+						.html("<div><label>Name</label></div><div><input type='text' class='name-txt' size='15'/></div>")
 				);
 
 				controls.append(
 						$(document.createElement("td"))
 							.addClass("value")
-							.html("<input type='text' class='value-txt' size='20'/><input type='button' value='+'/><div class='dc-expando-status'></div>")
+							.html("<div><label>Value</label></div><div><input type='text' class='value-txt' size='20'/><input type='button' value='+'/><div class='dc-expando-status'></div></div>")
 					);
 				
 				return controls;

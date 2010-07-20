@@ -185,16 +185,19 @@ $.widget("ui.selectablelist",{
 		$(item).addClass(itemClass);
 
 		if(options.selectable){
-			$(item).prepend("<input type='checkbox'/>")
-				.children()
-				.last()
-				.addClass(actionClass)
-				.addClass("float-r");
-		
+			$(item).prepend("<input type='checkbox'/>");
 			$(item).children().first().change(function(evt){
 				 that._itemSelectionStateChanged(evt.target);
 			});
 		}
+
+		$(item).children("div")
+		.last()
+		.addClass("float-r")
+		.addClass(actionClass);
+
+
+		
 		//bind mouse action listeners
 		$(item).find("."+actionClass).andSelf().click(function(evt){
 			var item = $(evt.target).nearestOfClass(itemClass);

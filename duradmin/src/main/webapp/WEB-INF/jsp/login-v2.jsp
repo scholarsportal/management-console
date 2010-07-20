@@ -43,13 +43,8 @@
 				</div>
 				
 				<div id="login-footer" class="outer footer clearfix">
-					<div class="footer-content">					
-						<div class="float-r" id="logo-ds"></div>
-						Duracloud Administrator Release 0.4  <span class="sep">|</span>
-						©<script type="text/javascript">document.write(new Date().getFullYear());</script>
-						<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
-						<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
-						<a target="_blank" href="#">Contact Us</a>
+					<div class="footer-content">		
+						<%@include file="/WEB-INF/jsp/include/footer.jsp" %>
 					</div>
 				</div>
 			</div>

@@ -38,12 +38,7 @@
 <div class="ui-layout-south footer">
 	 <tiles:insertAttribute name="main-footer" />
 	<div class="outer" id="footer-content">
-		<div class="float-r" id="logo-ds"></div>
-		Duracloud Administrator Release 0.4  <span class="sep">|</span>
-		©<script type="text/javascript">document.write(new Date().getFullYear());</script>
-		<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>  <span class="sep">|</span>
-		<a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>  <span class="sep">|</span> 
-		<a target="_blank" href="#">Contact Us</a>
+		<%@include file="/WEB-INF/jsp/include/footer.jsp" %>
 	</div>
 
 </div>	

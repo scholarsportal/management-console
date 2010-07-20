@@ -373,6 +373,9 @@ h3 { font-size:1em; }
 	vertical-align:middle;
 }
 
+.dc-item {
+	min-height:20px;	
+}
 .dc-item-list td,
 .dc-item-list th
 {
@@ -427,7 +430,9 @@ input.dc-check-all
 }
 
 .dc-item div:first-child {
-	float:left;
+	/*
+	
+	float:left;*/
 }
 
 .dc-item-list .dc-action-panel{
@@ -813,16 +818,18 @@ span.label
 	color: white;
 }
 
+
+
 .ui-glasspane {
-	filter:alpha(opacity=0.10);
-	-moz-opacity:0.10;
-	-khtml-opacity: 0.10;
-	opacity: 0.10;
-	background: #2886c0 url('../images/wait.gif') no-repeat center center;
+	filter:alpha(opacity=0.25);
+	-moz-opacity:0.25;
+	-khtml-opacity: 0.25;
+	opacity: 0.25;
+	background: #2886c0 url('../images/loading-bar-green.gif') no-repeat center center;
 	position: absolute;
 	text-align:center;
 	vertical-align:middle;
-		
+	
 }
 
 div.ui-glasspane-message {
@@ -830,8 +837,9 @@ div.ui-glasspane-message {
 	-moz-opacity:1.0;
 	-khtml-opacity: 1.0;
 	border: 1px solid blue;
-	background: white;
-	width:300px;	
+	background: white url('../images/loading-bar-green.gif') no-repeat center center;
+	min-width:300px;	
+	min-height:125px;
 	float:right;
 }
 
@@ -839,8 +847,6 @@ div.ui-glasspane-message {
 	filter:alpha(opacity=1.0);
 	-moz-opacity:1.0;
 	-khtml-opacity: 1.0;
-	
-	background: white;
 	font-size: 1.5em;
 	padding:5px;
 	text-align:left;	
