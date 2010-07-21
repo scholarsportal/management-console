@@ -847,9 +847,14 @@ span.label,
 	margin-left:10px;
 }
 
-#static-panel h2,p{
+#static-panel h2,h3,p,ul{
 	margin-bottom:10px;
 	margin-left:10px;
+}
+
+#static-panel li{
+	list-style-type: disc;
+	margin-left:20px;
 }
 
 #static-panel p{

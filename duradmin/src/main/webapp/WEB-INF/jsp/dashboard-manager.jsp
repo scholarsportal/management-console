@@ -34,8 +34,19 @@
 						<p>
 						The service builds on the pure storage from expert storage providers by overlaying the access functionality and preservation support tools that are essential to ensuring long-term access and durability. DuraCloud offers cloud storage across multiple commercial and non commercial providers, and offers compute services that are key to unlocking the value of digital content stored in the cloud. DuraCloud provides services that enable digital preservation, data access, transformation, and data sharing. Customers are offered "elastic capacity" coupled with a "pay as you go" approach. DuraCloud is appropriate for individuals, single institutions, or for multiple organizations that want to use cross-institutional infrastructure.
 						</p>
-						<p>DuraCloud has been in a pilot phase since the beginning of Fall 2009 and will be released as a service of the DuraSpace not-for-profit organization in the fall of 2010.
-						</p>
+
+						<p>
+						You can get started by <a href="<c:url value='/spaces'/>">adding a space</a> or 
+						 <a href="<c:url value='/services'/>">deploying a service</a>
+						</p>						
+						<h3>Useful Links</h3>
+						
+						<ul>
+							<li><a href="http://wiki.duraspace.org/display/duracloud/DuraCloud">Wiki</a></li>
+							<li><a href="http://jira.duraspace.org/browse/DURACLOUD">Issue Tracker</a></li>
+							<li><a href="http://duracloud.org">Duracloud.org</a></li>
+						
+						</ul>
 						
 				</div>
 			</tiles:putAttribute>

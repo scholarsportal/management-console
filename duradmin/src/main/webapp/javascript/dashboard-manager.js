@@ -27,7 +27,7 @@ $(document).ready(function() {
 	});
 	
 	var users = $("#current-users").expandopanel({title: "Current Users"});
-	$(users).expandopanel("getContent").append("<h3>Coming soon...</h3>");
+	$(users).expandopanel("getContent").append("<h3>Coming soon.</h3>");
 
 	var announcements = $("#announcements").expandopanel({title: "Announcements"});
 	/*
@@ -40,6 +40,6 @@ $(document).ready(function() {
 	   });
 	*/
 	 var content = $(announcements).expandopanel("getContent");
-	 content.append("<h3>Coming soon...</h3>");
+	 content.append("<h3>Coming soon.</h3>");
 
 });
