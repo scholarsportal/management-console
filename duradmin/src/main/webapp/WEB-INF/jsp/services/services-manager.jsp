@@ -48,6 +48,7 @@
 					<h2>
 						<span class="service-name"> Name</span> 
 						<span class="service-version">Version</span>
+						<input type="hidden" value="" id="deployment-id"/>
 					</h2>
 					<div class="toggle-control flex switch-holder">
 					    <div class="r">

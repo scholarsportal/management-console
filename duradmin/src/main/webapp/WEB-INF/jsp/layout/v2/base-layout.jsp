@@ -5,15 +5,10 @@
 		<div id="dc-tabs-panel">
 		    <ul class="horizontal-list dc-main-tabs flex clearfix">
 		    	<tiles:importAttribute name="mainTab" />
-		        <!-- 
 		        <li class="${mainTab == 'dashboard' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/dashboard"><span>Dashboard</span></a></li>
-		         -->
-		        
 		        <li class="${mainTab == 'spaces' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/spaces"><span>Spaces</span></a></li>
 		        <li class="${mainTab == 'services' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/services"><span>Services</span></a></li>
 		        <li class="${mainTab == 'admin' ? 'selected':'' }"><a href="${pageContext.request.contextPath}/admin"><span>Administration</span></a></li>
-
-
 		        <!-- 
 		        <li class="${mainTab == 'reports' ? 'selected':'' }"><a href="javascript:void(1); alert('Reports click')"><span>Reports</span></a></li>
 		     	-->
@@ -43,7 +38,10 @@
 
 </div>	
 
-<div id="loading-message" style="display:none">
-Loading...
+<div id="busy-dialog" class="dialog" style="display:none">
+	<h2 id="busy-dialog-title"></h2>
+	<div id="busy-dialog-progressbar">
+	
+	</div>
 </div>
 	

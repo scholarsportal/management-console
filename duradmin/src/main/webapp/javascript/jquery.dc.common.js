@@ -243,12 +243,39 @@ var dc;
 	
 	};
 	
+
+	
 	dc.busy = function(message){
-		$("#page-content").glasspane("show", message);
+		var d = 
+		   $("#busy-dialog");
+		
+		d.dialog({
+				autoOpen: false,
+				show: 'fade',
+				hide: 'fade',
+				resizable: false,
+				height: 100,
+				closeOnEscape:false,
+				modal: false,
+				width:300,
+				close: function() {
+					
+				},
+				
+				open: function(e){
+				},
+			   });
+		
+		$(".ui-dialog-titlebar").hide();
+		
+		//$("#page-content").glasspane("show", message);
+	   $("#busy-dialog-title").html(message);
+	   d.dialog("open");
 	};
 	
 	dc.done = function(){
-		$("#page-content").glasspane("hide");
+		//$("#page-content").glasspane("hide");
+		$("#busy-dialog").dialog("close");
 	};
 
 	

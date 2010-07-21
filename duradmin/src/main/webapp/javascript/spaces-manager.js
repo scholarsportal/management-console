@@ -457,7 +457,7 @@ $(document).ready(function() {
 					var error = false;
 					for(i in data.taskList){
 						var props = data.taskList[i].properties;
-						if(props.bytesRead < props.totalBytes && props.totalBytes > 0 && props.state =='running'){
+						if(props.state =='running'){
 							inprogress = true;
 						}
 					}
@@ -528,7 +528,6 @@ $(document).ready(function() {
 								
 							},
 							failure: function(text){
-								$("#add-space-dialog").dialog().glasspane("hide");
 								alert("add space failed: " + text);
 							},
 						}
@@ -598,7 +597,6 @@ $(document).ready(function() {
 		
 	});
 
-	$("#add-space-dialog").dialog().glasspane({});
 
 
 	$('.add-space-button').live("click",
@@ -1497,10 +1495,7 @@ $(document).ready(function() {
 	};
 	
 	
-	// $("#spaces-list-view").glasspane({});
-	// $("#content-item-list-view").glasspane({});
-	// $("#detail-pane").glasspane({});
-	$("#page-content").glasspane({});
+	//$("#page-content").glasspane({});
 
 	
 	

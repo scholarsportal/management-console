@@ -70,6 +70,7 @@ $(document).ready(function() {
 		//set the title of the pane
 		$(".service-name", serviceDetailPane.first()).html(service.displayName);
 		$(".service-version", serviceDetailPane.first()).html(service.serviceVersion);
+		$("#deployment-id", serviceDetailPane.first()).val(deriveDeploymentId(service,deployment));
 		
 		var centerPane = $(".center",serviceDetailPane.first());
 		centerPane.html("");
@@ -218,7 +219,6 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var defaultServiceSet = false;
 		
 		for(i in services){
 			var service = services[i];
@@ -234,14 +234,10 @@ $(document).ready(function() {
 								.append($.fn.create("td").html(deployment.status[0]));
 								
 				servicesList.selectablelist('addItem',item,{service:service, deployment:deployment});	   
-			
-				if(!defaultServiceSet){
-					loadDeploymentDetail(service,deployment);
-					defaultServiceSet = true;
-				}		
 			}
 		}
-		
+
+
 		table.show();
 		//bind for current item change listener
 		servicesList.bind("currentItemChanged", function(evt,state){
@@ -257,6 +253,7 @@ $(document).ready(function() {
 			loadDeploymentDetail(service,deployment);
 		});
 
+
 	};
 	
 	
@@ -268,8 +265,13 @@ $(document).ready(function() {
 			},
 			success: function(data){
 				dc.done();
-				//alert("deployed services returned!");
 				loadDeployedServiceList(data.services);
+				var id = $(detailPaneId + " #deployment-id").val();
+				if(id != null && id != undefined){
+					$(servicesListId).selectablelist("setCurrentItemById", id, true);
+				}else{
+					$(servicesListId).selectablelist("setFirstItemAsCurrent");
+				}
 			},
 			failure: function(text){
 				dc.done();
@@ -489,6 +491,7 @@ $(document).ready(function() {
 					type: "POST",
 					success: function(data){
 						dc.done();
+						loadDeploymentDetail(data.serviceInfo, data.deployment);
 						refreshDeployedServices();
 					},
 				
@@ -512,10 +515,6 @@ $(document).ready(function() {
 
 	$(".ui-dialog-titlebar").hide();
 
-	$("#page-content").glasspane({});
-
-	
-	//alert("about to execute refresh");
 	setTimeout(function(){
 		refreshDeployedServices();
 	}, 1000);

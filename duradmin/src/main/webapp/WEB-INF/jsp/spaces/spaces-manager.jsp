@@ -226,14 +226,16 @@
 			</tiles:putAttribute>
 
 			<tiles:putAttribute name="main-footer">
-				<div id="status-holder"><a href="javascript:void(0)"
-					id="view-uploads"><span id="upload-status-label">Upload Status:</span> 
-				</a>
+				<div id="status-holder">
+					<a href="javascript:void(0)" id="view-uploads">
+						<span id="upload-status-label">Upload Status:</span> 
+					</a>
+				</div>
 				<div id="upload-viewer">
-				<h1>Uploads</h1>
-				<div id="upload-list-wrapper"></div>
+					<h1>Uploads</h1>
+					<div id="upload-list-wrapper"></div>
 				</div>
-				</div>
+
 			</tiles:putAttribute>
 		</tiles:insertDefinition>
 	</tiles:putAttribute>

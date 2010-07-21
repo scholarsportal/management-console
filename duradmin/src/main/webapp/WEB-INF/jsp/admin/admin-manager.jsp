@@ -80,7 +80,6 @@
 				<ul>
 					<li class="row clearfix"><label for="username">Username</label><input type="text" name="username" id="username" class="field" /></li>
 					<li class="row clearfix"><label for="password">Password</label><input type="password" name="password" id="password" class="field" /></li>
-					<li class="row clearfix"><label for="passwordRetype">Retype Password</label><input type="password" name="retypePassword" id="retypePassword" class="field" /></li>
 				</ul>
 				</fieldset>
 				</div>

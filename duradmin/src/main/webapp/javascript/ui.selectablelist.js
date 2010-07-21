@@ -172,6 +172,13 @@ $.widget("ui.selectablelist",{
 		 this._fireCurrentItemChanged($("#"+id, this.element), notify);
 	},
 	
+	setFirstItemAsCurrent: function(){
+		 var first = this.element.children().first();
+		 if(first != undefined && first !=null){
+			 this._fireCurrentItemChanged(first, true);
+		 }
+	},
+	
 	currentItem:function(){
 		return this._currentItem;
 	},
