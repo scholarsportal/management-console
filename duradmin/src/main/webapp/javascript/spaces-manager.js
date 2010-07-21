@@ -136,12 +136,20 @@ $(document).ready(function() {
 	};
 
 	var loadVideo = function(target, contentItem){		
+		loadMedia(target,contentItem, "Watch");
+	}	
+
+	var loadAudio = function(target, contentItem){		
+		loadMedia(target,contentItem, "Listen");
+	}	
+
+	var loadMedia = function(target, contentItem, title){		
 		
 		
 		var viewer = $.fn.create("div").attr("id", "mediaspace");
 		
 		var div = $.fn.create("div")
-		.expandopanel({title: "Watch"});
+		.expandopanel({title: title});
 		
 		$(div).expandopanel("getContent").css("text-align", "center").append(viewer);
 		$(".center", target).append(div);
@@ -223,6 +231,7 @@ $(document).ready(function() {
 
 	};
 
+	/*
 	var loadAudio = function(target, contentItem){
 		var viewer = $.fn.create("embed")
 		.attr("src", contentItem.viewerURL)
@@ -240,6 +249,7 @@ $(document).ready(function() {
 		$(".center", target).append(div);
 		
 	};
+	*/
 
 
 	
