@@ -68,6 +68,7 @@ $(document).ready(function() {
 		var centerPane = $(".center",userDetailPane.first());
 		centerPane.html("");
 		
+		/*
 		var userDetails = new Array();
 		for(i in user){
 			userDetails.push([i, user[i]]);
@@ -81,7 +82,7 @@ $(document).ready(function() {
                  }
 			)
 		);
-
+		*/
 		$(".change-password-button", userDetailPane).click(function(evt){
 			var d = $("#change-password-dialog");
 			$("#username",d).val(user.username);
