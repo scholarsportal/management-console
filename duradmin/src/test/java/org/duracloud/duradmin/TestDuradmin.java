@@ -24,7 +24,7 @@ public class TestDuradmin extends DuradminTestBase {
 
     @Test
     public void testSpaces() throws Exception {
-        String url = getBaseUrl() + "/spaces.htm";
+        String url = getBaseUrl() + "/login";
         HttpResponse response = restHelper.get(url);
         Assert.assertEquals(200, response.getStatusCode());
 
