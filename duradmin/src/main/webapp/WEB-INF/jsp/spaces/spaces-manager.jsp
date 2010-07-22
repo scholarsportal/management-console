@@ -156,17 +156,22 @@
 				<h1>Add Space</h1>
 				<p class="hint">Add a Space to the current provider. All fields
 				are required.</p>
-				<div id="add-space-help-content" class="hint">
-				<h3>About Adding a New Space</h3>
-				<div>
-				<p>here's some help text</p>
-				</div>
+				<div class="hint">
+					<h2>Space ID's must follow these rules:</h2>
+					<ul class="bullets">
+						<li>Must be 3 to 63 characters long</li>
+						<li>ONLY use lowercase letters, numbers, periods, and dashes</li>
+						<li>Do NOT use spaces or underscores</li>
+						<li>Do NOT start or end with a dash</li>
+						<li>Do NOT format as an IP address, like 10.1.10.8</li>
+						<li>Do NOT use these combinations of period and dashes: '..' '-.' or '.-'</li>
+					</ul>
 				</div>
 				<form id="add-space-form">
 				<div id="form-fields" class="form-fields">
 				<fieldset>
 				<ul>
-					<li class="row clearfix first-of-type"><label for="spacename">Name</label><input
+					<li class="row clearfix first-of-type"><label for="spacename">Space ID</label><input
 						type="text" name="spaceId" id="spaceId" class="field" /></li>
 					<li class="row clearfix"><label for="access">Access</label><span
 						name="access" class="access-switch">access control here</span></li>

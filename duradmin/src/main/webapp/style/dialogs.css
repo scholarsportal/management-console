@@ -54,11 +54,39 @@
 	margin-bottom:5px;
 }
 
-.ui-dialog .hint
+.hint
 {
-	color:#999;
 	font-size:13px;
+}
+
+.ui-dialog .hint { 	color:#999; }
+.ui-dialog div.hint
+{
+	-moz-border-radius:5px;	
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	background-color:#585B5E;
 	margin:10px 0;
+	padding:10px;
+}
+
+.ui-dialog div.hint h2 { color:#bbb; }
+
+.dialog-open {
+	border:1px solid  red !important;
+}
+
+.dialog-closed {
+	border:1px solid  blue !important;
+}
+
+.ui-dialog label.error
+{
+	/*background-color:#cc0000;*/
+	color:#ffcc00;
+	font-size:11px;
+	margin:1px 0 0 2px;
+	padding:1px 5px;
 }
 
 .ui-dialog-content
