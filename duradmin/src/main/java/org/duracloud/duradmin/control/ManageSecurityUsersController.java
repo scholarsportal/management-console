@@ -33,45 +33,71 @@ import org.springframework.web.servlet.mvc.AbstractCommandController;
  */
 public class ManageSecurityUsersController extends AbstractCommandController {
 
+    private final Logger log = LoggerFactory.getLogger(
+        ManageSecurityUsersController.class);
+
+    private DuracloudUserDetailsService userDetailsService;
+
     public ManageSecurityUsersController() {
-    	setCommandClass(SecurityUserCommand.class);
-    	setCommandName("users");
-	}
-
-	private final Logger log = LoggerFactory.getLogger(ManageSecurityUsersController.class);
-
-	private DuracloudUserDetailsService userDetailsService;
-
-	public DuracloudUserDetailsService getUserDetailsService() {
-		return userDetailsService;
-	}
-
-	public void setUserDetailsService(DuracloudUserDetailsService userDetailsService) {
-		this.userDetailsService = userDetailsService;
-	}
-
-
-
-    
-
-
-    private SecurityUserBean getUser(SecurityUserCommand cmd) {
-        for(SecurityUserBean user : cmd.getUsers()){
-        	if(user.getUsername().equals(cmd.getUsername())){
-        		return user;
-        	}
-        }
-        return null;
-	}
-
-	private ModelAndView saveAndReturnModel(SecurityUserCommand cmd,
-			SecurityUserBean user) throws Exception {
-        pushUpdates(cmd.getUsers());
-    	return new ModelAndView("jsonView", "user", user);
+        setCommandClass(SecurityUserCommand.class);
+        setCommandName("users");
     }
 
+    @Override
+    protected ModelAndView handle(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  Object command,
+                                  BindException errors) throws Exception {
+        SecurityUserCommand cmd = (SecurityUserCommand) command;
+        cmd.setUsers(this.userDetailsService.getUsers());
+        String verb = cmd.getVerb();
+        String username = cmd.getUsername();
+        String password = cmd.getPassword();
 
-	private void pushUpdates(List<SecurityUserBean> users) throws Exception {
+        if (verb.equalsIgnoreCase("add")) {
+            List<String> grants = new ArrayList<String>();
+            grants.add("ROLE_USER");
+            SecurityUserBean user = new SecurityUserBean(username,
+                                                         password,
+                                                         grants);
+            cmd.addUser(user);
+            log.info("added user {}", user.getUsername());
+            return saveAndReturnModel(cmd, user);
+
+        } else if (verb.equalsIgnoreCase("remove")) {
+            SecurityUserBean user = getUser(cmd);
+            cmd.removeUser(user.getUsername());
+            log.info("removed user {}", username);
+            return saveAndReturnModel(cmd, user);
+
+        } else if (verb.equalsIgnoreCase("modify")) {
+            SecurityUserBean user = getUser(cmd);
+            user.setPassword(password);
+            log.info("updated password for user {}", username);
+            return saveAndReturnModel(cmd, user);
+
+        } else {
+            return new ModelAndView("admin-manager", "users", cmd.getUsers());
+        }
+    }
+
+    private SecurityUserBean getUser(SecurityUserCommand cmd) {
+        for (SecurityUserBean user : cmd.getUsers()) {
+            if (user.getUsername().equals(cmd.getUsername())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private ModelAndView saveAndReturnModel(SecurityUserCommand cmd,
+                                            SecurityUserBean user)
+        throws Exception {
+        pushUpdates(cmd.getUsers());
+        return new ModelAndView("jsonView", "user", user);
+    }
+
+    private void pushUpdates(List<SecurityUserBean> users) throws Exception {
         // update duradmin.
         userDetailsService.setUsers(users);
         log.debug("pushed updates to user details service");
@@ -85,53 +111,27 @@ public class ManageSecurityUsersController extends AbstractCommandController {
         Application duraservice = getDuraServiceApp();
         duraservice.setSecurityUsers(users);
         log.debug("pushed updates to duraservice");
-
-    	
-	}
+    }
 
     private Application getDuraStoreApp() {
         String host = DuradminConfig.getDuraStoreHost();
         String port = DuradminConfig.getDuraStorePort();
         String ctxt = DuradminConfig.getDuraStoreContext();
         return new Application(host, port, ctxt);
-    }    
+    }
 
     private Application getDuraServiceApp() {
         String host = DuradminConfig.getDuraServiceHost();
         String port = DuradminConfig.getDuraServicePort();
         String ctxt = DuradminConfig.getDuraServiceContext();
-        return new Application(host,port,ctxt);
+        return new Application(host, port, ctxt);
     }
 
-	@Override
-	protected ModelAndView handle(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException errors)
-			throws Exception {
-        SecurityUserCommand cmd = (SecurityUserCommand) command;
-        cmd.setUsers(this.userDetailsService.getUsers());
-        String verb = cmd.getVerb();
-        if (verb.equalsIgnoreCase("add")) {
-            String username = cmd.getUsername();
-            String password = cmd.getPassword();
-            List<String> grants = new ArrayList<String>();
-            grants.add("ROLE_USER");
-            SecurityUserBean user = new SecurityUserBean(username, password, grants);
-            cmd.addUser(user);
-            log.info("added user {}", user.getUsername());
-            return saveAndReturnModel(cmd, user);
-        } else if (verb.equalsIgnoreCase("remove")) {
-        	SecurityUserBean user = getUser(cmd);
-        	cmd.removeUser(user.getUsername());
-        	log.info("removed user {}", cmd.getUsername());
-        	return saveAndReturnModel(cmd, user);
-        } else if (verb.equalsIgnoreCase("modify")) {
-        	SecurityUserBean user = getUser(cmd);
-        	user.setPassword(cmd.getPassword());
-        	log.info("updated password for user {}", cmd.getUsername());
-        	return saveAndReturnModel(cmd, user);
-        } else {
-            return new ModelAndView("admin-manager", "users", cmd.getUsers());
-        }
+    public DuracloudUserDetailsService getUserDetailsService() {
+        return userDetailsService;
+    }
 
-	}
+    public void setUserDetailsService(DuracloudUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 }
