@@ -79,9 +79,9 @@ $(document).ready(function() {
 		$(".deploy-switch",serviceDetailPane.first()).onoffswitch({
 			   		initialState: "on"
 								, onStateClass: "on left"
-								, onIconClass: "unlock"
+								, onIconClass: "checkbox"
 								, offStateClass: "off right"
-								, offIconClass: "lock"
+								, offIconClass: "x"
 								, onText: "Deploy"
 								, offText: "Undeploy"
 		}).bind("turnOff", function(evt, future){

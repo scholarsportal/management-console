@@ -38,6 +38,76 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/duraservice-api.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/javascript/main.js"></script>
 	<script type="text/javascript">
+		/*REMOVE THIS $.require method when we upgrade jquery to 1.4.3+*/
+		/**
+		* require is used for on demand loading of JavaScript
+		*
+		* require r1 // 2008.02.05 // jQuery 1.2.2
+		*
+		* // basic usage (just like .accordion)
+		* $.require("comp1.js");
+		*
+	
+		* @param  jsFiles string array or string holding the js file names to load
+		* @param  params object holding parameter like browserType, callback, cache
+		* @return The jQuery object
+		* @author Manish Shanker
+		*/
+	
+		(function($){
+		$.require = function(jsFiles, params) {
+	
+		var params = params || {};
+		var bType = params.browserType===false?false:true;
+	
+		if (!bType){
+		return $;
+		}
+	
+		var cBack = params.callBack || function(){};
+		var eCache = params.cache===false?false:true;
+	
+		if (!$.require.loadedLib) $.require.loadedLib = {};
+	
+		if ( !$.scriptPath ) {
+		var path = $('script').attr('src');
+		$.scriptPath = path.replace(/\w+\.js$/, '');
+		}
+		if (typeof jsFiles === "string") {
+		jsFiles = new Array(jsFiles);
+		}
+		for (var n=0; n< jsFiles.length; n++) {
+		if (!$.require.loadedLib[jsFiles[n]]) {
+		$.ajax({
+		type: "GET",
+		url: $.scriptPath + jsFiles[n],
+		success: cBack,
+		dataType: "script",
+		cache: eCache,
+		async: false
+		});
+		$.require.loadedLib[jsFiles[n]] = true;
+		}
+		}
+		//console.dir($.require.loadedLib);
+	
+		return $;
+		};
+		})(jQuery);
+	
+	$.require('jquery.validate.min.js');
+	$.require('jquery.form-2.4.3.js');
+	$.require('jquery.validate.min.js');
+	$.require('jquery.ba-throttle-debounce.min.js');
+	$.require('jquery.layout.min-1.2.0.js');
+	$.require('jquery.dc.common.js');
+	$.require('ui.onoffswitch.js');
+	$.require('ui.selectablelist.js');
+	$.require('ui.listdetailviewer.js');
+	$.require('ui.expandopanel.js');
+	$.require('durastore-api.js');
+	$.require('duraservice-api.js');
+	$.require('main.js');
 	$(document).ready(function() {
 
 		///////////////////////////////////////////////////////////////////////

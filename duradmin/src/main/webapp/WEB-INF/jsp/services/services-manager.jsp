@@ -50,7 +50,7 @@
 						<span class="service-version">Version</span>
 						<input type="hidden" value="" id="deployment-id"/>
 					</h2>
-					<div class="toggle-control flex switch-holder">
+					<div class="toggle-control switch-holder">
 					    <div class="r">
 					    	<span>
 					    		Status

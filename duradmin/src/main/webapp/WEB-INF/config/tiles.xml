@@ -4,15 +4,6 @@
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
-    <definition name="users" template="/WEB-INF/jsp/users.jsp"/>
-
-	<definition name="error" extends="base" template="/WEB-INF/jsp/error.jsp">
-		<put-attribute name="mainTab" value="" />
-		<put-attribute name="menu" value=""/>
-	</definition>
-
-	<definition name="exception" extends="error">
-	</definition>
 
     <definition name="app-base" template="/WEB-INF/jsp/layout/v2/base.jsp">
             <put-attribute name="title" value="title" />
@@ -29,6 +20,15 @@
         <put-attribute name="main-footer" value=""/>
 
 	</definition>
+
+	<definition name="error" extends="base" template="/WEB-INF/jsp/error.jsp">
+		<put-attribute name="mainTab" value="" />
+		<put-attribute name="menu" value=""/>
+	</definition>
+
+	<definition name="exception" extends="error">
+	</definition>
+
 	 
 	<definition name="login" template="/WEB-INF/jsp/login-v2.jsp"/>
  	 
