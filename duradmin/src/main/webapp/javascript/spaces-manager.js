@@ -142,14 +142,14 @@ $(document).ready(function() {
 	};
 
 	var loadVideo = function(target, contentItem){		
-		loadMedia(target,contentItem, "Watch");
+		loadMedia(target,contentItem, "Watch","video");
 	}	
 
 	var loadAudio = function(target, contentItem){		
-		loadMedia(target,contentItem, "Listen");
+		loadMedia(target,contentItem, "Listen","audio");
 	}	
 
-	var loadMedia = function(target, contentItem, title){		
+	var loadMedia = function(target, contentItem, title,/*audio or video*/type){		
 		
 		
 		var viewer = $.fn.create("div").attr("id", "mediaspace");
@@ -172,7 +172,8 @@ $(document).ready(function() {
 					if(service.contentId.indexOf('mediastreamingservice') > -1){
 						streamingService = service;
 						var deployments = streamingService.deployments;
-						var sourceMediaSpace = null;
+						var sourceMediaSpace = false;
+						
 						var j;
 						for(j in deployments){
 							var deployment = deployments[j];
@@ -181,13 +182,13 @@ $(document).ready(function() {
 							var m;
 							for(m in userConfigs){
 								var uc = userConfigs[m];
-								if(uc.name == "mediaSourceSpaceId"){
-									sourceMediaSpace = uc.displayValue;
+								if(uc.name == "mediaSourceSpaceId" && uc.displayValue == contentItem.spaceId){
+									sourceMediaSpace = true;
 									break;
 								}
 							}
 
-							if(sourceMediaSpace != null){
+							if(sourceMediaSpace){
 								dc.service.GetServiceDeploymentConfig(streamingService, deployment,{
 									success: function(data) {
 										var streamingHost = null;
@@ -219,15 +220,20 @@ $(document).ready(function() {
 							}
 						}
 						
-						if(sourceMediaSpace == null){
-							viewer.html("<p>No streaming service is running against this space. " + 
+						if(!sourceMediaSpace){
+							viewer.html("<p>No streaming service is running against this space." + 
 							"Please reconfigure the streaming service to use this space as the source.</p>");
+							viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
+							viewer.append(createHTML5MediaTag(contentItem,type));
 						}
 					}
 				}
 				
 				if(streamingService == null){
-					viewer.html("The media stream services must be running to view video for this space.");
+					viewer.html("<p>The media stream services must be running to stream audio/video files for this space.</p");
+					viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
+
+					viewer.append(createHTML5MediaTag(contentItem, type));
 				}
 			},
 			failure: function(text){
@@ -237,26 +243,27 @@ $(document).ready(function() {
 
 	};
 
-	/*
-	var loadAudio = function(target, contentItem){
-		var viewer = $.fn.create("embed")
-		.attr("src", contentItem.viewerURL)
-		.attr("autoplay", "false");
-		
-		var wrapper = $.fn.create("div")
-				.addClass("preview-image-wrapper")
-				.append(viewer);
-		
-		var div = $.fn.create("div")
-		.expandopanel({title: "Listen"});
-		
-		$(div).expandopanel("getContent").append(viewer);
-		
-		$(".center", target).append(div);
-		
-	};
-	*/
+	var createHTML5MediaTag = function(contentItem,type){
+		return type == 'audio' ? createHTML5AudioTag(contentItem) : createHTML5VideoTag(contentItem);
+	}
 
+	var createHTML5AudioTag = function(contentItem){
+		return $.fn.create("audio")
+		.attr("src", contentItem.viewerURL)
+		.attr("loop", "false")
+		.attr("preload", "false")
+		.attr("controls", "true");
+	};
+
+	var createHTML5VideoTag = function(contentItem){
+		return $.fn.create("video")
+		.attr("src", contentItem.viewerURL)
+		.attr("loop", "false")
+		.attr("preload", "false")
+		.attr("width", "350")
+		.attr("height", "216")
+		.attr("controls", "true");
+	};
 
 	
 	var loadPreview = function(target, contentItem){
@@ -1509,10 +1516,6 @@ $(document).ready(function() {
 
 		refreshSpaces(currentProviderId);
 	};
-	
-	
-	//$("#page-content").glasspane({});
-
 	
 	
 	initSpacesManager();
