@@ -223,17 +223,16 @@ $(document).ready(function() {
 						if(!sourceMediaSpace){
 							viewer.html("<p>No streaming service is running against this space." + 
 							"Please reconfigure the streaming service to use this space as the source.</p>");
-							viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
-							viewer.append(createHTML5MediaTag(contentItem,type));
+							//viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
+							//viewer.append(createHTML5MediaTag(contentItem,type));
 						}
 					}
 				}
 				
 				if(streamingService == null){
 					viewer.html("<p>The media stream services must be running to stream audio/video files for this space.</p");
-					viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
-
-					viewer.append(createHTML5MediaTag(contentItem, type));
+					//viewer.append("<p>The player below will work on HTML5 compliant browsers only.");
+					//viewer.append(createHTML5MediaTag(contentItem, type));
 				}
 			},
 			failure: function(text){
