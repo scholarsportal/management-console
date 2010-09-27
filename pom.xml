@@ -4,7 +4,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>duracloud-priv</artifactId>
   <packaging>pom</packaging>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.7.0-SNAPSHOT</version>
   <name>DuraCloud Internal</name>
   <url>http://duracloud.org</url>
 
@@ -55,8 +55,8 @@
   </organization>
 
   <modules>
-    <module>mainwebapp</module>
-    <module>duradmin</module>
+    <module>account-management-util</module>
+    <module>account-management-app</module>
   </modules>
 
   <profiles>
