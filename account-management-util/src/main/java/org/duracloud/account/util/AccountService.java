@@ -3,7 +3,6 @@ package org.duracloud.account.util;
 import java.util.List;
 
 import org.duracloud.common.model.StorageProvider;
-import org.duracloud.security.DuracloudUserDetailsService;
 
 /**
  * An interface for manipulating account data.
