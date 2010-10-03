@@ -97,13 +97,15 @@ public interface AccountService {
 	
 	/**
 	 * 
+	 * @param username
 	 */
-	public void revokeAdminPrivileges();
+	public void revokeAdminPrivileges(String username);
 	
 	/**
 	 * 
+	 * @param username
 	 */
-	public void grantAdminPrivileges();
+	public void grantAdminPrivileges(String username);
 	
 	/**
 	 * 
