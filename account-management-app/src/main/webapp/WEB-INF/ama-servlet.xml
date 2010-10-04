@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:tx="http://www.springframework.org/schema/tx"
-  xmlns:util="http://www.springframework.org/schema/util" 
-  
   xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -11,35 +8,8 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/util 
         http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
-  <context:annotation-config />
-  <context:component-scan base-package="org.duracloud" />
-
-  <bean id="handlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-    <!--
-      <property name="interceptors"> <bean class="org.duracloud.account.app.interceptor.MyInterceptor" />
-      </property>
-    -->
-
-  </bean>
-
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-    <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView" />
-    <property name="order" value="1" />
-  </bean>
-  <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
-    <property name="definitions">
-      <list>
-        <value>/WEB-INF/defs/general.xml</value>
-      </list>
-    </property>
-    <!-- resolving preparer names as Spring bean definition names -->
-    <property name="preparerFactoryClass" value="org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory" />
-  </bean>
-  <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
-    <property name="prefix" value="/WEB-INF/jspx/" />
-    <property name="suffix" value=".jspx" />
-  </bean>
+        
+  <import resource="config/ama-app-config.xml" />  
+  <import resource="config/security-config.xml" />  
 </beans>
 

@@ -75,6 +75,11 @@
       <url>http://maven.springframework.org/snapshot</url>
     </repository>
 
+    <repository>
+      <id>Springframework milestone</id>
+      <url>http://maven.springframework.org/milestone</url>
+    </repository>
+
 
 
     <repository>
@@ -97,6 +102,11 @@
   <!-- Project properties -->
   <properties>
     <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
+    <!-- 
+    <org.springframework.security.version>3.1.0.M1</org.springframework.security.version>
+     -->
+    <org.springframework.security.version>2.0.4</org.springframework.security.version>
+    
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -207,6 +217,19 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>security</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.9.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- Spring framework -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -218,21 +241,7 @@
       <artifactId>org.springframework.web</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.transaction</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.orm</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.jdbc</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.web.servlet</artifactId>
@@ -259,6 +268,34 @@
       <version>${org.springframework.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${org.springframework.security.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>${org.springframework.security.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+      <version>${org.springframework.security.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${org.springframework.security.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    -->
+    
 
 
     <dependency>
