@@ -1,0 +1,32 @@
+****************************************************************************************************
+* The Account Management App        
+* @author dbernstein@duraspace.org
+****************************************************************************************************
+
+To run execute  mvn jetty:run and open http://localhost:8080/ama in your browser.
+To use an alternate port use -Djetty.port option.
+
+If you wish to run the unit tests (which include the selenium browser tests as well) you must specify
+the jetty port 9000 as in: 
+
+mvn -Djetty.port=9000 clean install;
+
+##Note:  I tried to parameterize the webapp host:port using the System.getProperty("jetty.port", "8080") method
+##		 to no avail - so for the time being the integration test url entry point is hardcoded to localhost:9000.
+## --dbernstein
+
+
+You might need to install the following packages if you want the selenium tests to work:
+
+sudo apt-get install firefox 
+sudo apt-get install xvfb
+sudo apt-get install xauth
+sudo apt-get install xfonts-base
+
+
+****************************************************************************************************
+* Eclipse Users
+****************************************************************************************************
+To generate project and classpath files for eclipse, simply run the following from the project root:
+
+mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true
