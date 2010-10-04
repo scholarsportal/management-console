@@ -17,15 +17,19 @@
   <dependencies>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.duracloud</groupId>
       <artifactId>security</artifactId>
       <version>${project.version}</version>
     </dependency>
-  </dependencies>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>storageprovider</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
+    </dependencies>
 </project>

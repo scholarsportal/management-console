@@ -2,7 +2,7 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
-import org.duracloud.common.model.StorageProvider;
+import org.duracloud.storage.domain.StorageProviderType;
 
 /**
  * An interface for manipulating account data.
@@ -67,19 +67,19 @@ public interface AccountService {
 	 * 
 	 * @return
 	 */
-	public List<StorageProvider> retrieveStorageProviders();
+	public List<StorageProviderType> retrieveStorageProviders();
 	
 	/**
 	 * 
-	 * @param storageProvider
+	 * @param storageProviderType
 	 */
-	public void addStorageProvider(StorageProvider storageProvider);
+	public void addStorageProvider(StorageProviderType storageProviderType);
 	
 	/**
 	 * 
-	 * @param storageProvider
+	 * @param storageProviderType
 	 */
-	public void removeStorageProvider(StorageProvider storageProvider);
+	public void removeStorageProvider(StorageProviderType storageProviderType);
 	
 	/**
 	 * 
