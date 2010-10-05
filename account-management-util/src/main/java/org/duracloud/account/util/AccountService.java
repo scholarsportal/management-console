@@ -1,3 +1,10 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.util;
 
 import java.util.List;
@@ -16,6 +23,7 @@ public interface AccountService {
 	 * @return
 	 */
 	public AccountDetail retrieveAccountDetail();
+
 	/**
 	 * 
 	 * @param fullName
@@ -31,13 +39,13 @@ public interface AccountService {
 	 * @return
 	 */
 	public PaymentInfo retrievePaymentInfo();
-	
+
 	/**
 	 * 
 	 * @param paymentInfo
 	 */
 	public void storePaymentInfo(PaymentInfo paymentInfo);
-	
+
 	/**
 	 * 
 	 * @param username
@@ -50,7 +58,7 @@ public interface AccountService {
 	 * @param newPassword
 	 */
 	public void changePassword(String oldPassword, String newPassword);
-	
+
 	/**
 	 * 
 	 * @param subdomain
@@ -68,44 +76,45 @@ public interface AccountService {
 	 * @return
 	 */
 	public List<StorageProviderType> retrieveStorageProviders();
-	
+
 	/**
 	 * 
 	 * @param storageProviderType
 	 */
 	public void addStorageProvider(StorageProviderType storageProviderType);
-	
+
 	/**
 	 * 
 	 * @param storageProviderType
 	 */
 	public void removeStorageProvider(StorageProviderType storageProviderType);
-	
+
 	/**
 	 * 
 	 * @param user
 	 * @throws UsernameAlreadyExistsException
 	 */
-	public void addUser(DuracloudUser user) throws UsernameAlreadyExistsException;
-	
+	public void addUser(DuracloudUser user)
+			throws UsernameAlreadyExistsException;
+
 	/**
 	 * 
 	 * @param user
 	 */
 	public void removeUser(String username);
-	
+
 	/**
 	 * 
 	 * @param username
 	 */
 	public void revokeAdminPrivileges(String username);
-	
+
 	/**
 	 * 
 	 * @param username
 	 */
 	public void grantAdminPrivileges(String username);
-	
+
 	/**
 	 * 
 	 * @return empty list

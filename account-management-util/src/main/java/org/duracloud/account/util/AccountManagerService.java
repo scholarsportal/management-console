@@ -1,5 +1,11 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.util;
-
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -8,6 +14,7 @@ package org.duracloud.account.util;
 public interface AccountManagerService {
 	/**
 	 * Returns an <code>AccountService</code> interface.
+	 * 
 	 * @param accountId
 	 * @return
 	 * @throws AccountNotFoundException
@@ -15,7 +22,6 @@ public interface AccountManagerService {
 	public AccountService getAccount(String accountId)
 			throws AccountNotFoundException;
 
-	
 	/**
 	 * 
 	 * @param username

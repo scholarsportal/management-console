@@ -1,3 +1,10 @@
+/*
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
+ */
 package org.duracloud.account.util;
 
 import java.net.InetAddress;
@@ -31,7 +38,7 @@ public interface DuracloudInstanceService {
 		STOPPED;
 
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -55,7 +62,6 @@ public interface DuracloudInstanceService {
 	 * @return
 	 */
 	public List<LogMessage> getLogMessages(Date from, Date to);
-	
 
 	/**
 	 * Returns the state of the Duracloud Instance.
@@ -64,16 +70,14 @@ public interface DuracloudInstanceService {
 	 */
 	public State getState();
 
-
 	/**
 	 * Starts the instance.
 	 * 
 	 * @throws IllegalStateException
-	 *             when method is invoked when the instance is not in the
-	 *             READY state
+	 *             when method is invoked when the instance is not in the READY
+	 *             state
 	 */
-	public void start()
-			throws IllegalStateException;
+	public void start() throws IllegalStateException;
 
 	/**
 	 * Stops the instance.
@@ -82,8 +86,7 @@ public interface DuracloudInstanceService {
 	 *             when method is invoked when the instance is not in the
 	 *             RUNNING state
 	 */
-	public void stop()
-			throws IllegalStateException;
+	public void stop() throws IllegalStateException;
 
 	/**
 	 * Restarts the instance. If instance is READY, it simply starts it up.
@@ -92,7 +95,6 @@ public interface DuracloudInstanceService {
 	 * @throws IllegalStateException
 	 *             when the instance is not in the READY or RUNNING state
 	 */
-	public void restart()
-			throws IllegalStateException;
+	public void restart() throws IllegalStateException;
 
 }
