@@ -26,7 +26,7 @@ public abstract class AbstractController {
 		
 	}
 	
-	public void destry(){
+	public void destroy(){
 		
 	}
 }

@@ -99,7 +99,7 @@ public interface AccountService {
 
 	/**
 	 * 
-	 * @param user
+	 * @param username
 	 */
 	public void removeUser(String username);
 

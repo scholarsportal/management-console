@@ -3,18 +3,16 @@
 * @author dbernstein@duraspace.org
 ****************************************************************************************************
 
-To run execute  mvn jetty:run and open http://localhost:8080/ama in your browser.
-To use an alternate port use -Djetty.port option.
+To run, execute:  
+    mvn jetty:run
+and open http://localhost:9000/ama in your browser.
 
-If you wish to run the unit tests (which include the selenium browser tests as well) you must specify
-the jetty port 9000 as in: 
+To use an alternate port use -Djetty.port option. This will update the port that jetty starts on,
+as well as the port that the unit tests connect to (see: src/test/resources/test-ama.properties).
 
-mvn -Djetty.port=9000 clean install;
-
-##Note:  I tried to parameterize the webapp host:port using the System.getProperty("jetty.port", "8080") method
-##		 to no avail - so for the time being the integration test url entry point is hardcoded to localhost:9000.
-## --dbernstein
-
+If you wish to run the unit tests (which include the selenium browser tests as well) on a port
+other than the default:9000, you must specify the jetty port with a command line property:
+    mvn -Djetty.port=9991 clean install;
 
 You might need to install the following packages if you want the selenium tests to work:
 

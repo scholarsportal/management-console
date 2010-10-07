@@ -70,8 +70,7 @@
     <!-- Maven Central Compatible Spring Snapshot Repository -->
     <repository>
       <id>org.springframework.maven.snapshot</id>
-      <name>Maven
-			Central Compatible Spring Snapshot Repository</name>
+      <name>Maven Central Compatible Spring Snapshot Repository</name>
       <url>http://maven.springframework.org/snapshot</url>
     </repository>
 
@@ -79,8 +78,6 @@
       <id>Springframework milestone</id>
       <url>http://maven.springframework.org/milestone</url>
     </repository>
-
-
 
     <repository>
       <id>openqa-snapshots</id>
@@ -113,7 +110,9 @@
 
   <!-- Build Configuration -->
   <build>
+
     <plugins>
+      
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.1</version>
@@ -122,6 +121,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -131,6 +131,14 @@
           we'll change to <artifactId>maven-jetty-plugin</artifactId>
         -->
         <configuration>
+
+          <systemProperties>
+            <systemProperty>
+              <name>jetty.port</name>
+              <value>9000</value>
+            </systemProperty>
+          </systemProperties>
+
           <webAppConfig>
             <contextPath>/ama</contextPath>
           </webAppConfig>
@@ -159,6 +167,7 @@
           </execution>
         </executions>
       </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -182,6 +191,7 @@
           </execution>
         </executions>
       </plugin>
+      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>selenium-maven-plugin</artifactId>
@@ -205,6 +215,7 @@
           </execution>
         </executions>
       </plugin>
+      
     </plugins>
   </build>
 
@@ -274,29 +285,6 @@
       <version>${org.springframework.security.version}</version>
       <scope>compile</scope>
     </dependency>
-    <!-- 
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-config</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-taglibs</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-web</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    -->
-    
-
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -356,6 +344,10 @@
       <groupId>commons-digester</groupId>
       <artifactId>commons-digester</artifactId>
       <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tiles</groupId>

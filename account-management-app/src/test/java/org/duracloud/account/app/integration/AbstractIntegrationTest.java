@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.app.integration;
 
+import org.duracloud.account.app.AMATestConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
@@ -18,14 +19,30 @@ public abstract class AbstractIntegrationTest {
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	protected DefaultSelenium sc;
-	
+    private String port;
+    private static String DEFAULT_PORT = "9000";
+
 	protected String getAppRoot() {
 		return "/ama";
 	}
-	@Before
 
-	public void before() {
-		String url = "http://localhost:9000" + getAppRoot();
+    private String getPort() throws Exception {
+        if (null == port) {
+            port = AMATestConfig.getPort();
+
+            try {
+                Integer.parseInt(port);
+
+            } catch (NumberFormatException e) {
+                port = DEFAULT_PORT;
+            }
+        }
+        return port;
+    }
+
+    @Before
+	public void before() throws Exception {
+        String url = "http://localhost:" + getPort() + getAppRoot();
 		sc = createSeleniumClient(url);
 		sc.start();
 		log.info("started selenium client on " + url);
