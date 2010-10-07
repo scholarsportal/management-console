@@ -15,7 +15,7 @@ import org.junit.Test;
  *
  *
  */
-public class HomePageTest extends AbstractIntegrationTest {
+public class TestHomePage extends AbstractIntegrationTest {
     @Test
     public void test() throws Exception {
         sc.open(getAppRoot());

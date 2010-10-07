@@ -106,6 +106,13 @@
     
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <unitTests>**/*Test.class</unitTests>
+    <integrationTests>**/Test*.class</integrationTests>
+    <instrumentedTests>**/*Test*__*.class</instrumentedTests>
+    <innerClasses>**/*$*</innerClasses>
+    <log.level.default>INFO</log.level.default>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <!-- Build Configuration -->
@@ -121,103 +128,155 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-      
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <!--
-          The jetty-maven-plugin (jetty 7.0) is generating a ClassNotFoundException and breaking the
-          tests for the time, I'm reverting back to the older (v6.x) version. When the time comes,
-          we'll change to <artifactId>maven-jetty-plugin</artifactId>
-        -->
-        <configuration>
-
-          <systemProperties>
-            <systemProperty>
-              <name>jetty.port</name>
-              <value>9000</value>
-            </systemProperty>
-          </systemProperties>
-
-          <webAppConfig>
-            <contextPath>/ama</contextPath>
-          </webAppConfig>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <stopKey>foo</stopKey>
-          <stopPort>9999</stopPort>
-        </configuration>
-        <executions>
-          <execution>
-            <id>start-jetty</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <scanIntervalSeconds>0</scanIntervalSeconds>
-              <daemon>true</daemon>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-jetty</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      
+            
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!--
-						Skip the normal tests, we'll run them in the integration-test
-						phase
-					-->
-          <skip>true</skip>
         </configuration>
-
         <executions>
           <execution>
+            <id>integrationtest</id>
             <phase>integration-test</phase>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
-              <skip>${maven.test.skip}</skip>
+              <systemProperties/>
+              <excludes>
+                <exclude>${unitTests}</exclude>
+                <exclude>${instrumentedTests}</exclude>
+                <exclude>${innerClasses}</exclude>
+                <exclude>**/integration/*</exclude>
+              </excludes>
+              <includes>
+                <include>${integrationTests}</include>
+              </includes>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>selenium-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>xvfb</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>xvfb</goal>
-            </goals>
-          </execution>
-
-          <execution>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start-server</goal>
-            </goals>
-            <configuration>
-              <background>true</background>
-            </configuration>
-          </execution>
-        </executions>
+        </executions>   
       </plugin>
       
     </plugins>
   </build>
+
+  <profiles>
+
+    <profile>
+      <id>profile-selenium</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>profile</name>
+          <value>selenium</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>selenium-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>xvfb</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>xvfb</goal>
+                </goals>
+              </execution>
+
+              <execution>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start-server</goal>
+                </goals>
+                <configuration>
+                  <background>true</background>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integrationtest</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemProperties/>
+                  <excludes>
+                    <exclude>${unitTests}</exclude>
+                    <exclude>${instrumentedTests}</exclude>
+                    <exclude>${innerClasses}</exclude>
+                  </excludes>
+                  <includes>
+                    <include>${integrationTests}</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>maven-jetty-plugin</artifactId>
+            <!--
+              The jetty-maven-plugin (jetty 7.0) is generating a ClassNotFoundException and breaking the
+              tests for the time, I'm reverting back to the older (v6.x) version. When the time comes,
+              we'll change to <artifactId>maven-jetty-plugin</artifactId>
+            -->
+            <configuration>
+
+              <systemProperties>
+                <systemProperty>
+                  <name>jetty.port</name>
+                  <value>9000</value>
+                </systemProperty>
+              </systemProperties>
+
+              <webAppConfig>
+                <contextPath>/ama</contextPath>
+              </webAppConfig>
+              <scanIntervalSeconds>5</scanIntervalSeconds>
+              <stopKey>foo</stopKey>
+              <stopPort>9999</stopPort>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-jetty</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <scanIntervalSeconds>0</scanIntervalSeconds>
+                  <daemon>true</daemon>
+                </configuration>
+              </execution>
+              <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+      
+    </profile>
+
+  </profiles>
 
   <!-- Dependencies -->
   <dependencies>
