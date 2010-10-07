@@ -16,15 +16,15 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.selenium.DefaultSelenium;
 
 public abstract class AbstractIntegrationTest {
-	protected Logger log = LoggerFactory.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
-	protected DefaultSelenium sc;
+    protected DefaultSelenium sc;
     private String port;
     private static String DEFAULT_PORT = "9000";
 
-	protected String getAppRoot() {
-		return "/ama";
-	}
+    protected String getAppRoot() {
+        return "/ama";
+    }
 
     private String getPort() throws Exception {
         if (null == port) {
@@ -41,35 +41,35 @@ public abstract class AbstractIntegrationTest {
     }
 
     @Before
-	public void before() throws Exception {
+    public void before() throws Exception {
         String url = "http://localhost:" + getPort() + getAppRoot();
-		sc = createSeleniumClient(url);
-		sc.start();
-		log.info("started selenium client on " + url);
-	}
-	
-	@After
-	public void after() {
-		sc.stop();
-		sc = null;
-		log.info("stopped selenium client");
-	}
+        sc = createSeleniumClient(url);
+        sc.start();
+        log.info("started selenium client on " + url);
+    }
 
-	/**
-	 * 	sc.isTextPresent is not working properly - 
-	 *	selenium is reporting back that the body empty
-	 *	assertTrue(sc.isTextPresent("Welcome"));
+    @After
+    public void after() {
+        sc.stop();
+        sc = null;
+        log.info("stopped selenium client");
+    }
+
+    /**
+     * sc.isTextPresent is not working properly -
+     * selenium is reporting back that the body empty
+     * assertTrue(sc.isTextPresent("Welcome"));
      *
-	 * @param text
-	 * @return
-	 */
-	protected boolean isTextPresent(String text){
-		return sc.getHtmlSource().contains(text);
-		
-	}
+     * @param text
+     * @return
+     */
+    protected boolean isTextPresent(String text) {
+        return sc.getHtmlSource().contains(text);
 
-	protected DefaultSelenium createSeleniumClient(String url) {
-		return new DefaultSelenium("localhost", 4444, "*firefox", url);
+    }
+
+    protected DefaultSelenium createSeleniumClient(String url) {
+        return new DefaultSelenium("localhost", 4444, "*firefox", url);
 	}
 
 }

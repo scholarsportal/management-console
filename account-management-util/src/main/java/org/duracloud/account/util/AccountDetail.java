@@ -9,51 +9,54 @@ package org.duracloud.account.util;
 
 /**
  * Read-only summary of salient account details.
- * 
+ *
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class AccountDetail {
-	private String id;
-	private String username;
-	private String fullName;
-	private String orgName;
-	private String email;
-	private String department;
+    private String id;
+    private String username;
+    private String fullName;
+    private String orgName;
+    private String email;
+    private String department;
 
-	protected AccountDetail(String id, String username, String fullName,
-			String email, String orgName, String department) {
-		super();
-		this.id = id;
-		this.username = username;
-		this.fullName = fullName;
-		this.email = email;
-		this.orgName = orgName;
-		this.department = department;
-	}
+    protected AccountDetail(String id,
+                            String username,
+                            String fullName,
+                            String email,
+                            String orgName,
+                            String department) {
+        super();
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.orgName = orgName;
+        this.department = department;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getFullName() {
-		return fullName;
-	}
+    public String getFullName() {
+        return fullName;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getOrgName() {
-		return orgName;
-	}
+    public String getOrgName() {
+        return orgName;
+    }
 
-	public String getDepartment() {
-		return department;
-	}
+    public String getDepartment() {
+        return department;
+    }
 
 }

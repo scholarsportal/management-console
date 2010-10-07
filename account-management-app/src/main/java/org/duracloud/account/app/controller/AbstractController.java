@@ -12,21 +12,21 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all controllers.
- * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  *
+ * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 
 public abstract class AbstractController {
-	
-	@SuppressWarnings("unused")
-	protected Logger log = LoggerFactory.getLogger(getClass());
+
+    @SuppressWarnings("unused")
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
 
-	public void init(){
-		
-	}
-	
-	public void destroy(){
-		
-	}
+    public void init() {
+
+    }
+
+    public void destroy() {
+
+    }
 }

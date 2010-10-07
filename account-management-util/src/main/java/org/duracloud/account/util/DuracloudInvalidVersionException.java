@@ -11,6 +11,6 @@ import org.duracloud.common.error.DuraCloudCheckedException;
 
 public class DuracloudInvalidVersionException extends DuraCloudCheckedException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }
