@@ -7,6 +7,9 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
+import org.duracloud.account.util.error.DuracloudInvalidVersionException;
+
 /**
  * Lifecycle operations for Duracloud instances.
  *
@@ -31,7 +34,7 @@ public interface DuracloudInstanceManagerService {
 
     /**
      * @return
-     * @throws DuracloudInstanceNotAvailableException
+     * @throws org.duracloud.account.util.error.DuracloudInstanceNotAvailableException
      *
      */
     public DuracloudInstanceService getInstance()

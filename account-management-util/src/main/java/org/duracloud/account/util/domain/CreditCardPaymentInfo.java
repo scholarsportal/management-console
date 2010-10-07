@@ -5,15 +5,11 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util;
-
-import org.duracloud.common.error.DuraCloudCheckedException;
+package org.duracloud.account.util.domain;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public class UsernameAlreadyExistsException extends DuraCloudCheckedException {
-
-    private static final long serialVersionUID = 1L;
+public class CreditCardPaymentInfo extends PaymentInfo {
 
 }

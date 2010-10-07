@@ -5,7 +5,7 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util;
+package org.duracloud.account.util.domain;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

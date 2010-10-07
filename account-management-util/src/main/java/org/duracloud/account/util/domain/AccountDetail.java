@@ -5,7 +5,7 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util;
+package org.duracloud.account.util.domain;
 
 /**
  * Read-only summary of salient account details.

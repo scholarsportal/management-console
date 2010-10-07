@@ -9,6 +9,10 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
+import org.duracloud.account.util.domain.AccountDetail;
+import org.duracloud.account.util.domain.DuracloudUser;
+import org.duracloud.account.util.domain.PaymentInfo;
+import org.duracloud.account.util.error.UsernameAlreadyExistsException;
 import org.duracloud.storage.domain.StorageProviderType;
 
 /**
@@ -81,7 +85,7 @@ public interface AccountService {
 
     /**
      * @param user
-     * @throws UsernameAlreadyExistsException
+     * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
      */
     public void addUser(DuracloudUser user)
         throws UsernameAlreadyExistsException;

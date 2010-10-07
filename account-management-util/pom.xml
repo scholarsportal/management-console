@@ -12,9 +12,10 @@
   <artifactId>account-management-util</artifactId>
   <packaging>jar</packaging>
   <version>0.7.0-SNAPSHOT</version>
-  <name>Account Management Util</name>
+  <name>Account Management Utility</name>
 
   <dependencies>
+    
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>security</artifactId>

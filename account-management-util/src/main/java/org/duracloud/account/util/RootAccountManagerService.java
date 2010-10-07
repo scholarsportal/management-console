@@ -9,6 +9,7 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
+import org.duracloud.account.util.domain.AccountDetail;
 import org.duracloud.security.domain.SecurityUserBean;
 
 /**

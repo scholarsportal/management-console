@@ -5,11 +5,14 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util;
+package org.duracloud.account.util.error;
 
 import org.duracloud.common.error.DuraCloudCheckedException;
 
-public class DuracloudInvalidVersionException extends DuraCloudCheckedException {
+/**
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
+ */
+public class UsernameAlreadyExistsException extends DuraCloudCheckedException {
 
     private static final long serialVersionUID = 1L;
 
