@@ -12,4 +12,12 @@ package org.duracloud.account.util.domain;
  */
 public abstract class PaymentInfo {
 
+    protected String streetAddress0;
+    protected String streetAddress1;
+    protected String streetAddress2;
+    protected String city;
+    protected String state;
+    protected String country;
+    protected String postalCode;
+
 }

@@ -7,8 +7,11 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.util.domain.AccountInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.UsernameAlreadyExistsException;
+
+import java.util.List;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -20,30 +23,26 @@ public interface AccountManagerService {
      * @param accountId
      * @return
      * @throws org.duracloud.account.util.error.AccountNotFoundException
+     *
      */
     public AccountService getAccount(String accountId)
         throws AccountNotFoundException;
 
     /**
-     * @param username
-     * @return true if username is available
-     */
-    public boolean isUsernameAvailable(String username);
-
-    /**
-     * @param username
-     * @return account id
+     * @param accountInfo
+     * @return AccountService
      * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
+     *
      */
-    public String createAccount(String username)
+    public AccountService createAccount(AccountInfo accountInfo)
         throws UsernameAlreadyExistsException;
 
     /**
      * @param username
      * @param password
-     * @return an account id
+     * @return list of account ids
      * @throws AccountNotFoundException
      */
-    public String lookupAccount(String username, String password)
-			throws AccountNotFoundException;
+    public List<String> lookupAccounts(String username, String password)
+        throws AccountNotFoundException;
 }

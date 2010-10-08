@@ -9,7 +9,7 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
-import org.duracloud.account.util.domain.AccountDetail;
+import org.duracloud.account.util.domain.AccountInfo;
 import org.duracloud.security.domain.SecurityUserBean;
 
 /**
@@ -23,12 +23,16 @@ public interface RootAccountManagerService {
      * @param filter optional filter on accountid
      * @return
      */
-    public List<AccountDetail> listAllAccounts(String filter);
+    public List<AccountInfo> listAllAccounts(String filter);
 
     /**
      * @param filter optional filter on username
      * @return
      */
     public List<SecurityUserBean> listAllUsers(String filter);
+
+    public void addDuracloudImage(String imageId,
+                                  String version,
+                                  String description);
 
 }

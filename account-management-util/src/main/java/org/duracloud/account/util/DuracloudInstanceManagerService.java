@@ -24,20 +24,21 @@ public interface DuracloudInstanceManagerService {
      * @throws DuracloudInvalidVersionException
      *
      */
-    public void createNewInstance(String version)
+    public DuracloudInstanceService createNewInstance(String acctId,
+                                                      String version)
         throws DuracloudInvalidVersionException;
 
     /**
      * Stops and removes the instance (if there is one).
      */
-    public void removeInstance();
+    public void removeInstance(String acctId);
 
     /**
      * @return
      * @throws org.duracloud.account.util.error.DuracloudInstanceNotAvailableException
      *
      */
-    public DuracloudInstanceService getInstance()
+    public DuracloudInstanceService getInstance(String acctId)
         throws DuracloudInstanceNotAvailableException;
 
 }

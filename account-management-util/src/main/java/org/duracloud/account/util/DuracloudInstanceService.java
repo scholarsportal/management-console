@@ -17,51 +17,24 @@ import java.util.List;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public interface DuracloudInstanceService {
+
     public static enum State {
-        /*
-           * instance in the process of starting up.
-           */
         STARTING,
-        /*
-           * instance is running.
-           */
         RUNNING,
-        /*
-           * instance is in the process of stopping
-           */
         STOPPING,
-
-        /*
-           * instance is not running, but ready to be started.
-           */
         STOPPED;
-
     }
 
-    /**
-     * @return
-     */
     public InetAddress getAddress();
 
-    /**
-     * @return
-     */
     public String getStatusMessage();
 
-    /**
-     * @return
-     */
     public Long getUptime();
 
-    /**
-     * @return
-     */
     public List<LogMessage> getLogMessages(Date from, Date to);
 
     /**
      * Returns the state of the Duracloud Instance.
-     *
-     * @return
      */
     public State getState();
 
@@ -87,6 +60,6 @@ public interface DuracloudInstanceService {
      *
      * @throws IllegalStateException when the instance is not in the READY or RUNNING state
      */
-	public void restart() throws IllegalStateException;
+    public void restart() throws IllegalStateException;
 
 }

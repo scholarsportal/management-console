@@ -7,40 +7,17 @@
  */
 package org.duracloud.account.util.domain;
 
+import org.duracloud.common.model.Credential;
 import org.duracloud.security.domain.SecurityUserBean;
+
+import java.util.Map;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public class DuracloudUser extends SecurityUserBean {
-    private String fullName;
+    private String firstName;
+    private String lastName;
     private String email;
 
-    /**
-     * @return
-     */
-    public String getFullName() {
-        return fullName;
-    }
-
-    /**
-     * @param fullName
-     */
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    /**
-     * @return
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email
-     */
-    public void setEmail(String email) {
-        this.email = email;
-	}
 }

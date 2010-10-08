@@ -12,4 +12,9 @@ package org.duracloud.account.util.domain;
  */
 public class CreditCardPaymentInfo extends PaymentInfo {
 
+    private String nameOnCard;
+    private String cardNumber;
+    private String expDate;
+    private String cvc;
+
 }

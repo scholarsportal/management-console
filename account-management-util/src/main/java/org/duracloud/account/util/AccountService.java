@@ -9,7 +9,7 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
-import org.duracloud.account.util.domain.AccountDetail;
+import org.duracloud.account.util.domain.AccountInfo;
 import org.duracloud.account.util.domain.DuracloudUser;
 import org.duracloud.account.util.domain.PaymentInfo;
 import org.duracloud.account.util.error.UsernameAlreadyExistsException;
@@ -24,39 +24,28 @@ public interface AccountService {
     /**
      * @return
      */
-    public AccountDetail retrieveAccountDetail();
+    public AccountInfo retrieveAccountInfo();
 
     /**
-     * @param fullName
-     * @param email
+     * @param acctName
      * @param orgName
      * @param department
      */
-    public void storeAccountInfo(String fullName,
-                                 String email,
+    public void storeAccountInfo(String acctName,
                                  String orgName,
                                  String department);
 
     /**
      * @return
      */
-    public PaymentInfo retrievePaymentInfo();
+    public List<PaymentInfo> retrievePaymentInfo();
+    public PaymentInfo retrievePrimaryPaymentInfo();
 
     /**
      * @param paymentInfo
      */
     public void storePaymentInfo(PaymentInfo paymentInfo);
-
-    /**
-     * @param username
-     */
-    public void sendPasswordReminder(String username);
-
-    /**
-     * @param oldPassword
-     * @param newPassword
-     */
-    public void changePassword(String oldPassword, String newPassword);
+    public void setPrimaryPaymentInfo(String paymentInfoId);
 
     /**
      * @param subdomain
@@ -66,47 +55,20 @@ public interface AccountService {
     /**
      * @return
      */
-    public String retrieveSubdomain();
+    public boolean checkSubdomain(String subdomain);
 
     /**
      * @return
      */
-    public List<StorageProviderType> retrieveStorageProviders();
+    public List<StorageProviderType> getStorageProviders();
 
     /**
-     * @param storageProviderType
+     * @param storageProviderTypes
      */
-    public void addStorageProvider(StorageProviderType storageProviderType);
-
-    /**
-     * @param storageProviderType
-     */
-    public void removeStorageProvider(StorageProviderType storageProviderType);
-
-    /**
-     * @param user
-     * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
-     */
-    public void addUser(DuracloudUser user)
-        throws UsernameAlreadyExistsException;
-
-    /**
-     * @param username
-     */
-    public void removeUser(String username);
-
-    /**
-     * @param username
-     */
-    public void revokeAdminPrivileges(String username);
-
-    /**
-     * @param username
-     */
-    public void grantAdminPrivileges(String username);
+    public void setStorageProvider(List<StorageProviderType> storageProviderTypes);
 
 	/**
      * @return empty list
      */
-	public List<DuracloudUser> listUsers();
+	public List<DuracloudUser> getUsers();
 }
