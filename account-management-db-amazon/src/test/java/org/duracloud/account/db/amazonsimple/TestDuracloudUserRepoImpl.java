@@ -7,10 +7,10 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.domain.DuracloudUser;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.unittestdb.UnitTestDatabaseUtil;

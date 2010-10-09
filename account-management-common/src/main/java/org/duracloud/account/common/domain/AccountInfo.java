@@ -5,9 +5,8 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util.domain;
+package org.duracloud.account.common.domain;
 
-import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.storage.domain.StorageProviderType;
 
 import java.util.List;

@@ -50,10 +50,11 @@
   </organization>
 
   <modules>
+    <module>account-management-common</module>
     <module>account-management-util</module>
-    <module>account-management-app</module>
     <module>account-management-db</module>
     <module>account-management-db-amazon</module>
+    <module>account-management-app</module>
   </modules>
 
   <profiles>

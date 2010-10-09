@@ -5,12 +5,9 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util.domain;
+package org.duracloud.account.common.domain;
 
-import org.duracloud.common.model.Credential;
 import org.duracloud.security.domain.SecurityUserBean;
-
-import java.util.Map;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

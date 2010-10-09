@@ -30,8 +30,7 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <!--The domain objects will need to be refactored into a 'common' project-->
-      <artifactId>account-management-util</artifactId>
+      <artifactId>account-management-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 

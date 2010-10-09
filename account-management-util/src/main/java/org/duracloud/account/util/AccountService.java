@@ -9,10 +9,9 @@ package org.duracloud.account.util;
 
 import java.util.List;
 
-import org.duracloud.account.util.domain.AccountInfo;
-import org.duracloud.account.util.domain.DuracloudUser;
-import org.duracloud.account.util.domain.PaymentInfo;
-import org.duracloud.account.util.error.UsernameAlreadyExistsException;
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.storage.domain.StorageProviderType;
 
 /**

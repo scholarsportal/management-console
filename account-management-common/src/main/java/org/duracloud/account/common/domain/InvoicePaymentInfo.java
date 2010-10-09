@@ -5,11 +5,14 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util.domain;
+package org.duracloud.account.common.domain;
 
 /**
- * @author Andrew Woods
- *         Date: Oct 8, 2010
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public class DuracloudInstance {
+public class InvoicePaymentInfo extends PaymentInfo {
+
+    private DuracloudUser contact;
+    private String phone;
+
 }

@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.util;
 
-import org.duracloud.account.util.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.UsernameAlreadyExistsException;
 

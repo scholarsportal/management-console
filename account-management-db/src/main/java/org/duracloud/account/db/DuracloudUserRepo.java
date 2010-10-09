@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.db;
 
-import org.duracloud.account.util.domain.DuracloudUser;
+import org.duracloud.account.common.domain.DuracloudUser;
 
 /**
  * @author Andrew Woods

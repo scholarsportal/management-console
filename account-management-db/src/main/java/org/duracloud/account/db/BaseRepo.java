@@ -9,7 +9,6 @@ package org.duracloud.account.db;
 
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.domain.DuracloudUser;
 
 import java.util.List;
 
