@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>security</artifactId>
+      <artifactId>account-management-db</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

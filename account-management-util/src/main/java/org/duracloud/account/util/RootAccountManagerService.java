@@ -10,7 +10,7 @@ package org.duracloud.account.util;
 import java.util.List;
 
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.security.domain.SecurityUserBean;
+import org.duracloud.account.common.domain.DuracloudUser;
 
 /**
  * An interface for the account management application administrator.
@@ -29,7 +29,7 @@ public interface RootAccountManagerService {
      * @param filter optional filter on username
      * @return
      */
-    public List<SecurityUserBean> listAllUsers(String filter);
+    public List<DuracloudUser> listAllUsers(String filter);
 
     public void addDuracloudImage(String imageId,
                                   String version,

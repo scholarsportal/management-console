@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public class AccountInfo {
+public class AccountInfo implements Identifiable {
     private String id;
     private String subDomain;
     private String acctName;
@@ -27,4 +27,8 @@ public class AccountInfo {
     private DuracloudUser owner;
     private List<StorageProviderType> storageProviders;
 
+    @Override
+    public String getId() {
+        return id;
+    }
 }

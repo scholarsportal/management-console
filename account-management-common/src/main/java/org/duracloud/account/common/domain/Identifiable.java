@@ -9,13 +9,8 @@ package org.duracloud.account.common.domain;
 
 /**
  * @author Andrew Woods
- *         Date: Oct 8, 2010
+ *         Date: Oct 9, 2010
  */
-public class DuracloudInstance implements Identifiable {
-    private String id;
-
-    @Override
-    public String getId() {
-        return id;
-    }
+public interface Identifiable {
+    public String getId();
 }

@@ -7,20 +7,20 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
 import com.amazonaws.services.simpledb.model.*;
-import com.amazonaws.services.simpledb.util.SimpleDBUtils;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
+import org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.util.FormatUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,17 +34,25 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
 
     private final Logger log = LoggerFactory.getLogger(DuracloudUserRepoImpl.class);
 
-    private static final String DOMAIN = "DURACLOUD_USERS";
-    private static final String USERNAME_ATT = "USERNAME";
-    private static final String PASSWORD_ATT = "PASSWORD";
-    private static final String FIRSTNAME_ATT = "FIRSTNAME";
-    private static final String LASTNAME_ATT = "LASTNAME";
-    private static final String EMAIL_ATT = "EMAIL";
+    private static final String DEFAULT_DOMAIN = "DURACLOUD_USERS";
 
-    private AmazonSimpleDBAsync db;
+    private final AmazonSimpleDBAsync db;
+    private final AmazonSimpleDBCaller caller;
+    private final DomainConverter<DuracloudUser> converter;
+    private final String domain;
 
     public DuracloudUserRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr) {
-        db = amazonSimpleDBClientMgr.getClient();
+        this(amazonSimpleDBClientMgr, DEFAULT_DOMAIN);
+    }
+
+    public DuracloudUserRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr,
+                                 String domain) {
+        this.db = amazonSimpleDBClientMgr.getClient();
+        this.domain = domain;
+
+        this.caller = new AmazonSimpleDBCaller();
+        this.converter = new DuracloudUserConverter();
+        this.converter.setDomain(domain);
         createDomainIfNecessary();
     }
 
@@ -52,26 +60,26 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
         boolean created = false;
 
         ListDomainsRequest listRequest = new ListDomainsRequest();
-        ListDomainsResult listResult = db.listDomains(listRequest);
+        ListDomainsResult listResult = caller.listDomains(db, listRequest);
         if (null == listResult ||
-            !listResult.getDomainNames().contains(DOMAIN)) {
-            CreateDomainRequest createRequest = new CreateDomainRequest(DOMAIN);
-            db.createDomain(createRequest);
+            !listResult.getDomainNames().contains(domain)) {
+            CreateDomainRequest createRequest = new CreateDomainRequest(domain);
+            caller.createDomain(db, createRequest);
 
-        } else if (listResult.getDomainNames().contains(DOMAIN)) {
+        } else if (listResult.getDomainNames().contains(domain)) {
             created = true;
         }
 
         int maxTries = 10;
         int tries = 0;
         while (!created && listResult != null && tries < maxTries) {
-            created = listResult.getDomainNames().contains(DOMAIN);
-            listResult = db.listDomains(listRequest);
+            created = listResult.getDomainNames().contains(domain);
+            listResult = caller.listDomains(db, listRequest);
             sleep((long) (Math.random() * (Math.pow(3, tries++) * 10L)));
         }
 
         if (!created) {
-            String msg = "Unable to create domain: " + DOMAIN;
+            String msg = "Unable to create domain: " + domain;
             log.error(msg);
             throw new DuraCloudRuntimeException(msg);
         }
@@ -80,9 +88,9 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
     @Override
     public DuracloudUser findById(String id) throws DBNotFoundException {
         SelectRequest request = new SelectRequest(
-            "select * from " + DOMAIN + " where itemName() = '" + id + "'");
+            "select * from " + domain + " where itemName() = '" + id + "'");
 
-        SelectResult result = select(request);
+        SelectResult result = caller.select(db, request);
         if (null == result) {
             throw new DBException(logError("Null result", id));
         }
@@ -98,71 +106,18 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
         }
 
         Item item = items.get(0);
-        int counter = -1;
-        String username = item.getName();
-        String password = null;
-        String firstname = null;
-        String lastname = null;
-        String email = null;
-
         List<Attribute> atts = item.getAttributes();
-        for (Attribute att : atts) {
-            String name = att.getName();
-            String value = att.getValue();
-            if (COUNTER_ATT.equals(name)) {
-                counter = SimpleDBUtils.decodeZeroPaddingInt(value);
-
-            } else if (USERNAME_ATT.equals(name)) {
-                username = value;
-
-            } else if (PASSWORD_ATT.equals(name)) {
-                password = value;
-
-            } else if (FIRSTNAME_ATT.equals(name)) {
-                firstname = value;
-
-            } else if (LASTNAME_ATT.equals(name)) {
-                lastname = value;
-
-            } else if (EMAIL_ATT.equals(name)) {
-                email = value;
-
-            } else {
-                StringBuilder msg = new StringBuilder("Unexpected name: ");
-                msg.append(name);
-                msg.append(" in domain: ");
-                msg.append(DOMAIN);
-                msg.append(" [with id]: ");
-                msg.append(id);
-                log.info(msg.toString());
-            }
-        }
-
-        return new DuracloudUser(username,
-                                 password,
-                                 firstname,
-                                 lastname,
-                                 email,
-                                 counter);
+        return converter.fromAttributes(atts, item.getName());
     }
 
     private String logError(String text, String id) {
         StringBuilder msg = new StringBuilder(text);
         msg.append(" in domain: ");
-        msg.append(DOMAIN);
+        msg.append(domain);
         msg.append(" [with id]: ");
         msg.append(id);
         log.error(msg.toString());
         return msg.toString();
-    }
-
-    private SelectResult select(SelectRequest request) {
-        try {
-            return db.select(request);
-
-        } catch (AmazonServiceException e) {
-            throw new DBException(e);
-        }
     }
 
     @Override
@@ -173,57 +128,28 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
             condition = new UpdateCondition().withName(COUNTER_ATT).withExists(
                 false);
         } else {
-            condition = new UpdateCondition(COUNTER_ATT, padded(counter), true);
+            condition = new UpdateCondition(COUNTER_ATT, FormatUtil.padded(
+                counter), true);
         }
 
-        List<ReplaceableAttribute> atts = new ArrayList<ReplaceableAttribute>();
-        atts.add(new ReplaceableAttribute(COUNTER_ATT,
-                                          padded(counter + 1),
-                                          true));
-        atts.add(new ReplaceableAttribute(PASSWORD_ATT,
-                                          item.getPassword(),
-                                          true));
-        atts.add(new ReplaceableAttribute(FIRSTNAME_ATT,
-                                          item.getFirstName(),
-                                          true));
-        atts.add(new ReplaceableAttribute(LASTNAME_ATT,
-                                          item.getLastName(),
-                                          true));
-        atts.add(new ReplaceableAttribute(EMAIL_ATT, item.getEmail(), true));
-
-        PutAttributesRequest request = new PutAttributesRequest(DOMAIN,
+        List<ReplaceableAttribute> atts = converter.toAttributesAndIncrement(
+            item);
+        PutAttributesRequest request = new PutAttributesRequest(domain,
                                                                 item.getUsername(),
                                                                 atts,
                                                                 condition);
 
-        putAttributes(request);
-    }
-
-    private String padded(Integer counter) {
-        return SimpleDBUtils.encodeZeroPadding(counter, 10);
-    }
-
-    private void putAttributes(PutAttributesRequest request)
-        throws DBConcurrentUpdateException {
-        try {
-            db.putAttributes(request);
-
-        } catch (AmazonServiceException e) {
-            if (HttpURLConnection.HTTP_CONFLICT == e.getStatusCode()) {
-                throw new DBConcurrentUpdateException(e);
-            }
-            throw new DBException(e);
-        }
+        caller.putAttributes(db, request);
     }
 
     @Override
     public List<String> getIds() {
-        String query = "select itemName() from " + DOMAIN;
+        String query = "select itemName() from " + domain;
         SelectRequest request = new SelectRequest(query);
-        SelectResult result = select(request);
+        SelectResult result = caller.select(db, request);
         if (null == result) {
             StringBuilder msg = new StringBuilder("No users found in domain: ");
-            msg.append(DOMAIN);
+            msg.append(domain);
             log.error(msg.toString());
             throw new DuraCloudRuntimeException(msg.toString());
         }
@@ -232,7 +158,7 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
         if (null == items) {
             StringBuilder msg = new StringBuilder("Items were null");
             msg.append(" in domain: ");
-            msg.append(DOMAIN);
+            msg.append(domain);
             log.error(msg.toString());
             throw new DuraCloudRuntimeException(msg.toString());
         }
@@ -249,8 +175,8 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
      * This method is NOT part of the DuracloudUserRepo interface contract.
      */
     public void removeDomain() {
-        DeleteDomainRequest request = new DeleteDomainRequest(DOMAIN);
-        db.deleteDomainAsync(request);
+        DeleteDomainRequest request = new DeleteDomainRequest(domain);
+        caller.deleteDomainAsync(db, request);
     }
 
     private void sleep(long millis) {

@@ -7,6 +7,10 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.error.UserAlreadyExistsException;
+
 /**
  * @author Andrew Woods
  *         Date: Oct 8, 2010
@@ -19,7 +23,8 @@ public interface DuracloudUserService {
                                 String password,
                                 String firstName,
                                 String lastName,
-                                String email);
+                                String email)
+        throws DBConcurrentUpdateException, DBNotFoundException, UserAlreadyExistsException;
 
     public void addUserToAccount(String acctId, String username);
 

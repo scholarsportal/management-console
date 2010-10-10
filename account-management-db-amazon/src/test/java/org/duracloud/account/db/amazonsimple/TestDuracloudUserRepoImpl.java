@@ -33,6 +33,8 @@ public class TestDuracloudUserRepoImpl {
 
     private DuracloudUserRepoImpl userRepo;
 
+    private static final String DOMAIN = "TEST_DURACLOUD_USERS";
+
     private String username = "username";
     private String password = "password";
     private String firstName = "punky";
@@ -48,7 +50,7 @@ public class TestDuracloudUserRepoImpl {
         Credential cred = getCredential();
         AmazonSimpleDBClientMgr mgr = new AmazonSimpleDBClientMgr(cred.getUsername(),
                                                                   cred.getPassword());
-        return new DuracloudUserRepoImpl(mgr);
+        return new DuracloudUserRepoImpl(mgr, DOMAIN);
     }
 
     private static Credential getCredential() throws Exception {
@@ -82,21 +84,9 @@ public class TestDuracloudUserRepoImpl {
 
     @Test
     public void testGetIds() throws Exception {
-        DuracloudUser user0 = new DuracloudUser(username + "0",
-                                                password,
-                                                firstName,
-                                                lastName,
-                                                email);
-        DuracloudUser user1 = new DuracloudUser(username + "1",
-                                                password,
-                                                firstName,
-                                                lastName,
-                                                email);
-        DuracloudUser user2 = new DuracloudUser(username + "2",
-                                                password,
-                                                firstName,
-                                                lastName,
-                                                email);
+        DuracloudUser user0 = createUser(username + "0");
+        DuracloudUser user1 = createUser(username + "1");
+        DuracloudUser user2 = createUser(username + "2");
 
         userRepo.save(user0);
         userRepo.save(user1);
@@ -139,6 +129,10 @@ public class TestDuracloudUserRepoImpl {
         Assert.assertTrue(thrown);
 
         verifyCounter(user0, 2);
+    }
+
+    private DuracloudUser createUser(String name) {
+        return new DuracloudUser(name, password, firstName, lastName, email);
     }
 
     private void verifyUser(final DuracloudUser user) {

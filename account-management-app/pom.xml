@@ -287,6 +287,8 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- This dependency is only used for selenium tests
+    the transitive dependency needs to be discovered so this can be removed -->
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>security</artifactId>
