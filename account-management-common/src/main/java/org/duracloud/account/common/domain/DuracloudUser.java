@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.common.domain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,11 @@ import java.util.Map;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public class DuracloudUser implements Identifiable {
+
+    public static final String ROLE_ROOT = "ROLE_ROOT";
+    public static final String ROLE_USER = "ROLE_USER";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
     private String username;
     private String password;
     private String firstName;
@@ -44,6 +50,19 @@ public class DuracloudUser implements Identifiable {
         this.lastName = lastName;
         this.email = email;
         this.counter = counter;
+    }
+
+    /**
+     * This method adds the arg acctId to the user's list with the priviledge
+     * of "ROLE_USER".
+     *
+     * @param acctId to add to user
+     */
+    public void addAccount(String acctId) {
+        List<String> roles = new ArrayList<String>();
+        roles.add(ROLE_USER);
+
+        getAcctToRoles().put(acctId, roles);
     }
 
     public String getUsername() {

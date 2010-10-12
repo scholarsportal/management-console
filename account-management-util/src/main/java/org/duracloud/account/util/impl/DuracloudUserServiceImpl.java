@@ -7,12 +7,17 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -20,16 +25,24 @@ import org.duracloud.account.util.DuracloudUserService;
  */
 public class DuracloudUserServiceImpl implements DuracloudUserService {
 
-    private DuracloudUserRepo duracloudUserRepo;
+    private DuracloudUserRepo userRepo;
+    private DuracloudAccountRepo accountRepo;
 
-    public DuracloudUserServiceImpl(DuracloudUserRepo duracloudUserRepo) {
-        this.duracloudUserRepo = duracloudUserRepo;
+    public DuracloudUserServiceImpl(DuracloudUserRepo userRepo,
+                                    DuracloudAccountRepo accountRepo) {
+        this.userRepo = userRepo;
+        this.accountRepo = this.accountRepo;
     }
 
     @Override
     public boolean isUsernameAvailable(String username) {
-        // Default method body
-        return false;
+        try {
+            userRepo.findById(username);
+            return false;
+
+        } catch (DBNotFoundException e) {
+            return true;
+        }
     }
 
     @Override
@@ -45,25 +58,23 @@ public class DuracloudUserServiceImpl implements DuracloudUserService {
                                                lastName,
                                                email);
         throwIfUserExists(user);
-        duracloudUserRepo.save(user);
+        userRepo.save(user);
         return user.getId();
     }
 
     private void throwIfUserExists(DuracloudUser user)
         throws UserAlreadyExistsException {
-        try {
-            duracloudUserRepo.findById(user.getId());
-            throw new UserAlreadyExistsException(user.getId());
 
-        } catch (DBNotFoundException e) {
-            // do nothing
+        if (!isUsernameAvailable(user.getId())) {
+            throw new UserAlreadyExistsException(user.getId());
         }
     }
 
     @Override
-    public void addUserToAccount(String acctId, String username) {
-        // Default method body
-
+    public void addUserToAccount(String acctId, String username)
+        throws DBNotFoundException {
+        DuracloudUser user = userRepo.findById(username);
+        user.addAccount(acctId);
     }
 
     @Override

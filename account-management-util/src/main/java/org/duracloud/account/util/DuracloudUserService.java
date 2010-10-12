@@ -26,7 +26,8 @@ public interface DuracloudUserService {
                                 String email)
         throws DBConcurrentUpdateException, DBNotFoundException, UserAlreadyExistsException;
 
-    public void addUserToAccount(String acctId, String username);
+    public void addUserToAccount(String acctId, String username)
+        throws DBNotFoundException;
 
     public void removeUserFromAccount(String acctId, String username);
 
