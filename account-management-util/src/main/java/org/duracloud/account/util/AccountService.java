@@ -37,14 +37,12 @@ public interface AccountService {
     /**
      * @return
      */
-    public List<PaymentInfo> retrievePaymentInfo();
-    public PaymentInfo retrievePrimaryPaymentInfo();
+    public PaymentInfo retrievePaymentInfo();
 
     /**
      * @param paymentInfo
      */
     public void storePaymentInfo(PaymentInfo paymentInfo);
-    public void setPrimaryPaymentInfo(String paymentInfoId);
 
     /**
      * @param subdomain
