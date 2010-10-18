@@ -31,7 +31,7 @@
         <ul>
           <li>
             <label
-             for="j_username">Username</label>
+             for="username">Username</label>
 
             <input
              type="text"
@@ -41,9 +41,10 @@
 
           <li>
             <label
-             for="j_password">Password</label>
+             for="password">Password</label>
 
             <input
+            id="password"
              type="password"
              name="j_password" />
           </li>

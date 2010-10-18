@@ -48,7 +48,19 @@ public abstract class AbstractIntegrationTest {
         log.info("started selenium client on " + url);
     }
 
-    @After
+    /**
+	 * 
+	 */
+	protected void logout() {
+		LoginHelper.logout(sc);
+	}
+
+	
+	protected void login(String username, String password){
+		LoginHelper.login(sc, username, password);
+	}
+	
+	@After
     public void after() {
         sc.stop();
         sc = null;

@@ -15,14 +15,14 @@ import com.thoughtworks.selenium.Selenium;
  */
 public class LoginHelper {
 	public static void login(Selenium sc, String username, String password){
-		sc.type("id=j_username", username);
-		sc.type("id=j_password", password);
+		sc.type("id=username", username);
+		sc.type("id=password", password);
 		sc.click("id=login-button");
 		sc.waitForPageToLoad("1000");
 	}
 
 	public static void logout(Selenium sc){
-		sc.click("id=logout-link");
+		sc.open(SeleniumHelper.getAppRoot()+"/j_spring_security_logout");
 		sc.waitForPageToLoad("1000");
 	}
 
