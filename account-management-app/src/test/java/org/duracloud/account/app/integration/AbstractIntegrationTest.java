@@ -23,7 +23,7 @@ public abstract class AbstractIntegrationTest {
     private static String DEFAULT_PORT = "9000";
 
     protected String getAppRoot() {
-        return "/ama/app";
+    	return SeleniumHelper.getAppRoot();
     }
 
     private String getPort() throws Exception {

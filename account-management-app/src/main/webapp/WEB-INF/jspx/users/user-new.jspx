@@ -32,7 +32,7 @@
               <form:label
                path="firstName">FirstName</form:label>
 
-              <form:input id="first-name-txt"
+              <form:input id="first-name-text"
                path="firstName" />
 
               <form:errors
@@ -43,7 +43,7 @@
               <form:label
                path="lastName">LastName</form:label>
 
-              <form:input id="last-name-txt"
+              <form:input id="last-name-text"
                path="lastName" />
 
               <form:errors
@@ -54,7 +54,7 @@
               <form:label
                path="email">Email</form:label>
 
-              <form:input id="email-txt"
+              <form:input id="email-text"
                path="email" />
 
               <form:errors
@@ -65,7 +65,7 @@
               <form:label
                path="username">Username</form:label>
 
-              <form:input id="username-txt"
+              <form:input id="username-text"
                path="username" />
 
               <form:errors
@@ -76,7 +76,7 @@
               <form:label
                path="password">Password</form:label>
 
-              <form:password id="password-txt"
+              <form:password id="password-text"
                path="password"
                showPassword="true" />
 
@@ -88,7 +88,7 @@
               <form:label
                path="passwordConfirm">Confirm Password</form:label>
 
-              <form:password id="password-confirm-txt"
+              <form:password id="password-confirm-text"
                path="passwordConfirm"
                showPassword="true" />
 
@@ -97,7 +97,7 @@
             </li>
 
             <li>
-              <button id="create-user-btn"
+              <button id="create-user-button"
                type="submit">Create</button>
             </li>
           </ul>
