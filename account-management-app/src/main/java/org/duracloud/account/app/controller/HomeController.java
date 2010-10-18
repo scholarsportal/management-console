@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController extends AbstractController {
 
-	@RequestMapping(value = { "/index.html", "/app/", "/home.html", "/index",
+	@RequestMapping(value = { "/index.html", "/", "", "/home.html", "/index",
 			"/home" })
 	public ModelAndView home() {
 		log.info("serving up the home page at {}", System.currentTimeMillis());

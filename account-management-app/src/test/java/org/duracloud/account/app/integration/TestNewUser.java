@@ -25,9 +25,8 @@ public class TestNewUser extends AbstractIntegrationTest {
         String newUserLink = "id=new-user-link";
         assertTrue(this.sc.isElementPresent(newUserLink));
         this.sc.click(newUserLink);
-        sc.waitForPageToLoad("5000");
+        sc.waitForPageToLoad("1000");
         confirmNewUserFormIsLoaded();
-        
     }
 
 	/**
@@ -35,5 +34,23 @@ public class TestNewUser extends AbstractIntegrationTest {
 	 */
 	private void confirmNewUserFormIsLoaded() {
 		assertTrue(sc.isElementPresent("id=new-user-form"));
+	}
+	
+	
+	@Test
+	public void createUser(){
+        sc.open(getAppRoot()+"/users/new");
+        sc.type("first-name-txt", "Ira");
+        sc.type("last-name-txt", "Glass");
+        sc.type("email-txt", "ira@thisamericanlife.org");
+        sc.type("username-txt", newusername);
+        sc.type("password-txt", newpassword);
+        sc.type("password-confirm-txt", newpassword);
+        sc.click("id=create-user-btn");
+        sc.waitForPageToLoad("10000");
+        
+        this.isTextPresent("Profile");
+        this.isTextPresent(newusername);
+
 	}
 }
