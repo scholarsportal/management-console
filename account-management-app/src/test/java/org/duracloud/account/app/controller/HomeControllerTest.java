@@ -7,10 +7,9 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.app.controller.HomeController;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class HomeControllerTest {
     @Test

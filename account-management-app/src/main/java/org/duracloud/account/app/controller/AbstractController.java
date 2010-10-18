@@ -18,15 +18,18 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractController {
 
-    @SuppressWarnings("unused")
     protected Logger log = LoggerFactory.getLogger(getClass());
 
+	protected static final String PREFIX = "/app";
+
+
+	public static final String NEW_MAPPING = "/new";
 
     public void init() {
-
+    	log.info("initializing " + this.toString());
     }
 
     public void destroy() {
-
+    	log.info("destroying " + this.toString());
     }
 }

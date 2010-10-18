@@ -7,20 +7,19 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
+import org.duracloud.account.security.Role;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.duracloud.account.common.domain.DuracloudUser.ROLE_USER;
 
 /**
  * @author Andrew Woods
@@ -130,7 +129,7 @@ public class DuracloudUserServiceImplTest {
         acctToRoles = user.getAcctToRoles();
         Assert.assertNotNull(acctToRoles);
         Assert.assertTrue(acctToRoles.containsKey(acctId));
-        Assert.assertTrue(acctToRoles.get(acctId).contains(ROLE_USER));
+        Assert.assertTrue(acctToRoles.get(acctId).contains(Role.ROLE_USER.name()));
 
         EasyMock.verify(userRepo);
     }

@@ -8,18 +8,24 @@
 package org.duracloud.account.common.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.duracloud.account.security.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public class DuracloudUser implements Identifiable {
+public class DuracloudUser implements Identifiable, UserDetails  {
 
-    public static final String ROLE_ROOT = "ROLE_ROOT";
-    public static final String ROLE_USER = "ROLE_USER";
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+	private static final long serialVersionUID = 1L;
 
     private String username;
     private String password;
@@ -27,6 +33,11 @@ public class DuracloudUser implements Identifiable {
     private String lastName;
     private String email;
     private Map<String, List<String>> acctToRoles; // acct-ids --> roles
+    
+    private boolean enabled = true;
+    private boolean accountNonExpired = true;
+    private boolean credentialsNonExpired = true;
+    private boolean accountNonLocked = true;
 
     private int counter;
 
@@ -50,8 +61,19 @@ public class DuracloudUser implements Identifiable {
         this.lastName = lastName;
         this.email = email;
         this.counter = counter;
+        this.acctToRoles = new HashMap<String,List<String>>();
+        
     }
 
+    public List<String> getRolesByAcct(String accountId){
+	    	List<String> roles = this.acctToRoles.get(accountId);
+	    	if(roles != null){
+	    		return roles;
+	    	}else{
+	    		return new ArrayList<String>(0);
+	    	}
+    }
+    
     /**
      * This method adds the arg acctId to the user's list with the priviledge
      * of "ROLE_USER".
@@ -60,7 +82,7 @@ public class DuracloudUser implements Identifiable {
      */
     public void addAccount(String acctId) {
         List<String> roles = new ArrayList<String>();
-        roles.add(ROLE_USER);
+        roles.add(Role.ROLE_USER.name());
 
         getAcctToRoles().put(acctId, roles);
     }
@@ -154,5 +176,41 @@ public class DuracloudUser implements Identifiable {
         result = 31 * result + getAcctToRoles().size();
         return result;
     }
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+
+	public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
+
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	/**
+	 * Returns the set of all possible roles a user can play
+	 * This method is implemented as part of the UserDetails
+	 * interface (<code>UserDetails</code>).
+	 * @return 
+	 */
+	public Collection<GrantedAuthority> getAuthorities() {
+		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+		authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
+		for(String acct : this.acctToRoles.keySet()){
+			List<String> roles = this.acctToRoles.get(acct);
+			if(roles != null){
+				for(String role : roles){
+					authorities.add(Role.valueOf(role).authority());
+				}
+			}
+		}
+		return authorities;
+	}
 
 }

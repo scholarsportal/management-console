@@ -7,9 +7,9 @@
  */
 package org.duracloud.account.common.domain;
 
-import org.duracloud.storage.domain.StorageProviderType;
-
 import java.util.List;
+
+import org.duracloud.storage.domain.StorageProviderType;
 
 /**
  * Read-only summary of salient account details.
@@ -18,14 +18,61 @@ import java.util.List;
  */
 public class AccountInfo implements Identifiable {
     private String id;
-    private String subDomain;
+    private String subdomain;
     private String acctName;
     private String orgName;
     private String department;
-
     private PaymentInfo paymentInfo;
     private DuracloudUser owner;
     private List<StorageProviderType> storageProviders;
+
+	public AccountInfo(String subdomain, DuracloudUser owner,
+			List<StorageProviderType> storageProviders) {
+		this(null, subdomain, null, null, null, owner, storageProviders);
+	}
+	
+	public AccountInfo(String id, String subdomain, String acctName, String orgName,  
+			String department, DuracloudUser owner,
+			List<StorageProviderType> storageProviders) {
+		super();
+		this.id = id;
+		this.subdomain = subdomain;
+		this.acctName = acctName;
+		this.orgName = orgName;
+		this.department = department;
+		this.owner = owner;
+		this.storageProviders = storageProviders;
+	}
+
+	public String getSubdomain() {
+		return subdomain;
+	}
+
+
+	public String getAcctName() {
+		return acctName;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public PaymentInfo getPaymentInfo() {
+		return paymentInfo;
+	}
+
+	public DuracloudUser getOwner() {
+		return owner;
+	}
+
+	public List<StorageProviderType> getStorageProviders() {
+		return storageProviders;
+	}
 
     @Override
     public String getId() {

@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<html xmlns="http://www.w3.org/1999/xhtml"	
-  	xmlns:jsp="http://java.sun.com/JSP/Page" 
-	xmlns:tiles="http://tiles.apache.org/tags-tiles"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
-	<jsp:output doctype-root-element="html"
-        doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" 
-        doctype-system="http://www.w3c.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
-    <jsp:directive.page contentType="text/html;charset=ISO-8859-1" />
-<head>
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <jsp:output
+   doctype-root-element="html"
+   doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+   doctype-system="http://www.w3c.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
 
-<title>Duracloud : <tiles:insertAttribute name="title" ignore="true" /></title>
-<link href="${pageContext.request.contextPath}/css/global.css"
-	rel="stylesheet" type="text/css" />
-<tiles:insertAttribute name="header-extensions" ignore="true" />
+  <jsp:directive.page
+   contentType="text/html;charset=ISO-8859-1" />
 
-</head>
-<body>
-	<tiles:insertAttribute name="body" />
-</body>
+  <head>
+    <title>Duracloud : 
+    <tiles:insertAttribute
+     name="title"
+     ignore="true" />
+    </title>
+
+    <link
+     href="${pageContext.request.contextPath}/css/global.css"
+     rel="stylesheet"
+     type="text/css" />
+
+    <tiles:insertAttribute
+     name="header-extensions"
+     ignore="true" />
+  </head>
+
+  <body>
+    <sec:authorize
+     ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">Logged in as 
+    <sec:authentication
+     property="principal.username" />
+
+    <a
+     id="logoutLink"
+     href="${pageContext.request.contextPath }/app/j_spring_security_logout">logout</a>
+    </sec:authorize>
+
+    <tiles:insertAttribute
+     name="body" />
+  </body>
 </html>
+

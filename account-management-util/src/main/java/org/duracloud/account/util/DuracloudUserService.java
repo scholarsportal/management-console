@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
@@ -41,4 +42,7 @@ public interface DuracloudUserService {
                                String oldPassword,
                                String newPassword);
 
+	public DuracloudUser loadDuracloudUserByUsername(String username)
+			throws DBNotFoundException;
+    
 }

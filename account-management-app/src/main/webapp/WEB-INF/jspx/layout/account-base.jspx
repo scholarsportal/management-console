@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <ul>
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}">Dashboard</a>
+    </li>
+
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/statement">Statement</a>
+    </li>
+
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/providers">Providers</a>
+    </li>
+
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/users">Users</a>
+    </li>
+
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/billing">Account</a>
+    </li>
+  </ul>
+
+  <tiles:insertAttribute
+   name="content"
+   ignore="false" />
+</jsp:root>
+

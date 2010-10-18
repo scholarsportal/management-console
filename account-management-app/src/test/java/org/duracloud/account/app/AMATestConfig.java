@@ -7,9 +7,9 @@
  */
 package org.duracloud.account.app;
 
-import org.duracloud.common.util.ApplicationConfig;
-
 import java.util.Properties;
+
+import org.duracloud.common.util.ApplicationConfig;
 
 /**
  * @author Andrew Woods

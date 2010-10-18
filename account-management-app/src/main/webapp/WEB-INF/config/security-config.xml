@@ -1,68 +1,97 @@
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+<beans:beans
+  xmlns="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
   xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd"
 
-  <beans:bean id="authenticationProcessingFilter"
-              class="org.springframework.security.ui.webapp.AuthenticationProcessingFilter">
-    <beans:property name="authenticationManager" ref="authenticationManager" />
-    <beans:property name="authenticationFailureUrl" value="/login?error=true" />
-    <beans:property name="defaultTargetUrl" value="/" />
-    <beans:property name="filterProcessesUrl" value="/j_spring_security_check" />
+>
+
+  <beans:bean
+    id="accessDecisionManager"
+    class="org.springframework.security.access.vote.UnanimousBased"
+  >
+    <beans:property
+      name="decisionVoters"
+    >
+      <beans:list>
+        <beans:bean
+          id="roleVoter"
+          class="org.springframework.security.access.vote.RoleHierarchyVoter"
+        >
+          <beans:constructor-arg
+            ref="roleHierarchy" />
+        </beans:bean>
+      </beans:list>
+    </beans:property>
   </beans:bean>
-
-  <http auto-config="false" entry-point-ref="authenticationProcessingFilterEntryPoint">
-    <intercept-url pattern="/pub/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/css/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-    <intercept-url pattern="/img/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
-    <intercept-url pattern="/accounts/**" access="ROLE_USER"  />
-    <form-login login-page="/login" always-use-default-target="false"  authentication-failure-url="/login?error=true" />
-    <anonymous />
+  
+    <beans:bean
+    id="roleHierarchy"
+    class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl"
+  >
+    <beans:property
+      name="hierarchy"
+    >
+      <beans:value> ROLE_ROOT > ROLE_OWNER ROLE_OWNER > ROLE_ADMIN ROLE_ADMIN > ROLE_USER ROLE_USER > ROLE_ANONYMOUS</beans:value>
+    </beans:property>
+  </beans:bean>
+  
+  
+  
+<http auto-config="false" >
+    <access-denied-handler error-page="/app/access-denied"/>
+    <intercept-url
+      pattern="/app/accounts/new"
+      access="ROLE_USER" />
+    <intercept-url
+      pattern="/app/accounts/byid/**"
+      access="ROLE_USER" />
+    <intercept-url
+      pattern="/app/users/byid/**"
+      access="ROLE_USER" />
+    <form-login
+      login-page="/app/login"
+      always-use-default-target="false"
+      login-processing-url="/app/j_spring_security_check"
+      authentication-failure-url="/app/login?error=true" />
     <http-basic />
-    <logout logout-url="/logout"/>
+    <logout invalidate-session="true"  logout-url="/app/j_spring_security_logout"/>
   </http>
 
+
   <!-- AuthN Manager -->
-  <authentication-manager alias="authenticationManager"/>
-  <authentication-provider user-service-ref="userDetailsSvc"/>
-  <beans:bean id="userDetailsSvc" class="org.duracloud.security.impl.UserDetailsServiceImpl"/>
+  <authentication-manager
+    alias="authenticationManager"
+  >
+    <authentication-provider
+      user-service-ref="userDetailsService" />
+  </authentication-manager>
 
-	<beans:bean id="authenticationProcessingFilterEntryPoint"	class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-		<beans:property name="loginFormUrl" value="/login" />
-		<beans:property name="serverSideRedirect" value="true" />
-	</beans:bean>
-
-  <!-- AOP to log(in/out) ContentStoreMgr and ServicesMgr -->
-  <!-- 
-  
-  <beans:bean id="securityContextUtil" class="org.duracloud.security.context.SecurityContextUtil"/>
-  <beans:bean id="securityAdvice" class="org.duracloud.duradmin.security.SecurityAdvice">
-    <beans:constructor-arg ref="securityContextUtil"/>
-  </beans:bean>
-
-  <beans:bean id="securityAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
-    <beans:property name="advice" ref="securityAdvice"/>
-    <beans:property name="pattern" value=".*Manager.*"/>
-  </beans:bean>
- -->
-  
-  <!--
-     AOP Proxy Creation Over ContentStoreMgr and ServicesMgr.
-     Note: Would use spring...DefaultAdvisorAutoProxyCreator, but default constructor required.
-  <beans:bean id="contentStoreManager" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <beans:property name="target" ref="contentStoreManagerTarget"/>
-    <beans:property name="interceptorNames" value="securityAdvisor"/>
-  </beans:bean>
-
-  <beans:bean id="servicesManager" class="org.springframework.aop.framework.ProxyFactoryBean">
-    <beans:property name="target" ref="servicesManagerTarget"/>
-    <beans:property name="interceptorNames" value="securityAdvisor"/>
-  </beans:bean>
-   -->
+  <global-method-security  pre-post-annotations="enabled" 
+      
+  >
+    <!-- 
+    <protect-pointcut 
+      expression="execution(* org.duracloud.account.util.Root*Service.*(..))"
+      access="ROLE_ROOT" />
+    <protect-pointcut 
+      expression="execution(* org.duracloud.account.util.Root*Service.*(..))"
+      access="ROLE_ROOT" />
+    <protect-pointcut
+      expression="execution(* org.duracloud.account.util.Account*Service.*(..))"
+      access="ROLE_USER"  />
+    <protect-pointcut
+      expression="execution(* org.duracloud.account.util.Account*Service.*(..))"
+      access="ROLE_USER"  />
+  -->
+    
+  </global-method-security>
 
 </beans:beans>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: Login" />
+
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
+
+    <tiles:putAttribute
+     name="body">
+      <h1>Duracloud Account Management Application Login</h1>
+
+      <c:if
+       test="${not empty param.error}">
+        <div>The username/password combination is not valid. Please reenter your credentials.</div>
+      </c:if>
+
+      <form
+       id="loginForm"
+       action="${pageContext.request.contextPath}/app/j_spring_security_check"
+       method="post">
+        <ul>
+          <li>
+            <label
+             for="j_username">Username</label>
+
+            <input
+             type="text"
+             id="username"
+             name="j_username" />
+          </li>
+
+          <li>
+            <label
+             for="j_password">Password</label>
+
+            <input
+             type="password"
+             name="j_password" />
+          </li>
+
+          <li>
+            <button
+             id="button-login"
+             type="submit">Login</button>
+          </li>
+        </ul>
+      </form>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

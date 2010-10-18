@@ -7,15 +7,14 @@
  */
 package org.duracloud.account.common.domain;
 
+import java.util.List;
+import java.util.Map;
+
+import org.duracloud.account.security.Role;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.duracloud.account.common.domain.DuracloudUser.ROLE_USER;
 
 /**
  * @author Andrew Woods
@@ -52,16 +51,16 @@ public class DuracloudUserTest {
 
         // add first acct
         user.addAccount(acct0);
-        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, ROLE_USER);
+        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, Role.ROLE_USER.name());
         
         // check idempotency
         user.addAccount(acct0);
-        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, ROLE_USER);
+        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, Role.ROLE_USER.name());
 
         // add another acct
         user.addAccount(acct1);
-        verifyAcctToRoles(user.getAcctToRoles(), 2, acct0, ROLE_USER);
-        verifyAcctToRoles(user.getAcctToRoles(), 2, acct1, ROLE_USER);
+        verifyAcctToRoles(user.getAcctToRoles(), 2, acct0, Role.ROLE_USER.name());
+        verifyAcctToRoles(user.getAcctToRoles(), 2, acct1, Role.ROLE_USER.name());
     }
 
     private void verifyAcctToRoles(Map<String, List<String>> acctToRoles,

@@ -92,17 +92,16 @@
       <releases>
         <enabled>false</enabled>
       </releases>
-    </repository>
 
+    </repository>
+    <repository>
+      <id>Hibernate Repository</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/public</url>
+    </repository>
   </repositories>
 
   <!-- Project properties -->
   <properties>
-    <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
-    <!-- 
-    <org.springframework.security.version>3.1.0.M1</org.springframework.security.version>
-     -->
-    <org.springframework.security.version>2.0.4</org.springframework.security.version>
     
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -111,15 +110,43 @@
     <integrationTests>**/Test*.class</integrationTests>
     <instrumentedTests>**/*Test*__*.class</instrumentedTests>
     <innerClasses>**/*$*</innerClasses>
-    <log.level.default>INFO</log.level.default>
+    <log.level.default>DEBUG</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jetty.port>9000</jetty.port>
   </properties>
 
   <!-- Build Configuration -->
   <build>
-
     <plugins>
-      
+
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <!--
+          The jetty-maven-plugin (jetty 7.0) is generating a
+          ClassNotFoundException and breaking the tests for the time,
+          I'm reverting back to the older (v6.x) version. When the time
+          comes, we'll change to
+          <artifactId>maven-jetty-plugin</artifactId>
+        -->
+        <configuration>
+          <systemProperties>
+            <systemProperty>
+              <name>jetty.port</name>
+              <value>${jetty.port}</value>
+            </systemProperty>
+
+          </systemProperties>
+
+          <webAppConfig>
+            <contextPath>/ama</contextPath>
+          </webAppConfig>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <stopKey>foo</stopKey>
+          <stopPort>9999</stopPort>
+        </configuration>
+      </plugin>
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.1</version>
@@ -128,7 +155,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-            
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -142,7 +169,7 @@
               <goal>test</goal>
             </goals>
             <configuration>
-              <systemProperties/>
+              <systemProperties />
               <excludes>
                 <exclude>${unitTests}</exclude>
                 <exclude>${instrumentedTests}</exclude>
@@ -154,9 +181,9 @@
               </includes>
             </configuration>
           </execution>
-        </executions>   
+        </executions>
       </plugin>
-      
+
     </plugins>
   </build>
 
@@ -173,7 +200,7 @@
       </activation>
       <build>
         <plugins>
-          
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>selenium-maven-plugin</artifactId>
@@ -211,7 +238,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemProperties/>
+                  <systemProperties />
                   <excludes>
                     <exclude>${unitTests}</exclude>
                     <exclude>${instrumentedTests}</exclude>
@@ -228,27 +255,6 @@
           <plugin>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>maven-jetty-plugin</artifactId>
-            <!--
-              The jetty-maven-plugin (jetty 7.0) is generating a ClassNotFoundException and breaking the
-              tests for the time, I'm reverting back to the older (v6.x) version. When the time comes,
-              we'll change to <artifactId>maven-jetty-plugin</artifactId>
-            -->
-            <configuration>
-
-              <systemProperties>
-                <systemProperty>
-                  <name>jetty.port</name>
-                  <value>9000</value>
-                </systemProperty>
-              </systemProperties>
-
-              <webAppConfig>
-                <contextPath>/ama</contextPath>
-              </webAppConfig>
-              <scanIntervalSeconds>5</scanIntervalSeconds>
-              <stopKey>foo</stopKey>
-              <stopPort>9999</stopPort>
-            </configuration>
             <executions>
               <execution>
                 <id>start-jetty</id>
@@ -270,10 +276,9 @@
               </execution>
             </executions>
           </plugin>
-
         </plugins>
       </build>
-      
+
     </profile>
 
   </profiles>
@@ -291,7 +296,13 @@
     the transitive dependency needs to be discovered so this can be removed -->
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>security</artifactId>
+      <artifactId>account-management-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>account-management-security</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -302,90 +313,35 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Spring framework -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.core</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web.servlet</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.aop</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.expression</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.test</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-      <version>${org.springframework.security.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${org.springframework.version}</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <!-- Other dependencies -->
-<!--
+    <!--
+      <dependency> <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId> <version>0.9.24</version>
+      </dependency> <dependency> <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId> <version>0.9.24</version>
+      </dependency> <dependency> <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId> <version>1.6.0</version>
+      </dependency> <dependency> <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId> <version>1.6.0</version>
+      </dependency>
+    -->
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>0.9.24</version>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
     </dependency>
 
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>0.9.24</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+      <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.6.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>1.6.0</version>
-    </dependency>
 
--->
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -424,6 +380,11 @@
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.1.0.Final</version>
     </dependency>
 
     <dependency>

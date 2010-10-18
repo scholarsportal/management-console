@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.common.domain;
 
+
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */

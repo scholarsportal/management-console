@@ -7,15 +7,6 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
-import com.amazonaws.services.simpledb.model.Attribute;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.junit.Assert;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.ACCTS_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.EMAIL_ATT;
@@ -23,6 +14,16 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConve
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.LASTNAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.PASSWORD_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.junit.Assert;
+
+import com.amazonaws.services.simpledb.model.Attribute;
 
 /**
  * @author Andrew Woods

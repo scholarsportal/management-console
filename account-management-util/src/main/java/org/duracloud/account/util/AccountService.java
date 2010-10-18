@@ -49,10 +49,6 @@ public interface AccountService {
      */
     public void storeSubdomain(String subdomain);
 
-    /**
-     * @return
-     */
-    public boolean checkSubdomain(String subdomain);
 
     /**
      * @return
@@ -62,7 +58,7 @@ public interface AccountService {
     /**
      * @param storageProviderTypes
      */
-    public void setStorageProvider(List<StorageProviderType> storageProviderTypes);
+    public void setStorageProviders(List<StorageProviderType> storageProviderTypes);
 
 	/**
      * @return empty list

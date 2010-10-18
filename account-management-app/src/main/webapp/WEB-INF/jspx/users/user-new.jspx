@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: New User Signup" />
+
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
+
+    <tiles:putAttribute
+     name="body">
+      <h1>Create a user account</h1>
+
+      <form:form
+       modelAttribute="newUserForm"
+       method="POST">
+        <form:errors
+         path="*" />
+
+        <fieldset>
+          <ul>
+            <li>
+              <form:label
+               path="firstName">FirstName</form:label>
+
+              <form:input
+               path="firstName" />
+
+              <form:errors
+               path="firstName" />
+            </li>
+
+            <li>
+              <form:label
+               path="lastName">LastName</form:label>
+
+              <form:input
+               path="lastName" />
+
+              <form:errors
+               path="lastName" />
+            </li>
+
+            <li>
+              <form:label
+               path="email">Email</form:label>
+
+              <form:input
+               path="email" />
+
+              <form:errors
+               path="email" />
+            </li>
+
+            <li>
+              <form:label
+               path="username">Username</form:label>
+
+              <form:input
+               path="username" />
+
+              <form:errors
+               path="username" />
+            </li>
+
+            <li>
+              <form:label
+               path="password">Password</form:label>
+
+              <form:password
+               path="password"
+               showPassword="true" />
+
+              <form:errors
+               path="password" />
+            </li>
+
+            <li>
+              <form:label
+               path="passwordConfirm">Confirm Password</form:label>
+
+              <form:password
+               path="passwordConfirm"
+               showPassword="true" />
+
+              <form:errors
+               path="passwordConfirm" />
+            </li>
+
+            <li>
+              <button
+               type="submit">Create</button>
+            </li>
+          </ul>
+        </fieldset>
+      </form:form>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

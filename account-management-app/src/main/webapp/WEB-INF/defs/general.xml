@@ -9,6 +9,16 @@
     <put-attribute name="header-extensions" value=""  />
     <put-attribute name="body" value="body" />
   </definition>
-  <definition name="home.page" template="/WEB-INF/jspx/index.jspx" />
 
+  <definition name="account-base" template="/WEB-INF/jspx/layout/account-base.jspx">
+    <put-attribute name="content" value="content" />
+  </definition>
+  <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx" />
+  <definition name="login" template="/WEB-INF/jspx/login.jspx" />
+  <definition name="home" template="/WEB-INF/jspx/index.jspx" />
+  <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
+  <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
+  <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
+  <definition name="user-home" template="/WEB-INF/jspx/users/user/user-home.jspx" />
+  
 </tiles-definitions>

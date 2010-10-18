@@ -7,6 +7,14 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import static org.apache.commons.httpclient.HttpStatus.SC_CONFLICT;
+import static org.apache.commons.httpclient.HttpStatus.SC_INTERNAL_SERVER_ERROR;
+import static org.apache.commons.httpclient.HttpStatus.SC_SERVICE_UNAVAILABLE;
+
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
@@ -16,13 +24,6 @@ import com.amazonaws.services.simpledb.model.ListDomainsResult;
 import com.amazonaws.services.simpledb.model.PutAttributesRequest;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.commons.httpclient.HttpStatus.SC_CONFLICT;
-import static org.apache.commons.httpclient.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.commons.httpclient.HttpStatus.SC_SERVICE_UNAVAILABLE;
 
 /**
  * This class is a utility that has the arg db execute the arg request and retry

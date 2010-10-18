@@ -25,6 +25,12 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
+      <artifactId>account-management-security</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
       <artifactId>storageprovider</artifactId>
       <version>${project.version}</version>
     </dependency>

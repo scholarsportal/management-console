@@ -7,8 +7,9 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
-import com.amazonaws.services.simpledb.model.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
@@ -21,8 +22,18 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.CreateDomainRequest;
+import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
+import com.amazonaws.services.simpledb.model.Item;
+import com.amazonaws.services.simpledb.model.ListDomainsRequest;
+import com.amazonaws.services.simpledb.model.ListDomainsResult;
+import com.amazonaws.services.simpledb.model.PutAttributesRequest;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.model.SelectRequest;
+import com.amazonaws.services.simpledb.model.SelectResult;
+import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 /**
  * This class manages the persistence of DuracloudUsers.

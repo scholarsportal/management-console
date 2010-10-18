@@ -7,12 +7,12 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import java.util.List;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-
-import java.util.List;
 
 /**
  * @author Andrew Woods

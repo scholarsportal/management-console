@@ -7,14 +7,15 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.duracloud.common.error.DuraCloudRuntimeException;
+
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
 import com.amazonaws.services.simpledb.AmazonSimpleDBAsyncClient;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * This class creates and caches a client for the Amazon SimpleDB.

@@ -7,6 +7,11 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import static junit.framework.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBException;
@@ -19,11 +24,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * @author Andrew Woods

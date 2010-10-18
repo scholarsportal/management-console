@@ -31,6 +31,12 @@ public interface RootAccountManagerService {
      */
     public List<DuracloudUser> listAllUsers(String filter);
 
+    /**
+     * 
+     * @param imageId
+     * @param version
+     * @param description
+     */
     public void addDuracloudImage(String imageId,
                                   String version,
                                   String description);

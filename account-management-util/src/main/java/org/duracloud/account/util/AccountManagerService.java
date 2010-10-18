@@ -7,17 +7,25 @@
  */
 package org.duracloud.account.util;
 
+import java.util.List;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.UsernameAlreadyExistsException;
-
-import java.util.List;
+import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public interface AccountManagerService {
+
     /**
+     * Checks if the subdomain is available.
+     * @return true if the subdomain is available, otherwise file.
+     */
+    public boolean checkSubdomain(String subdomain);
+
+	
+	/**
      * Returns an <code>AccountService</code> interface.
      *
      * @param accountId
@@ -35,7 +43,7 @@ public interface AccountManagerService {
      *
      */
     public AccountService createAccount(AccountInfo accountInfo)
-        throws UsernameAlreadyExistsException;
+        throws SubdomainAlreadyExistsException;
 
     /**
      * @param username

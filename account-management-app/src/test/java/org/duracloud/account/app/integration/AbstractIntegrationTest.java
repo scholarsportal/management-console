@@ -42,7 +42,7 @@ public abstract class AbstractIntegrationTest {
 
     @Before
     public void before() throws Exception {
-        String url = "http://localhost:" + getPort() + getAppRoot();
+        String url = "http://localhost:" + getPort() + getAppRoot()+"/";
         sc = createSeleniumClient(url);
         sc.start();
         log.info("started selenium client on " + url);

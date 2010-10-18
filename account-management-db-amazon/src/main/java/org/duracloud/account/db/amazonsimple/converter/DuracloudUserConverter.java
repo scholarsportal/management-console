@@ -7,13 +7,7 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.util.SimpleDBUtils;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.db.util.FormatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.util.FormatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.util.SimpleDBUtils;
 
 /**
  * This class is responsible for converting DuracloudUser objects to/from

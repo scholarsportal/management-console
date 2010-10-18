@@ -1,1 +1,1 @@
-<jsp:forward page="/pub/index.html"/>
+<jsp:forward page="/app/index.html"/>

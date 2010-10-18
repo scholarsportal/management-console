@@ -8,9 +8,10 @@
   <name>Account Management Security</name>
 
   <parent>
-    <artifactId>duracloud</artifactId>
+    <artifactId>duracloud-priv</artifactId>
     <groupId>org.duracloud</groupId>
     <version>0.7.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <build>
@@ -37,6 +38,12 @@
 
   <dependencies>
 
+
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
     
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -49,10 +56,6 @@
     </dependency>
 
     <!-- runtime deps -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-core</artifactId>
-    </dependency>
     <dependency>
       <groupId>aspectj</groupId>
       <artifactId>aspectjrt</artifactId>

@@ -7,17 +7,18 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import static org.duracloud.account.db.util.FormatUtil.padded;
+
+import java.util.List;
+
 import org.duracloud.account.common.domain.Identifiable;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
-import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
-import static org.duracloud.account.db.util.FormatUtil.padded;
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 
 /**
  * @author Andrew Woods
