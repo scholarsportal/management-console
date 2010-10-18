@@ -20,7 +20,7 @@
      name="body">
       <h1>Create a user account</h1>
 
-      <form:form
+      <form:form id="new-user-form"
        modelAttribute="newUserForm"
        method="POST">
         <form:errors

@@ -25,7 +25,7 @@
 
       <p>
         <a
-         id="newUserLink"
+         id="new-user-link"
          href="${pageContext.request.contextPath}/app/users/new">Create New User Profile</a>
       </p>
     </tiles:putAttribute>

@@ -38,7 +38,7 @@
      property="principal.username" />
 
     <a
-     id="logoutLink"
+     id="logout-link"
      href="${pageContext.request.contextPath }/app/j_spring_security_logout">logout</a>
     </sec:authorize>
 

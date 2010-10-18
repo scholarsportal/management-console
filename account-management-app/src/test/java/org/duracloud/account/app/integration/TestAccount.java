@@ -16,17 +16,8 @@ import org.junit.Test;
  *
  */
 public class TestAccount extends AbstractIntegrationTest {
-	/*
-	@Test
-    public void test() throws Exception {
-        sc.open(getAppRoot()+"/app/accounts/0");
-        assertTrue(this.isTextPresent("dbernstein"));
-    }
-    
+	
     @Test
-    public void testNewForm(){
-        sc.open(getAppRoot()+"/app/new");
-        assertTrue(this.isTextPresent("New Account"));
+    public void test(){
     }
-    */
 }

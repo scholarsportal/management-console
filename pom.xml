@@ -158,7 +158,7 @@
 
   <properties>
     <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
-    <org.springframework.security.version>3.1.0.M1</org.springframework.security.version>
+    <org.springframework.security.version>3.0.3.RELEASE</org.springframework.security.version>
     <tomcat.port.default>8080</tomcat.port.default>
     <database.home.default>/opt/derby/duracloudDB</database.home.default>
     <unitTests>**/*Test.class</unitTests>
@@ -215,7 +215,40 @@
       <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
 
+    <repository>
+      <id>http://repository.codehaus.org/</id>
+      <name>mortbay</name>
+      <url>http://repository.codehaus.org/</url>
+    </repository>
+
+    <repository>
+      <id>http://repository.codehaus.org/</id>
+      <name>mortbay</name>
+      <url>http://repository.codehaus.org/</url>
+    </repository>
+
+
+    <repository>
+      <id>openqa-snapshots</id>
+      <name>Openqa Snapshot Repository</name>
+      <url>http://nexus.openqa.org/content/repositories/snapshots</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+        <checksumPolicy>ignore</checksumPolicy>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+
+    </repository>
+    <repository>
+      <id>Hibernate Repository</id>
+      <url>https://repository.jboss.org/nexus/content/repositories/public</url>
+    </repository>
   </repositories>
+
 
   <scm>
     <connection>scm:svn:https://svn.duraspace.org/duracloud-priv/trunk</connection>
