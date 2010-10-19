@@ -18,12 +18,12 @@ public class LoginHelper {
 		sc.type("id=username", username);
 		sc.type("id=password", password);
 		sc.click("id=login-button");
-		sc.waitForPageToLoad("1000");
+		sc.waitForPageToLoad("5000");
 	}
 
 	public static void logout(Selenium sc){
 		sc.open(SeleniumHelper.getAppRoot()+"/j_spring_security_logout");
-		sc.waitForPageToLoad("1000");
+		sc.waitForPageToLoad("5000");
 	}
 
 }

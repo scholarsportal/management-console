@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.duracloud.account.security.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -62,9 +61,9 @@ public class DuracloudUser implements Identifiable, UserDetails  {
         this.email = email;
         this.counter = counter;
         this.acctToRoles = new HashMap<String,List<String>>();
-        
     }
 
+    
     public List<String> getRolesByAcct(String accountId){
 	    	List<String> roles = this.acctToRoles.get(accountId);
 	    	if(roles != null){
@@ -81,10 +80,13 @@ public class DuracloudUser implements Identifiable, UserDetails  {
      * @param acctId to add to user
      */
     public void addAccount(String acctId) {
-        List<String> roles = new ArrayList<String>();
+    	
+        List<String> roles = this.acctToRoles.get(acctId);
+        if(roles == null){
+        	roles = new ArrayList<String>(1);
+        }
         roles.add(Role.ROLE_USER.name());
-
-        getAcctToRoles().put(acctId, roles);
+        this.acctToRoles.put(acctId, roles);
     }
 
     public String getUsername() {
@@ -108,9 +110,6 @@ public class DuracloudUser implements Identifiable, UserDetails  {
     }
 
     public Map<String, List<String>> getAcctToRoles() {
-        if (null == acctToRoles) {
-            acctToRoles = new HashMap<String, List<String>>();
-        }
         return acctToRoles;
     }
 

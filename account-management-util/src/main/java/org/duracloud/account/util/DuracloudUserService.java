@@ -44,5 +44,8 @@ public interface DuracloudUserService {
 
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException;
+
+	public void grantOwnerRights(String id, String username);
+	public void revokeOwnerRights(String id, String username);
     
 }

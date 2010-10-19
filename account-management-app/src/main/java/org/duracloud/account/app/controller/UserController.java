@@ -7,13 +7,19 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,17 +44,21 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/users")
 public class UserController extends  AbstractController {
 
-	private DuracloudUserService userService;
 	public static final String NEW_USER_VIEW = "user-new";
 	public static final String USER_HOME = "user-home";
 
+	@Autowired
+	private AccountManagerService accountManagerService;
+
+	@Autowired
+	private DuracloudUserService userService;
+	
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	/**
 	 * 
 	 * @param userService
 	 */
-	@Autowired
 	public void setUserService(DuracloudUserService userService) {
 		if (userService == null) {
 			throw new NullPointerException(
@@ -70,11 +80,17 @@ public class UserController extends  AbstractController {
 				new NewUserForm());
 	}
 
-	@RequestMapping(value = { "/byid/{userId}" }, method = RequestMethod.GET)
-	@PreAuthorize("#userId == authentication.name OR hasRole(\'ROLE_ROOT\')")
-	public ModelAndView get(@PathVariable String userId){
-		log.debug("getting user {}", userId);
-		return new ModelAndView(USER_HOME, "username", userId);
+	@RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
+	//@PreAuthorize("#userId == authentication.name OR hasRole('ROLE_ROOT')")
+	public ModelAndView getUser(@PathVariable String username) throws DBNotFoundException{
+		log.debug("getting user {}", username);
+		DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
+		ModelAndView mav =  new ModelAndView(USER_HOME, 
+				"user", user);
+		
+		List<AccountInfo> accounts = this.accountManagerService.lookupAccountsByUsername(user.getUsername());
+		mav.addObject("accounts", null);
+		return mav;
 	}
 
 	@RequestMapping(value = {NEW_MAPPING }, method = RequestMethod.POST)
@@ -108,6 +124,14 @@ public class UserController extends  AbstractController {
 
 	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
+	}
+
+	public void setAccountManagerService(AccountManagerService accountManagerService) {
+		this.accountManagerService = accountManagerService;
+	}
+
+	public AccountManagerService getAccountManagerService() {
+		return accountManagerService;
 	}
 
 }

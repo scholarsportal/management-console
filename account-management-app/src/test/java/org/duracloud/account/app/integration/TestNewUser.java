@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.thoughtworks.selenium.Selenium;
-
 /**
  * 
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

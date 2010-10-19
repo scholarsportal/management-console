@@ -7,7 +7,6 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.annotation.UniqueUsernameValidator;
 import org.duracloud.account.db.mockimpl.MockDuracloudAccountRepo;
 import org.duracloud.account.db.mockimpl.MockDuracloudUserRepo;
 import org.duracloud.account.util.DuracloudUserService;

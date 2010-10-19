@@ -60,6 +60,10 @@ public abstract class AbstractIntegrationTest {
 		LoginHelper.login(sc, username, password);
 	}
 	
+	protected void loginAdmin(){
+		login("admin","admin");
+	}
+	
 	@After
     public void after() {
         sc.stop();

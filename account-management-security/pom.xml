@@ -38,6 +38,10 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
 
 
     <dependency>
@@ -53,6 +57,17 @@
     <dependency>
       <groupId>org.apache.xmlbeans</groupId>
       <artifactId>xmlbeans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>account-management-util</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>account-management-common</artifactId>
+      <version>${version}</version>
     </dependency>
 
     <!-- runtime deps -->

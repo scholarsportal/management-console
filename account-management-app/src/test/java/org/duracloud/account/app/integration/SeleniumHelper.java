@@ -20,6 +20,6 @@ public class SeleniumHelper {
 	}
 	
 	public static String getAppRoot() {
-        return "/ama/app";
+        return "/ama";
     }
 }

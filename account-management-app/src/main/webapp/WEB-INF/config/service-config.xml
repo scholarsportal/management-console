@@ -1,24 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
   xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-        
-        <bean class="org.duracloud.account.util.impl.DuracloudUserServiceImpl" name="userService,userDetailsService" lazy-init="false" scope="singleton">
-           <constructor-arg ref="userRepo"/>
-           <constructor-arg ref="accountRepo"/>
-        </bean>
-        
-        
-        <bean class="org.duracloud.account.util.mock.AccountManagerServiceImpl" name="accountManagerService" lazy-init="false" scope="singleton"/>
-
-        
-        <bean class="org.duracloud.account.db.mockimpl.MockDuracloudUserRepo" name="userRepo" lazy-init="false" scope="singleton"/>
-        <bean class="org.duracloud.account.db.mockimpl.MockDuracloudAccountRepo" name="accountRepo" lazy-init="false" scope="singleton"/>
-
-        
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+>
+  <bean
+    depends-on="userRepo,accountRepo"
+    class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
+    primary="true"
+    scope="singleton"
+    id="userService"
+    name="userDetailsService"
+    
+  >
+    <constructor-arg>
+      <ref bean="userRepo"/>
+      </constructor-arg>
+    <constructor-arg>
+      <ref bean="accountRepo"/>
+      </constructor-arg>
+  </bean>
+  <bean
+    class="org.duracloud.account.util.mock.AccountManagerServiceImpl"
+    id="accountManagerService"
+    scope="singleton"
+  >
+    <property name="userService">
+      <ref bean="userService"/>
+    </property>
+  </bean>
+ 
+  <bean
+    class="org.duracloud.account.db.mockimpl.MockDuracloudUserRepo"
+    id="userRepo"
+    scope="singleton"
+    primary="true" />
+  <bean
+    class="org.duracloud.account.db.mockimpl.MockDuracloudAccountRepo"
+    id="accountRepo"
+    scope="singleton"
+    primary="true" />
 </beans>
-

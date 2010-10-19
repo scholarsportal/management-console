@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
-import org.duracloud.account.security.Role;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;

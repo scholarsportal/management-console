@@ -24,9 +24,10 @@
       <p>Timestamp: ${time}</p>
 
       <p>
+
         <a
          id="new-user-link"
-         href="${pageContext.request.contextPath}/app/users/new">Create New User Profile</a>
+         href="${pageContext.request.contextPath}/users/new">Create New User Profile</a>
       </p>
     </tiles:putAttribute>
   </tiles:insertDefinition>

@@ -10,7 +10,8 @@ package org.duracloud.account.app.integration;
 import org.junit.Test;
 
 /**
- *
+ * 
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
 public class TestAccount extends AbstractIntegrationTest {

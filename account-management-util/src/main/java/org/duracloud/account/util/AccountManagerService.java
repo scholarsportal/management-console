@@ -12,6 +12,7 @@ import java.util.List;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -47,10 +48,9 @@ public interface AccountManagerService {
 
     /**
      * @param username
-     * @param password
      * @return list of account ids
      * @throws AccountNotFoundException
      */
-    public List<String> lookupAccounts(String username, String password)
-        throws AccountNotFoundException;
+    public List<AccountInfo> lookupAccountsByUsername(String username)
+        throws UsernameNotFoundException;
 }

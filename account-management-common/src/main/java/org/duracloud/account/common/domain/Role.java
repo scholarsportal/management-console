@@ -1,4 +1,4 @@
-package org.duracloud.account.security;
+package org.duracloud.account.common.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;

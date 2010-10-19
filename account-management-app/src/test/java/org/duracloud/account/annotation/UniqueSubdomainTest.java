@@ -7,7 +7,6 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.annotation.UniqueSubdomainValidator;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.mock.AccountManagerServiceImpl;
 import org.duracloud.annotation.MockConstraintValidatorContext;

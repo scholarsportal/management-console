@@ -32,7 +32,7 @@
               <form:label
                path="orgName">orgName</form:label>
 
-              <form:input
+              <form:input id="org-name-text"
                path="orgName" />
 
               <form:errors
@@ -43,7 +43,7 @@
               <form:label
                path="acctName">acctName</form:label>
 
-              <form:input
+              <form:input id="acct-name-text"
                path="acctName" />
 
               <form:errors
@@ -54,7 +54,7 @@
               <form:label
                path="department">department</form:label>
 
-              <form:input
+              <form:input id="department-text"
                path="department" />
 
               <form:errors
@@ -65,7 +65,7 @@
               <form:label
                path="subdomain">Subdomain</form:label>
 
-              <form:input
+              <form:input id="subdomain-text"
                path="subdomain" />
 
               <form:errors
@@ -73,7 +73,7 @@
             </li>
 
             <li>
-              <button
+              <button id="create-account-button"
                type="submit">Create</button>
             </li>
           </ul>

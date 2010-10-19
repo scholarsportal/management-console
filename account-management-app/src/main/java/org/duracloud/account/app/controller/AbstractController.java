@@ -20,7 +20,7 @@ public abstract class AbstractController {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-	protected static final String PREFIX = "/app";
+	protected static final String PREFIX = "";
 
 
 	public static final String NEW_MAPPING = "/new";

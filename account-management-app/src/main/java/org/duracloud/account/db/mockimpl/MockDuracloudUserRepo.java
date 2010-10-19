@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
+
 public class MockDuracloudUserRepo implements DuracloudUserRepo {
 	private Map<String,DuracloudUser> usermap;
 	private Logger log = LoggerFactory.getLogger(getClass());

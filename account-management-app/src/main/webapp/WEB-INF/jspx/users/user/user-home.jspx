@@ -10,7 +10,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${username}'s Profile" />
+     value="Account Management App: ${user.username}'s Profile" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -18,12 +18,12 @@
 
     <tiles:putAttribute
      name="body">
-      <h1>${username}'s Profile</h1>
+      <h1>${user.username}'s Profile</h1>
 
       <ul>
         <li>
-          <a
-           href="${pageContext.request.contextPath}/app/accounts/new">Create New Account</a>
+          <a id="new-account-link"
+           href="${pageContext.request.contextPath}/accounts/new">Create New Account</a>
         </li>
 
         <li>
@@ -40,6 +40,22 @@
           </form>
         </li>
       </ul>
+      
+      <c:if test="${not empty accounts}">
+	      <ul>
+	      	<c:forEach var="a" items="${accounts}">
+	      		<li>
+	      			<a href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
+	      				${a.orgName}:${a.acctName}
+	      			</a>
+	      		</li>
+	      	
+	      	</c:forEach>	
+	      
+	      </ul>
+	      
+      </c:if>
+      
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

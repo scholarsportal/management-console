@@ -8,11 +8,14 @@
 package org.duracloud.account.app.integration;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.thoughtworks.selenium.SeleniumException;
+
 /**
- * @contributor "Daniel Bernstein (dbernstein@archive.org)"
+ * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
 public class TestUser extends AbstractIntegrationTest{
@@ -43,21 +46,28 @@ public class TestUser extends AbstractIntegrationTest{
 		super.after();
 	}
 	
+	/**
+	 * 
+	 */
+	private void login() {
+		loginAdmin();
+	}
+
 	@Test
 	public void testProfile(){
 		this.isTextPresent("admin");
 	}
 
-	/**
-	 * 
-	 */
-	private void login() {
-		login("admin","admin");
+	@Test
+	public void testAuthorization(){
+		try{
+			sc.open(getAppRoot()+"/users/byid/user");
+			Assert.assertTrue(false);
+		}catch(SeleniumException ex){
+			Assert.assertTrue(ex.getMessage().contains("403"));
+		}
 	}
 
-	@Test
-	public void testProfileAgain(){
-		this.isTextPresent("admin");
-	}
+
 
 }

@@ -1,18 +1,20 @@
 package org.duracloud.account.util.mock;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
-import org.duracloud.account.util.error.UsernameAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /*
  * The contents of this file are subject to the license and copyright
@@ -31,6 +33,8 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 	private Map<String, AccountService> accountServiceMap = new HashMap<String, AccountService>();
 	private Logger log = LoggerFactory.getLogger(getClass());
 	
+	@Autowired
+	private DuracloudUserService userService;
 	
 	public AccountManagerServiceImpl(){
 	}
@@ -79,10 +83,11 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 	 * lang.String, java.lang.String)
 	 */
 	@Override
-	public List<String> lookupAccounts(String username, String password)
-			throws AccountNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<AccountInfo> lookupAccountsByUsername(String username)
+			throws UsernameNotFoundException {
+		List<AccountInfo> accountInfo = new LinkedList<AccountInfo>();
+		return accountInfo;
+	
 	}
 
 	/*
@@ -100,6 +105,16 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 			}
 		}
 		return true;
+	}
+
+
+	public void setUserService(DuracloudUserService userService) {
+		this.userService = userService;
+	}
+
+
+	public DuracloudUserService getUserService() {
+		return userService;
 	}
 
 }

@@ -7,13 +7,12 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -22,7 +21,6 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +33,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	private Logger log = LoggerFactory.getLogger(getClass());
     private DuracloudUserRepo userRepo;
     private DuracloudAccountRepo accountRepo;
-
     public DuracloudUserServiceImpl(DuracloudUserRepo userRepo,
                                     DuracloudAccountRepo accountRepo) {
         this.userRepo = userRepo;
@@ -103,8 +100,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 				acctToRoles.put(acctId, roles);
 			}
 			
-			if(!roles.contains("ROLE_ADMIN")){
-				roles.add("ROLE_ADMIN");
+			if(!roles.contains(Role.ROLE_ADMIN.name())){
+				roles.add(Role.ROLE_ADMIN.name());
 			}
 			user.setAcctToRoles(acctToRoles);
 			log.info("granted admin rights to {} on {}", username, acctId);
@@ -114,6 +111,30 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 		}
 	}
 
+	@Override
+	public void grantOwnerRights(String acctId, String username) {
+		try {
+			DuracloudUser user = this.userRepo.findById(username);
+			Map<String,List<String>> acctToRoles = user.getAcctToRoles();
+			List<String> roles = acctToRoles.get(acctId);
+			if(roles == null){
+				roles = new LinkedList<String>();
+				acctToRoles.put(acctId, roles);
+			}
+			
+			if(!roles.contains(Role.ROLE_OWNER.name())){
+				roles.add(Role.ROLE_OWNER.name());
+			}
+			user.setAcctToRoles(acctToRoles);
+			log.info("granted owner rights to {} on {}", username, acctId);
+
+		} catch (DBNotFoundException e) {
+			log.error("user {} not found", username, e);
+		}		
+	}
+
+
+
 
     @Override
     public void revokeAdminRights(String acctId, String username) {
@@ -122,7 +143,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 			Map<String,List<String>> acctToRoles = user.getAcctToRoles();
 			List<String> roles = acctToRoles.get(acctId);
 			if(roles != null){
-				roles.remove("ROLE_ADMIN");
+				roles.remove(Role.ROLE_ADMIN.name());
 			}
 			user.setAcctToRoles(acctToRoles);
 			log.info("revoked admin rights from {} on {}", username, acctId);
@@ -162,5 +183,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 		}
 	}
 
+	@Override
+	public void revokeOwnerRights(String id, String username) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

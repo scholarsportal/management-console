@@ -21,7 +21,6 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -43,7 +42,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Lazy
 @RequestMapping("/accounts")
 public class AccountController extends AbstractController {
+	@Autowired
 	private AccountManagerService accountManagerService;
+	@Autowired
 	private DuracloudUserService userService;
 	public static final String NEW_ACCOUNT_VIEW = "account-new";
 	public static final String ACCOUNT_HOME = "account-home";
@@ -71,7 +72,6 @@ public class AccountController extends AbstractController {
 	}
 
 	@RequestMapping(value = { "/byid/{accountId}" }, method = RequestMethod.GET)
-	@PreAuthorize("userService.loadDuracloudUserByUsername(authentication.name).getRolesByAcct(#accountId).contains(\'ROLE_USER\') OR hasRole(\'ROLE_ROOT\')")
 	public String getHome(@PathVariable String accountId, Model model)
 			throws AccountNotFoundException {
 		AccountService accountService = accountManagerService
@@ -108,8 +108,11 @@ public class AccountController extends AbstractController {
 										newAccountForm.getStorageProviders());
 		
 			AccountService service = this.accountManagerService.createAccount(accountInfo);
-			this.userService.addUserToAccount(service.retrieveAccountInfo().getId(), 
+			String id = service.retrieveAccountInfo().getId();
+			this.userService.addUserToAccount(id, 
 											   user.getUsername());
+			
+			this.userService.grantOwnerRights(id, username);
 			
 			return "redirect:"+ MessageFormat.format("{0}/accounts/byid/{1}", 
 													 PREFIX,
@@ -128,7 +131,6 @@ public class AccountController extends AbstractController {
 	public AccountManagerService getAccountManagerService() {
 		return accountManagerService;
 	}
-	@Autowired
 	public void setAccountManagerService(AccountManagerService accountManagerService) {
 		this.accountManagerService = accountManagerService;
 	}
@@ -137,7 +139,6 @@ public class AccountController extends AbstractController {
 	public DuracloudUserService getUserService() {
 		return userService;
 	}
-	@Autowired
 	public void setUserService(DuracloudUserService userService) {
 		this.userService = userService;
 	}
