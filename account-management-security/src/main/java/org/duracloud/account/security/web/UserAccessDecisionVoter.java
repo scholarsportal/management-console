@@ -12,10 +12,8 @@ import java.util.Collection;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
@@ -24,37 +22,18 @@ import org.springframework.security.core.Authentication;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
  */
-public class UserAccessDecisionVoter implements AccessDecisionVoter {
+public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
 	private Logger log = LoggerFactory.getLogger(getClass());
-	@Override
-	public boolean supports(ConfigAttribute attribute) {
-		log.debug("supports attribute{}", attribute.getAttribute());
-		return true;
-	}
 
 	@Override
-	public boolean supports(Class<?> clazz) {
-		log.debug("supports {}", clazz.getName());
-		return MethodInvocation.class.isAssignableFrom(clazz);
-	}
-
-	@Override
-	public int vote(Authentication authentication, Object object,
+	protected int voteImpl(Authentication authentication, MethodInvocation rmi,
 			Collection<ConfigAttribute> attributes) {
-		log.debug("voting on {} for {} using attributes {}", new Object[] {
-				authentication, object, attributes });
-		for(ConfigAttribute ca : attributes){
-			log.debug("attribute: {}", ca.getAttribute());
-		}
-		
-		MethodInvocation rmi = (MethodInvocation)object;
 		if(rmi.getMethod().getName().matches(".*UserByUsername.*")){
 			String username = (String)rmi.getArguments()[0];
 			log.debug("intercepted ({})", username);
 			DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
 			
-			if(username.equals(user.getUsername()) || 
-					user.getAuthorities().contains(Role.ROLE_ROOT.authority())){
+			if(username.equals(user.getUsername())){
 				return ACCESS_GRANTED;
 			}else{
 				return ACCESS_DENIED;
