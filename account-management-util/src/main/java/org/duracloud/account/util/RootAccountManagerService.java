@@ -17,6 +17,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
  *
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
+
 public interface RootAccountManagerService {
 
     /**

@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -85,8 +86,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public void removeUserFromAccount(String acctId, String username) {
-        // Default method body
-
+    	throw new NotImplementedException();
     }
 
     @Override

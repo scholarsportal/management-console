@@ -10,6 +10,7 @@ package org.duracloud.account.util.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -146,17 +147,18 @@ public class DuracloudUserServiceImplTest {
 
     @Test
     public void testRemoveUserFromAccount() throws Exception {
-        // TODO: complete test
+    	//TODO: complete test
     }
 
     @Test
     public void testGrantAdminRights() throws Exception {
-        // TODO: complete test
+    	//TODO: complete test
     }
 
     @Test
     public void testRevokeAdminRights() throws Exception {
         // TODO: complete test
+
     }
 
     @Test
@@ -168,4 +170,20 @@ public class DuracloudUserServiceImplTest {
     public void testChangePassword() throws Exception {
         // TODO: complete test
     }
+    
+    @Test
+    public void testloadDuracloudUserByUsername() throws Exception {
+        // TODO: complete test
+    }
+    
+    @Test
+    public void testGrantOwnerRights() throws Exception {
+        // TODO: complete test
+    }
+
+    @Test
+    public void testRevokeOwnerRights() throws Exception {
+        // TODO: complete test
+    }
+
 }
