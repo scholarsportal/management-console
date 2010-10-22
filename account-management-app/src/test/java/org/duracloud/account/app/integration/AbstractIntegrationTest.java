@@ -88,4 +88,15 @@ public abstract class AbstractIntegrationTest {
         return new DefaultSelenium("localhost", 4444, "*firefox", url);
 	}
 
+	protected void openUserProfilePage(String username){
+		sc.open(getAppRoot()+"/users/byid/" + username);
+	}
+	
+	/**
+	 * @param accountId
+	 */
+	protected void openAccountHome(String accountId) {
+		sc.open(getAppRoot()+"/accounts/byid/"+accountId);
+		
+	}
 }

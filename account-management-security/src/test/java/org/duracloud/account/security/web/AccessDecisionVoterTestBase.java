@@ -70,8 +70,7 @@ public class AccessDecisionVoterTestBase {
 
 	private Authentication createMockAuthentication(UserDetails user) {
 		Authentication auth = EasyMock.createMock(Authentication.class);
-		EasyMock.expect(auth.getPrincipal()).andReturn(user);
-		EasyMock.expect(auth.getPrincipal()).andReturn(user);
+		EasyMock.expect(auth.getPrincipal()).andReturn(user).anyTimes();
 		EasyMock.replay(auth);
 		return auth;
 	}

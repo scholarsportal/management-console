@@ -4,13 +4,14 @@
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:sec="http://www.springframework.org/security/tags"
  xmlns:form="http://www.springframework.org/tags/form"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <tiles:insertDefinition
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${user.username}'s Profile" />
+     value="${user.username}'s Profile" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -19,8 +20,8 @@
     <tiles:putAttribute
      name="body">
       <h1>${user.username}'s Profile</h1>
-
-      <ul>
+	<sec:authorize ifNotGranted="ROLE_ROOT">
+	  <ul>
         <li>
           <a id="new-account-link"
            href="${pageContext.request.contextPath}/accounts/new">Create New Account</a>
@@ -40,7 +41,9 @@
           </form>
         </li>
       </ul>
-      
+	
+	</sec:authorize>
+	 
       <c:if test="${not empty accounts}">
 	      <ul>
 	      	<c:forEach var="a" items="${accounts}">

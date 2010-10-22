@@ -8,11 +8,14 @@
 package org.duracloud.account.db.mockimpl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -32,6 +35,9 @@ public class MockDuracloudUserRepo implements DuracloudUserRepo {
 		usermap = new HashMap<String,DuracloudUser>();
 		save(new DuracloudUser("admin", "admin", "Sky", "Dancer", "admin@duracloud.org"));
 		save(new DuracloudUser("user", "user", "Joe", "Bloggs", "jbloggs@duracloud.org"));
+		save(new DuracloudUser("root", "root", "Root", "User", "root@duracloud.org", 
+				new HashSet(Arrays.asList(new Role[]{Role.ROLE_ROOT}))));
+
 		log.debug("constructed " + getClass());
 		
 	}

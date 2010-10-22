@@ -19,9 +19,7 @@ import com.thoughtworks.selenium.SeleniumException;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
-public class TestAccount extends AbstractIntegrationTest {
-	private String accountId = null;
-
+public class TestAccounts extends AbstractIntegrationTest {
 	
 	/* (non-Javadoc)
 	 * @see org.duracloud.account.app.integration.AbstractIntegrationTest#before()
@@ -30,9 +28,15 @@ public class TestAccount extends AbstractIntegrationTest {
 	@Before
 	public void before() throws Exception {
 		super.before();
-		openUserProfilePage("admin");
-		loginAdmin();
-    	accountId = AccountTestHelper.createAccount(sc);
+		openUserProfilePage("root");
+		loginRoot();
+	}
+
+	/**
+	 * 
+	 */
+	protected void loginRoot() {
+		login("root","root");
 	}
 
 	/* (non-Javadoc)
@@ -44,23 +48,29 @@ public class TestAccount extends AbstractIntegrationTest {
 		logout();
 		super.after();
 	}
+	
+    @Test
+    public void test(){
+		openAccounts();
+		Assert.assertTrue(sc.isElementPresent("id=accounts-link"));
+    }
+    
+	/**
+	 * 
+	 */
+	private void openAccounts() {
+		sc.open(getAppRoot()+"/accounts/");		
+	}
 
 	@Test
-	public void test(){
-		Assert.assertNotNull(this.accountId);
-		openAccountHome(this.accountId);
-		Assert.assertTrue(sc.isElementPresent("id=account-id"));
-	}
-	@Test
-	public void testFailedAuthorization(){
-		logout();
-		try {
-	    	openAccountHome(accountId);
-			login("user", "user");
-			Assert.assertTrue(false);
-		} catch (SeleniumException e) {
-			Assert.assertTrue(e.getMessage().contains("403"));
+	public void testAuthorization(){
+		try{
+			logout();
+			openAccounts();
+			loginAdmin();
+		}catch(SeleniumException ex){
+			Assert.assertTrue(ex.getMessage().contains("403"));
 		}
 	}
-	
+
 }

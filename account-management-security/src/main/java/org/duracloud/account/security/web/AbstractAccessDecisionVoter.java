@@ -61,6 +61,10 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 			Collection<ConfigAttribute> attributes);
 
 	protected boolean isRoot(Authentication authentication) {
+		if(!(authentication.getPrincipal() instanceof UserDetails)){
+			return false;
+		}
+
 		return ((UserDetails)authentication.getPrincipal())
 					.getAuthorities()
 					.contains(Role.ROLE_ROOT.authority());

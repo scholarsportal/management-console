@@ -40,6 +40,8 @@ public class DuracloudUser implements Identifiable, UserDetails  {
 
     private int counter;
 
+	private Set<Role> superRoles = null;
+
     public DuracloudUser(String username,
                          String password,
                          String firstName,
@@ -64,7 +66,18 @@ public class DuracloudUser implements Identifiable, UserDetails  {
     }
 
     
-    public List<String> getRolesByAcct(String accountId){
+    public DuracloudUser(	String username,
+				            String password,
+				            String firstName,
+				            String lastName,
+				            String email,
+				            Set<Role> superRoles) {
+
+    	this(username, password, firstName,lastName, email);
+    	this.superRoles  = superRoles;
+	}
+
+	public List<String> getRolesByAcct(String accountId){
 	    	List<String> roles = this.acctToRoles.get(accountId);
 	    	if(roles != null){
 	    		return roles;
@@ -84,9 +97,12 @@ public class DuracloudUser implements Identifiable, UserDetails  {
         List<String> roles = this.acctToRoles.get(acctId);
         if(roles == null){
         	roles = new ArrayList<String>(1);
+            this.acctToRoles.put(acctId, roles);
         }
-        roles.add(Role.ROLE_USER.name());
-        this.acctToRoles.put(acctId, roles);
+        if(!roles.contains(Role.ROLE_USER.name())){
+            roles.add(Role.ROLE_USER.name());
+        }
+
     }
 
     public String getUsername() {
@@ -200,6 +216,12 @@ public class DuracloudUser implements Identifiable, UserDetails  {
 	 */
 	public Collection<GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+
+		if(this.superRoles != null){
+			for(Role r : this.superRoles){
+				authorities.add(r.authority());
+			}
+		}
 		authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
 		for(String acct : this.acctToRoles.keySet()){
 			List<String> roles = this.acctToRoles.get(acct);

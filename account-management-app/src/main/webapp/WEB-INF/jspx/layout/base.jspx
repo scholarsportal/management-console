@@ -4,7 +4,8 @@
 	xmlns:tiles="http://tiles.apache.org/tags-tiles"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:form="http://www.springframework.org/tags/form"
-	xmlns:sec="http://www.springframework.org/security/tags">
+	xmlns:sec="http://www.springframework.org/security/tags"
+	>
 <jsp:output doctype-root-element="html"
 	doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
 	doctype-system="http://www.w3c.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
@@ -35,8 +36,18 @@
 
 		</li>
 	</ul>
-
 </sec:authorize>
+
+			<sec:authorize ifAllGranted="ROLE_ROOT">
+				<ul>
+					<li>
+						<a id="accounts-link"
+							href="${pageContext.request.contextPath}/accounts/">
+							View All Accounts
+						</a>
+					</li>
+				</ul>
+			</sec:authorize>
 
 <sec:authentication property="principal" var="principal" />
 <c:if test="${principal == 'anonymousUser'}">

@@ -36,6 +36,8 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 		log.debug("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
+	
+	
 
 	@Override
 	protected int voteImpl(Authentication authentication, MethodInvocation rmi,

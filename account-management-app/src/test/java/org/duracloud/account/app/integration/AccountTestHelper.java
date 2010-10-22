@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.app.integration;
 
+import org.junit.Assert;
+
 import com.thoughtworks.selenium.Selenium;
 
 /**
@@ -15,13 +17,28 @@ import com.thoughtworks.selenium.Selenium;
  */
 public class AccountTestHelper {
 
-	public static void createAccount(Selenium sc, String orgName, String department, String subdomain, String accountName){
+	public static String createAccount(Selenium sc, String orgName, String department, String subdomain, String accountName){
         sc.open(SeleniumHelper.getAppRoot()+"/accounts/new");
         sc.type("org-name-text", orgName);
         sc.type("department-text", department);
         sc.type("subdomain-text", subdomain);
         sc.type("acct-name-text", accountName);
         sc.click("id=create-account-button");
-        sc.waitForPageToLoad("1000");
+        sc.waitForPageToLoad("10000");
+        String accountId =  sc.getText("id=account-id");
+        Assert.assertTrue(accountId != null && !accountId.trim().equals(""));
+        return accountId;
 	}
+
+	/**
+	 * @return
+	 */
+	public static String createAccount(Selenium sc) {
+		return createAccount(	sc, 
+								"test", 
+								"test", 
+								System.currentTimeMillis()
+								+ "", 
+								"test");
+    }
 }

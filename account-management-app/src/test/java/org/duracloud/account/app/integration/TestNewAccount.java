@@ -19,11 +19,8 @@ public class TestNewAccount extends AbstractIntegrationTest{
 	public void createAccount(){
 		sc.open(getAppRoot()+"/accounts/new");
 		loginAdmin();
-		String orgName = "My Org";
-		String subdomain = "buddha";
-		String department = "Eastern Religions";
-		AccountTestHelper.createAccount(sc, orgName, department, subdomain, "MyOrgAccountName");
-		isTextPresent(orgName);
+		String id = AccountTestHelper.createAccount(sc);
+		isTextPresent(id);
 		logout();
 	}
 }

@@ -54,6 +54,10 @@
     <access-denied-handler
       error-page="/access-denied" />
     <intercept-url
+      pattern="/accounts/"
+      access="ROLE_ROOT" />
+
+    <intercept-url
       pattern="/accounts/new"
       access="ROLE_USER" />
     <intercept-url
@@ -90,7 +94,7 @@
     >
       <beans:list>
         <beans:bean
-          class="org.duracloud.account.security.web.AccountAccessDecisionVoter" />
+          class="org.duracloud.account.security.web.AccountAccessDecisionVoter"/>
         <beans:bean
           class="org.duracloud.account.security.web.UserAccessDecisionVoter" />
       </beans:list>

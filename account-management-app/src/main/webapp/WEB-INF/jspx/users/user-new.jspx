@@ -47,7 +47,8 @@
                path="lastName" />
 
               <form:errors
-               path="lastName" />
+               path="lastName">
+               </form:errors>
             </li>
 
             <li>

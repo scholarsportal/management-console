@@ -53,7 +53,6 @@
               <name>jetty.port</name>
               <value>${jetty.port}</value>
             </systemProperty>
-
           </systemProperties>
 
           <webAppConfig>

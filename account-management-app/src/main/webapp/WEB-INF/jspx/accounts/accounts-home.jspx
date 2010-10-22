@@ -9,7 +9,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${accountInfo.id} Home" />
+     value="Accounts Home" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -17,17 +17,8 @@
 
     <tiles:putAttribute
      name="body">
-      <tiles:insertDefinition
-       name="account-base">
-        <tiles:putAttribute
-         name="content">
-          <h1>Dashboard: ${accountInfo.subdomain}: [id=${accountInfo.id}]</h1>
-
-
-		  <!-- for testing purposes -->
-		  <span id="account-id" style="visibililty:hidden">${accountInfo.id}</span>
-        </tiles:putAttribute>
-      </tiles:insertDefinition>
+          <h1>Account List for Root Admins</h1>
+          <p>Not yet implemented</p>
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

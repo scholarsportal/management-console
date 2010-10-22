@@ -27,7 +27,6 @@ public class HomeController extends AbstractController {
 		log.info("serving up the home page at {}", System.currentTimeMillis());
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("home");
-		mav.addObject("message", "Hello World!");
 		mav.addObject("time", new Date());
 		return mav;
 	}

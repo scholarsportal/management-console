@@ -55,7 +55,7 @@ public class AccountController extends AbstractController {
 	public AccountController(){
 		
 	}
-	
+
 	public AccountController(AccountManagerService accountManagerService,
 			DuracloudUserService userService) {
 		if (accountManagerService == null) {

@@ -26,16 +26,11 @@ public class TestUser extends AbstractIntegrationTest{
 	@Override
 	@Before
 	public void before() throws Exception {
-		// TODO Auto-generated method stub
 		super.before();
-		openUserProfilePage();
-		login();
-
+		openUserProfilePage("admin");
+		loginAdmin();
 	}
 
-	protected void openUserProfilePage(){
-		sc.open(getAppRoot()+"/users/byid/admin");
-	}
 	/* (non-Javadoc)
 	 * @see org.duracloud.account.app.integration.AbstractIntegrationTest#after()
 	 */
@@ -45,13 +40,6 @@ public class TestUser extends AbstractIntegrationTest{
 		logout();
 		super.after();
 	}
-	
-	/**
-	 * 
-	 */
-	private void login() {
-		loginAdmin();
-	}
 
 	@Test
 	public void testProfile(){
@@ -60,11 +48,10 @@ public class TestUser extends AbstractIntegrationTest{
 
 	@Test
 	public void testAuthorization(){
-		try{
-			sc.open(getAppRoot()+"/users/byid/user");
-			Assert.assertTrue(false);
-		}catch(SeleniumException ex){
-			Assert.assertTrue(ex.getMessage().contains("403"));
+		try {
+			openUserProfilePage("user");
+		} catch (SeleniumException e) {
+			Assert.assertTrue(e.getMessage().contains("403"));
 		}
 	}
 
