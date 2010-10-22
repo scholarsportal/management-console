@@ -12,20 +12,31 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.easymock.EasyMock;
 
 public class AccountUtilTestData {
-	public static final String[] ACCOUNT_IDS = new String[]{"0","1","2"};
-	public static final String[] USERNAMES = new String[]{"danny","bill","andrew"};
+	public static final String[] ACCOUNT_IDS = new String[] { "0", "1", "2" };
+	public static final String[] USERNAMES = new String[] { "danny", "bill",
+			"andrew" };
 	public static final String ORG_PREFIX = "org-";
-	
-	public static  DuracloudUserRepo createMockUserRepo() {
-		DuracloudUserRepo mockRepo = EasyMock.createMock(DuracloudUserRepo.class);
+	public static final String NOT_A_USER_USERNAME = "notauser";
+
+	public static DuracloudUserRepo createMockUserRepo() {
+		DuracloudUserRepo mockRepo = EasyMock
+				.createMock(DuracloudUserRepo.class);
 		List<String> ids = new ArrayList<String>(Arrays.asList(USERNAMES));
 		EasyMock.expect(mockRepo.getIds()).andReturn(ids);
-		for(String id : ids){
-			try{
-				EasyMock.expect(mockRepo.findById(id)).andReturn(new DuracloudUser(id,id,"test", "test", id+"@duracloud.org"));
-			}catch(DBNotFoundException ex){
-				ex.printStackTrace();
+		try {
+
+			for (String id : ids) {
+				EasyMock.expect(mockRepo.findById(id)).andReturn(
+						new DuracloudUser(id, id, "test", "test", id
+								+ "@duracloud.org"));
 			}
+
+			EasyMock.expect(mockRepo.findById(NOT_A_USER_USERNAME)).andThrow(
+					new DBNotFoundException(NOT_A_USER_USERNAME
+							+ " not a user!"));
+			
+		} catch (DBNotFoundException ex) {
+			ex.printStackTrace();
 		}
 
 		EasyMock.replay(mockRepo);
@@ -33,18 +44,21 @@ public class AccountUtilTestData {
 	}
 
 	public static DuracloudAccountRepo createMockAccountRepo() {
-		DuracloudAccountRepo mockRepo = EasyMock.createMock(DuracloudAccountRepo.class);
+		DuracloudAccountRepo mockRepo = EasyMock
+				.createMock(DuracloudAccountRepo.class);
 		List<String> ids = new ArrayList<String>(Arrays.asList(ACCOUNT_IDS));
 		EasyMock.expect(mockRepo.getIds()).andReturn(ids);
-		for(String id : ids){
-			try{
-				EasyMock.expect(mockRepo.findById(id)).andReturn(new AccountInfo(id,"subdomain-"+id,"account-"+id,ORG_PREFIX+id,null, null, null));
-			}catch(DBNotFoundException ex){
+		for (String id : ids) {
+			try {
+				EasyMock.expect(mockRepo.findById(id)).andReturn(
+						new AccountInfo(id, "subdomain-" + id, "account-" + id,
+								ORG_PREFIX + id, null, null, null));
+			} catch (DBNotFoundException ex) {
 				ex.printStackTrace();
 			}
 		}
 
 		EasyMock.replay(mockRepo);
-		return mockRepo;	
+		return mockRepo;
 	}
 }

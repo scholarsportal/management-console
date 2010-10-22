@@ -10,7 +10,6 @@ package org.duracloud.account.util.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -20,6 +19,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -40,28 +40,20 @@ public class DuracloudUserServiceImplTest {
 
     private static final String acctId = "acct-id";
 
+    @Before
+	public void before() {
+		service = new DuracloudUserServiceImpl(
+				AccountUtilTestData.createMockUserRepo(), 
+				AccountUtilTestData.createMockAccountRepo());
+	}
+
     @Test
     public void testIsUsernameAvailable() throws Exception {
-        userRepo = createMockIsUsernameAvailableRepo();
-        service = new DuracloudUserServiceImpl(userRepo, accountRepo);
-
-        service.isUsernameAvailable(username);
-        service.isUsernameAvailable(username);
-
-        EasyMock.verify(userRepo);
+        Assert.assertFalse(service.isUsernameAvailable(AccountUtilTestData.USERNAMES[0]));
+        Assert.assertTrue(service.isUsernameAvailable(AccountUtilTestData.NOT_A_USER_USERNAME));
     }
 
-    private DuracloudUserRepo createMockIsUsernameAvailableRepo()
-        throws Exception {
-        DuracloudUserRepo repo = EasyMock.createMock(DuracloudUserRepo.class);
 
-        EasyMock.expect(repo.findById(username)).andReturn(createUser());
-        EasyMock.expect(repo.findById(username))
-            .andThrow(new DBNotFoundException("test"));
-
-        EasyMock.replay(repo);
-        return repo;
-    }
 
     private DuracloudUser createUser() {
         return new DuracloudUser(username,
