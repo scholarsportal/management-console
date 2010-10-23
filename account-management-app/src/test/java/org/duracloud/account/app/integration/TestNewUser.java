@@ -26,7 +26,7 @@ public class TestNewUser extends AbstractIntegrationTest {
         String newUserLink = "id=new-user-link";
         assertTrue(this.sc.isElementPresent(newUserLink));
         this.sc.click(newUserLink);
-        sc.waitForPageToLoad("1000");
+		SeleniumHelper.waitForPage(sc);
         confirmNewUserFormIsLoaded();
     }
 

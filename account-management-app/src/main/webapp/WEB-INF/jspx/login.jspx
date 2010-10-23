@@ -27,7 +27,7 @@
       <form
        id="loginForm"
        action="${pageContext.request.contextPath}/j_spring_security_check"
-       method="post">
+       method="POST">
         <ul>
           <li>
             <label

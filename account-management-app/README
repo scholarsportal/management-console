@@ -10,10 +10,13 @@ and open http://localhost:9000/ama in your browser.
 To use an alternate port use -Djetty.port option. This will update the port that jetty starts on,
 as well as the port that the unit tests connect to (see: src/test/resources/test-ama.properties).
 
-If you wish to run the unit tests (which include the selenium browser tests as well) on a port
+If you wish to run the jetty server  a port
 other than the default:9000, you must specify the jetty port with a command line property:
     mvn -Djetty.port=9991 clean install;
 
+****************************************************************************************************
+* Notes on Running Integration Tests
+****************************************************************************************************
 You might need to install the following packages if you want the selenium tests to work:
 
 sudo apt-get install firefox 
@@ -21,6 +24,20 @@ sudo apt-get install xvfb
 sudo apt-get install xauth
 sudo apt-get install xfonts-base
 
+To run the tests you must enable the selenium test profile: 
+
+mvn clean install -Pprofile-selenium
+
+To run a single selenium test you must start the jetty server in one console, the selenium server
+in another and the test run in yet a third.
+
+Console #1: mvn jetty:run
+Console #2: mvn selenium:start-server
+Console #3: mvn test -Pprofile-selenium -Dtest=<YourTestNameHere>
+
+
+To debug a single test in eclipse,  just follow the above steps for consoles #1 and #2 and run the
+test of choice in Eclipse or the IDE of choice.
 
 ****************************************************************************************************
 * Eclipse Users

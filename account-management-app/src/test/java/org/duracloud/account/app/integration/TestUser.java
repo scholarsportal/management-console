@@ -47,7 +47,7 @@ public class TestUser extends AbstractIntegrationTest{
 	}
 
 	@Test
-	public void testAuthorization(){
+	public void testUnauthorizedAccessToAnotherUser(){
 		try {
 			openUserProfilePage("user");
 		} catch (SeleniumException e) {

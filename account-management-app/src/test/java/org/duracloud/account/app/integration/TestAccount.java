@@ -11,6 +11,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.selenium.SeleniumException;
 
@@ -21,7 +23,7 @@ import com.thoughtworks.selenium.SeleniumException;
  */
 public class TestAccount extends AbstractIntegrationTest {
 	private String accountId = null;
-
+	private Logger log = LoggerFactory.getLogger(getClass());
 	
 	/* (non-Javadoc)
 	 * @see org.duracloud.account.app.integration.AbstractIntegrationTest#before()
@@ -53,10 +55,12 @@ public class TestAccount extends AbstractIntegrationTest {
 	}
 	@Test
 	public void testFailedAuthorization(){
-		logout();
 		try {
-	    	openAccountHome(accountId);
+			logout();
+			sc.open(getAppRoot()+"/login");
 			login("user", "user");
+
+			openAccountHome(accountId);
 			Assert.assertTrue(false);
 		} catch (SeleniumException e) {
 			Assert.assertTrue(e.getMessage().contains("403"));

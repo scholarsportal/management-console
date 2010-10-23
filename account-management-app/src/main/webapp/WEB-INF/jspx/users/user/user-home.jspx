@@ -20,6 +20,30 @@
     <tiles:putAttribute
      name="body">
       <h1>${user.username}'s Profile</h1>
+	  <h3>Accounts</h3>
+	  <c:choose>
+      <c:when test="${not empty accounts}">
+      	  
+	      <ul>
+	      	<c:forEach var="a" items="${accounts}">
+	      		<li>
+	      			<a id="account-home-${id}-link" href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
+	      				Account[id=${a.id}: ${a.orgName} - ${a.acctName}
+	      			</a>
+	      		</li>
+	      	
+	      	</c:forEach>	
+	      
+	      </ul>
+	      
+      </c:when>
+	  <c:otherwise>
+	  	<p>
+		  	There are no Duracloud accounts associated with this user profile.
+	  	</p>
+	  </c:otherwise>	  	
+	  </c:choose>
+
 	<sec:authorize ifNotGranted="ROLE_ROOT">
 	  <ul>
         <li>
@@ -41,24 +65,8 @@
           </form>
         </li>
       </ul>
-	
 	</sec:authorize>
-	 
-      <c:if test="${not empty accounts}">
-	      <ul>
-	      	<c:forEach var="a" items="${accounts}">
-	      		<li>
-	      			<a href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
-	      				${a.orgName}:${a.acctName}
-	      			</a>
-	      		</li>
-	      	
-	      	</c:forEach>	
-	      
-	      </ul>
-	      
-      </c:if>
-      
+		
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

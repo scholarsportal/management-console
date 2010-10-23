@@ -30,6 +30,11 @@ public class AccountInfo implements Identifiable {
 			List<StorageProviderType> storageProviders) {
 		this(null, subdomain, null, null, null, owner, storageProviders);
 	}
+	public AccountInfo(String subdomain, String acctName, String orgName,  
+			String department, DuracloudUser owner,
+			List<StorageProviderType> storageProviders) {
+		this(null, subdomain, acctName, orgName, department, owner, storageProviders);
+	}
 	
 	public AccountInfo(String id, String subdomain, String acctName, String orgName,  
 			String department, DuracloudUser owner,

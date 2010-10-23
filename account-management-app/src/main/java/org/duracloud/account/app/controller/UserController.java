@@ -89,7 +89,7 @@ public class UserController extends  AbstractController {
 				"user", user);
 		
 		List<AccountInfo> accounts = this.accountManagerService.lookupAccountsByUsername(user.getUsername());
-		mav.addObject("accounts", null);
+		mav.addObject("accounts", accounts);
 		return mav;
 	}
 

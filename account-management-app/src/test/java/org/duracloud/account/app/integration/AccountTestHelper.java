@@ -24,7 +24,7 @@ public class AccountTestHelper {
         sc.type("subdomain-text", subdomain);
         sc.type("acct-name-text", accountName);
         sc.click("id=create-account-button");
-        sc.waitForPageToLoad("10000");
+		SeleniumHelper.waitForPage(sc);
         String accountId =  sc.getText("id=account-id");
         Assert.assertTrue(accountId != null && !accountId.trim().equals(""));
         return accountId;

@@ -104,19 +104,17 @@ public class AccountController extends AbstractController {
 			DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
 			AccountInfo accountInfo = new AccountInfo(
 										newAccountForm.getSubdomain(), 
+										newAccountForm.getAcctName(),
+										newAccountForm.getOrgName(),
+										newAccountForm.getDepartment(),
 										user, 
 										newAccountForm.getStorageProviders());
 		
 			AccountService service = this.accountManagerService.createAccount(accountInfo);
 			String id = service.retrieveAccountInfo().getId();
-			this.userService.addUserToAccount(id, 
-											   user.getUsername());
-			
-			this.userService.grantOwnerRights(id, username);
-			
 			return "redirect:"+ MessageFormat.format("{0}/accounts/byid/{1}", 
 													 PREFIX,
-													 service.retrieveAccountInfo().getId());
+													 id);
 		} catch (SubdomainAlreadyExistsException ex) {
 			result.addError(new ObjectError("subdomain",
 					"The subdomain you selected is already in use. Please choose another."));

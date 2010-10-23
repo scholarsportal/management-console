@@ -15,6 +15,8 @@ import com.thoughtworks.selenium.Selenium;
  */
 public class SeleniumHelper {
 	
+	public static String DEFAULT_PAGE_LOAD_WAIT_IN_MS = "10000";
+	  
 	public static boolean isTextPresent(Selenium s, String text){
 		return s.getHtmlSource().contains(text);
 	}
@@ -22,4 +24,11 @@ public class SeleniumHelper {
 	public static String getAppRoot() {
         return "/ama";
     }
+
+	/**
+	 * @param sc
+	 */
+	public static void waitForPage(Selenium sc) {
+		sc.waitForPageToLoad(SeleniumHelper.DEFAULT_PAGE_LOAD_WAIT_IN_MS);
+	}
 }

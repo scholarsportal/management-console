@@ -8,27 +8,27 @@
   <ul>
     <li>
       <a
-       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}">Dashboard</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}">Home</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/statement">Statement</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement">Statement</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/providers">Providers</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers">Providers</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/users">Users</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users">Users</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/app/accounts/${accountInfo.id}/billing">Account</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing">Account</a>
     </li>
   </ul>
 

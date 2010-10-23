@@ -21,11 +21,11 @@
        name="account-base">
         <tiles:putAttribute
          name="content">
-          <h1>Dashboard: ${accountInfo.subdomain}: [id=${accountInfo.id}]</h1>
+          <h1>Account Home: ${accountInfo.subdomain}: [id=${accountInfo.id}]</h1>
 
 
 		  <!-- for testing purposes -->
-		  <span id="account-id" style="visibililty:hidden">${accountInfo.id}</span>
+		  <span id="account-id">${accountInfo.id}</span>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

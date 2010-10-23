@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -56,7 +58,14 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 		String id = this.accountServiceMap.size() + "";
 		AccountService accountService = new AccountServiceImpl(id, accountInfo);
 		accountServiceMap.put(id,accountService);
-		return accountService;
+		String username = accountInfo.getOwner().getUsername();
+		try{
+			this.userService.addUserToAccount(id, username);
+			this.userService.grantOwnerRights(id, username);
+			return accountService;
+		}catch(DBNotFoundException ex){
+			throw new Error(ex);
+		}
 	}
 
 	/*
@@ -85,9 +94,22 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 	@Override
 	public List<AccountInfo> lookupAccountsByUsername(String username)
 			throws UsernameNotFoundException {
-		List<AccountInfo> accountInfo = new LinkedList<AccountInfo>();
-		return accountInfo;
-	
+
+		try {
+			DuracloudUser user  = this.userService.loadDuracloudUserByUsername(username);
+			user  = this.userService.loadDuracloudUserByUsername(username);
+			
+			List<AccountInfo> accounts = new LinkedList<AccountInfo>();
+			for(String accountId : user.getAcctToRoles().keySet()){
+				accounts.add(this.accountServiceMap.get(accountId).retrieveAccountInfo());
+			}
+			
+			return accounts;
+		} catch (DBNotFoundException e) {
+			throw new UsernameNotFoundException("user [" + username+"] not found", e);
+		}
+
+
 	}
 
 	/*

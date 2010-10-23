@@ -21,7 +21,6 @@ public abstract class AbstractIntegrationTest {
     protected DefaultSelenium sc;
     private String port;
     private static String DEFAULT_PORT = "9000";
-
     protected String getAppRoot() {
     	return SeleniumHelper.getAppRoot();
     }
@@ -97,6 +96,7 @@ public abstract class AbstractIntegrationTest {
 	 */
 	protected void openAccountHome(String accountId) {
 		sc.open(getAppRoot()+"/accounts/byid/"+accountId);
-		
+		SeleniumHelper.waitForPage(sc);
+		log.debug("after opening accountHome: " + sc.getHtmlSource());
 	}
 }

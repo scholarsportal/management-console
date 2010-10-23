@@ -23,6 +23,6 @@ public class UserTestHelper {
         sc.type("password-text", password);
         sc.type("password-confirm-text", password);
         sc.click("id=create-user-button");
-        sc.waitForPageToLoad("1000");
+		SeleniumHelper.waitForPage(sc);
 	}
 }
