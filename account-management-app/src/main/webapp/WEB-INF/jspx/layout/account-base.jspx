@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
@@ -8,27 +7,32 @@
   <ul>
     <li>
       <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}">Home</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/">Home</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement">Statement</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement/">Statement</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers">Providers</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/">Providers</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users">Users</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/">Instance</a>
     </li>
 
     <li>
       <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing">Account</a>
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/">Users</a>
+    </li>
+
+    <li>
+      <a
+       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing/" accesskey="b">Billing</a>
     </li>
   </ul>
 

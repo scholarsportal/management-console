@@ -11,7 +11,6 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd"
 >
   <bean
-    depends-on="userRepo,accountRepo"
     class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
     primary="true"
     scope="singleton"
@@ -19,21 +18,16 @@
     name="userDetailsService"
     
   >
-    <constructor-arg>
-      <ref bean="userRepo"/>
-      </constructor-arg>
-    <constructor-arg>
-      <ref bean="accountRepo"/>
-      </constructor-arg>
+      <constructor-arg ref="userRepo"/>
+      <constructor-arg ref="accountRepo"/>
   </bean>
   <bean
-    class="org.duracloud.account.util.mock.AccountManagerServiceImpl"
+    class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
     id="accountManagerService"
     scope="singleton"
   >
-    <property name="userService">
-      <ref bean="userService"/>
-    </property>
+      <constructor-arg ref="userRepo"/>
+      <constructor-arg ref="accountRepo"/>
   </bean>
  
   <bean
@@ -46,4 +40,16 @@
     id="accountRepo"
     scope="singleton"
     primary="true" />
+    
+  <bean
+    class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
+    id="rootAccountManagerService"
+    scope="singleton"
+    primary="true" >
+      <constructor-arg ref="userRepo"/>
+      <constructor-arg ref="accountRepo"/>
+
+    </bean>
+    
+    
 </beans>

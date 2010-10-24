@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<jsp:root
- version="2.0"
+<jsp:root version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
@@ -13,13 +11,18 @@
      value="Account Management App: New Account Form" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+     name="header-extensions">
+      <script type="text/javascript">
+    	$(function(){
+			$("#org-name-text").focus();
+    	});
+      </script>
 
-    <tiles:putAttribute
-     name="body">
+
+     </tiles:putAttribute>
+
+    <tiles:putAttribute name="body">
       <h1>New Account Form</h1>
-
       <form:form
        modelAttribute="newAccountForm"
        method="POST">
@@ -30,7 +33,7 @@
           <ul>
             <li>
               <form:label
-               path="orgName">orgName</form:label>
+               path="orgName">Organization Name</form:label>
 
               <form:input id="org-name-text"
                path="orgName" />
@@ -41,7 +44,7 @@
 
             <li>
               <form:label
-               path="acctName">acctName</form:label>
+               path="acctName">Account Name</form:label>
 
               <form:input id="acct-name-text"
                path="acctName" />
@@ -52,7 +55,7 @@
 
             <li>
               <form:label
-               path="department">department</form:label>
+               path="department">Department</form:label>
 
               <form:input id="department-text"
                path="department" />

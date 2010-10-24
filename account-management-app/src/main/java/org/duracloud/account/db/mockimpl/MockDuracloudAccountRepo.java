@@ -7,7 +7,10 @@
  */
 package org.duracloud.account.db.mockimpl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -19,14 +22,17 @@ import org.duracloud.account.db.error.DBNotFoundException;
  *
  */
 public class MockDuracloudAccountRepo implements DuracloudAccountRepo {
+	private Map<String, AccountInfo> accountInfoMap = new HashMap<String, AccountInfo>();
 
 	/* (non-Javadoc)
 	 * @see org.duracloud.account.db.BaseRepo#findById(java.lang.String)
 	 */
 	@Override
 	public AccountInfo findById(String id) throws DBNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		if(!this.accountInfoMap.containsKey(id)){
+			throw new DBNotFoundException("account [ " + id + "] not found.");
+		}
+		return this.accountInfoMap.get(id);
 	}
 
 	/* (non-Javadoc)
@@ -34,8 +40,7 @@ public class MockDuracloudAccountRepo implements DuracloudAccountRepo {
 	 */
 	@Override
 	public List<String> getIds() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<String>(this.accountInfoMap.keySet());
 	}
 
 	/* (non-Javadoc)
@@ -43,8 +48,7 @@ public class MockDuracloudAccountRepo implements DuracloudAccountRepo {
 	 */
 	@Override
 	public void save(AccountInfo item) throws DBConcurrentUpdateException {
-		// TODO Auto-generated method stub
-
+		accountInfoMap.put(item.getId(),item);
 	}
 
 }

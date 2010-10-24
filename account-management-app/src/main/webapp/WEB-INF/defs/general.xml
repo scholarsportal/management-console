@@ -4,6 +4,8 @@
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
+
+  <!-- templates -->
   <definition name="app-base" template="/WEB-INF/jspx/layout/base.jspx">
     <put-attribute name="title" value="title" />
     <put-attribute name="header-extensions" value=""  />
@@ -13,13 +15,24 @@
   <definition name="account-base" template="/WEB-INF/jspx/layout/account-base.jspx">
     <put-attribute name="content" value="content" />
   </definition>
+
+  <!-- global views -->
   <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx" />
   <definition name="login" template="/WEB-INF/jspx/login.jspx" />
   <definition name="home" template="/WEB-INF/jspx/index.jspx" />
+
+  <!-- root views -->
   <definition name="accounts-home" template="/WEB-INF/jspx/accounts/accounts-home.jspx" />
-  <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
-  <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
+
+  <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
   <definition name="user-home" template="/WEB-INF/jspx/users/user/user-home.jspx" />
-  
+
+  <!-- account views -->
+  <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
+  <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
+
+  <definition name="account-billing" template="/WEB-INF/jspx/accounts/account/account-billing.jspx" />
+  <definition name="account-billing-edit" template="/WEB-INF/jspx/accounts/account/account-billing-edit.jspx" />
+
 </tiles-definitions>

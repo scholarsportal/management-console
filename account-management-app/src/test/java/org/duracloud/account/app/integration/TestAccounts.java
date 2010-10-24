@@ -66,8 +66,9 @@ public class TestAccounts extends AbstractIntegrationTest {
 	public void testAuthorization(){
 		try{
 			logout();
-			openAccounts();
+			sc.open(getAppRoot()+"/login");
 			loginAdmin();
+			openAccounts();
 		}catch(SeleniumException ex){
 			Assert.assertTrue(ex.getMessage().contains("403"));
 		}

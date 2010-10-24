@@ -99,4 +99,11 @@ public abstract class AbstractIntegrationTest {
 		SeleniumHelper.waitForPage(sc);
 		log.debug("after opening accountHome: " + sc.getHtmlSource());
 	}
+
+	protected void openAccountBilling(String accountId) {
+		sc.open(getAppRoot()+"/accounts/byid/"+accountId +"/billing/");
+		SeleniumHelper.waitForPage(sc);
+		log.debug("after opening accountHome: " + sc.getHtmlSource());
+	}
+
 }

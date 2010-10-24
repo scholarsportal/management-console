@@ -53,6 +53,21 @@ public class TestAccount extends AbstractIntegrationTest {
 		openAccountHome(this.accountId);
 		Assert.assertTrue(sc.isElementPresent("id=account-id"));
 	}
+
+	@Test
+	public void testBillingOpenEditSave(){
+		Assert.assertNotNull(this.accountId);
+		openAccountBilling(this.accountId);
+		sc.click("id=billing-edit-link");
+		SeleniumHelper.waitForPage(sc);
+		Assert.assertTrue(sc.isElementPresent("id=billing-edit-form"));
+		sc.click("id=billing-save-button");
+		SeleniumHelper.waitForPage(sc);
+		Assert.assertTrue(sc.isElementPresent("id=account-id"));
+	}
+
+	
+
 	@Test
 	public void testFailedAuthorization(){
 		try {

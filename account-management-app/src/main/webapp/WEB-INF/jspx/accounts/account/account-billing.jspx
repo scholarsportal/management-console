@@ -9,7 +9,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${accountInfo.id} Home" />
+     value="${accountInfo.orgName} :: Billing Details" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -21,8 +21,15 @@
        name="account-base">
         <tiles:putAttribute
          name="content">
-          <h1>Account Home: ${accountInfo.subdomain}: Id<span id="account-id" >${accountInfo.id}</span></h1>
-
+          <h1>Billing Details for  ${accountInfo.subdomain}: Id #<span id="account-id" >${accountInfo.id}</span></h1>
+          <ul>
+          	<li>
+          		<a id="billing-edit-link" href="edit">Edit</a>
+          	</li>
+          </ul>
+		 <p>
+		 	!!Billing Details will go here!!
+		 </p>
 
         </tiles:putAttribute>
       </tiles:insertDefinition>
