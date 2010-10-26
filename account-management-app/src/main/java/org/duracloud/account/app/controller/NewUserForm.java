@@ -8,37 +8,34 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.annotation.UniqueUsernameConstraint;
-import org.duracloud.common.annotation.FieldMatch;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
- *
+ * 
  */
-@FieldMatch(first = "password", second = "passwordConfirm", message = "The password fields must match")
 public class NewUserForm {
-	@Length(min=6, max=20)
+	@Length(min = 6, max = 20)
 	@UniqueUsernameConstraint
 	private String username;
 
 	@NotEmpty
-	private String password; 
+	private String password;
 
 	@NotEmpty
-	private String passwordConfirm; 
+	private String passwordConfirm;
 
 	@NotEmpty
-	private String firstName; 
+	private String firstName;
 
 	@NotEmpty
 	private String lastName;
-	
+
 	@Email
-	@NotEmpty
-	private String email; 
-	
+	private String email;
+
 	public String getUsername() {
 		return username;
 	}

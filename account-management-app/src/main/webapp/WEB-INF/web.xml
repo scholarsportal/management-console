@@ -28,8 +28,8 @@
   <servlet-mapping>
     <servlet-name>ama</servlet-name>
     <url-pattern>/</url-pattern>
+   
   </servlet-mapping>
-
 
 
   <!-- Spring security  -->

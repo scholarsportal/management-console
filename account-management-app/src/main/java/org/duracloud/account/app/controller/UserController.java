@@ -7,11 +7,16 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.groups.Default;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -28,6 +33,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +63,37 @@ public class UserController extends  AbstractController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private Validator validator;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.setValidator(new org.springframework.validation.Validator(){
+			@Override
+			public boolean supports(Class<?> clazz) {
+				return true;
+			}
+
+			@Override
+			public void validate(Object target, Errors errors) {
+				NewUserForm nuf = (NewUserForm)target;
+				//ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		        //Validator validator = factory.getValidator();
+		        
+		        Set<ConstraintViolation<NewUserForm>> constraintViolations = validator.validate(nuf, Default.class);
+		        for(ConstraintViolation<NewUserForm> cv : constraintViolations){
+		        	errors.rejectValue(cv.getPropertyPath().toString(), cv.getMessage(),cv.getMessage());
+		        }
+
+		        if(nuf.getPassword() == null || !nuf.getPassword().equals(nuf.getPasswordConfirm())){
+		        	nuf.setPassword(null);
+		        	nuf.setPasswordConfirm(null);
+		        	errors.rejectValue("passwordConfirm", "password.nomatch", "Passwords do not match.");
+		        }
+			}
+		});
+	}
 	/**
 	 * 
 	 * @param userService
@@ -132,6 +171,12 @@ public class UserController extends  AbstractController {
 
 	public AccountManagerService getAccountManagerService() {
 		return accountManagerService;
+	}
+	public void setValidator(Validator validator) {
+		this.validator = validator;
+	}
+	public Validator getValidator() {
+		return validator;
 	}
 
 }

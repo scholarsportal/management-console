@@ -10,6 +10,7 @@ package org.duracloud.account.annotation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.util.DuracloudUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,16 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsernameConstraint, String> {
 	
-	@Autowired
+	@Autowired(required=true)
 	private DuracloudUserService duracloudUserService;
-
 
 	/* (non-Javadoc)
 	 * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
 	 */
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		return this.duracloudUserService.isUsernameAvailable(value);
+		return StringUtils.isBlank(value) ||  this.duracloudUserService.isUsernameAvailable(value);
 	}
 
 

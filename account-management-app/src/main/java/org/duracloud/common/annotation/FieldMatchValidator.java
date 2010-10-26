@@ -32,6 +32,7 @@ public class FieldMatchValidator implements
 	public boolean isValid(final Object value,
 			final ConstraintValidatorContext context) {
 		try {
+			
 			final Object firstObj = BeanUtils
 					.getProperty(value, firstFieldName);
 			final Object secondObj = BeanUtils.getProperty(value,

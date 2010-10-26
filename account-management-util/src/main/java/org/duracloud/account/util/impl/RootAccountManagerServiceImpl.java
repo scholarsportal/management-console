@@ -10,6 +10,7 @@ package org.duracloud.account.util.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -36,7 +37,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	@Override
 	public void addDuracloudImage(String imageId, String version,
 			String description) {
-		
+		throw new NotImplementedException("addDuracloudImage not implemented");
 	}
 
 

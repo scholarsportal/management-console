@@ -18,7 +18,7 @@ public class SeleniumHelper {
 	public static String DEFAULT_PAGE_LOAD_WAIT_IN_MS = "10000";
 	  
 	public static boolean isTextPresent(Selenium s, String text){
-		return s.getHtmlSource().contains(text);
+		return s.isTextPresent(text);
 	}
 	
 	public static String getAppRoot() {

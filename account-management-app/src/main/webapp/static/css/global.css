@@ -9,3 +9,41 @@ html,body {
 	padding:1em;
 }
 
+form li{
+	list-style: none;
+}
+
+label {
+	
+}
+
+table.standard-form{
+	width:100%;
+}
+
+.standard-form td {
+}
+
+.standard-form .label {
+	width:10%;
+}
+
+.standard-form .field-errors {
+	width:45%;
+}
+
+.standard-form .value {
+	width:45%;
+}
+
+
+label.error{
+	color:red;
+}
+
+input.error,.global-errors{
+	border: 1px solid red;	
+	background-color: #FFBBBB;
+}
+
+

@@ -9,6 +9,7 @@ package org.duracloud.account.app.integration;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -42,8 +43,9 @@ public class TestNewUser extends AbstractIntegrationTest {
 	@Test
 	public void createUser(){
 		UserTestHelper.createUser(sc,newusername, newpassword, "Walter", "Berglund", "walter@cerulean-mtr.org");
-        SeleniumHelper.isTextPresent(sc,"Profile");
-        SeleniumHelper.isTextPresent(sc,newusername);
+        SeleniumHelper.waitForPage(sc);
+		Assert.assertTrue(sc.getHtmlSource().contains("Profile"));
+		Assert.assertTrue(sc.getHtmlSource().contains(newusername));
 	}
 	
 	

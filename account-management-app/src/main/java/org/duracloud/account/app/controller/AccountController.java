@@ -7,8 +7,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-
 import javax.validation.Valid;
 
 import org.duracloud.account.common.domain.AccountInfo;
@@ -39,25 +37,27 @@ import org.springframework.web.servlet.ModelAndView;
 @Lazy
 public class AccountController extends AbstractAccountController {
 
+	public static final String NEW_ACCOUNT_FORM_KEY = "newAccountForm";
+
 	@RequestMapping(value = {ACCOUNT_PATH}, method = RequestMethod.GET)
 	public String getHome(@PathVariable String accountId, Model model)
 			throws AccountNotFoundException {
 		AccountService accountService = accountManagerService
 				.getAccount(accountId);
 		AccountInfo info = accountService.retrieveAccountInfo();
-		model.addAttribute("accountInfo", info);
+		model.addAttribute(ACCOUNT_INFO_KEY, info);
 		return ACCOUNT_HOME;
 	}
 
 	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
 	public ModelAndView getNewForm() {
 		log.info("serving up new AccountForm");
-		return new ModelAndView(NEW_ACCOUNT_VIEW, "newAccountForm",
+		return new ModelAndView(NEW_ACCOUNT_VIEW, NEW_ACCOUNT_FORM_KEY,
 				new NewAccountForm());
 	}
 
 	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
-	public String add( @ModelAttribute("newAccountForm") @Valid NewAccountForm newAccountForm,
+	public String add( @ModelAttribute(NEW_ACCOUNT_FORM_KEY) @Valid NewAccountForm newAccountForm,
 					   BindingResult result, 
 					   Model model) {
 

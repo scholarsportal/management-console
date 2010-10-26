@@ -30,7 +30,7 @@ public abstract class  AbstractAccountController extends AbstractController {
 	public static final String ACCOUNTS_PATH = "/accounts";
 	public static final String ACCOUNT_PATH = "/byid/{accountId}";
 	public static final String EDIT_PATH = "/edit";
-
+	public static final String ACCOUNT_INFO_KEY = "accountInfo";
 	@Autowired(required=true)
 	protected AccountManagerService accountManagerService;
 	

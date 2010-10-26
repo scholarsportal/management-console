@@ -5,7 +5,7 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.util.mock;
+package org.duracloud.account.util.impl;
 
 import java.util.List;
 

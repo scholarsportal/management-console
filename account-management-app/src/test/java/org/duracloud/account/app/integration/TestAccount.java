@@ -61,9 +61,20 @@ public class TestAccount extends AbstractIntegrationTest {
 		sc.click("id=billing-edit-link");
 		SeleniumHelper.waitForPage(sc);
 		Assert.assertTrue(sc.isElementPresent("id=billing-edit-form"));
+		sc.type("id=address-line-1", "address 1");
+		sc.type("id=city", "Anytown");
+		sc.type("id=state", "CA");
+		sc.type("id=postal-code", "99999");
+		sc.type("id=country", "usa");
+		sc.type("id=cc-number", "1234123412341234");
+		sc.type("id=cc-name", "Joe Duracloud");
+		sc.type("id=cc-expiration", "10/2015");
+		sc.type("id=cc-cvc", "999");
+		
 		sc.click("id=billing-save-button");
 		SeleniumHelper.waitForPage(sc);
-		Assert.assertTrue(sc.isElementPresent("id=account-id"));
+		
+		Assert.assertTrue(!sc.isElementPresent("id=billing-edit-form"));
 	}
 
 	
