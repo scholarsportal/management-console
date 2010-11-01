@@ -10,70 +10,77 @@
 			value="Account Management App: New Account Form" />
 
 		<tiles:putAttribute name="header-extensions">
-			<script type="text/javascript">
-    	$(function(){
-			$("#org-name-text").focus();
-    	});
-      </script>
-
-
+			<script type="text/javascript" xml:space="preserve">
+      $(function(){$("#org-name-text").focus();});
+</script>
 		</tiles:putAttribute>
 
 		<tiles:putAttribute name="body">
-			<h1>New Account Form</h1>
-			<form:form modelAttribute="newAccountForm" method="POST">
-				<form:errors path="*" />
-
-				<table class="standard-form">
+			<tiles:insertDefinition name="user-base">
+				<tiles:putAttribute name="mainTab" value="home" />
+				<tiles:putAttribute name="content">
 
 
-					<tr>
-						<td class="label"><form:label path="orgName">Organization Name</form:label>
+					<h1>New Account Form</h1>
+					<jsp:include page="/WEB-INF/jspx/includes/global-errors.jspx">
+						<jsp:param name="formName" value="newAccountForm" />
+					</jsp:include>
 
-						</td>
-						<td class="required">*</td>
-						<td class="value"><form:input id="org-name-text"
-							path="orgName" /></td>
-						<td class="field-errors"><form:errors path="orgName" /></td>
-					</tr>
+					<form:form cssClass="change-aware" modelAttribute="newAccountForm"
+						method="POST">
 
-					<tr>
-						<td class="label"><form:label path="acctName">Account Name</form:label>
-						</td>
-						<td class="required">*</td>
-						<td class="value"><form:input id="acct-name-text"
-							path="acctName" /></td>
-						<td class="field-errors"><form:errors path="acctName" /></td>
-					</tr>
+						<table class="standard-form">
+							<tr>
+								<td class="label"><form:label cssErrorClass="error"
+									path="orgName">Organization Name</form:label></td>
 
+								<td class="required">*</td>
 
-					<tr>
-						<td class="label"><form:label path="department">Department</form:label>
-						</td>
-						<td class="required">*</td>
-						<td class="value"><form:input id="department-text"
-							path="department" /></td>
-						<td class="field-errors"><form:errors path="department" /></td>
-					</tr>
-					<tr>
-						<td class="label"><form:label path="subdomain">Subdomain</form:label>
-						</td>
-						<td class="required">*</td>
-						<td class="value"><form:input id="subdomain-text"
-							path="subdomain" /></td>
-						<td class="field-errors"><form:errors path="subdomain" /></td>
-					</tr>
+								<td class="value"><form:input cssErrorClass="error"
+									id="org-name-text" path="orgName" /></td>
+							</tr>
 
-					<tr>
-						<td>
-						<div class="button-bar">
-						<button id="create-account-button" type="submit">Create</button>
+							<tr>
+								<td class="label"><form:label cssErrorClass="error"
+									path="acctName">Account Name</form:label></td>
 
-						</div>
-						</td>
-					</tr>
-				</table>
-			</form:form>
+								<td class="required">*</td>
+
+								<td class="value"><form:input cssErrorClass="error"
+									id="acct-name-text" path="acctName" /></td>
+							</tr>
+
+							<tr>
+								<td class="label"><form:label cssErrorClass="error"
+									path="department">Department</form:label></td>
+
+								<td class="required">*</td>
+
+								<td class="value"><form:input cssErrorClass="error"
+									id="department-text" path="department" /></td>
+							</tr>
+
+							<tr>
+								<td class="label"><form:label cssErrorClass="error"
+									path="subdomain">Subdomain</form:label></td>
+								<td class="required">*</td>
+
+								<td class="value"><form:input cssErrorClass="error"
+									id="subdomain-text" path="subdomain" /></td>
+							</tr>
+
+							<tr>
+								<td>
+								<div class="button-bar">
+								<button id="create-account-button" type="submit">Create</button>
+								</div>
+								</td>
+							</tr>
+						</table>
+					</form:form>
+				</tiles:putAttribute>
+			</tiles:insertDefinition>
+
 		</tiles:putAttribute>
 	</tiles:insertDefinition>
 </jsp:root>

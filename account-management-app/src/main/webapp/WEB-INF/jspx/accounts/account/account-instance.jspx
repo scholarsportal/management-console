@@ -1,16 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
-  <jsp:directive.page  contentType="application/xhtml+xml;charset=UTF-8"/>
- 
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
   <tiles:insertDefinition
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="${accountInfo.orgName} :: Billing Details" />
+     value="Account Management App: ${accountInfo.id} :: Instance" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -20,18 +22,12 @@
      name="body">
       <tiles:insertDefinition
        name="account-base">
+       <tiles:putAttribute name="mainTab" value="instance"/>
+       
         <tiles:putAttribute
          name="content">
-          <h1>Billing Details for  ${accountInfo.subdomain}: Id #<span id="account-id" >${accountInfo.id}</span></h1>
-          <ul>
-          	<li>
-          		<a id="billing-edit-link" href="edit">Edit</a>
-          	</li>
-          </ul>
-		 <p>
-		 	!!Billing Details will go here!!
-		 </p>
 
+          <h1>Account Instance: ${accountInfo.orgName}</h1>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

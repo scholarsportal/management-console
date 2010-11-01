@@ -3,19 +3,123 @@
 * @author dbernstein
 ********************************************************************************/
 
-html,body {
-	background: #DDDDFF;
-	margin:0;
-	padding:1em;
-}
+/* RESETTERS *************************************************/
+/* Eric Meyer: 
+/* v1.0 | 20080212 */
 
-form li{
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, button, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
 	list-style: none;
 }
 
-label {
-	
+ul.bullets,
+#static-panel ul
+{
+	line-height:130%;
+	list-style:square;
+	margin-left:15px;
 }
+
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+td {
+	padding:5px;	
+}
+
+/* set input color for autofill */
+input:-webkit-autofill {
+    color: #000 !important;
+}
+
+
+/* CLEARFIX *************************************************/
+.clearfix:after {
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+     }
+.clearfix { display: inline-block; }
+/* start commented backslash hack \*/
+* html .clearfix { height: 1%; }
+.clearfix { display: block; }
+/* close commented backslash hack */
+
+	
+.horizontal-list li
+{
+	display:inline-block;
+}
+
+
+body {
+	background:#fff url(../img/bg_clouds.jpg) repeat-y;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size:1em;
+	*font-size:	90%; /* IE only */
+	margin-right:10px !important;
+}
+
+h1, h2, h3
+{
+	font-family:Helvetica, Sans-Serif;
+}
+
+h1 { font-size:2em; font-weight:normal; }
+h2 { font-size:1.3em; font-weight:normal; }
+h3 { font-size:1em; }
+
+
+.float-l {float:left; margin-left:0; }
+.float-r {float:right; margin-right:0; }
+.content-centered { text-align:center !important; }
+
+
+/*YUI CSS**********************/
+#doc3 {
+	margin:auto 0px;	
+}
+
+
 
 table.standard-form{
 	width:100%;
@@ -25,15 +129,15 @@ table.standard-form{
 }
 
 .standard-form .label {
-	width:10%;
+	width:175px;
 }
-
-.standard-form .field-errors {
-	width:45%;
+.standard-form .required {
+	width:5px;
+	color:blue;
 }
-
 .standard-form .value {
-	width:45%;
+	width:*;
+	padding-left:5px;
 }
 
 
@@ -46,4 +150,169 @@ input.error,.global-errors{
 	background-color: #FFBBBB;
 }
 
+.two-by-one-layout > div:first-child{
+	width:50%;
+	float:left;
+}
 
+.two-by-one-layout > div:last-child{
+	width:50%;
+	float:right;
+}
+
+
+.outer,
+.outer a
+{
+	color:#4c4c4c;
+	font-size:11px;
+}
+
+.outer .icon-link:hover
+{
+	color:#000;
+}
+
+
+#dc-logo-panel
+{
+	padding-left:10px;
+}
+
+#dc-logo,
+#dc-app-title
+{
+	background-repeat:no-repeat;
+	display:inline-block;
+	float:left;
+	height:20px;
+	font-size:20px;
+	padding-top:25px;
+}
+
+#dc-logo
+{
+	background-image:url(../img/logo_top_duracloud.png);
+	width:110px;
+}
+
+#dc-app-title
+{
+	background-image:url(../img/app_title.png);
+	width:280px;
+}
+
+#hd,#bd, .dc-main-tabs
+{
+	min-width:960px;
+}
+
+.pane-L1-body
+{
+	margin-top:42px;
+	background:url(../img/bg_L1.png) no-repeat top right;
+	padding-top:5px;
+	min-height:600px;
+}
+
+.pane-L1-body a
+{
+	color:#ccc;
+	
+}
+
+
+ing-right:10px;
+}
+
+/* TABS **********************************************/
+/* Extends css.flex *****/
+#dc-user
+{	
+	border-right:solid 1px #ccc;
+	height:60px;
+	margin-right:10px;
+	padding-right:20px;
+	text-align:right;
+	width:400px;
+}
+
+.dc-main-tabs
+{
+	position:absolute;
+	left:10px;
+	top:65px;
+	opacity:0.7;
+}
+
+.dc-main-tabs li
+{
+	margin:0;
+}
+
+.dc-main-tabs a,
+.dc-main-tabs a span
+{
+	color:#000;
+	font-size:13px;
+	height:22px;
+	line-height:22px;
+}
+
+.dc-main-tabs a span
+{
+	margin:0 -2px;
+	padding-left:2px;
+	font-weight:bold;
+}
+
+.dc-main-tabs .selected a,
+.dc-main-tabs a:hover
+{
+	background:url(../img/tab.gif) no-repeat top left;
+}
+
+.dc-main-tabs .selected a span,
+.dc-main-tabs a:hover span
+{
+	background:url(../img/tab.gif) no-repeat top right;
+	color:#fff !important;
+}
+
+.dc-main-content {
+	padding:5px;
+	color: #ccc;
+	margin:10px;
+}
+
+.dc-main-content h1 {
+	border-bottom: 1px solid #aaa;
+	margin-bottom:10px;
+}
+
+
+.dc-subgroup {
+	padding:0px 0px 5px 0px;
+	background-color: #ccc;
+	color: #555;
+	min-height:300px;
+}
+
+.dc-subgroup > h2 > span:last-child{
+	float:right;
+}
+
+.dc-subgroup h2 {
+	padding:5px 0px 5px 5px;
+	background-color:#bbb;
+}
+
+.dc-subgroup table  {
+	width:100%;
+}
+.dc-subgroup table > tr {
+
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+	
+}

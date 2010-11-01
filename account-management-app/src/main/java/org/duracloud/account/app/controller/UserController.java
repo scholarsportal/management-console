@@ -89,7 +89,7 @@ public class UserController extends  AbstractController {
 		        if(nuf.getPassword() == null || !nuf.getPassword().equals(nuf.getPasswordConfirm())){
 		        	nuf.setPassword(null);
 		        	nuf.setPasswordConfirm(null);
-		        	errors.rejectValue("passwordConfirm", "password.nomatch", "Passwords do not match.");
+		        	errors.rejectValue("passwordConfirm", "password.nomatch", "Passwords do not match. Please reenter the password and confirmation.");
 		        }
 			}
 		});

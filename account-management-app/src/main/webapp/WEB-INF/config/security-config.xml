@@ -104,13 +104,15 @@
   <global-method-security
     access-decision-manager-ref="globalAccessDecisionManager"
     pre-post-annotations="enabled"
-  >
+    >
+   
     <protect-pointcut
       expression="execution(* org.duracloud.account.util.*UserService.*(..))"
       access="ROLE_USER" />
-  
+        
     <protect-pointcut
       expression="execution(* org.duracloud.account.util.Account*Service.*(..))"
       access="ROLE_USER" />
   </global-method-security>
+  
 </beans:beans>

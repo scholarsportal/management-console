@@ -18,22 +18,21 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class NewUserForm {
 	@Length(min = 6, max = 20)
-	@UniqueUsernameConstraint
+	@UniqueUsernameConstraint(message="Username is not available; please choose another.")
 	private String username;
 
-	@NotEmpty
+	@NotEmpty(message = "Password must contain a value.")
 	private String password;
 
-	@NotEmpty
 	private String passwordConfirm;
 
-	@NotEmpty
+	@NotEmpty (message = "First name is empty.")
 	private String firstName;
 
-	@NotEmpty
+	@NotEmpty (message = "Last name is empty.")
 	private String lastName;
 
-	@Email
+	@Email(message = "Email is invalid.")
 	private String email;
 
 	public String getUsername() {

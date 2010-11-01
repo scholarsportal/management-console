@@ -15,16 +15,16 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class BillingInfoForm {
 
-	public static enum PaymentType {
+	public static enum PaymentMethod {
 		CC,
 		INVOICE;
 	}
 	
-	public PaymentType[] getPaymentTypes(){
-		return PaymentType.values();
+	public PaymentMethod[] getPaymentMethods(){
+		return PaymentMethod.values();
 	}
 	
-	private PaymentType paymentType = PaymentType.CC;
+	private PaymentMethod paymentMethod = PaymentMethod.CC;
 	@NotBlank
 	private String addressLine1;
 	private String addressLine2;
@@ -40,11 +40,11 @@ public class BillingInfoForm {
 	private CreditCardForm creditCard = new CreditCardForm();
 	private InvoiceForm invoice = new InvoiceForm();
 	
-	public PaymentType getPaymentType() {
-		return paymentType;
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
 	}
-	public void setPaymentType(PaymentType paymentType) {
-		this.paymentType = paymentType;
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
 	}
 	public String getAddressLine1() {
 		return addressLine1;

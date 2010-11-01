@@ -1,53 +1,148 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <html xmlns="http://www.w3.org/1999/xhtml"
- 	xmlns:jsp="http://java.sun.com/JSP/Page" 
- 	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:tiles="http://tiles.apache.org/tags-tiles"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:form="http://www.springframework.org/tags/form"
 	xmlns:sec="http://www.springframework.org/security/tags">
-	<jsp:directive.page  contentType="application/xhtml+xml;charset=UTF-8"/>
+<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 
 <head>
-<jsp:output  omit-xml-declaration="yes" doctype-root-element="html" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
-	
-	<title>Duracloud : <tiles:insertAttribute name="title"
-		ignore="true" /></title>
-	<link href="${pageContext.request.contextPath}/static/css/global.css"
-		rel="stylesheet" type="text/css" />
-	<script src="http://code.jquery.com/jquery-1.4.3.js"></script>
-	<tiles:insertAttribute name="header-extensions" ignore="true" />
+<jsp:output omit-xml-declaration="yes" doctype-root-element="html"
+	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
+
+<title>Duracloud : <tiles:insertAttribute name="title"
+	ignore="true" /></title>
+
+<link rel="stylesheet" type="text/css"
+	href="http://yui.yahooapis.com/2.8.2r1/build/grids/grids-min.css" />
+
+<link href="${pageContext.request.contextPath}/static/css/global.css"
+	rel="stylesheet" type="text/css" />
+<link href="${pageContext.request.contextPath}/static/css/flex.css"
+	rel="stylesheet" type="text/css" />
+<link href="${pageContext.request.contextPath}/static/css/buttons.css"
+	rel="stylesheet" type="text/css" />
+
+<script src="http://code.jquery.com/jquery-1.4.3.js"
+	xml:space="preserve">
+</script>
+
+<script>
+	$(function(){
+		(function(){
+			var changedFieldId = "ama-changed";
+			//flip bit if any form elements change
+			$(".change-aware input,.change-aware radio,"+
+					".change-aware select,.change-aware textarea,.change-aware checkbox").change(
+				function(){
+					$("#"+changedFieldId).val("true");	
+				});
+			//append a hidden field to the body
+			var input = $(document.createElement("input"));
+			input.attr("id", changedFieldId);
+			input.attr("type", "hidden");
+			input.val("false");
+			$(document.body).append(input);
+
+			//listen to all links
+			$("a[href]").click(function(evt){
+					if($("#"+changedFieldId).val() == "true"){
+						if(!confirm("You have changed a value on this page without saving.\n"+
+										" Are you sure you want to abandon your changes?")){
+							evt.preventDefault();
+							evt.stopPropagation();
+						}
+					}
+				});
+			
+
+			/*
+				window.onbeforeunload = function(evt) { 
+					if($("#"+changedFieldId).val() == "true"){
+						if(!confirm("You have changed a value on this page without saving.\n"+
+										" Are you sure you want to abandon your changes?")){
+							evt.preventDefault();
+							evt.stopPropagation();
+						}
+					}
+				};
+			*/
+		})();
+	});
+
+</script>
+
+<tiles:insertAttribute name="header-extensions" ignore="true" />
 </head>
 
 <body>
-<div>
-<sec:authorize ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
-	<sec:authentication property="principal.username" var="username" />
-	<ul>
-		<li>Logged in as ${username}</li>
-		<li><a id="user-profile-link" accesskey="p"
-			href="${pageContext.request.contextPath }/users/byid/${username}">Profile</a>
+<div id="doc3">
+<div id="hd">
+<div id="left" class="float-l outer">
+<div id="dc-logo-panel"><a
+	href="${pageContext.request.contextPath}" id="dc-logo"></a> <span
+	id="dc-app-title">Account Manager</span></div>
+</div>
+<div id="right" class="float-r outer">
+<div id="dc-user" class="float-r">
+<ul class="horizontal-list" style="margin-top: 10px;">
+	<sec:authorize ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
+		<sec:authentication property="principal.username" var="username" />
+		<li><i class="pre"></i>${username}</li>
+
+		<li><a id="user-profile-link" accesskey="p" class="icon-link"
+			href="${pageContext.request.contextPath }/users/byid/${username}">
+		<i class="pre "></i> Profile</a></li>
+
+		<li><sec:authorize ifAllGranted="ROLE_ROOT">
+			<li><a id="accounts-link" class="icon-link"
+				href="${pageContext.request.contextPath}/accounts/"> <i
+				class="pre"></i> View All Accounts</a></li>
+		</sec:authorize>
+		<li><a id="logout-link" accesskey="l"
+			href="${pageContext.request.contextPath}/j_spring_security_logout"
+			class="icon-link logout"> <i class="pre logoff"></i>Logout</a></li>
 
 		</li>
-		<li><a id="logout-link"
-			href="${pageContext.request.contextPath }/j_spring_security_logout"
-			accesskey="l">logout</a></li>
-	</ul>
-</sec:authorize>
 
-<sec:authorize ifAllGranted="ROLE_ROOT">
-	<ul>
-		<li><a id="accounts-link"
-			href="${pageContext.request.contextPath}/accounts/"> View All
-		Accounts </a></li>
-	</ul>
-</sec:authorize>
+	</sec:authorize>
 
-<sec:authentication property="principal" var="principal" />
-<c:if test="${principal == 'anonymousUser'}">
-	<a id="login-link" accesskey="l"
-		href="${pageContext.request.contextPath}/login">Login</a>
+	<sec:authentication property="principal" var="principal" />
 
-</c:if>
-<tiles:insertAttribute name="body" />
+	<c:if test="${principal == 'anonymousUser'}">
+		<li><a id="login-link" accesskey="l" class="icon-link"
+			href="${pageContext.request.contextPath}/login"> <i class="pre"></i>
+		Login</a></li>
+	</c:if>
+
+	<li id="help"><a class="icon-link" href="#"><i
+		class="pre help"></i>Help</a></li>
+</ul>
+</div>
+</div>
+
+</div>
+<div id="bd" class="pane-L1-body">
+<div id="yui-main">
+<div class="yui-b" role="main"><tiles:insertAttribute name="body" />
+</div>
+</div>
+</div>
+<div id="ft">
+	<div class="outer" id="footer-content">
+
+	<div class="float-r" id="logo-ds"></div>
+	Duracloud Account Manager Release v${project.version}
+	${prefix.revision}${prefix.specialStatus} <span class="sep">|</span> ©<script
+		type="text/javascript">document.write(new Date().getFullYear());</script>
+	<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a> <span
+		class="sep">|</span> <a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>
+	<span class="sep">|</span> <a target="_blank"
+		href="mailto:info@duracloud.org">Contact Us</a>
+	</div>
+	</div>
 </div>
 </body>
 </html>

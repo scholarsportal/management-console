@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * The default view for this application
  * 
- * @contributor dbernstein
+ * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
+ *
  */
 @Controller
 @Lazy
@@ -42,13 +42,40 @@ public class AccountController extends AbstractAccountController {
 	@RequestMapping(value = {ACCOUNT_PATH}, method = RequestMethod.GET)
 	public String getHome(@PathVariable String accountId, Model model)
 			throws AccountNotFoundException {
-		AccountService accountService = accountManagerService
-				.getAccount(accountId);
-		AccountInfo info = accountService.retrieveAccountInfo();
-		model.addAttribute(ACCOUNT_INFO_KEY, info);
+		loadAccountInfo(accountId, model);
 		return ACCOUNT_HOME;
 	}
 
+	@RequestMapping(value = {ACCOUNT_PATH+"/statement"}, method = RequestMethod.GET)
+	public String getStatement(@PathVariable String accountId, Model model)
+			throws AccountNotFoundException {
+		loadAccountInfo(accountId, model);
+		return "account-statement";
+	}
+
+	@RequestMapping(value = {ACCOUNT_PATH+"/instance"}, method = RequestMethod.GET)
+	public String getInstance(@PathVariable String accountId, Model model)
+			throws AccountNotFoundException {
+		loadAccountInfo(accountId, model);
+		return "account-instance";
+	}
+
+	@RequestMapping(value = {ACCOUNT_PATH+"/providers"}, method = RequestMethod.GET)
+	public String getProviders(@PathVariable String accountId, Model model)
+			throws AccountNotFoundException {
+		loadAccountInfo(accountId, model);
+		return "account-providers";
+	}
+
+	@RequestMapping(value = {ACCOUNT_PATH+"/users"}, method = RequestMethod.GET)
+	public String getUsers(@PathVariable String accountId, Model model)
+			throws AccountNotFoundException {
+		loadAccountInfo(accountId, model);
+		return "account-users";
+	}
+
+	
+	
 	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
 	public ModelAndView getNewForm() {
 		log.info("serving up new AccountForm");
@@ -91,7 +118,4 @@ public class AccountController extends AbstractAccountController {
 		}
 
 	}
-
-
-
 }

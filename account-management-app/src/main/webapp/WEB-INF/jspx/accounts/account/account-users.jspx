@@ -12,7 +12,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${accountInfo.id} Home" />
+     value="Account Management App: ${accountInfo.id} :: Users" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -22,11 +22,11 @@
      name="body">
       <tiles:insertDefinition
        name="account-base">
-        <tiles:putAttribute name="main-tab" value="home"/>
+            <tiles:putAttribute name="mainTab" value="users"/>
+
         <tiles:putAttribute
          name="content">
-          <h1>Account Home: ${accountInfo.orgName}</h1>
-          
+          <h1>Account Users: ${accountInfo.orgName}</h1>
           
         </tiles:putAttribute>
       </tiles:insertDefinition>

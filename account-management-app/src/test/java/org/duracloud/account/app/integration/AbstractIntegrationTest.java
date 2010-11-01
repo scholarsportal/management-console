@@ -100,8 +100,8 @@ public abstract class AbstractIntegrationTest {
 		log.debug("after opening accountHome: " + sc.getHtmlSource());
 	}
 
-	protected void openAccountBilling(String accountId) {
-		sc.open(getAppRoot()+"/accounts/byid/"+accountId +"/billing/");
+	protected void openAccountDetails(String accountId) {
+		sc.open(getAppRoot()+"/accounts/byid/"+accountId +"/details/");
 		SeleniumHelper.waitForPage(sc);
 		log.debug("after opening accountHome: " + sc.getHtmlSource());
 	}

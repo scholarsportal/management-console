@@ -47,6 +47,47 @@ public class AccountControllerTest {
 	 */
 	@Test
 	public void testGetHome() throws AccountNotFoundException {
+		setupSimpleAccountManagerService();
+		Model model = new ExtendedModelMap();
+		String view = accountController.getHome(TEST_ACCOUNT_ID, model);
+		Assert.assertEquals(AccountController.ACCOUNT_HOME, view);
+		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+	}
+	
+	@Test
+	public void testGetInstance() throws AccountNotFoundException {
+		setupSimpleAccountManagerService();
+		Model model = new ExtendedModelMap();
+		accountController.getInstance(TEST_ACCOUNT_ID, model);
+		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+	}
+
+	@Test
+	public void testGetProviders() throws AccountNotFoundException {
+		setupSimpleAccountManagerService();
+		Model model = new ExtendedModelMap();
+		accountController.getProviders(TEST_ACCOUNT_ID, model);
+		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+	}
+
+	@Test
+	public void testGetUsers() throws AccountNotFoundException {
+		setupSimpleAccountManagerService();
+		Model model = new ExtendedModelMap();
+		accountController.getUsers(TEST_ACCOUNT_ID, model);
+		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+	}
+
+	@Test
+	public void testGetStatement() throws AccountNotFoundException {
+		setupSimpleAccountManagerService();
+		Model model = new ExtendedModelMap();
+		accountController.getStatement(TEST_ACCOUNT_ID, model);
+		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+	}
+
+	private void setupSimpleAccountManagerService()
+			throws AccountNotFoundException {
 		AccountManagerService ams = EasyMock.createMock(AccountManagerService.class);
 		AccountService as = EasyMock.createMock(AccountService.class);
 		EasyMock.expect(as.retrieveAccountInfo()).andReturn(createAccountInfo());
@@ -54,10 +95,6 @@ public class AccountControllerTest {
 		EasyMock.expect(ams.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
 		EasyMock.replay(ams, as);
 		accountController.setAccountManagerService(ams);
-		Model model = new ExtendedModelMap();
-		String view = accountController.getHome(TEST_ACCOUNT_ID, model);
-		Assert.assertEquals(AccountController.ACCOUNT_HOME, view);
-		Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
 	}
 
 	/**

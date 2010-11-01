@@ -12,7 +12,14 @@
     <put-attribute name="body" value="body" />
   </definition>
 
+  <definition name="user-base" template="/WEB-INF/jspx/layout/user-base.jspx">
+    <put-attribute name="mainTab" value="home" />
+    <put-attribute name="content" value="content" />
+  </definition>
+
+
   <definition name="account-base" template="/WEB-INF/jspx/layout/account-base.jspx">
+    <put-attribute name="mainTab" value="home" />
     <put-attribute name="content" value="content" />
   </definition>
 
@@ -32,7 +39,12 @@
   <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
   <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
 
-  <definition name="account-billing" template="/WEB-INF/jspx/accounts/account/account-billing.jspx" />
+  <definition name="account-details" template="/WEB-INF/jspx/accounts/account/account-details.jspx" />
   <definition name="account-billing-edit" template="/WEB-INF/jspx/accounts/account/account-billing-edit.jspx" />
+
+  <definition name="account-statement" template="/WEB-INF/jspx/accounts/account/account-statement.jspx" />
+  <definition name="account-providers" template="/WEB-INF/jspx/accounts/account/account-providers.jspx" />
+  <definition name="account-instance" template="/WEB-INF/jspx/accounts/account/account-instance.jspx" />
+  <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
 
 </tiles-definitions>

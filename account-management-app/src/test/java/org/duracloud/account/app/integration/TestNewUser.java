@@ -44,8 +44,8 @@ public class TestNewUser extends AbstractIntegrationTest {
 	public void createUser(){
 		UserTestHelper.createUser(sc,newusername, newpassword, "Walter", "Berglund", "walter@cerulean-mtr.org");
         SeleniumHelper.waitForPage(sc);
-		Assert.assertTrue(sc.getHtmlSource().contains("Profile"));
-		Assert.assertTrue(sc.getHtmlSource().contains(newusername));
+		Assert.assertTrue(sc.isTextPresent("Profile"));
+		Assert.assertTrue(sc.isTextPresent(newusername));
 	}
 	
 	

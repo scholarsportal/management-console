@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
@@ -5,10 +6,10 @@
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:form="http://www.springframework.org/tags/form"
  xmlns:spring="http://www.springframework.org/tags"
-
  xmlns:c="http://java.sun.com/jsp/jstl/core">
-   <jsp:directive.page  contentType="application/xhtml+xml;charset=UTF-8"/>
- 
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
   <tiles:insertDefinition
    name="app-base">
     <tiles:putAttribute
@@ -17,113 +18,176 @@
 
     <tiles:putAttribute
      name="header-extensions">
-     
-	      <script type="text/javascript">
-	    	$(function(){
-				$("#first-name-text").focus();
-	    	});
-	      </script>
-
-     </tiles:putAttribute>
+<script
+ type="text/javascript" xml:space="preserve">
+        $(function(){
+        $("#first-name-text").focus();
+        });
+        
+</script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
-
       <h1>Create a user account</h1>
-    <spring:hasBindErrors name="newUserForm">
-        <div class="global-errors">
-            <p>Please correct the following errors:</p>
-            <ul>
-            <c:forEach var="error" items="${errors.allErrors}">
-                <li>${error.class.simpleName == 'FieldError' ? error.field : ''} ${error.defaultMessage}</li>
-            </c:forEach>
-            </ul>
-        </div>
-    </spring:hasBindErrors>
-
       
+      <jsp:include page="/WEB-INF/jspx/includes/global-errors.jspx">
+        <jsp:param  name="formName" value="newUserForm" />
+      </jsp:include>
 
-      <form:form id="new-user-form"
+      <form:form
+       id="new-user-form"
        modelAttribute="newUserForm"
        method="POST">
- 
-                  <table class="standard-form">
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="first-name-text"
-							path="firstName">First Name</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:input cssErrorClass="error" id="first-name-text" path="firstName" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="last-name-text" path="lastName">Last Name</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:input cssErrorClass="error" id="last-name-text" path="lastName" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="email-text" path="email">Email</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:input cssErrorClass="error" id="email-text" path="email" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="username-text" path="username">Username</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:input cssErrorClass="error" id="username-text" path="username" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="password-text" path="password">Password</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:password cssErrorClass="error" id="password-text" path="password" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="label">
-                        <form:label cssErrorClass="error" for="password-confirm-text" path="passwordConfirm">Confirm Password</form:label>
-                       </td> 
-                       <td class="required"></td>
-                       <td class="value">
-                         <form:password cssErrorClass="error" id="password-confirm-text" path="passwordConfirm" />
-                       </td>
-                       <td class="field-errors">
-                       </td>
-                    </tr>
-                     <tr>
-                       <td class="button-bar" colspan="4">
-	                       	<div class="button-bar">
-					              <button id="create-user-button"
-					               type="submit">Create</button>
-	                       	</div>
-                       </td>
-                    </tr>
-                    </table>
+        <table
+         class="standard-form">
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="first-name-text"
+               path="firstName">First Name</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:input
+               cssErrorClass="error"
+               id="first-name-text"
+               path="firstName" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="last-name-text"
+               path="lastName">Last Name</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:input
+               cssErrorClass="error"
+               id="last-name-text"
+               path="lastName" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="email-text"
+               path="email">Email</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:input
+               cssErrorClass="error"
+               id="email-text"
+               path="email" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="username-text"
+               path="username">Username</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:input
+               cssErrorClass="error"
+               id="username-text"
+               path="username" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="password-text"
+               path="password">Password</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:password
+               showPassword="true"
+               cssErrorClass="error"
+               id="password-text"
+               path="password" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="label">
+              <form:label
+               cssErrorClass="error"
+               for="password-confirm-text"
+               path="passwordConfirm">Confirm Password</form:label>
+            </td>
+
+            <td
+             class="required">
+            </td>
+
+            <td
+             class="value">
+              <form:password
+               cssErrorClass="error"
+               id="password-confirm-text"
+               showPassword="true"
+               path="passwordConfirm" />
+            </td>
+          </tr>
+
+          <tr>
+            <td
+             class="button-bar"
+             colspan="4">
+              <div
+               class="button-bar">
+                <button
+                 id="create-user-button"
+                 type="submit">Create</button>
+              </div>
+            </td>
+          </tr>
+        </table>
       </form:form>
     </tiles:putAttribute>
   </tiles:insertDefinition>

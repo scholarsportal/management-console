@@ -57,7 +57,7 @@ public class TestAccount extends AbstractIntegrationTest {
 	@Test
 	public void testBillingOpenEditSave(){
 		Assert.assertNotNull(this.accountId);
-		openAccountBilling(this.accountId);
+		openAccountDetails(this.accountId);
 		sc.click("id=billing-edit-link");
 		SeleniumHelper.waitForPage(sc);
 		Assert.assertTrue(sc.isElementPresent("id=billing-edit-form"));

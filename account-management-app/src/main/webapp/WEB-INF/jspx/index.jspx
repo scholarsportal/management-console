@@ -1,38 +1,46 @@
-<jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:jsp="http://java.sun.com/JSP/Page"
-	xmlns:tiles="http://tiles.apache.org/tags-tiles"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:sec="http://www.springframework.org/security/tags"
-	xmlns:form="http://www.springframework.org/tags/form"
-	>
-	
-	<jsp:directive.page  contentType="application/xhtml+xml;charset=UTF-8"/>
-	
-	<tiles:insertDefinition name="app-base">
-		<tiles:putAttribute name="title"
-			value="Account Management App: Welcome" />
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:sec="http://www.springframework.org/security/tags"
+ xmlns:form="http://www.springframework.org/tags/form">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
 
-		<tiles:putAttribute name="header-extensions" value="" />
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: Welcome" />
 
-		<tiles:putAttribute name="body">
-			<sec:authentication property="principal" var="principal" />
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
 
-			<h1>Duracloud Account Management Application</h1>
+    <tiles:putAttribute
+     name="body">
+      <sec:authentication
+       property="principal"
+       var="principal" />
 
-			<h5>${time}</h5>
+      <h1>Duracloud Account Management Application</h1>
 
-			<c:if test="${principal == 'anonymousUser'}">
-				<ul>
-					<li>
-						<a id="new-user-link"
-							href="${pageContext.request.contextPath}/users/new">
-							Create New User Profile
-						</a>
-					</li>
-				</ul>
-			</c:if>
-			
-		</tiles:putAttribute>
-	</tiles:insertDefinition>
+      <h5>${time}</h5>
+
+      <c:if
+       test="${principal == 'anonymousUser'}">
+        <ul>
+          <li>
+            <a
+             id="new-user-link"
+             href="${pageContext.request.contextPath}/users/new">Create New User Profile</a>
+          </li>
+        </ul>
+      </c:if>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
 </jsp:root>
 

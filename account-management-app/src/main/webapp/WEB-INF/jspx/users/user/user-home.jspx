@@ -1,72 +1,61 @@
-<jsp:root
- version="2.0"
- xmlns="http://www.w3.org/1999/xhtml"
- xmlns:jsp="http://java.sun.com/JSP/Page"
- xmlns:tiles="http://tiles.apache.org/tags-tiles"
- xmlns:sec="http://www.springframework.org/security/tags"
- xmlns:form="http://www.springframework.org/tags/form"
- xmlns:c="http://java.sun.com/jsp/jstl/core">
-  <tiles:insertDefinition
-   name="app-base">
-    <tiles:putAttribute
-     name="title"
-     value="${user.username}'s Profile" />
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:form="http://www.springframework.org/tags/form">
+	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 
-    <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+	<tiles:insertDefinition name="app-base">
+		<tiles:putAttribute name="title" value="${user.username}'s Profile" />
 
-    <tiles:putAttribute
-     name="body">
-      <h1>${user.username}'s Profile</h1>
-	  <h3>Accounts</h3>
-	  <c:choose>
-      <c:when test="${not empty accounts}">
-      	  
-	      <ul>
-	      	<c:forEach var="a" items="${accounts}">
-	      		<li>
-	      			<a id="account-home-${id}-link" href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
-	      				Account[id=${a.id}: ${a.orgName} - ${a.acctName}
-	      			</a>
-	      		</li>
-	      	
-	      	</c:forEach>	
-	      
-	      </ul>
-	      
-      </c:when>
-	  <c:otherwise>
-	  	<p>
-		  	There are no Duracloud accounts associated with this user profile.
-	  	</p>
-	  </c:otherwise>	  	
-	  </c:choose>
+		<tiles:putAttribute name="header-extensions" value="" />
 
-	<sec:authorize ifNotGranted="ROLE_ROOT">
-	  <ul>
-        <li>
-          <a id="new-account-link" accesskey="n"
-           href="${pageContext.request.contextPath}/accounts/new">Create New Account</a>
-        </li>
+		<tiles:putAttribute name="body">
 
-        <li>
-          <form
-           method="POST">
-            <fieldset>
-              <label
-               for="key">Enter Key</label>
+			<tiles:insertDefinition name="user-base">
+				<tiles:putAttribute name="mainTab" value="home" />
+				<tiles:putAttribute name="content">
+					<h1>${user.username}'s Profile</h1>
 
-              <input
-               id="key">
-              </input>
-            </fieldset>
-          </form>
-        </li>
-      </ul>
-	</sec:authorize>
-		
-    </tiles:putAttribute>
-  </tiles:insertDefinition>
+					<h3>Accounts</h3>
+
+					<c:choose>
+						<c:when test="${not empty accounts}">
+							<ul>
+								<c:forEach var="a" items="${accounts}">
+									<li><a id="account-home-${id}-link"
+										href="${pageContext.request.contextPath}/accounts/byid/${a.id}">Account[id=${a.id}:
+									${a.orgName} - ${a.acctName}</a></li>
+								</c:forEach>
+							</ul>
+						</c:when>
+
+						<c:otherwise>
+							<p>There are no Duracloud accounts associated with this user
+							profile.</p>
+						</c:otherwise>
+					</c:choose>
+
+					<sec:authorize ifNotGranted="ROLE_ROOT">
+						<ul>
+							<li><a id="new-account-link" accesskey="n"
+								href="${pageContext.request.contextPath}/accounts/new">Create
+							New Account</a></li>
+
+							<li>
+							<form method="POST">
+							<fieldset><label for="key">Enter Key</label> <input
+								id="key"> </input></fieldset>
+							</form>
+							</li>
+						</ul>
+					</sec:authorize>
+
+				</tiles:putAttribute>
+			</tiles:insertDefinition>
+		</tiles:putAttribute>
+	</tiles:insertDefinition>
 </jsp:root>
 

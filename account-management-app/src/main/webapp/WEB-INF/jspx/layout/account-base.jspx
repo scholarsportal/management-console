@@ -1,45 +1,44 @@
-<jsp:root
- version="2.0"
- xmlns="http://www.w3.org/1999/html"
- xmlns:jsp="http://java.sun.com/JSP/Page"
- xmlns:tiles="http://tiles.apache.org/tags-tiles"
- xmlns:c="http://java.sun.com/jsp/jstl/core">
-<jsp:directive.page  contentType="application/xhtml+xml;charset=UTF-8"/>
- 
-  <ul>
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/">Home</a>
-    </li>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns:form="http://www.springframework.org/tags/form">
+	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
+	<div>
+	<ul class="horizontal-list dc-main-tabs flex clearfix">
+		<tiles:importAttribute  name="mainTab" ignore="true" />
+		<li class="${mainTab=='home'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/"><span>Dashboard</span></a>
+		</li>
 
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement/">Statement</a>
-    </li>
+		<li class="${mainTab=='statement'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement"><span>Statement</span></a>
+		</li>
+		<li class="${mainTab=='providers'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers"><span>Providers</span></a>
+		</li>
 
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/">Providers</a>
-    </li>
+		<li class="${mainTab=='instance'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance"><span>Instance</span></a>
+		</li>
 
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/">Instance</a>
-    </li>
+		<li class="${mainTab=='users'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users"><span>Users</span></a>
+		</li>
+		<li class="${mainTab=='details'?'selected':''}"><a
+			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/"
+			accesskey="b"><span>Account</span></a></li>
+	</ul>
+	</div>
 
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/">Users</a>
-    </li>
 
-    <li>
-      <a
-       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing/" accesskey="b">Billing</a>
-    </li>
-  </ul>
+	<div class="dc-main-content"><tiles:insertAttribute name="content" ignore="false" />
+    </div>
+    <div style="display:none">
+      <span id="account-id">${accountInfo.id}</span>    
+    </div>
 
-  <tiles:insertAttribute
-   name="content"
-   ignore="false" />
 </jsp:root>
 

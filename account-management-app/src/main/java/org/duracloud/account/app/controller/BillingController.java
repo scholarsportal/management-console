@@ -37,8 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(BillingController.FULL_BILLING_PATH)
 public class BillingController extends AbstractAccountController {
-	public static final String BILLING_PATH = "/billing/"; 
-	public static final String FULL_BILLING_PATH = ACCOUNTS_PATH + ACCOUNT_PATH + BILLING_PATH; 
+	public static final String FULL_BILLING_PATH = ACCOUNTS_PATH + ACCOUNT_PATH + "/billing"; 
 	public static final String EDIT_VIEW = "account-billing-edit";
 	public static final String BILLING_FORM = "billingInfoForm";
 	
@@ -63,7 +62,7 @@ public class BillingController extends AbstractAccountController {
 		        	errors.rejectValue(cv.getPropertyPath().toString(), cv.getMessage(),cv.getMessage());
 		        }
 
-		        if(bif.getPaymentType().equals(BillingInfoForm.PaymentType.CC)){
+		        if(bif.getPaymentMethod().equals(BillingInfoForm.PaymentMethod.CC)){
 			        Set<ConstraintViolation<CreditCardForm>> ccConstraints = validator.validate(bif.getCreditCard(), Default.class);
 			        errors.pushNestedPath("creditCard");
 			        for(ConstraintViolation<CreditCardForm> cv : ccConstraints){
@@ -75,13 +74,6 @@ public class BillingController extends AbstractAccountController {
 		});
 	}
 	
-	@RequestMapping(value = { "", "/"  }, method = RequestMethod.GET)
-	public String getHome(@PathVariable String accountId, Model model)
-			throws AccountNotFoundException {
-		loadAccountInfo(accountId, model);
-		return "account-billing";
-	}
-
 	@RequestMapping(value = { EDIT_PATH }, method = RequestMethod.GET)
 	public String getBillingInfoForm( @PathVariable String accountId, Model model)
 		throws AccountNotFoundException{
@@ -105,7 +97,7 @@ public class BillingController extends AbstractAccountController {
 		if (result.hasErrors()) {
 			return EDIT_VIEW;
 		}
-		return formatAccountRedirect(accountId, BILLING_PATH);
+		return formatAccountRedirect(accountId, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
 	}
 	

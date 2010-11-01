@@ -26,7 +26,7 @@ public class NewAccountForm {
 	private String acctName;
 	
 	@UniqueSubdomainConstraint
-	@Length(min=3, max=20)
+	@Length(min=3, max=20, message = "Subdomain must be between 3 and 20 characters.")
 	private String subdomain;
 	
 	private List<StorageProviderType> storageProviders;
