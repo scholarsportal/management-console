@@ -106,4 +106,8 @@ public abstract class AbstractIntegrationTest {
 		log.debug("after opening accountHome: " + sc.getHtmlSource());
 	}
 
+	protected void waitForPage() {
+		SeleniumHelper.waitForPage(sc);
+	}
+
 }

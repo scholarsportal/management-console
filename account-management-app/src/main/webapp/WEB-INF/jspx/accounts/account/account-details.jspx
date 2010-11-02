@@ -18,7 +18,16 @@
                     <h1>Account and Billing Information</h1>
 					<div class="two-by-one-layout">
                 		<div id="account-details" class="dc-subgroup">
-        					<h2>Account Information</h2>
+                          <h2><span>Account Information</span>
+                                <span>
+                                    <ul class="horizontal-list">
+                                      <li><a id="account-edit-link" class="button"
+                                        href="javascript:void(0,'${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit')"><i class="pre pencil"></i>Edit</a>
+                                      </li>
+                                    </ul>
+                                </span>                  
+                            </h2>
+
                             <table>
                               <tr>
                                 <td>

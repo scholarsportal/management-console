@@ -22,13 +22,15 @@
 
     <tiles:putAttribute
      name="body">
+      <div class="dc-main-content">
+     
       <sec:authentication
        property="principal"
        var="principal" />
 
       <h1>Duracloud Account Management Application</h1>
 
-      <h5>${time}</h5>
+      <p>${time}</p>
 
       <c:if
        test="${principal == 'anonymousUser'}">
@@ -38,8 +40,14 @@
              id="new-user-link"
              href="${pageContext.request.contextPath}/users/new">Create New User Profile</a>
           </li>
+          <li>
+            <a
+             id="login"
+             href="${pageContext.request.contextPath}/login">Login</a>
+          </li>
         </ul>
       </c:if>
+      </div>
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

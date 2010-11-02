@@ -66,9 +66,14 @@
     <intercept-url
       pattern="/users/byid/**"
       access="ROLE_USER" />
+    <intercept-url
+      pattern="/users/profile"
+      access="ROLE_USER" />
+
     <form-login
       login-page="/login"
       always-use-default-target="false"
+      default-target-url="/users/profile"
       authentication-failure-url="/login?error=true" />
     <http-basic />
     <logout

@@ -29,7 +29,12 @@
 
     <tiles:putAttribute
      name="body">
-      <h1>Create a user account</h1>
+      <div class="dc-main-content">
+ 
+        <div class="two-by-one-layout">
+          <div class="dc-subgroup">
+          <h2>Create a user account</h2>
+          <div class="dc-subgroup-body">
       
       <jsp:include page="/WEB-INF/jspx/includes/global-errors.jspx">
         <jsp:param  name="formName" value="newUserForm" />
@@ -189,6 +194,12 @@
           </tr>
         </table>
       </form:form>
+      </div>
+      </div>
+      <div></div>
+      </div>
+      </div>
+      
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

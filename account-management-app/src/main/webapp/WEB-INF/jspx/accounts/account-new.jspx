@@ -19,13 +19,16 @@
 			<tiles:insertDefinition name="user-base">
 				<tiles:putAttribute name="mainTab" value="home" />
 				<tiles:putAttribute name="content">
+                    <h1>Profile</h1>
 
-
-					<h1>New Account Form</h1>
-					<jsp:include page="/WEB-INF/jspx/includes/global-errors.jspx">
+					<div class="two-by-one-layout">
+					<div class="dc-subgroup">
+					<h2>Create New Account</h2>
+					<div class="dc-subgroup-body">
+					<jsp:include
+						page="/WEB-INF/jspx/includes/global-errors.jspx">
 						<jsp:param name="formName" value="newAccountForm" />
-					</jsp:include>
-
+					</jsp:include> 
 					<form:form cssClass="change-aware" modelAttribute="newAccountForm"
 						method="POST">
 
@@ -69,15 +72,16 @@
 									id="subdomain-text" path="subdomain" /></td>
 							</tr>
 
-							<tr>
-								<td>
-								<div class="button-bar">
-								<button id="create-account-button" type="submit">Create</button>
-								</div>
-								</td>
-							</tr>
 						</table>
-					</form:form>
+                        <div class="button-bar">
+                        <button id="create-account-button" type="submit">Create</button>
+                        </div>
+            
+					</form:form></div>
+					</div>
+					<div></div>
+					</div>
+
 				</tiles:putAttribute>
 			</tiles:insertDefinition>
 

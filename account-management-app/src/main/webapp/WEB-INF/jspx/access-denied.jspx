@@ -20,9 +20,12 @@
 
     <tiles:putAttribute
      name="body">
+      <div class="dc-main-content">
+     
       <h1>Access Denied (403)</h1>
 
       <p>You do not have permission to view this page.</p>
+      </div>
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

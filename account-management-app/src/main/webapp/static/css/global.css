@@ -59,7 +59,7 @@ table {
 	border-spacing: 0;
 }
 
-td {
+td,th {
 	padding:5px;	
 }
 
@@ -109,9 +109,25 @@ h2 { font-size:1.3em; font-weight:normal; }
 h3 { font-size:1em; }
 
 
+li a{
+	text-decoration: none;
+}
+
+li a:hover{
+	
+}
+
+
+
+
+	
+
 .float-l {float:left; margin-left:0; }
 .float-r {float:right; margin-right:0; }
 .content-centered { text-align:center !important; }
+
+
+
 
 
 /*YUI CSS**********************/
@@ -125,19 +141,27 @@ table.standard-form{
 	width:100%;
 }
 
-.standard-form td {
-}
 
 .standard-form .label {
-	width:175px;
+	max-width:75px;
+	min-width:75px;
+	
 }
 .standard-form .required {
-	width:5px;
+	max-width:5px;
+	min-width:5px;
+	
 	color:blue;
 }
 .standard-form .value {
 	width:*;
 	padding-left:5px;
+}
+
+
+.button-bar {
+	margin-top:10px;	
+	
 }
 
 
@@ -150,8 +174,16 @@ input.error,.global-errors{
 	background-color: #FFBBBB;
 }
 
+div.global-errors{
+	padding:5px; 
+	margin-bottom:5px;
+}
+.global-errors li{
+	padding:5px; 
+}
+
 .two-by-one-layout > div:first-child{
-	width:50%;
+	width:49%;
 	float:left;
 }
 
@@ -286,7 +318,6 @@ ing-right:10px;
 }
 
 .dc-main-content h1 {
-	border-bottom: 1px solid #aaa;
 	margin-bottom:10px;
 }
 
@@ -294,25 +325,65 @@ ing-right:10px;
 .dc-subgroup {
 	padding:0px 0px 5px 0px;
 	background-color: #ccc;
-	color: #555;
 	min-height:300px;
 }
 
+
+.dc-subgroup, .dc-subgroup a{
+	color:#555;
+}
+
+.dc-subgroup a:hover 
+{
+	color:#444;
+} 
+
+.dc-subgroup .button {
+	color:#bbb;	
+}
 .dc-subgroup > h2 > span:last-child{
 	float:right;
 }
 
 .dc-subgroup h2 {
-	padding:5px 0px 5px 5px;
+	padding:10px 5px 10px 5px;
 	background-color:#bbb;
+	
 }
 
 .dc-subgroup table  {
 	width:100%;
 }
 .dc-subgroup table > tr {
-
-	border-top: 1px solid #aaa;
 	border-bottom: 1px solid #aaa;
+}
+
+
+.dc-subgroup-body{
+	padding:10px;	
+}
+
+
+li.account {
+	padding:5px;
+}
+
+
+li.account span:last-child{
+	margin-left:100px;
+}
+
+li.account:hover {
+	background-color: #ddd;	
+	cursor: pointer;	
+}	
+
+
+.dc-subgroup li {
+	border-bottom: 1px solid #aaa;
+}
+
+.dc-subgroup li:last-child {
+	border-bottom: 0;
 	
 }

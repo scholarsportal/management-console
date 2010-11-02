@@ -6,18 +6,21 @@
 	xmlns:sec="http://www.springframework.org/security/tags"
 	xmlns:form="http://www.springframework.org/tags/form">
 	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
-	<div>
-    <sec:authentication property="principal.username" var="username" />
+	<div><sec:authentication property="principal.username"
+		var="username" />
 	<ul class="horizontal-list dc-main-tabs flex clearfix">
-		<tiles:importAttribute  name="mainTab" ignore="true" />
-		<li class="${mainTab=='home'?'selected':''}"><a
-			href="${pageContext.request.contextPath}/users/byid/${username}/"><span>Dashboard</span></a>
+		<tiles:importAttribute name="mainTab" ignore="true" />
+		<li class="${mainTab=='home'?'selected':''}"><a id="user-home"
+			href="${pageContext.request.contextPath}/users/byid/${username}/"><span>Home</span></a>
 		</li>
 	</ul>
 	</div>
 
 
-	<div><tiles:insertAttribute name="content" ignore="false" /></div>
+	<div class="dc-main-content">
+	<tiles:insertAttribute
+		name="content" ignore="false" />
+    </div>
 
 </jsp:root>
 

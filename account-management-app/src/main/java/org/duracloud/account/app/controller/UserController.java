@@ -119,8 +119,14 @@ public class UserController extends  AbstractController {
 				new NewUserForm());
 	}
 
+	@RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
+	public String profileRedirect() {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return "redirect:/users/byid/"  + username;
+		
+	}
+
 	@RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
-	//@PreAuthorize("#userId == authentication.name OR hasRole('ROLE_ROOT')")
 	public ModelAndView getUser(@PathVariable String username) throws DBNotFoundException{
 		log.debug("getting user {}", username);
 		DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);

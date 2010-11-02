@@ -51,6 +51,13 @@ public class TestAccount extends AbstractIntegrationTest {
 	public void test(){
 		Assert.assertNotNull(this.accountId);
 		openAccountHome(this.accountId);
+		testIfAccountIdElementIsPresent();
+	}
+
+	/**
+	 * 
+	 */
+	private void testIfAccountIdElementIsPresent() {
 		Assert.assertTrue(sc.isElementPresent("id=account-id"));
 	}
 
@@ -77,8 +84,22 @@ public class TestAccount extends AbstractIntegrationTest {
 		Assert.assertTrue(!sc.isElementPresent("id=billing-edit-form"));
 	}
 
-	
 
+	@Test
+	public void testAccountTabs(){
+		String[] tabs = {"dashboard", "statement", "instance", "users", "details"};
+		for(String t : tabs){
+			openAccountHome(accountId);
+			String id = "account-"+t;
+			log.debug("about to click id=" + id);
+			sc.click("id="+id);
+			waitForPage();
+			testIfAccountIdElementIsPresent();
+			log.debug("clicked id=" + id);
+		}
+	}
+	
+	
 	@Test
 	public void testFailedAuthorization(){
 		try {
