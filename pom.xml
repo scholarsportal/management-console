@@ -219,14 +219,10 @@
       <id>http://repository.codehaus.org/</id>
       <name>mortbay</name>
       <url>http://repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
-
-    <repository>
-      <id>http://repository.codehaus.org/</id>
-      <name>mortbay</name>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
-
 
     <repository>
       <id>openqa-snapshots</id>
