@@ -1,7 +1,7 @@
+/*
+ * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ */
 package org.duracloud.account.util.impl;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.duracloud.account.common.domain.AccountInfo;
@@ -19,13 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-/*
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- *     http://duracloud.org/license
- */
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
