@@ -4,11 +4,12 @@
 package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -16,11 +17,10 @@ import java.util.List;
 public interface AccountManagerService {
 
     /**
-     * Checks if the subdomain is available.
+     * Checks to see if the subdomain is available.
      * @return true if the subdomain is available, otherwise file.
      */
-    public boolean checkSubdomain(String subdomain);
-
+    public boolean subdomainAvailable(String subdomain);
 	
 	/**
      * Returns an <code>AccountService</code> interface.
@@ -30,7 +30,7 @@ public interface AccountManagerService {
      * @throws org.duracloud.account.util.error.AccountNotFoundException
      *
      */
-    public AccountService getAccount(String accountId)
+    public AccountService getAccount(int accountId)
         throws AccountNotFoundException;
 
     /**
@@ -39,14 +39,15 @@ public interface AccountManagerService {
      * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
      *
      */
-    public AccountService createAccount(AccountInfo accountInfo)
+    public AccountService createAccount(AccountInfo accountInfo,
+                                        DuracloudUser owner)
         throws SubdomainAlreadyExistsException;
 
     /**
-     * @param username
+     * @param userId
      * @return list of account ids
      * @throws AccountNotFoundException
      */
-    public List<AccountInfo> lookupAccountsByUsername(String username)
+    public Set<AccountInfo> findAccountsByUserId(int userId)
         throws UsernameNotFoundException;
 }

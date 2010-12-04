@@ -3,16 +3,8 @@
  */
 package org.duracloud.account.security.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.aopalliance.intercept.MethodInvocation;
+import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.easymock.EasyMock;
@@ -22,6 +14,13 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 /**
  * 
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -31,28 +30,23 @@ public class AccessDecisionVoterTestBase {
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 	protected Collection<ConfigAttribute> attributes = new LinkedList<ConfigAttribute>();
-	protected static List<Role> USER_AUTHORITIES;
+	protected static Set<Role> USER_AUTHORITIES;
 
 	static {
-		USER_AUTHORITIES= new ArrayList<Role>();
-		USER_AUTHORITIES.add(Role.ROLE_USER);
-		
+		USER_AUTHORITIES = new HashSet<Role>();
+		USER_AUTHORITIES.add(Role.ROLE_USER);		
 	}
 	
 	public AccessDecisionVoterTestBase() {
 		super();
 	}
 
-	protected Authentication createUserAuthentication(List<Role> authorities) {
-		DuracloudUser user = new DuracloudUser("test", "test", "test","test", "test@test");
-		Map<String,List<String>> map = new HashMap<String,List<String>>();
-		user.setAcctToRoles(map);
-		List<String> list = new LinkedList<String>();
-		for(Role a : authorities){
-			list.add(a.name());
-		}
-		map.put("0", list);
-		
+	protected Authentication createUserAuthentication(Set<Role> authorities) {
+		DuracloudUser user = new DuracloudUser(0, "test", "test", "test","test", "test@test");
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+        rights.add(new AccountRights(0, 0, 0, authorities));
+		user.setAccountRights(rights);
+
 		return createMockAuthentication(user);
 	}
 

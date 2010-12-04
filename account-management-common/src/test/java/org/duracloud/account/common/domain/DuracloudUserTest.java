@@ -3,13 +3,19 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Andrew Woods
@@ -18,22 +24,42 @@ import org.junit.Test;
 public class DuracloudUserTest {
 
     private DuracloudUser user;
+    private static final int userId = 0;
     private static final String email = "email";
     private static final String lastName = "last-name";
     private static final String firstName = "first-name";
     private static final String password = "password";
     private static final String username = "username";
 
-    private static final String acct0 = "acct-0";
-    private static final String acct1 = "acct-1";
+    private static final int acctId0 = 0;
+    private static final int acctId1 = 1;
 
     @Before
     public void setUp() throws Exception {
-        user = new DuracloudUser(username,
+        Set<Role> roles0 = new HashSet<Role>();
+        roles0.add(Role.ROLE_USER);
+        AccountRights rights0 = new AccountRights(0, acctId0, userId, roles0, 0);
+
+        Set<Role> roles1 = new HashSet<Role>();
+        roles1.add(Role.ROLE_USER);
+        roles1.add(Role.ROLE_ADMIN);
+        roles1.add(Role.ROLE_OWNER);
+        roles1.add(Role.ROLE_ROOT);
+        roles1.add(Role.ROLE_SYSTEM);
+        AccountRights rights1 = new AccountRights(1, acctId1, userId, roles1, 0);
+
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+        rights.add(rights0);
+        rights.add(rights1);
+
+        user = new DuracloudUser(userId,
+                                 username,
                                  password,
                                  firstName,
                                  lastName,
-                                 email);
+                                 email,
+                                 0);
+        user.setAccountRights(rights);
     }
 
     @After
@@ -41,39 +67,77 @@ public class DuracloudUserTest {
     }
 
     @Test
-    public void testAddAccount() throws Exception {
-        verifyAcctToRoles(user.getAcctToRoles(), 0, null);
+    public void testGetAuthorities() {
+        Collection<GrantedAuthority> authorities = user.getAuthorities();
+        assertFalse(authorities.isEmpty());
 
-        // add first acct
-        user.addAccount(acct0);
-        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, Role.ROLE_USER.name());
-        
-        // check idempotency
-        user.addAccount(acct0);
-        verifyAcctToRoles(user.getAcctToRoles(), 1, acct0, Role.ROLE_USER.name());
-
-        // add another acct
-        user.addAccount(acct1);
-        verifyAcctToRoles(user.getAcctToRoles(), 2, acct0, Role.ROLE_USER.name());
-        verifyAcctToRoles(user.getAcctToRoles(), 2, acct1, Role.ROLE_USER.name());
-    }
-
-    private void verifyAcctToRoles(Map<String, List<String>> acctToRoles,
-                                   int expectedSize,
-                                   String expectedAcct,
-                                   String... expectedRoles) {
-        Assert.assertNotNull(acctToRoles);
-        Assert.assertEquals(expectedSize, acctToRoles.size());
-
-        if (null != expectedAcct) {
-            Assert.assertTrue(acctToRoles.containsKey(expectedAcct));
-            List<String> roles = acctToRoles.get(expectedAcct);
-            Assert.assertNotNull(roles);
-
-            Assert.assertEquals(expectedRoles.length, roles.size());
-            for (String expectedRole : expectedRoles) {
-                Assert.assertTrue(roles.contains(expectedRole));
+        boolean user = false;
+        boolean admin = false;
+        boolean owner = false;
+        boolean root = false;
+        boolean system = false;
+        for(GrantedAuthority ga : authorities) {
+            if(ga.getAuthority().equals(Role.ROLE_USER.name())) {
+                user = true;
+            } else if(ga.getAuthority().equals(Role.ROLE_ADMIN.name())) {
+                admin = true;
+            } else if(ga.getAuthority().equals(Role.ROLE_OWNER.name())) {
+                owner = true;
+            } else if(ga.getAuthority().equals(Role.ROLE_ROOT.name())) {
+                root = true;
+            } else if(ga.getAuthority().equals(Role.ROLE_SYSTEM.name())) {
+                system = true;
             }
         }
+        assertTrue(user);
+        assertTrue(admin);
+        assertTrue(owner);
+        assertTrue(root);
+        assertTrue(system);
     }
+
+    @Test
+    public void testGetRolesByAccount() {
+        Set<Role> roles = user.getRolesByAcct(acctId0);
+        assertNotNull(roles);
+        assertEquals(1, roles.size());
+        checkRoles(roles, true, false, false, false, false);
+
+        roles = user.getRolesByAcct(acctId1);
+        assertNotNull(roles);
+        assertEquals(5, roles.size());
+        checkRoles(roles, true, true, true, true, true);
+    }
+
+    private void checkRoles(Set<Role> roles,
+                            boolean expUser,
+                            boolean expAdmin,
+                            boolean expOwner,
+                            boolean expRoot,
+                            boolean expSystem) {
+        boolean user = false;
+        boolean admin = false;
+        boolean owner = false;
+        boolean root = false;
+        boolean system = false;
+        for(Role role : roles) {
+            if(role.equals(Role.ROLE_USER)) {
+                user = true;
+            } else if(role.equals(Role.ROLE_ADMIN)) {
+                admin = true;
+            } else if(role.equals(Role.ROLE_OWNER)) {
+                owner = true;
+            } else if(role.equals(Role.ROLE_ROOT)) {
+                root = true;
+            } else if(role.equals(Role.ROLE_SYSTEM)) {
+                system = true;
+            }
+        }
+        assertEquals(expUser, user);
+        assertEquals(expAdmin, admin);
+        assertEquals(expOwner, owner);
+        assertEquals(expRoot, root);
+        assertEquals(expSystem, system);
+    }
+
 }

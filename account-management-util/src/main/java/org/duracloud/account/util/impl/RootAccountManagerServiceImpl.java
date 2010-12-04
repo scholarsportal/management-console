@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,6 +13,9 @@ import org.duracloud.account.util.RootAccountManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Andrew Woods
  *         Date: Oct 9, 2010
@@ -25,7 +25,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private DuracloudUserRepo userRepo;
     private DuracloudAccountRepo accountRepo;
     
-    public RootAccountManagerServiceImpl(DuracloudUserRepo userRepo, DuracloudAccountRepo accountRepo) {
+    public RootAccountManagerServiceImpl(DuracloudUserRepo userRepo,
+                                         DuracloudAccountRepo accountRepo) {
         this.userRepo = userRepo;
         this.accountRepo = accountRepo;
     }
@@ -38,27 +39,27 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 
 	@Override
-	public List<AccountInfo> listAllAccounts(String filter) {
-		List<String> accountIds = accountRepo.getIds();
-		List<AccountInfo> accountInfos = new LinkedList<AccountInfo>();
-		for(String id : accountIds){
+	public Set<AccountInfo> listAllAccounts(String filter) {
+		Set<Integer> accountIds = accountRepo.getIds();
+		Set<AccountInfo> accountInfos = new HashSet<AccountInfo>();
+		for(int acctId : accountIds){
 			try{
-				AccountInfo accountInfo = accountRepo.findById(id);
+				AccountInfo accountInfo = accountRepo.findById(acctId);
 				if(filter == null || accountInfo.getOrgName().startsWith(filter)){
 					accountInfos.add(accountInfo);
 				}
 			}catch(DBNotFoundException ex){
-				log.error("account[{}] not found; skipping.", id, ex);
+				log.error("account[{}] not found; skipping.", acctId, ex);
 			}
 		}
 		return accountInfos;
 	}
 
 	@Override
-	public List<DuracloudUser> listAllUsers(String filter) {
-		List<String> userIds = userRepo.getIds();
-		List<DuracloudUser> users = new LinkedList<DuracloudUser>();
-		for(String id : userIds){
+	public Set<DuracloudUser> listAllUsers(String filter) {
+		Set<Integer> userIds = userRepo.getIds();
+		Set<DuracloudUser> users = new HashSet<DuracloudUser>();
+		for(int id : userIds){
 			try{
 				DuracloudUser user = userRepo.findById(id);
 				

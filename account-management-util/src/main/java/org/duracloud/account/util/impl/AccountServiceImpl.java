@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.List;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
@@ -15,120 +13,63 @@ import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.error.DuracloudInvalidVersionException;
 import org.duracloud.storage.domain.StorageProviderType;
 
+import java.util.Set;
+
 /**
- * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)" 
  */
 public class AccountServiceImpl implements AccountService,
 		DuracloudInstanceManagerService {
-	private AccountInfo accountInfo;
+	private AccountInfo account;
 
 	/**
-	 * @param accountInfo
+	 * @param acct
 	 */
-	public AccountServiceImpl(String id, AccountInfo a) {
-		this.accountInfo = new AccountInfo(id, a.getSubdomain(), a
-				.getAcctName(), a.getOrgName(), a.getDepartment(),
-				a.getOwner(), a.getStorageProviders());
+	public AccountServiceImpl(AccountInfo acct) {
+		this.account = acct;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.duracloud.account.util.AccountService#getStorageProviders()
-	 */
 	@Override
-	public List<StorageProviderType> getStorageProviders() {
+	public Set<StorageProviderType> getStorageProviders() {
+		return account.getStorageProviders();
+	}
+
+	@Override
+	public Set<DuracloudUser> getUsers() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.duracloud.account.util.AccountService#getUsers()
-	 */
-	@Override
-	public List<DuracloudUser> getUsers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.duracloud.account.util.AccountService#retrieveAccountInfo()
-	 */
 	@Override
 	public AccountInfo retrieveAccountInfo() {
-		return this.accountInfo;
+		return account;
 	}
 
-
-
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountService#setStorageProvider(java.util
-	 * .List)
-	 */
 	@Override
-	public void setStorageProviders(
-			List<StorageProviderType> storageProviderTypes) {
+	public void setStorageProviders(Set<StorageProviderType> storageProviderTypes) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void storeAccountInfo(String acctName,
+                                 String orgName,
+			                     String department) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountService#storeAccountInfo(java.lang.
-	 * String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void storeAccountInfo(String acctName, String orgName,
-			String department) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountService#storePaymentInfo(org.duracloud
-	 * .account.common.domain.PaymentInfo)
-	 */
 	@Override
 	public void storePaymentInfo(PaymentInfo paymentInfo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountService#storeSubdomain(java.lang.String
-	 * )
-	 */
 	@Override
 	public void storeSubdomain(String subdomain) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.DuracloudInstanceManagerService#createNewInstance
-	 * (java.lang.String, java.lang.String)
-	 */
 	@Override
 	public DuracloudInstanceService createNewInstance(String acctId,
 			String version) throws DuracloudInvalidVersionException {
@@ -136,13 +77,6 @@ public class AccountServiceImpl implements AccountService,
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.DuracloudInstanceManagerService#getInstance
-	 * (java.lang.String)
-	 */
 	@Override
 	public DuracloudInstanceService getInstance(String acctId)
 			throws DuracloudInstanceNotAvailableException {
@@ -150,17 +84,9 @@ public class AccountServiceImpl implements AccountService,
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.DuracloudInstanceManagerService#removeInstance
-	 * (java.lang.String)
-	 */
 	@Override
 	public void removeInstance(String acctId) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

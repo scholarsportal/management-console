@@ -3,29 +3,22 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import static junit.framework.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.common.model.Credential;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.unittestdb.UnitTestDatabaseUtil;
-import org.duracloud.unittestdb.domain.ResourceType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andrew Woods
  *         Date: Oct 8, 2010
  */
-public class TestDuracloudUserRepoImpl {
+public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
 
     private DuracloudUserRepoImpl userRepo;
 
@@ -43,21 +36,7 @@ public class TestDuracloudUserRepoImpl {
     }
 
     private static DuracloudUserRepoImpl createUserRepo() throws Exception {
-        Credential cred = getCredential();
-        AmazonSimpleDBClientMgr mgr = new AmazonSimpleDBClientMgr(cred.getUsername(),
-                                                                  cred.getPassword());
-        return new DuracloudUserRepoImpl(mgr, DOMAIN);
-    }
-
-    private static Credential getCredential() throws Exception {
-        UnitTestDatabaseUtil dbUtil = new UnitTestDatabaseUtil();
-        Credential s3Credential = dbUtil.findCredentialForResource(ResourceType.fromStorageProviderType(
-            StorageProviderType.AMAZON_S3));
-        assertNotNull(s3Credential);
-        assertNotNull(s3Credential.getUsername());
-        assertNotNull(s3Credential.getPassword());
-
-        return s3Credential;
+        return new DuracloudUserRepoImpl(getDBManager(), DOMAIN);
     }
 
     @AfterClass
@@ -69,7 +48,7 @@ public class TestDuracloudUserRepoImpl {
     public void testNotFound() {
         boolean thrown = false;
         try {
-            userRepo.findById("not-found");
+            userRepo.findById(-100);
             Assert.fail("exception expected");
 
         } catch (DBNotFoundException e) {
@@ -80,9 +59,9 @@ public class TestDuracloudUserRepoImpl {
 
     @Test
     public void testGetIds() throws Exception {
-        DuracloudUser user0 = createUser(username + "0");
-        DuracloudUser user1 = createUser(username + "1");
-        DuracloudUser user2 = createUser(username + "2");
+        DuracloudUser user0 = createUser(0, username + "0");
+        DuracloudUser user1 = createUser(1, username + "1");
+        DuracloudUser user2 = createUser(2, username + "2");
 
         userRepo.save(user0);
         userRepo.save(user1);
@@ -103,12 +82,16 @@ public class TestDuracloudUserRepoImpl {
         verifyUser(user1);
         verifyUser(user2);
 
+        verifyUserByName(user0);
+        verifyUserByName(user1);
+        verifyUserByName(user2);        
+
         // test concurrency
         verifyCounter(user0, 1);
 
         DuracloudUser user = null;
         while (null == user) {
-            user = userRepo.findById(user0.getUsername());
+            user = userRepo.findById(user0.getId());
         }
         Assert.assertNotNull(user);
 
@@ -127,14 +110,22 @@ public class TestDuracloudUserRepoImpl {
         verifyCounter(user0, 2);
     }
 
-    private DuracloudUser createUser(String name) {
-        return new DuracloudUser(name, password, firstName, lastName, email);
+    private DuracloudUser createUser(int id, String name) {
+        return new DuracloudUser(id, name, password, firstName, lastName, email);
     }
 
     private void verifyUser(final DuracloudUser user) {
         new DBCaller<DuracloudUser>() {
             protected DuracloudUser doCall() throws Exception {
-                return userRepo.findById(user.getUsername());
+                return userRepo.findById(user.getId());
+            }
+        }.call(user);
+    }
+
+    private void verifyUserByName(final DuracloudUser user) {
+        new DBCaller<DuracloudUser>() {
+            protected DuracloudUser doCall() throws Exception {
+                return userRepo.findByUsername(user.getUsername());
             }
         }.call(user);
     }
@@ -142,39 +133,9 @@ public class TestDuracloudUserRepoImpl {
     private void verifyCounter(final DuracloudUser user, final int counter) {
         new DBCaller<Integer>() {
             protected Integer doCall() throws Exception {
-                return userRepo.findById(user.getUsername()).getCounter();
+                return userRepo.findById(user.getId()).getCounter();
             }
         }.call(counter);
     }
 
-    private static abstract class DBCaller<T> {
-
-        public void call(T expected) {
-            boolean callComplete = false;
-            int maxTries = 20;
-            int tries = 0;
-
-            while (!callComplete && tries < maxTries) {
-                try {
-                    callComplete = expected.equals(doCall());
-
-                } catch (DBException dbe) {
-                    callComplete = true;
-
-                } catch (Exception e) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        // do nothing
-                    }
-                }
-                tries++;
-            }
-            Assert.assertTrue(
-                expected + " not found after " + tries + " tries.",
-                callComplete);
-        }
-
-        protected abstract T doCall() throws Exception;
-    }
 }

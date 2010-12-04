@@ -5,8 +5,10 @@ package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -15,12 +17,12 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -31,10 +33,13 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 	private Logger log = LoggerFactory.getLogger(getClass());
 	private DuracloudUserRepo userRepo;
 	private DuracloudAccountRepo accountRepo;
+    private DuracloudRightsRepo rightsRepo;
 	private DuracloudUserService userService;
+    private IdUtil idUtil;
 
 	public AccountManagerServiceImpl(DuracloudUserRepo userRepo,
-			DuracloudAccountRepo accountRepo) {
+			                         DuracloudAccountRepo accountRepo,
+                                     DuracloudRightsRepo rightsRepo) {
 		if (userRepo == null) {
 			throw new NullArgumentException("userRepo must be non null.");
 		}
@@ -46,107 +51,85 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 		}
 
 		this.accountRepo = accountRepo;
-		
-		this.userService = 
-			new DuracloudUserServiceImpl(this.userRepo, this.accountRepo);
+
+        if (rightsRepo == null) {
+            throw new NullArgumentException("rightsRepo must be non null");
+        }
+
+        this.rightsRepo = rightsRepo;
+
+		this.userService = new DuracloudUserServiceImpl(this.userRepo,
+                                                        this.accountRepo,
+                                                        this.rightsRepo);
+
+        idUtil = IdUtil.instance();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountManagerService#createAccount(org.duracloud
-	 * .account.common.domain.AccountInfo)
-	 */
 	@Override
-	public synchronized AccountService createAccount(AccountInfo accountInfo)
+	public synchronized AccountService createAccount(AccountInfo accountInfo,
+                                                     DuracloudUser owner)
 			throws SubdomainAlreadyExistsException {
-		if (!checkSubdomain(accountInfo.getSubdomain())) {
+		if (!subdomainAvailable(accountInfo.getSubdomain())) {
 			throw new SubdomainAlreadyExistsException();
 		}
 		try {
-
-			String username = accountInfo.getOwner().getUsername();
-			String id = (this.accountRepo.getIds().size() + 1) + "";
-			AccountInfo newAccountInfo = new AccountInfo(
-					id, 
-					accountInfo.getSubdomain(), 
-					accountInfo.getAcctName(), 
-					accountInfo.getOrgName(), 
-					accountInfo.getDepartment(), 
-					accountInfo.getOwner(), 
-					accountInfo.getStorageProviders());
-			
+			int acctId = idUtil.newAccountId();
+			AccountInfo newAccountInfo =
+                new AccountInfo(acctId,
+					            accountInfo.getSubdomain(),
+					            accountInfo.getAcctName(),
+					            accountInfo.getOrgName(),
+					            accountInfo.getDepartment(),
+                                accountInfo.getPaymentInfoId(),
+                                accountInfo.getInstanceIds(),
+					            accountInfo.getStorageProviders());
 			this.accountRepo.save(newAccountInfo);
-			
-			userService.addUserToAccount(id, username);
-			userService.grantOwnerRights(id, username);
-			return new AccountServiceImpl(id, this.accountRepo.findById(id));
-		} catch (DBNotFoundException ex) {
-			throw new Error(ex);
+
+			userService.grantOwnerRights(acctId, owner.getId());
+			return new AccountServiceImpl(newAccountInfo);
 		} catch (DBConcurrentUpdateException ex) {
 			throw new Error(ex);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountManagerService#getAccount(java.lang
-	 * .String)
-	 */
 	@Override
-	public AccountService getAccount(String accountId)
+	public AccountService getAccount(int accountId)
 			throws AccountNotFoundException {
 		try {
-			return new AccountServiceImpl(accountId, this.accountRepo.findById(accountId));
+			return new AccountServiceImpl(accountRepo.findById(accountId));
 		} catch (DBNotFoundException e) {
 			throw new AccountNotFoundException();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountManagerService#lookupAccounts(java.
-	 * lang.String, java.lang.String)
-	 */
 	@Override
-	public List<AccountInfo> lookupAccountsByUsername(String username)
-			throws UsernameNotFoundException {
-
+	public Set<AccountInfo> findAccountsByUserId(int userId) {
 		try {
-			DuracloudUser user = this.userService
-					.loadDuracloudUserByUsername(username);
-			user = this.userService.loadDuracloudUserByUsername(username);
-			List<AccountInfo> accounts = new LinkedList<AccountInfo>();
-			for (String accountId : user.getAcctToRoles().keySet()) {
-				accounts.add(this.accountRepo.findById(accountId));
-			}
-
-			return accounts;
+            Set<AccountRights> userRights = rightsRepo.findByUserId(userId);
+            Set<AccountInfo> userAccounts = new HashSet<AccountInfo>();
+            for(AccountRights rights : userRights) {
+                userAccounts.add(accountRepo.findById(rights.getAccountId()));
+            }
+            return userAccounts;
 		} catch (DBNotFoundException e) {
-			throw new UsernameNotFoundException("user [" + username
-					+ "] not found", e);
+            String error = "DBNotFoundException encountered attempting to " +
+                           "find accounts for user " + userId + ": " +
+                           e.getMessage();
+            throw new DuraCloudRuntimeException(error, e);
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.duracloud.account.util.AccountManagerService#checkSubdomain(java.
-	 * lang.String)
-	 */
+    /*
+     * FIXME: This action could be accomplished much more quickly by adding
+     *        a db query specific to this need, rather than having to loop
+     *        and check all accounts.
+     */
 	@Override
-	public boolean checkSubdomain(String subdomain) {
-		for (String accountId : this.accountRepo.getIds()) {
+	public boolean subdomainAvailable(String subdomain) {
+		for (int accountId : accountRepo.getIds()) {
 			try {
-				AccountInfo accountInfo;
-				accountInfo = this.accountRepo.findById(accountId);
+				AccountInfo accountInfo = accountRepo.findById(accountId);
 				if (accountInfo.getSubdomain().equals(subdomain)) {
 					return false;
 				}

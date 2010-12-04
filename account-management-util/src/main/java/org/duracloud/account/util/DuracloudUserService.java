@@ -16,32 +16,33 @@ public interface DuracloudUserService {
 
     public boolean isUsernameAvailable(String username);
 
-    public String createNewUser(String username,
-                                String password,
-                                String firstName,
-                                String lastName,
-                                String email)
-        throws DBConcurrentUpdateException, DBNotFoundException, UserAlreadyExistsException;
+    public DuracloudUser createNewUser(String username,
+                                       String password,
+                                       String firstName,
+                                       String lastName,
+                                       String email)
+        throws DBConcurrentUpdateException,
+               UserAlreadyExistsException;
 
-    public void addUserToAccount(String acctId, String username)
-        throws DBNotFoundException;
+    public void addUserToAccount(int acctId, int userId);
 
-    public void removeUserFromAccount(String acctId, String username);
+    public void removeUserFromAccount(int acctId, int userId);
 
-    public void grantAdminRights(String acctId, String username);
+    public void grantAdminRights(int acctId, int userId);
 
-    public void revokeAdminRights(String acctId, String username);
+    public void revokeAdminRights(int acctId, int userId);
 
-    public void sendPasswordReminder(String username);
+	public void grantOwnerRights(int acctId, int userId);
+    
+	public void revokeOwnerRights(int acctId, int userId);
 
-    public void changePassword(String username,
+    public void sendPasswordReminder(int userId);
+
+    public void changePassword(int userId,
                                String oldPassword,
                                String newPassword);
 
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException;
-
-	public void grantOwnerRights(String id, String username);
-	public void revokeOwnerRights(String id, String username);
     
 }

@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.db;
 
-import java.util.List;
-
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+
+import java.util.Set;
 
 /**
  * This interface defines the contract of item repositories.
@@ -26,7 +26,7 @@ public interface BaseRepo<T> {
      * @return item
      * @throws DBNotFoundException if no item found
      */
-    public T findById(String id) throws DBNotFoundException;
+    public T findById(int id) throws DBNotFoundException;
 
     /**
      * This method stores the arg item to the underlying persistence layer.
@@ -39,7 +39,7 @@ public interface BaseRepo<T> {
     /**
      * This method returns ids for all items in this repo.
      *
-     * @return list of ids
+     * @return set of ids
      */
-    public List<String> getIds();
+    public Set<Integer> getIds();
 }

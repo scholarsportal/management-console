@@ -3,12 +3,12 @@
  */
 package org.duracloud.account.util;
 
-import java.util.List;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.storage.domain.StorageProviderType;
+
+import java.util.Set;
 
 /**
  * An interface for manipulating account data.
@@ -49,15 +49,15 @@ public interface AccountService {
     /**
      * @return
      */
-    public List<StorageProviderType> getStorageProviders();
+    public Set<StorageProviderType> getStorageProviders();
 
     /**
      * @param storageProviderTypes
      */
-    public void setStorageProviders(List<StorageProviderType> storageProviderTypes);
+    public void setStorageProviders(Set<StorageProviderType> storageProviderTypes);
 
 	/**
      * @return empty list
      */
-	public List<DuracloudUser> getUsers();
+	public Set<DuracloudUser> getUsers();
 }

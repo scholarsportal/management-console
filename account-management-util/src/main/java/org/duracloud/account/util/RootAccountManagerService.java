@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.util;
 
-import java.util.List;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+
+import java.util.Set;
 
 /**
  * An interface for the account management application administrator.
@@ -17,16 +17,16 @@ import org.duracloud.account.common.domain.DuracloudUser;
 public interface RootAccountManagerService {
 
     /**
-     * @param filter optional filter on accountid
+     * @param filter optional filter on org name
      * @return
      */
-    public List<AccountInfo> listAllAccounts(String filter);
+    public Set<AccountInfo> listAllAccounts(String filter);
 
     /**
      * @param filter optional filter on username
      * @return
      */
-    public List<DuracloudUser> listAllUsers(String filter);
+    public Set<DuracloudUser> listAllUsers(String filter);
 
     /**
      * 

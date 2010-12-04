@@ -3,33 +3,22 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.Item;
+import com.amazonaws.services.simpledb.model.PutAttributesRequest;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
 import org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.db.util.FormatUtil;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.CreateDomainRequest;
-import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
-import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.ListDomainsRequest;
-import com.amazonaws.services.simpledb.model.ListDomainsResult;
-import com.amazonaws.services.simpledb.model.PutAttributesRequest;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.model.SelectRequest;
-import com.amazonaws.services.simpledb.model.SelectResult;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
+import java.util.List;
+
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.USERNAME_ATT;
 
 /**
  * This class manages the persistence of DuracloudUsers.
@@ -37,16 +26,11 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
  * @author Andrew Woods
  *         Date: Oct 8, 2010
  */
-public class DuracloudUserRepoImpl implements DuracloudUserRepo {
-
-    private final Logger log = LoggerFactory.getLogger(DuracloudUserRepoImpl.class);
+public class DuracloudUserRepoImpl extends BaseDuracloudRepoImpl implements DuracloudUserRepo {
 
     private static final String DEFAULT_DOMAIN = "DURACLOUD_USERS";
 
-    private final AmazonSimpleDBAsync db;
-    private final AmazonSimpleDBCaller caller;
     private final DomainConverter<DuracloudUser> converter;
-    private final String domain;
 
     public DuracloudUserRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr) {
         this(amazonSimpleDBClientMgr, DEFAULT_DOMAIN);
@@ -54,144 +38,42 @@ public class DuracloudUserRepoImpl implements DuracloudUserRepo {
 
     public DuracloudUserRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr,
                                  String domain) {
-        this.db = amazonSimpleDBClientMgr.getClient();
-        this.domain = domain;
+        super(new AmazonSimpleDBCaller(),
+              amazonSimpleDBClientMgr.getClient(),
+              domain);
+        this.log = LoggerFactory.getLogger(DuracloudUserRepoImpl.class);
 
-        this.caller = new AmazonSimpleDBCaller();
         this.converter = new DuracloudUserConverter();
         this.converter.setDomain(domain);
+
         createDomainIfNecessary();
     }
 
-    private void createDomainIfNecessary() {
-        boolean created = false;
-
-        ListDomainsRequest listRequest = new ListDomainsRequest();
-        ListDomainsResult listResult = caller.listDomains(db, listRequest);
-        if (null == listResult ||
-            !listResult.getDomainNames().contains(domain)) {
-            CreateDomainRequest createRequest = new CreateDomainRequest(domain);
-            caller.createDomain(db, createRequest);
-
-        } else if (listResult.getDomainNames().contains(domain)) {
-            created = true;
-        }
-
-        int maxTries = 10;
-        int tries = 0;
-        while (!created && listResult != null && tries < maxTries) {
-            created = listResult.getDomainNames().contains(domain);
-            listResult = caller.listDomains(db, listRequest);
-            sleep((long) (Math.random() * (Math.pow(3, tries++) * 10L)));
-        }
-
-        if (!created) {
-            String msg = "Unable to create domain: " + domain;
-            log.error(msg);
-            throw new DuraCloudRuntimeException(msg);
-        }
+    @Override
+    public DuracloudUser findById(int id) throws DBNotFoundException {
+        Item item = findItemById(id);
+        List<Attribute> atts = item.getAttributes();
+        return converter.fromAttributes(atts, idFromString(item.getName()));
     }
 
     @Override
-    public DuracloudUser findById(String id) throws DBNotFoundException {
-        SelectRequest request = new SelectRequest(
-            "select * from " + domain + " where itemName() = '" + id + "'");
-
-        SelectResult result = caller.select(db, request);
-        if (null == result) {
-            throw new DBException(logError("Null result", id));
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(logError("No items found", id));
-        }
-
-        if (items.size() != 1) {
-            throw new DBException(logError(
-                "Unexpected item count: " + items.size(), id));
-        }
-
-        Item item = items.get(0);
+    public DuracloudUser findByUsername(String username) throws DBNotFoundException {
+        Item item = findItemsByAttribute(USERNAME_ATT, username).get(0);
         List<Attribute> atts = item.getAttributes();
-        return converter.fromAttributes(atts, item.getName());
-    }
-
-    private String logError(String text, String id) {
-        StringBuilder msg = new StringBuilder(text);
-        msg.append(" in domain: ");
-        msg.append(domain);
-        msg.append(" [with id]: ");
-        msg.append(id);
-        log.error(msg.toString());
-        return msg.toString();
+        return converter.fromAttributes(atts, idFromString(item.getName()));
     }
 
     @Override
     public void save(DuracloudUser item) throws DBConcurrentUpdateException {
-        Integer counter = item.getCounter();
-        UpdateCondition condition;
-        if (0 == counter) {
-            condition = new UpdateCondition().withName(COUNTER_ATT).withExists(
-                false);
-        } else {
-            condition = new UpdateCondition(COUNTER_ATT, FormatUtil.padded(
-                counter), true);
-        }
+        UpdateCondition condition = getUpdateCondition(item.getCounter());
 
-        List<ReplaceableAttribute> atts = converter.toAttributesAndIncrement(
-            item);
+        List<ReplaceableAttribute> atts =
+            converter.toAttributesAndIncrement(item);
         PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                item.getUsername(),
+                                                                idAsString(item),
                                                                 atts,
                                                                 condition);
-
         caller.putAttributes(db, request);
-    }
-
-    @Override
-    public List<String> getIds() {
-        String query = "select itemName() from " + domain;
-        SelectRequest request = new SelectRequest(query);
-        SelectResult result = caller.select(db, request);
-        if (null == result) {
-            StringBuilder msg = new StringBuilder("No users found in domain: ");
-            msg.append(domain);
-            log.error(msg.toString());
-            throw new DuraCloudRuntimeException(msg.toString());
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items) {
-            StringBuilder msg = new StringBuilder("Items were null");
-            msg.append(" in domain: ");
-            msg.append(domain);
-            log.error(msg.toString());
-            throw new DuraCloudRuntimeException(msg.toString());
-        }
-
-        List<String> ids = new ArrayList<String>();
-        for (Item item : items) {
-            ids.add(item.getName());
-        }
-
-        return ids;
-    }
-
-    /**
-     * This method is NOT part of the DuracloudUserRepo interface contract.
-     */
-    public void removeDomain() {
-        DeleteDomainRequest request = new DeleteDomainRequest(domain);
-        caller.deleteDomainAsync(db, request);
-    }
-
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            // do nothing.
-        }
     }
 
 }

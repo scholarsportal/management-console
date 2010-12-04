@@ -10,7 +10,7 @@ package org.duracloud.account.common.domain;
  */
 public class InvoicePaymentInfo extends PaymentInfo {
 
-    private DuracloudUser contact;
+    private int contactDuracloudId;
     private String phone;
 
 }

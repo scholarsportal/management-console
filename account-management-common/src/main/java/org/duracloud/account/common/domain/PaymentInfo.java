@@ -6,19 +6,14 @@ package org.duracloud.account.common.domain;
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public abstract class PaymentInfo implements Identifiable {
+public abstract class PaymentInfo extends BaseDomainData {
 
-    protected String id;
-    protected String streetAddress0;
-    protected String streetAddress1;
-    protected String streetAddress2;
-    protected String city;
-    protected String state;
-    protected String country;
-    protected String postalCode;
+    private String streetAddress0;
+    private String streetAddress1;
+    private String streetAddress2;
+    private String city;
+    private String state;
+    private String country;
+    private String postalCode;
 
-    @Override
-    public String getId() {
-        return id;
-    }
 }

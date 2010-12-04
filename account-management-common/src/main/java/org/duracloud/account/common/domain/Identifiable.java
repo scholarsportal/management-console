@@ -8,5 +8,6 @@ package org.duracloud.account.common.domain;
  *         Date: Oct 9, 2010
  */
 public interface Identifiable {
-    public String getId();
+    public int getId();
+    public int getCounter();
 }

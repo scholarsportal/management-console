@@ -7,11 +7,6 @@ package org.duracloud.account.common.domain;
  * @author Andrew Woods
  *         Date: Oct 8, 2010
  */
-public class DuracloudServerImage implements Identifiable {
-    private String id;
+public class DuracloudServerImage extends BaseDomainData {
 
-    @Override
-    public String getId() {
-        return id;
-    }
 }

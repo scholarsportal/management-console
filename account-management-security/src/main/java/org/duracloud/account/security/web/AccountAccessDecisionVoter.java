@@ -4,14 +4,14 @@
 package org.duracloud.account.security.web;
 
 
-import java.util.Collection;
-
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
+
+import java.util.Collection;
 
 /**
  * 
@@ -31,22 +31,27 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 		log.debug("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
-	
-	
 
 	@Override
 	protected int voteImpl(Authentication authentication, MethodInvocation rmi,
 			Collection<ConfigAttribute> attributes) {
 		if(rmi.getMethod().getName().equals("getAccount")){
 			String accountId = (String)rmi.getArguments()[0];
+
+            int intAccountId;
+            try {
+                intAccountId = Integer.valueOf(accountId);
+            } catch (NumberFormatException e) {
+                return ACCESS_DENIED;
+            }
 			log.debug("intercepted getAccount({})", accountId);
 
-				DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
-				if(user.getRolesByAcct(accountId).contains(Role.ROLE_USER.name())){
-					return ACCESS_GRANTED;
-				}else{
-					return ACCESS_DENIED;
-				}
+            DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
+            if(user.getRolesByAcct(intAccountId).contains(Role.ROLE_USER.name())){
+                return ACCESS_GRANTED;
+            }else{
+                return ACCESS_DENIED;
+            }
 		}
 		return ACCESS_ABSTAIN;
 	}
