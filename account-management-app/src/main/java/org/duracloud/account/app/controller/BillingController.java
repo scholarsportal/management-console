@@ -71,7 +71,7 @@ public class BillingController extends AbstractAccountController {
 	}
 	
 	@RequestMapping(value = { EDIT_PATH }, method = RequestMethod.GET)
-	public String getBillingInfoForm( @PathVariable String accountId, Model model)
+	public String getBillingInfoForm( @PathVariable int accountId, Model model)
 		throws AccountNotFoundException{
 		log.info("serving up new "+BILLING_FORM);
 		loadAccountInfo(accountId, model);
@@ -83,7 +83,7 @@ public class BillingController extends AbstractAccountController {
 	}
 
 	@RequestMapping(value = { EDIT_PATH }, method = RequestMethod.POST)
-	public String update( @PathVariable String accountId, 
+	public String update( @PathVariable int accountId,
 					   @ModelAttribute(BILLING_FORM) @Valid BillingInfoForm billingInfoForm,
 					   BindingResult result, 
 					   Model model) throws AccountNotFoundException {
@@ -93,7 +93,8 @@ public class BillingController extends AbstractAccountController {
 		if (result.hasErrors()) {
 			return EDIT_VIEW;
 		}
-		return formatAccountRedirect(accountId, AccountDetailsController.ACCOUNT_DETAILS_PATH);
+        String accountIdText = Integer.toString(accountId);
+		return formatAccountRedirect(accountIdText, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
 	}
 	

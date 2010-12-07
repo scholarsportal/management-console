@@ -5,17 +5,20 @@ package org.duracloud.account.util.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.easymock.EasyMock;
 
 public class AccountUtilTestData {
-	public static final String[] ACCOUNT_IDS = new String[] { "0", "1", "2" };
+	public static final Integer[] ACCOUNT_IDS = new Integer[] { 0, 1, 2 };
 	public static final String[] USERNAMES = new String[] { "danny", "bill", "andrew" };
 	public static final String ORG_PREFIX = "org-";
 	public static final String NOT_A_USER_USERNAME = "notauser";
@@ -24,17 +27,21 @@ public class AccountUtilTestData {
 	public static DuracloudUserRepo createMockUserRepo() {
 		DuracloudUserRepo mockRepo = EasyMock
 				.createMock(DuracloudUserRepo.class);
-		List<String> ids = new ArrayList<String>(Arrays.asList(USERNAMES));
+        Set<Integer> ids = new HashSet<Integer>();
+        for (Integer i : ACCOUNT_IDS) {
+            ids.add(i);
+        }
+
 		EasyMock.expect(mockRepo.getIds()).andReturn(ids);
 		try {
 
 			for (String id : ids) {
 				DuracloudUser user = new DuracloudUser(id, id, "test", "test", id
 						+ "@duracloud.org");
-				
+
 				for(String aid : ACCOUNT_IDS){
 					user.addAccount(aid);
-					
+
 				}
 				EasyMock.expect(mockRepo.findById(id)).andReturn(user).anyTimes();
 			}
@@ -42,7 +49,7 @@ public class AccountUtilTestData {
 			EasyMock.expect(mockRepo.findById(NOT_A_USER_USERNAME)).andThrow(
 					new DBNotFoundException(NOT_A_USER_USERNAME
 							+ " not a user!")).anyTimes();
-			
+
 		} catch (DBNotFoundException ex) {
 			ex.printStackTrace();
 		}
@@ -67,13 +74,6 @@ public class AccountUtilTestData {
 			}
 		}
 		
-		try {
-			EasyMock.expect(mockRepo.findById(NOT_AN_ACCOUNT_ID)).andThrow(new DBNotFoundException(""));
-		} catch (DBNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		return mockRepo;
 	}
 	
@@ -82,4 +82,8 @@ public class AccountUtilTestData {
 		EasyMock.replay(mockRepo);
 		return mockRepo;
 	}
+
+    public static DuracloudRightsRepo createMockRightsRepo() {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

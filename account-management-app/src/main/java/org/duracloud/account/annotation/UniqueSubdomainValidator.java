@@ -25,7 +25,7 @@ public class UniqueSubdomainValidator implements ConstraintValidator<UniqueSubdo
 	 */
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		return this.accountManagerService.checkSubdomain(value);
+		return this.accountManagerService.subdomainAvailable(value);
 	}
 
 	public void setAccountManagerService(AccountManagerService accountManagerService) {

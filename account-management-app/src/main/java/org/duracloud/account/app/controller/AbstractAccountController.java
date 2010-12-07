@@ -52,7 +52,7 @@ public abstract class  AbstractAccountController extends AbstractController {
 	 * @param accountId
 	 * @param model
 	 */
-	protected void loadAccountInfo(String accountId, Model model)
+	protected void loadAccountInfo(int accountId, Model model)
 			throws AccountNotFoundException {
 		AccountService accountService = accountManagerService.getAccount(accountId);
 		AccountInfo info = accountService.retrieveAccountInfo();
@@ -60,7 +60,7 @@ public abstract class  AbstractAccountController extends AbstractController {
 	}
 	/**
 	 * @param accountId
-	 * @param string
+	 * @param suffix
 	 * @return
 	 */
 	protected String formatAccountRedirect(String accountId, String suffix) {

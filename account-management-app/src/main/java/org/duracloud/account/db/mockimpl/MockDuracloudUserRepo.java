@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.IdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +26,15 @@ import org.slf4j.LoggerFactory;
  */
 
 public class MockDuracloudUserRepo implements DuracloudUserRepo {
-	private Map<String,DuracloudUser> usermap;
+	private Map<Integer,DuracloudUser> usermap;
+    private IdUtil idUtil;
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public MockDuracloudUserRepo() throws DBConcurrentUpdateException{
-		usermap = new HashMap<String,DuracloudUser>();
-		save(new DuracloudUser("admin", "admin", "Sky", "Dancer", "admin@duracloud.org"));
-		save(new DuracloudUser("user", "user", "Joe", "Bloggs", "jbloggs@duracloud.org"));
-		save(new DuracloudUser("root", "root", "Root", "User", "root@duracloud.org", 
+		usermap = new HashMap<Integer,DuracloudUser>();
+		save(new DuracloudUser(idUtil.newUserId(),"admin", "admin", "Sky", "Dancer", "admin@duracloud.org"));
+		save(new DuracloudUser(idUtil.newUserId(),"user", "user", "Joe", "Bloggs", "jbloggs@duracloud.org"));
+		save(new DuracloudUser(idUtil.newUserId(),"root", "root", "Root", "User", "root@duracloud.org",
 				new HashSet(Arrays.asList(new Role[]{Role.ROLE_ROOT}))));
 
 		log.debug("constructed " + getClass());
@@ -41,7 +44,7 @@ public class MockDuracloudUserRepo implements DuracloudUserRepo {
 	 * @see org.duracloud.account.db.BaseRepo#findById(java.lang.String)
 	 */
 	@Override
-	public DuracloudUser findById(String id) throws DBNotFoundException {
+	public DuracloudUser findById(int id) throws DBNotFoundException {
 		if(usermap.containsKey(id)){
 			return usermap.get(id);
 		}
@@ -52,8 +55,8 @@ public class MockDuracloudUserRepo implements DuracloudUserRepo {
 	 * @see org.duracloud.account.db.BaseRepo#getIds()
 	 */
 	@Override
-	public List<String> getIds() {
-		return new ArrayList<String>(this.usermap.keySet());
+	public Set<Integer> getIds() {
+		return this.usermap.keySet();
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +65,21 @@ public class MockDuracloudUserRepo implements DuracloudUserRepo {
 	@Override
 	public void save(DuracloudUser item) throws DBConcurrentUpdateException {
 		log.debug("saved {}", item.getUsername());
-		this.usermap.put(item.getUsername(), item);
+		this.usermap.put(item.getId(), item);
 	}
 
+    @Override
+    public DuracloudUser findByUsername(String username)
+        throws DBNotFoundException {
+        // Default method body
+        return null;
+    }
+
+    public IdUtil getIdUtil() {
+        return idUtil;
+    }
+
+    public void setIdUtil(IdUtil idUtil) {
+        this.idUtil = idUtil;
+    }
 }

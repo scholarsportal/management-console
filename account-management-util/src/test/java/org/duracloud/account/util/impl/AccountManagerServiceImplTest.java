@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,36 +34,43 @@ public class AccountManagerServiceImplTest {
 	public void before(){
 		ams = new AccountManagerServiceImpl(
 				AccountUtilTestData.createMockUserRepo(),
-				AccountUtilTestData.createMockAccountRepo());
+				AccountUtilTestData.createMockAccountRepo(),
+                AccountUtilTestData.createMockRightsRepo());
 	}
 
 	@Test
 	public void testCreateAccount() {
 
 		String subdomain = "testdomain";
+        int userId = 0;
 		DuracloudUser user =
-				new DuracloudUser(
+				new DuracloudUser(userId,
 					"testuser",
 					"password", 
 					"Primo",
 					"Ultimo", 
 					"primo@ultimo.org");
-		
-		AccountInfo info = new AccountInfo(
-				subdomain, 
-				"primo's account", 
-				"primo site",
-				"Dept. Big Data",user,
-				Arrays.asList(StorageProviderType.values()));			
+
+        int acctId = 0;
+        int paymentId = 0;
+		AccountInfo info = new AccountInfo(acctId,
+                                           subdomain,
+                                           "primo's account",
+                                           "primo site",
+                                           "Dept. Big Data",
+                                           paymentId,
+                                           new HashSet<Integer>(),
+                                           new HashSet<StorageProviderType>(
+                                               Arrays.asList(StorageProviderType.values())));
 		
 		try {
 			DuracloudAccountRepo accountRepo = EasyMock.createNiceMock(DuracloudAccountRepo.class);
 			DuracloudUserRepo userRepo = EasyMock.createNiceMock(DuracloudUserRepo.class);
-			EasyMock.expect(userRepo.findById("testuser")).andReturn(user).anyTimes();
-			EasyMock.expect(accountRepo.getIds()).andReturn(new LinkedList<String>()).times(2);
-			EasyMock.expect(accountRepo.getIds()).andReturn(Arrays.asList(new String[]{"1"}));
+			EasyMock.expect(userRepo.findById(userId)).andReturn(user).anyTimes();
+			EasyMock.expect(accountRepo.getIds()).andReturn(new HashSet<Integer>()).times(2);
+			EasyMock.expect(accountRepo.getIds()).andReturn(new HashSet<Integer>(Arrays.asList(new Integer[]{userId})));
 
-			EasyMock.expect(accountRepo.findById("1")).andReturn(info);
+			EasyMock.expect(accountRepo.findById(userId)).andReturn(info);
 			EasyMock.replay(accountRepo, userRepo);
 			ams = new AccountManagerServiceImpl(userRepo,accountRepo);
 		} catch (DBNotFoundException e1) {

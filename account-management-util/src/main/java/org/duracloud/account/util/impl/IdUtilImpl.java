@@ -6,13 +6,14 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.util.IdUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
 /**
  * @author: Bill Branan
  * Date: Dec 3, 2010
  */
-public class IdUtil {
+public class IdUtilImpl implements IdUtil {
 
     private static IdUtil idUtil = null;
 
@@ -21,12 +22,12 @@ public class IdUtil {
     private int rightsId = -1;
 
 
-    private IdUtil() {
+    private IdUtilImpl() {
     }
 
     public static IdUtil instance() {
         if(null == idUtil) {
-            idUtil = new IdUtil();
+            idUtil = new IdUtilImpl();
         }
         return idUtil;
     }
@@ -43,14 +44,17 @@ public class IdUtil {
         }
     }
 
+    @Override
     public int newAccountId() {
         return ++accountId;
     }
 
+    @Override
     public int newUserId() {
         return ++userId;
     }
 
+    @Override
     public int newRightsId() {
         return ++rightsId;
     }

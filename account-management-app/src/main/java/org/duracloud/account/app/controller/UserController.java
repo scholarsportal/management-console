@@ -129,7 +129,7 @@ public class UserController extends  AbstractController {
 		ModelAndView mav =  new ModelAndView(USER_HOME, 
 				"user", user);
 		
-		List<AccountInfo> accounts = this.accountManagerService.lookupAccountsByUsername(user.getUsername());
+		Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
 		mav.addObject("accounts", accounts);
 		return mav;
 	}

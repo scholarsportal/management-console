@@ -4,6 +4,7 @@
 package org.duracloud.account.app.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -25,7 +26,7 @@ public class NewAccountForm {
 	@Length(min=3, max=20, message = "Subdomain must be between 3 and 20 characters.")
 	private String subdomain;
 	
-	private List<StorageProviderType> storageProviders;
+	private Set<StorageProviderType> storageProviders;
 
 
 	public String getSubdomain() {
@@ -36,11 +37,11 @@ public class NewAccountForm {
 		this.subdomain = subdomain;
 	}
 
-	public List<StorageProviderType> getStorageProviders() {
+	public Set<StorageProviderType> getStorageProviders() {
 		return storageProviders;
 	}
 
-	public void setStorageProviders(List<StorageProviderType> storageProviders) {
+	public void setStorageProviders(Set<StorageProviderType> storageProviders) {
 		this.storageProviders = storageProviders;
 	}
 

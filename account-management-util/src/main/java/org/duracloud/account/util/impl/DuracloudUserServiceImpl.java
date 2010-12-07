@@ -13,6 +13,7 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.IdUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         this.userRepo = userRepo;
         this.accountRepo = accountRepo;
         this.rightsRepo = rightsRepo;
-
-        idUtil = IdUtil.instance();
     }
 
     @Override
@@ -228,5 +227,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 		}
 	}
 
+    public IdUtil getIdUtil() {
+        return idUtil;
+    }
 
+    public void setIdUtil(IdUtil idUtil) {
+        this.idUtil = idUtil;
+    }
 }

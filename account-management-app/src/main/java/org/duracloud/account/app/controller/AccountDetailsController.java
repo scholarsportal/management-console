@@ -25,7 +25,7 @@ public class AccountDetailsController extends AbstractAccountController {
 	
 
 	@RequestMapping(value=ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
-	public String get(@PathVariable String accountId, Model model) throws AccountNotFoundException{
+	public String get(@PathVariable int accountId, Model model) throws AccountNotFoundException{
 		loadAccountInfo(accountId, model);
 		return ACCOUNT_DETAILS_VIEW_ID;
 	}

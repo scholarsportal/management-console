@@ -15,6 +15,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.IdUtil;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
@@ -61,8 +62,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 		this.userService = new DuracloudUserServiceImpl(this.userRepo,
                                                         this.accountRepo,
                                                         this.rightsRepo);
-
-        idUtil = IdUtil.instance();
 	}
 
 	@Override
@@ -140,4 +139,11 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 		return true;
 	}
 
+    public IdUtil getIdUtil() {
+        return idUtil;
+    }
+
+    public void setIdUtil(IdUtil idUtil) {
+        this.idUtil = idUtil;
+    }
 }
