@@ -12,6 +12,7 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.IdUtil;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,7 @@ public class AccountController extends AbstractAccountController {
 
 	public static final String NEW_ACCOUNT_FORM_KEY = "newAccountForm";
 
+    @Autowired
     private IdUtil idUtil;
 
 	@RequestMapping(value = {ACCOUNT_PATH}, method = RequestMethod.GET)
@@ -124,11 +126,4 @@ public class AccountController extends AbstractAccountController {
 
 	}
 
-    public IdUtil getIdUtil() {
-        return idUtil;
-    }
-
-    public void setIdUtil(IdUtil idUtil) {
-        this.idUtil = idUtil;
-    }
 }

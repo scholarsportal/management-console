@@ -22,12 +22,14 @@
       <constructor-arg ref="accountRepo"/>
   </bean>
   <bean
-    class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
     id="accountManagerService"
+    class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
     scope="singleton"
   >
-      <constructor-arg ref="userRepo"/>
-      <constructor-arg ref="accountRepo"/>
+    <constructor-arg ref="userRepo"/>
+    <constructor-arg ref="accountRepo"/>
+    <constructor-arg ref="rightsRepo"/>
+    <constructor-arg ref="idUtil"/>
   </bean>
  
   <bean
@@ -40,6 +42,11 @@
     id="accountRepo"
     scope="singleton"
     primary="true" />
+  <bean
+    class="org.duracloud.account.db.mockimpl.MockDuracloudRightsRepo"
+    id="rightsRepo"
+    scope="singleton"
+    primary="true" />
     
   <bean
     class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
@@ -50,6 +57,11 @@
       <constructor-arg ref="accountRepo"/>
 
     </bean>
-    
-    
+
+  <bean id="idUtil" class="org.duracloud.account.util.impl.IdUtilImpl">
+    <constructor-arg ref="userRepo"/>
+    <constructor-arg ref="accountRepo"/>
+    <constructor-arg ref="rightsRepo"/>
+  </bean>
+
 </beans>

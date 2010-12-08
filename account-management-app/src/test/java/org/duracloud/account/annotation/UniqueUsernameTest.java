@@ -20,7 +20,10 @@ public class UniqueUsernameTest {
 	
 	@Test
 	public void test() throws Exception{
-		DuracloudUserService service = new DuracloudUserServiceImpl(new MockDuracloudUserRepo(), new MockDuracloudAccountRepo());
+        DuracloudUserService service = new DuracloudUserServiceImpl(new MockDuracloudUserRepo(),
+                                                                    new MockDuracloudAccountRepo(),
+                                                                    null,
+                                                                    null);
 				UniqueUsernameValidator v = new UniqueUsernameValidator();
 		v.setUserService(service);
 		Assert.assertTrue(v.isValid("buddha", new MockConstraintValidatorContext()));

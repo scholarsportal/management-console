@@ -23,8 +23,8 @@ public class UniqueSubdomainTest {
 	@Before
 	public void before() throws DBConcurrentUpdateException{
 		this.ams = EasyMock.createMock(AccountManagerService.class);
-		EasyMock.expect(this.ams.checkSubdomain("opendomain")).andReturn(true);
-		EasyMock.expect(this.ams.checkSubdomain("inusedomain")).andReturn(false);
+		EasyMock.expect(this.ams.subdomainAvailable("opendomain")).andReturn(true);
+		EasyMock.expect(this.ams.subdomainAvailable("inusedomain")).andReturn(false);
 		EasyMock.replay(this.ams);
 		this.v = new UniqueSubdomainValidator();
 	}

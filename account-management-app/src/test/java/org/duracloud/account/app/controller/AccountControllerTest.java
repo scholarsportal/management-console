@@ -31,14 +31,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class AccountControllerTest {
 	private AccountController accountController;
 	private static final String TEST_USERNAME = "testuser";
-	private static final String TEST_ACCOUNT_ID = "1";
+	private static final Integer TEST_ACCOUNT_ID = 1;
 	@Before
 	public void before(){
 		accountController = new AccountController();
 			
 	}
 	/**
-	 * Test method for {@link org.duracloud.account.app.controller.AccountController#getHome(java.lang.String, org.springframework.ui.Model)}.
+	 * Test method for org.duracloud.account.app.controller.AccountController
 	 * @throws AccountNotFoundException 
 	 */
 	@Test
@@ -98,10 +98,10 @@ public class AccountControllerTest {
 	 */
 	private AccountInfo createAccountInfo() {
 		return new AccountInfo(TEST_ACCOUNT_ID, "testdomain", "test", "test", "test",
-				createUser(), null);
+				0, null,null);
 	}
 	private DuracloudUser createUser(){
-		return new DuracloudUser(
+		return new DuracloudUser(0,
 				TEST_USERNAME, "test", "test", "test","test");
 	}
 	/**
@@ -141,8 +141,10 @@ public class AccountControllerTest {
 		AccountManagerService ams = EasyMock.createMock(AccountManagerService.class);
 		AccountService as = EasyMock.createMock(AccountService.class);
 		EasyMock.expect(as.retrieveAccountInfo()).andReturn(createAccountInfo()).anyTimes();
-		
-		EasyMock.expect(ams.createAccount((AccountInfo)EasyMock.anyObject())).andReturn(as);
+
+        EasyMock.expect(ams.createAccount(EasyMock.isA(AccountInfo.class),
+                                          EasyMock.isA(DuracloudUser.class)))
+            .andReturn(as);
 		EasyMock.replay(ams, as);
 
 		

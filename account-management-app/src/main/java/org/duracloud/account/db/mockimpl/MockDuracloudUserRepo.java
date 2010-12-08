@@ -19,6 +19,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.IdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -27,14 +28,15 @@ import org.slf4j.LoggerFactory;
 
 public class MockDuracloudUserRepo implements DuracloudUserRepo {
 	private Map<Integer,DuracloudUser> usermap;
-    private IdUtil idUtil;
+
 	private Logger log = LoggerFactory.getLogger(getClass());
 
 	public MockDuracloudUserRepo() throws DBConcurrentUpdateException{
 		usermap = new HashMap<Integer,DuracloudUser>();
-		save(new DuracloudUser(idUtil.newUserId(),"admin", "admin", "Sky", "Dancer", "admin@duracloud.org"));
-		save(new DuracloudUser(idUtil.newUserId(),"user", "user", "Joe", "Bloggs", "jbloggs@duracloud.org"));
-		save(new DuracloudUser(idUtil.newUserId(),"root", "root", "Root", "User", "root@duracloud.org",
+        int userId = 0;
+		save(new DuracloudUser(userId,"admin", "admin", "Sky", "Dancer", "admin@duracloud.org"));
+		save(new DuracloudUser(++userId ,"user", "user", "Joe", "Bloggs", "jbloggs@duracloud.org"));
+		save(new DuracloudUser(++userId,"root", "root", "Root", "User", "root@duracloud.org",
 				new HashSet(Arrays.asList(new Role[]{Role.ROLE_ROOT}))));
 
 		log.debug("constructed " + getClass());
@@ -75,11 +77,4 @@ public class MockDuracloudUserRepo implements DuracloudUserRepo {
         return null;
     }
 
-    public IdUtil getIdUtil() {
-        return idUtil;
-    }
-
-    public void setIdUtil(IdUtil idUtil) {
-        this.idUtil = idUtil;
-    }
 }
