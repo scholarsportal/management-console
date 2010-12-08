@@ -21,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter {
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+	private Logger log = LoggerFactory.getLogger(AbstractAccessDecisionVoter.class);
 
 	public AbstractAccessDecisionVoter() {
 		super();

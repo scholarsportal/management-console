@@ -40,28 +40,30 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
 	public AccountManagerServiceImpl(DuracloudUserRepo userRepo,
 			                         DuracloudAccountRepo accountRepo,
-                                     DuracloudRightsRepo rightsRepo) {
+                                     DuracloudRightsRepo rightsRepo,
+                                     IdUtil idUtil) {
 		if (userRepo == null) {
 			throw new NullArgumentException("userRepo must be non null.");
 		}
-
-		this.userRepo = userRepo;
-
-		if (accountRepo == null) {
-			throw new NullArgumentException("accountRepo must be non null.");
-		}
-
-		this.accountRepo = accountRepo;
-
+        if (accountRepo == null) {
+            throw new NullArgumentException("accountRepo must be non null.");
+        }
         if (rightsRepo == null) {
             throw new NullArgumentException("rightsRepo must be non null");
         }
+        if (idUtil == null) {
+            throw new NullArgumentException("idUtil must be non null");
+        }
 
+        this.userRepo = userRepo;
+        this.accountRepo = accountRepo;
         this.rightsRepo = rightsRepo;
+        this.idUtil = idUtil;
 
-		this.userService = new DuracloudUserServiceImpl(this.userRepo,
+        this.userService = new DuracloudUserServiceImpl(this.userRepo,
                                                         this.accountRepo,
-                                                        this.rightsRepo);
+                                                        this.rightsRepo,
+                                                        this.idUtil);
 	}
 
 	@Override
@@ -139,11 +141,4 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 		return true;
 	}
 
-    public IdUtil getIdUtil() {
-        return idUtil;
-    }
-
-    public void setIdUtil(IdUtil idUtil) {
-        this.idUtil = idUtil;
-    }
 }

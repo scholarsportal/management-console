@@ -37,10 +37,12 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     
     public DuracloudUserServiceImpl(DuracloudUserRepo userRepo,
                                     DuracloudAccountRepo accountRepo,
-                                    DuracloudRightsRepo rightsRepo) {
+                                    DuracloudRightsRepo rightsRepo,
+                                    IdUtil idUtil) {
         this.userRepo = userRepo;
         this.accountRepo = accountRepo;
         this.rightsRepo = rightsRepo;
+        this.idUtil = idUtil;
     }
 
     @Override
@@ -227,11 +229,4 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 		}
 	}
 
-    public IdUtil getIdUtil() {
-        return idUtil;
-    }
-
-    public void setIdUtil(IdUtil idUtil) {
-        this.idUtil = idUtil;
-    }
 }

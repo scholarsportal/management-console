@@ -9,39 +9,25 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.util.IdUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * @author: Bill Branan
  * Date: Dec 3, 2010
  */
 public class IdUtilImpl implements IdUtil {
 
-    private static IdUtil idUtil = null;
-
     private int accountId = -1;
     private int userId = -1;
     private int rightsId = -1;
 
-
-    private IdUtilImpl() {
-    }
-
-    public static IdUtil instance() {
-        if(null == idUtil) {
-            idUtil = new IdUtilImpl();
-        }
-        return idUtil;
-    }
-
-    public void initialize(DuracloudAccountRepo accountRepo,
-                           DuracloudUserRepo userRepo,
-                           DuracloudRightsRepo rightsRepo) {
-        // TODO: Initialize local ID values to the highest ID found in each repo
-    }
-
-    private void checkInitialized() {
-        if(accountId < 0 || userId < 0 || rightsId < 0) {
-            throw new DuraCloudRuntimeException("IdUtil must be initialized");
-        }
+    public IdUtilImpl(DuracloudUserRepo userRepo,
+                      DuracloudAccountRepo accountRepo,
+                      DuracloudRightsRepo rightsRepo) {
+        this.accountId = Collections.max(accountRepo.getIds());
+        this.userId = Collections.max(userRepo.getIds());
+        this.rightsId = Collections.max(rightsRepo.getIds());
     }
 
     @Override

@@ -7,6 +7,8 @@ package org.duracloud.account.security.web;
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
@@ -19,6 +21,9 @@ import java.util.Collection;
  * 
  */
 public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter implements AccessDecisionVoter {
+
+    private Logger log = LoggerFactory.getLogger(AccountAccessDecisionVoter.class);
+
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
 		log.debug("supports attribute{}", attribute.getAttribute());
@@ -35,6 +40,8 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 	@Override
 	protected int voteImpl(Authentication authentication, MethodInvocation rmi,
 			Collection<ConfigAttribute> attributes) {
+
+        int decision = ACCESS_ABSTAIN;
 		if(rmi.getMethod().getName().equals("getAccount")){
 			String accountId = (String)rmi.getArguments()[0];
 
@@ -42,19 +49,21 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
             try {
                 intAccountId = Integer.valueOf(accountId);
             } catch (NumberFormatException e) {
+                log.debug("decision: " + ACCESS_DENIED + ", " + e.getMessage());
                 return ACCESS_DENIED;
             }
 			log.debug("intercepted getAccount({})", accountId);
 
             DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
             if(user.getRolesByAcct(intAccountId).contains(Role.ROLE_USER.name())){
-                return ACCESS_GRANTED;
+                decision = ACCESS_GRANTED;
             }else{
-                return ACCESS_DENIED;
+                decision = ACCESS_DENIED;
             }
 		}
-		return ACCESS_ABSTAIN;
-	}
+        log.debug("decision: " + decision);
+        return decision;
+    }
 
 
 	
