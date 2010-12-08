@@ -3,61 +3,73 @@
  */
 package org.duracloud.account.security.web;
 
+import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.util.AccountManagerService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.access.AccessDecisionVoter;
 
 /**
- * 
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- * 
  */
 public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
-	private AbstractAccessDecisionVoter adv = new AccountAccessDecisionVoter();
 
-	private AccountManagerService ams;
-	
-	public AccountAccessDecisionVoterTest(){
-		 ams = EasyMock.createMock(AccountManagerService.class);
-		 EasyMock.replay(ams);
-	}
-	
-	@Test
-	public void testAbstain() throws Exception {
-		Assert.assertEquals(AccessDecisionVoter.ACCESS_ABSTAIN, adv.vote(
-				createUserAuthentication(USER_AUTHORITIES),
-				createMockMethodInvoker(ams.getClass().getMethod("toString"), 
-										new Object[]{"0"}), 
-				attributes));
-	}
+    private AbstractAccessDecisionVoter decisionVoter;
+    private AccountManagerService accountManagerService;
 
-	@Test
-	public void testDeny() throws Exception {
-		Assert.assertEquals(AccessDecisionVoter.ACCESS_DENIED, adv.vote(
-				createUserAuthentication(USER_AUTHORITIES),
-				createMockMethodInvoker(ams.getClass().getMethod("getAccount", String.class), 
-										new Object[]{"1"}), 
-				attributes));
-	}
+    @Before
+    public void setUp() {
+        decisionVoter = new AccountAccessDecisionVoter();
+        accountManagerService = EasyMock.createMock(AccountManagerService.class);
+        EasyMock.replay(accountManagerService);
+    }
 
-	@Test
-	public void testRootAccess() throws Exception {
-		Assert.assertEquals(AccessDecisionVoter.ACCESS_GRANTED, adv.vote(
-				createRootAuthentication(),
-				createMockMethodInvoker(ams.getClass().getMethod("getAccount", String.class), 
-										new Object[]{"1"}), 
-				attributes));
-	}
+    @Test
+    public void testAbstain() throws Exception {
+        MethodInvocation invocation = createMockMethodInvoker(
+            accountManagerService.getClass().getMethod("toString"),
+            new Object[]{"0"});
 
-	@Test
-	public void testGranted() throws Exception {
-		Assert.assertEquals(AccessDecisionVoter.ACCESS_GRANTED, adv.vote(
-				createUserAuthentication(USER_AUTHORITIES),
-				createMockMethodInvoker(ams.getClass().getMethod("getAccount", String.class), 
-										new Object[]{"0"}), 
-				attributes));
-	}
+        int decision = decisionVoter.vote(createUserAuthentication(
+            USER_AUTHORITIES), invocation, attributes);
+
+        Assert.assertEquals(AccessDecisionVoter.ACCESS_ABSTAIN, decision);
+    }
+
+    @Test
+    public void testDeny() throws Exception {
+        MethodInvocation invocation = createMockMethodInvoker(
+            AccountManagerService.class.getMethod("getAccount", int.class),
+            new Object[]{"1"});
+
+        int decision = decisionVoter.vote(createUserAuthentication(
+            USER_AUTHORITIES), invocation, attributes);
+        Assert.assertEquals(AccessDecisionVoter.ACCESS_DENIED, decision);
+    }
+
+    @Test
+    public void testRootAccess() throws Exception {
+        MethodInvocation invocation = createMockMethodInvoker(
+            accountManagerService.getClass().getMethod("getAccount", int.class),
+            new Object[]{"1"});
+
+        int decision = decisionVoter.vote(createRootAuthentication(),
+                                          invocation,
+                                          attributes);
+        Assert.assertEquals(AccessDecisionVoter.ACCESS_GRANTED, decision);
+    }
+
+    @Test
+    public void testGranted() throws Exception {
+        MethodInvocation invocation = createMockMethodInvoker(
+            accountManagerService.getClass().getMethod("getAccount", int.class),
+            new Object[]{"0"});
+
+        int decision = decisionVoter.vote(createUserAuthentication(
+            USER_AUTHORITIES), invocation, attributes);
+        Assert.assertEquals(AccessDecisionVoter.ACCESS_GRANTED, decision);
+    }
 
 }

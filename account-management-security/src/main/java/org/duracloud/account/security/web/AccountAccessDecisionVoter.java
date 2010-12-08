@@ -14,6 +14,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * 
@@ -49,22 +50,39 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
             try {
                 intAccountId = Integer.valueOf(accountId);
             } catch (NumberFormatException e) {
-                log.debug("decision: " + ACCESS_DENIED + ", " + e.getMessage());
+                log.debug("decision: ACCESS_DENIED, " + e.getMessage());
                 return ACCESS_DENIED;
             }
 			log.debug("intercepted getAccount({})", accountId);
 
             DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
-            if(user.getRolesByAcct(intAccountId).contains(Role.ROLE_USER.name())){
+            Set<Role> roles = user.getRolesByAcct(intAccountId);
+            if(null != roles && roles.contains(Role.ROLE_USER)){
                 decision = ACCESS_GRANTED;
             }else{
                 decision = ACCESS_DENIED;
             }
 		}
-        log.debug("decision: " + decision);
+        log.debug("decision: " + decisionToString(decision));
         return decision;
     }
 
-
+    private String decisionToString(int decision) {
+        String text;
+        switch (decision) {
+            case 1:
+                text = "ACCESS_GRANTED";
+                break;
+            case 0:
+                text = "ACCESS_ABSTAIN";
+                break;
+            case -1:
+                text = "ACCESS_DENIED";
+                break;
+            default:
+                text = "UNRECOGNIZED_DECISION:" + decision;
+        }
+        return text;
+    }
 	
 }

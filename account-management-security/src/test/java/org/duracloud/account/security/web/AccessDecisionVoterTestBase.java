@@ -28,17 +28,12 @@ import java.util.Set;
  */
 public class AccessDecisionVoterTestBase {
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
 	protected Collection<ConfigAttribute> attributes = new LinkedList<ConfigAttribute>();
 	protected static Set<Role> USER_AUTHORITIES;
 
 	static {
 		USER_AUTHORITIES = new HashSet<Role>();
 		USER_AUTHORITIES.add(Role.ROLE_USER);		
-	}
-	
-	public AccessDecisionVoterTestBase() {
-		super();
 	}
 
 	protected Authentication createUserAuthentication(Set<Role> authorities) {
