@@ -105,19 +105,20 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
 	@Override
 	public Set<AccountInfo> findAccountsByUserId(int userId) {
+		Set<AccountRights> userRights = null;
+		Set<AccountInfo> userAccounts = null;
 		try {
-            Set<AccountRights> userRights = rightsRepo.findByUserId(userId);
-            Set<AccountInfo> userAccounts = new HashSet<AccountInfo>();
+			userRights = rightsRepo.findByUserId(userId);
+            userAccounts = new HashSet<AccountInfo>();
             for(AccountRights rights : userRights) {
                 userAccounts.add(accountRepo.findById(rights.getAccountId()));
             }
             return userAccounts;
 		} catch (DBNotFoundException e) {
-            String error = "DBNotFoundException encountered attempting to " +
-                           "find accounts for user " + userId + ": " +
-                           e.getMessage();
-            throw new DuraCloudRuntimeException(error, e);
+            log.info("No accounts found for user {}", userId);
 		}
+		
+		return new HashSet<AccountInfo>();
 
 	}
 

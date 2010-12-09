@@ -12,6 +12,6 @@
         http://www.springframework.org/schema/mvc 
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd        
         " >
-
+<!-- strangely seems to be required by spring 3.0  -->
 </beans>
 

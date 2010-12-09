@@ -44,19 +44,12 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 
         int decision = ACCESS_ABSTAIN;
 		if(rmi.getMethod().getName().equals("getAccount")){
-			String accountId = (String)rmi.getArguments()[0];
+			Integer accountId = (Integer)rmi.getArguments()[0];
 
-            int intAccountId;
-            try {
-                intAccountId = Integer.valueOf(accountId);
-            } catch (NumberFormatException e) {
-                log.debug("decision: ACCESS_DENIED, " + e.getMessage());
-                return ACCESS_DENIED;
-            }
 			log.debug("intercepted getAccount({})", accountId);
 
             DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
-            Set<Role> roles = user.getRolesByAcct(intAccountId);
+            Set<Role> roles = user.getRolesByAcct(accountId);
             if(null != roles && roles.contains(Role.ROLE_USER)){
                 decision = ACCESS_GRANTED;
             }else{

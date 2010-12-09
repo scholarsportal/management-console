@@ -3,13 +3,13 @@
  */
 package org.duracloud.account.common.domain;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -45,6 +45,9 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
              lastName,
              email,
              0);
+        
+        this.superRoles = new HashSet();
+        this.superRoles.add(Role.ROLE_USER);
     }
 
     public DuracloudUser(int id,

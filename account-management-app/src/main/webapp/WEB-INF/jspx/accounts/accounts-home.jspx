@@ -15,10 +15,6 @@
      value="Accounts Home" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
-
-    <tiles:putAttribute
      name="body">
       <h1>Account List for Root Admins</h1>
 

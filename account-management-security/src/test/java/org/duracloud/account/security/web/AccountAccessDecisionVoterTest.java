@@ -42,7 +42,7 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     public void testDeny() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
             AccountManagerService.class.getMethod("getAccount", int.class),
-            new Object[]{"1"});
+            new Object[]{1});
 
         int decision = decisionVoter.vote(createUserAuthentication(
             USER_AUTHORITIES), invocation, attributes);
@@ -53,7 +53,7 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     public void testRootAccess() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
             accountManagerService.getClass().getMethod("getAccount", int.class),
-            new Object[]{"1"});
+            new Object[]{1});
 
         int decision = decisionVoter.vote(createRootAuthentication(),
                                           invocation,
@@ -65,7 +65,7 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     public void testGranted() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
             accountManagerService.getClass().getMethod("getAccount", int.class),
-            new Object[]{"0"});
+            new Object[]{0});
 
         int decision = decisionVoter.vote(createUserAuthentication(
             USER_AUTHORITIES), invocation, attributes);

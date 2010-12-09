@@ -9,12 +9,14 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.IdUtil;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -123,14 +125,15 @@ public class AccountControllerTest {
 	public void testAdd() throws DBNotFoundException, SubdomainAlreadyExistsException {
 		SecurityContext ctx = new SecurityContextImpl();
 		Authentication auth = EasyMock.createMock(Authentication.class);
-		EasyMock.expect(auth.getName()).andReturn(TEST_USERNAME);
-		EasyMock.replay(auth);
+		EasyMock.expect(auth.getName()).andReturn(TEST_USERNAME).anyTimes();
+		AuthenticationManager authManager = EasyMock.createNiceMock(AuthenticationManager.class);
+		EasyMock.replay(auth,authManager);
 		ctx.setAuthentication(auth);
 		SecurityContextHolder.setContext(ctx);
 		
 		DuracloudUserService userService = EasyMock.createMock(DuracloudUserService.class);
 		EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
-					.andReturn(createUser());
+					.andReturn(createUser()).anyTimes();
 		EasyMock.replay(userService);
 		
 		BindingResult result = EasyMock.createMock(BindingResult.class);
@@ -138,6 +141,8 @@ public class AccountControllerTest {
 		EasyMock.expect(result.hasErrors()).andReturn(false);
 		EasyMock.replay(result);
 
+		IdUtil idUtil = EasyMock.createNiceMock(IdUtil.class);
+		
 		AccountManagerService ams = EasyMock.createMock(AccountManagerService.class);
 		AccountService as = EasyMock.createMock(AccountService.class);
 		EasyMock.expect(as.retrieveAccountInfo()).andReturn(createAccountInfo()).anyTimes();
@@ -145,13 +150,13 @@ public class AccountControllerTest {
         EasyMock.expect(ams.createAccount(EasyMock.isA(AccountInfo.class),
                                           EasyMock.isA(DuracloudUser.class)))
             .andReturn(as);
-		EasyMock.replay(ams, as);
+		EasyMock.replay(ams, as,idUtil);
 
 		
 		accountController.setAccountManagerService(ams);
 		accountController.setUserService(userService);
-
-		
+		accountController.setIdUtil(idUtil);
+		accountController.setAuthenticationManager(authManager);		
 		NewAccountForm newAccountForm  = new NewAccountForm();
 		newAccountForm.setSubdomain("testdomain");
 		Model model = new ExtendedModelMap();

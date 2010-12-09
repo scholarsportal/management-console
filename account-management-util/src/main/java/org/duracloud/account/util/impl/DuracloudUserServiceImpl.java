@@ -68,9 +68,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                                password,
                                                firstName,
                                                lastName,
-                                               email);
+                                               email
+                                               );
+        
         throwIfUserExists(user);
         userRepo.save(user);
+        
+        
         log.info("created new user [{}]", username);
         return user;
     }
@@ -220,13 +224,23 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
+    	DuracloudUser user;
 		try {
-            DuracloudUser user = userRepo.findByUsername(username);
-            user.setAccountRights(rightsRepo.findByUserId(user.getId()));
-			return user;
+            user = userRepo.findByUsername(username);
 		} catch (DBNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
-	}
+
+		//not all users are associated with an account.
+		try {
+			user.setAccountRights(rightsRepo.findByUserId(user.getId()));
+		} catch (DBNotFoundException e) {
+			log.debug("no account rights for {}", user.getUsername());
+		}
+		
+		
+		return user;
+    
+    }
 
 }

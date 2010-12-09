@@ -14,6 +14,9 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -41,6 +44,10 @@ public class AccountController extends AbstractAccountController {
 
     @Autowired
     private IdUtil idUtil;
+    
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
 
 	@RequestMapping(value = {ACCOUNT_PATH}, method = RequestMethod.GET)
 	public String getHome(@PathVariable int accountId, Model model)
@@ -98,7 +105,8 @@ public class AccountController extends AbstractAccountController {
 		try {
 
 			SecurityContext securityContext = SecurityContextHolder.getContext();
-			String username = securityContext.getAuthentication().getName();
+			Authentication authentication = securityContext.getAuthentication();
+			String username = authentication.getName();
 			DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
             int paymentInfoId = -1;
             Set<Integer> instanceIds = null;
@@ -114,6 +122,18 @@ public class AccountController extends AbstractAccountController {
 			AccountService service = this.accountManagerService.createAccount(accountInfo, user);
 			int id = service.retrieveAccountInfo().getId();
             String idText = Integer.toString(id);
+            user = this.userService.loadDuracloudUserByUsername(username);
+            
+            //reauthenticate
+            //FIXME I'm not sure that this is the right way to accomplish 
+            //      updating the account rights within the current security context.
+            //		The question: will the password be available in this context? 
+            //		Or will it be hashed or null?
+    		Authentication auth = authenticationManager.authenticate(
+    				new UsernamePasswordAuthenticationToken(
+    						user.getUsername(), user.getPassword()));
+    		securityContext.setAuthentication(auth);
+
 			return formatAccountRedirect(idText, "/");
 		} catch (SubdomainAlreadyExistsException ex) {
 			result.addError(new ObjectError("subdomain",
@@ -124,6 +144,22 @@ public class AccountController extends AbstractAccountController {
 			throw new Error("This should never happen", e);
 		}
 
+	}
+
+	public AuthenticationManager getAuthenticationManager() {
+		return authenticationManager;
+	}
+
+	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+		this.authenticationManager = authenticationManager;
+	}
+
+	public IdUtil getIdUtil() {
+		return idUtil;
+	}
+
+	public void setIdUtil(IdUtil idUtil) {
+		this.idUtil = idUtil;
 	}
 
 }

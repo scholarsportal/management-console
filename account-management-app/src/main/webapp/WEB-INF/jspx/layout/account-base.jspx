@@ -8,38 +8,45 @@
 	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 	<div>
 	<ul class="horizontal-list dc-main-tabs flex clearfix">
-		<tiles:importAttribute  name="mainTab" ignore="true" />
-		<li class="${mainTab=='home'?'selected':''}"><a id="account-dashboard"
+		<tiles:importAttribute name="mainTab" ignore="true" />
+		<li class="${mainTab=='home'?'selected':''}"><a
+			id="account-dashboard"
 			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/"><span>Dashboard</span></a>
 		</li>
 
-		<li class="${mainTab=='statement'?'selected':''}"><a id="account-statement"
-			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement"><span>Statement</span></a>
-		</li>
-		<li class="${mainTab=='providers'?'selected':''}"><a id="account-providers"
+		<sec:authorize ifAnyGranted="ROLE_ROOT, ROLE_ADMIN">
+			<li class="${mainTab=='statement'?'selected':''}"><a
+				id="account-statement"
+				href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/statement"><span>Statement</span></a>
+			</li>
+
+		</sec:authorize>
+		<li class="${mainTab=='providers'?'selected':''}"><a
+			id="account-providers"
 			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers"><span>Providers</span></a>
 		</li>
 
-		<li class="${mainTab=='instance'?'selected':''}"><a id="account-instance"
+		<li class="${mainTab=='instance'?'selected':''}"><a
+			id="account-instance"
 			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance"><span>Instance</span></a>
 		</li>
 
-		<li class="${mainTab=='users'?'selected':''}"><a id="account-users"
+		<li class="${mainTab=='users'?'selected':''}"><a
+			id="account-users"
 			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users"><span>Users</span></a>
 		</li>
-		<li class="${mainTab=='details'?'selected':''}"><a id="account-details"
+		<li class="${mainTab=='details'?'selected':''}"><a
+			id="account-details"
 			href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/"
 			accesskey="b"><span>Account</span></a></li>
 	</ul>
 	</div>
 
 
-	<div class="dc-main-content">
-		<tiles:insertAttribute name="content" ignore="false" />
-    </div>
-    <div style="display:none">
-      <span id="account-id">${accountInfo.id}</span>    
-    </div>
+	<div class="dc-main-content"><tiles:insertAttribute
+		name="content" ignore="false" /></div>
+	<div style="display: none"><span id="account-id">${accountInfo.id}</span>
+	</div>
 
 </jsp:root>
 

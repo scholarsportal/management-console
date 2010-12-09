@@ -3,11 +3,8 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.db.mockimpl.MockDuracloudAccountRepo;
-import org.duracloud.account.db.mockimpl.MockDuracloudUserRepo;
 import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.impl.DuracloudUserServiceImpl;
-import org.duracloud.annotation.MockConstraintValidatorContext;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,14 +17,15 @@ public class UniqueUsernameTest {
 	
 	@Test
 	public void test() throws Exception{
-        DuracloudUserService service = new DuracloudUserServiceImpl(new MockDuracloudUserRepo(),
-                                                                    new MockDuracloudAccountRepo(),
-                                                                    null,
-                                                                    null);
-				UniqueUsernameValidator v = new UniqueUsernameValidator();
+		DuracloudUserService service = EasyMock.createMock(DuracloudUserService.class);
+		EasyMock.expect(service.isUsernameAvailable("buddha")).andReturn(true);
+		EasyMock.expect(service.isUsernameAvailable("admin")).andReturn(false);
+		EasyMock.replay(service);
+		
+		UniqueUsernameValidator v = new UniqueUsernameValidator();
 		v.setUserService(service);
-		Assert.assertTrue(v.isValid("buddha", new MockConstraintValidatorContext()));
-		Assert.assertFalse(v.isValid("admin", new MockConstraintValidatorContext()));
+		Assert.assertTrue(v.isValid("buddha", null));
+		Assert.assertFalse(v.isValid("admin", null));
 	}
 	
 }

@@ -20,33 +20,46 @@
   >
       <constructor-arg ref="userRepo"/>
       <constructor-arg ref="accountRepo"/>
+      <constructor-arg ref="rightsRepo"/>
+      <constructor-arg ref="idUtil"/>
   </bean>
   <bean
     id="accountManagerService"
     class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
-    scope="singleton"
-  >
+    scope="singleton">
     <constructor-arg ref="userRepo"/>
     <constructor-arg ref="accountRepo"/>
     <constructor-arg ref="rightsRepo"/>
     <constructor-arg ref="idUtil"/>
   </bean>
  
+  <bean 
+    class="org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr"
+    id="dbClientMgr"
+    scope="singleton"
+    primary="true">
+    <constructor-arg value="xxxxxxxxxxxxxxxxxxxx"/>  
+    <constructor-arg value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>  
+  </bean>
   <bean
-    class="org.duracloud.account.db.mockimpl.MockDuracloudUserRepo"
+    class="org.duracloud.account.db.amazonsimple.DuracloudUserRepoImpl"
     id="userRepo"
-    scope="singleton"
-    primary="true" />
+    primary="true">
+    <constructor-arg ref="dbClientMgr"/>
+    </bean>
   <bean
-    class="org.duracloud.account.db.mockimpl.MockDuracloudAccountRepo"
+    class="org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl"
     id="accountRepo"
-    scope="singleton"
-    primary="true" />
+    primary="true" >
+    <constructor-arg ref="dbClientMgr"/>
+    </bean>
+
   <bean
-    class="org.duracloud.account.db.mockimpl.MockDuracloudRightsRepo"
+    class="org.duracloud.account.db.amazonsimple.DuracloudRightsRepoImpl"
     id="rightsRepo"
-    scope="singleton"
-    primary="true" />
+    primary="true">
+    <constructor-arg ref="dbClientMgr"/>
+   </bean>
     
   <bean
     class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
