@@ -49,6 +49,8 @@ public abstract class BaseDuracloudRepoImpl {
     }
 
     public void createDomainIfNecessary() {
+        log.debug("creating domain: " + domain);
+
         boolean created = false;
 
         ListDomainsRequest listRequest = new ListDomainsRequest();

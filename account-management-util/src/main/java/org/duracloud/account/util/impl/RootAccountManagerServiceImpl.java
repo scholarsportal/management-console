@@ -7,6 +7,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.RootAccountManagerService;
@@ -21,14 +22,13 @@ import java.util.Set;
  *         Date: Oct 9, 2010
  */
 public class RootAccountManagerServiceImpl implements RootAccountManagerService {
-	private Logger log = LoggerFactory.getLogger(getClass());
-    private DuracloudUserRepo userRepo;
-    private DuracloudAccountRepo accountRepo;
+
+	private Logger log = LoggerFactory.getLogger(RootAccountManagerServiceImpl.class);
+
+    private DuracloudRepoMgr repoMgr;
     
-    public RootAccountManagerServiceImpl(DuracloudUserRepo userRepo,
-                                         DuracloudAccountRepo accountRepo) {
-        this.userRepo = userRepo;
-        this.accountRepo = accountRepo;
+    public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
+        this.repoMgr = duracloudRepoMgr;
     }
 
 	@Override
@@ -40,11 +40,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<AccountInfo> listAllAccounts(String filter) {
-		Set<Integer> accountIds = accountRepo.getIds();
+		Set<Integer> accountIds = getAccountRepo().getIds();
 		Set<AccountInfo> accountInfos = new HashSet<AccountInfo>();
 		for(int acctId : accountIds){
 			try{
-				AccountInfo accountInfo = accountRepo.findById(acctId);
+				AccountInfo accountInfo = getAccountRepo().findById(acctId);
 				if(filter == null || accountInfo.getOrgName().startsWith(filter)){
 					accountInfos.add(accountInfo);
 				}
@@ -57,11 +57,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<DuracloudUser> listAllUsers(String filter) {
-		Set<Integer> userIds = userRepo.getIds();
+		Set<Integer> userIds = getUserRepo().getIds();
 		Set<DuracloudUser> users = new HashSet<DuracloudUser>();
 		for(int id : userIds){
 			try{
-				DuracloudUser user = userRepo.findById(id);
+				DuracloudUser user = getUserRepo().findById(id);
 				
 				if(filter == null || (user.getUsername().startsWith(filter)
 						|| user.getFirstName().startsWith(filter)
@@ -78,5 +78,12 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	}
 
+    private DuracloudUserRepo getUserRepo() {
+        return repoMgr.getUserRepo();
+    }
+
+    private DuracloudAccountRepo getAccountRepo() {
+        return repoMgr.getAccountRepo();
+    }
   
 }

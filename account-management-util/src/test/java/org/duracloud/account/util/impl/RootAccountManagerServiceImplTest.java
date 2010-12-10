@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,13 +22,13 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testAddDuracloudImage() {
         //TODO implement test;
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testListAllAccounts() throws Exception {
         setUpListAllAccounts();
-        rootService = new RootAccountManagerServiceImpl(userRepo, accountRepo);
+        rootService = new RootAccountManagerServiceImpl(repoMgr);
 
         String filter = null;
         Set<AccountInfo> accountInfos = rootService.listAllAccounts(filter);
@@ -40,13 +41,13 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
             AccountInfo acctInfo = newAccountInfo(acctId);
             EasyMock.expect(accountRepo.findById(acctId)).andReturn(acctInfo);
         }
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testListAllAccountsWithFilter() throws Exception {
         setUpListAllAccounts();
-        rootService = new RootAccountManagerServiceImpl(userRepo, accountRepo);
+        rootService = new RootAccountManagerServiceImpl(repoMgr);
 
         String filter = "org-1";
         Set<AccountInfo> acctInfos = rootService.listAllAccounts(filter);
@@ -57,7 +58,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testListAllUsersNoFilter() throws Exception {
         setUpListAllUsers();
-        rootService = new RootAccountManagerServiceImpl(userRepo, accountRepo);
+        rootService = new RootAccountManagerServiceImpl(repoMgr);
 
         String filter = null;
         Set<DuracloudUser> users = rootService.listAllUsers(filter);
@@ -72,13 +73,13 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
                 newDuracloudUser(userId, username + userId));
         }
 
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testListAllUsersFilter() throws Exception {
         setUpListAllUsers();
-        rootService = new RootAccountManagerServiceImpl(userRepo, accountRepo);
+        rootService = new RootAccountManagerServiceImpl(repoMgr);
 
         String filter = "a-user-name-2";
         Set<DuracloudUser> users = rootService.listAllUsers(filter);

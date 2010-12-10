@@ -7,13 +7,14 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.IdUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,26 +30,19 @@ import java.util.Set;
  *         Date: Oct 9, 2010
  */
 public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetailsService {
-	private Logger log = LoggerFactory.getLogger(getClass());
-    private DuracloudUserRepo userRepo;
-    private DuracloudAccountRepo accountRepo;
-    private DuracloudRightsRepo rightsRepo;
-    private IdUtil idUtil;
     
-    public DuracloudUserServiceImpl(DuracloudUserRepo userRepo,
-                                    DuracloudAccountRepo accountRepo,
-                                    DuracloudRightsRepo rightsRepo,
-                                    IdUtil idUtil) {
-        this.userRepo = userRepo;
-        this.accountRepo = accountRepo;
-        this.rightsRepo = rightsRepo;
-        this.idUtil = idUtil;
+	private Logger log = LoggerFactory.getLogger(DuracloudUserServiceImpl.class);
+
+    private DuracloudRepoMgr repoMgr;
+    
+    public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
+        this.repoMgr = duracloudRepoMgr;
     }
 
     @Override
     public boolean isUsernameAvailable(String username) {
         try {
-            userRepo.findByUsername(username);
+            getUserRepo().findByUsername(username);
             return false;
         } catch (DBNotFoundException e) {
             return true;
@@ -62,7 +56,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String lastName,
                                        String email)
         throws DBConcurrentUpdateException, UserAlreadyExistsException {
-        int newUserId = idUtil.newUserId();
+        int newUserId = getIdUtil().newUserId();
         DuracloudUser user = new DuracloudUser(newUserId,
                                                username,
                                                password,
@@ -72,7 +66,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                                );
         
         throwIfUserExists(user);
-        userRepo.save(user);
+        getUserRepo().save(user);
         
         
         log.info("created new user [{}]", username);
@@ -152,7 +146,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         int rightsId = -1;
         Set<Role> roles = null;
         try {
-            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
+            rights = getRightsRepo().findByAccountIdAndUserId(acctId, userId);
             rightsId = rights.getId();
             roles = rights.getRoles();
             if(roles != null && roles.contains(role)) {
@@ -173,18 +167,18 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
 
         if(rightsId < 0) {
-            rightsId = idUtil.newRightsId();
+            rightsId = getIdUtil().newRightsId();
         }
 
         rights = new AccountRights(rightsId, acctId, userId, roles);
-        rightsRepo.save(rights);
+        getRightsRepo().save(rights);
     }
 
     private void revokeRights(int acctId, int userId, Role role)
         throws DBConcurrentUpdateException {
         try {
             AccountRights rights =
-                rightsRepo.findByAccountIdAndUserId(acctId, userId);
+                getRightsRepo().findByAccountIdAndUserId(acctId, userId);
             Set<Role> roles = rights.getRoles();
             if(roles != null && roles.contains(role)) {
                 roles.remove(Role.ROLE_OWNER);
@@ -194,7 +188,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                     roles.remove(Role.ROLE_ADMIN);
                     roles.remove(Role.ROLE_USER);
                 }                                
-                rightsRepo.save(rights);
+                getRightsRepo().save(rights);
             } else {
                 return; // Role does not exist for user on account
             }
@@ -218,7 +212,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	@Override
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException {
-		return  this.userRepo.findByUsername(username);
+		return  this.getUserRepo().findByUsername(username);
 	}
 
     @Override
@@ -226,21 +220,34 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 			throws UsernameNotFoundException {
     	DuracloudUser user;
 		try {
-            user = userRepo.findByUsername(username);
+            user = getUserRepo().findByUsername(username);
 		} catch (DBNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
 		}
 
 		//not all users are associated with an account.
 		try {
-			user.setAccountRights(rightsRepo.findByUserId(user.getId()));
+			user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
 		} catch (DBNotFoundException e) {
 			log.debug("no account rights for {}", user.getUsername());
 		}
 		
-		
 		return user;
-    
     }
 
+    private DuracloudUserRepo getUserRepo() {
+        return repoMgr.getUserRepo();
+    }
+
+    private DuracloudAccountRepo getAccountRepo() {
+        return repoMgr.getAccountRepo();
+    }
+
+    private DuracloudRightsRepo getRightsRepo() {
+        return repoMgr.getRightsRepo();
+    }
+
+    private IdUtil getIdUtil() {
+        return repoMgr.getIdUtil();
+    }
 }

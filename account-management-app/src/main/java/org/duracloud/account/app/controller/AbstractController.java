@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractController {
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger(AbstractController.class);
 
 	protected static final String PREFIX = "";
 

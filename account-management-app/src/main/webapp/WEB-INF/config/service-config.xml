@@ -8,73 +8,36 @@
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd"
->
-  <bean
-    class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
-    primary="true"
-    scope="singleton"
-    id="userService"
-    name="userDetailsService"
-    
-  >
-      <constructor-arg ref="userRepo"/>
-      <constructor-arg ref="accountRepo"/>
-      <constructor-arg ref="rightsRepo"/>
-      <constructor-arg ref="idUtil"/>
-  </bean>
-  <bean
-    id="accountManagerService"
-    class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
-    scope="singleton">
-    <constructor-arg ref="userRepo"/>
-    <constructor-arg ref="accountRepo"/>
-    <constructor-arg ref="rightsRepo"/>
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+  <bean id="idUtil" class="org.duracloud.account.db.impl.IdUtilImpl"/>
+
+  <bean id="repoMgr"
+        class="org.duracloud.account.db.amazonsimple.AmazonSimpleDBRepoMgr">
     <constructor-arg ref="idUtil"/>
   </bean>
- 
-  <bean 
-    class="org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr"
-    id="dbClientMgr"
-    scope="singleton"
-    primary="true">
-    <constructor-arg value="xxxxxxxxxxxxxxxxxxxx"/>  
-    <constructor-arg value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>  
+
+  <bean id="duracloudUserService"
+        class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
+        primary="true"
+        scope="singleton"
+        name="userDetailsService">
+    <constructor-arg ref="repoMgr"/>
   </bean>
-  <bean
-    class="org.duracloud.account.db.amazonsimple.DuracloudUserRepoImpl"
-    id="userRepo"
-    primary="true">
-    <constructor-arg ref="dbClientMgr"/>
-    </bean>
-  <bean
-    class="org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl"
-    id="accountRepo"
-    primary="true" >
-    <constructor-arg ref="dbClientMgr"/>
-    </bean>
 
-  <bean
-    class="org.duracloud.account.db.amazonsimple.DuracloudRightsRepoImpl"
-    id="rightsRepo"
-    primary="true">
-    <constructor-arg ref="dbClientMgr"/>
-   </bean>
-    
-  <bean
-    class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
-    id="rootAccountManagerService"
-    scope="singleton"
-    primary="true" >
-      <constructor-arg ref="userRepo"/>
-      <constructor-arg ref="accountRepo"/>
+  <bean id="accountManagerService"
+        class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
+        scope="singleton">
+    <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="duracloudUserService"/>
+  </bean>
 
-    </bean>
-
-  <bean id="idUtil" class="org.duracloud.account.util.impl.IdUtilImpl">
-    <constructor-arg ref="userRepo"/>
-    <constructor-arg ref="accountRepo"/>
-    <constructor-arg ref="rightsRepo"/>
+  <bean id="rootAccountManagerService"
+        class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
+        scope="singleton"
+        primary="true">
+    <constructor-arg ref="repoMgr"/>
   </bean>
 
 </beans>

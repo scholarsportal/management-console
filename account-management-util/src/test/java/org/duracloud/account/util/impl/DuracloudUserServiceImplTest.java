@@ -9,6 +9,7 @@ import java.util.Set;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
@@ -23,8 +24,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     private DuracloudUserServiceImpl userService;
 
-
-
     private static final int acctId = 1;
 
     @Test
@@ -32,10 +31,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String existingName = "name-existing";
         String newName = "name-new";
         setUpIsUsernameAvailable(existingName, newName);
-        userService = new DuracloudUserServiceImpl(userRepo,
-                                                   accountRepo,
-                                                   rightsRepo,
-                                                   idUtil);
+        userService = new DuracloudUserServiceImpl(repoMgr);
 
         Assert.assertFalse(userService.isUsernameAvailable(existingName));
         Assert.assertTrue(userService.isUsernameAvailable(newName));
@@ -47,7 +43,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         EasyMock.expect(userRepo.findByUsername(newName))
             .andThrow(new DBNotFoundException("canned-exception"));
 
-        replayRepos();
+        replayMocks();
     }
 
     @Test
@@ -55,10 +51,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String newName = "new-username";
         String existingName = "existing-username";
         setUpCreateNewUser(newName, existingName);
-        userService = new DuracloudUserServiceImpl(userRepo,
-                                                   accountRepo,
-                                                   rightsRepo,
-                                                   idUtil);
+        userService = new DuracloudUserServiceImpl(repoMgr);
 
         String password = "password";
         String firstName = "firstName";
@@ -102,7 +95,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         EasyMock.expect(idUtil.newUserId()).andReturn(userId).times(2);
 
-        replayRepos();
+        replayMocks();
     }
 
     @Test
@@ -110,10 +103,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         int userId = 7;
         DuracloudUser user = newDuracloudUser(userId, "some-username");
         setUpAddUserToAccount(user);
-        userService = new DuracloudUserServiceImpl(userRepo,
-                                                   accountRepo,
-                                                   rightsRepo,
-                                                   idUtil);
+        userService = new DuracloudUserServiceImpl(repoMgr);
 
         Set<Role> roles = user.getRolesByAcct(acctId);
         Assert.assertNotNull(roles);
@@ -140,55 +130,55 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
             .andReturn(rights)
             .anyTimes();
 
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testRemoveUserFromAccount() throws Exception {
         //TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testGrantAdminRights() throws Exception {
         //TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testRevokeAdminRights() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testSendPasswordReminder() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testChangePassword() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testloadDuracloudUserByUsername() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testGrantOwnerRights() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
     @Test
     public void testRevokeOwnerRights() throws Exception {
         // TODO: complete test
-        replayRepos();
+        replayMocks();
     }
 
 }

@@ -8,15 +8,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.IdUtil;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -28,6 +25,7 @@ import org.junit.Before;
  */
 public class DuracloudServiceTestBase {
 
+    protected DuracloudRepoMgr repoMgr;
     protected DuracloudUserRepo userRepo;
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudRightsRepo rightsRepo;
@@ -47,6 +45,8 @@ public class DuracloudServiceTestBase {
         rightsRepo = EasyMock.createMock("DuraCloudRightsRepo",
                                          DuracloudRightsRepo.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
+        repoMgr = EasyMock.createMock("DuracloudRepoMgr",
+                                      DuracloudRepoMgr.class);
 
         Set<Integer> userIds = createIds(NUM_USERS);
         Set<Integer> acctIds = createIds(NUM_ACCTS);
@@ -55,6 +55,15 @@ public class DuracloudServiceTestBase {
         EasyMock.expect(userRepo.getIds()).andReturn(userIds).anyTimes();
         EasyMock.expect(accountRepo.getIds()).andReturn(acctIds).anyTimes();
         EasyMock.expect(rightsRepo.getIds()).andReturn(rightsIds).anyTimes();
+
+        EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).anyTimes();
+        EasyMock.expect(repoMgr.getAccountRepo())
+            .andReturn(accountRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getRightsRepo())
+            .andReturn(rightsRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getIdUtil()).andReturn(idUtil).anyTimes();
     }
 
     protected Set<Integer> createIds(int count) {
@@ -105,10 +114,11 @@ public class DuracloudServiceTestBase {
                                storageProviders);
     }
 
-    protected void replayRepos() {
+    protected void replayMocks() {
         EasyMock.replay(userRepo);
         EasyMock.replay(accountRepo);
         EasyMock.replay(rightsRepo);
         EasyMock.replay(idUtil);
+        EasyMock.replay(repoMgr);
     }
 }

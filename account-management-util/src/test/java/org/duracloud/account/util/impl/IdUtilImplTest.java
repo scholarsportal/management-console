@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.impl.IdUtilImpl;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -34,7 +35,8 @@ public class IdUtilImplTest {
         userRepo = createMockUserRepo(COUNT);
         rightsRepo = createMockRightsRepo(COUNT);
 
-        idUtil = new IdUtilImpl(userRepo, accountRepo, rightsRepo);
+        idUtil = new IdUtilImpl();
+        idUtil.initialize(userRepo, accountRepo, rightsRepo);
     }
 
     private DuracloudAccountRepo createMockAccountRepo(int count) {
