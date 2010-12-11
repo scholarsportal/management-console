@@ -63,7 +63,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 			getAccountRepo().save(newAccountInfo);
 
 			userService.grantOwnerRights(acctId, owner.getId());
-			return new AccountServiceImpl(newAccountInfo);
+			return new AccountServiceImpl(newAccountInfo, repoMgr);
 		} catch (DBConcurrentUpdateException ex) {
 			throw new Error(ex);
 		}
@@ -73,7 +73,9 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 	public AccountService getAccount(int accountId)
 			throws AccountNotFoundException {
 		try {
-			return new AccountServiceImpl(getAccountRepo().findById(accountId));
+            AccountInfo acctInfo = getAccountRepo().findById(accountId);
+			return new AccountServiceImpl(acctInfo, repoMgr);
+            
 		} catch (DBNotFoundException e) {
 			throw new AccountNotFoundException();
 		}

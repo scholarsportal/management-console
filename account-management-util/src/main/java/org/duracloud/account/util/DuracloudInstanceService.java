@@ -3,9 +3,12 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.DuracloudUser;
+
 import java.net.InetAddress;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An interface for controlling a deployed duracloud instance
@@ -58,4 +61,11 @@ public interface DuracloudInstanceService {
      */
     public void restart() throws IllegalStateException;
 
+    /**
+     * This method pushes user role info to the running instance.
+     * Note: This set of users will replace the existing configuration on the
+     * running instance.
+     * @param users to update
+     */
+    public void updateUserRoles(Set<DuracloudUser> users);
 }

@@ -6,6 +6,7 @@ package org.duracloud.account.util;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.storage.domain.StorageProviderType;
 
 import java.util.Set;
@@ -54,7 +55,8 @@ public interface AccountService {
     /**
      * @param storageProviderTypes
      */
-    public void setStorageProviders(Set<StorageProviderType> storageProviderTypes);
+    public void setStorageProviders(Set<StorageProviderType> storageProviderTypes)
+        throws DBConcurrentUpdateException;
 
 	/**
      * @return empty list

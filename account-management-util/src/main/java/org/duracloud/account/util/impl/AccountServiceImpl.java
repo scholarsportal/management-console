@@ -6,6 +6,8 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
@@ -18,20 +20,19 @@ import java.util.Set;
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)" 
  */
-public class AccountServiceImpl implements AccountService,
-		DuracloudInstanceManagerService {
+public class AccountServiceImpl implements AccountService {
+
+    // The AccountInfo member is a read-cache. All 'getter' come from it, and
+    // writes go to both it and the persistence layer.
 	private AccountInfo account;
+    private DuracloudRepoMgr repoMgr;
 
 	/**
 	 * @param acct
 	 */
-	public AccountServiceImpl(AccountInfo acct) {
+	public AccountServiceImpl(AccountInfo acct, DuracloudRepoMgr repoMgr) {
 		this.account = acct;
-	}
-
-	@Override
-	public Set<StorageProviderType> getStorageProviders() {
-		return account.getStorageProviders();
+        this.repoMgr = repoMgr;
 	}
 
 	@Override
@@ -45,12 +46,19 @@ public class AccountServiceImpl implements AccountService,
 		return account;
 	}
 
-	@Override
-	public void setStorageProviders(Set<StorageProviderType> storageProviderTypes) {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public Set<StorageProviderType> getStorageProviders() {
+        return account.getStorageProviders();
+    }
 
-	@Override
+    @Override
+    public void setStorageProviders(Set<StorageProviderType> storageProviderTypes)
+        throws DBConcurrentUpdateException {
+        account.setStorageProviders(storageProviderTypes);
+        repoMgr.getAccountRepo().save(account);
+    }
+
+    @Override
 	public void storeAccountInfo(String acctName,
                                  String orgName,
 			                     String department) {
@@ -64,34 +72,16 @@ public class AccountServiceImpl implements AccountService,
 
 	}
 
+    @Override
+    public PaymentInfo retrievePaymentInfo() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 	@Override
 	public void storeSubdomain(String subdomain) {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public DuracloudInstanceService createNewInstance(String acctId,
-			String version) throws DuracloudInvalidVersionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public DuracloudInstanceService getInstance(String acctId)
-			throws DuracloudInstanceNotAvailableException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeInstance(String acctId) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public PaymentInfo retrievePaymentInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
 }

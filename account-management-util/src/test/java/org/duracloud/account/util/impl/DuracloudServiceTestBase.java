@@ -75,7 +75,8 @@ public class DuracloudServiceTestBase {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        EasyMock.verify(repoMgr);
         EasyMock.verify(userRepo);
         EasyMock.verify(accountRepo);
         EasyMock.verify(rightsRepo);
