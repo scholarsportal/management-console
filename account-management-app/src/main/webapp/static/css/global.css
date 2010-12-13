@@ -137,22 +137,43 @@ li a:hover{
 
 
 
+.required:before
+{ 
+	content:"*";
+	color:blue;
+	padding-right: 5px;
+}
+
+/*
+*this unrequired setting is used here purely for 
+*the purpose of field alignment:
+*it's a hack (color and bg color are the same) 
+*to get required and otherwise fields to line up properly.
+*There's probably a better way to do it.
+*/
+.unrequired:before
+{ 
+	content:"*";
+	color:#ccc;
+	padding-right: 5px;
+}
+
+
 table.standard-form{
+	
 	width:100%;
 }
 
+.dc-subgroup-body p {
+	padding-bottom:10px;	
+}
 
 .standard-form .label {
 	max-width:75px;
 	min-width:75px;
-	
 }
-.standard-form .required {
-	max-width:5px;
-	min-width:5px;
-	
-	color:blue;
-}
+
+
 .standard-form .value {
 	width:*;
 	padding-left:5px;
@@ -161,7 +182,10 @@ table.standard-form{
 
 .button-bar {
 	margin-top:10px;	
-	
+}
+
+.button-bar *{
+	float:right;	
 }
 
 
@@ -180,6 +204,9 @@ div.global-errors{
 }
 .global-errors li{
 	padding:5px; 
+	list-style-type: square;
+	list-style-position: inside;
+	border-bottom:0 !important;
 }
 
 .two-by-one-layout > div:first-child{
@@ -205,6 +232,11 @@ div.global-errors{
 	color:#000;
 }
 
+
+
+.dc-properties{
+	border-top:2px solid #aaa;	
+}
 
 #dc-logo-panel
 {
@@ -349,6 +381,10 @@ ing-right:10px;
 	padding:10px 5px 10px 5px;
 	background-color:#bbb;
 	
+}
+
+.dc-subgroup-body-header{
+	margin-bottom:10px;	
 }
 
 .dc-subgroup table  {

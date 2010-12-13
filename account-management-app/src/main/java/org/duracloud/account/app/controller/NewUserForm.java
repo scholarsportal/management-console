@@ -13,11 +13,11 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 
  */
 public class NewUserForm {
-	@Length(min = 6, max = 20)
+	@Length(min = 6, max = 20, message="Username must be between 6 and 20 characters in length.")
 	@UniqueUsernameConstraint(message="Username is not available; please choose another.")
 	private String username;
 
-	@NotEmpty(message = "Password must contain a value.")
+	@NotEmpty(message = "Password must be specified.")
 	private String password;
 
 	private String passwordConfirm;

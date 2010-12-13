@@ -39,7 +39,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-	<version>6.1.10</version>
+        <version>6.1.10</version>
         <!--
           The jetty-maven-plugin (jetty 7.0) is generating a
           ClassNotFoundException and breaking the tests for the time,

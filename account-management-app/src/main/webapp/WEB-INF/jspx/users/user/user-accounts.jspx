@@ -14,7 +14,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="My Profile" />
+     value="Accounts" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -26,7 +26,7 @@
        name="user-base">
         <tiles:putAttribute
          name="mainTab"
-         value="home" />
+         value="accounts" />
 
         <tiles:putAttribute
          name="content">
@@ -34,7 +34,16 @@
            id="account-list"
            class="dc-subgroup">
             <h2>
-              Profile Information
+              Your Accounts
+
+                <a
+                 href="${pageContext.request.contextPath}/accounts/new"
+                 class="button">
+                <i
+                 class="pre plus">
+                </i>
+
+                Add Duracloud Account</a>
             </h2>
 
             <div
@@ -42,30 +51,36 @@
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
-                  <div class="dc-subgroup-body-header">
-                    <button id="edit">Edit</button>
-                    <button id="edit">Change Password</button>
+                  <table>
+                      <tr>
+                        <th>
+                          Account
+                        </th>
+                        <th>
+                          Role
+                        </th>
+                      </tr>
+                    <c:forEach
+                     var="a"
+                     items="${accounts}">
 
-                  </div>
-                  <table class="dc-properties">
-                    <tr>
-                      <td
-                       class="label">Your Full Name</td>
-                      <td
-                       class="value">
-                        <span>${user.firstName} ${user.lastName}</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                       class="label">Email Address</td>
 
-                      <td
-                       class="value">
-                        <span>${user.email}</span>
-                      </td>
-                    </tr>
+                      <tr class="account">
+                        <td>
+                        <a
+                         id="account-home-${id}-link"
+                         href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
+                          ${a.acctName} (${a.orgName} - ${a.department})
+                          </a>
+                        </td>
+                        <td>
+                           FIXME                        
+                        </td>
+                      </tr>
 
+
+                    </c:forEach>
+                    
                   </table>
                 </c:when>
 

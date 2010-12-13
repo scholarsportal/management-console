@@ -38,7 +38,7 @@
           <li>
             <a
              id="new-user-link"
-             href="${pageContext.request.contextPath}/users/new">Create New User Profile</a>
+             href="${pageContext.request.contextPath}/users/new">Create User Profile</a>
           </li>
           <li>
             <a

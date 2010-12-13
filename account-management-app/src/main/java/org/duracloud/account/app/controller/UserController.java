@@ -3,15 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.validation.groups.Default;
 
 import org.duracloud.account.common.domain.AccountInfo;
@@ -46,139 +43,175 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @Lazy
 @RequestMapping("/users")
-public class UserController extends  AbstractController {
+public class UserController extends AbstractController {
 
-	public static final String NEW_USER_VIEW = "user-new";
-	public static final String USER_HOME = "user-home";
+    public static final String NEW_USER_VIEW = "user-new";
+    public static final String USER_HOME = "user-home";
+    public static final String USER_ACCOUNTS = "user-accounts";
 
-	@Autowired
-	private AccountManagerService accountManagerService;
+    @Autowired
+    private AccountManagerService accountManagerService;
 
-	@Autowired
-	private DuracloudUserService userService;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private DuracloudUserService userService;
 
-	@Autowired
-	private Validator validator;
-	
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.setValidator(new org.springframework.validation.Validator(){
-			@Override
-			public boolean supports(Class<?> clazz) {
-				return true;
-			}
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-			@Override
-			public void validate(Object target, Errors errors) {
-				NewUserForm nuf = (NewUserForm)target;
-				//ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		        //Validator validator = factory.getValidator();
-		        
-		        Set<ConstraintViolation<NewUserForm>> constraintViolations = validator.validate(nuf, Default.class);
-		        for(ConstraintViolation<NewUserForm> cv : constraintViolations){
-		        	errors.rejectValue(cv.getPropertyPath().toString(), cv.getMessage(),cv.getMessage());
-		        }
+    @Autowired
+    private Validator validator;
 
-		        if(nuf.getPassword() == null || !nuf.getPassword().equals(nuf.getPasswordConfirm())){
-		        	nuf.setPassword(null);
-		        	nuf.setPasswordConfirm(null);
-		        	errors.rejectValue("passwordConfirm", "password.nomatch", "Passwords do not match. Please reenter the password and confirmation.");
-		        }
-			}
-		});
-	}
-	/**
-	 * 
-	 * @param userService
-	 */
-	public void setUserService(DuracloudUserService userService) {
-		if (userService == null) {
-			throw new NullPointerException(
-					"userService must be non-null");
-		}
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setValidator(new org.springframework.validation.Validator() {
+            @Override
+            public boolean supports(Class<?> clazz) {
+                return true;
+            }
 
-		this.userService = userService;
-		log.info("new instance created: " + getClass().getName());
-	}
+            @Override
+            public void validate(Object target, Errors errors) {
+                NewUserForm nuf = (NewUserForm) target;
+                // ValidatorFactory factory =
+                // Validation.buildDefaultValidatorFactory();
+                // Validator validator = factory.getValidator();
 
-	public DuracloudUserService getUserService(){
-		return this.userService;
-	}
+                Set<ConstraintViolation<NewUserForm>> constraintViolations =
+                    validator.validate(nuf, Default.class);
+                for (ConstraintViolation<NewUserForm> cv : constraintViolations) {
+                    errors.rejectValue(cv.getPropertyPath().toString(), cv
+                        .getMessage(), cv.getMessage());
+                }
 
-	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
-	public ModelAndView getNewForm() {
-		log.info("serving up NewUserForm");
-		return new ModelAndView(NEW_USER_VIEW, "newUserForm",
-				new NewUserForm());
-	}
+                if (nuf.getPassword() == null
+                    || !nuf.getPassword().equals(nuf.getPasswordConfirm())) {
+                    nuf.setPassword(null);
+                    nuf.setPasswordConfirm(null);
+                    errors
+                        .rejectValue(
+                            "passwordConfirm", "password.nomatch",
+                            "Passwords do not match. Please reenter the password and confirmation.");
+                }
+            }
+        });
+    }
 
-	@RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
-	public String profileRedirect() {
-			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			return "redirect:/users/byid/"  + username;
-		
-	}
+    /**
+     * 
+     * @param userService
+     */
+    public void setUserService(DuracloudUserService userService) {
+        if (userService == null) {
+            throw new NullPointerException("userService must be non-null");
+        }
 
-	@RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
-	public ModelAndView getUser(@PathVariable String username) throws DBNotFoundException{
-		log.debug("getting user {}", username);
-		DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
-		ModelAndView mav =  new ModelAndView(USER_HOME, 
-				"user", user);
-		
-		Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
-		mav.addObject("accounts", accounts);
-		return mav;
-	}
+        this.userService = userService;
+        log.info("new instance created: " + getClass().getName());
+    }
 
-	@RequestMapping(value = {NEW_MAPPING }, method = RequestMethod.POST)
-	public String add(
-			@ModelAttribute("newUserForm") @Valid NewUserForm newUserForm,
-			BindingResult result, Model model, HttpServletRequest request) throws Exception {
-		if (result.hasErrors()) {
-			return NEW_USER_VIEW;
-		}
-		
-		this.userService.createNewUser(
-				newUserForm.getUsername(), 
-				newUserForm.getPassword(), 
-				newUserForm.getFirstName(),
-				newUserForm.getLastName(),
-				newUserForm.getEmail());
-		
-		SecurityContext ctx = SecurityContextHolder.getContext();
-		Authentication auth = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						newUserForm.getUsername(), newUserForm.getPassword()));
-		ctx.setAuthentication(auth);
-	
-		
-		return "redirect:"+PREFIX+"/users/byid/"+newUserForm.getUsername();
-	}
+    public DuracloudUserService getUserService() {
+        return this.userService;
+    }
 
-	public AuthenticationManager getAuthenticationManager() {
-		return authenticationManager;
-	}
+    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
+    public ModelAndView getNewForm() {
+        log.info("serving up NewUserForm");
+        return new ModelAndView(NEW_USER_VIEW, "newUserForm", new NewUserForm());
+    }
 
-	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-		this.authenticationManager = authenticationManager;
-	}
+    @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
+    public String profileRedirect() {
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:/users/byid/" + username;
 
-	public void setAccountManagerService(AccountManagerService accountManagerService) {
-		this.accountManagerService = accountManagerService;
-	}
+    }
 
-	public AccountManagerService getAccountManagerService() {
-		return accountManagerService;
-	}
-	public void setValidator(Validator validator) {
-		this.validator = validator;
-	}
-	public Validator getValidator() {
-		return validator;
-	}
+    @RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
+    public ModelAndView getUser(@PathVariable String username)
+        throws DBNotFoundException {
+        log.debug("getting user {}", username);
+        ModelAndView mav = new ModelAndView(USER_HOME);
+        prepareModel(username,mav);
+        return mav;
+    }
+
+    @RequestMapping(value = { "/byid/{username}/accounts" }, method = RequestMethod.GET)
+    public ModelAndView getUserAccounts(@PathVariable String username)
+        throws DBNotFoundException {
+        log.debug("getting user accounts for {}", username);
+        ModelAndView mav = new ModelAndView(USER_ACCOUNTS);
+        prepareModel(username,mav);
+        return mav;
+    }
+
+    /**
+     * @param mav
+     */
+    private void prepareModel(String username, ModelAndView mav) throws DBNotFoundException{
+        DuracloudUser user =
+            this.userService.loadDuracloudUserByUsername(username);
+        mav.addObject("user", user);
+
+        Set<AccountInfo> accounts =
+            this.accountManagerService.findAccountsByUserId(user.getId());
+        mav.addObject("accounts", accounts);
+        
+    }
+
+    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
+    public String add(
+        @ModelAttribute("newUserForm") @Valid NewUserForm newUserForm,
+        BindingResult result, Model model, HttpServletRequest request)
+        throws Exception {
+        if (result.hasErrors()) {
+            return NEW_USER_VIEW;
+        }
+
+        this.userService.createNewUser(newUserForm.getUsername(), newUserForm
+            .getPassword(), newUserForm.getFirstName(), newUserForm
+            .getLastName(), newUserForm.getEmail());
+
+        //FIXME seems like there is some latency between successfully creating
+        //a new user and the user actually being visible to subsequent calls
+        //to the repository (due to amazon async I believe).
+        Thread.sleep(2000);
+        
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        Authentication auth =
+            authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                    newUserForm.getUsername(), newUserForm.getPassword()));
+        ctx.setAuthentication(auth);
+
+        return "redirect:"
+            + PREFIX + "/users/byid/" + newUserForm.getUsername();
+    }
+
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public void setAuthenticationManager(
+        AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public void setAccountManagerService(
+        AccountManagerService accountManagerService) {
+        this.accountManagerService = accountManagerService;
+    }
+
+    public AccountManagerService getAccountManagerService() {
+        return accountManagerService;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
+
+    public Validator getValidator() {
+        return validator;
+    }
 
 }

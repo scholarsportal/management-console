@@ -26,99 +26,102 @@ import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
+ * 
  */
 
 public class AccountManagerServiceImpl implements AccountManagerService {
 
-	private Logger log = LoggerFactory.getLogger(AccountManagerServiceImpl.class);
+    private Logger log =
+        LoggerFactory.getLogger(AccountManagerServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
-	private DuracloudUserService userService;
+    private DuracloudUserService userService;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-                                     DuracloudUserService duracloudUserService) {
+        DuracloudUserService duracloudUserService) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
-	}
+    }
 
-	@Override
-	public synchronized AccountService createAccount(AccountInfo accountInfo,
-                                                     DuracloudUser owner)
-			throws SubdomainAlreadyExistsException {
-		if (!subdomainAvailable(accountInfo.getSubdomain())) {
-			throw new SubdomainAlreadyExistsException();
-		}
-		try {
-			int acctId = getIdUtil().newAccountId();
-			AccountInfo newAccountInfo =
-                new AccountInfo(acctId,
-					            accountInfo.getSubdomain(),
-					            accountInfo.getAcctName(),
-					            accountInfo.getOrgName(),
-					            accountInfo.getDepartment(),
-                                accountInfo.getPaymentInfoId(),
-                                accountInfo.getInstanceIds(),
-					            accountInfo.getStorageProviders());
-			getAccountRepo().save(newAccountInfo);
+    @Override
+    public synchronized AccountService createAccount(AccountInfo accountInfo,
+        DuracloudUser owner) throws SubdomainAlreadyExistsException {
+        if (!subdomainAvailable(accountInfo.getSubdomain())) {
+            throw new SubdomainAlreadyExistsException();
+        }
+        try {
+            int acctId = getIdUtil().newAccountId();
+            AccountInfo newAccountInfo =
+                new AccountInfo(
+                    acctId, 
+                    accountInfo.getSubdomain(), 
+                    accountInfo.getAcctName(), 
+                    accountInfo.getOrgName(), 
+                    accountInfo.getDepartment(), 
+                    accountInfo.getPaymentInfoId(),
+                    accountInfo.getInstanceIds(), 
+                    accountInfo.getStorageProviders());
 
-			userService.grantOwnerRights(acctId, owner.getId());
-			return new AccountServiceImpl(newAccountInfo, repoMgr);
-		} catch (DBConcurrentUpdateException ex) {
-			throw new Error(ex);
-		}
-	}
+            getAccountRepo().save(newAccountInfo);
 
-	@Override
-	public AccountService getAccount(int accountId)
-			throws AccountNotFoundException {
-		try {
+            userService.grantOwnerRights(acctId, owner.getId());
+            return new AccountServiceImpl(newAccountInfo, repoMgr);
+        } catch (DBConcurrentUpdateException ex) {
+            throw new Error(ex);
+        }
+    }
+
+    @Override
+    public AccountService getAccount(int accountId)
+        throws AccountNotFoundException {
+        try {
             AccountInfo acctInfo = getAccountRepo().findById(accountId);
-			return new AccountServiceImpl(acctInfo, repoMgr);
-            
-		} catch (DBNotFoundException e) {
-			throw new AccountNotFoundException();
-		}
-	}
+            return new AccountServiceImpl(acctInfo, repoMgr);
 
-	@Override
-	public Set<AccountInfo> findAccountsByUserId(int userId) {
-		Set<AccountRights> userRights = null;
-		Set<AccountInfo> userAccounts = null;
-		try {
-			userRights = getRightsRepo().findByUserId(userId);
+        } catch (DBNotFoundException e) {
+            throw new AccountNotFoundException();
+        }
+    }
+
+    @Override
+    public Set<AccountInfo> findAccountsByUserId(int userId) {
+        Set<AccountRights> userRights = null;
+        Set<AccountInfo> userAccounts = null;
+        try {
+            userRights = getRightsRepo().findByUserId(userId);
             userAccounts = new HashSet<AccountInfo>();
-            for(AccountRights rights : userRights) {
-                userAccounts.add(getAccountRepo().findById(rights.getAccountId()));
+            for (AccountRights rights : userRights) {
+                userAccounts.add(getAccountRepo().findById(
+                    rights.getAccountId()));
             }
             return userAccounts;
-		} catch (DBNotFoundException e) {
+        } catch (DBNotFoundException e) {
             log.info("No accounts found for user {}", userId);
-		}
+        }
 
-		return new HashSet<AccountInfo>();
+        return new HashSet<AccountInfo>();
 
-	}
+    }
 
     /*
-     * FIXME: This action could be accomplished much more quickly by adding
-     *        a db query specific to this need, rather than having to loop
-     *        and check all accounts.
+     * FIXME: This action could be accomplished much more quickly by adding a db
+     * query specific to this need, rather than having to loop and check all
+     * accounts.
      */
-	@Override
-	public boolean subdomainAvailable(String subdomain) {
-		for (int accountId : getAccountRepo().getIds()) {
-			try {
-				AccountInfo accountInfo = getAccountRepo().findById(accountId);
-				if (accountInfo.getSubdomain().equals(subdomain)) {
-					return false;
-				}
-			} catch (DBNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean subdomainAvailable(String subdomain) {
+        for (int accountId : getAccountRepo().getIds()) {
+            try {
+                AccountInfo accountInfo = getAccountRepo().findById(accountId);
+                if (accountInfo.getSubdomain().equals(subdomain)) {
+                    return false;
+                }
+            } catch (DBNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
 
     private DuracloudAccountRepo getAccountRepo() {
         return repoMgr.getAccountRepo();

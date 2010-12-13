@@ -3,23 +3,21 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.classextension.EasyMock;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * @author Andrew Woods
- *         Date: Dec 10, 2010
+ * @author Andrew Woods Date: Dec 10, 2010
  */
 public class AccountServiceImplTest extends DuracloudServiceTestBase {
 
@@ -41,13 +39,13 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
 
         Set<StorageProviderType> emptySet = new HashSet<StorageProviderType>();
         acctInfo = new AccountInfo(acctId, subdomain, emptySet);
+        acctService = new AccountServiceImpl(acctInfo, repoMgr);
+
     }
 
     @Test
     public void testGetSetStorageProviders() throws Exception {
         setUpGetSetStorageProviders();
-
-        acctService = new AccountServiceImpl(acctInfo, repoMgr);
 
         Set<StorageProviderType> providers = acctService.getStorageProviders();
         Assert.assertEquals(0, providers.size());
@@ -66,14 +64,27 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     private void setUpGetSetStorageProviders() throws Exception {
         accountRepo.save(acctInfo);
         EasyMock.expectLastCall();
-
         replayMocks();
     }
 
     @Test
     public void testGetUsers() throws Exception {
-        // FIXME: implement
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_OWNER);
+        roles.add(Role.ROLE_ADMIN);
+        roles.add(Role.ROLE_USER);
+        int userId = 1;
+        rights.add(new AccountRights(1, acctId, userId, roles));
+        EasyMock.expect(this.rightsRepo.findByAccountId(acctId)).andReturn(
+            rights);
+        EasyMock.expect(this.userRepo.findById(userId)).andReturn(
+            newDuracloudUser(userId, "test"));
+        EasyMock.expectLastCall();
         replayMocks();
+        Set<DuracloudUser> users = this.acctService.getUsers();
+        Assert.assertNotNull(users);
+        Assert.assertTrue(users.size() == 1);
     }
 
     @Test

@@ -1,150 +1,164 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:jsp="http://java.sun.com/JSP/Page"
-	xmlns:tiles="http://tiles.apache.org/tags-tiles"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
-	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
 
-	<tiles:insertDefinition name="app-base">
-		<tiles:putAttribute name="title"
-			value="${accountInfo.orgName} :: Account Details" />
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="${accountInfo.orgName} :: Account Details" />
 
-		<tiles:putAttribute name="header-extensions" value="" />
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
 
-		<tiles:putAttribute name="body">
-			<tiles:insertDefinition name="account-base">
-        		<tiles:putAttribute name="mainTab" value="details"/>
-				<tiles:putAttribute name="content">
-                    <h1>Account and Billing Information</h1>
-					<div class="two-by-one-layout">
-                		<div id="account-details" class="dc-subgroup">
-                          <h2><span>Account Information</span>
-                                <span>
-                                    <ul class="horizontal-list">
-                                      <li><a id="account-edit-link" class="button"
-                                        href="javascript:void(0,'${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit')"><i class="pre pencil"></i>Edit</a>
-                                      </li>
-                                    </ul>
-                                </span>                  
-                            </h2>
+    <tiles:putAttribute
+     name="body">
+      <tiles:insertDefinition
+       name="account-base">
+        <tiles:putAttribute
+         name="mainTab"
+         value="details" />
 
-                            <table>
-                              <tr>
-                                <td>
-                                    Subdomain                                  
-                                </td>
-                                <td>
-                                    ${accountInfo.subdomain}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                    Owner                                  
-                                </td>
-                                <td>
-                                    ${accountInfo.owner.firstName}
-                                    ${accountInfo.owner.lastName}
-                                    <a href="mailto:${accountInfo.owner.email}">${accountInfo.owner.email}</a>
-                                    
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                    Account Name                                  
-                                </td>
-                                <td>
-                                    ${accountInfo.acctName}
-                                </td>
-                              </tr>
+        <tiles:putAttribute
+         name="content">
+          <h1>Account and Billing Information</h1>
 
-                              <tr>
-                                <td>
-                                    Organization Name                                  
-                                </td>
-                                <td>
-                                    ${accountInfo.orgName}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                    Department                                  
-                                </td>
-                                <td>
-                                    ${accountInfo.department}
-                                </td>
-                              </tr>
+          <div
+           class="two-by-one-layout">
+            <div
+             id="account-details"
+             class="dc-subgroup">
+              <h2>
+                <span>Account Information</span>
 
-                            </table>
-    					</div>
-    
-    					<div id="billing-details" class="dc-subgroup">
-        					<h2><span>Billing Information</span>
-                                <span>
-                                    <ul class="horizontal-list">
-                                      <li><a id="billing-edit-link" class="button"
-                                        href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing/edit"><i class="pre pencil"></i>Edit</a>
-                                      </li>
-                                    </ul>
-                                </span>                  
-                            </h2>
-                            <table class="standard-property">
-                              <tr>
-                                <td>
-                                   Name
-                                </td>
-                                <td>
-                                  Walter Berglund
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                   Street Address
-                                </td>
-                                <td>
-                                   1234 Main St
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                   City
-                                </td>
-                                <td>
-                                  St. Paul
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                   State
-                                </td>
-                                <td>
-                                  MN
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                   Country
-                                </td>
-                                <td>
-                                  USA
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                   Zip/Postal Code
-                                </td>
-                                <td>
-                                  99999-9999
-                                </td>
-                              </tr>
+                <span>
+                  <ul
+                   class="horizontal-list">
+                    <li>
+                      <a
+                       id="account-edit-link"
+                       class="button"
+                       href="javascript:void(0,'${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit')">
+                      <i
+                       class="pre pencil">
+                      </i>
 
-                            </table>
-        
-    					</div>
-					</div>
+                      Edit</a>
+                    </li>
+                  </ul>
+                </span>
+              </h2>
 
-				</tiles:putAttribute>
-			</tiles:insertDefinition>
-		</tiles:putAttribute>
-	</tiles:insertDefinition>
+              <table>
+                <tr>
+                  <td>Subdomain</td>
+
+                  <td>${accountInfo.subdomain}</td>
+                </tr>
+
+                <tr>
+                  <td>Owner</td>
+
+                  <td>${accountOwner.firstName} ${accountOwner.lastName} 
+                  <a
+                   href="mailto:${accountOwner.email}">${accountOwner.email}</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Account Name</td>
+
+                  <td>${accountInfo.acctName}</td>
+                </tr>
+
+                <tr>
+                  <td>Organization Name</td>
+
+                  <td>${accountInfo.orgName}</td>
+                </tr>
+
+                <tr>
+                  <td>Department</td>
+
+                  <td>${accountInfo.department}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div
+             id="billing-details"
+             class="dc-subgroup">
+              <h2>
+                <span>Billing Information</span>
+
+                <span>
+                  <ul
+                   class="horizontal-list">
+                    <li>
+                      <a
+                       id="billing-edit-link"
+                       class="button"
+                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing/edit">
+                      <i
+                       class="pre pencil">
+                      </i>
+
+                      Edit</a>
+                    </li>
+                  </ul>
+                </span>
+              </h2>
+
+              <table
+               class="standard-property">
+                <tr>
+                  <td>Name</td>
+
+                  <td>{Full Name Here}</td>
+                </tr>
+
+                <tr>
+                  <td>Street Address</td>
+
+                  <td>{Street Address 1}</td>
+                </tr>
+
+                <tr>
+                  <td>City</td>
+
+                  <td>{City}</td>
+                </tr>
+
+                <tr>
+                  <td>State</td>
+
+                  <td>{state}</td>
+                </tr>
+
+                <tr>
+                  <td>Country</td>
+
+                  <td>{country}</td>
+                </tr>
+
+                <tr>
+                  <td>Zip/Postal Code</td>
+
+                  <td>{zip/postalcode}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </tiles:putAttribute>
+      </tiles:insertDefinition>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
 </jsp:root>
 

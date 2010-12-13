@@ -3,6 +3,8 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Set;
+
 import javax.validation.Valid;
 
 import org.duracloud.account.common.domain.AccountInfo;
@@ -28,8 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Set;
 
 /**
  * 
@@ -77,15 +77,6 @@ public class AccountController extends AbstractAccountController {
 		return "account-providers";
 	}
 
-	@RequestMapping(value = {ACCOUNT_PATH+"/users"}, method = RequestMethod.GET)
-	public String getUsers(@PathVariable int accountId, Model model)
-			throws AccountNotFoundException {
-		loadAccountInfo(accountId, model);
-		return "account-users";
-	}
-
-	
-	
 	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
 	public ModelAndView getNewForm() {
 		log.info("serving up new AccountForm");
@@ -96,7 +87,7 @@ public class AccountController extends AbstractAccountController {
 	@RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
 	public String add( @ModelAttribute(NEW_ACCOUNT_FORM_KEY) @Valid NewAccountForm newAccountForm,
 					   BindingResult result, 
-					   Model model) {
+					   Model model) throws Exception {
 
 		if (result.hasErrors()) {
 			return NEW_ACCOUNT_VIEW;
@@ -120,6 +111,12 @@ public class AccountController extends AbstractAccountController {
 										newAccountForm.getStorageProviders());
 		
 			AccountService service = this.accountManagerService.createAccount(accountInfo, user);
+
+	        //FIXME seems like there is some latency between successfully creating
+	        //a new user and the user actually being visible to subsequent calls
+	        //to the repository (due to amazon async I believe).
+			Thread.sleep(2000);
+			
 			int id = service.retrieveAccountInfo().getId();
             String idText = Integer.toString(id);
             user = this.userService.loadDuracloudUserByUsername(username);
