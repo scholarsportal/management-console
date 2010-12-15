@@ -9,7 +9,6 @@ import java.util.Set;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
@@ -109,7 +108,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         Assert.assertNotNull(roles);
         Assert.assertTrue(!roles.contains(acctId));
 
-        userService.addUserToAccount(acctId, userId);
+        userService.grantUserRights(acctId, userId);
 
         // FIXME: not sure how this user functionality is intended to work - aw.
         //  roles = user.getRolesByAcct(acctId);

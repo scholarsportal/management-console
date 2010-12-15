@@ -3,20 +3,22 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -38,25 +40,24 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Set<DuracloudUser> getUsers() {
+        DuracloudUserRepo userRepo = repoMgr.getUserRepo();
+        DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+
         Set<DuracloudUser> users = new HashSet<DuracloudUser>();
         try {
-
             Set<AccountRights> rights =
-                this.repoMgr.getRightsRepo().findByAccountId(
-                    this.account.getId());
+                rightsRepo.findByAccountId(account.getId());
 
             for (AccountRights right : rights) {
-                DuracloudUser user = this.repoMgr.getUserRepo().findById(right.getUserId());
+                DuracloudUser user = userRepo.findById(right.getUserId());
                 Set<AccountRights> userRights = new HashSet<AccountRights>();
                 userRights.add(right);
                 user.setAccountRights(userRights); 
                 users.add(user);
             }
         } catch (DBNotFoundException ex) {
-            log
-                .warn(
-                    "something's wrong: no AccountRights found for account[{}]: error message: {}",
-                    this.account.getId(), ex.getMessage());
+            log.warn("No AccountRights found for account[{}]: error message: {}",
+                     this.account.getId(), ex.getMessage());
         }
 
         return users;

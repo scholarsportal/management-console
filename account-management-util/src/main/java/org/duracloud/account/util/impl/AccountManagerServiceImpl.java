@@ -9,13 +9,12 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.slf4j.Logger;
@@ -45,22 +44,22 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     @Override
     public synchronized AccountService createAccount(AccountInfo accountInfo,
-        DuracloudUser owner) throws SubdomainAlreadyExistsException {
+                                                     DuracloudUser owner)
+        throws SubdomainAlreadyExistsException {
         if (!subdomainAvailable(accountInfo.getSubdomain())) {
             throw new SubdomainAlreadyExistsException();
         }
         try {
             int acctId = getIdUtil().newAccountId();
             AccountInfo newAccountInfo =
-                new AccountInfo(
-                    acctId, 
-                    accountInfo.getSubdomain(), 
-                    accountInfo.getAcctName(), 
-                    accountInfo.getOrgName(), 
-                    accountInfo.getDepartment(), 
-                    accountInfo.getPaymentInfoId(),
-                    accountInfo.getInstanceIds(), 
-                    accountInfo.getStorageProviders());
+                new AccountInfo(acctId,
+                                accountInfo.getSubdomain(),
+                                accountInfo.getAcctName(),
+                                accountInfo.getOrgName(),
+                                accountInfo.getDepartment(),
+                                accountInfo.getPaymentInfoId(),
+                                accountInfo.getInstanceIds(),
+                                accountInfo.getStorageProviders());
 
             getAccountRepo().save(newAccountInfo);
 
@@ -91,8 +90,8 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             userRights = getRightsRepo().findByUserId(userId);
             userAccounts = new HashSet<AccountInfo>();
             for (AccountRights rights : userRights) {
-                userAccounts.add(getAccountRepo().findById(
-                    rights.getAccountId()));
+                userAccounts.add(
+                    getAccountRepo().findById(rights.getAccountId()));
             }
             return userAccounts;
         } catch (DBNotFoundException e) {

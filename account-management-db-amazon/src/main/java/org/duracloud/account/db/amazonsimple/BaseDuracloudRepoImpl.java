@@ -128,20 +128,6 @@ public abstract class BaseDuracloudRepoImpl {
             throw new DBNotFoundException(logError("No items found",
                                                    attName+"="+attValue));
         }
-        
-        
-         //FIXME The commented code should probably be removed: 
-         //This seams to me to be a bug:
-         //it's causing the DuracloudRightsRepositoryImpl
-         //to choke when there is more than one account
-         // associated with a single user.
-         // Am I missing something here?
-         // Can Andrew or Bill please confirm?
-        /*
-        if (items.size() != 1) {
-            throw new DBException(logError(
-                "Unexpected item count: " + items.size(), attName+"="+attValue));
-        }*/
 
         return items;
     }

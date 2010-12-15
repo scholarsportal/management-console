@@ -24,9 +24,9 @@ public interface DuracloudUserService {
         throws DBConcurrentUpdateException,
                UserAlreadyExistsException;
 
-    public void addUserToAccount(int acctId, int userId);
+    public void grantUserRights(int acctId, int userId);
 
-    public void removeUserFromAccount(int acctId, int userId);
+    public void revokeUserRights(int acctId, int userId);
 
     public void grantAdminRights(int acctId, int userId);
 

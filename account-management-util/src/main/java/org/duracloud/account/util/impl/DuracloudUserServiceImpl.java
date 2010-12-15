@@ -82,7 +82,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void addUserToAccount(int acctId, int userId) {
+    public void grantUserRights(int acctId, int userId) {
         retryUpdateRights(acctId, userId, Role.ROLE_USER, true);
     }
 
@@ -97,7 +97,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	}
 
     @Override
-    public void removeUserFromAccount(int acctId, int userId) {
+    public void revokeUserRights(int acctId, int userId) {
     	retryUpdateRights(acctId, userId, Role.ROLE_USER, false);
     }    
 
