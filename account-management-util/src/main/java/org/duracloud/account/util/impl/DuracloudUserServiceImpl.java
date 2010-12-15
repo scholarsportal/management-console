@@ -179,15 +179,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         try {
             AccountRights rights =
                 getRightsRepo().findByAccountIdAndUserId(acctId, userId);
+
+            // Removing user rights is equivalent to removing all rights
+            if(Role.ROLE_USER.equals(role)) {
+                getRightsRepo().delete(rights.getId());
+                return;
+            }
+
             Set<Role> roles = rights.getRoles();
             if(roles != null && roles.contains(role)) {
                 roles.remove(Role.ROLE_OWNER);
-                if(role.equals(Role.ROLE_ADMIN)) {
+                if(Role.ROLE_ADMIN.equals(role)) {
                     roles.remove(Role.ROLE_ADMIN);
-                } else if(role.equals(Role.ROLE_USER)) {
-                    roles.remove(Role.ROLE_ADMIN);
-                    roles.remove(Role.ROLE_USER);
-                }                                
+                }
                 getRightsRepo().save(rights);
             } else {
                 return; // Role does not exist for user on account

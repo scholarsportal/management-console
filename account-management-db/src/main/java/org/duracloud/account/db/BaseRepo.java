@@ -37,6 +37,17 @@ public interface BaseRepo<T> {
     public void save(T item) throws DBConcurrentUpdateException;
 
     /**
+     * This method removes an item along with all of its associated attributes
+     * from the underlying persistence layer. The item to be removed has a 
+     * primary key equal to the arg id.
+     *
+     * No exception is thrown if the item does not exist.
+     *
+     * @param id of the item to be removed
+     */
+    public void delete(int id);
+
+    /**
      * This method returns ids for all items in this repo.
      *
      * @return set of ids

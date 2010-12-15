@@ -161,6 +161,40 @@ public class AmazonSimpleDBCallerTest {
     }
 
     @Test
+    public void testDeleteAttributes() throws Exception {
+        db = createMockDeleteAttributesDB();
+
+        caller.deleteAttributes(db, null);
+        caller.deleteAttributes(db, null);
+
+        EasyMock.verify(db);
+    }
+
+    private AmazonSimpleDBAsync createMockDeleteAttributesDB() {
+        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+
+        AmazonServiceException e = new AmazonServiceException("test-0");
+        e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
+        db.deleteAttributes(null);
+        EasyMock.expectLastCall().andThrow(e);
+
+        AmazonClientException ex = new AmazonClientException("test-1");
+        db.deleteAttributes(null);
+        EasyMock.expectLastCall().andThrow(ex);
+
+        e = new AmazonServiceException("test-2");
+        e.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        db.deleteAttributes(null);
+        EasyMock.expectLastCall().andThrow(e);
+
+        db.deleteAttributes(null);
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(db);
+        return db;
+    }
+
+    @Test
     public void testDeleteDomainAsync() throws Exception {
         db = createMockDeleteDomainAsyncDB();
 

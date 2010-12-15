@@ -6,6 +6,7 @@ package org.duracloud.account.db.amazonsimple;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,6 +38,14 @@ public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
 
     private static DuracloudUserRepoImpl createUserRepo() throws Exception {
         return new DuracloudUserRepoImpl(getDBManager(), DOMAIN);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        for(Integer itemId : userRepo.getItemIds()) {
+            userRepo.delete(itemId);
+        }
+        verifyRepoSize(userRepo, 0);
     }
 
     @AfterClass
@@ -108,6 +117,16 @@ public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
         Assert.assertTrue(thrown);
 
         verifyCounter(user0, 2);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        DuracloudUser user0 = createUser(0, username + "0");
+        userRepo.save(user0);
+        verifyRepoSize(userRepo, 1);
+
+        userRepo.delete(user0.getId());
+        verifyRepoSize(userRepo, 0);
     }
 
     private DuracloudUser createUser(int id, String name) {

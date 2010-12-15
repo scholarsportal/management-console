@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,6 +49,14 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         return new DuracloudRightsRepoImpl(getDBManager(), DOMAIN);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        for(Integer itemId : rightsRepo.getItemIds()) {
+            rightsRepo.delete(itemId);
+        }
+        verifyRepoSize(rightsRepo, 0);
+    }
+
     @AfterClass
     public static void afterClass() throws Exception {
         createRightsRepo().removeDomain();
@@ -76,10 +85,10 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         rightsRepo.save(rights1);
         rightsRepo.save(rights2);
 
-        List<String> expectedIds = new ArrayList<String>();
-        expectedIds.add(String.valueOf(rights0.getId()));
-        expectedIds.add(String.valueOf(rights1.getId()));
-        expectedIds.add(String.valueOf(rights2.getId()));
+        List<Integer> expectedIds = new ArrayList<Integer>();
+        expectedIds.add(rights0.getId());
+        expectedIds.add(rights1.getId());
+        expectedIds.add(rights2.getId());
 
         new DBCaller<Integer>() {
             protected Integer doCall() throws Exception {
@@ -123,6 +132,16 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         Assert.assertTrue(thrown);
 
         verifyCounter(rights0, 2);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        AccountRights rights0 = createRights(0, 0, 0);
+        rightsRepo.save(rights0);
+        verifyRepoSize(rightsRepo, 1);
+
+        rightsRepo.delete(rights0.getId());
+        verifyRepoSize(rightsRepo, 0);
     }
 
     private AccountRights createRights(int id, int accountId, int userId) {

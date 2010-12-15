@@ -5,6 +5,7 @@ package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
+import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
 import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
 import com.amazonaws.services.simpledb.model.Item;
 import com.amazonaws.services.simpledb.model.ListDomainsRequest;
@@ -175,6 +176,12 @@ public abstract class BaseDuracloudRepoImpl {
         }
 
         return items.get(0);
+    }
+
+    public void delete(int id) {
+        DeleteAttributesRequest request =
+            new DeleteAttributesRequest(domain, String.valueOf(id));
+        caller.deleteAttributes(db, request);
     }
 
     private String logError(String text, String id) {

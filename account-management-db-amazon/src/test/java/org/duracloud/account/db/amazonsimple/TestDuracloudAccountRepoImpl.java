@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,6 +57,14 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         return new DuracloudAccountRepoImpl(getDBManager(), DOMAIN);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        for(Integer itemId : accountRepo.getItemIds()) {
+            accountRepo.delete(itemId);
+        }
+        verifyRepoSize(accountRepo, 0);
+    }
+
     @AfterClass
     public static void afterClass() throws Exception {
         createAccountRepo().removeDomain();
@@ -84,10 +93,10 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         accountRepo.save(acct1);
         accountRepo.save(acct2);
 
-        List<String> expectedIds = new ArrayList<String>();
-        expectedIds.add(String.valueOf(acct0.getId()));
-        expectedIds.add(String.valueOf(acct1.getId()));
-        expectedIds.add(String.valueOf(acct2.getId()));
+        List<Integer> expectedIds = new ArrayList<Integer>();
+        expectedIds.add(acct0.getId());
+        expectedIds.add(acct1.getId());
+        expectedIds.add(acct2.getId());
 
         new DBCaller<Integer>() {
             protected Integer doCall() throws Exception {
@@ -121,6 +130,16 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         Assert.assertTrue(thrown);
 
         verifyCounter(acct0, 2);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        AccountInfo acct0 = createAccount(0);
+        accountRepo.save(acct0);
+        verifyRepoSize(accountRepo, 1);
+
+        accountRepo.delete(acct0.getId());
+        verifyRepoSize(accountRepo, 0);
     }
 
     private AccountInfo createAccount(int id) {

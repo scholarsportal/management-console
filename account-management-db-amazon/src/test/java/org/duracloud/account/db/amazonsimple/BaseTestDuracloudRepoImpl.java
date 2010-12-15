@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.error.DBException;
 import org.duracloud.common.model.Credential;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -112,5 +113,14 @@ public class BaseTestDuracloudRepoImpl {
 
         protected abstract Set<T> doCall() throws Exception;
     }
+
+    protected void verifyRepoSize(final BaseRepo repo,
+                                  final int expectedSize) {
+        new DBCaller<Integer>() {
+            protected Integer doCall() throws Exception {
+                return repo.getIds().size();
+            }
+        }.call(expectedSize);
+    }   
     
 }
