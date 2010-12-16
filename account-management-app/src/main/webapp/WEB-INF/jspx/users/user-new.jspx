@@ -18,14 +18,6 @@
 
     <tiles:putAttribute
      name="header-extensions">
-<script
- type="text/javascript"
- xml:space="preserve">
-        $(function(){
-        $("#first-name-text").focus();
-        });
-        
-</script>
     </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -37,12 +29,10 @@
           <div
            class="dc-subgroup">
             <h2>Create a New Duracloud Profile</h2>
+
             <div
              class="dc-subgroup-body">
-              <p>
-                All fields marked <span class="required"/> are required.                
-              </p>
-
+              <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
               <jsp:include
                page="/WEB-INF/jspx/includes/global-errors.jspx">
                 <jsp:param
@@ -62,6 +52,7 @@
                       <form:label
                        cssErrorClass="error"
                        for="first-name-text"
+                       autofocus="true"
                        path="firstName">First Name</form:label>
                     </td>
 
@@ -83,7 +74,6 @@
                        path="lastName">Last Name</form:label>
                     </td>
 
-
                     <td
                      class="value required">
                       <form:input
@@ -102,7 +92,6 @@
                        path="email">Email</form:label>
                     </td>
 
-
                     <td
                      class="value required">
                       <form:input
@@ -120,7 +109,6 @@
                        for="username-text"
                        path="username">Username</form:label>
                     </td>
-
 
                     <td
                      class="value required">
@@ -172,7 +160,6 @@
 
                 <div
                  class="button-bar">
-                  
                   <button
                    id="create-user-button"
                    type="submit">Create Profile</button>

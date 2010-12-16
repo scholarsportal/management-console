@@ -269,7 +269,6 @@
                            path="creditCard.expiration">Expiration</form:label>
                         </td>
 
-
                         <td
                          class="value required">
                           <form:input
@@ -289,7 +288,7 @@
                         </td>
 
                         <td
-                        class="value required">
+                         class="value required">
                           <form:input
                            id="cc-cvc"
                            cssErrorClass="error"
@@ -313,7 +312,6 @@
                            path="invoice.name">Contact Name</form:label>
                         </td>
 
- 
                         <td
                          class="value required">
                           <form:input
@@ -332,10 +330,9 @@
                            path="invoice.phone">Contact Phone</form:label>
                         </td>
 
- 
                         <td
                          class="value required">
-                         <form:input
+                          <form:input
                            id="invoice-phone"
                            cssErrorClass="error"
                            path="invoice.phone" />

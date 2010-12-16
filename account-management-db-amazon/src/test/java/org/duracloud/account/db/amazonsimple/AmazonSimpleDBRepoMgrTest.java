@@ -6,7 +6,6 @@ package org.duracloud.account.db.amazonsimple;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.impl.IdUtilImpl;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +50,13 @@ public class AmazonSimpleDBRepoMgrTest {
         }
 
         try {
+            repoMgr.getUserInvitationRepo();
+            Assert.fail("exception expected");
+        } catch (DBUninitializedException e) {
+            numExceptions++;
+        }
+
+        try {
             repoMgr.getInstanceRepo();
             Assert.fail("exception expected");
         } catch (DBUninitializedException e) {
@@ -72,7 +78,7 @@ public class AmazonSimpleDBRepoMgrTest {
             numExceptions++;
         }
 
-        Assert.assertEquals(6, numExceptions);
+        Assert.assertEquals(7, numExceptions);
     }
 
 }

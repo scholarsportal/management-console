@@ -10,14 +10,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,16 +34,69 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Lazy
 public class AccountUsersController extends AbstractAccountController {
     public static final String ACCOUNT_USERS_VIEW_ID = "account-users";
+    public static final String USERS_INVITE_VIEW_ID = "account-users-invite";
+
     public static final String ACCOUNT_USERS_PATH = "/users";
     public static final String ACCOUNT_USERS_MAPPING =
         ACCOUNT_PATH + ACCOUNT_USERS_PATH;
+    public static final String USERS_INVITE_MAPPING =
+        ACCOUNT_USERS_MAPPING + "/invite";
 
+    public static final String USERS_KEY = "users";
+
+    /**
+     * 
+     * @param accountId
+     * @param model
+     * @return
+     * @throws AccountNotFoundException
+     */
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException {
+        throws Exception {
         loadAccountUsers(accountId, model);
 
         return ACCOUNT_USERS_VIEW_ID;
+    }
+
+    @RequestMapping(value = USERS_INVITE_MAPPING, method = RequestMethod.GET)
+    public String newInivation(@PathVariable int accountId, Model model)
+        throws AccountNotFoundException {
+        log.info("serving up new user invitation form");
+        loadAccountInfo(accountId, model);
+        model.addAttribute("invitationForm", new InvitationForm());
+        return USERS_INVITE_VIEW_ID;
+    }
+
+    @RequestMapping(value = USERS_INVITE_MAPPING, method = RequestMethod.POST)
+    public String sendInvitations(
+        @ModelAttribute("invitationForm") @Valid InvitationForm invitationForm,
+        @PathVariable int accountId, Model model) throws Exception {
+        log.info("sending invitations from account {}", accountId);
+        List<String> emailAddresses =
+            EmailAddressesParser.parse(invitationForm.getEmailAddresses());
+        AccountService service = getAccountService(accountId);
+
+        for (String emailAddress : emailAddresses) {
+            UserInvitation ui = service.createUserInvitation(emailAddress);
+            log.debug(
+                "created user invitation on account {} for {} expiring on {}",
+                new Object[] {
+                    ui.getAccountId(), ui.getUserEmail(),
+                    ui.getExpirationDate() });
+        }
+        
+        loadAccountUsers(accountId, model);
+        return ACCOUNT_USERS_VIEW_ID;
+    }
+
+    /**
+     * @param accountId
+     * @return
+     */
+    private AccountService getAccountService(int accountId)
+        throws AccountNotFoundException {
+        return this.getAccountService(accountId);
     }
 
     /**
@@ -47,20 +104,22 @@ public class AccountUsersController extends AbstractAccountController {
      * @param model
      */
     private void loadAccountUsers(int accountId, Model model)
-        throws AccountNotFoundException {
+        throws Exception {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         Set<DuracloudUser> users = accountService.getUsers();
+        Set<UserInvitation> pendingUserInvitations = accountService.getPendingInvitations();
+        model.addAttribute("pendingUserInvitations", pendingUserInvitations);    
         addAccountInfoToModel(accountService.retrieveAccountInfo(), model);
-        addAccountOwnerToModel(getOwner(accountId, users), model);
-        model.addAttribute("users", buildUserList(accountId,users));
+        model.addAttribute(USERS_KEY, buildUserList(accountId, users));
     }
 
     /**
      * @param accountService
      * @return
      */
-    private List<AccountUser> buildUserList(int accountId, Set<DuracloudUser> users) {
+    private List<AccountUser> buildUserList(
+        int accountId, Set<DuracloudUser> users) {
         List<AccountUser> list = new LinkedList<AccountUser>();
         for (DuracloudUser u : users) {
             AccountUser au =
@@ -96,11 +155,11 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     /**
-     * This class is a read only representation of a user from the perspective of an 
-     * account admin/owner.
+     * This class is a read only representation of a user from the perspective
+     * of an account admin/owner.
      * 
      * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
-     *
+     * 
      */
     public class AccountUser {
         public AccountUser(

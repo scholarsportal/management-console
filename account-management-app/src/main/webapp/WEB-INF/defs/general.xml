@@ -47,5 +47,6 @@
   <definition name="account-providers" template="/WEB-INF/jspx/accounts/account/account-providers.jspx" />
   <definition name="account-instance" template="/WEB-INF/jspx/accounts/account/account-instance.jspx" />
   <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
+  <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx" />
 
 </tiles-definitions>

@@ -3,7 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.List;
 import java.util.Set;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;

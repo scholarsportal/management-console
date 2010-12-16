@@ -4,11 +4,10 @@
 package org.duracloud.account.app.controller;
 
 import java.text.MessageFormat;
-import java.util.Set;
+import java.util.List;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -59,9 +58,9 @@ public abstract class AbstractAccountController extends AbstractController {
         model.addAttribute("accountInfo", info);
     }
 
-    protected void addAccountOwnerToModel(DuracloudUser owner, Model model)
+    protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
         throws AccountNotFoundException {
-        model.addAttribute("accountOwner", owner);
+        model.addAttribute("accountOwners", owners);
     }
 
     /**
@@ -81,20 +80,6 @@ public abstract class AbstractAccountController extends AbstractController {
         addAccountInfoToModel(accountInfo, model);
     }
 
-    /**
-     * @return
-     */
-    protected DuracloudUser getOwner(int accountId, Set<DuracloudUser> users) {
-        for (DuracloudUser user : users) {
-            for (Role role : user.getRolesByAcct(accountId)) {
-                if (role == Role.ROLE_OWNER) {
-                    return user;
-                }
-            }
-        }
-        throw new RuntimeException(
-            "No owner designated for this account - this should never happen");
-    }
 
     /**
      * @param accountId

@@ -88,6 +88,19 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testGetPendingUserInvitations() throws Exception {
+        // FIXME: implement
+        replayMocks();
+    }
+
+    @Test
+    public void testCreateUserInvitation() throws Exception {
+        // FIXME: implement
+        replayMocks();
+    }
+
+    
+    @Test
     public void testStoreRetrieveAccountInfo() throws Exception {
         // FIXME: implement
         replayMocks();

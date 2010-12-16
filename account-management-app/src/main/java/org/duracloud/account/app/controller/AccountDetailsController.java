@@ -31,7 +31,6 @@ public class AccountDetailsController extends AbstractAccountController {
         AccountService service =
             this.accountManagerService.getAccount(accountId);
         loadAccountInfo(service, model);
-        addAccountOwnerToModel(getOwner(accountId, service.getUsers()), model);
         return ACCOUNT_DETAILS_VIEW_ID;
     }
 

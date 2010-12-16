@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: ${accountInfo.id} :: Invite New Users" />
+
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
+
+    <tiles:putAttribute
+     name="body">
+      <tiles:insertDefinition
+       name="account-base">
+        <tiles:putAttribute
+         name="mainTab"
+         value="users" />
+
+        <tiles:putAttribute
+         name="content">
+          <div
+           id="account-list"
+           class="dc-subgroup">
+            <h2>Invite New Users to ${accountInfo.acctName}</h2>
+
+            <div
+             class="dc-subgroup-body">
+
+              <p>Invite new users to this Duracloud account. Invitees that
+              already have Duracloud profiles will be invited to login, while
+              those without will be required to create a new Duracloud profile.
+              Enter one or more email addresses below, separated by commas.
+              Invitations will expire within 30 days of issuance.</p>
+              
+              <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
+              <jsp:include
+               page="/WEB-INF/jspx/includes/global-errors.jspx">
+                <jsp:param
+                 name="formName"
+                 value="invitationForm" />
+              </jsp:include>
+
+             <form:form
+               id="new-user-form"
+               modelAttribute="newUserForm"
+               method="POST">
+                <table
+                 class="standard-form">
+                  <tr>
+                    <td
+                     class="label">
+                      <form:label
+                       cssErrorClass="error"
+                       for="role"
+                       autofocus="true"
+                       path="role">Invite each as a</form:label>
+                    </td>
+
+                    <td
+                     class="value">
+                     
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td
+                     class="label">
+                      <form:label
+                       cssErrorClass="error"
+                       for="email-addresses"
+                       autofocus="true"
+                       path="emailAddresses">Email Addresses</form:label>
+                    </td>
+
+                    <td
+                     class="value required">
+                      <form:input
+                       cssErrorClass="error"
+                       id="email-addresses"
+                       path="emailAddresses" />
+                    </td>
+                  </tr>
+
+                </table>
+              
+            </div>
+          </div>
+        </tiles:putAttribute>
+      </tiles:insertDefinition>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

@@ -33,12 +33,12 @@
            class="dc-subgroup">
             <h2>Users 
             <a
-             href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/new"
+             href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invite"
              class="button">
             <i
              class="pre plus">
             </i>
-            Add Users to Account</a>
+            Invite New Users</a>
             </h2>
 
             <div

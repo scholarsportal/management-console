@@ -3,6 +3,9 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBUninitializedException;
@@ -13,9 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 /**
  * @author Andrew Woods

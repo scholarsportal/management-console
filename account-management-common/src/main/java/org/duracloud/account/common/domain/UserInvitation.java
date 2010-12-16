@@ -37,6 +37,21 @@ public class UserInvitation extends BaseDomainData {
         this.counter = counter;
     }
 
+
+    public UserInvitation(int id, int counter,
+        int accountId, String userEmail, Date creationDate,
+        Date expirationDate, String redemptionCode) {
+        super();
+        this.id = id;
+        this.counter = counter;
+        this.accountId = accountId;
+        this.userEmail = userEmail;
+        this.creationDate = creationDate;
+        this.expirationDate = expirationDate;
+        this.redemptionCode = redemptionCode;
+    }
+
+
     public int getAccountId() {
         return accountId;
     }

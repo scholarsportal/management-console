@@ -3,14 +3,8 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
@@ -36,15 +30,14 @@ import org.springframework.web.servlet.ModelAndView;
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
  */
-public class AccountControllerTest {
+public class AccountControllerTest extends AmaControllerTestBase{
     private AccountController accountController;
-    private static final String TEST_USERNAME = "testuser";
-    private static final Integer TEST_ACCOUNT_ID = 1;
 
     @Before
-    public void before() {
+    public void before() throws Exception {
+        super.before();
         accountController = new AccountController();
-
+        accountController.setAccountManagerService(this.accountManagerService);
     }
 
     /**
@@ -54,7 +47,6 @@ public class AccountControllerTest {
      */
     @Test
     public void testGetHome() throws AccountNotFoundException {
-        setupSimpleAccountManagerService();
         Model model = new ExtendedModelMap();
         String view = accountController.getHome(TEST_ACCOUNT_ID, model);
         Assert.assertEquals(AccountController.ACCOUNT_HOME, view);
@@ -64,7 +56,6 @@ public class AccountControllerTest {
 
     @Test
     public void testGetInstance() throws AccountNotFoundException {
-        setupSimpleAccountManagerService();
         Model model = new ExtendedModelMap();
         accountController.getInstance(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model
@@ -73,63 +64,21 @@ public class AccountControllerTest {
 
     @Test
     public void testGetProviders() throws AccountNotFoundException {
-        setupSimpleAccountManagerService();
         Model model = new ExtendedModelMap();
         accountController.getProviders(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model
             .containsAttribute(AccountController.ACCOUNT_INFO_KEY));
     }
 
-    // @Test
-    // public void testGetUsers() throws AccountNotFoundException {
-    // setupSimpleAccountManagerService();
-    // Model model = new ExtendedModelMap();
-    // accountController.getUsers(TEST_ACCOUNT_ID, model);
-    // Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
-    // }
 
     @Test
     public void testGetStatement() throws AccountNotFoundException {
-        setupSimpleAccountManagerService();
         Model model = new ExtendedModelMap();
         accountController.getStatement(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model
             .containsAttribute(AccountController.ACCOUNT_INFO_KEY));
     }
 
-    private void setupSimpleAccountManagerService()
-        throws AccountNotFoundException {
-        AccountManagerService ams =
-            EasyMock.createMock(AccountManagerService.class);
-        AccountService as = EasyMock.createMock(AccountService.class);
-        EasyMock
-            .expect(as.retrieveAccountInfo()).andReturn(createAccountInfo())
-            .times(1);
-
-        EasyMock.expect(ams.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
-        EasyMock.replay(ams, as);
-        accountController.setAccountManagerService(ams);
-    }
-
-    /**
-     * @return
-     */
-    private AccountInfo createAccountInfo() {
-        return new AccountInfo(
-            TEST_ACCOUNT_ID, "testdomain", "test", "test", "test", 0, null,
-            null);
-    }
-
-    private DuracloudUser createUser() {
-        DuracloudUser user =
-            new DuracloudUser(0, TEST_USERNAME, "test", "test", "test", "test");
-        Set<AccountRights> rights = new HashSet<AccountRights>();
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_OWNER);
-        rights.add(new AccountRights(1, TEST_ACCOUNT_ID.intValue(), 0, roles));
-        user.setAccountRights(rights);
-        return user;
-    }
 
     /**
      * Test method for

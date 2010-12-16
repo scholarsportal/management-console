@@ -3,17 +3,18 @@
  */
 package org.duracloud.account.util;
 
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.storage.domain.StorageProviderType;
 
-import java.util.Set;
-
 /**
  * An interface for manipulating account data.
- *
+ * 
  * @author "Daniel Bernstein (dbernstein@duracloud.org)"
  */
 public interface AccountService {
@@ -27,9 +28,8 @@ public interface AccountService {
      * @param orgName
      * @param department
      */
-    public void storeAccountInfo(String acctName,
-                                 String orgName,
-                                 String department);
+    public void storeAccountInfo(
+        String acctName, String orgName, String department);
 
     /**
      * @return
@@ -46,7 +46,6 @@ public interface AccountService {
      */
     public void storeSubdomain(String subdomain);
 
-
     /**
      * @return
      */
@@ -55,11 +54,18 @@ public interface AccountService {
     /**
      * @param storageProviderTypes
      */
-    public void setStorageProviders(Set<StorageProviderType> storageProviderTypes)
+    public void setStorageProviders(
+        Set<StorageProviderType> storageProviderTypes)
         throws DBConcurrentUpdateException;
 
-	/**
+    /**
      * @return empty list
      */
-	public Set<DuracloudUser> getUsers();
+    public Set<DuracloudUser> getUsers();
+
+    public UserInvitation createUserInvitation(String emailAddress)
+        throws DBConcurrentUpdateException;
+
+    public Set<UserInvitation> getPendingInvitations()
+        throws DBConcurrentUpdateException;
 }

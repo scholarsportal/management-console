@@ -10,20 +10,10 @@
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
 
-  <spring:hasBindErrors
-   name="${param.formName}">
-    <div
-     class="global-errors">
-      <p>Please correct the following errors:</p>
+  <p>All fields marked 
+  <span
+   class="required" />
 
-      <ul>
-        <c:forEach
-         var="error"
-         items="${errors.allErrors}">
-          <li>${error.defaultMessage}</li>
-        </c:forEach>
-      </ul>
-    </div>
-  </spring:hasBindErrors>
+  are required.</p>
 </jsp:root>
 

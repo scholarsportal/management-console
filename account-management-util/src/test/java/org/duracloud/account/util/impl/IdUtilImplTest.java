@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.impl.IdUtilImpl;
 import org.easymock.classextension.EasyMock;
@@ -27,6 +28,8 @@ public class IdUtilImplTest {
     private DuracloudAccountRepo accountRepo;
     private DuracloudUserRepo userRepo;
     private DuracloudRightsRepo rightsRepo;
+    private DuracloudUserInvitationRepo userInvitationRepo;
+
     private static final int COUNT = 5;
 
     @Before
@@ -34,9 +37,17 @@ public class IdUtilImplTest {
         accountRepo = createMockAccountRepo(COUNT);
         userRepo = createMockUserRepo(COUNT);
         rightsRepo = createMockRightsRepo(COUNT);
+        userInvitationRepo = createMockUserInvitationRepo(COUNT);
 
         idUtil = new IdUtilImpl();
-        idUtil.initialize(userRepo, accountRepo, rightsRepo);
+        idUtil.initialize(userRepo, accountRepo, rightsRepo, userInvitationRepo);
+    }
+
+    private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
+        DuracloudUserInvitationRepo repo = EasyMock.createMock(DuracloudUserInvitationRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
     }
 
     private DuracloudAccountRepo createMockAccountRepo(int count) {
@@ -73,6 +84,8 @@ public class IdUtilImplTest {
         EasyMock.verify(accountRepo);
         EasyMock.verify(userRepo);
         EasyMock.verify(rightsRepo);
+        EasyMock.verify(userInvitationRepo);
+
     }
 
     @Test
@@ -89,4 +102,10 @@ public class IdUtilImplTest {
     public void testNewRightsId() throws Exception {
         Assert.assertEquals(COUNT, idUtil.newRightsId());
     }
+
+    @Test
+    public void testNewUserInvitationId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newUserInvitationId());
+    }
+
 }

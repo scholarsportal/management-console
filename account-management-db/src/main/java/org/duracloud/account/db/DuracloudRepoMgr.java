@@ -19,9 +19,12 @@ public interface DuracloudRepoMgr {
 
     public DuracloudRightsRepo getRightsRepo();
 
+    public DuracloudUserInvitationRepo getUserInvitationRepo();
+
     public DuracloudInstanceRepo getInstanceRepo();
 
     public DuracloudImageRepo getImageRepo();
 
     public IdUtil getIdUtil();
+
 }

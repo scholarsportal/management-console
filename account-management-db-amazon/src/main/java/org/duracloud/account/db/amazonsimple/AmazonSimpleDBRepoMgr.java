@@ -8,6 +8,7 @@ import org.duracloud.account.db.DuracloudImageRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBException;
@@ -24,16 +25,17 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 
 /**
- * @author Andrew Woods
- *         Date: Dec 9, 2010
+ * @author Andrew Woods Date: Dec 9, 2010
  */
 public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
 
-    private final Logger log = LoggerFactory.getLogger(AmazonSimpleDBRepoMgr.class);
+    private final Logger log =
+        LoggerFactory.getLogger(AmazonSimpleDBRepoMgr.class);
 
     private DuracloudUserRepo userRepo;
     private DuracloudAccountRepo accountRepo;
     private DuracloudRightsRepo rightsRepo;
+    private DuracloudUserInvitationRepo userInvitationRepo;
     private DuracloudInstanceRepo instanceRepo; // not used yet
     private DuracloudImageRepo imageRepo; // not used yet
 
@@ -68,25 +70,36 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     }
 
     private void doInitialize(Credential credential) {
-        AmazonSimpleDBClientMgr dbClientMgr = new AmazonSimpleDBClientMgr(
-            credential.getUsername(),
-            credential.getPassword());
+        AmazonSimpleDBClientMgr dbClientMgr =
+            new AmazonSimpleDBClientMgr(credential.getUsername(), credential
+                .getPassword());
 
         if (null != DOMAIN_PREFIX) {
             String userTable = DOMAIN_PREFIX + "_USER_DOMAIN";
             String acctTable = DOMAIN_PREFIX + "_ACCT_DOMAIN";
             String rightsTable = DOMAIN_PREFIX + "_RIGHTS_DOMAIN";
+            String userInvitationTable =
+                DOMAIN_PREFIX + "_USER_INVITATION_DOMAIN";
+
             userRepo = new DuracloudUserRepoImpl(dbClientMgr, userTable);
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr, acctTable);
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr, rightsTable);
+            userInvitationRepo =
+                new DuracloudUserInvitationRepoImpl(
+                    dbClientMgr, userInvitationTable);
 
         } else {
             userRepo = new DuracloudUserRepoImpl(dbClientMgr);
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr);
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr);
+            userInvitationRepo =
+                new DuracloudUserInvitationRepoImpl(
+                    dbClientMgr);
+
         }
 
-        idUtil.initialize(userRepo, accountRepo, rightsRepo);
+        idUtil
+            .initialize(userRepo, accountRepo, rightsRepo, userInvitationRepo);
     }
 
     private Credential readCredential(InputStream xml) throws Exception {
@@ -139,6 +152,12 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     }
 
     @Override
+    public DuracloudUserInvitationRepo getUserInvitationRepo() {
+        checkInitialized(this.userInvitationRepo, "DuracloudUserInvitationRepo");
+        return this.userInvitationRepo;
+    }
+    
+    @Override
     public IdUtil getIdUtil() {
         checkInitialized(this.idUtil, "IdUtil");
         return this.idUtil;
@@ -151,4 +170,6 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             throw new DBUninitializedException(msg);
         }
     }
+
+
 }
