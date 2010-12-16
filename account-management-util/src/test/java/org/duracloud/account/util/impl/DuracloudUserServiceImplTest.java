@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
@@ -129,9 +130,54 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
             .andReturn(rights)
             .anyTimes();
 
+        rightsRepo.save(EasyMock.isA(AccountRights.class));
+        EasyMock.expectLastCall().anyTimes();
+
         replayMocks();
     }
 
+    @Test
+    public void testRedeemAccountInvitation() throws Exception {
+        int userId = 10;
+        String redemptionCode = "ABCD";
+        setUpRedeemAccountInvitation(userId, redemptionCode);
+        userService = new DuracloudUserServiceImpl(repoMgr);
+
+        userService.redeemAccountInvitation(userId, redemptionCode);
+    }
+
+    private void setUpRedeemAccountInvitation(int userId, String redemptionCode)
+        throws Exception {
+        int invitationId = 0;
+        int expirationDays = 2;
+        UserInvitation invitation = new UserInvitation(invitationId,
+                                                       acctId,
+                                                       "my@email.com",
+                                                       expirationDays,
+                                                       redemptionCode);
+        EasyMock.expect(
+            invitationRepo.findByRedemptionCode(EasyMock.isA(String.class)))
+            .andReturn(invitation)
+            .anyTimes();
+
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
+                                                            EasyMock.anyInt()))
+            .andThrow(new DBNotFoundException("No rights found"))
+            .anyTimes();
+
+        EasyMock.expect(idUtil.newRightsId())
+            .andReturn(0)
+            .anyTimes();
+
+        rightsRepo.save(EasyMock.isA(AccountRights.class));
+        EasyMock.expectLastCall().anyTimes();
+
+        invitationRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
+
+        replayMocks();
+    }
+    
     @Test
     public void testRemoveUserFromAccount() throws Exception {
         //TODO: complete test

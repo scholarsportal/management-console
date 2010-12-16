@@ -145,11 +145,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private void grantRights(int acctId, int userId, Role role)
         throws DBConcurrentUpdateException {
+        DuracloudRightsRepo rightsRepo = getRightsRepo();
+
         AccountRights rights = null;
         int rightsId = -1;
         Set<Role> roles = null;
         try {
-            rights = getRightsRepo().findByAccountIdAndUserId(acctId, userId);
+            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
             rightsId = rights.getId();
             roles = rights.getRoles();
             if(roles != null && roles.contains(role)) {
@@ -174,7 +176,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
 
         rights = new AccountRights(rightsId, acctId, userId, roles);
-        getRightsRepo().save(rights);
+        rightsRepo.save(rights);
     }
 
     private void revokeRights(int acctId, int userId, Role role)
