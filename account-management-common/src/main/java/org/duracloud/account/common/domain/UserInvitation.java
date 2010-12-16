@@ -21,6 +21,14 @@ public class UserInvitation extends BaseDomainData {
                           int accountId,
                           String userEmail,
                           int expirationDays,
+                          String redemptionCode) {
+        this(id, accountId, userEmail, expirationDays, redemptionCode, 0);
+    }
+
+    public UserInvitation(int id,
+                          int accountId,
+                          String userEmail,
+                          int expirationDays,
                           String redemptionCode,
                           int counter) {
         this.id = id;
@@ -37,18 +45,20 @@ public class UserInvitation extends BaseDomainData {
         this.counter = counter;
     }
 
-
-    public UserInvitation(int id, int counter,
-        int accountId, String userEmail, Date creationDate,
-        Date expirationDate, String redemptionCode) {
-        super();
+    public UserInvitation(int id,
+                          int accountId,
+                          String userEmail,
+                          Date creationDate,
+                          Date expirationDate,
+                          String redemptionCode,
+                          int counter) {
         this.id = id;
-        this.counter = counter;
         this.accountId = accountId;
         this.userEmail = userEmail;
         this.creationDate = creationDate;
         this.expirationDate = expirationDate;
         this.redemptionCode = redemptionCode;
+        this.counter = counter;
     }
 
 

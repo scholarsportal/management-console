@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -22,6 +19,9 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
         } catch (DBNotFoundException ex) {
             log.warn(
                 "No AccountRights found for account[{}]: error message: {}",
-                this.account.getId(), ex.getMessage());
+                account.getId(), ex.getMessage());
         }
 
         return users;
@@ -86,16 +86,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void storeAccountInfo(
-        String acctName, String orgName, String department) {
+    public void storeAccountInfo(String acctName,
+                                 String orgName,
+                                 String department) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void storePaymentInfo(PaymentInfo paymentInfo) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -107,7 +106,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void storeSubdomain(String subdomain) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -121,21 +119,20 @@ public class AccountServiceImpl implements AccountService {
         String redemptionCode =
             DigestUtils.md5DigestAsHex((emailAddress + System
                 .currentTimeMillis()).getBytes());
-        UserInvitation userInvitation =
-            new UserInvitation(
-                id, this.account.getId(), emailAddress, 14, redemptionCode, 0);
 
+        int acctId = account.getId();
+        UserInvitation userInvitation =
+            new UserInvitation(id, acctId, emailAddress, 14, redemptionCode);
         userInvitationRepo.save(userInvitation);
 
         return userInvitation;
     }
 
     @Override
-    public Set<UserInvitation> getPendingInvitations()
-        throws DBConcurrentUpdateException {
+    public Set<UserInvitation> getPendingInvitations() {
         DuracloudUserInvitationRepo userInvitationRepo =
             repoMgr.getUserInvitationRepo();
-        return userInvitationRepo.findByAccountId(this.account.getId());
+        return userInvitationRepo.findByAccountId(account.getId());
     }
 
 }

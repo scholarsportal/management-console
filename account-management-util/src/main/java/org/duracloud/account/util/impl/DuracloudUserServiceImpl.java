@@ -6,15 +6,18 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,6 +240,27 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 		}
 		
 		return user;
+    }
+
+    @Override
+    public void redeemAccountInvitation(int userId, String redemptionCode)
+        throws InvalidRedemptionCodeException {
+        try {
+            DuracloudUserInvitationRepo invRepo =
+                repoMgr.getUserInvitationRepo();
+
+            // Retrieve the invitation
+            UserInvitation invitation =
+                invRepo.findByRedemptionCode(redemptionCode);
+
+            // Add the user to the account
+            grantUserRights(invitation.getAccountId(), userId);
+
+            // Delete the invitation
+            invRepo.delete(invitation.getId());
+        } catch(DBNotFoundException e) {
+            throw new InvalidRedemptionCodeException(redemptionCode);
+        }
     }
 
     private DuracloudUserRepo getUserRepo() {

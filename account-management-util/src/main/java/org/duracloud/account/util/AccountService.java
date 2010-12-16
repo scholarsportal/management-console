@@ -3,14 +3,14 @@
  */
 package org.duracloud.account.util;
 
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.storage.domain.StorageProviderType;
+
+import java.util.Set;
 
 /**
  * An interface for manipulating account data.
@@ -28,8 +28,9 @@ public interface AccountService {
      * @param orgName
      * @param department
      */
-    public void storeAccountInfo(
-        String acctName, String orgName, String department);
+    public void storeAccountInfo(String acctName,
+                                 String orgName,
+                                 String department);
 
     /**
      * @return
@@ -63,9 +64,23 @@ public interface AccountService {
      */
     public Set<DuracloudUser> getUsers();
 
+    /**
+     * Invites a user to join this account by sending a notification to the
+     * provided email address. The invitation sent to the user is also
+     * returned by this method, as it may be useful to an administrator.
+     *
+     * @param emailAddress address at which to invite user
+     * @return UserInvitation
+     */
     public UserInvitation createUserInvitation(String emailAddress)
         throws DBConcurrentUpdateException;
 
+    /**
+     * Gets a listing of the user invitations which are associated with this
+     * account.
+     *
+     * @return UserInvitation set
+     */
     public Set<UserInvitation> getPendingInvitations()
         throws DBConcurrentUpdateException;
 }

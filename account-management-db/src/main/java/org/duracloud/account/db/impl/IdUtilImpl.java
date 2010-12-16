@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.db.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
@@ -13,8 +10,12 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBUninitializedException;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
- * @author: Bill Branan Date: Dec 3, 2010
+ * @author: Bill Branan
+ *          Date: Dec 3, 2010
  */
 public class IdUtilImpl implements IdUtil {
 
@@ -23,11 +24,10 @@ public class IdUtilImpl implements IdUtil {
     private int rightsId = -1;
     private int userInvitationId = -1;
 
-    public void initialize(
-        DuracloudUserRepo userRepo, DuracloudAccountRepo accountRepo,
-        DuracloudRightsRepo rightsRepo,
-        DuracloudUserInvitationRepo userInvitationRepo) {
-
+    public void initialize(DuracloudUserRepo userRepo,
+                           DuracloudAccountRepo accountRepo,
+                           DuracloudRightsRepo rightsRepo,
+                           DuracloudUserInvitationRepo userInvitationRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
         this.rightsId = max(rightsRepo.getIds());

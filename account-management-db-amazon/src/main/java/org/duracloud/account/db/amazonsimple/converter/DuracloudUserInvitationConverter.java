@@ -3,20 +3,19 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
-import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.util.SimpleDBUtils;
+import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.db.util.FormatUtil;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.util.FormatUtil;
-import org.slf4j.LoggerFactory;
-
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.util.SimpleDBUtils;
+import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 
 /**
  * This class is responsible for converting UserInvitation objects to/from
@@ -32,7 +31,7 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
         log = LoggerFactory.getLogger(DuracloudUserInvitationConverter.class);
     }
 
-    protected static final String ACCOUNT_ID_ATT = "ACCOUNT_ID";
+    public static final String ACCOUNT_ID_ATT = "ACCOUNT_ID";
     protected static final String USER_EMAIL_ATT = "USER_EMAIL";
     protected static final String CREATIONDATE_ATT = "CREATION_DATE";
     protected static final String EXPIRATION_DATE_ATT = "EXPIRATION_DATE";
@@ -104,9 +103,13 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
             }
         }
 
-        return new UserInvitation(
-            id, counter, accountId, userEmail, creationDate, expirationDate,
-            redemptionCode);
+        return new UserInvitation(id,
+                                  accountId,
+                                  userEmail,
+                                  creationDate,
+                                  expirationDate,
+                                  redemptionCode,
+                                  counter);
 
     }
 }

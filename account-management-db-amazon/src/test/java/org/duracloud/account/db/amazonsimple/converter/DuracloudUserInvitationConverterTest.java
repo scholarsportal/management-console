@@ -3,6 +3,14 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
+import com.amazonaws.services.simpledb.model.Attribute;
+import org.duracloud.account.common.domain.UserInvitation;
+import org.junit.Assert;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.CREATIONDATE_ATT;
@@ -10,15 +18,6 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvit
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.REDEMPTION_CODE_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.USER_EMAIL_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.duracloud.account.common.domain.UserInvitation;
-import org.junit.Assert;
-
-import com.amazonaws.services.simpledb.model.Attribute;
 
 /**
  * @author Daniel Bernstein Date: Dec 15, 2010
@@ -46,8 +45,8 @@ public class DuracloudUserInvitationConverterTest
     protected UserInvitation createTestItem() {
         UserInvitation ui =
             new UserInvitation(
-                id, counter, accountId, userEmail, creationDate,
-                expirationDate, redemptionCode);
+                id, accountId, userEmail, creationDate,
+                expirationDate, redemptionCode, counter);
 
         return ui;
     }

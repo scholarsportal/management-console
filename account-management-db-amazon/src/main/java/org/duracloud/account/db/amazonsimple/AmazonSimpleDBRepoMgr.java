@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 
 /**
- * @author Andrew Woods Date: Dec 9, 2010
+ * @author Andrew Woods
+ *         Date: Dec 9, 2010
  */
 public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
 
@@ -71,8 +72,8 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
 
     private void doInitialize(Credential credential) {
         AmazonSimpleDBClientMgr dbClientMgr =
-            new AmazonSimpleDBClientMgr(credential.getUsername(), credential
-                .getPassword());
+            new AmazonSimpleDBClientMgr(credential.getUsername(),
+                                        credential.getPassword());
 
         if (null != DOMAIN_PREFIX) {
             String userTable = DOMAIN_PREFIX + "_USER_DOMAIN";
@@ -93,13 +94,14 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr);
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr);
             userInvitationRepo =
-                new DuracloudUserInvitationRepoImpl(
-                    dbClientMgr);
+                new DuracloudUserInvitationRepoImpl(dbClientMgr);
 
         }
 
-        idUtil
-            .initialize(userRepo, accountRepo, rightsRepo, userInvitationRepo);
+        idUtil.initialize(userRepo,
+                          accountRepo,
+                          rightsRepo,
+                          userInvitationRepo);
     }
 
     private Credential readCredential(InputStream xml) throws Exception {

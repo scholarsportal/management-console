@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
+import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 
 /**
  * @author Andrew Woods
@@ -44,5 +45,17 @@ public interface DuracloudUserService {
 
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException;
+
+    /**
+     * Redeems an invitation to add this user to a DuraCloud account.
+     *
+     * @param userId the id of the user which will be added to the account
+     *               indicated in the invitation
+     * @param redemptionCode code which was sent to the user as part of the
+     *                       invitation to become part of an account
+     */
+    public void redeemAccountInvitation(int userId,
+                                        String redemptionCode)
+        throws InvalidRedemptionCodeException;
     
 }

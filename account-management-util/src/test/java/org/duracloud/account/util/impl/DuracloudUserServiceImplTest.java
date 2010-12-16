@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -14,6 +11,9 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -98,7 +98,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testAddUserToAccount() throws Exception {
+    public void testGrantUserRights() throws Exception {
         int userId = 7;
         DuracloudUser user = newDuracloudUser(userId, "some-username");
         setUpAddUserToAccount(user);
