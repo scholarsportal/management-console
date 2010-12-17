@@ -125,6 +125,8 @@ public class AccountServiceImpl implements AccountService {
             new UserInvitation(id, acctId, emailAddress, 14, redemptionCode);
         userInvitationRepo.save(userInvitation);
 
+        // TODO: Send invitation to user via emailAddress
+
         return userInvitation;
     }
 
