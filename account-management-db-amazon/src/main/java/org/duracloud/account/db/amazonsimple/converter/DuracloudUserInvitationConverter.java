@@ -78,7 +78,7 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
 
             } else if (ACCOUNT_ID_ATT.equals(name)) {
                 accountId =
-                    idFromString(value, "Account", "User Invitation ID", id);
+                    idFromString(value, "Account", "User Invitation", id);
 
             } else if (USER_EMAIL_ATT.equals(name)) {
                 userEmail = value;

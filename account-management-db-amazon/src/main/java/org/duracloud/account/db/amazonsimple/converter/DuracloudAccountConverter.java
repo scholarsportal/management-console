@@ -26,7 +26,7 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 public class DuracloudAccountConverter extends BaseDomainConverter implements DomainConverter<AccountInfo> {
 
     public DuracloudAccountConverter() {
-        log = LoggerFactory.getLogger(DuracloudAccountConverter.class);        
+        log = LoggerFactory.getLogger(DuracloudAccountConverter.class);
     }
 
     protected static final String SUBDOMAIN_ATT = "SUBDOMAIN";
@@ -61,7 +61,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                           asString(acct.getPaymentInfoId()),
                                           true));
         atts.add(new ReplaceableAttribute(INSTANCE_IDS_ATT,
-                                          instIdsAsString(acct.getInstanceIds()),
+                                          idsAsString(acct.getInstanceIds()),
                                           true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
@@ -83,30 +83,6 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                     builder.append(DELIM);
                 }
                 builder.append(sp.name());
-            }
-        }
-        return builder.toString();
-    }
-
-    protected String asString(int intVal) {
-        return String.valueOf(intVal);
-    }
-
-    /**
-     * This method formats a set of Integers as follows:
-     * int1,int2,intN
-     *
-     * @param intSet set of integers
-     * @return the string value of the set
-     */
-    protected String instIdsAsString(Set<Integer> intSet) {
-        StringBuilder builder = new StringBuilder();
-        if(null != intSet) {
-            for(Integer in : intSet) {
-                if(builder.length() > 0) {
-                    builder.append(DELIM);
-                }
-                builder.append(in.toString());
             }
         }
         return builder.toString();
@@ -146,10 +122,10 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
 
             } else if (PAYMENT_INFO_ID_ATT.equals(name)) {
                 paymentInfoId =
-                    idFromString(value, "Payment Info", "Account ID", id);
+                    idFromString(value, "Payment Info", "Account", id);
 
             } else if (INSTANCE_IDS_ATT.equals(name)) {
-                instanceIds = instanceIdsFromString(value, id);
+                instanceIds = idsFromString(value);
 
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
@@ -162,16 +138,15 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
             }
         }
 
-        AccountInfo account = new AccountInfo(id,
-                                              subdomain,
-                                              acctName,
-                                              orgName,
-                                              department,
-                                              paymentInfoId,
-                                              instanceIds,
-                                              storageProviders,
-                                              counter);
-        return account;
+        return new AccountInfo(id,
+                               subdomain,
+                               acctName,
+                               orgName,
+                               department,
+                               paymentInfoId,
+                               instanceIds,
+                               storageProviders,
+                               counter);
     }
 
     protected Set<StorageProviderType> fromString(String value) {
@@ -180,23 +155,6 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
             String[] splitValue = value.split(DELIM);
             for(String spt : splitValue) {
                 set.add(StorageProviderType.fromString(spt));
-            }
-        }
-        return set;
-    }
-
-    protected Set<Integer> instanceIdsFromString(String value, int acctId) {
-        Set<Integer> set = new HashSet<Integer>();
-        if(value != null) {
-            String[] splitValue = value.split(DELIM);
-            for(String instanceId : splitValue) {
-                try {
-                    set.add(Integer.valueOf(instanceId));                    
-                } catch(NumberFormatException e) {
-                    log.error("Instance ID value for account " + acctId +
-                              " is not a valid integer: " + instanceId);
-                }
-
             }
         }
         return set;

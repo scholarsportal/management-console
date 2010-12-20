@@ -53,7 +53,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
 
         storageProviders = new HashSet<StorageProviderType>();
         storageProviders.add(StorageProviderType.AMAZON_S3);
-        storageProviders.add(StorageProviderType.RACKSPACE);       
+        storageProviders.add(StorageProviderType.RACKSPACE);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
         testAtts.add(new Attribute(INSTANCE_IDS_ATT,
-                                   acctCvtr.instIdsAsString(instanceIds)));
+                                   acctCvtr.idsAsString(instanceIds)));
         testAtts.add(new Attribute(STORAGE_PROVIDERS_ATT,
                                    acctCvtr.asString(storageProviders)));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
@@ -124,13 +124,6 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     public void testAsString() {
         DuracloudAccountConverter acctCvtr = createAccountConverter();
 
-        assertEquals("100", acctCvtr.asString(paymentInfoId));
-
-        String instanceIdsString = acctCvtr.instIdsAsString(instanceIds);
-        assertEquals(2, instanceIdsString.split(DELIM).length);
-        assertTrue(instanceIdsString.contains("1"));
-        assertTrue(instanceIdsString.contains("2"));
-
         String spString = acctCvtr.asString(storageProviders);
         assertEquals(2, spString.split(DELIM).length);
         assertTrue(spString.contains(StorageProviderType.AMAZON_S3.name()));
@@ -140,10 +133,6 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     @Test
     public void testFromString() {
         DuracloudAccountConverter acctCvtr = createAccountConverter();
-
-        String instIdString = "1" + DELIM + "2";
-        Set<Integer> instIdSet = acctCvtr.instanceIdsFromString(instIdString, 0);
-        assertEquals(instanceIds, instIdSet);
 
         String spString = StorageProviderType.AMAZON_S3.name() + DELIM +
                           StorageProviderType.RACKSPACE.name();

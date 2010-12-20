@@ -88,10 +88,10 @@ public class DuracloudRightsConverter extends BaseDomainConverter implements Dom
                 counter = SimpleDBUtils.decodeZeroPaddingInt(value);
 
             } else if (ACCOUNT_ID_ATT.equals(name)) {
-                accountId = idFromString(value, "Account", "Rights ID", id);
+                accountId = idFromString(value, "Account", "Rights", id);
 
             } else if (USER_ID_ATT.equals(name)) {
-                userId = idFromString(value, "User", "Rights ID", id);
+                userId = idFromString(value, "User", "Rights", id);
 
             } else if (ROLES_ATT.equals(name)) {
                 roles = fromString(value);
