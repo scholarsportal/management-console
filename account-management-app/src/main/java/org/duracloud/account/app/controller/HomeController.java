@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Date;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,14 +14,13 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class HomeController extends AbstractController {
-
+    public static final String HOME_VIEW_ID = "home";
 	@RequestMapping(value = { "/index.html", "/", "", "/home.html", "/index",
 			"/home" })
 	public ModelAndView home() {
 		log.info("serving up the home page at {}", System.currentTimeMillis());
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("home");
-		mav.addObject("time", new Date());
+		mav.setViewName(HOME_VIEW_ID);
 		return mav;
 	}
 

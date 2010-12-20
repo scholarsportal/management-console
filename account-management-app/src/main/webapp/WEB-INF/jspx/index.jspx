@@ -28,25 +28,11 @@
        property="principal"
        var="principal" />
 
-      <h1>Duracloud Account Management Application</h1>
-
-      <p>${time}</p>
-
       <c:if
        test="${principal == 'anonymousUser'}">
-        <ul>
-          <li>
-            <a
-             id="new-user-link"
-             href="${pageContext.request.contextPath}/users/new">Create User Profile</a>
-          </li>
-          <li>
-            <a
-             id="login"
-             href="${pageContext.request.contextPath}/login">Login</a>
-          </li>
-        </ul>
+        <jsp:include page="/WEB-INF/jspx/includes/login-create-profile.jspx"/>
       </c:if>
+
       </div>
     </tiles:putAttribute>
   </tiles:insertDefinition>

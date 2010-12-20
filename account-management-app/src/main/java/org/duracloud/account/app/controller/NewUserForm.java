@@ -31,6 +31,8 @@ public class NewUserForm {
 	@Email(message = "Email is invalid.")
 	private String email;
 
+	private String redemptionCode;
+	
 	public String getUsername() {
 		return username;
 	}
@@ -78,4 +80,12 @@ public class NewUserForm {
 	public String getPasswordConfirm() {
 		return passwordConfirm;
 	}
+
+    public void setRedemptionCode(String redemptionCode) {
+        this.redemptionCode = redemptionCode;
+    }
+
+    public String getRedemptionCode() {
+        return redemptionCode;
+    }
 }

@@ -83,4 +83,11 @@ public interface AccountService {
      */
     public Set<UserInvitation> getPendingInvitations()
         throws DBConcurrentUpdateException;
+
+    /**
+     * Deletes an invitation to this account.
+     * @param invitationId
+     * @throws DBConcurrentUpdateException
+     */
+    public void deleteUserInvitation(int invitationId) throws DBConcurrentUpdateException;
 }

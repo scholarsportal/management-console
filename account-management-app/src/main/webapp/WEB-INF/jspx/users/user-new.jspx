@@ -44,6 +44,7 @@
                id="new-user-form"
                modelAttribute="newUserForm"
                method="POST">
+                <form:hidden path="redemptionCode"/>
                 <table
                  class="standard-form">
                   <tr>

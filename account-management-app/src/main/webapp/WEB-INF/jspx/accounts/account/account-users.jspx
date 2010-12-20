@@ -38,6 +38,7 @@
             <i
              class="pre plus">
             </i>
+
             Invite New Users</a>
             </h2>
 
@@ -74,25 +75,64 @@
                     <td>${u.status}</td>
 
                     <td>
-                      <a
-                       id="edit-user-${u.id}-link"
-                       class="button"
-                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/edit">
-                      <i
-                       class="pre pencil">
-                      </i>
+                      <ul
+                       class="horizontal-list">
+                        <li>
+                          <a
+                           href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/edit"
+                           style="visibility:${u.id lt 0 ? 'hidden' : 'visible'}"
+                           id="edit-user-${u.id}-link"
+                           class="button">
+                          <i
+                           class="pre pencil">
+                          </i>
 
-                      Edit</a>
-                      <a
-                       id="remove-user-${u.id}-link"
-                       class="button"
-                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/remove">
-                      <i
-                       class="pre trash">
-                      </i>
+                          Edit</a>
+                        </li>
 
-                      Delete</a>
+                        <c:if
+                         test="${u.deletable}">
+                          <li>
+                            <c:choose>
+                              <c:when
+                               test="${u.id lt 0}">
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invitations/byid/${u.invitationId}/delete"
+                                 method="post">
+                                  <button
+                                   type="submit">
+                                  <i
+                                   class="pre trash">
+                                  </i>
 
+                                  Delete</button>
+                                </form>
+                              </c:when>
+
+                              <c:otherwise>
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/delete"
+                                 method="post">
+                                  <button
+                                   type="submit">
+                                  <i
+                                   class="pre trash">
+                                  </i>
+
+                                  Delete</button>
+                                </form>
+                              </c:otherwise>
+                            </c:choose>
+                          </li>
+                        </c:if>
+                        <c:if test="${u.id lt 0}">
+                          <li>
+                            <a href="${pageContext.request.contextPath}/users/redeem/${u.redemptionCode}">
+                              Redemption URL
+                            </a>
+                          </li>
+                        </c:if>
+                      </ul>
                     </td>
                   </tr>
                 </c:forEach>

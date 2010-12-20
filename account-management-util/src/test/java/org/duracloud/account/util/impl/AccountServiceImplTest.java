@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
@@ -88,15 +89,41 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testGetPendingUserInvitations() throws Exception {
-        // FIXME: implement
+    public void testDeleteUserInvitation() throws Exception {
+        this.invitationRepo.delete(1);
+        EasyMock.expectLastCall();
         replayMocks();
+        this.acctService.deleteUserInvitation(1);
+
     }
 
     @Test
-    public void testCreateUserInvitation() throws Exception {
-        // FIXME: implement
+    public void testGetPendingUserInvitations() throws Exception {
+        Set<UserInvitation> userInvitations = new HashSet<UserInvitation>();
+        userInvitations.add(createUserInvite());
+        EasyMock.expect(this.invitationRepo.findByAccountId(acctId)).andReturn(userInvitations);
         replayMocks();
+        Set<UserInvitation> invites = this.acctService.getPendingInvitations();
+        Assert.assertTrue(invites.size() > 0);
+    }
+
+    private UserInvitation createUserInvite() {
+        return new UserInvitation(1, acctId, "test@duracloud.org", 1, "xyz");
+   }
+
+    @Test
+    public void testCreateUserInvitation() throws Exception {
+        String email = "test@duracloud.org";
+        EasyMock.expect(this.idUtil.newUserInvitationId()).andReturn(1);
+        
+        
+        this.invitationRepo.save(createUserInvite());
+        
+        EasyMock.expectLastCall();
+        replayMocks();
+        UserInvitation ui = this.acctService.createUserInvitation(email);
+        Assert.assertTrue(ui.getId() == 1);
+        Assert.assertTrue(ui.getRedemptionCode().length() > 3);
     }
 
     

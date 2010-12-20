@@ -7,19 +7,16 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.annotation.EmailAddressesConstraint;
+
 
 /**
- * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
  */
 public class InvitationForm {
+    @EmailAddressesConstraint
     private String emailAddresses = null;
-    private Role role = Role.ROLE_USER;
-    private static Role[] ADMIN_ROLES =
-        new Role[] { Role.ROLE_USER, Role.ROLE_ADMIN };
-    private static Role[] OWNER_ROLES =
-        new Role[] { Role.ROLE_USER, Role.ROLE_ADMIN, Role.ROLE_OWNER };
 
     public void setEmailAddresses(String emailAddresses) {
         this.emailAddresses = emailAddresses;
@@ -27,21 +24,5 @@ public class InvitationForm {
 
     public String getEmailAddresses() {
         return emailAddresses;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-    
-    public Role[] getAdminRoles(){
-        return ADMIN_ROLES;
-    }
-    
-    public Role[] getOwnerRoles(){
-        return OWNER_ROLES;
     }
 }

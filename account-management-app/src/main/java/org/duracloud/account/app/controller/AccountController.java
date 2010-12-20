@@ -17,7 +17,6 @@ import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -115,8 +114,8 @@ public class AccountController extends AbstractAccountController {
 	        //FIXME seems like there is some latency between successfully creating
 	        //a new user and the user actually being visible to subsequent calls
 	        //to the repository (due to amazon async I believe).
-			Thread.sleep(2000);
-			
+			sleepMomentarily();
+
 			int id = service.retrieveAccountInfo().getId();
             String idText = Integer.toString(id);
             user = this.userService.loadDuracloudUserByUsername(username);
@@ -126,11 +125,7 @@ public class AccountController extends AbstractAccountController {
             //      updating the account rights within the current security context.
             //		The question: will the password be available in this context? 
             //		Or will it be hashed or null?
-    		Authentication auth = authenticationManager.authenticate(
-    				new UsernamePasswordAuthenticationToken(
-    						user.getUsername(), user.getPassword()));
-    		securityContext.setAuthentication(auth);
-
+            reauthenticate(user, authenticationManager);
 			return formatAccountRedirect(idText, "/");
 		} catch (SubdomainAlreadyExistsException ex) {
 			result.addError(new ObjectError("subdomain",

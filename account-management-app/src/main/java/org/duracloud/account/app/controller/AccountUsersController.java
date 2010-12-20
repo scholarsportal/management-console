@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
@@ -21,6 +22,7 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,10 @@ public class AccountUsersController extends AbstractAccountController {
         ACCOUNT_PATH + ACCOUNT_USERS_PATH;
     public static final String USERS_INVITE_MAPPING =
         ACCOUNT_USERS_MAPPING + "/invite";
+    public static final String USERS_INVITATIONS_DELETE_MAPPING =
+        ACCOUNT_USERS_MAPPING + "/invitations/byid/{invitationId}/delete";
+    public static final String USERS_DELETE_MAPPING =
+        ACCOUNT_USERS_MAPPING + "/byid/{userId}/delete";
 
     public static final String USERS_KEY = "users";
 
@@ -54,8 +60,12 @@ public class AccountUsersController extends AbstractAccountController {
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
         throws Exception {
-        loadAccountUsers(accountId, model);
+        return get(getAccountService(accountId), model);
+    }
 
+    protected String get(AccountService accountService, Model model)
+        throws Exception {
+        loadAccountUsers(accountService, model);
         return ACCOUNT_USERS_VIEW_ID;
     }
 
@@ -70,24 +80,53 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = USERS_INVITE_MAPPING, method = RequestMethod.POST)
     public String sendInvitations(
+        @PathVariable int accountId,
         @ModelAttribute("invitationForm") @Valid InvitationForm invitationForm,
-        @PathVariable int accountId, Model model) throws Exception {
+        BindingResult result, Model model) throws Exception {
         log.info("sending invitations from account {}", accountId);
+        if (result.hasErrors()) {
+            return USERS_INVITE_VIEW_ID;
+        }
         List<String> emailAddresses =
             EmailAddressesParser.parse(invitationForm.getEmailAddresses());
         AccountService service = getAccountService(accountId);
 
         for (String emailAddress : emailAddresses) {
             UserInvitation ui = service.createUserInvitation(emailAddress);
-            log.debug(
-                "created user invitation on account {} for {} expiring on {}",
+            log.debug("created user invitation on account {} for {} expiring on {}",
                 new Object[] {
                     ui.getAccountId(), ui.getUserEmail(),
                     ui.getExpirationDate() });
         }
-        
-        loadAccountUsers(accountId, model);
-        return ACCOUNT_USERS_VIEW_ID;
+
+        // FIXME pause for a moment to let the async calls to
+        // the database percolate.
+        // what happens if an async call fails?
+        sleepMomentarily();
+        return get(service, model);
+    }
+
+    @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
+    public String deleteUserInvitation(
+        @PathVariable int accountId, @PathVariable int invitationId, Model model)
+        throws Exception {
+        log.info("remove invitation {} from account {}",
+            invitationId,
+            accountId);
+        AccountService service = getAccountService(accountId);
+        service.deleteUserInvitation(invitationId);
+        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+    }
+
+    @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
+    public String deleteUserFromAccount(
+        @PathVariable int accountId, @PathVariable int userId, Model model)
+        throws Exception {
+        log.info("delete user {} from account {}", userId, accountId);
+        userService.revokeOwnerRights(accountId, userId);
+        userService.revokeAdminRights(accountId, userId);
+        userService.revokeUserRights(accountId, userId);
+        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
     /**
@@ -96,22 +135,50 @@ public class AccountUsersController extends AbstractAccountController {
      */
     private AccountService getAccountService(int accountId)
         throws AccountNotFoundException {
-        return this.getAccountService(accountId);
+        return this.accountManagerService.getAccount(accountId);
     }
 
     /**
-     * @param accountId
+     * @param accountService
      * @param model
      */
-    private void loadAccountUsers(int accountId, Model model)
+    private void loadAccountUsers(AccountService accountService, Model model)
         throws Exception {
-        AccountService accountService =
-            accountManagerService.getAccount(accountId);
+        AccountInfo accountInfo = accountService.retrieveAccountInfo();
         Set<DuracloudUser> users = accountService.getUsers();
-        Set<UserInvitation> pendingUserInvitations = accountService.getPendingInvitations();
-        model.addAttribute("pendingUserInvitations", pendingUserInvitations);    
-        addAccountInfoToModel(accountService.retrieveAccountInfo(), model);
-        model.addAttribute(USERS_KEY, buildUserList(accountId, users));
+        Set<UserInvitation> pendingUserInvitations =
+            accountService.getPendingInvitations();
+        model.addAttribute("pendingUserInvitations", pendingUserInvitations);
+        addAccountInfoToModel(accountInfo, model);
+        List<AccountUser> accountUsers =
+            buildUserList(accountInfo.getId(), users);
+        appendInvitationsToAccountUserList(accountUsers, pendingUserInvitations);
+        model.addAttribute(USERS_KEY, accountUsers);
+    }
+
+    /**
+     * @param accountUsers
+     * @param pendingUserInvitations
+     */
+    private void appendInvitationsToAccountUserList(
+        List<AccountUser> accountUsers,
+        Set<UserInvitation> pendingUserInvitations) {
+        for (UserInvitation ui : pendingUserInvitations) {
+            accountUsers.add(new PendingAccountUser(ui.getId(),
+                ui.getUserEmail(),
+                resolveStatus(ui),
+                ui.getRole(),
+                ui.getRedemptionCode()));
+        }
+    }
+
+    /**
+     * @param ui
+     * @return
+     */
+    private InvitationStatus resolveStatus(UserInvitation ui) {
+        return ui.getExpirationDate().getTime() > System.currentTimeMillis()
+            ? InvitationStatus.PENDING : InvitationStatus.EXPIRED;
     }
 
     /**
@@ -121,23 +188,50 @@ public class AccountUsersController extends AbstractAccountController {
     private List<AccountUser> buildUserList(
         int accountId, Set<DuracloudUser> users) {
         List<AccountUser> list = new LinkedList<AccountUser>();
+        boolean hasMoreThanOneOwner =
+            accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
+            Role role = getBroadestRole(u.getRolesByAcct(accountId));
             AccountUser au =
-                new AccountUser(u.getId(), u.getUsername(), u.getFirstName(), u
-                    .getLastName(), u.getEmail(), "Active", getBroadestRole(u
-                    .getRolesByAcct(accountId)));
+                new AccountUser(u.getId(),
+                    u.getUsername(),
+                    u.getFirstName(),
+                    u.getLastName(),
+                    u.getEmail(),
+                    InvitationStatus.ACTIVE,
+                    role,
+                    role != Role.ROLE_OWNER || hasMoreThanOneOwner);
             list.add(au);
         }
 
         return list;
     }
 
+    /**
+     * @param users
+     * @return
+     */
+    private boolean accountHasMoreThanOneOwner(
+        Set<DuracloudUser> users, int accountId) {
+        int ownerCount = 0;
+        for (DuracloudUser u : users) {
+            if (u.getRolesByAcct(accountId).contains(Role.ROLE_OWNER)) {
+                ownerCount++;
+                if (ownerCount > 1) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static class LowestToHighestComparator implements Comparator<Role> {
 
         @Override
         public int compare(Role o1, Role o2) {
-            return o1.ordinal() > o2.ordinal() ? 1 : (o1.ordinal() < o2
-                .ordinal() ? -1 : 0);
+            return o1.ordinal() > o2.ordinal()
+                ? 1 : (o1.ordinal() < o2.ordinal() ? -1 : 0);
         }
     }
 
@@ -164,7 +258,7 @@ public class AccountUsersController extends AbstractAccountController {
     public class AccountUser {
         public AccountUser(
             int id, String username, String firstName, String lastName,
-            String email, String status, Role role) {
+            String email, InvitationStatus status, Role role, boolean deletable) {
             super();
             this.id = id;
             this.username = username;
@@ -173,6 +267,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.email = email;
             this.status = status;
             this.role = role;
+            this.deletable = deletable;
         }
 
         private int id;
@@ -180,8 +275,9 @@ public class AccountUsersController extends AbstractAccountController {
         private String firstName;
         private String lastName;
         private String email;
-        private String status;
+        private InvitationStatus status;
         private Role role;
+        private boolean deletable;
 
         public int getId() {
             return id;
@@ -203,12 +299,50 @@ public class AccountUsersController extends AbstractAccountController {
             return email;
         }
 
-        public String getStatus() {
+        public InvitationStatus getStatus() {
             return status;
         }
 
         public Role getRole() {
             return role;
         }
+
+        public boolean isDeletable() {
+            return this.deletable;
+        }
+    }
+
+    public static enum InvitationStatus {
+        ACTIVE, PENDING, EXPIRED
+    }
+
+    public class PendingAccountUser extends AccountUser {
+
+        /**
+         * @param invitationId
+         * @param email
+         * @param status
+         * @param role
+         */
+
+        private int invitationId;
+        private String redemptionCode;
+
+        public PendingAccountUser(
+            int invitationId, String email, InvitationStatus status, Role role,
+            String redemptionCode) {
+            super(-1, "------", "------", "------", email, status, role, true);
+            this.invitationId = invitationId;
+            this.redemptionCode = redemptionCode;
+        }
+
+        public int getInvitationId() {
+            return this.invitationId;
+        }
+
+        public String getRedemptionCode() {
+            return this.redemptionCode;
+        }
+
     }
 }

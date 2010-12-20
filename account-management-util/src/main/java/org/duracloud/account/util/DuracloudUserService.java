@@ -53,8 +53,9 @@ public interface DuracloudUserService {
      *               indicated in the invitation
      * @param redemptionCode code which was sent to the user as part of the
      *                       invitation to become part of an account
+     * @return the account id associated with the newly redeemed invitation.
      */
-    public void redeemAccountInvitation(int userId,
+    public int redeemAccountInvitation(int userId,
                                         String redemptionCode)
         throws InvalidRedemptionCodeException;
     

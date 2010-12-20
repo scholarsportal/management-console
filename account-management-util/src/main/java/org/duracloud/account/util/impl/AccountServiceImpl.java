@@ -112,10 +112,7 @@ public class AccountServiceImpl implements AccountService {
     public UserInvitation createUserInvitation(String emailAddress)
         throws DBConcurrentUpdateException {
         
-        DuracloudUserInvitationRepo userInvitationRepo =
-            repoMgr.getUserInvitationRepo();
-
-        int id = repoMgr.getIdUtil().newUserInvitationId();
+               int id = repoMgr.getIdUtil().newUserInvitationId();
         String redemptionCode =
             DigestUtils.md5DigestAsHex((emailAddress + System
                 .currentTimeMillis()).getBytes());
@@ -123,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
         int acctId = account.getId();
         UserInvitation userInvitation =
             new UserInvitation(id, acctId, emailAddress, 14, redemptionCode);
-        userInvitationRepo.save(userInvitation);
+        getUserInvitationRepo().save(userInvitation);
 
         // TODO: Send invitation to user via emailAddress
 
@@ -132,9 +129,19 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Set<UserInvitation> getPendingInvitations() {
+        return getUserInvitationRepo().findByAccountId(account.getId());
+    }
+
+    private DuracloudUserInvitationRepo getUserInvitationRepo() {
         DuracloudUserInvitationRepo userInvitationRepo =
             repoMgr.getUserInvitationRepo();
-        return userInvitationRepo.findByAccountId(account.getId());
+        return userInvitationRepo;
+    }
+
+    @Override
+    public void deleteUserInvitation(int invitationId)
+        throws DBConcurrentUpdateException {
+        getUserInvitationRepo().delete(invitationId);
     }
 
 }

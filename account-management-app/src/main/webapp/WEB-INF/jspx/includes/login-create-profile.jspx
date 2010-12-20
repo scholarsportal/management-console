@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:sec="http://www.springframework.org/security/tags"
+ xmlns:form="http://www.springframework.org/tags/form">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
+  <div
+   class="two-by-one-layout">
+    <div
+     class="dc-subgroup">
+      <h2>Current Users</h2>
+
+      <div
+       class="dc-subgroup-body">
+        <p>Already have a Duracloud profile?
+        
+        <c:choose>
+          <c:when test="${not empty redemptionCode}">
+            Login here to accept your invitation.  
+          </c:when>
+          <c:otherwise>
+            Login here.
+          </c:otherwise>
+        </c:choose>
+        </p>
+
+        <jsp:include
+         page="/WEB-INF/jspx/includes/login-form.jspx" />
+      </div>
+    </div>
+
+    <div
+     class="dc-subgroup">
+      <h2>New Users</h2>
+
+      <div
+       class="dc-subgroup-body">
+        <p>Don't have a Duracloud profile yet? No problem - create a new one
+        here.</p>
+
+        <ul>
+          <li>
+            <a
+             id="new-user-link"
+             href="${pageContext.request.contextPath}/users/new"
+             class="button">
+            <i
+             class="pre plus">
+            </i>
+
+            Create New Profile</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</jsp:root>
+

@@ -16,6 +16,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -46,6 +48,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class UserController extends AbstractController {
 
     public static final String NEW_USER_VIEW = "user-new";
+    public static final String NEW_USER_WELCOME = "user-welcome";
+
     public static final String USER_HOME = "user-home";
     public static final String USER_ACCOUNTS = "user-accounts";
 
@@ -79,18 +83,18 @@ public class UserController extends AbstractController {
                 Set<ConstraintViolation<NewUserForm>> constraintViolations =
                     validator.validate(nuf, Default.class);
                 for (ConstraintViolation<NewUserForm> cv : constraintViolations) {
-                    errors.rejectValue(cv.getPropertyPath().toString(), cv
-                        .getMessage(), cv.getMessage());
+                    errors.rejectValue(cv.getPropertyPath().toString(),
+                        cv.getMessage(),
+                        cv.getMessage());
                 }
 
                 if (nuf.getPassword() == null
                     || !nuf.getPassword().equals(nuf.getPasswordConfirm())) {
                     nuf.setPassword(null);
                     nuf.setPasswordConfirm(null);
-                    errors
-                        .rejectValue(
-                            "passwordConfirm", "password.nomatch",
-                            "Passwords do not match. Please reenter the password and confirmation.");
+                    errors.rejectValue("passwordConfirm",
+                        "password.nomatch",
+                        "Passwords do not match. Please reenter the password and confirmation.");
                 }
             }
         });
@@ -114,9 +118,11 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getNewForm() {
+    public ModelAndView getNewForm(HttpServletRequest request) {
         log.info("serving up NewUserForm");
-        return new ModelAndView(NEW_USER_VIEW, "newUserForm", new NewUserForm());
+        NewUserForm newUserForm = new NewUserForm();
+        newUserForm.setRedemptionCode(removeRedemptionCodeFromSession(request));
+        return new ModelAndView(NEW_USER_VIEW, "newUserForm", newUserForm);
     }
 
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
@@ -128,12 +134,58 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
-    public ModelAndView getUser(@PathVariable String username)
+    public ModelAndView getUser(
+        @PathVariable String username, HttpServletRequest request)
         throws DBNotFoundException {
         log.debug("getting user {}", username);
+        // if there's a redemption code in the session, it means that
+        // the user logged in in order to redeem an invitation
+        String redemptionCode = removeRedemptionCodeFromSession(request);
+        if (redemptionCode != null) {
+            log.debug("redemption code found in session: {}", redemptionCode);
+            DuracloudUser user =
+                this.userService.loadDuracloudUserByUsername(username);
+            int accountId;
+            try {
+                accountId =
+                    this.userService.redeemAccountInvitation(user.getId(),
+                        redemptionCode);
+                // FIXME
+                sleepMomentarily();
+                user = this.userService.loadDuracloudUserByUsername(username);
+                reauthenticate(user, this.authenticationManager);
+                return getUserWelcome(username, accountId);
+            } catch (InvalidRedemptionCodeException e) {
+                log.error("redemption failed for {} on redemption {}",
+                    username,
+                    redemptionCode);
+                addRedemptionFailedMessage();
+            }
+        }
+
         ModelAndView mav = new ModelAndView(USER_HOME);
-        prepareModel(username,mav);
+        prepareModel(username, mav);
         return mav;
+    }
+
+    /**
+     * 
+     */
+    private void addRedemptionFailedMessage() {
+        addErrorMessage("The redemption code you supplied is invalid. We are unable to add you to an account.");
+    }
+
+    /**
+     * @param request
+     * @return
+     */
+    private String removeRedemptionCodeFromSession(HttpServletRequest request) {
+        String redemptionCode =
+            (String) request.getSession().getAttribute("redemptionCode");
+        if (redemptionCode != null) {
+            request.getSession().removeAttribute("redemptionCode");
+        }
+        return redemptionCode;
     }
 
     @RequestMapping(value = { "/byid/{username}/accounts" }, method = RequestMethod.GET)
@@ -141,14 +193,32 @@ public class UserController extends AbstractController {
         throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
         ModelAndView mav = new ModelAndView(USER_ACCOUNTS);
-        prepareModel(username,mav);
+        prepareModel(username, mav);
+        return mav;
+    }
+
+    @RequestMapping(value = { "/byid/{username}/welcome" }, method = RequestMethod.GET)
+    public ModelAndView getUserWelcome(
+        @PathVariable String username,
+        @RequestParam(value = "accountId", required = false) Integer accountId)
+        throws DBNotFoundException {
+
+        log.debug("opening welcome page for for {}: accountId={}",
+            username,
+            accountId);
+        ModelAndView mav = new ModelAndView(NEW_USER_WELCOME);
+        if (accountId != null) {
+            mav.addObject("accountId", accountId);
+        }
+        prepareModel(username, mav);
         return mav;
     }
 
     /**
      * @param mav
      */
-    private void prepareModel(String username, ModelAndView mav) throws DBNotFoundException{
+    private void prepareModel(String username, ModelAndView mav)
+        throws DBNotFoundException {
         DuracloudUser user =
             this.userService.loadDuracloudUserByUsername(username);
         mav.addObject("user", user);
@@ -156,7 +226,7 @@ public class UserController extends AbstractController {
         Set<AccountInfo> accounts =
             this.accountManagerService.findAccountsByUserId(user.getId());
         mav.addObject("accounts", accounts);
-        
+
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -168,24 +238,70 @@ public class UserController extends AbstractController {
             return NEW_USER_VIEW;
         }
 
-        this.userService.createNewUser(newUserForm.getUsername(), newUserForm
-            .getPassword(), newUserForm.getFirstName(), newUserForm
-            .getLastName(), newUserForm.getEmail());
+        DuracloudUser user =
+            this.userService.createNewUser(newUserForm.getUsername(),
+                newUserForm.getPassword(),
+                newUserForm.getFirstName(),
+                newUserForm.getLastName(),
+                newUserForm.getEmail());
 
-        //FIXME seems like there is some latency between successfully creating
-        //a new user and the user actually being visible to subsequent calls
-        //to the repository (due to amazon async I believe).
-        Thread.sleep(2000);
-        
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        Authentication auth =
-            authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(
-                    newUserForm.getUsername(), newUserForm.getPassword()));
-        ctx.setAuthentication(auth);
+        // FIXME seems like there is some latency between successfully creating
+        // a new user and the user actually being visible to subsequent calls
+        // to the repository (due to amazon async I believe).
+        sleepMomentarily();
 
-        return "redirect:"
-            + PREFIX + "/users/byid/" + newUserForm.getUsername();
+        String redemptionCode = newUserForm.getRedemptionCode();
+        int accountId = -1;
+        if (redemptionCode != null) {
+            try {
+
+                accountId =
+                    this.userService.redeemAccountInvitation(user.getId(),
+                        redemptionCode);
+                // FIXME credentials aren't propagating immediately
+                sleepMomentarily();
+            } catch (InvalidRedemptionCodeException ex) {
+                addRedemptionFailedMessage();
+            }
+        }
+
+        user = this.userService.loadDuracloudUserByUsername(user.getUsername());
+        reauthenticate(user,
+            this.authenticationManager);
+
+        String redirect =
+            "redirect:"
+                + PREFIX + "/users/byid/" + newUserForm.getUsername()
+                + "/welcome";
+
+        if (accountId > -1) {
+            redirect += "?accountId=" + accountId;
+        }
+
+        return redirect;
+    }
+
+    /**
+     * @param string
+     */
+    private void addErrorMessage(String string) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @RequestMapping(value = { "/redeem/{redemptionCode}" }, method = RequestMethod.GET)
+    public ModelAndView redeemUser(
+        HttpServletRequest request, @PathVariable String redemptionCode)
+        throws DBNotFoundException {
+        log.debug("getting redeem invitation {}", redemptionCode);
+
+        // force logout
+        request.getSession().invalidate();
+        // add the redemption code to the session
+        request.getSession(true).setAttribute("redemptionCode", redemptionCode);
+        ModelAndView mav = new ModelAndView(HomeController.HOME_VIEW_ID);
+        mav.addObject("redemptionCode", redemptionCode);
+        return mav;
     }
 
     public AuthenticationManager getAuthenticationManager() {

@@ -245,7 +245,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void redeemAccountInvitation(int userId, String redemptionCode)
+    public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException {
         try {
             DuracloudUserInvitationRepo invRepo =
@@ -260,6 +260,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
             // Delete the invitation
             invRepo.delete(invitation.getId());
+            
+            //return accountId
+            return invitation.getAccountId();
         } catch(DBNotFoundException e) {
             throw new InvalidRedemptionCodeException(redemptionCode);
         }

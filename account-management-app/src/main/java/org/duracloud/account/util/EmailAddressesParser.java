@@ -19,7 +19,7 @@ public class EmailAddressesParser {
         if (emailAddresses == null) {
             return new ArrayList<String>(0);
         } else {
-            String[] emailAddressArray = emailAddresses.split("[,]");
+            String[] emailAddressArray = emailAddresses.split("[,\n]");
             List<String> emailList =
                 new ArrayList<String>(emailAddressArray.length);
             for (int i = 0; i < emailAddressArray.length; i++) {

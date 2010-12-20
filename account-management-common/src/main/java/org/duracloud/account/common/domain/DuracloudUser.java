@@ -30,7 +30,6 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
     private boolean credentialsNonExpired = true;
     private boolean accountNonLocked = true;
 
-	private Set<Role> superRoles = null;
 
     public DuracloudUser(int id,
                          String username,
@@ -45,9 +44,6 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
              lastName,
              email,
              0);
-        
-        this.superRoles = new HashSet();
-        this.superRoles.add(Role.ROLE_USER);
     }
 
     public DuracloudUser(int id,
@@ -66,16 +62,7 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
         this.counter = counter;
     }
 
-    public DuracloudUser(int id,
-                         String username,
-				         String password,
-				         String firstName,
-				         String lastName,
-				         String email,
-				         Set<Role> superRoles) {
-    	this(id, username, password, firstName,lastName, email);
-    	this.superRoles  = superRoles;
-	}
+
 
     public void setAccountRights(Set<AccountRights> accountRights) {
         this.accountRights = accountRights;
@@ -187,12 +174,6 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
 	 */
 	public Collection<GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-
-		if(this.superRoles != null){
-			for(Role r : this.superRoles){
-				authorities.add(r.authority());
-			}
-		}
 		authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
         if(accountRights != null) {
             for(AccountRights rights : accountRights) {
