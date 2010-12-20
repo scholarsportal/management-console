@@ -28,10 +28,7 @@
        property="principal"
        var="principal" />
 
-      <c:if
-       test="${principal == 'anonymousUser'}">
         <jsp:include page="/WEB-INF/jspx/includes/login-create-profile.jspx"/>
-      </c:if>
 
       </div>
     </tiles:putAttribute>

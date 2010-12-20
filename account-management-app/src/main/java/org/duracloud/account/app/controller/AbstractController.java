@@ -42,10 +42,20 @@ public abstract class AbstractController {
      */
     protected void reauthenticate(
         DuracloudUser user, AuthenticationManager authenticationManager) {
+        reauthenticate(user.getUsername(),
+            user.getPassword(),
+            authenticationManager);
+    }
+
+    /**
+     * @param user
+     */
+    protected void reauthenticate(
+        String username, String password,
+        AuthenticationManager authenticationManager) {
         SecurityContext ctx = SecurityContextHolder.getContext();
         UsernamePasswordAuthenticationToken token =
-            new UsernamePasswordAuthenticationToken(user.getUsername(),
-                user.getPassword());
+            new UsernamePasswordAuthenticationToken(username, password);
         Authentication auth = authenticationManager.authenticate(token);
         ctx.setAuthentication(auth);
     }

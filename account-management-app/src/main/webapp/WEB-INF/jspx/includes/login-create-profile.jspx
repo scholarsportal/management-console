@@ -10,6 +10,8 @@
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
 
+  <sec:authentication property="principal" var="principal" />
+ 
   <div
    class="two-by-one-layout">
     <div
@@ -18,25 +20,39 @@
 
       <div
        class="dc-subgroup-body">
-        <p>Already have a Duracloud profile?
-        
         <c:choose>
-          <c:when test="${not empty redemptionCode}">
-            Login here to accept your invitation.  
-          </c:when>
-          <c:otherwise>
-            Login here.
-          </c:otherwise>
-        </c:choose>
-        </p>
+        
+              <c:when
+       test="${principal == 'anonymousUser'}">
+              <p>Already have a Duracloud profile?
+              
+              <c:choose>
+                <c:when test="${not empty redemptionCode}">
+                  Login here to accept your invitation.  
+                </c:when>
+                <c:otherwise>
+                  Login here.
+                </c:otherwise>
+              </c:choose>
+              </p>
 
-        <jsp:include
-         page="/WEB-INF/jspx/includes/login-form.jspx" />
+          <jsp:include
+	         page="/WEB-INF/jspx/includes/login-form.jspx" />
+        
+        </c:when>
+        <c:otherwise>
+              <p>You are logged in as ${principal.username}</p>
+              <a class="button" href="${pageContext.request.contextPath}/j_spring_security_logout"><i class="pre logoff"></i>Log in as Another User</a>
+        
+        </c:otherwise>
+        </c:choose>
       </div>
     </div>
 
     <div
      class="dc-subgroup">
+      <c:if test="${principal == 'anonymousUser'}">
+      
       <h2>New Users</h2>
 
       <div
@@ -58,6 +74,7 @@
           </li>
         </ul>
       </div>
+      </c:if>
     </div>
   </div>
 </jsp:root>

@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -252,7 +253,7 @@ public class UserController extends AbstractController {
 
         String redemptionCode = newUserForm.getRedemptionCode();
         int accountId = -1;
-        if (redemptionCode != null) {
+        if (!StringUtils.isEmpty(redemptionCode)) {
             try {
 
                 accountId =
@@ -265,8 +266,7 @@ public class UserController extends AbstractController {
             }
         }
 
-        user = this.userService.loadDuracloudUserByUsername(user.getUsername());
-        reauthenticate(user,
+        reauthenticate(newUserForm.getUsername(), newUserForm.getPassword(),
             this.authenticationManager);
 
         String redirect =
