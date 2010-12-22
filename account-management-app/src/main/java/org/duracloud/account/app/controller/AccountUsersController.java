@@ -3,15 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -27,6 +18,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -167,7 +166,7 @@ public class AccountUsersController extends AbstractAccountController {
             accountUsers.add(new PendingAccountUser(ui.getId(),
                 ui.getUserEmail(),
                 resolveStatus(ui),
-                ui.getRole(),
+                Role.ROLE_USER,
                 ui.getRedemptionCode()));
         }
     }
@@ -182,7 +181,7 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     /**
-     * @param accountService
+     * @param accountId
      * @return
      */
     private List<AccountUser> buildUserList(

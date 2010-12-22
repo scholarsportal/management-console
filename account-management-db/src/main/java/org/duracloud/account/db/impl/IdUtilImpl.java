@@ -4,6 +4,7 @@
 package org.duracloud.account.db.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
@@ -23,15 +24,18 @@ public class IdUtilImpl implements IdUtil {
     private int userId = -1;
     private int rightsId = -1;
     private int userInvitationId = -1;
+    private int instanceId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudAccountRepo accountRepo,
                            DuracloudRightsRepo rightsRepo,
-                           DuracloudUserInvitationRepo userInvitationRepo) {
+                           DuracloudUserInvitationRepo userInvitationRepo,
+                           DuracloudInstanceRepo instanceRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
         this.rightsId = max(rightsRepo.getIds());
         this.userInvitationId = max(userInvitationRepo.getIds());
+        this.instanceId = max(instanceRepo.getIds());
     }
 
     private int max(Collection<? extends Integer> c) {
@@ -69,6 +73,12 @@ public class IdUtilImpl implements IdUtil {
     public synchronized int newUserInvitationId() {
         checkInitialized();
         return ++userInvitationId;
+    }
+
+    @Override
+    public synchronized int newInstanceId() {
+        checkInitialized();
+        return ++instanceId;
     }
 
 }

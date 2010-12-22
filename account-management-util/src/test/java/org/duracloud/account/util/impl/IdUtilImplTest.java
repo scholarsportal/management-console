@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
@@ -29,6 +30,7 @@ public class IdUtilImplTest {
     private DuracloudUserRepo userRepo;
     private DuracloudRightsRepo rightsRepo;
     private DuracloudUserInvitationRepo userInvitationRepo;
+    private DuracloudInstanceRepo instanceRepo;
 
     private static final int COUNT = 5;
 
@@ -38,9 +40,14 @@ public class IdUtilImplTest {
         userRepo = createMockUserRepo(COUNT);
         rightsRepo = createMockRightsRepo(COUNT);
         userInvitationRepo = createMockUserInvitationRepo(COUNT);
+        instanceRepo = createMockInstanceRepo(COUNT);
 
         idUtil = new IdUtilImpl();
-        idUtil.initialize(userRepo, accountRepo, rightsRepo, userInvitationRepo);
+        idUtil.initialize(userRepo,
+                          accountRepo,
+                          rightsRepo,
+                          userInvitationRepo,
+                          instanceRepo);
     }
 
     private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
@@ -71,6 +78,13 @@ public class IdUtilImplTest {
         return repo;
     }
 
+    private DuracloudInstanceRepo createMockInstanceRepo(int count) {
+        DuracloudInstanceRepo repo = EasyMock.createMock(DuracloudInstanceRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+
     private Set<Integer> createIds(int count) {
         Set<Integer> ids = new HashSet<Integer>();
         for (int i = 0; i < count; ++i) {
@@ -85,7 +99,7 @@ public class IdUtilImplTest {
         EasyMock.verify(userRepo);
         EasyMock.verify(rightsRepo);
         EasyMock.verify(userInvitationRepo);
-
+        EasyMock.verify(instanceRepo);
     }
 
     @Test
@@ -106,6 +120,11 @@ public class IdUtilImplTest {
     @Test
     public void testNewUserInvitationId() throws Exception {
         Assert.assertEquals(COUNT, idUtil.newUserInvitationId());
+    }
+
+    @Test
+    public void testNewInstanceInvitationId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
 }

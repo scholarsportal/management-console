@@ -12,7 +12,8 @@ public interface IdUtil {
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudAccountRepo accountRepo,
                            DuracloudRightsRepo rightsRepo,
-                           DuracloudUserInvitationRepo userInvitationRepo);
+                           DuracloudUserInvitationRepo userInvitationRepo,
+                           DuracloudInstanceRepo instanceRepo);
 
     int newAccountId();
 
@@ -21,4 +22,6 @@ public interface IdUtil {
     int newRightsId();
 
     int newUserInvitationId();
+
+    int newInstanceId();
 }

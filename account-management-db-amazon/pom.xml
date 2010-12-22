@@ -102,6 +102,7 @@
       <groupId>org.duracloud</groupId>
       <artifactId>unit-test-db</artifactId>
       <version>${duracloud.artifact.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>

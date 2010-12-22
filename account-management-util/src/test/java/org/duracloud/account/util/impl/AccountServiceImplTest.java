@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,6 +13,9 @@ import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Andrew Woods Date: Dec 10, 2010
@@ -115,9 +115,8 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     public void testCreateUserInvitation() throws Exception {
         String email = "test@duracloud.org";
         EasyMock.expect(this.idUtil.newUserInvitationId()).andReturn(1);
-        
-        
-        this.invitationRepo.save(createUserInvite());
+                
+        this.invitationRepo.save(EasyMock.isA(UserInvitation.class));
         
         EasyMock.expectLastCall();
         replayMocks();

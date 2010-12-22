@@ -21,4 +21,8 @@ public abstract class BaseDomainData implements Identifiable {
     public int getCounter() {
         return counter;
     }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
 }

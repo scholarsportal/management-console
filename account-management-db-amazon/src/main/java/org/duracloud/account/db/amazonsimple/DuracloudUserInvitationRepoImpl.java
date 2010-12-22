@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class DuracloudUserInvitationRepoImpl extends BaseDuracloudRepoImpl implements DuracloudUserInvitationRepo {
 
-    private static final String DEFAULT_DOMAIN = "DURACLOUD_USER_INVITATION";
+    private static final String DEFAULT_DOMAIN = "DURACLOUD_USER_INVITATIONS";
 
     private final DomainConverter<UserInvitation> converter;
 

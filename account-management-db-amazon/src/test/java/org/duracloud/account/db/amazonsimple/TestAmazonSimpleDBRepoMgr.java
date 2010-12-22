@@ -51,6 +51,7 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
         repoMgr.getAccountRepo();
         repoMgr.getRightsRepo();
         repoMgr.getUserInvitationRepo();
+        repoMgr.getInstanceRepo();
 
         // IdUtil only throws when a direct call is made.
         repoMgr.getIdUtil().newAccountId();
@@ -58,20 +59,13 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
         // These throw because they are not yet implemented.
         int numExceptions = 0;
         try {
-            repoMgr.getInstanceRepo();
-            Assert.fail("exception expected");
-        } catch (DBUninitializedException e) {
-            numExceptions++;
-        }
-
-        try {
             repoMgr.getImageRepo();
             Assert.fail("exception expected");
         } catch (DBUninitializedException e) {
             numExceptions++;
         }
 
-        Assert.assertEquals(2, numExceptions);
+        Assert.assertEquals(1, numExceptions);
     }
 
     private String initializationXml() throws Exception {

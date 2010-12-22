@@ -112,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
     public UserInvitation createUserInvitation(String emailAddress)
         throws DBConcurrentUpdateException {
         
-               int id = repoMgr.getIdUtil().newUserInvitationId();
+        int id = repoMgr.getIdUtil().newUserInvitationId();
         String redemptionCode =
             DigestUtils.md5DigestAsHex((emailAddress + System
                 .currentTimeMillis()).getBytes());

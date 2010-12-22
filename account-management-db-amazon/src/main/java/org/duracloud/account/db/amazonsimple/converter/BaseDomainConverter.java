@@ -105,11 +105,13 @@ public abstract class BaseDomainConverter {
         Set<Integer> set = new HashSet<Integer>();
         if(intList != null) {
             String[] splitValue = intList.split(DELIM);
-            for(String instanceId : splitValue) {
-                try {
-                    set.add(Integer.valueOf(instanceId));
-                } catch(NumberFormatException e) {
-                    log.error("ID value is not a valid integer: " + instanceId);
+            for(String id : splitValue) {
+                if(!id.equals("")) {
+                    try {
+                        set.add(Integer.valueOf(id));
+                    } catch(NumberFormatException e) {
+                        log.error("ID value is not a valid integer: " + id);
+                    }
                 }
             }
         }

@@ -94,20 +94,20 @@ public abstract class BaseDuracloudRepoImpl {
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
-            throw new DBException(logError("Null result",
-                                           "id=" + String.valueOf(id)));
+            throw new DBException(
+                getErrorMsg("Null result", "id=" + String.valueOf(id)));
         }
 
         List<Item> items = result.getItems();
         if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(logError("No items found",
-                                                   "id=" + String.valueOf(id)));
+            throw new DBNotFoundException(
+                getErrorMsg("No items found", "id=" + String.valueOf(id)));
         }
 
         if (items.size() != 1) {
-            throw new DBException(logError(
-                "Unexpected item count: " + items.size(),
-                "id=" + String.valueOf(id)));
+            throw new DBException(
+                getErrorMsg("Unexpected item count: " + items.size(),
+                            "id=" + String.valueOf(id)));
         }
 
         return items.get(0);
@@ -121,13 +121,14 @@ public abstract class BaseDuracloudRepoImpl {
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
-            throw new DBException(logError("Null result", attName+"="+attValue));
+            throw new DBException(
+                getErrorMsg("Null result", attName+"="+attValue));
         }
 
         List<Item> items = result.getItems();
         if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(logError("No items found",
-                                                   attName+"="+attValue));
+            throw new DBNotFoundException(
+                getErrorMsg("No items found", attName+"="+attValue));
         }
 
         return items;
@@ -161,18 +162,19 @@ public abstract class BaseDuracloudRepoImpl {
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
-            throw new DBException(logError("Null result", selectStatement));
+            throw new DBException(getErrorMsg("Null result", selectStatement));
         }
 
         List<Item> items = result.getItems();
         if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(logError("No items found",
-                                                   selectStatement));
+            throw new DBNotFoundException(
+                getErrorMsg("No items found", selectStatement));
         }
 
         if (items.size() != 1) {
-            throw new DBException(logError(
-                "Unexpected item count: " + items.size(), selectStatement));
+            throw new DBException(
+                getErrorMsg("Unexpected item count: " + items.size(), 
+                            selectStatement));
         }
 
         return items.get(0);
@@ -184,13 +186,12 @@ public abstract class BaseDuracloudRepoImpl {
         caller.deleteAttributes(db, request);
     }
 
-    private String logError(String text, String id) {
+    private String getErrorMsg(String text, String id) {
         StringBuilder msg = new StringBuilder(text);
         msg.append(" in domain: ");
         msg.append(domain);
         msg.append(" [for]: ");
         msg.append(id);
-        log.error(msg.toString());
         return msg.toString();
     }
 
@@ -211,33 +212,22 @@ public abstract class BaseDuracloudRepoImpl {
         String query = "select itemName() from " + domain;
         SelectRequest request = new SelectRequest(query);
         SelectResult result = caller.select(db, request);
-        if (null == result) {
-            StringBuilder msg = new StringBuilder("No items found in domain: ");
-            msg.append(domain);
-            log.error(msg.toString());
-            throw new DuraCloudRuntimeException(msg.toString());
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items) {
-            StringBuilder msg = new StringBuilder("Items were null");
-            msg.append(" in domain: ");
-            msg.append(domain);
-            log.error(msg.toString());
-            throw new DuraCloudRuntimeException(msg.toString());
-        }
 
         Set<Integer> ids = new HashSet<Integer>();
-        for (Item item : items) {
-            String itemName = item.getName();
-            try {
-                ids.add(Integer.valueOf(itemName));
-            } catch(NumberFormatException e) {
-                log.error("Item name " + itemName + " in domain " +
-                          domain + " is not an integer!");
+        if (null != result) {
+            List<Item> items = result.getItems();
+            if (null != items) {   
+                for (Item item : items) {
+                    String itemName = item.getName();
+                    try {
+                        ids.add(Integer.valueOf(itemName));
+                    } catch(NumberFormatException e) {
+                        log.error("Item name " + itemName + " in domain " +
+                                  domain + " is not an integer!");
+                    }
+                }
             }
         }
-
         return ids;
     }
 

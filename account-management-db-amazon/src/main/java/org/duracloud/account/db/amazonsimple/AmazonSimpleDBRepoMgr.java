@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudImageRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -37,7 +40,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     private DuracloudAccountRepo accountRepo;
     private DuracloudRightsRepo rightsRepo;
     private DuracloudUserInvitationRepo userInvitationRepo;
-    private DuracloudInstanceRepo instanceRepo; // not used yet
+    private DuracloudInstanceRepo instanceRepo;
     private DuracloudImageRepo imageRepo; // not used yet
 
     private IdUtil idUtil;
@@ -81,6 +84,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             String rightsTable = DOMAIN_PREFIX + "_RIGHTS_DOMAIN";
             String userInvitationTable =
                 DOMAIN_PREFIX + "_USER_INVITATION_DOMAIN";
+            String instanceTable = DOMAIN_PREFIX + "_INSTANCE_DOMAIN";
 
             userRepo = new DuracloudUserRepoImpl(dbClientMgr, userTable);
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr, acctTable);
@@ -88,6 +92,8 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             userInvitationRepo =
                 new DuracloudUserInvitationRepoImpl(
                     dbClientMgr, userInvitationTable);
+            instanceRepo = new DuracloudInstanceRepoImpl(dbClientMgr, 
+                                                         instanceTable);
 
         } else {
             userRepo = new DuracloudUserRepoImpl(dbClientMgr);
@@ -95,13 +101,14 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr);
             userInvitationRepo =
                 new DuracloudUserInvitationRepoImpl(dbClientMgr);
-
+            instanceRepo = new DuracloudInstanceRepoImpl(dbClientMgr);
         }
 
         idUtil.initialize(userRepo,
                           accountRepo,
                           rightsRepo,
-                          userInvitationRepo);
+                          userInvitationRepo,
+                          instanceRepo);
     }
 
     private Credential readCredential(InputStream xml) throws Exception {
@@ -165,6 +172,18 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
         return this.idUtil;
     }
 
+    @Override
+    public Set<BaseRepo> getAllRepos() {
+        Set<BaseRepo> repos = new HashSet<BaseRepo>();
+        repos.add(getUserRepo());
+        repos.add(getAccountRepo());
+        repos.add(getRightsRepo());
+        repos.add(getUserInvitationRepo());
+        repos.add(getInstanceRepo());
+        //repos.add(getImageRepo());
+        return repos;
+    }
+
     private void checkInitialized(Object member, String name) {
         if (null == member) {
             String msg = name + " is not initialized";
@@ -172,6 +191,5 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             throw new DBUninitializedException(msg);
         }
     }
-
 
 }

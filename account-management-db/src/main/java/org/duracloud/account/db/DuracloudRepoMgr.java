@@ -4,6 +4,7 @@
 package org.duracloud.account.db;
 
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -26,5 +27,7 @@ public interface DuracloudRepoMgr {
     public DuracloudImageRepo getImageRepo();
 
     public IdUtil getIdUtil();
+
+    public Set<BaseRepo> getAllRepos();
 
 }
