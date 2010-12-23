@@ -3,6 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -166,7 +174,7 @@ public class AccountUsersController extends AbstractAccountController {
             accountUsers.add(new PendingAccountUser(ui.getId(),
                 ui.getUserEmail(),
                 resolveStatus(ui),
-                Role.ROLE_USER,
+                Arrays.asList(new Role[]{Role.ROLE_USER}),
                 ui.getRedemptionCode()));
         }
     }
@@ -190,7 +198,6 @@ public class AccountUsersController extends AbstractAccountController {
         boolean hasMoreThanOneOwner =
             accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
-            Role role = getBroadestRole(u.getRolesByAcct(accountId));
             AccountUser au =
                 new AccountUser(u.getId(),
                     u.getUsername(),
@@ -198,8 +205,8 @@ public class AccountUsersController extends AbstractAccountController {
                     u.getLastName(),
                     u.getEmail(),
                     InvitationStatus.ACTIVE,
-                    role,
-                    role != Role.ROLE_OWNER || hasMoreThanOneOwner);
+                    u.getRolesByAcct(accountId),
+                    u.isOwnerForAcct(accountId) || hasMoreThanOneOwner);
             list.add(au);
         }
 
@@ -214,7 +221,7 @@ public class AccountUsersController extends AbstractAccountController {
         Set<DuracloudUser> users, int accountId) {
         int ownerCount = 0;
         for (DuracloudUser u : users) {
-            if (u.getRolesByAcct(accountId).contains(Role.ROLE_OWNER)) {
+            if (u.isOwnerForAcct(accountId)) {
                 ownerCount++;
                 if (ownerCount > 1) {
                     return true;
@@ -223,28 +230,6 @@ public class AccountUsersController extends AbstractAccountController {
         }
 
         return false;
-    }
-
-    private static class LowestToHighestComparator implements Comparator<Role> {
-
-        @Override
-        public int compare(Role o1, Role o2) {
-            return o1.ordinal() > o2.ordinal()
-                ? 1 : (o1.ordinal() < o2.ordinal() ? -1 : 0);
-        }
-    }
-
-    private static LowestToHighestComparator LOWEST_TO_HIGHEST_COMPARATOR =
-        new LowestToHighestComparator();
-
-    /**
-     * @param roles
-     * @return
-     */
-    private Role getBroadestRole(Set<Role> roles) {
-        List<Role> roleList = new ArrayList<Role>(roles);
-        Collections.sort(roleList, LOWEST_TO_HIGHEST_COMPARATOR);
-        return roleList.get(0);
     }
 
     /**
@@ -257,7 +242,7 @@ public class AccountUsersController extends AbstractAccountController {
     public class AccountUser {
         public AccountUser(
             int id, String username, String firstName, String lastName,
-            String email, InvitationStatus status, Role role, boolean deletable) {
+            String email, InvitationStatus status, Collection<Role> roles, boolean deletable) {
             super();
             this.id = id;
             this.username = username;
@@ -265,7 +250,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.lastName = lastName;
             this.email = email;
             this.status = status;
-            this.role = role;
+            this.roles = roles;
             this.deletable = deletable;
         }
 
@@ -275,7 +260,7 @@ public class AccountUsersController extends AbstractAccountController {
         private String lastName;
         private String email;
         private InvitationStatus status;
-        private Role role;
+        private Collection<Role> roles;
         private boolean deletable;
 
         public int getId() {
@@ -302,8 +287,8 @@ public class AccountUsersController extends AbstractAccountController {
             return status;
         }
 
-        public Role getRole() {
-            return role;
+        public Collection<Role> getRoles() {
+            return roles;
         }
 
         public boolean isDeletable() {
@@ -328,9 +313,9 @@ public class AccountUsersController extends AbstractAccountController {
         private String redemptionCode;
 
         public PendingAccountUser(
-            int invitationId, String email, InvitationStatus status, Role role,
+            int invitationId, String email, InvitationStatus status, Collection<Role> roles,
             String redemptionCode) {
-            super(-1, "------", "------", "------", email, status, role, true);
+            super(-1, "------", "------", "------", email, status, roles, true);
             this.invitationId = invitationId;
             this.redemptionCode = redemptionCode;
         }

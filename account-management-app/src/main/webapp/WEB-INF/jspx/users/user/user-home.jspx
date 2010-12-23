@@ -39,11 +39,15 @@
              class="dc-subgroup-body">
               <div
                class="dc-subgroup-body-header">
-                <button
-                 id="edit">Edit</button>
+                <a id="edit" href="${pageContext.request.contextPath}/users/byid/${user.username}/edit" class="button">
+                  <i class="pre pencil"></i>
+                  Edit
+                </a>
 
-                <button
-                 id="edit">Change Password</button>
+                <a id="edit" href="${pageContext.request.contextPath}/users/byid/${user.username}/change-password" class="button">
+                  <i class="pre pencil"></i>
+                  Change Password
+                </a>
               </div>
 
               <table

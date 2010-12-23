@@ -30,6 +30,8 @@
     <log.level.default>DEBUG</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jetty.port>9000</jetty.port>
+    <credentials.file.path>${basedir}/src/test/resources/credentials.xml</credentials.file.path>
+    
   </properties>
 
   <!-- Build Configuration -->

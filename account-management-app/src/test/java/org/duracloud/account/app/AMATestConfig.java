@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.duracloud.common.util.ApplicationConfig;
@@ -16,6 +17,7 @@ public class AMATestConfig extends ApplicationConfig {
     private static String AMA_PROPERTIES_NAME = "test-ama.properties";
     private static String configFileName;
     private static String portKey = "port";
+    private static String credentialsFilePath = "credentials.file.path";
 
     private static Properties getProps() throws Exception {
         return getPropsFromResource(getConfigFileName());
@@ -36,4 +38,7 @@ public class AMATestConfig extends ApplicationConfig {
         return configFileName;
     }
 
+    public static  File getCredentialsFile() throws Exception{
+        return new File(getProps().getProperty(credentialsFilePath));
+    }
 }

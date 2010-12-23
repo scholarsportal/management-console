@@ -28,9 +28,12 @@ public class TestAccount extends AbstractIntegrationTest {
 	@Before
 	public void before() throws Exception {
 		super.before();
-		openUserProfilePage("admin");
+		openUserProfilePage(TEST_USER_1);
+		waitForPage();
 		loginAdmin();
-    	accountId = AccountTestHelper.createAccount(sc);
+		if(accountId == null){
+	        accountId = AccountTestHelper.createAccount(sc);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +104,7 @@ public class TestAccount extends AbstractIntegrationTest {
 		try {
 			logout();
 			sc.open(getAppRoot()+"/login");
-			login("user", "user");
+			login(TEST_USER_2, TEST_USER_2);
 
 			openAccountHome(accountId);
 			Assert.assertTrue(false);

@@ -3,11 +3,13 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
@@ -17,6 +19,7 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
@@ -24,9 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -214,14 +214,26 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public void changePassword(int userId,
                                String oldPassword,
-                               String newPassword) {
-        // Default method body
+                               String newPassword) throws DBNotFoundException,InvalidPasswordException {
+        
+        DuracloudUser user = getUserRepo().findById(userId);
+        if(!user.getPassword().equals(oldPassword)){
+            throw new InvalidPasswordException(userId);
+        }
+        
+        //FIXME not implemented!
+        //I'm refraining from doing more with this one - not sure 
+        //whether we want to add a set on the password of DuracloudUser
+        //or (more probable) push the implementation down into the
+        //repo layer.
+        log.error("NOT IMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        
     }
 
 	@Override
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException {
-		return  this.getUserRepo().findByUsername(username);
+		return  getUserRepo().findByUsername(username);
 	}
 
     @Override
@@ -272,15 +284,22 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         return repoMgr.getUserRepo();
     }
 
-    private DuracloudAccountRepo getAccountRepo() {
-        return repoMgr.getAccountRepo();
-    }
-
     private DuracloudRightsRepo getRightsRepo() {
         return repoMgr.getRightsRepo();
     }
 
     private IdUtil getIdUtil() {
         return repoMgr.getIdUtil();
+    }
+
+    @Override
+    public void storeUserDetails(
+        int userId, String firstName, String lastName, String email)
+        throws DBNotFoundException, DBConcurrentUpdateException {
+        DuracloudUser user = getUserRepo().findById(userId);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        getUserRepo().save(user);
     }
 }

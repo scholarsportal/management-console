@@ -6,10 +6,7 @@ package org.duracloud.account.app.controller;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.validation.groups.Default;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
@@ -17,20 +14,16 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,12 +41,32 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/users")
 public class UserController extends AbstractController {
 
+    /**
+     * 
+     */
+    public static final String USER_KEY = "user";
     public static final String NEW_USER_VIEW = "user-new";
     public static final String NEW_USER_WELCOME = "user-welcome";
 
     public static final String USER_HOME = "user-home";
     public static final String USER_ACCOUNTS = "user-accounts";
 
+    public static final String USER_MAPPING = "/byid/{username}";
+
+    public static final String USER_WELCOME_MAPPING = USER_MAPPING + "/welcome";
+
+    public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
+
+    public static final String USER_ACCOUNTS_MAPPING =
+        USER_MAPPING + "/accounts";
+
+    private static final String USER_EDIT_VIEW = "user-edit";
+
+    private static final String CHANGE_PASSWORD_MAPPING =
+        USER_MAPPING + "/change-password";
+    private static final String CHANGE_PASSWORD_VIEW = "user-change-password";
+    private static final String USER_PROFILE_FORM_KEY = "userProfileEditForm";
+    private static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
     @Autowired
     private AccountManagerService accountManagerService;
 
@@ -62,44 +75,6 @@ public class UserController extends AbstractController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private Validator validator;
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.setValidator(new org.springframework.validation.Validator() {
-            @Override
-            public boolean supports(Class<?> clazz) {
-                return true;
-            }
-
-            @Override
-            public void validate(Object target, Errors errors) {
-                NewUserForm nuf = (NewUserForm) target;
-                // ValidatorFactory factory =
-                // Validation.buildDefaultValidatorFactory();
-                // Validator validator = factory.getValidator();
-
-                Set<ConstraintViolation<NewUserForm>> constraintViolations =
-                    validator.validate(nuf, Default.class);
-                for (ConstraintViolation<NewUserForm> cv : constraintViolations) {
-                    errors.rejectValue(cv.getPropertyPath().toString(),
-                        cv.getMessage(),
-                        cv.getMessage());
-                }
-
-                if (nuf.getPassword() == null
-                    || !nuf.getPassword().equals(nuf.getPasswordConfirm())) {
-                    nuf.setPassword(null);
-                    nuf.setPasswordConfirm(null);
-                    errors.rejectValue("passwordConfirm",
-                        "password.nomatch",
-                        "Passwords do not match. Please reenter the password and confirmation.");
-                }
-            }
-        });
-    }
 
     /**
      * 
@@ -134,7 +109,7 @@ public class UserController extends AbstractController {
 
     }
 
-    @RequestMapping(value = { "/byid/{username}" }, method = RequestMethod.GET)
+    @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUser(
         @PathVariable String username, HttpServletRequest request)
         throws DBNotFoundException {
@@ -189,7 +164,7 @@ public class UserController extends AbstractController {
         return redemptionCode;
     }
 
-    @RequestMapping(value = { "/byid/{username}/accounts" }, method = RequestMethod.GET)
+    @RequestMapping(value = { USER_ACCOUNTS_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUserAccounts(@PathVariable String username)
         throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
@@ -198,7 +173,101 @@ public class UserController extends AbstractController {
         return mav;
     }
 
-    @RequestMapping(value = { "/byid/{username}/welcome" }, method = RequestMethod.GET)
+    @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.GET)
+    public String edit(@PathVariable String username, Model model)
+        throws DBNotFoundException {
+        log.debug("getting user accounts for {}", username);
+        UserProfileEditForm form = new UserProfileEditForm();
+        DuracloudUser user =
+            this.userService.loadDuracloudUserByUsername(username);
+        form.setFirstName(user.getFirstName());
+        form.setLastName(user.getLastName());
+        form.setEmail(user.getEmail());
+        model.addAttribute(USER_PROFILE_FORM_KEY, form);
+        addUserToModel(user, model);
+        return USER_EDIT_VIEW;
+    }
+
+    @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
+    public String update(
+        @PathVariable String username,
+        @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
+        BindingResult result, Model model) throws Exception {
+
+        if (result.hasErrors()) {
+            log.debug("profile form has errors for {}: returning...", username);
+            model.addAttribute(USER_KEY,
+                this.userService.loadDuracloudUserByUsername(username));
+            return USER_EDIT_VIEW;
+        }
+
+        log.info("updating user profile for {}", username);
+        int id = this.userService.loadDuracloudUserByUsername(username).getId();
+        this.userService.storeUserDetails(id,
+            form.getFirstName(),
+            form.getLastName(),
+            form.getEmail());
+        return "redirect:" + PREFIX + "/users/byid/" + username;
+    }
+
+    @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.GET)
+    public String changePassword(@PathVariable String username, Model model)
+        throws DBNotFoundException {
+        log.debug("opening change password form  for {}", username);
+        model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+        // add related model objects
+        addUserToModel(this.userService.loadDuracloudUserByUsername(username),
+            model);
+        return CHANGE_PASSWORD_VIEW;
+    }
+
+    @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
+    public String changePassword(
+        @PathVariable String username,
+        @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
+        BindingResult result, Model model) throws DBNotFoundException {
+
+        DuracloudUser user =
+            this.userService.loadDuracloudUserByUsername(username);
+
+        // check for errors
+        if (!result.hasErrors()) {
+            log.info("changing user password for {}", username);
+            int id = user.getId();
+            try {
+                this.userService.changePassword(id,
+                    form.getOldPassword(),
+                    form.getPassword());
+                return "redirect:" + PREFIX + "/users/byid/" + username;
+            } catch (InvalidPasswordException e) {
+                result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
+                    "oldPassword",
+                    "The old password is not correct"));
+            }
+        }
+
+        log.debug("password form has errors for {}: returning...", username);
+        addUserToModel(user, model);
+        return CHANGE_PASSWORD_VIEW;
+
+    }
+
+    /**
+     * @param user
+     * @param mav
+     */
+    private void prepareModel(DuracloudUser user, ModelAndView mav) {
+        mav.addObject(USER_KEY, user);
+        Set<AccountInfo> accounts =
+            this.accountManagerService.findAccountsByUserId(user.getId());
+        mav.addObject("accounts", accounts);
+    }
+
+    private void addUserToModel(DuracloudUser user, Model model) {
+        model.addAttribute(USER_KEY, user);
+    }
+
+    @RequestMapping(value = { USER_WELCOME_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUserWelcome(
         @PathVariable String username,
         @RequestParam(value = "accountId", required = false) Integer accountId)
@@ -222,12 +291,7 @@ public class UserController extends AbstractController {
         throws DBNotFoundException {
         DuracloudUser user =
             this.userService.loadDuracloudUserByUsername(username);
-        mav.addObject("user", user);
-
-        Set<AccountInfo> accounts =
-            this.accountManagerService.findAccountsByUserId(user.getId());
-        mav.addObject("accounts", accounts);
-
+        prepareModel(user, mav);
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -266,7 +330,8 @@ public class UserController extends AbstractController {
             }
         }
 
-        reauthenticate(newUserForm.getUsername(), newUserForm.getPassword(),
+        reauthenticate(newUserForm.getUsername(),
+            newUserForm.getPassword(),
             this.authenticationManager);
 
         String redirect =
@@ -321,13 +386,4 @@ public class UserController extends AbstractController {
     public AccountManagerService getAccountManagerService() {
         return accountManagerService;
     }
-
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
-
-    public Validator getValidator() {
-        return validator;
-    }
-
 }

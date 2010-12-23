@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author "Daniel Bernstein (dbernstein@duracloud.org)"
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 

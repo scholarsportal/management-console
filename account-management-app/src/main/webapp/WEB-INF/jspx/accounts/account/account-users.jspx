@@ -70,7 +70,16 @@
 
                     <td>${u.email}</td>
 
-                    <td>${u.role}</td>
+                    <td>
+                      <c:forEach
+                       items="${u.roles}"
+                       var="role"
+                       varStatus="status">
+                      <c:if
+                       test="${status.count &gt; 1}">,</c:if>
+
+                      ${role}</c:forEach>
+                    </td>
 
                     <td>${u.status}</td>
 
@@ -125,11 +134,13 @@
                             </c:choose>
                           </li>
                         </c:if>
-                        <c:if test="${u.id lt 0}">
+
+                        <c:if
+                         test="${u.id lt 0}">
                           <li>
-                            <a href="${pageContext.request.contextPath}/users/redeem/${u.redemptionCode}">
-                              Redemption URL
-                            </a>
+                            <a
+                             href="${pageContext.request.contextPath}/users/redeem/${u.redemptionCode}">
+                            Redemption URL</a>
                           </li>
                         </c:if>
                       </ul>

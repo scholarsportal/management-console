@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.common.domain;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +15,9 @@ import java.util.Set;
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
-public class DuracloudUser extends BaseDomainData implements UserDetails  {
+public class DuracloudUser extends BaseDomainData implements UserDetails {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private String username;
     private String password;
@@ -30,29 +31,15 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
     private boolean credentialsNonExpired = true;
     private boolean accountNonLocked = true;
 
-
-    public DuracloudUser(int id,
-                         String username,
-                         String password,
-                         String firstName,
-                         String lastName,
-                         String email) {
-        this(id,
-             username,
-             password,
-             firstName,
-             lastName,
-             email,
-             0);
+    public DuracloudUser(
+        int id, String username, String password, String firstName,
+        String lastName, String email) {
+        this(id, username, password, firstName, lastName, email, 0);
     }
 
-    public DuracloudUser(int id,
-                         String username,
-                         String password,
-                         String firstName,
-                         String lastName,
-                         String email,
-                         int counter) {
+    public DuracloudUser(
+        int id, String username, String password, String firstName,
+        String lastName, String email, int counter) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -66,11 +53,11 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
         this.accountRights = accountRights;
     }
 
-    public Set<Role> getRolesByAcct(int accountId){
+    public Set<Role> getRolesByAcct(int accountId) {
         Set<Role> roles = new HashSet<Role>(0);
-        if(accountRights != null) {
-            for(AccountRights rights : accountRights) {
-                if(rights.getAccountId() == accountId) {
+        if (accountRights != null) {
+            for (AccountRights rights : accountRights) {
+                if (rights.getAccountId() == accountId) {
                     roles = rights.getRoles();
                 }
             }
@@ -90,12 +77,32 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        checkNotBlank("firstName", firstName);
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
     }
 
+    public void setLastName(String lastName) {
+        checkNotBlank("lastName", lastName);
+        this.lastName = lastName;
+    }
+    
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email){
+        checkNotBlank("email", email);
+        this.email = email;
+    }
+    private void checkNotBlank(String field, String value) throws IllegalArgumentException{
+        if(StringUtils.isBlank(value)){
+            throw new IllegalArgumentException(field + " is blank");
+        }
     }
 
     /*
@@ -115,20 +122,20 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
         if (email != null ? !email.equals(that.email) : that.email != null) {
             return false;
         }
-        if (firstName != null ? !firstName.equals(that.firstName) :
-            that.firstName != null) {
+        if (firstName != null
+            ? !firstName.equals(that.firstName) : that.firstName != null) {
             return false;
         }
-        if (lastName != null ? !lastName.equals(that.lastName) :
-            that.lastName != null) {
+        if (lastName != null
+            ? !lastName.equals(that.lastName) : that.lastName != null) {
             return false;
         }
-        if (password != null ? !password.equals(that.password) :
-            that.password != null) {
+        if (password != null
+            ? !password.equals(that.password) : that.password != null) {
             return false;
         }
-        if (username != null ? !username.equals(that.username) :
-            that.username != null) {
+        if (username != null
+            ? !username.equals(that.username) : that.username != null) {
             return false;
         }
 
@@ -137,7 +144,7 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
 
     /*
      * Generated by IntelliJ
-     */     
+     */
     @Override
     public int hashCode() {
         int result = username != null ? username.hashCode() : 0;
@@ -148,42 +155,63 @@ public class DuracloudUser extends BaseDomainData implements UserDetails  {
         return result;
     }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public boolean isAccountNonExpired() {
-		return accountNonExpired;
-	}
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
 
-	public boolean isCredentialsNonExpired() {
-		return credentialsNonExpired;
-	}
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
 
-	public boolean isAccountNonLocked() {
-		return accountNonLocked;
-	}
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
 
-	/**
-	 * Returns the set of all possible roles a user can play
-	 * This method is implemented as part of the UserDetails
-	 * interface (<code>UserDetails</code>).
-	 * @return 
-	 */
-	public Collection<GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
-        if(accountRights != null) {
-            for(AccountRights rights : accountRights) {
+    /**
+     * Returns the set of all possible roles a user can play This method is
+     * implemented as part of the UserDetails interface (
+     * <code>UserDetails</code>).
+     * 
+     * @return
+     */
+    public Collection<GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
+        if (accountRights != null) {
+            for (AccountRights rights : accountRights) {
                 Set<Role> roles = rights.getRoles();
-                if(roles != null) {
-                    for(Role role : roles) {
+                if (roles != null) {
+                    for (Role role : roles) {
                         authorities.add(role.authority());
                     }
                 }
             }
         }
-		return authorities;
-	}
+        return authorities;
+    }
 
+    public boolean isOwnerForAcct(int accountId) {
+        return hasRoleForAcct(accountId, Role.ROLE_OWNER);
+    }
+
+    public boolean isAdminForAcct(int accountId) {
+        return hasRoleForAcct(accountId, Role.ROLE_ADMIN);
+    }
+
+    public boolean isRootForAcct(int accountId) {
+        return hasRoleForAcct(accountId, Role.ROLE_ROOT);
+    }
+
+    public boolean hasRoleForAcct(int accountId, Role role) {
+        Set<Role> roles = getRolesByAcct(accountId);
+        if (roles != null) {
+            return roles.contains(role);
+        }
+
+        return false;
+    }
 }

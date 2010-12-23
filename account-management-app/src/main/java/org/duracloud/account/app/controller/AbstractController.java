@@ -25,6 +25,7 @@ public abstract class AbstractController {
     protected static final String PREFIX = "";
 
     public static final String NEW_MAPPING = "/new";
+    public static final String EDIT_MAPPING = "/edit";
 
     /**
      * 

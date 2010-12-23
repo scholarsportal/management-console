@@ -17,7 +17,6 @@
 
     <tiles:putAttribute
      name="header-extensions">
-
     </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -30,8 +29,6 @@
 
         <tiles:putAttribute
          name="content">
-          <h1>Profile</h1>
-
           <div
            class="two-by-one-layout">
             <div
@@ -62,13 +59,12 @@
                       </td>
 
                       <td
-                       class="value  required">
+                       class="value required">
                         <form:input
                          cssErrorClass="error"
                          id="org-name-text"
-                         path="orgName" 
-                         autofocus="true"
-                         />
+                         path="orgName"
+                         autofocus="true" />
                       </td>
                     </tr>
 
@@ -114,7 +110,6 @@
                          path="subdomain">Subdomain</form:label>
                       </td>
 
-
                       <td
                        class="value required">
                         <form:input
@@ -127,6 +122,12 @@
 
                   <div
                    class="button-bar">
+                    <a
+                     class="button"
+                     id="cancel-button"
+                     href="${pageContext.request.contextPath}/users/byid/${user.username}/accounts">
+                    Cancel</a>
+
                     <button
                      id="create-account-button"
                      type="submit">Create</button>

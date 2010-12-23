@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * An interface for manipulating account data.
  * 
- * @author "Daniel Bernstein (dbernstein@duracloud.org)"
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public interface AccountService {
     /**

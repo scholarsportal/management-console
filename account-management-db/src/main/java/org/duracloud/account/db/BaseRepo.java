@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.db;
 
+import java.util.Set;
+
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-
-import java.util.Set;
 
 /**
  * This interface defines the contract of item repositories.

@@ -21,4 +21,5 @@ public interface DuracloudUserRepo extends BaseRepo<DuracloudUser> {
      */
     public DuracloudUser findByUsername(String username) throws DBNotFoundException;
 
+
 }

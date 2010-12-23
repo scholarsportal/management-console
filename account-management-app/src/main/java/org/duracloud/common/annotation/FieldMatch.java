@@ -28,7 +28,7 @@ import javax.validation.Payload;
  * @FieldMatch(first = "email", second = "confirmEmail", message =
  *                   "The email fields must match")})
  */
-@Target( { ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FieldMatchValidator.class)
 @Documented

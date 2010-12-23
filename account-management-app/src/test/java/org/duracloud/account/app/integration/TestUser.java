@@ -16,14 +16,14 @@ import com.thoughtworks.selenium.SeleniumException;
  */
 public class TestUser extends AbstractIntegrationTest{
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.duracloud.account.app.integration.AbstractIntegrationTest#before()
 	 */
 	@Override
 	@Before
 	public void before() throws Exception {
 		super.before();
-		openUserProfilePage("admin");
+		openUserProfilePage(TEST_USER_1);
 		loginAdmin();
 	}
 
@@ -39,13 +39,13 @@ public class TestUser extends AbstractIntegrationTest{
 
 	@Test
 	public void testProfile(){
-		this.isTextPresent("admin");
+		this.isTextPresent(TEST_USER_1);
 	}
 
 	@Test
 	public void testUnauthorizedAccessToAnotherUser(){
 		try {
-			openUserProfilePage("user");
+			openUserProfilePage(TEST_USER_2);
 		} catch (SeleniumException e) {
 			Assert.assertTrue(e.getMessage().contains("403"));
 		}

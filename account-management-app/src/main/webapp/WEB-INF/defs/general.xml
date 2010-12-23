@@ -35,6 +35,8 @@
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
   <definition name="user-home" template="/WEB-INF/jspx/users/user/user-home.jspx" />
   <definition name="user-welcome" template="/WEB-INF/jspx/users/user/new-user-welcome.jspx" />
+  <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />
+  <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx" />
 
   <definition name="user-accounts" template="/WEB-INF/jspx/users/user/user-accounts.jspx" />
 
