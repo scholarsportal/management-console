@@ -45,6 +45,7 @@
   <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
 
   <definition name="account-details" template="/WEB-INF/jspx/accounts/account/account-details.jspx" />
+  <definition name="account-info-edit" template="/WEB-INF/jspx/accounts/account/account-info-edit.jspx" />
   <definition name="account-billing-edit" template="/WEB-INF/jspx/accounts/account/account-billing-edit.jspx" />
 
   <definition name="account-statement" template="/WEB-INF/jspx/accounts/account/account-statement.jspx" />
@@ -52,5 +53,6 @@
   <definition name="account-instance" template="/WEB-INF/jspx/accounts/account/account-instance.jspx" />
   <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
   <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx" />
+  <definition name="account-users-edit" template="/WEB-INF/jspx/accounts/account/account-users-edit.jspx" />
 
 </tiles-definitions>

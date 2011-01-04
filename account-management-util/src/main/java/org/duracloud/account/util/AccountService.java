@@ -30,7 +30,8 @@ public interface AccountService {
      */
     public void storeAccountInfo(String acctName,
                                  String orgName,
-                                 String department);
+                                 String department)
+        throws DBConcurrentUpdateException;
 
     /**
      * @return

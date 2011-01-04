@@ -26,8 +26,11 @@
        
         <tiles:putAttribute
          name="content">
-
-          <h1>Account Instance: ${accountInfo.orgName}</h1>
+            <div
+              class="dc-subgroup">
+                <h2>Instance</h2>
+                <h3>No instance associated with this account.</h3>
+            </div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

@@ -45,7 +45,7 @@
                       <a
                        id="account-edit-link"
                        class="button"
-                       href="javascript:void(0,'${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit')">
+                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit">
                       <i
                        class="pre pencil">
                       </i>
@@ -110,39 +110,63 @@
               <table
                class="standard-property">
                 <tr>
-                  <td>Name</td>
-
-                  <td>{Full Name Here}</td>
-                </tr>
-
-                <tr>
                   <td>Street Address</td>
 
-                  <td>{Street Address 1}</td>
+                  <td>
+                    ${billingInfo.streetAddress0}
+                      <br></br>
+                    ${billingInfo.streetAddress1}
+                      <br></br>
+                    ${billingInfo.streetAddress2}
+                  </td>
                 </tr>
 
                 <tr>
                   <td>City</td>
 
-                  <td>{City}</td>
+                  <td>${billingInfo.city}</td>
                 </tr>
 
                 <tr>
                   <td>State</td>
 
-                  <td>{state}</td>
+                  <td>${billingInfo.state}</td>
                 </tr>
 
                 <tr>
                   <td>Country</td>
 
-                  <td>{country}</td>
+                  <td>${billingInfo.country}</td>
                 </tr>
 
                 <tr>
-                  <td>Zip/Postal Code</td>
+                  <td>Postal Code</td>
 
-                  <td>{zip/postalcode}</td>
+                  <td>${billingInfo.postalCode}</td>
+                </tr>
+
+                <tr>
+                  <td>Name on card</td>
+
+                  <td>${billingInfo.nameOnCard}</td>
+                </tr>
+
+                <tr>
+                  <td>Card Number</td>
+
+                  <td>${billingInfo.cardNumber}</td>
+                </tr>
+
+                <tr>
+                  <td>Expiration Date</td>
+
+                  <td>${billingInfo.expDate}</td>
+                </tr>
+
+                <tr>
+                  <td>CVC Number</td>
+
+                  <td>${billingInfo.cvc}</td>
                 </tr>
               </table>
             </div>

@@ -2,6 +2,7 @@
 <jsp:root version="2.0" xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:tiles="http://tiles.apache.org/tags-tiles"
+    xmlns:form="http://www.springframework.org/tags/form"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 	<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 
@@ -16,7 +17,78 @@
 				<tiles:putAttribute name="mainTab" value="providers" />
 
 				<tiles:putAttribute name="content">
-					<h1>Account Providers: ${accountInfo.orgName}</h1>
+                  <div
+                   class="dc-subgroup">
+                    <h2>Providers</h2>
+                    <h3>
+                      <form:form
+                        id="provider-add-form"
+                        method="post"
+                        action="providers/add"
+                        modelAttribute="providerForm">
+
+                        <c:if test="${providerForm.storageProviders != null}">
+
+                          Add a Provider:
+                        <form:select
+                         id="provider"
+                         cssErrorClass="error"
+                         path="provider"
+                         items="${providerForm.storageProviders}" />
+                        <button
+                         id="provider-add-button"
+                         type="submit">
+                            <i class="pre plus"></i>
+                            Add</button>
+                            
+                        </c:if>
+                        <c:if test="${providerForm.storageProviders == null}">
+                            All available providers have been added
+                        </c:if>
+                      </form:form>
+                    </h3>
+
+                    <div
+                     class="dc-subgroup-body">
+                      <table>
+                        <tr>
+                          <th>Provider</th>
+
+                          <th>Status</th>
+
+                          <th>
+                          </th>
+                        </tr>
+
+
+
+                          <c:forEach
+                           var="p"
+                           items="${providers}">
+                            <tr>
+                              <td>${p}</td>
+
+                              <td></td>
+
+                              <td>
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/byid/${p}/delete"
+                                 method="post">
+                                  <button
+                                   type="submit">
+                                  <i
+                                   class="pre trash">
+                                  </i>
+
+                                  Delete</button>
+                                </form>
+                              </td>
+                            </tr>
+                          </c:forEach>
+                      </table>
+                    </div>
+                  </div>
+
 				</tiles:putAttribute>
 			</tiles:insertDefinition>
 		</tiles:putAttribute>

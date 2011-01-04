@@ -60,13 +60,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
-    public void testGetProviders() throws AccountNotFoundException {
-        Model model = new ExtendedModelMap();
-        accountController.getProviders(TEST_ACCOUNT_ID, model);
-        Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
-    }
-
-    @Test
     public void testGetStatement() throws AccountNotFoundException {
         Model model = new ExtendedModelMap();
         accountController.getStatement(TEST_ACCOUNT_ID, model);

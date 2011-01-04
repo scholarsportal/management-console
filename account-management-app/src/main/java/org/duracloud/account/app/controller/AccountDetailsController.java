@@ -28,9 +28,8 @@ public class AccountDetailsController extends AbstractAccountController {
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
-        AccountService service =
-            this.accountManagerService.getAccount(accountId);
-        loadAccountInfo(service, model);
+        loadAccountInfo(accountId, model);
+        loadBillingInfo(accountId, model);
         return ACCOUNT_DETAILS_VIEW_ID;
     }
 

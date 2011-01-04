@@ -88,8 +88,12 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void storeAccountInfo(String acctName,
                                  String orgName,
-                                 String department) {
-        // TODO Auto-generated method stub
+                                 String department)
+        throws DBConcurrentUpdateException {
+        account.setAcctName(acctName);
+        account.setOrgName(orgName);
+        account.setDepartment(department);
+        repoMgr.getAccountRepo().save(account);
     }
 
     @Override

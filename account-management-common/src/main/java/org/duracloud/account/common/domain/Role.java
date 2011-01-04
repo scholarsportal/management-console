@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 
 public enum Role {
-	ROLE_SYSTEM, 
 	ROLE_ROOT, 
 	ROLE_OWNER,
 	ROLE_ADMIN, 

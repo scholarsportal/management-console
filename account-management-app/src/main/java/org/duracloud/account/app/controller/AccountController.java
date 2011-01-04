@@ -3,14 +3,19 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
 
+import com.sun.org.apache.xalan.internal.xslt.*;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.IdUtil;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
@@ -67,13 +72,6 @@ public class AccountController extends AbstractAccountController {
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return "account-instance";
-    }
-
-    @RequestMapping(value = { ACCOUNT_PATH + "/providers" }, method = RequestMethod.GET)
-    public String getProviders(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException {
-        loadAccountInfo(accountId, model);
-        return "account-providers";
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)

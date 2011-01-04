@@ -66,6 +66,7 @@
                  method="post"
                  action="edit"
                  modelAttribute="billingInfoForm">
+                  <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
                   <jsp:include
                    page="/WEB-INF/jspx/includes/global-errors.jspx">
                     <jsp:param

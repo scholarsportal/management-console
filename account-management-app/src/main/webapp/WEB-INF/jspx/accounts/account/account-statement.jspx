@@ -26,7 +26,11 @@
        
         <tiles:putAttribute
          name="content">
-          <h1>Account Statement: ${accountInfo.orgName}</h1>
+            <div
+              class="dc-subgroup">
+                <h2>Statement</h2>
+                <h3>No activity to display for this account.</h3>
+            </div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

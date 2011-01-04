@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="${accountInfo.orgName} :: Edit User" />
+
+    <tiles:putAttribute
+     name="body">
+      <tiles:insertDefinition
+       name="account-base">
+        <tiles:putAttribute
+         name="mainTab"
+         value="users" />
+
+        <tiles:putAttribute
+         name="content">
+          <div
+           class="two-by-one-layout">
+            <div
+             class="dc-subgroup">
+              <h2>Edit User</h2>
+
+              <div
+               class="dc-subgroup-body">
+                <form:form
+                 id="account-users-edit-form"
+                 method="post"
+                 action="edit"
+                 modelAttribute="accountUsersEditForm">
+                  <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
+                  <jsp:include
+                   page="/WEB-INF/jspx/includes/global-errors.jspx">
+                    <jsp:param
+                     name="formName"
+                     value="accountUsersEditForm" />
+                  </jsp:include>
+
+                  <table
+                   class="standard-form">
+                    <tr>
+                      <td>Full Name</td>
+                      <td>${user.firstName} ${user.lastName}</td>
+                    </tr>
+
+                    <tr>
+                      <td>User Name</td>
+                      <td>${user.username}</td>
+                    </tr>
+
+                    <tr>
+                      <td
+                       class="label">
+                        <form:label
+                         for="role"
+                         cssErrorClass="error"
+                         path="role">Account Type</form:label>
+                      </td>
+
+                      <td
+                       class="value required">
+                        <form:select
+                         id="role"
+                         cssErrorClass="error"
+                         path="role"
+                         items="${roleList}" />
+                      </td>
+                    </tr>
+                  </table>
+
+                  <div
+                   class="button-bar">
+                    <button
+                     id="account-users-save-button"
+                     type="submit">Save</button>
+                  </div>
+                </form:form>
+              </div>
+            </div>
+
+            <div
+             style="height: 20px;">
+            </div>
+          </div>
+        </tiles:putAttribute>
+      </tiles:insertDefinition>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

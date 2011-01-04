@@ -13,6 +13,9 @@ import javax.validation.ValidatorFactory;
 import javax.validation.groups.Default;
 
 import org.duracloud.account.app.controller.BillingInfoForm.CreditCardForm;
+import org.duracloud.account.common.domain.CreditCardPaymentInfo;
+import org.duracloud.account.common.domain.InvoicePaymentInfo;
+import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,10 +78,39 @@ public class BillingController extends AbstractAccountController {
 		throws AccountNotFoundException{
 		log.info("serving up new "+BILLING_FORM);
 		loadAccountInfo(accountId, model);
-		//TODO load form
-		log.warn("!!!MUST IMPLEMENT LOADING OF BILLING INFO FORM");
-		model.addAttribute(BILLING_FORM,
-				new BillingInfoForm());
+        loadBillingInfo(accountId, model);
+
+        BillingInfoForm billingInfoForm = new BillingInfoForm();
+
+        Object obj = model.asMap().get("paymentInfo");
+        if(obj instanceof CreditCardPaymentInfo) {
+            CreditCardPaymentInfo cardPaymentInfo = (CreditCardPaymentInfo) obj;
+            billingInfoForm.setAddressLine1(cardPaymentInfo.getStreetAddress0());
+            billingInfoForm.setAddressLine2(cardPaymentInfo.getStreetAddress1());
+            billingInfoForm.setAddressLine3(cardPaymentInfo.getStreetAddress2());
+            billingInfoForm.setCity(cardPaymentInfo.getCity());
+            billingInfoForm.setState(cardPaymentInfo.getState());
+            billingInfoForm.setPostalCode(cardPaymentInfo.getPostalCode());
+            billingInfoForm.setCountry(cardPaymentInfo.getCountry());
+            billingInfoForm.getCreditCard().setNameOnCard(cardPaymentInfo.getNameOnCard());
+            billingInfoForm.getCreditCard().setNumber(cardPaymentInfo.getCardNumber());
+            billingInfoForm.getCreditCard().setCvc(cardPaymentInfo.getCvc());
+            billingInfoForm.getCreditCard().setExpiration(cardPaymentInfo.getExpDate());
+        }
+        else if(obj instanceof InvoicePaymentInfo) {
+            InvoicePaymentInfo invoicePaymentInfo = (InvoicePaymentInfo) obj;
+            billingInfoForm.setAddressLine1(invoicePaymentInfo.getStreetAddress0());
+            billingInfoForm.setAddressLine2(invoicePaymentInfo.getStreetAddress1());
+            billingInfoForm.setAddressLine3(invoicePaymentInfo.getStreetAddress2());
+            billingInfoForm.setCity(invoicePaymentInfo.getCity());
+            billingInfoForm.setState(invoicePaymentInfo.getState());
+            billingInfoForm.setPostalCode(invoicePaymentInfo.getPostalCode());
+            billingInfoForm.setCountry(invoicePaymentInfo.getCountry());
+            billingInfoForm.getInvoice().setName(invoicePaymentInfo.getName());
+            billingInfoForm.getInvoice().setPhone(invoicePaymentInfo.getPhone());
+        }
+
+		model.addAttribute(BILLING_FORM, billingInfoForm);
 		return EDIT_VIEW;
 	}
 
@@ -93,10 +125,13 @@ public class BillingController extends AbstractAccountController {
 		if (result.hasErrors()) {
 			return EDIT_VIEW;
 		}
+
+        //TODO update billing info
+
+        loadBillingInfo(accountId, model);
+        
         String accountIdText = Integer.toString(accountId);
 		return formatAccountRedirect(accountIdText, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
 	}
-	
-	
 }

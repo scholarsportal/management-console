@@ -4,6 +4,9 @@
 package org.duracloud.account.app.controller;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +47,9 @@ import java.util.Set;
 public class AccountUsersController extends AbstractAccountController {
     public static final String ACCOUNT_USERS_VIEW_ID = "account-users";
     public static final String USERS_INVITE_VIEW_ID = "account-users-invite";
+    public static final String ACCOUNT_USERS_EDIT_ID = "account-users-edit";
+
+    public static final String EDIT_ACCOUNT_USERS_FORM_KEY = "accountUsersEditForm";
 
     public static final String ACCOUNT_USERS_PATH = "/users";
     public static final String ACCOUNT_USERS_MAPPING =
@@ -54,6 +60,8 @@ public class AccountUsersController extends AbstractAccountController {
         ACCOUNT_USERS_MAPPING + "/invitations/byid/{invitationId}/delete";
     public static final String USERS_DELETE_MAPPING =
         ACCOUNT_USERS_MAPPING + "/byid/{userId}/delete";
+    public static final String USERS_EDIT_MAPPING =
+        ACCOUNT_USERS_MAPPING + "/byid/{userId}/edit";
 
     public static final String USERS_KEY = "users";
 
@@ -133,6 +141,59 @@ public class AccountUsersController extends AbstractAccountController {
         userService.revokeOwnerRights(accountId, userId);
         userService.revokeAdminRights(accountId, userId);
         userService.revokeUserRights(accountId, userId);
+        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+    }
+
+    @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.GET)
+    public String getEditUserForm(@PathVariable int accountId, @PathVariable int userId, Model model)
+        throws Exception {
+        log.info("getEditUserForm user {} account {}", userId, accountId);
+        AccountUserEditForm editForm = new AccountUserEditForm();
+
+        AccountService accountService = getAccountService(accountId);
+        Set<DuracloudUser> users = accountService.getUsers();
+
+        for (DuracloudUser u : users) {
+            if(u.getId() == userId) {
+                AccountUser au =
+                    new AccountUser(u.getId(),
+                        u.getUsername(),
+                        u.getFirstName(),
+                        u.getLastName(),
+                        u.getEmail(),
+                        InvitationStatus.ACTIVE,
+                        u.getRolesByAcct(accountId),
+                        false);
+                //TODO set current role for select box - based on hierarchy?
+                //editForm.setRole();
+                model.addAttribute("user", au);
+                break;
+            }
+        }
+
+        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, editForm);
+
+        return ACCOUNT_USERS_EDIT_ID;
+    }
+
+    @ModelAttribute("roleList")
+    public List<Role> getRoleList() {
+        List<Role> roles = Arrays.asList(Role.values());
+        return roles;
+    }
+
+    @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
+    public String editUser(@PathVariable int accountId, @PathVariable int userId,
+                           @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
+					   BindingResult result,
+					   Model model) throws Exception {
+        log.info("editUser account {}", accountId);
+
+        log.info("New role-" + accountUserEditForm.getRole());
+        //TODO add updateUserRights to DuracloudUserService
+//        userService.retryUpdateRights(accountId, userId,
+//                                      Role.valueOf(accountUserEditForm.getRole()), true);
+
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
