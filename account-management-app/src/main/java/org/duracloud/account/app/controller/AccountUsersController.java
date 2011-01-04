@@ -3,17 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -31,9 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -138,8 +126,6 @@ public class AccountUsersController extends AbstractAccountController {
         @PathVariable int accountId, @PathVariable int userId, Model model)
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
-        userService.revokeOwnerRights(accountId, userId);
-        userService.revokeAdminRights(accountId, userId);
         userService.revokeUserRights(accountId, userId);
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }

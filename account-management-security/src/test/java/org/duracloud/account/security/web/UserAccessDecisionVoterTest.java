@@ -3,13 +3,6 @@
  */
 package org.duracloud.account.security.web;
 
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_ABSTAIN;
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_DENIED;
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_GRANTED;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -20,6 +13,14 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_ABSTAIN;
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_DENIED;
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_GRANTED;
 
 /**
  * 
@@ -82,49 +83,38 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
                 attributes));
     }
 
-    private void testRevokeUserRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "revokeUserRights", params);
+    private void testRevokeUserRights(int expectedDecision,
+                                      Set<Role> callerAuthorities,
+                                      Object[] params) throws Exception{
+        testRevokeMethod(expectedDecision, callerAuthorities, params);
     }
 
-    private void testGrantUserRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "grantUserRights", params);
+    private void testSetUserRights(int expectedDecision,
+                                   Set<Role> callerAuthorities,
+                                   Object[] params) throws Exception{
+        testSetMethod(expectedDecision, callerAuthorities, params);
     }
 
-    private void testRevokeAdminRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "revokeAdminRights", params);
-    }
-
-    private void testGrantAdminRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "grantAdminRights", params);
-    }
-
-    private void testRevokeOwnerRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "revokeOwnerRights", params);
-    }
-
-    private void testGrantOwnerRights(int expectedDecision, Set<Role> callerAuthorities, Object[] params) throws Exception{
-        testMethod(expectedDecision, callerAuthorities, "grantOwnerRights", params);
-    }
-    
     @Test
     public void testUserGrantRevokeWithAccountOwnedByAnotherUser() throws Exception{
-        // accountid, userid
         //test user grants/revokes rights to/from anybody
         int accountId = 0;
         int userId = 1;
-        Object[] params = { accountId, userId };
+
+        // Set user rights
         expectRightsForAccount(accountId, userId);
-        testGrantUserRights(ACCESS_DENIED, USER_AUTHORITIES, params);
+        Object[] userRoleParams = { accountId, userId, Role.ROLE_USER };
+        testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, userRoleParams);
+
+        // Set admin rights
         expectRightsForAccount(accountId, userId);
-        testGrantAdminRights(ACCESS_DENIED, USER_AUTHORITIES, params);
+        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, adminRoleParams);
+
+        // Set owner rights
         expectRightsForAccount(accountId, userId);
-        testGrantOwnerRights(ACCESS_DENIED, USER_AUTHORITIES, params);
-        expectRightsForAccount(accountId, userId);
-        testRevokeUserRights(ACCESS_DENIED, USER_AUTHORITIES, params);
-        expectRightsForAccount(accountId, userId);
-        testRevokeAdminRights(ACCESS_DENIED, USER_AUTHORITIES, params);
-        expectRightsForAccount(accountId, userId);
-        testRevokeOwnerRights(ACCESS_DENIED, USER_AUTHORITIES, params);
+        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, ownerRoleParams);
     }
     
     @Test 
@@ -134,70 +124,76 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         int userId = 1;
         Object[] params = { accountId, userId };
         expectNotRightsForAccount(accountId);
-        testRevokeOwnerRights(ACCESS_GRANTED, USER_AUTHORITIES, params);
+        testRevokeUserRights(ACCESS_GRANTED, USER_AUTHORITIES, params);
     }
 
-    private void expectRightsForAccount(int accountId, int userId) throws DBNotFoundException{
+    private void expectRightsForAccount(int accountId, int userId)
+        throws DBNotFoundException{
         reinitRightsMock();
         Set<AccountRights> set = new HashSet<AccountRights>();
         set.add(new AccountRights(1, accountId, userId, OWNER_AUTHORITIES));
-        EasyMock.expect(this.adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
         .andReturn(set);
         replayRightsMock();        
     }
 
     private void expectNotRightsForAccount(int accountId) throws DBNotFoundException{
         reinitRightsMock();
-        EasyMock.expect(this.adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
         .andThrow(new DBNotFoundException("no rights for this account"));
         replayRightsMock();        
     }
 
     @Test
     public void testOwnerGrantRevoke() throws Exception{
-        // accountid, userid
-        //test user grants/revokes rights to/from anybody
-        Object[] params = { 0, 1 };
-        testGrantUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
-        testGrantAdminRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
-        testGrantOwnerRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
-        testRevokeUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
-        testRevokeAdminRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
-        testRevokeOwnerRights(ACCESS_GRANTED, OWNER_AUTHORITIES, params);
+        int accountId = 0;
+        int userId = 1;
+
+        // Set user rights
+        Object[] userRoleParams = { accountId, userId, Role.ROLE_USER };
+        testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, userRoleParams);
+
+        // Set admin rights
+        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, adminRoleParams);
+
+        // Set owner rights
+        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, ownerRoleParams);
     }
     
     @Test
     public void testAdminGrantRevoke() throws Exception{
-        // accountid, userid
-        Object[] params = { 0, 1 };
+        int accountId = 0;
+        int userId = 1;
         reinitRightsMock();
 
         //admin grants admin rights to user
         expect(0,1, USER_AUTHORITIES);
-        testGrantAdminRights(ACCESS_GRANTED, ADMIN_AUTHORITIES, params);
+        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        testSetUserRights(ACCESS_GRANTED, ADMIN_AUTHORITIES, adminRoleParams);
 
         //admin grants owner rights to admin
         expect(0,1, ADMIN_AUTHORITIES);
-        testGrantOwnerRights(ACCESS_DENIED, ADMIN_AUTHORITIES, params);
+        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, ownerRoleParams);
 
         //admin revokes admin rights from owner
         expect(0,1, OWNER_AUTHORITIES);
-        testRevokeAdminRights(ACCESS_DENIED, ADMIN_AUTHORITIES, params);
+        testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, adminRoleParams);
 
         //admin revokes owner rights from owner
-        testRevokeOwnerRights(ACCESS_DENIED, ADMIN_AUTHORITIES, params);
+        testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, ownerRoleParams);
+    }    
 
-    }
-    
-    
-
-    private void expect(int accountId, int userId, Set<Role> authorities) throws Exception {
+    private void expect(int accountId, int userId, Set<Role> authorities)
+        throws Exception {
         reinitRightsMock();
-        EasyMock.expect(this.adv.getDuracloudRepoMgr().getRightsRepo().findByAccountIdAndUserId(accountId, userId))
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().
+            findByAccountIdAndUserId(accountId, userId))
         .andReturn(new AccountRights(1, accountId, userId, authorities));
         replayRightsMock();
     }
-    
 
     private void replayRightsMock() {
         EasyMock.replay(this.adv.getDuracloudRepoMgr().getRightsRepo());
@@ -213,18 +209,29 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         EasyMock.replay(repoMgr);
     }
 
+    private void testSetMethod(int access,
+                               Set<Role> callerAuthorities,
+                               Object[] params) throws Exception {
+        Method method = userService.getClass().getMethod("setUserRights",
+                                                         Integer.TYPE,
+                                                         Integer.TYPE,
+                                                         Role.class);
+        int voteResult = adv.vote(createUserAuthentication(callerAuthorities),
+                                  createMockMethodInvoker(method, params),
+                                  attributes);
+        Assert.assertEquals(access, voteResult);
+    }
 
-
-    private void testMethod(
-        int access, Set<Role> callerAuthorities, String methodName,
-        Object[] params) throws Exception {
-        Assert.assertEquals(access,
-            adv.vote(createUserAuthentication(callerAuthorities),
-                createMockMethodInvoker(userService.getClass()
-                    .getMethod(methodName, Integer.TYPE, Integer.TYPE),
-                    params),
-                attributes));
-
+    private void testRevokeMethod(int access,
+                                  Set<Role> callerAuthorities,
+                                  Object[] params) throws Exception {
+        Method method = userService.getClass().getMethod("revokeUserRights",
+                                                         Integer.TYPE,
+                                                         Integer.TYPE);
+        int voteResult = adv.vote(createUserAuthentication(callerAuthorities),
+                                  createMockMethodInvoker(method, params),
+                                  attributes);
+        Assert.assertEquals(access, voteResult);
     }
 
 }

@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,8 +13,10 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -59,7 +58,9 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
     private void setUpCreateAccount() throws Exception {
         userService = EasyMock.createMock(DuracloudUserService.class);
-        userService.grantOwnerRights(EasyMock.anyInt(),EasyMock.anyInt());
+        userService.setUserRights(EasyMock.anyInt(),
+                                  EasyMock.anyInt(),
+                                  EasyMock.isA(Role.class));
         EasyMock.expectLastCall();
         EasyMock.replay(userService);
 

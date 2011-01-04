@@ -3,10 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.duracloud.account.app.controller.AccountUsersController.AccountUser;
 import org.duracloud.account.app.controller.AccountUsersController.PendingAccountUser;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -23,6 +19,10 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -166,10 +166,6 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     @Test
     public void testDeleteUser() throws Exception {
         DuracloudUserService userService = EasyMock.createMock(DuracloudUserService.class);
-        userService.revokeOwnerRights(TEST_ACCOUNT_ID, 1);
-        EasyMock.expectLastCall();
-        userService.revokeAdminRights(TEST_ACCOUNT_ID, 1);
-        EasyMock.expectLastCall();
         userService.revokeUserRights(TEST_ACCOUNT_ID, 1);
         EasyMock.expectLastCall();
         

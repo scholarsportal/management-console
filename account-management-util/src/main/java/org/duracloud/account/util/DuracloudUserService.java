@@ -4,6 +4,7 @@
 package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
@@ -22,17 +23,18 @@ public interface DuracloudUserService {
         String email)
         throws DBConcurrentUpdateException, UserAlreadyExistsException;
 
-    public void grantUserRights(int acctId, int userId);
+    /**
+     * Sets the roles of a user in an account.
+     * 
+     * Note that this method only sets a user to a new role. To remove a user
+     * from an account, use revokeAllRights().
+     */
+    public void setUserRights(int acctId, int userId, Role role);
 
+    /**
+     * Removes all rights to an account for a given user.
+     */
     public void revokeUserRights(int acctId, int userId);
-
-    public void grantAdminRights(int acctId, int userId);
-
-    public void revokeAdminRights(int acctId, int userId);
-
-    public void grantOwnerRights(int acctId, int userId);
-
-    public void revokeOwnerRights(int acctId, int userId);
 
     public void sendPasswordReminder(int userId);
 

@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -27,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -85,49 +85,44 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void grantUserRights(int acctId, int userId) {
-        retryUpdateRights(acctId, userId, Role.ROLE_USER, true);
+    public void setUserRights(int acctId, int userId, Role role) {
+        if(null == role) {
+            throw new IllegalArgumentException("Role may not be null");
+        }
+
+        DuracloudRightsRepo rightsRepo = getRightsRepo();
+        AccountRights rights = null;
+        try {
+            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
+
+            // Determine the current rights level
+            int currentRightsLevel = 0;
+            for(Role currentRole : rights.getRoles()) {
+                if(currentRole.getRightsLevel() > currentRightsLevel) {
+                    currentRightsLevel = currentRole.getRightsLevel();
+                }
+            }
+
+            // Only set a new role if the current rights levels differ
+            if(role.getRightsLevel() != currentRightsLevel) {
+                retryUpdateRights(acctId, userId, role, rights);
+            }
+        } catch (DBNotFoundException e) {
+            // No rights currently, grant new rights
+            retryUpdateRights(acctId, userId, role, null);
+        }
     }
-
-    @Override
-    public void grantAdminRights(int acctId, int userId) {
-        retryUpdateRights(acctId, userId, Role.ROLE_ADMIN, true);
-	}
-
-	@Override
-	public void grantOwnerRights(int acctId, int userId) {
-        retryUpdateRights(acctId, userId, Role.ROLE_OWNER, true);
-	}
-
-    @Override
-    public void revokeUserRights(int acctId, int userId) {
-    	retryUpdateRights(acctId, userId, Role.ROLE_USER, false);
-    }    
-
-    @Override
-    public void revokeAdminRights(int acctId, int userId) {
-        retryUpdateRights(acctId, userId, Role.ROLE_ADMIN, false);
-	}
-
-	@Override
-	public void revokeOwnerRights(int acctId, int userId) {
-		retryUpdateRights(acctId, userId, Role.ROLE_OWNER, false);
-	}
 
     private void retryUpdateRights(int acctId,
                                    int userId,
                                    Role role,
-                                   boolean grant) {
+                                   AccountRights rights) {
         int maxAttempts = 5;
         int attempts = 0;
         boolean success = false;
         while(!success && attempts < maxAttempts) {
             try {
-                if(grant) {
-                    grantRights(acctId, userId, role);
-                } else {
-                    revokeRights(acctId, userId, role);
-                }
+                saveRights(acctId, userId, role, rights);
                 success = true;
             } catch(DBConcurrentUpdateException e) {
             }
@@ -135,34 +130,31 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
 
         if(!success && attempts >= maxAttempts) {
-            String type = grant ? "grant" : "remoke";
-            String error = "Failure attempting to " + type + " role " +
-                           role.name() + " to User ID " + userId +
-                           " for Account ID" + acctId;
+            String error = "Failure attempting to update user with ID" +
+                           userId + " to role " + role.name() +
+                           " for Account with ID" + acctId;
             throw new DuraCloudRuntimeException(error);
         }
     }
 
-    private void grantRights(int acctId, int userId, Role role)
+    private void saveRights(int acctId,
+                            int userId,
+                            Role role,
+                            AccountRights rights)
         throws DBConcurrentUpdateException {
         DuracloudRightsRepo rightsRepo = getRightsRepo();
 
-        AccountRights rights = null;
-        int rightsId = -1;
-        Set<Role> roles = null;
-        try {
-            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
+        int rightsId;
+        int counter;
+        if(null == rights) {
+            rightsId = getIdUtil().newRightsId();
+            counter = 0;
+        } else {
             rightsId = rights.getId();
-            roles = rights.getRoles();
-            if(roles != null && roles.contains(role)) {
-                return; // User already has access to expected role
-            }
-        } catch (DBNotFoundException e) {
+            counter = rights.getCounter();
         }
 
-        if(roles == null) {
-            roles = new HashSet<Role>();
-        }
+        Set<Role> roles = new HashSet<Role>();
         roles.add(Role.ROLE_USER);
         if(role.equals(Role.ROLE_ADMIN)) {
             roles.add(Role.ROLE_ADMIN);
@@ -171,40 +163,21 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             roles.add(Role.ROLE_OWNER);
         }
 
-        if(rightsId < 0) {
-            rightsId = getIdUtil().newRightsId();
-        }
-
-        rights = new AccountRights(rightsId, acctId, userId, roles);
+        rights = new AccountRights(rightsId, acctId, userId, roles, counter);
         rightsRepo.save(rights);
     }
 
-    private void revokeRights(int acctId, int userId, Role role)
-        throws DBConcurrentUpdateException {
+    @Override
+    public void revokeUserRights(int acctId, int userId) {
+        DuracloudRightsRepo rightsRepo = getRightsRepo();
         try {
             AccountRights rights =
-                getRightsRepo().findByAccountIdAndUserId(acctId, userId);
-
-            // Removing user rights is equivalent to removing all rights
-            if(Role.ROLE_USER.equals(role)) {
-                getRightsRepo().delete(rights.getId());
-                return;
-            }
-
-            Set<Role> roles = rights.getRoles();
-            if(roles != null && roles.contains(role)) {
-                roles.remove(Role.ROLE_OWNER);
-                if(Role.ROLE_ADMIN.equals(role)) {
-                    roles.remove(Role.ROLE_ADMIN);
-                }
-                getRightsRepo().save(rights);
-            } else {
-                return; // Role does not exist for user on account
-            }
+                rightsRepo.findByAccountIdAndUserId(acctId, userId);
+            getRightsRepo().delete(rights.getId());
         } catch (DBNotFoundException e) {
-            return; // No rights exist for the given user on the given account
+            // User has no rights in this account
         }
-    }
+    }    
 
     @Override
     public void sendPasswordReminder(int userId) {
@@ -233,7 +206,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	@Override
 	public DuracloudUser loadDuracloudUserByUsername(String username)
 			throws DBNotFoundException {
-		return  getUserRepo().findByUsername(username);
+		return getUserRepo().findByUsername(username);
 	}
 
     @Override
@@ -268,7 +241,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                 invRepo.findByRedemptionCode(redemptionCode);
 
             // Add the user to the account
-            grantUserRights(invitation.getAccountId(), userId);
+            setUserRights(invitation.getAccountId(), userId, Role.ROLE_USER);
 
             // Delete the invitation
             invRepo.delete(invitation.getId());

@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -63,7 +64,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
             getAccountRepo().save(newAccountInfo);
 
-            userService.grantOwnerRights(acctId, owner.getId());
+            userService.setUserRights(acctId, owner.getId(), Role.ROLE_OWNER);
             return new AccountServiceImpl(newAccountInfo, repoMgr);
         } catch (DBConcurrentUpdateException ex) {
             throw new Error(ex);

@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.security.web;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -18,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * 
@@ -53,13 +53,17 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
 
         // if caller is root or owner for the account all is permitted
         // otherwise call must be an admin changing another admin or user
-        if (method.matches("(grant|revoke).*")) {
+        if (method.matches("(setUserRights|revokeUserRights).*")) {
             if(!authentication.isAuthenticated()){
                 return ACCESS_DENIED;
             }
 
             Integer accountId = (Integer) rmi.getArguments()[0];
             Integer userId = (Integer) rmi.getArguments()[1];
+            Role setToRole = null;
+            if(rmi.getArguments().length > 2) {
+                setToRole = (Role) rmi.getArguments()[2];
+            }
             String methodlc = method.toLowerCase();
             DuracloudUser user = getUser(authentication);
             boolean isRoot = user.isRootForAcct(accountId);
@@ -79,20 +83,17 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
                 }
             } else if (isRoot || isOwner) {
                 return ACCESS_GRANTED;
-            } else {
-                Role roleToModify =
-                    methodlc.contains("user")
-                        ? Role.ROLE_USER : (methodlc.contains("admin")
-                            ? Role.ROLE_ADMIN : Role.ROLE_OWNER);
-
-                // under no circumstances can an admin modify an owner
-                if (roleToModify == Role.ROLE_OWNER) {
-                    return ACCESS_DENIED;
-                }
-                // if the user is trying to remove their own admin rights, they
-                // can do that
-                if (userId == user.getId() && roleToModify != Role.ROLE_OWNER) {
-                    return ACCESS_GRANTED;
+            } else { // Admin
+                if(setToRole != null) {
+                    // under no circumstances can an admin modify an owner
+                    if (setToRole.equals(Role.ROLE_OWNER)) {
+                        return ACCESS_DENIED;
+                    }
+                    // if the user is trying to remove their own admin rights, they
+                    // can do that
+                    if (userId == user.getId() && !setToRole.equals(Role.ROLE_OWNER)) {
+                        return ACCESS_GRANTED;
+                    }
                 }
 
                 // an admin can only change the rights of an admin, user or user

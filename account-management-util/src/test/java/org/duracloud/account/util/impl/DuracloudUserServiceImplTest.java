@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +26,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     private DuracloudUserServiceImpl userService;
 
     private static final int acctId = 1;
+    private static final int userId = 1;
 
     @Test
     public void testIsUsernameAvailable() throws Exception {
@@ -109,7 +111,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         Assert.assertNotNull(roles);
         Assert.assertTrue(!roles.contains(acctId));
 
-        userService.grantUserRights(acctId, userId);
+        userService.setUserRights(acctId, userId, Role.ROLE_USER);
 
         // FIXME: not sure how this user functionality is intended to work - aw.
         //  roles = user.getRolesByAcct(acctId);
@@ -137,16 +139,102 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testSetUserRightsStartAsNull() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(null);
+    }
+
+    @Test
+    public void testSetUserRightsStartAsUser() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_USER);
+    }
+
+    @Test
+    public void testSetUserRightsStartAsAdmin() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_ADMIN);
+    }
+
+    @Test
+    public void testSetUserRightsStartAsOwner() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_OWNER);
+    }
+
+    private void testSetRole(Role initialRole) throws Exception {
+        Capture<AccountRights> capture = setUpSetRights(initialRole);
+        testSetRole(initialRole, capture, Role.ROLE_USER);
+        testSetRole(initialRole, capture, Role.ROLE_ADMIN);
+        testSetRole(initialRole, capture, Role.ROLE_OWNER);
+    }
+
+    private Capture<AccountRights> setUpSetRights(Role initialRole)
+        throws Exception {
+        AccountRights startingRights = getRightsWithRole(initialRole);
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
+                                                            EasyMock.anyInt()))
+            .andReturn(startingRights)
+            .anyTimes();
+
+        Capture<AccountRights> capturedRights = new Capture<AccountRights>();
+        rightsRepo.save(EasyMock.capture(capturedRights));
+        EasyMock.expectLastCall().anyTimes();
+
+        replayMocks();
+        return capturedRights;
+    }
+
+    private AccountRights getRightsWithRole(Role role) {
+        Set<Role> roles = new HashSet<Role>();
+        if(null != role) {
+            roles.add(Role.ROLE_USER);
+            if(role.equals(Role.ROLE_ADMIN)) {
+                roles.add(Role.ROLE_ADMIN);
+            } else if(role.equals(Role.ROLE_OWNER)) {
+                roles.add(Role.ROLE_ADMIN);
+                roles.add(Role.ROLE_OWNER);
+            }
+        }
+        return new AccountRights(0, acctId, userId, roles);
+    }
+
+    private void testSetRole(Role initialRole,
+                             Capture<AccountRights> capture,
+                             Role finalRole)
+        throws Exception {
+        userService.setUserRights(acctId, userId, finalRole);
+        if(finalRole.equals(initialRole)) {
+            try {
+                capture.getValue();
+                Assert.fail("Exception expected");
+            } catch(AssertionError expected) {
+                // If the initial role and final role are the same, no updates
+                // should have been saved to the rights repo, therefore no
+                // value should have been captured in that call.
+            }
+        } else {
+            verifyFinalRights(capture.getValue(), finalRole.getRightsLevel());
+        }
+    }    
+
+    private void verifyFinalRights(AccountRights finalRights, int numRoles) {
+        Assert.assertNotNull(finalRights);
+        Set<Role> finalRoles = finalRights.getRoles();
+        Assert.assertNotNull(finalRoles);
+        Assert.assertEquals(numRoles, finalRoles.size());
+    }
+
+    @Test
     public void testRedeemAccountInvitation() throws Exception {
-        int userId = 10;
         String redemptionCode = "ABCD";
-        setUpRedeemAccountInvitation(userId, redemptionCode);
+        setUpRedeemAccountInvitation(redemptionCode);
         userService = new DuracloudUserServiceImpl(repoMgr);
 
         userService.redeemAccountInvitation(userId, redemptionCode);
     }
 
-    private void setUpRedeemAccountInvitation(int userId, String redemptionCode)
+    private void setUpRedeemAccountInvitation(String redemptionCode)
         throws Exception {
         int invitationId = 0;
         int expirationDays = 2;
@@ -179,20 +267,22 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
     
     @Test
-    public void testRemoveUserFromAccount() throws Exception {
-        //TODO: complete test
-        replayMocks();
+    public void testRevokeUserRights() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        setUpRevokeUserRights();
+        userService.revokeUserRights(acctId, userId);
     }
 
-    @Test
-    public void testGrantAdminRights() throws Exception {
-        //TODO: complete test
-        replayMocks();
-    }
+    private void setUpRevokeUserRights() throws Exception {
+        AccountRights rights = new AccountRights(0, acctId, userId, null);
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
+                                                            EasyMock.anyInt()))
+            .andReturn(rights)
+            .anyTimes();
 
-    @Test
-    public void testRevokeAdminRights() throws Exception {
-        // TODO: complete test
+        rightsRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
+
         replayMocks();
     }
 
@@ -210,19 +300,16 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testloadDuracloudUserByUsername() throws Exception {
-        // TODO: complete test
-        replayMocks();
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        setUpLoadDuracloudUserByUsername();
+        userService.loadDuracloudUserByUsername("name");
     }
 
-    @Test
-    public void testGrantOwnerRights() throws Exception {
-        // TODO: complete test
-        replayMocks();
-    }
-
-    @Test
-    public void testRevokeOwnerRights() throws Exception {
-        // TODO: complete test
+    private void setUpLoadDuracloudUserByUsername() throws Exception {
+        DuracloudUser user = newDuracloudUser(userId, "some-username");
+        EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
+            .andReturn(user)
+            .anyTimes();
         replayMocks();
     }
 

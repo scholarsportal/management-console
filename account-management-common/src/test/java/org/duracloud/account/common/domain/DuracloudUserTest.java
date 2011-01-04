@@ -45,7 +45,6 @@ public class DuracloudUserTest {
         roles1.add(Role.ROLE_ADMIN);
         roles1.add(Role.ROLE_OWNER);
         roles1.add(Role.ROLE_ROOT);
-        roles1.add(Role.ROLE_SYSTEM);
         AccountRights rights1 = new AccountRights(1, acctId1, userId, roles1, 0);
 
         Set<AccountRights> rights = new HashSet<AccountRights>();
@@ -85,15 +84,12 @@ public class DuracloudUserTest {
                 owner = true;
             } else if(ga.getAuthority().equals(Role.ROLE_ROOT.name())) {
                 root = true;
-            } else if(ga.getAuthority().equals(Role.ROLE_SYSTEM.name())) {
-                system = true;
             }
         }
         assertTrue(user);
         assertTrue(admin);
         assertTrue(owner);
         assertTrue(root);
-        assertTrue(system);
     }
 
     @Test
@@ -101,25 +97,23 @@ public class DuracloudUserTest {
         Set<Role> roles = user.getRolesByAcct(acctId0);
         assertNotNull(roles);
         assertEquals(1, roles.size());
-        checkRoles(roles, true, false, false, false, false);
+        checkRoles(roles, true, false, false, false);
 
         roles = user.getRolesByAcct(acctId1);
         assertNotNull(roles);
-        assertEquals(5, roles.size());
-        checkRoles(roles, true, true, true, true, true);
+        assertEquals(4, roles.size());
+        checkRoles(roles, true, true, true, true);
     }
 
     private void checkRoles(Set<Role> roles,
                             boolean expUser,
                             boolean expAdmin,
                             boolean expOwner,
-                            boolean expRoot,
-                            boolean expSystem) {
+                            boolean expRoot) {
         boolean user = false;
         boolean admin = false;
         boolean owner = false;
         boolean root = false;
-        boolean system = false;
         for(Role role : roles) {
             if(role.equals(Role.ROLE_USER)) {
                 user = true;
@@ -129,15 +123,12 @@ public class DuracloudUserTest {
                 owner = true;
             } else if(role.equals(Role.ROLE_ROOT)) {
                 root = true;
-            } else if(role.equals(Role.ROLE_SYSTEM)) {
-                system = true;
             }
         }
         assertEquals(expUser, user);
         assertEquals(expAdmin, admin);
         assertEquals(expOwner, owner);
         assertEquals(expRoot, root);
-        assertEquals(expSystem, system);
     }
 
 }
