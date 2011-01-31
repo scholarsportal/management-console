@@ -9,78 +9,42 @@
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security-3.0.xsd
            http://www.springframework.org/schema/mvc
-           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd"
->
+           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-  
-  
-  <http
-    auto-config="false"
-  >
-    <access-denied-handler
-      error-page="/access-denied" />
+  <http auto-config="false">
+    <access-denied-handler error-page="/access-denied" />
  
-    <intercept-url
-      pattern="/accounts/new"
-      access="ROLE_USER" />
-    <intercept-url
-      pattern="/accounts/byid/**"
-      access="ROLE_USER" />
-    <intercept-url
-      pattern="/users/byid/**"
-      access="ROLE_USER" />
-    <intercept-url
-      pattern="/users/profile"
-      access="ROLE_USER" />
+    <intercept-url pattern="/accounts/new" access="ROLE_USER" />
+    <intercept-url pattern="/accounts/byid/**" access="ROLE_USER" />
+    <intercept-url pattern="/users/byid/**" access="ROLE_USER" />
+    <intercept-url pattern="/users/profile" access="ROLE_USER" />
 
-    <form-login
-      login-page="/login"
-      always-use-default-target="false"
-      default-target-url="/users/profile"
-      authentication-failure-url="/login?error=true" />
+    <form-login login-page="/login" always-use-default-target="false"
+                default-target-url="/users/profile"
+                authentication-failure-url="/login?error=true" />
     <http-basic />
-    <logout
-      invalidate-session="true" />
+    <logout invalidate-session="true" />
   </http>
 
-
   <!-- AuthN Manager -->
-  <authentication-manager
-    alias="authenticationManager"
-  >
-    <authentication-provider
-      user-service-ref="userDetailsService" />
+  <authentication-manager alias="authenticationManager" >
+    <authentication-provider user-service-ref="userDetailsService" />
   </authentication-manager>
   
-    <beans:bean
-    id="globalAccessDecisionManager"
-    class="org.springframework.security.access.vote.UnanimousBased"
-  >
-    <beans:property name="allowIfAllAbstainDecisions" value="true"/>
-    <beans:property
-      name="decisionVoters"
-    >
-      <beans:list>
-        <beans:bean
-          class="org.duracloud.account.security.web.AccountAccessDecisionVoter"/>
-        <beans:bean
-          class="org.duracloud.account.security.web.UserAccessDecisionVoter">
-        </beans:bean>
-      </beans:list>
-    </beans:property>
+  <beans:bean id="globalAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" >
+  <beans:property name="allowIfAllAbstainDecisions" value="true"/>
+  <beans:property name="decisionVoters" >
+    <beans:list>
+      <beans:bean class="org.duracloud.account.security.web.AccountAccessDecisionVoter"/>
+      <beans:bean class="org.duracloud.account.security.web.UserAccessDecisionVoter"/>
+    </beans:list>
+  </beans:property>
   </beans:bean>
   
-  <global-method-security
-    access-decision-manager-ref="globalAccessDecisionManager"
-    pre-post-annotations="enabled"
-    >
-   
-    <protect-pointcut
-      expression="execution(* org.duracloud.account.util.*UserService.*(..))"
+  <global-method-security access-decision-manager-ref="globalAccessDecisionManager" pre-post-annotations="enabled" >   
+    <protect-pointcut expression="execution(* org.duracloud.account.util.*UserService.*(..))"
       access="ROLE_USER" />
-        
-    <protect-pointcut
-      expression="execution(* org.duracloud.account.util.Account*Service.*(..))"
+    <protect-pointcut expression="execution(* org.duracloud.account.util.Account*Service.*(..))"
       access="ROLE_USER" />
   </global-method-security>
   
