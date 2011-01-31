@@ -215,7 +215,7 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         Method method = userService.getClass().getMethod("setUserRights",
                                                          Integer.TYPE,
                                                          Integer.TYPE,
-                                                         Role.class);
+                                                         Role[].class);
         int voteResult = adv.vote(createUserAuthentication(callerAuthorities),
                                   createMockMethodInvoker(method, params),
                                   attributes);

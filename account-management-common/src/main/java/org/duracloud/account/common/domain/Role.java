@@ -6,32 +6,50 @@ package org.duracloud.account.common.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public enum Role {
-	ROLE_ROOT(4, "Root"),
-	ROLE_OWNER(3, "Owner"),
-	ROLE_ADMIN(2, "Administrator"),
-	ROLE_USER(1, "User");
+    ROLE_INIT("Init"),
+    ROLE_ROOT("Root"),
+    ROLE_OWNER("Owner"),
+    ROLE_ADMIN("Administrator"),
+    ROLE_USER("User");
 
-	private GrantedAuthority authority;
+    private GrantedAuthority authority;
     private String displayName;
-    private int rightsLevel;
 
-	Role(int rightsLevel, String displayName) {
-		this.authority = new GrantedAuthorityImpl(name());
-        this.rightsLevel = rightsLevel;
+    Role(String displayName) {
+        this.authority = new GrantedAuthorityImpl(name());
         this.displayName = displayName;
-	}
+    }
 
-	public GrantedAuthority authority() {
-		return this.authority;
-	}
+    public GrantedAuthority authority() {
+        return this.authority;
+    }
 
     public String getDisplayName() {
         return displayName;
     }
 
-    public int getRightsLevel() {
-        return rightsLevel;
-    }        
+    public Set<Role> getRoleHierarchy() {
+        Set<Role> hierarchy = new HashSet<Role>();
+        switch (this) {
+            case ROLE_ROOT:
+                hierarchy.add(ROLE_ROOT);
+            case ROLE_OWNER:
+                hierarchy.add(ROLE_OWNER);
+            case ROLE_ADMIN:
+                hierarchy.add(ROLE_ADMIN);
+            case ROLE_USER:
+                hierarchy.add(ROLE_USER);
+                break;
+            case ROLE_INIT:
+                // not in hierarchy
+                hierarchy.add(ROLE_INIT);
+        }
+
+        return hierarchy;
+    }
 }

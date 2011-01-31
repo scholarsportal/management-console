@@ -162,16 +162,40 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         testSetRole(Role.ROLE_OWNER);
     }
 
-    private void testSetRole(Role initialRole) throws Exception {
-        Capture<AccountRights> capture = setUpSetRights(initialRole);
-        testSetRole(initialRole, capture, Role.ROLE_USER);
-        testSetRole(initialRole, capture, Role.ROLE_ADMIN);
-        testSetRole(initialRole, capture, Role.ROLE_OWNER);
+    @Test
+    public void testSetUserRightsStartAsRoot() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_ROOT);
     }
 
-    private Capture<AccountRights> setUpSetRights(Role initialRole)
+        @Test
+    public void testSetUserRightsStartAsInit() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_INIT);
+    }
+
+    @Test
+    public void testSetUserRightsStartAsMulti() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        testSetRole(Role.ROLE_INIT, Role.ROLE_ADMIN);
+    }
+
+    private void testSetRole(Role... initialRoles) throws Exception {
+        Capture<AccountRights> capture = setUpSetRights(initialRoles);
+        testSetRole(initialRoles, capture, Role.ROLE_USER);
+        testSetRole(initialRoles, capture, Role.ROLE_ADMIN);
+        testSetRole(initialRoles, capture, Role.ROLE_OWNER);
+        testSetRole(initialRoles, capture, Role.ROLE_ROOT);
+        testSetRole(initialRoles, capture, Role.ROLE_INIT);
+        testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_USER);
+        testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_ADMIN);
+        testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_OWNER);
+        testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_ROOT);
+    }
+
+    private Capture<AccountRights> setUpSetRights(Role... initialRoles)
         throws Exception {
-        AccountRights startingRights = getRightsWithRole(initialRole);
+        AccountRights startingRights = getRightsWithRoles(initialRoles);
         EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
                                                             EasyMock.anyInt()))
             .andReturn(startingRights)
@@ -185,26 +209,25 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         return capturedRights;
     }
 
-    private AccountRights getRightsWithRole(Role role) {
-        Set<Role> roles = new HashSet<Role>();
-        if(null != role) {
-            roles.add(Role.ROLE_USER);
-            if(role.equals(Role.ROLE_ADMIN)) {
-                roles.add(Role.ROLE_ADMIN);
-            } else if(role.equals(Role.ROLE_OWNER)) {
-                roles.add(Role.ROLE_ADMIN);
-                roles.add(Role.ROLE_OWNER);
+    private AccountRights getRightsWithRoles(Role... roles) {
+        Set<Role> rolesWithHierarchy = new HashSet<Role>();
+        if(null != roles) {
+            for (Role role : roles) {
+                if (null != role) {
+                    rolesWithHierarchy.addAll(role.getRoleHierarchy());
+                }
             }
         }
-        return new AccountRights(0, acctId, userId, roles);
+        return new AccountRights(0, acctId, userId, rolesWithHierarchy);
     }
 
-    private void testSetRole(Role initialRole,
+    private void testSetRole(Role[] initialRoles,
                              Capture<AccountRights> capture,
-                             Role finalRole)
+                             Role... finalRoles)
         throws Exception {
-        userService.setUserRights(acctId, userId, finalRole);
-        if(finalRole.equals(initialRole)) {
+        userService.setUserRights(acctId, userId, finalRoles);
+        
+        if(rolesAreSame(initialRoles, finalRoles)) {
             try {
                 capture.getValue();
                 Assert.fail("Exception expected");
@@ -214,15 +237,38 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                 // value should have been captured in that call.
             }
         } else {
-            verifyFinalRights(capture.getValue(), finalRole.getRightsLevel());
+            Set<Role> newRoles = new HashSet<Role>();
+            for (Role role : finalRoles) {
+                newRoles.addAll(role.getRoleHierarchy());
+            }
+            verifyFinalRights(capture.getValue(), newRoles);
         }
-    }    
+    }
 
-    private void verifyFinalRights(AccountRights finalRights, int numRoles) {
+    private boolean rolesAreSame(Role[] initialRoles, Role[] finalRoles) {
+        Set<Role> oldRoles = new HashSet<Role>();
+        if (null != initialRoles) {
+            for (Role role : initialRoles) {
+                oldRoles.add(role);
+            }
+        }
+
+        Set<Role> newRoles = new HashSet<Role>();
+        if (null != finalRoles) {
+            for (Role role : finalRoles) {
+                newRoles.add(role);
+            }
+        }
+
+        return oldRoles.equals(newRoles);
+    }
+
+    private void verifyFinalRights(AccountRights finalRights, Set<Role> expectedRoles) {
         Assert.assertNotNull(finalRights);
         Set<Role> finalRoles = finalRights.getRoles();
         Assert.assertNotNull(finalRoles);
-        Assert.assertEquals(numRoles, finalRoles.size());
+        Assert.assertEquals(expectedRoles.size(), finalRoles.size());
+        Assert.assertEquals(expectedRoles, finalRoles);
     }
 
     @Test

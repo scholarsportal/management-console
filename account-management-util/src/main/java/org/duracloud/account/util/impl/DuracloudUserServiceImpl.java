@@ -85,44 +85,42 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void setUserRights(int acctId, int userId, Role role) {
-        if(null == role) {
+    public void setUserRights(int acctId, int userId, Role... roles) {
+        if(null == roles) {
             throw new IllegalArgumentException("Role may not be null");
+        }
+
+        Set<Role> oldRoles = null;
+        Set<Role> newRoles = new HashSet<Role>();
+        for (Role role : roles) {
+            newRoles.addAll(role.getRoleHierarchy());
         }
 
         DuracloudRightsRepo rightsRepo = getRightsRepo();
         AccountRights rights = null;
         try {
             rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
+            oldRoles = rights.getRoles();
 
-            // Determine the current rights level
-            int currentRightsLevel = 0;
-            for(Role currentRole : rights.getRoles()) {
-                if(currentRole.getRightsLevel() > currentRightsLevel) {
-                    currentRightsLevel = currentRole.getRightsLevel();
-                }
-            }
-
-            // Only set a new role if the current rights levels differ
-            if(role.getRightsLevel() != currentRightsLevel) {
-                retryUpdateRights(acctId, userId, role, rights);
-            }
         } catch (DBNotFoundException e) {
-            // No rights currently, grant new rights
-            retryUpdateRights(acctId, userId, role, null);
+            log.info("Will add new rights for " + userId + ", " + acctId);
+        }
+
+        if (!newRoles.equals(oldRoles)) {
+            retryUpdateRights(acctId, userId, newRoles, rights);
         }
     }
 
     private void retryUpdateRights(int acctId,
                                    int userId,
-                                   Role role,
+                                   Set<Role> roles,
                                    AccountRights rights) {
         int maxAttempts = 5;
         int attempts = 0;
         boolean success = false;
         while(!success && attempts < maxAttempts) {
             try {
-                saveRights(acctId, userId, role, rights);
+                saveRights(acctId, userId, roles, rights);
                 success = true;
             } catch(DBConcurrentUpdateException e) {
             }
@@ -131,7 +129,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         if(!success && attempts >= maxAttempts) {
             String error = "Failure attempting to update user with ID" +
-                           userId + " to role " + role.name() +
+                           userId + " to roles " + roles +
                            " for Account with ID" + acctId;
             throw new DuraCloudRuntimeException(error);
         }
@@ -139,7 +137,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private void saveRights(int acctId,
                             int userId,
-                            Role role,
+                            Set<Role> roles,
                             AccountRights rights)
         throws DBConcurrentUpdateException {
         DuracloudRightsRepo rightsRepo = getRightsRepo();
@@ -152,15 +150,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         } else {
             rightsId = rights.getId();
             counter = rights.getCounter();
-        }
-
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
-        if(role.equals(Role.ROLE_ADMIN)) {
-            roles.add(Role.ROLE_ADMIN);
-        } else if(role.equals(Role.ROLE_OWNER)) {
-            roles.add(Role.ROLE_ADMIN);
-            roles.add(Role.ROLE_OWNER);
         }
 
         rights = new AccountRights(rightsId, acctId, userId, roles, counter);
