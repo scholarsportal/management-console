@@ -59,23 +59,5 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
         log.debug("decision: " + decisionToString(decision));
         return decision;
     }
-
-    private String decisionToString(int decision) {
-        String text;
-        switch (decision) {
-            case 1:
-                text = "ACCESS_GRANTED";
-                break;
-            case 0:
-                text = "ACCESS_ABSTAIN";
-                break;
-            case -1:
-                text = "ACCESS_DENIED";
-                break;
-            default:
-                text = "UNRECOGNIZED_DECISION:" + decision;
-        }
-        return text;
-    }
 	
 }

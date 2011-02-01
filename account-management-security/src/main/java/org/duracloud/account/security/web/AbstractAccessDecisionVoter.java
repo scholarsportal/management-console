@@ -65,4 +65,22 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 					.contains(Role.ROLE_ROOT.authority());
 	}
 
+    protected String decisionToString(int decision) {
+        String text;
+        switch (decision) {
+            case 1:
+                text = "ACCESS_GRANTED";
+                break;
+            case 0:
+                text = "ACCESS_ABSTAIN";
+                break;
+            case -1:
+                text = "ACCESS_DENIED";
+                break;
+            default:
+                text = "UNRECOGNIZED_DECISION:" + decision;
+        }
+        return text;
+    }
+
 }

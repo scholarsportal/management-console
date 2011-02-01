@@ -8,12 +8,16 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -226,7 +230,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                              Role... finalRoles)
         throws Exception {
         userService.setUserRights(acctId, userId, finalRoles);
-        
+
         if(rolesAreSame(initialRoles, finalRoles)) {
             try {
                 capture.getValue();
@@ -311,7 +315,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         replayMocks();
     }
-    
+
     @Test
     public void testRevokeUserRights() throws Exception {
         userService = new DuracloudUserServiceImpl(repoMgr);
@@ -345,17 +349,68 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testloadDuracloudUserByUsername() throws Exception {
+    public void testLoadDuracloudUserByUsername() throws Exception {
         userService = new DuracloudUserServiceImpl(repoMgr);
-        setUpLoadDuracloudUserByUsername();
-        userService.loadDuracloudUserByUsername("name");
+
+        String username = "test-username";
+        setUpLoadDuracloudUserByUsername(username, null);
+
+        UserDetails user = userService.loadDuracloudUserByUsername(username);
+        Assert.assertNotNull(user);
+        Assert.assertEquals(username, user.getUsername());
+
+        Collection<GrantedAuthority> authorities = user.getAuthorities();
+        Assert.assertNotNull(authorities);
+        Assert.assertEquals(1, authorities.size());
+        Assert.assertEquals(Role.ROLE_USER.name(),
+                            authorities.iterator().next().getAuthority());
     }
 
-    private void setUpLoadDuracloudUserByUsername() throws Exception {
-        DuracloudUser user = newDuracloudUser(userId, "some-username");
-        EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
-            .andReturn(user)
-            .anyTimes();
+    @Test
+    public void testLoadDuracloudUserByUsernameException0() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        String username = "junk-username";
+        Exception exception = new DBNotFoundException("canned-exception");
+        setUpLoadDuracloudUserByUsername(username, exception);
+
+        try {
+            userService.loadDuracloudUserByUsername(username);
+            Assert.fail("exception expected");
+        } catch (DBNotFoundException e) {
+            Assert.assertEquals(exception, e);
+        }
+    }
+
+    @Test
+    public void testLoadDuracloudUserByUsernameException1() throws Exception {
+        userService = new DuracloudUserServiceImpl(repoMgr);
+        String username = "junk-username";
+        Exception exception = new DBUninitializedException("canned-exception");
+        setUpLoadDuracloudUserByUsername(username, exception);
+
+        try {
+            userService.loadDuracloudUserByUsername(username);
+            Assert.fail("exception expected");
+        } catch (DBUninitializedException e) {
+            Assert.assertEquals(exception, e);
+        }
+    }
+
+    private void setUpLoadDuracloudUserByUsername(String username,
+                                                  Exception exception)
+        throws Exception {
+        DuracloudUser user = newDuracloudUser(userId, username);
+
+        if (null == exception) {
+            EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
+                .andReturn(user)
+                .anyTimes();
+
+        } else {
+            EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
+                .andThrow(exception);
+        }
+
         replayMocks();
     }
 

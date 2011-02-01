@@ -14,6 +14,7 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
@@ -204,9 +205,14 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     	DuracloudUser user;
 		try {
             user = getUserRepo().findByUsername(username);
+
 		} catch (DBNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage(), e);
-		}
+
+		} catch (DBUninitializedException ue) {
+            log.warn("UserRepo is uninitialized");
+            throw new UsernameNotFoundException(ue.getMessage(), ue);
+        }
 
 		//not all users are associated with an account.
 		try {
