@@ -31,6 +31,7 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final int imageId = 10;
     private static final String hostName = "host";
     private static final String providerInstanceId = "ABCD";
+    private static final int computeProviderAccountId = 1;
     private static final int primaryStorageProviderAccountId = 5;
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> serviceRepositoryIds = null;
@@ -147,6 +148,7 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
                                      imageId,
                                      hostName,
                                      providerInstanceId,
+                                     computeProviderAccountId,
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
                                      serviceRepositoryIds,

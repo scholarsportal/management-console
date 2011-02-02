@@ -37,6 +37,8 @@ public class DuracloudInstanceConverter
         "PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID";
     protected static final String SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT =
         "SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS";
+    protected static final String COMPUTE_PROVIDER_ACCOUNT_ID_ATT =
+        "COMPUTE_PROVIDER_ACCOUNT_ID";
     protected static final String SERVICE_REPOSITORY_IDS_ATT =
         "SERVICE_REPOSITORY_IDS";
     protected static final String DC_ROOT_USERNAME_ATT = "DC_ROOT_USERNAME";
@@ -68,6 +70,10 @@ public class DuracloudInstanceConverter
             idsAsString(instance.getSecondaryStorageProviderAccountIds()),
             true));
         atts.add(new ReplaceableAttribute(
+            COMPUTE_PROVIDER_ACCOUNT_ID_ATT,
+            asString(instance.getComputeProviderAccountId()),
+            true));
+        atts.add(new ReplaceableAttribute(
             SERVICE_REPOSITORY_IDS_ATT,
             idsAsString(instance.getServiceRepositoryIds()),
             true));
@@ -90,6 +96,7 @@ public class DuracloudInstanceConverter
         int imageId = -1;
         String hostName = null;
         String providerInstanceId = null;
+        int computeProviderAccountId = -1;
         int primaryStorageProviderAccountId = -1;
         Set<Integer> secondaryStorageProviderAccountIds = null;
         Set<Integer> serviceRepositoryIds = null;
@@ -110,6 +117,13 @@ public class DuracloudInstanceConverter
 
             } else if (PROVIDER_INSTANCE_ID_ATT.equals(name)) {
                 providerInstanceId = value;
+
+            } else if (COMPUTE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
+                computeProviderAccountId =
+                    idFromString(value,
+                                 "Compute Provider Account",
+                                 "Instance",
+                                 id);
 
             } else if (PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
                 primaryStorageProviderAccountId =
@@ -145,6 +159,7 @@ public class DuracloudInstanceConverter
                                      imageId,
                                      hostName,
                                      providerInstanceId,
+                                     computeProviderAccountId,
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
                                      serviceRepositoryIds,

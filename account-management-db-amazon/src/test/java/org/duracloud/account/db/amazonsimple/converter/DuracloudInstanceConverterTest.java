@@ -17,6 +17,7 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.IMAGE_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.HOST_NAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PROVIDER_INSTANCE_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.COMPUTE_PROVIDER_ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.SERVICE_REPOSITORY_IDS_ATT;
@@ -34,6 +35,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
     private static final int imageId = 10;
     private static final String hostName = "host";
     private static final String providerInstanceId = "ABCD";
+    private static final int computeProviderAccountId = 1;
     private static final int primaryStorageProviderAccountId = 5;
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> serviceRepositoryIds = null;
@@ -63,6 +65,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
                                      imageId,
                                      hostName,
                                      providerInstanceId,
+                                     computeProviderAccountId,
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
                                      serviceRepositoryIds,
@@ -79,6 +82,8 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         testAtts.add(new Attribute(IMAGE_ID_ATT, insCvtr.asString(imageId)));
         testAtts.add(new Attribute(HOST_NAME_ATT, hostName));
         testAtts.add(new Attribute(PROVIDER_INSTANCE_ID_ATT, providerInstanceId));
+        testAtts.add(new Attribute(COMPUTE_PROVIDER_ACCOUNT_ID_ATT,
+                                   insCvtr.asString(computeProviderAccountId)));
         testAtts.add(new Attribute(PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT,
                                    insCvtr.asString(primaryStorageProviderAccountId)));
         testAtts.add(new Attribute(SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
@@ -99,6 +104,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         Assert.assertNotNull(instance.getImageId());
         Assert.assertNotNull(instance.getHostName());
         Assert.assertNotNull(instance.getProviderInstanceId());
+        Assert.assertNotNull(instance.getComputeProviderAccountId());
         Assert.assertNotNull(instance.getPrimaryStorageProviderAccountId());
         Assert.assertNotNull(instance.getSecondaryStorageProviderAccountIds());
         Assert.assertNotNull(instance.getServiceRepositoryIds());
@@ -110,6 +116,8 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         Assert.assertEquals(hostName, instance.getHostName());
         Assert.assertEquals(providerInstanceId,
                             instance.getProviderInstanceId());
+        Assert.assertEquals(computeProviderAccountId,
+                            instance.getComputeProviderAccountId());        
         Assert.assertEquals(primaryStorageProviderAccountId,
                             instance.getPrimaryStorageProviderAccountId());
         Assert.assertEquals(secondaryStorageProviderAccountIds,
