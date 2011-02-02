@@ -1,14 +1,16 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.util.impl;
+package org.duracloud.account.db.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
-import org.duracloud.account.db.impl.IdUtilImpl;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,6 +33,9 @@ public class IdUtilImplTest {
     private DuracloudRightsRepo rightsRepo;
     private DuracloudUserInvitationRepo userInvitationRepo;
     private DuracloudInstanceRepo instanceRepo;
+    private DuracloudServerImageRepo serverImageRepo;
+    private DuracloudProviderAccountRepo providerAccountRepo;
+    private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
 
     private static final int COUNT = 5;
 
@@ -41,45 +46,79 @@ public class IdUtilImplTest {
         rightsRepo = createMockRightsRepo(COUNT);
         userInvitationRepo = createMockUserInvitationRepo(COUNT);
         instanceRepo = createMockInstanceRepo(COUNT);
+        serverImageRepo = createMockServerImageRepo(COUNT);
+        providerAccountRepo = createMockProviderAccountRepo(COUNT);
+        serviceRepositoryRepo = createMockServiceRepositoryRepo(COUNT);
 
         idUtil = new IdUtilImpl();
         idUtil.initialize(userRepo,
                           accountRepo,
                           rightsRepo,
                           userInvitationRepo,
-                          instanceRepo);
+                          instanceRepo,
+                          serverImageRepo,
+                          providerAccountRepo,
+                          serviceRepositoryRepo);
     }
 
     private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
-        DuracloudUserInvitationRepo repo = EasyMock.createMock(DuracloudUserInvitationRepo.class);
+        DuracloudUserInvitationRepo repo =
+            EasyMock.createMock(DuracloudUserInvitationRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
         EasyMock.replay(repo);
         return repo;
     }
 
     private DuracloudAccountRepo createMockAccountRepo(int count) {
-        DuracloudAccountRepo repo = EasyMock.createMock(DuracloudAccountRepo.class);
+        DuracloudAccountRepo repo =
+            EasyMock.createMock(DuracloudAccountRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
         EasyMock.replay(repo);
         return repo;
     }
 
     private DuracloudUserRepo createMockUserRepo(int count) {
-        DuracloudUserRepo repo = EasyMock.createMock(DuracloudUserRepo.class);
+        DuracloudUserRepo repo =
+            EasyMock.createMock(DuracloudUserRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
         EasyMock.replay(repo);
         return repo;
     }
 
     private DuracloudRightsRepo createMockRightsRepo(int count) {
-        DuracloudRightsRepo repo = EasyMock.createMock(DuracloudRightsRepo.class);
+        DuracloudRightsRepo repo =
+            EasyMock.createMock(DuracloudRightsRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
         EasyMock.replay(repo);
         return repo;
     }
 
     private DuracloudInstanceRepo createMockInstanceRepo(int count) {
-        DuracloudInstanceRepo repo = EasyMock.createMock(DuracloudInstanceRepo.class);
+        DuracloudInstanceRepo repo =
+            EasyMock.createMock(DuracloudInstanceRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+
+    private DuracloudServerImageRepo createMockServerImageRepo(int count) {
+        DuracloudServerImageRepo repo =
+            EasyMock.createMock(DuracloudServerImageRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+
+    private DuracloudProviderAccountRepo createMockProviderAccountRepo(int count) {
+        DuracloudProviderAccountRepo repo =
+            EasyMock.createMock(DuracloudProviderAccountRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+    private DuracloudServiceRepositoryRepo createMockServiceRepositoryRepo(int count) {
+        DuracloudServiceRepositoryRepo repo =
+            EasyMock.createMock(DuracloudServiceRepositoryRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
         EasyMock.replay(repo);
         return repo;
@@ -100,6 +139,9 @@ public class IdUtilImplTest {
         EasyMock.verify(rightsRepo);
         EasyMock.verify(userInvitationRepo);
         EasyMock.verify(instanceRepo);
+        EasyMock.verify(serverImageRepo);
+        EasyMock.verify(providerAccountRepo);
+        EasyMock.verify(serviceRepositoryRepo);
     }
 
     @Test
@@ -124,6 +166,21 @@ public class IdUtilImplTest {
 
     @Test
     public void testNewInstanceInvitationId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newInstanceId());
+    }
+
+    @Test
+    public void testNewServerImageId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newInstanceId());
+    }
+
+    @Test
+    public void testNewProviderAccountId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newInstanceId());
+    }
+
+    @Test
+    public void testNewServiceRepositoryId() throws Exception {
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 

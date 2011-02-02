@@ -28,6 +28,8 @@ public interface DuracloudRepoMgr {
 
     public DuracloudProviderAccountRepo getProviderAccountRepo();
 
+    public DuracloudServiceRepositoryRepo getServiceRepositoryRepo();
+
     public IdUtil getIdUtil();
 
     public Set<BaseRepo> getAllRepos();

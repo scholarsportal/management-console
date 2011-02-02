@@ -5,7 +5,10 @@ package org.duracloud.account.db.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
@@ -25,17 +28,26 @@ public class IdUtilImpl implements IdUtil {
     private int rightsId = -1;
     private int userInvitationId = -1;
     private int instanceId = -1;
+    private int serverImageId = -1;
+    private int providerAccountId = -1;
+    private int serviceRepositoryId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudAccountRepo accountRepo,
                            DuracloudRightsRepo rightsRepo,
                            DuracloudUserInvitationRepo userInvitationRepo,
-                           DuracloudInstanceRepo instanceRepo) {
+                           DuracloudInstanceRepo instanceRepo,
+                           DuracloudServerImageRepo serverImageRepo,
+                           DuracloudProviderAccountRepo providerAccountRepo,
+                           DuracloudServiceRepositoryRepo serviceRepositoryRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
         this.rightsId = max(rightsRepo.getIds());
         this.userInvitationId = max(userInvitationRepo.getIds());
         this.instanceId = max(instanceRepo.getIds());
+        this.serverImageId = max(serverImageRepo.getIds());
+        this.providerAccountId = max(providerAccountRepo.getIds());
+        this.serviceRepositoryId = max(serviceRepositoryRepo.getIds());
     }
 
     private int max(Collection<? extends Integer> c) {
@@ -81,4 +93,21 @@ public class IdUtilImpl implements IdUtil {
         return ++instanceId;
     }
 
+    @Override
+    public int newServerImageId() {
+        checkInitialized();
+        return ++serverImageId;
+    }
+
+    @Override
+    public int newProviderAccountId() {
+        checkInitialized();
+        return ++providerAccountId;
+    }
+
+    @Override
+    public int newServiceRepositoryId() {
+        checkInitialized();
+        return ++serviceRepositoryId;
+    }
 }

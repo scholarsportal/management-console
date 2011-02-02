@@ -10,9 +10,9 @@ package org.duracloud.account.common.domain;
 public class ProviderAccount extends BaseDomainData {
 
     public enum ProviderType {
-        AMAZON(),
-        RACKSPACE(),
-        MICROSOFT();
+        AMAZON,
+        RACKSPACE,
+        MICROSOFT;
     }
 
     /**
