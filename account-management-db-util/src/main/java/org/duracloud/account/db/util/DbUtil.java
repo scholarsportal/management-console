@@ -100,8 +100,8 @@ public class DbUtil {
             }
             if(items.size() > 0) {
                 String serialized = serialize(items);
-                writeToFile(serialized,
-                            items.get(0).getClass().getSimpleName());
+                String name = items.get(0).getClass().getSimpleName() + ".xml";
+                writeToFile(serialized, name);
             }
         } catch (DBNotFoundException e) {
             log.error("Item not found: " + e.getMessage());

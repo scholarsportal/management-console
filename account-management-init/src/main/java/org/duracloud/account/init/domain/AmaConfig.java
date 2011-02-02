@@ -21,8 +21,8 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     private static final String INIT_RESOURCE = "/init";
 
-    public static final String awsUsernameKey = "aws-username";
-    public static final String awsPasswordKey = "aws-password";
+    public static final String awsUsernameKey = "username";
+    public static final String awsPasswordKey = "password";
 
     private String awsUsername;
     private String awsPassword;

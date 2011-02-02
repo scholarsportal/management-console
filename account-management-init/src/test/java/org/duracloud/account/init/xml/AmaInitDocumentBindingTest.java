@@ -56,8 +56,8 @@ public class AmaInitDocumentBindingTest {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<credential>");
-        sb.append("  <awsUsername>" + encUsername + "</awsUsername>");
-        sb.append("  <awsPassword>" + encPassword + "</awsPassword>");
+        sb.append("  <username>" + encUsername + "</username>");
+        sb.append("  <password>" + encPassword + "</password>");
         sb.append("</credential>");
 
         return new ByteArrayInputStream(sb.toString().getBytes());

@@ -39,8 +39,8 @@ public class AmaInitDocumentBinding {
             Document doc = builder.build(xml);
             Element root = doc.getRootElement();
 
-            String encUsername = root.getChildText("awsUsername");
-            String encPassword = root.getChildText("awsPassword");
+            String encUsername = root.getChildText("username");
+            String encPassword = root.getChildText("password");
             config.setAwsUsername(decrypt(encUsername));
             config.setAwsPassword(decrypt(encPassword));
 
