@@ -103,17 +103,20 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
 
         // Set user rights
         expectRightsForAccount(accountId, userId);
-        Object[] userRoleParams = { accountId, userId, Role.ROLE_USER };
+        Role[] roles = new Role[]{Role.ROLE_USER};
+        Object[] userRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, userRoleParams);
 
         // Set admin rights
         expectRightsForAccount(accountId, userId);
-        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        roles = new Role[]{Role.ROLE_ADMIN};
+        Object[] adminRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, adminRoleParams);
 
         // Set owner rights
         expectRightsForAccount(accountId, userId);
-        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        roles = new Role[]{Role.ROLE_OWNER};
+        Object[] ownerRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_DENIED, USER_AUTHORITIES, ownerRoleParams);
     }
     
@@ -150,15 +153,18 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         int userId = 1;
 
         // Set user rights
-        Object[] userRoleParams = { accountId, userId, Role.ROLE_USER };
+        Role[] roles = new Role[]{Role.ROLE_USER};
+        Object[] userRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, userRoleParams);
 
         // Set admin rights
-        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        roles = new Role[]{Role.ROLE_ADMIN};
+        Object[] adminRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, adminRoleParams);
 
         // Set owner rights
-        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        roles = new Role[]{Role.ROLE_OWNER};
+        Object[] ownerRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_GRANTED, OWNER_AUTHORITIES, ownerRoleParams);
     }
     
@@ -170,12 +176,14 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
 
         //admin grants admin rights to user
         expect(0,1, USER_AUTHORITIES);
-        Object[] adminRoleParams = { accountId, userId, Role.ROLE_ADMIN };
+        Role[] roles = new Role[]{Role.ROLE_ADMIN};
+        Object[] adminRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_GRANTED, ADMIN_AUTHORITIES, adminRoleParams);
 
         //admin grants owner rights to admin
         expect(0,1, ADMIN_AUTHORITIES);
-        Object[] ownerRoleParams = { accountId, userId, Role.ROLE_OWNER };
+        roles = new Role[]{Role.ROLE_OWNER};
+        Object[] ownerRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, ownerRoleParams);
 
         //admin revokes admin rights from owner

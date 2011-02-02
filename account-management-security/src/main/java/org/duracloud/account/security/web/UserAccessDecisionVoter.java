@@ -17,6 +17,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -27,6 +28,10 @@ import java.util.Set;
 public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    private static final int ACCT_ID_INDEX = 0;
+    private static final int USER_ID_INDEX = 1;
+    private static final int ROLES_ID_INDEX = 2;
+    
     @Autowired
     private DuracloudRepoMgr duracloudRepoMgr;
 
@@ -58,13 +63,10 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
                 return ACCESS_DENIED;
             }
 
-            Integer accountId = (Integer) rmi.getArguments()[0];
-            Integer userId = (Integer) rmi.getArguments()[1];
-            Role setToRole = null;
-            if(rmi.getArguments().length > 2) {
-                setToRole = (Role) rmi.getArguments()[2];
-            }
-            String methodlc = method.toLowerCase();
+            Integer accountId = getAccountId(rmi.getArguments());
+            Integer userId = getUserId(rmi.getArguments());
+            Set<Role> setToRoles = getRoles(rmi.getArguments());
+
             DuracloudUser user = getUser(authentication);
             boolean isRoot = user.isRootForAcct(accountId);
             boolean isOwner = user.isOwnerForAcct(accountId);
@@ -84,17 +86,16 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
             } else if (isRoot || isOwner) {
                 return ACCESS_GRANTED;
             } else { // Admin
-                if(setToRole != null) {
                     // under no circumstances can an admin modify an owner
-                    if (setToRole.equals(Role.ROLE_OWNER)) {
+                    if (setToRoles.contains(Role.ROLE_OWNER)) {
                         return ACCESS_DENIED;
                     }
                     // if the user is trying to remove their own admin rights, they
                     // can do that
-                    if (userId == user.getId() && !setToRole.equals(Role.ROLE_OWNER)) {
+                    if (userId == user.getId() && !setToRoles.contains(Role.ROLE_OWNER)) {
                         return ACCESS_GRANTED;
                     }
-                }
+
 
                 // an admin can only change the rights of an admin, user or user
                 // without rights.
@@ -116,6 +117,31 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
         }
 
         return ACCESS_ABSTAIN;
+    }
+
+    private Integer getAccountId(Object[] methodArgs) {
+        log.debug("Returning 'accountId' at index: " + ACCT_ID_INDEX);
+        return (Integer) methodArgs[ACCT_ID_INDEX];
+    }
+
+    private Integer getUserId(Object[] methodArgs) {
+        log.debug("Returning 'userId' at index: " + USER_ID_INDEX);
+        return (Integer) methodArgs[USER_ID_INDEX];
+    }
+
+    private Set<Role> getRoles(Object[] methodArgs) {
+        log.debug("Returning 'roles' at index: " + ROLES_ID_INDEX);
+        Set<Role> roles = new HashSet<Role>();
+
+        if (methodArgs.length > ROLES_ID_INDEX) {
+            Role[] arg = (Role[]) methodArgs[ROLES_ID_INDEX];
+            if (null != arg) {
+                for (Role role : arg) {
+                    roles.add(role);
+                }
+            }
+        }
+        return roles;
     }
 
     private boolean accountHasRights(Integer accountId) {
