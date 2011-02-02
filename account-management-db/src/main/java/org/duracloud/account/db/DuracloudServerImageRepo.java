@@ -3,12 +3,12 @@
  */
 package org.duracloud.account.db;
 
-import org.duracloud.account.common.domain.DuracloudServerImage;
+import org.duracloud.account.common.domain.ServerImage;
 
 /**
  * @author Andrew Woods
  *         Date: Oct 8, 2010
  */
-public interface DuracloudImageRepo extends BaseRepo<DuracloudServerImage> {
+public interface DuracloudServerImageRepo extends BaseRepo<ServerImage> {
 
 }

@@ -4,12 +4,10 @@
 package org.duracloud.account.db.amazonsimple;
 
 import org.duracloud.account.db.IdUtil;
-import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.impl.IdUtilImpl;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.EncryptionUtil;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,20 +50,11 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
         repoMgr.getRightsRepo();
         repoMgr.getUserInvitationRepo();
         repoMgr.getInstanceRepo();
+        repoMgr.getServerImageRepo();
+        repoMgr.getProviderAccountRepo();
 
         // IdUtil only throws when a direct call is made.
         repoMgr.getIdUtil().newAccountId();
-
-        // These throw because they are not yet implemented.
-        int numExceptions = 0;
-        try {
-            repoMgr.getImageRepo();
-            Assert.fail("exception expected");
-        } catch (DBUninitializedException e) {
-            numExceptions++;
-        }
-
-        Assert.assertEquals(1, numExceptions);
     }
 
     private String initializationXml() throws Exception {

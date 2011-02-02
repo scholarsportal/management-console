@@ -10,9 +10,10 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.BaseDomainData;
 import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.DuracloudServerImage;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -176,6 +177,10 @@ public class DbUtil {
             repo = repoMgr.getUserInvitationRepo();
         } else if(item instanceof DuracloudInstance) {
             repo = repoMgr.getInstanceRepo();
+        } else if(item instanceof ServerImage) {
+            repo = repoMgr.getServerImageRepo();
+        } else if(item instanceof ProviderAccount) {
+            repo = repoMgr.getProviderAccountRepo();
         } else {
             throw new RuntimeException("Item is not a known type: " +
                                        item.getClass().getName());
@@ -210,8 +215,10 @@ public class DbUtil {
         xstream.alias(UserInvitation.class.getSimpleName(), UserInvitation.class);
         xstream.alias(DuracloudInstance.class.getSimpleName(),
                       DuracloudInstance.class);
-        xstream.alias(DuracloudServerImage.class.getSimpleName(),
-                      DuracloudServerImage.class);
+        xstream.alias(ServerImage.class.getSimpleName(),
+                      ServerImage.class);
+        xstream.alias(ProviderAccount.class.getSimpleName(),
+                      ProviderAccount.class);        
         xstream.alias(Role.class.getSimpleName(), Role.class);
         xstream.alias(StorageProviderType.class.getSimpleName(),
                       StorageProviderType.class);

@@ -23,7 +23,8 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
  * @author: Bill Branan
  * Date: Dec 2, 2010
  */
-public class DuracloudRightsConverter extends BaseDomainConverter implements DomainConverter<AccountRights> {
+public class DuracloudRightsConverter extends BaseDomainConverter
+    implements DomainConverter<AccountRights> {
 
     public DuracloudRightsConverter() {
         log = LoggerFactory.getLogger(DuracloudRightsConverter.class);

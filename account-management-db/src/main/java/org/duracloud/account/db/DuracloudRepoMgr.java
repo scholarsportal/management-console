@@ -24,7 +24,9 @@ public interface DuracloudRepoMgr {
 
     public DuracloudInstanceRepo getInstanceRepo();
 
-    public DuracloudImageRepo getImageRepo();
+    public DuracloudServerImageRepo getServerImageRepo();
+
+    public DuracloudProviderAccountRepo getProviderAccountRepo();
 
     public IdUtil getIdUtil();
 
