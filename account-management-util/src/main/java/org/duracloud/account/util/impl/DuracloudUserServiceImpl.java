@@ -86,7 +86,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void setUserRights(int acctId, int userId, Role... roles) {
+    public boolean setUserRights(int acctId, int userId, Role... roles) {
         if(null == roles) {
             throw new IllegalArgumentException("Role may not be null");
         }
@@ -107,9 +107,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             log.info("Will add new rights for " + userId + ", " + acctId);
         }
 
-        if (!newRoles.equals(oldRoles)) {
+        boolean updatedNeeded = !newRoles.equals(oldRoles);
+        if (updatedNeeded) {
             retryUpdateRights(acctId, userId, newRoles, rights);
         }
+        return updatedNeeded;
     }
 
     private void retryUpdateRights(int acctId,

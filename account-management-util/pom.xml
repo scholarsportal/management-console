@@ -36,6 +36,11 @@
       <artifactId>storageprovider</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>app-config</artifactId>
+      <version>${duracloud.artifact.version}</version>
+    </dependency>
 
     </dependencies>
 </project>

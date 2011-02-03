@@ -28,8 +28,9 @@ public interface DuracloudUserService {
      * 
      * Note that this method only sets a user to new roles. To remove a user
      * from an account, use revokeAllRights().
+     * @return true if an update was performed.
      */
-    public void setUserRights(int acctId, int userId, Role... roles);
+    public boolean setUserRights(int acctId, int userId, Role... roles);
 
     /**
      * Removes all rights to an account for a given user.

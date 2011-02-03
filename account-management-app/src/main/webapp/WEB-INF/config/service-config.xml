@@ -40,4 +40,10 @@
     <constructor-arg ref="repoMgr"/>
   </bean>
 
+  <!--This service pushes UserDetails updates down to the DuraCloud instances-->
+  <bean id="userDetailsPropagator"
+        class="org.duracloud.account.util.usermgmt.UserDetailsPropagatorImpl">
+    <constructor-arg ref="repoMgr" />
+  </bean>
+
 </beans>

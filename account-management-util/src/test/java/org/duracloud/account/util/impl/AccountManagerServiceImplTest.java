@@ -58,10 +58,10 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
     private void setUpCreateAccount() throws Exception {
         userService = EasyMock.createMock(DuracloudUserService.class);
-        userService.setUserRights(EasyMock.anyInt(),
-                                  EasyMock.anyInt(),
-                                  EasyMock.isA(Role.class));
-        EasyMock.expectLastCall();
+        EasyMock.expect(userService.setUserRights(EasyMock.anyInt(),
+                                                  EasyMock.anyInt(),
+                                                  EasyMock.isA(Role.class)))
+            .andReturn(true);
         EasyMock.replay(userService);
 
         for (int id : createIds(NUM_ACCTS)) {
