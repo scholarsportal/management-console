@@ -4,37 +4,29 @@
 package org.duracloud.account.util;
 
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.util.error.DuracloudInvalidVersionException;
 
 /**
  * Lifecycle operations for Duracloud instances.
  *
- * @author "Daniel Bernstein (dbernstein@duraspace.org)"
+ * @author: Bill Branan
+ * Date: Feb 3, 2011
  */
 public interface DuracloudInstanceManagerService {
+    
     /**
-     * Removes and stops the current instance if there is one. Then creates a
-     * new instance.
-     *
-     * @param version FIXME specify format of version parameter
-     * @throws DuracloudInvalidVersionException
-     *
+     * Starts a new instance for the given account from the given image.
      */
-    public DuracloudInstanceService createNewInstance(String acctId,
-                                                      String version)
-        throws DuracloudInvalidVersionException;
+    public DuracloudInstanceService createInstance(int accountId, int imageId);
 
     /**
-     * Stops and removes the instance (if there is one).
-     */
-    public void removeInstance(String acctId);
-
-    /**
+     * Retrieves a DuraCloud instance wrapped in a class which provides
+     * services on the instance.
+     *
      * @return
-     * @throws org.duracloud.account.util.error.DuracloudInstanceNotAvailableException
+     * @throws DuracloudInstanceNotAvailableException
      *
      */
-    public DuracloudInstanceService getInstance(String acctId)
+    public DuracloudInstanceService getInstanceService(String instanceId)
         throws DuracloudInstanceNotAvailableException;
 
 }

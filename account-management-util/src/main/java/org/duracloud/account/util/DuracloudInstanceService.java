@@ -3,69 +3,52 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 
-import java.net.InetAddress;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 /**
  * An interface for controlling a deployed duracloud instance
  *
- * @author "Daniel Bernstein (dbernstein@duraspace.org)"
+ * @author: Bill Branan
+ * Date: Feb 3, 2011
  */
 public interface DuracloudInstanceService {
 
-    public static enum State {
+    public static enum InstanceState {
         STARTING,
         RUNNING,
-        STOPPING,
-        STOPPED;
+        STOPPING;
     }
 
-    public InetAddress getAddress();
-
-    public String getStatusMessage();
-
-    public Long getUptime();
-
-    public List<LogMessage> getLogMessages(Date from, Date to);
+    /**
+     * Gets information about the underlying Duracloud instance.
+     */
+    public DuracloudInstance getInstanceInfo();
 
     /**
-     * Returns the state of the Duracloud Instance.
+     * Returns the state of the Duracloud instance.
      */
-    public State getState();
-
-    /**
-     * Starts the instance.
-     *
-     * @throws IllegalStateException when method is invoked when the instance is not in the READY
-     *                               state
-     */
-    public void start() throws IllegalStateException;
+    public InstanceState getState();
 
     /**
      * Stops the instance.
-     *
-     * @throws IllegalStateException when method is invoked when the instance is not in the
-     *                               RUNNING state
+     * Stopped instances cannot be restarted (stop == terminate).
      */
-    public void stop() throws IllegalStateException;
+    public void stop();
 
     /**
-     * Restarts the instance. If instance is READY, it simply starts it up.
-     * Otherwise the instance is stopped and started.
-     *
-     * @throws IllegalStateException when the instance is not in the READY or RUNNING state
+     * Restarts the instance.
      */
-    public void restart() throws IllegalStateException;
+    public void restart();
 
     /**
-     * This method pushes user role info to the running instance.
+     * Pushes user role info to the running instance.
      * Note: This set of users will replace the existing configuration on the
      * running instance.
      * @param users to update
      */
-    public void updateUserRoles(Set<DuracloudUser> users);
+    public void setUserRoles(Set<DuracloudUser> users);    
+
 }

@@ -38,7 +38,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     private DuracloudUserService userService;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-        DuracloudUserService duracloudUserService) {
+                                     DuracloudUserService duracloudUserService) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
     }
