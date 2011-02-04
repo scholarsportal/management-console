@@ -15,7 +15,6 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -355,9 +354,14 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String username = "test-username";
         setUpLoadDuracloudUserByUsername(username, null);
 
-        UserDetails user = userService.loadDuracloudUserByUsername(username);
+        DuracloudUser user = userService.loadDuracloudUserByUsername(username);
         Assert.assertNotNull(user);
         Assert.assertEquals(username, user.getUsername());
+
+        Set<Role> roles = user.getRolesByAcct(acctId);
+        Assert.assertNotNull(roles);
+        Assert.assertEquals(1, roles.size());
+        Assert.assertEquals(Role.ROLE_USER, roles.iterator().next());
 
         Collection<GrantedAuthority> authorities = user.getAuthorities();
         Assert.assertNotNull(authorities);
@@ -406,6 +410,13 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                 .andReturn(user)
                 .anyTimes();
 
+            Set<AccountRights> rights = new HashSet<AccountRights>();
+            Set<Role> roles = new HashSet<Role>();
+            roles.add(Role.ROLE_USER);
+            rights.add(new AccountRights(0, acctId, userId, roles));
+            EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
+                .andReturn(rights)
+                .anyTimes();            
         } else {
             EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
                 .andThrow(exception);

@@ -195,32 +195,29 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         
     }
 
-	@Override
-	public DuracloudUser loadDuracloudUserByUsername(String username)
-			throws DBNotFoundException {
-		return getUserRepo().findByUsername(username);
-	}
-
     @Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
-    	DuracloudUser user;
-		try {
-            user = getUserRepo().findByUsername(username);
-
-		} catch (DBNotFoundException e) {
-			throw new UsernameNotFoundException(e.getMessage(), e);
-
+        try {
+            return loadDuracloudUserByUsername(username);
+        } catch(DBNotFoundException e) {
+            throw new UsernameNotFoundException(e.getMessage());
 		} catch (DBUninitializedException ue) {
             log.warn("UserRepo is uninitialized");
-            throw new UsernameNotFoundException(ue.getMessage(), ue);
+            throw new UsernameNotFoundException(ue.getMessage());
         }
+    }
 
-		//not all users are associated with an account.
+	@Override
+	public DuracloudUser loadDuracloudUserByUsername(String username)
+			throws DBNotFoundException {
+        DuracloudUser user = getUserRepo().findByUsername(username);
+
 		try {
 			user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
 		} catch (DBNotFoundException e) {
-			log.debug("no account rights for {}", user.getUsername());
+		    // Not all users are associated with an account.
+			log.debug("No account rights found for {}", user.getUsername());
 		}
 		
 		return user;
