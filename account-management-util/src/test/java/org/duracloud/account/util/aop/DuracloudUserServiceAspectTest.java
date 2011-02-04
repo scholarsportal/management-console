@@ -6,6 +6,8 @@ package org.duracloud.account.util.aop;
 import org.aspectj.lang.JoinPoint;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -48,7 +50,7 @@ public class DuracloudUserServiceAspectTest {
     }
 
     private void doTestSetUserRights(boolean success)
-        throws DBNotFoundException {
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException, AccountNotFoundException {
         createPropagatorSetRights(success);
         createJointPointSetRights(success);
         aspect = new DuracloudUserServiceAspect(propagator);
@@ -57,7 +59,7 @@ public class DuracloudUserServiceAspectTest {
     }
 
     private UserDetailsPropagator createPropagatorSetRights(boolean success)
-        throws DBNotFoundException {
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException, AccountNotFoundException {
         propagator = EasyMock.createMock("UserDetailsPropagator",
                                          UserDetailsPropagator.class);
         if (success) {
@@ -92,7 +94,7 @@ public class DuracloudUserServiceAspectTest {
     }
 
     private UserDetailsPropagator createPropagatorRevokeRights()
-        throws DBNotFoundException {
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException, AccountNotFoundException {
         propagator = EasyMock.createMock("UserDetailsPropagator",
                                          UserDetailsPropagator.class);
 

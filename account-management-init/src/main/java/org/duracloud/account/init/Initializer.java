@@ -75,11 +75,12 @@ public class Initializer extends BaseConfig {
     private void createAmaApplication() {
         if (amaEndpointLoad()) {
             Credential credential = new InitUserCredential();
+            RestHttpHelper restHelper = new RestHttpHelper(credential);
+
             Application ama = new Application(amaHost,
                                               amaPort,
                                               amaContext,
-                                              credential.getUsername(),
-                                              credential.getPassword());
+                                              restHelper);
             amaWithConfig = new ApplicationWithConfig(amaKey);
             amaWithConfig.setApplication(ama);
             amaWithConfig.setConfig(new AmaConfig());

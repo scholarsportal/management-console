@@ -33,6 +33,12 @@
     <constructor-arg ref="duracloudUserService"/>
   </bean>
 
+    <bean id="instanceManagerService"
+        class="org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl"
+        scope="singleton">
+    <constructor-arg ref="repoMgr"/>
+  </bean>
+
   <bean id="rootAccountManagerService"
         class="org.duracloud.account.util.impl.RootAccountManagerServiceImpl"
         scope="singleton"
@@ -42,8 +48,9 @@
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->
   <bean id="userDetailsPropagator"
-        class="org.duracloud.account.util.usermgmt.UserDetailsPropagatorImpl">
-    <constructor-arg ref="repoMgr" />
+        class="org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl">
+    <constructor-arg ref="instanceManagerService" />
+    <constructor-arg ref="accountManagerService" />
   </bean>
 
 </beans>

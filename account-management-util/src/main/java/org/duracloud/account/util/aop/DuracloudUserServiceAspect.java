@@ -47,13 +47,11 @@ public class DuracloudUserServiceAspect {
      *
      * @param jp     JoinPoint context information of the call
      * @param result return result of target call
-     * @throws DBNotFoundException
      */
     @AfterReturning(
         pointcut = "execution(* org.duracloud.account.util.DuracloudUserService.setUserRights(..))",
         returning = "result")
-    public void setUserRights(JoinPoint jp, boolean result)
-        throws DBNotFoundException {
+    public void setUserRights(JoinPoint jp, boolean result) {
 
         if (result == false) {
             log.info("setUserRights() failed, not propagating updates.");
@@ -117,7 +115,7 @@ public class DuracloudUserServiceAspect {
      */
     @AfterReturning(
         pointcut = "execution(* org.duracloud.account.util.DuracloudUserService.revokeUserRights(..))")
-    public void revokeUserRights(JoinPoint jp) throws DBNotFoundException {
+    public void revokeUserRights(JoinPoint jp) {
         Object[] args = jp.getArgs();
         if (null == args) {
             String msg = "revokeUserRights() had no args?!";

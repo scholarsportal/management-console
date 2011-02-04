@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
@@ -31,6 +32,7 @@ public class DuracloudServiceTestBase {
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudRightsRepo rightsRepo;
     protected DuracloudUserInvitationRepo invitationRepo;
+    protected DuracloudInstanceRepo instanceRepo;
 
     protected IdUtil idUtil;
 
@@ -38,6 +40,7 @@ public class DuracloudServiceTestBase {
     protected static final int NUM_ACCTS = 4;
     protected static final int NUM_RIGHTS = 4;
     protected static final int NUM_INVITES = 4;
+    protected static final int NUM_INSTANCES = 4;
 
     @Before
     public void before() throws Exception {
@@ -49,6 +52,8 @@ public class DuracloudServiceTestBase {
                                          DuracloudRightsRepo.class);
         invitationRepo = EasyMock.createMock("DuracloudUserInvitationRepo",
                                              DuracloudUserInvitationRepo.class);
+        instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
+                                           DuracloudInstanceRepo.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
@@ -57,11 +62,13 @@ public class DuracloudServiceTestBase {
         Set<Integer> acctIds = createIds(NUM_ACCTS);
         Set<Integer> rightsIds = createIds(NUM_RIGHTS);
         Set<Integer> invitationIds = createIds(NUM_INVITES);
+        Set<Integer> instanceIds = createIds(NUM_INSTANCES);
 
         EasyMock.expect(userRepo.getIds()).andReturn(userIds).anyTimes();
         EasyMock.expect(accountRepo.getIds()).andReturn(acctIds).anyTimes();
         EasyMock.expect(rightsRepo.getIds()).andReturn(rightsIds).anyTimes();
         EasyMock.expect(invitationRepo.getIds()).andReturn(invitationIds).anyTimes();
+        EasyMock.expect(instanceRepo.getIds()).andReturn(instanceIds).anyTimes();
 
         EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).anyTimes();
         EasyMock.expect(repoMgr.getAccountRepo())
@@ -72,6 +79,9 @@ public class DuracloudServiceTestBase {
             .anyTimes();
         EasyMock.expect(repoMgr.getUserInvitationRepo())
             .andReturn(invitationRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
             .anyTimes();
         EasyMock.expect(repoMgr.getIdUtil()).andReturn(idUtil).anyTimes();
     }
@@ -91,6 +101,7 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(accountRepo);
         EasyMock.verify(rightsRepo);
         EasyMock.verify(invitationRepo);
+        EasyMock.verify(instanceRepo);
         EasyMock.verify(idUtil);
     }
 
@@ -131,6 +142,7 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(accountRepo);
         EasyMock.replay(rightsRepo);
         EasyMock.replay(invitationRepo);
+        EasyMock.replay(instanceRepo);
         EasyMock.replay(idUtil);
         EasyMock.replay(repoMgr);
     }
