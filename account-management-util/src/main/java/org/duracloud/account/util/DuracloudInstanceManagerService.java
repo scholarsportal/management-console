@@ -5,6 +5,8 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 
+import java.util.Set;
+
 /**
  * Lifecycle operations for Duracloud instances.
  *
@@ -12,7 +14,7 @@ import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
  * Date: Feb 3, 2011
  */
 public interface DuracloudInstanceManagerService {
-    
+
     /**
      * Starts a new instance for the given account from the given image.
      */
@@ -27,6 +29,18 @@ public interface DuracloudInstanceManagerService {
      *
      */
     public DuracloudInstanceService getInstanceService(String instanceId)
+        throws DuracloudInstanceNotAvailableException;
+
+    /**
+     * Retrieves a Set of DuraCloud instances wrapped in a class which provides
+     * services on the instances.
+     *
+     * @param accountId
+     * @return
+     * @throws DuracloudInstanceNotAvailableException
+     *
+     */
+    public Set<DuracloudInstanceService> getInstanceServices(int accountId)
         throws DuracloudInstanceNotAvailableException;
 
 }

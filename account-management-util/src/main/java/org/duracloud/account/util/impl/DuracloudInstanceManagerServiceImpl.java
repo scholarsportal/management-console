@@ -8,6 +8,8 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 
+import java.util.Set;
+
 /**
  * @author: Bill Branan
  * Date: Feb 3, 2011
@@ -28,6 +30,13 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
 
     @Override
     public DuracloudInstanceService getInstanceService(String instanceId)
+        throws DuracloudInstanceNotAvailableException {
+        // Default method body
+        return null;
+    }
+
+    @Override
+    public Set<DuracloudInstanceService> getInstanceServices(int accountId)
         throws DuracloudInstanceNotAvailableException {
         // Default method body
         return null;
