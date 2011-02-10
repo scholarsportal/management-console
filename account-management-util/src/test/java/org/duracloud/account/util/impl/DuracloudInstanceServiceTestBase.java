@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
@@ -11,6 +12,8 @@ import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.usermgmt.UserDetailsInstanceUpdater;
+import org.duracloud.account.util.usermgmt.impl.UserDetailsInstanceUpdaterImpl;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -33,24 +36,36 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudProviderAccountRepo providerAcctRepo;
     protected ProviderAccount providerAcct;
     protected DuracloudInstanceRepo instanceRepo;
+    protected UserDetailsInstanceUpdater instanceUpdater;
 
     @Before
     public void setup() throws Exception {
         Set<Integer> ids = new HashSet<Integer>();
         ids.add(1);
-        instance = EasyMock.createMock(DuracloudInstance.class);
-        repoMgr = EasyMock.createMock(DuracloudRepoMgr.class);
-        computeProviderUtil = EasyMock.createMock(ComputeProviderUtil.class);
-        computeProvider = EasyMock.createMock(DuracloudComputeProvider.class);
-        providerAcctRepo = EasyMock.createMock(DuracloudProviderAccountRepo.class);
-        providerAcct = EasyMock.createMock(ProviderAccount.class);
-        instanceRepo = EasyMock.createMock(DuracloudInstanceRepo.class);
+
+        instance = EasyMock.createMock("DuracloudInstance",
+                                       DuracloudInstance.class);
+        repoMgr = EasyMock.createMock("DuracloudRepoMgr",
+                                      DuracloudRepoMgr.class);
+        computeProviderUtil = EasyMock.createMock("ComputeProviderUtil",
+                                                  ComputeProviderUtil.class);
+        computeProvider = EasyMock.createMock("DuracloudComputeProvider",
+                                              DuracloudComputeProvider.class);
+        providerAcctRepo = EasyMock.createMock("DuracloudProviderAccountRepo",
+                                               DuracloudProviderAccountRepo.class);
+        providerAcct = EasyMock.createMock("ProviderAccount",
+                                           ProviderAccount.class);
+        instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
+                                           DuracloudInstanceRepo.class);
+        instanceUpdater = EasyMock.createMock("UserDetailsInstanceUpdaterImpl",
+                                              UserDetailsInstanceUpdaterImpl.class);
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
                                                    computeProviderUtil,
-                                                   computeProvider);
+                                                   computeProvider,
+                                                   instanceUpdater);
     }
 
     protected void replayMocks() {
@@ -59,7 +74,8 @@ public class DuracloudInstanceServiceTestBase {
                         computeProvider,
                         providerAcctRepo,
                         providerAcct,
-                        instanceRepo);
+                        instanceRepo,
+                        instanceUpdater);
     }
 
     @After
@@ -69,7 +85,8 @@ public class DuracloudInstanceServiceTestBase {
                         computeProvider,
                         providerAcctRepo,
                         providerAcct,
-                        instanceRepo);
+                        instanceRepo,
+                        instanceUpdater);
     }
 
     protected void setUpInitComputeProvider() throws Exception {
@@ -94,4 +111,18 @@ public class DuracloudInstanceServiceTestBase {
             .andReturn(1)
             .times(1);
     }
+
+    protected DuracloudUser newDuracloudUser(int userId, String username) {
+        String password = "password";
+        String firstName = "firstName";
+        String lastName = "lastName";
+        String email = "email";
+        return new DuracloudUser(userId,
+                                 username,
+                                 password,
+                                 firstName,
+                                 lastName,
+                                 email);
+    }
+
 }
