@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -21,9 +22,12 @@ import java.util.Set;
 public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceManagerService {
 
     private DuracloudRepoMgr repoMgr;
+    private ComputeProviderUtil computeUtil;
 
-    public DuracloudInstanceManagerServiceImpl(DuracloudRepoMgr repoMgr) {
+    public DuracloudInstanceManagerServiceImpl(DuracloudRepoMgr repoMgr,
+                                               ComputeProviderUtil computeUtil) {
         this.repoMgr = repoMgr;
+        this.computeUtil = computeUtil;
     }
 
     @Override
@@ -51,7 +55,10 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
         try {
             DuracloudInstance instance = instanceRepo.findById(instanceId);
-            return new DuracloudInstanceServiceImpl(accountId, instance, repoMgr);
+            return new DuracloudInstanceServiceImpl(accountId,
+                                                    instance,
+                                                    repoMgr,
+                                                    computeUtil);
         } catch(DBNotFoundException e) {
             throw new DuracloudInstanceNotAvailableException(e.getMessage(), e);
         }

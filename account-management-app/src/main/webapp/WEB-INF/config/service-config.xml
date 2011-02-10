@@ -33,10 +33,22 @@
     <constructor-arg ref="duracloudUserService"/>
   </bean>
 
-    <bean id="instanceManagerService"
+  <bean id="computeProviderFactory"
+        class="org.duracloud.account.compute.AmazonComputeProviderFactory"
+        scope="singleton">
+  </bean>
+
+  <bean id="computeProviderUtil"
+        class="org.duracloud.account.compute.ComputeProviderUtil"
+        scope="singleton">
+    <constructor-arg ref="computeProviderFactory"/>
+  </bean>
+
+  <bean id="instanceManagerService"
         class="org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="computeProviderUtil"/>
   </bean>
 
   <bean id="rootAccountManagerService"

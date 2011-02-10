@@ -78,7 +78,8 @@ public class DuracloudInstanceServiceImplTest
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
-                                                   repoMgr);
+                                                   repoMgr,
+                                                   computeProviderUtil);
     }
 
 }

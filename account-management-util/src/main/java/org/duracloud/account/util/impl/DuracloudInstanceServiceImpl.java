@@ -6,12 +6,12 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ProviderAccount;
+import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.compute.ComputeProviderUtil;
 
 import java.util.Set;
 
@@ -24,23 +24,27 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private int accountId;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
+    private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
-                                        DuracloudRepoMgr repoMgr)
+                                        DuracloudRepoMgr repoMgr,
+                                        ComputeProviderUtil computeProviderUtil)
         throws DBNotFoundException {
-        this(accountId, instance, repoMgr, null);
+        this(accountId, instance, repoMgr, computeProviderUtil, null);
     }
 
     protected DuracloudInstanceServiceImpl(int accountId,
                                            DuracloudInstance instance,
                                            DuracloudRepoMgr repoMgr,
+                                           ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider)
         throws DBNotFoundException {
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
+        this.computeProviderUtil = computeProviderUtil;
 
         if(null != computeProvider) {
             this.computeProvider = computeProvider;
@@ -56,11 +60,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
             repoMgr.getProviderAccountRepo();
         ProviderAccount computeProviderAcct =
             providerAcctRepo.findById(instance.getComputeProviderAccountId());
-        ComputeProviderUtil computeUtil = new ComputeProviderUtil();
 
-        this.computeProvider =
-            computeUtil.getComputeProvider(computeProviderAcct.getUsername(),
-                                           computeProviderAcct.getPassword());
+        this.computeProvider = computeProviderUtil
+            .getComputeProvider(computeProviderAcct.getUsername(),
+                                computeProviderAcct.getPassword());
     }
 
     @Override

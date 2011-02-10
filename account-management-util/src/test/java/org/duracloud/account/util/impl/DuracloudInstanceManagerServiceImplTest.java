@@ -34,7 +34,8 @@ public class DuracloudInstanceManagerServiceImplTest
         replayMocks();
 
         DuracloudInstanceManagerServiceImpl managerService =
-            new DuracloudInstanceManagerServiceImpl(repoMgr);
+            new DuracloudInstanceManagerServiceImpl(repoMgr,
+                                                    computeProviderUtil);
         int acctId = 1;
         int instanceId = 2;
         DuracloudInstanceService instanceService =
@@ -62,7 +63,8 @@ public class DuracloudInstanceManagerServiceImplTest
         replayMocks();
 
         DuracloudInstanceManagerServiceImpl managerService =
-            new DuracloudInstanceManagerServiceImpl(repoMgr);
+            new DuracloudInstanceManagerServiceImpl(repoMgr,
+                                                    computeProviderUtil);
         int acctId = 1;
         Set<DuracloudInstanceService> instanceServices =
             managerService.getInstanceServices(acctId);

@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ProviderAccount;
+import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
@@ -26,6 +27,7 @@ public class DuracloudInstanceServiceTestBase {
     protected int accountId = 1;
     protected DuracloudInstance instance;
     protected DuracloudRepoMgr repoMgr;
+    protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
     protected DuracloudInstanceService service;
     protected DuracloudProviderAccountRepo providerAcctRepo;
@@ -38,6 +40,7 @@ public class DuracloudInstanceServiceTestBase {
         ids.add(1);
         instance = EasyMock.createMock(DuracloudInstance.class);
         repoMgr = EasyMock.createMock(DuracloudRepoMgr.class);
+        computeProviderUtil = EasyMock.createMock(ComputeProviderUtil.class);
         computeProvider = EasyMock.createMock(DuracloudComputeProvider.class);
         providerAcctRepo = EasyMock.createMock(DuracloudProviderAccountRepo.class);
         providerAcct = EasyMock.createMock(ProviderAccount.class);
@@ -46,6 +49,7 @@ public class DuracloudInstanceServiceTestBase {
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
+                                                   computeProviderUtil,
                                                    computeProvider);
     }
 
@@ -74,6 +78,11 @@ public class DuracloudInstanceServiceTestBase {
             .times(1);
         EasyMock.expect(providerAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(providerAcct)
+            .times(1);
+        EasyMock.expect(computeProviderUtil
+                            .getComputeProvider(EasyMock.isA(String.class),
+                                                EasyMock.isA(String.class)))
+            .andReturn(null)
             .times(1);
         EasyMock.expect(providerAcct.getUsername())
             .andReturn("user")
