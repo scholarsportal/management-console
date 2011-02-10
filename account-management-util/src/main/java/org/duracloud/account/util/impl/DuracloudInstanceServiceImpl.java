@@ -72,7 +72,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         }
 
         if (null == userDetailsInstanceUpdater) {
-            userDetailsInstanceUpdater = new UserDetailsInstanceUpdaterImpl();
+            this.userDetailsInstanceUpdater = new UserDetailsInstanceUpdaterImpl();
         }
     }
 
