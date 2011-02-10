@@ -51,6 +51,8 @@
     <module>account-management-db</module>
     <module>account-management-db-amazon</module>
     <module>account-management-db-util</module>
+    <module>account-management-compute</module>
+    <module>account-management-compute-amazon</module>
     <module>account-management-app</module>
   </modules>
 

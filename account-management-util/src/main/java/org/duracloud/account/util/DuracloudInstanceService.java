@@ -16,12 +16,6 @@ import java.util.Set;
  */
 public interface DuracloudInstanceService {
 
-    public static enum InstanceState {
-        STARTING,
-        RUNNING,
-        STOPPING;
-    }
-
     /**
      * Gets information about the underlying Duracloud instance.
      */
@@ -30,7 +24,7 @@ public interface DuracloudInstanceService {
     /**
      * Returns the state of the Duracloud instance.
      */
-    public InstanceState getState();
+    public String getStatus();
 
     /**
      * Stops the instance.

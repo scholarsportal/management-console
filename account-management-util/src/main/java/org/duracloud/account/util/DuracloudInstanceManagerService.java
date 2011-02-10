@@ -28,7 +28,8 @@ public interface DuracloudInstanceManagerService {
      * @throws DuracloudInstanceNotAvailableException
      *
      */
-    public DuracloudInstanceService getInstanceService(String instanceId)
+    public DuracloudInstanceService getInstanceService(int accountId,
+                                                       int instanceId)
         throws DuracloudInstanceNotAvailableException;
 
     /**
