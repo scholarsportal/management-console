@@ -70,6 +70,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         } else {
             initializeComputeProvider();
         }
+
+        if (null == userDetailsInstanceUpdater) {
+            userDetailsInstanceUpdater = new UserDetailsInstanceUpdaterImpl();
+        }
     }
 
     private void initializeComputeProvider()
@@ -143,24 +147,19 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
             userBeans.add(new SecurityUserBean(username, password, grants));
         }
 
-        // collect instance connection details
+        // do the update
+        updateUserDetails(userBeans);
+    }
+
+    private void updateUserDetails(Set<SecurityUserBean> userBeans) {
         Credential rootCredential = new Credential(instance.getDcRootUsername(),
                                                    instance.getDcRootPassword());
         RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
         String host = instance.getHostName();
-        getUserDetailsInstanceUpdater().updateUserDetails(host,
-                                                          userBeans,
-                                                          restHelper);
+
+        userDetailsInstanceUpdater.updateUserDetails(host,
+                                                     userBeans,
+                                                     restHelper);
     }
 
-    public UserDetailsInstanceUpdater getUserDetailsInstanceUpdater() {
-        if (null == userDetailsInstanceUpdater) {
-            userDetailsInstanceUpdater = new UserDetailsInstanceUpdaterImpl();
-        }
-        return userDetailsInstanceUpdater;
-    }
-
-    public void setUserDetailsInstanceUpdater(UserDetailsInstanceUpdater userDetailsInstanceUpdater) {
-        this.userDetailsInstanceUpdater = userDetailsInstanceUpdater;
-    }
 }
