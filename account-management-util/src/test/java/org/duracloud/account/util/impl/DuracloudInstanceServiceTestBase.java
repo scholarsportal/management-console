@@ -11,9 +11,11 @@ import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.usermgmt.UserDetailsInstanceUpdater;
-import org.duracloud.account.util.usermgmt.impl.UserDetailsInstanceUpdaterImpl;
+import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +38,9 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudProviderAccountRepo providerAcctRepo;
     protected ProviderAccount providerAcct;
     protected DuracloudInstanceRepo instanceRepo;
-    protected UserDetailsInstanceUpdater instanceUpdater;
+    protected InstanceUpdater instanceUpdater;
+    protected DuracloudRightsRepo rightsRepo;
+    protected DuracloudUserRepo userRepo;
 
     @Before
     public void setup() throws Exception {
@@ -57,8 +61,12 @@ public class DuracloudInstanceServiceTestBase {
                                            ProviderAccount.class);
         instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
                                            DuracloudInstanceRepo.class);
-        instanceUpdater = EasyMock.createMock("UserDetailsInstanceUpdaterImpl",
-                                              UserDetailsInstanceUpdaterImpl.class);
+        instanceUpdater = EasyMock.createMock("InstanceUpdaterImpl",
+                                              InstanceUpdaterImpl.class);
+        rightsRepo = EasyMock.createMock("DuracloudRightsRepo",
+                                         DuracloudRightsRepo.class);
+        userRepo = EasyMock.createMock("DuracloudUserRepo",
+                                       DuracloudUserRepo.class);
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
@@ -75,7 +83,9 @@ public class DuracloudInstanceServiceTestBase {
                         providerAcctRepo,
                         providerAcct,
                         instanceRepo,
-                        instanceUpdater);
+                        instanceUpdater,
+                        rightsRepo,
+                        userRepo);
     }
 
     @After
@@ -86,7 +96,9 @@ public class DuracloudInstanceServiceTestBase {
                         providerAcctRepo,
                         providerAcct,
                         instanceRepo,
-                        instanceUpdater);
+                        instanceUpdater,
+                        rightsRepo,
+                        userRepo);
     }
 
     protected void setUpInitComputeProvider() throws Exception {

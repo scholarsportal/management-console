@@ -8,7 +8,10 @@ import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
-import org.duracloud.account.util.usermgmt.UserDetailsInstanceUpdater;
+import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DuraserviceConfig;
+import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.easymock.Capture;
@@ -80,6 +83,51 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instance.getProviderInstanceId())
             .andReturn("id")
             .times(1);
+        EasyMock.expect(instance.getHostName())
+            .andReturn("host")
+            .times(4);
+        EasyMock.expect(instance.getDcRootUsername())
+            .andReturn("user")
+            .times(2);
+        EasyMock.expect(instance.getDcRootPassword())
+            .andReturn("pass")
+            .times(2);
+        instanceUpdater.initializeInstance(EasyMock.isA(String.class),
+                                           EasyMock.isA(DuradminConfig.class),
+                                           EasyMock.isA(DurastoreConfig.class),
+                                           EasyMock
+                                               .isA(DuraserviceConfig.class),
+                                           EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall()
+            .times(1);
+        EasyMock.expect(repoMgr.getRightsRepo())
+            .andReturn(rightsRepo)
+            .times(1);
+        EasyMock.expect(repoMgr.getUserRepo())
+            .andReturn(userRepo)
+            .times(1);
+
+        int userId = 5;
+        Set<AccountRights> accountRights = new HashSet<AccountRights>();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+        accountRights.add(new AccountRights(0, accountId, userId, roles));
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(accountRights)
+            .times(1);
+
+        DuracloudUser user =
+            new DuracloudUser(userId, "user", "pass", "first", "last", "email");
+        user.setAccountRights(accountRights);
+        EasyMock.expect(userRepo.findById(userId))
+            .andReturn(user)
+            .times(1);
+
+        instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
+                                          EasyMock.isA(Set.class),
+                                          EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall()
+            .times(1);
 
         replayMocks();
 
@@ -126,7 +174,7 @@ public class DuracloudInstanceServiceImplTest
         return instance;
     }
 
-    private UserDetailsInstanceUpdater createInstanceUpdaterExpectations(Capture<Set<SecurityUserBean>> capturedUsers) {
+    private InstanceUpdater createInstanceUpdaterExpectations(Capture<Set<SecurityUserBean>> capturedUsers) {
         instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
                                           EasyMock.capture(capturedUsers),
                                           EasyMock.isA(RestHttpHelper.class));

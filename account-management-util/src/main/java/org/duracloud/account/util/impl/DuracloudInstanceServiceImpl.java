@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ProviderAccount;
@@ -12,11 +13,16 @@ import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
-import org.duracloud.account.util.usermgmt.UserDetailsInstanceUpdater;
-import org.duracloud.account.util.usermgmt.impl.UserDetailsInstanceUpdaterImpl;
+import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
+import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DuraserviceConfig;
+import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
@@ -41,7 +47,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private DuracloudRepoMgr repoMgr;
     private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
-    private UserDetailsInstanceUpdater userDetailsInstanceUpdater;
+    private InstanceUpdater instanceUpdater;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
@@ -56,13 +62,13 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
                                            DuracloudRepoMgr repoMgr,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
-                                           UserDetailsInstanceUpdater userDetailsInstanceUpdater)
+                                           InstanceUpdater instanceUpdater)
         throws DBNotFoundException {
 
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
-        this.userDetailsInstanceUpdater = userDetailsInstanceUpdater;
+        this.instanceUpdater = instanceUpdater;
         this.computeProviderUtil = computeProviderUtil;
 
         if(null != computeProvider) {
@@ -71,8 +77,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
             initializeComputeProvider();
         }
 
-        if (null == userDetailsInstanceUpdater) {
-            this.userDetailsInstanceUpdater = new UserDetailsInstanceUpdaterImpl();
+        if (null == instanceUpdater) {
+            this.instanceUpdater = new InstanceUpdaterImpl();
         }
     }
 
@@ -107,8 +113,73 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     @Override
     public void restart() {
         computeProvider.restart(instance.getProviderInstanceId());
+        // TODO: Should likely be a wait in here
+        initialize();
+    }
 
-        // TODO: Initialize instance
+    @Override
+    public void initialize() {
+        initializeInstance();
+        initializeUserRoles();
+    }
+
+    private void initializeInstance() {
+        DuradminConfig duradminConfig = getDuradminConfig();
+        DurastoreConfig durastoreConfig = getDurastoreConfig();
+        DuraserviceConfig duraserviceConfig = getDuraserviceConfig();
+
+        Credential rootCredential = new Credential(instance.getDcRootUsername(),
+                                                   instance.getDcRootPassword());
+        RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
+        String host = instance.getHostName();
+
+        instanceUpdater.initializeInstance(host,
+                                           duradminConfig,
+                                           durastoreConfig,
+                                           duraserviceConfig,
+                                           restHelper);
+    }
+
+    private DuradminConfig getDuradminConfig() {
+        DuradminConfig config = new DuradminConfig();
+        config.setDurastoreHost(instance.getHostName());
+        config.setDurastorePort("443");
+        config.setDurastoreContext(DurastoreConfig.QUALIFIER);
+        config.setDuraserviceHost(instance.getHostName());
+        config.setDuraservicePort("443");
+        config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
+        return config;
+    }
+
+    private DurastoreConfig getDurastoreConfig() {
+        DurastoreConfig config = new DurastoreConfig();
+        // TODO: fill out (after adding setters to DurastoreConfig)
+        return config;
+    }
+
+    private DuraserviceConfig getDuraserviceConfig() {
+        DuraserviceConfig config = new DuraserviceConfig();
+        // TODO: fill out (after adding setters to DuraserviceConfig)
+        return config;
+    }    
+
+    private void initializeUserRoles() {
+        try {
+            DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+            Set<AccountRights> acctRights = rightsRepo.findByAccountId(accountId);
+
+            DuracloudUserRepo userRepo = repoMgr.getUserRepo();
+            Set<DuracloudUser> users = new HashSet<DuracloudUser>();
+            for(AccountRights right : acctRights) {
+                users.add(userRepo.findById(right.getUserId()));
+            }
+            setUserRoles(users);
+        } catch(DBNotFoundException e) {
+            String msg = "Exception encountered attempting to initialize user" +
+                         " roles on instance for account " +
+                         accountId + ": " + e.getMessage();
+            throw new DuracloudInstanceUpdateException(msg);
+        }
     }
 
     @Override
@@ -157,9 +228,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
         String host = instance.getHostName();
 
-        userDetailsInstanceUpdater.updateUserDetails(host,
-                                                     userBeans,
-                                                     restHelper);
+        instanceUpdater.updateUserDetails(host, userBeans, restHelper);
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.util.usermgmt;
+package org.duracloud.account.util.usermgmt.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,6 +16,7 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.impl.DuracloudInstanceServiceImpl;
 import org.duracloud.account.util.impl.DuracloudServiceTestBase;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl;
 import org.duracloud.client.ContentStore;
 import org.easymock.EasyMock;

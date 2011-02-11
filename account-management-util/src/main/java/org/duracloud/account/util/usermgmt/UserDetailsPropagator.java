@@ -5,8 +5,6 @@ package org.duracloud.account.util.usermgmt;
 
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 
 import java.util.Set;
 
@@ -28,7 +26,7 @@ public interface UserDetailsPropagator {
      * @param roles  new roles of arg user
      * @throws DBNotFoundException
      */
-    void propagateRights(int acctId, int userId, Set<Role> roles);
+    public void propagateRights(int acctId, int userId, Set<Role> roles);
 
     /**
      * This method propagates the revocation of rights for the arg user and acct
@@ -38,5 +36,5 @@ public interface UserDetailsPropagator {
      * @param userId of user with revoked rights
      * @throws DBNotFoundException
      */
-    void propagateRevocation(int acctId, int userId);
+    public void propagateRevocation(int acctId, int userId);
 }

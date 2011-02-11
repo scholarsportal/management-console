@@ -33,9 +33,15 @@ public interface DuracloudInstanceService {
     public void stop();
 
     /**
-     * Restarts the instance.
+     * Restarts the server instance and calls initialize
      */
     public void restart();
+
+    /**
+     * Collects all of the necessary information and initializes a
+     * Duracloud instance
+     */
+    public void initialize();
 
     /**
      * Pushes user role info to the running instance.
