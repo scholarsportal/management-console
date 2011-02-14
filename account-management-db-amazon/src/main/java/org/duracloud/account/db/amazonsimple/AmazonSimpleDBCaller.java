@@ -4,7 +4,7 @@
 package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
+import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
 import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
@@ -33,7 +33,7 @@ public class AmazonSimpleDBCaller {
     private static final Logger log = LoggerFactory.getLogger(
         AmazonSimpleDBCaller.class);
 
-    public ListDomainsResult listDomains(final AmazonSimpleDBAsync db,
+    public ListDomainsResult listDomains(final AmazonSimpleDB db,
                                          final ListDomainsRequest listRequest) {
         return new Caller<ListDomainsResult>() {
             protected ListDomainsResult doCall() throws Exception {
@@ -42,7 +42,7 @@ public class AmazonSimpleDBCaller {
         }.call();
     }
 
-    public void createDomain(final AmazonSimpleDBAsync db,
+    public void createDomain(final AmazonSimpleDB db,
                              final CreateDomainRequest createRequest) {
         new Caller<Integer>() {
             protected Integer doCall() throws Exception {
@@ -52,7 +52,7 @@ public class AmazonSimpleDBCaller {
         }.call();
     }
 
-    public SelectResult select(final AmazonSimpleDBAsync db,
+    public SelectResult select(final AmazonSimpleDB db,
                                final SelectRequest request) {
         return new Caller<SelectResult>() {
             protected SelectResult doCall() throws Exception {
@@ -61,7 +61,7 @@ public class AmazonSimpleDBCaller {
         }.call();
     }
 
-    public void putAttributes(final AmazonSimpleDBAsync db,
+    public void putAttributes(final AmazonSimpleDB db,
                               final PutAttributesRequest request)
         throws DBConcurrentUpdateException {
         AmazonServiceException exception = new Caller<AmazonServiceException>() {
@@ -85,7 +85,7 @@ public class AmazonSimpleDBCaller {
         }
     }
 
-    public void deleteAttributes(final AmazonSimpleDBAsync db,
+    public void deleteAttributes(final AmazonSimpleDB db,
                                  final DeleteAttributesRequest request) {
         new Caller<Integer>() {
             protected Integer doCall() throws Exception {
@@ -95,11 +95,11 @@ public class AmazonSimpleDBCaller {
         }.call();
     }
 
-    public void deleteDomainAsync(final AmazonSimpleDBAsync db,
+    public void deleteDomainAsync(final AmazonSimpleDB db,
                                   final DeleteDomainRequest request) {
         new Caller<Integer>() {
             protected Integer doCall() throws Exception {
-                db.deleteDomainAsync(request);
+                db.deleteDomain(request);
                 return 0;
             }
         }.call();

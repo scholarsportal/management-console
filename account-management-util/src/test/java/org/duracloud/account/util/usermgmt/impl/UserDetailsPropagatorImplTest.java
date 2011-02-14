@@ -4,6 +4,7 @@
 package org.duracloud.account.util.usermgmt.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -140,6 +141,13 @@ public class UserDetailsPropagatorImplTest {
             DuracloudInstanceService instance = EasyMock.createMock(
                 "DuracloudInstanceService",
                 DuracloudInstanceService.class);
+
+            DuracloudInstance info = org.easymock
+                .classextension
+                .EasyMock
+                .createMock("DuracloudInstance", DuracloudInstance.class);
+            EasyMock.expect(info.getHostName()).andReturn("hostname.org");
+            EasyMock.expect(instance.getInstanceInfo()).andReturn(info);
 
             instance.setUserRoles(EasyMock.isA(Set.class));
             EasyMock.expectLastCall().andStubAnswer(verifyRoles(revoke));

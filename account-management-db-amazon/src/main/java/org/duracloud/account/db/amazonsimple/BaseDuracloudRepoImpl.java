@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
+import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
 import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
@@ -38,11 +38,11 @@ public abstract class BaseDuracloudRepoImpl {
     protected Logger log = LoggerFactory.getLogger(BaseDuracloudRepoImpl.class);
 
     protected AmazonSimpleDBCaller caller;
-    protected AmazonSimpleDBAsync db;
+    protected AmazonSimpleDB db;
     protected String domain;
 
     public BaseDuracloudRepoImpl(AmazonSimpleDBCaller caller,
-                                 AmazonSimpleDBAsync db,
+                                 AmazonSimpleDB db,
                                  String domain) {
         this.caller = caller;
         this.db = db;
@@ -89,8 +89,10 @@ public abstract class BaseDuracloudRepoImpl {
     }
 
     public Item findItemById(int id) throws DBNotFoundException {
+        boolean consistent = true;
         SelectRequest request = new SelectRequest(
-            "select * from " + domain + " where itemName() = '" + id + "'");
+            "select * from " + domain + " where itemName() = '" + id + "'",
+            consistent);
 
         SelectResult result = caller.select(db, request);
         if (null == result) {

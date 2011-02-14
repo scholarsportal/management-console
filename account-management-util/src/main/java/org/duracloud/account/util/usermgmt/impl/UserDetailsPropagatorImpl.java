@@ -4,6 +4,7 @@
 package org.duracloud.account.util.usermgmt.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.AccountManagerService;
@@ -106,8 +107,15 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     }
 
     private void doPropagate(int acctId, Set<DuracloudUser> users) {
+        log.debug("propagating user roles for acct: " + acctId);
+
         Set<DuracloudInstanceService> services = getInstanceServices(acctId);
         for (DuracloudInstanceService service : services) {
+            DuracloudInstance instanceInfo = service.getInstanceInfo();
+            log.debug("propagating user roles: {}, {}",
+                      instanceInfo.getHostName(),
+                      users);
+
             service.setUserRoles(users);
         }
     }

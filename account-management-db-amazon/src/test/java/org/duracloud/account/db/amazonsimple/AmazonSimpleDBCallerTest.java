@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import org.apache.commons.httpclient.HttpStatus;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
@@ -21,7 +22,7 @@ public class AmazonSimpleDBCallerTest {
 
     private AmazonSimpleDBCaller caller;
 
-    private AmazonSimpleDBAsync db;
+    private AmazonSimpleDB db;
 
     @Before
     public void setUp() throws Exception {
@@ -42,8 +43,8 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockListDomainsDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockListDomainsDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -72,8 +73,8 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockCreateDomainDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockCreateDomainDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -106,8 +107,8 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockSelectDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockSelectDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -136,8 +137,8 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockPutAttributesDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockPutAttributesDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -170,8 +171,8 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockDeleteAttributesDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockDeleteAttributesDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
@@ -195,8 +196,8 @@ public class AmazonSimpleDBCallerTest {
     }
 
     @Test
-    public void testDeleteDomainAsync() throws Exception {
-        db = createMockDeleteDomainAsyncDB();
+    public void testDeleteDomain() throws Exception {
+        db = createMockDeleteDomainDB();
 
         caller.deleteDomainAsync(db, null);
         caller.deleteDomainAsync(db, null);
@@ -204,24 +205,25 @@ public class AmazonSimpleDBCallerTest {
         EasyMock.verify(db);
     }
 
-    private AmazonSimpleDBAsync createMockDeleteDomainAsyncDB() {
-        AmazonSimpleDBAsync db = EasyMock.createMock(AmazonSimpleDBAsync.class);
+    private AmazonSimpleDB createMockDeleteDomainDB() {
+        AmazonSimpleDB db = EasyMock.createMock(AmazonSimpleDB.class);
 
         AmazonServiceException e = new AmazonServiceException("test-0");
         e.setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE);
-        db.deleteDomainAsync(null);
+        db.deleteDomain(null);
         EasyMock.expectLastCall().andThrow(e);
 
         AmazonClientException ex = new AmazonClientException("test-1");
-        db.deleteDomainAsync(null);
+        db.deleteDomain(null);
         EasyMock.expectLastCall().andThrow(ex);
 
         e = new AmazonServiceException("test-2");
         e.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-        db.deleteDomainAsync(null);
+        db.deleteDomain(null);
         EasyMock.expectLastCall().andThrow(e);
 
-        EasyMock.expect(db.deleteDomainAsync(null)).andReturn(null);
+        db.deleteDomain(null);
+        EasyMock.expectLastCall();
 
         EasyMock.replay(db);
         return db;

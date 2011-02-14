@@ -62,6 +62,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater {
     public void updateUserDetails(String host,
                                   Set<SecurityUserBean> userBeans,
                                   RestHttpHelper restHelper) {
+        log.info("Updating user details: {}, beans {}", host, userBeans);
 
         if (StringUtils.isBlank(host) || null == userBeans ||
             userBeans.size() == 0 || null == restHelper) {

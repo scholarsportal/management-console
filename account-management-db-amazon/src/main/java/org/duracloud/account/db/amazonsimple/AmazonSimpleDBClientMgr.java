@@ -6,12 +6,12 @@ package org.duracloud.account.db.amazonsimple;
 import java.io.File;
 import java.io.IOException;
 
+import com.amazonaws.services.simpledb.AmazonSimpleDB;
+import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsyncClient;
 
 /**
  * This class creates and caches a client for the Amazon SimpleDB.
@@ -21,12 +21,12 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBAsyncClient;
  */
 public class AmazonSimpleDBClientMgr {
 
-    private AmazonSimpleDBAsync db;
+    private AmazonSimpleDB db;
 
     public AmazonSimpleDBClientMgr(String credentialsFilename) {
         File file = new File(credentialsFilename);
         try {
-            db = new AmazonSimpleDBAsyncClient(new PropertiesCredentials(file));
+            db = new AmazonSimpleDBClient(new PropertiesCredentials(file));
 
         } catch (IOException e) {
             throw new DuraCloudRuntimeException(e);
@@ -34,11 +34,11 @@ public class AmazonSimpleDBClientMgr {
     }
 
     public AmazonSimpleDBClientMgr(String accessKey, String secretKey) {
-        db = new AmazonSimpleDBAsyncClient(new BasicAWSCredentials(accessKey,
-                                                                   secretKey));
+        db = new AmazonSimpleDBClient(new BasicAWSCredentials(accessKey,
+                                                              secretKey));
     }
 
-    public AmazonSimpleDBAsync getClient() {
+    public AmazonSimpleDB getClient() {
         return db;
     }
 }
