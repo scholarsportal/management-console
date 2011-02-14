@@ -173,12 +173,12 @@ public class AccountUsersController extends AbstractAccountController {
                            @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
 					   BindingResult result,
 					   Model model) throws Exception {
-        log.info("editUser account {}", accountId);
+        log.debug("editUser account {}", accountId);
 
-        log.info("New role-" + accountUserEditForm.getRole());
-        //TODO add updateUserRights to DuracloudUserService
-//        userService.retryUpdateRights(accountId, userId,
-//                                      Role.valueOf(accountUserEditForm.getRole()), true);
+        Role role = Role.valueOf(accountUserEditForm.getRole());
+        log.info("New role: {}", role);
+        
+        userService.setUserRights(accountId, userId, role);
 
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
