@@ -15,6 +15,7 @@ import org.duracloud.security.domain.SecurityUserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -53,9 +54,15 @@ public class InstanceUpdaterImpl implements InstanceUpdater {
             throw new DuracloudInstanceUpdateException(msg.toString());
         }
 
-        getDuradminApplication(host, restHelper).initialize(duradminConfig);
-        getDurastoreApplication(host, restHelper).initialize(durastoreConfig);
-        getDuraserviceApplication(host, restHelper).initialize(duraserviceConfig);
+        Application duradminApp = getDuradminApplication(host, restHelper);
+        checkResponse("DurAdmin", duradminApp.initialize(duradminConfig));
+
+        Application durastoreApp = getDurastoreApplication(host, restHelper) ;
+        checkResponse("DuraStore", durastoreApp.initialize(durastoreConfig));
+
+        Application duraserviceApp = getDuraserviceApplication(host, restHelper);
+        checkResponse("DuraService",
+                      duraserviceApp.initialize(duraserviceConfig));
     }
 
     @Override
@@ -101,6 +108,27 @@ public class InstanceUpdaterImpl implements InstanceUpdater {
     private Application getDuraserviceApplication(String host,
                                                   RestHttpHelper restHelper) {
         return new Application(host, port, duraserviceContext, restHelper);
+    }
+
+    private void checkResponse(String name,
+                               RestHttpHelper.HttpResponse response) {
+        if (null == response || response.getStatusCode() != 200) {
+            String body = null;
+            try {
+                body = response.getResponseBody();
+            } catch (IOException e) {
+            } finally {
+                StringBuilder msg = new StringBuilder("Error Initializing ");
+                msg.append(name);
+                msg.append(" Response Code: " + response.getStatusCode());
+                if (null != body) {
+                    msg.append("\nResponse Body:\n");
+                    msg.append(body);
+                }
+                log.error(msg.toString());
+                throw new DuracloudInstanceUpdateException(msg.toString());
+            }
+        }
     }
 
 }

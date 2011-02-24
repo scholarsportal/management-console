@@ -144,7 +144,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     @Test
     public void testSetUserRightsStartAsNull() throws Exception {
         userService = new DuracloudUserServiceImpl(repoMgr);
-        testSetRole(null);
+        testSetRole((Role)null);
     }
 
     @Test

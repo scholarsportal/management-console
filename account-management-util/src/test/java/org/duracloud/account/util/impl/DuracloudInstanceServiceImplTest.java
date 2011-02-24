@@ -80,23 +80,35 @@ public class DuracloudInstanceServiceImplTest
         computeProvider.restart(EasyMock.isA(String.class));
         EasyMock.expectLastCall()
             .times(1);
+
+        DuradminConfig duradminConfig = new DuradminConfig();
+        EasyMock.expect(instanceConfigUtil.getDuradminConfig())
+            .andReturn(duradminConfig)
+            .times(1);
+        EasyMock.expect(instanceConfigUtil.getDurastoreConfig())
+            .andReturn(new DurastoreConfig())
+            .times(1);
+        EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
+            .andReturn(new DuraserviceConfig())
+            .times(1);
+
         EasyMock.expect(instance.getProviderInstanceId())
             .andReturn("id")
             .times(1);
-        EasyMock.expect(instance.getHostName())
-            .andReturn("host")
-            .times(4);
         EasyMock.expect(instance.getDcRootUsername())
             .andReturn("user")
             .times(2);
         EasyMock.expect(instance.getDcRootPassword())
             .andReturn("pass")
             .times(2);
+        EasyMock.expect(instance.getHostName())
+            .andReturn("host")
+            .times(2);
+
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
-                                           EasyMock
-                                               .isA(DuraserviceConfig.class),
+                                           EasyMock.isA(DuraserviceConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall()
             .times(1);

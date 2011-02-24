@@ -18,7 +18,9 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
+import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -48,13 +50,14 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
+    private InstanceConfigUtil instanceConfigUtil;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
                                         DuracloudRepoMgr repoMgr,
                                         ComputeProviderUtil computeProviderUtil)
         throws DBNotFoundException {
-        this(accountId, instance, repoMgr, computeProviderUtil, null, null);
+        this(accountId, instance, repoMgr, computeProviderUtil, null, null, null);
     }
 
     protected DuracloudInstanceServiceImpl(int accountId,
@@ -62,23 +65,28 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
                                            DuracloudRepoMgr repoMgr,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
-                                           InstanceUpdater instanceUpdater)
+                                           InstanceUpdater instanceUpdater,
+                                           InstanceConfigUtil instanceConfigUtil)
         throws DBNotFoundException {
 
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
-        this.instanceUpdater = instanceUpdater;
         this.computeProviderUtil = computeProviderUtil;
+        this.computeProvider = computeProvider;
+        this.instanceUpdater = instanceUpdater;
+        this.instanceConfigUtil = instanceConfigUtil;
 
-        if(null != computeProvider) {
-            this.computeProvider = computeProvider;
-        } else {
+        if (null == computeProvider) {
             initializeComputeProvider();
         }
 
         if (null == instanceUpdater) {
             this.instanceUpdater = new InstanceUpdaterImpl();
+        }
+
+        if (null == instanceConfigUtil) {
+            this.instanceConfigUtil = new InstanceConfigUtilImpl(instance, repoMgr);
         }
     }
 
@@ -124,9 +132,12 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     }
 
     private void initializeInstance() {
-        DuradminConfig duradminConfig = getDuradminConfig();
-        DurastoreConfig durastoreConfig = getDurastoreConfig();
-        DuraserviceConfig duraserviceConfig = getDuraserviceConfig();
+        DuradminConfig duradminConfig =
+            instanceConfigUtil.getDuradminConfig();
+        DurastoreConfig durastoreConfig =
+            instanceConfigUtil.getDurastoreConfig();
+        DuraserviceConfig duraserviceConfig =
+            instanceConfigUtil.getDuraserviceConfig();
 
         Credential rootCredential = new Credential(instance.getDcRootUsername(),
                                                    instance.getDcRootPassword());
@@ -139,29 +150,6 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
                                            duraserviceConfig,
                                            restHelper);
     }
-
-    private DuradminConfig getDuradminConfig() {
-        DuradminConfig config = new DuradminConfig();
-        config.setDurastoreHost(instance.getHostName());
-        config.setDurastorePort("443");
-        config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-        config.setDuraserviceHost(instance.getHostName());
-        config.setDuraservicePort("443");
-        config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
-        return config;
-    }
-
-    private DurastoreConfig getDurastoreConfig() {
-        DurastoreConfig config = new DurastoreConfig();
-        // TODO: fill out (after adding setters to DurastoreConfig)
-        return config;
-    }
-
-    private DuraserviceConfig getDuraserviceConfig() {
-        DuraserviceConfig config = new DuraserviceConfig();
-        // TODO: fill out (after adding setters to DuraserviceConfig)
-        return config;
-    }    
 
     private void initializeUserRoles() {
         try {
