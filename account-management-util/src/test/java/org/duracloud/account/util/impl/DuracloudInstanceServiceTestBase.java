@@ -8,6 +8,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
+import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -43,6 +44,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudRightsRepo rightsRepo;
     protected DuracloudUserRepo userRepo;
     protected InstanceConfigUtil instanceConfigUtil;
+    protected DuracloudAccountRepo accountRepo;
 
     @Before
     public void setup() throws Exception {
@@ -71,6 +73,8 @@ public class DuracloudInstanceServiceTestBase {
                                        DuracloudUserRepo.class);
         instanceConfigUtil = EasyMock.createMock("InstanceConfigUtil",
                                                  InstanceConfigUtil.class);
+        accountRepo = EasyMock.createMock("DuracloudAccountRepo",
+                                          DuracloudAccountRepo.class);
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
@@ -91,7 +95,8 @@ public class DuracloudInstanceServiceTestBase {
                         instanceUpdater,
                         rightsRepo,
                         userRepo,
-                        instanceConfigUtil);
+                        instanceConfigUtil,
+                        accountRepo);
     }
 
     @After
@@ -105,7 +110,8 @@ public class DuracloudInstanceServiceTestBase {
                         instanceUpdater,
                         rightsRepo,
                         userRepo,
-                        instanceConfigUtil);
+                        instanceConfigUtil,
+                        accountRepo);
     }
 
     protected void setUpInitComputeProvider() throws Exception {

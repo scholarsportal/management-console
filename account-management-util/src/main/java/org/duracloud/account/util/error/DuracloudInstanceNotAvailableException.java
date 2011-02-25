@@ -12,6 +12,10 @@ public class DuracloudInstanceNotAvailableException extends DuraCloudCheckedExce
 
     private static final long serialVersionUID = 1L;
 
+    public DuracloudInstanceNotAvailableException(String message) {
+        super(message);
+    }
+
     public DuracloudInstanceNotAvailableException(String message,
                                                   Throwable cause) {
         super(message, cause);

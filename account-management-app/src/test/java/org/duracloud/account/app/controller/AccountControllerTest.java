@@ -4,11 +4,14 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
@@ -25,12 +28,17 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
  */
 public class AccountControllerTest extends AmaControllerTestBase {
     private AccountController accountController;
+    private DuracloudInstanceManagerService instanceManagerService;
+    private DuracloudInstanceService instanceService;
 
     @Before
     public void before() throws Exception {
@@ -38,6 +46,13 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
     }
+
+    /* FIXME: Properly set up mock account controller to pass verification - bb
+    @After
+    public void after() throws Exception {
+        EasyMock.verify(accountController);
+    }
+    */
 
     /**
      * Test method for org.duracloud.account.app.controller.AccountController
@@ -53,10 +68,15 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
-    public void testGetInstance() throws AccountNotFoundException {
+    public void testGetInstance() throws Exception {
+        initializeMockInstanceManagerService();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
         Model model = new ExtendedModelMap();
         accountController.getInstance(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+
+        EasyMock.verify(instanceManagerService, instanceService);
     }
 
     @Test
@@ -68,7 +88,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     /**
      * Test method for
-     * {@link org.duracloud.account.app.controller.AccountController#getNewForm()}
+     * {@link org.duracloud.account.app.controller.AccountController #getNewForm()}
      * .
      */
     @Test
@@ -150,7 +170,34 @@ public class AccountControllerTest extends AmaControllerTestBase {
         ctx.setAuthentication(auth);
         SecurityContextHolder.setContext(ctx);
         accountController.setAuthenticationManager(authManager);
+    }
 
+    private void initializeMockInstanceManagerService() throws Exception {
+        instanceManagerService =
+            EasyMock.createMock(DuracloudInstanceManagerService.class);
+
+        instanceService = EasyMock.createMock(DuracloudInstanceService.class);
+        Set<DuracloudInstanceService> instanceServices =
+            new HashSet<DuracloudInstanceService>();
+        instanceServices.add(instanceService);
+
+        EasyMock.expect(
+            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            .andReturn(instanceServices)
+            .times(1);
+
+        EasyMock.expect(instanceService.getStatus())
+            .andReturn("status")
+            .times(1);
+
+        DuracloudInstance instance =
+            new DuracloudInstance(0, 0, "host", "providerInstanceId", 0, 0,
+                                  null, null, "username", "password");
+        EasyMock.expect(instanceService.getInstanceInfo())
+            .andReturn(instance)
+            .times(1);
+
+        EasyMock.replay(instanceManagerService, instanceService);
     }
 
 }

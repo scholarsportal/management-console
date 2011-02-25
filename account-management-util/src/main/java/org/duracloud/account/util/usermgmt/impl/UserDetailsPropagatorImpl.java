@@ -11,7 +11,6 @@ import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
@@ -125,7 +124,7 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         try {
             services = instanceManagerService.getInstanceServices(acctId);
 
-        } catch (DuracloudInstanceNotAvailableException e) {
+        } catch (AccountNotFoundException e) {
             log.error("Unable to get instances for: " + acctId, e);
             error = e;
         }

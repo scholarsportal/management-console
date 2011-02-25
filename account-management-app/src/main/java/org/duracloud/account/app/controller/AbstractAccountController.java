@@ -3,26 +3,25 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.duracloud.storage.domain.StorageProviderType;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.InvoicePaymentInfo;
-import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The default view for this application
@@ -36,8 +35,12 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String ACCOUNT_PATH = "/byid/{accountId}";
     public static final String EDIT_PATH = "/edit";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
+    public static final String INSTANCE_INFO_KEY = "instanceInfo";
+    public static final String INSTANCE_STATUS_KEY = "instanceStatus";
     @Autowired(required = true)
     protected AccountManagerService accountManagerService;
+    @Autowired(required = true)
+    protected DuracloudInstanceManagerService instanceManagerService;
 
     @Autowired(required = true)
     protected DuracloudUserService userService;
@@ -53,6 +56,11 @@ public abstract class AbstractAccountController extends AbstractController {
         this.accountManagerService = accountManagerService;
     }
 
+    public void setInstanceManagerService(
+        DuracloudInstanceManagerService instanceManagerService) {
+        this.instanceManagerService = instanceManagerService;
+    }
+
     public DuracloudUserService getUserService() {
         return userService;
     }
@@ -62,7 +70,7 @@ public abstract class AbstractAccountController extends AbstractController {
     }
 
     protected void addAccountInfoToModel(AccountInfo info, Model model){
-        model.addAttribute("accountInfo", info);
+        model.addAttribute(ACCOUNT_INFO_KEY, info);
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -87,6 +95,20 @@ public abstract class AbstractAccountController extends AbstractController {
         addAccountInfoToModel(accountInfo, model);
     }
 
+    protected void loadInstanceInfo(int accountId, Model model)
+        throws AccountNotFoundException {
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if(instanceServices.size() > 0) {
+            // Handle only a single instance for the time being
+            DuracloudInstanceService instanceService =
+                instanceServices.iterator().next();
+            model.addAttribute(INSTANCE_INFO_KEY,
+                               instanceService.getInstanceInfo());
+            model.addAttribute(INSTANCE_STATUS_KEY,
+                               instanceService.getStatus());
+        }
+    }
 
     /**
      * @param accountId

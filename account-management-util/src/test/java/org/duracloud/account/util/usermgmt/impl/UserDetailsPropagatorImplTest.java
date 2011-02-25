@@ -7,19 +7,12 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.util.impl.DuracloudInstanceServiceImpl;
-import org.duracloud.account.util.impl.DuracloudServiceTestBase;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
-import org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl;
-import org.duracloud.client.ContentStore;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.After;
@@ -28,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -132,7 +124,7 @@ public class UserDetailsPropagatorImplTest {
     }
 
     private void createInstanceManagerExpectation(boolean revoke)
-        throws DuracloudInstanceNotAvailableException {
+        throws AccountNotFoundException {
         instanceManagerService = EasyMock.createMock(
             "DuracloudInstanceManagerService",
             DuracloudInstanceManagerService.class);

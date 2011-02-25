@@ -12,4 +12,13 @@ public class AccountNotFoundException extends DuraCloudCheckedException {
 
     private static final long serialVersionUID = 1L;
 
+    public AccountNotFoundException() {
+        super();
+    }
+
+    public AccountNotFoundException(int accountId) {
+        super("Account with ID " + accountId +
+              " could not be found in the database");
+    }
+
 }
