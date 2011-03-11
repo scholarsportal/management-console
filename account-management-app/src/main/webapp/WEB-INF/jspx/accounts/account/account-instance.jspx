@@ -29,12 +29,23 @@
                     <tr>
                       <th>Host Name</th>
                       <th>Status</th>
+                      <c:if test="${actionStatus != null}">
+                        <th>Notice</th>
+                      </c:if>
                       <th><!-- buttons --></th>
                     </tr>
                     <tr>
                       <td><c:out value="${instanceInfo.hostName}" /></td>
                       <td><c:out value="${instanceStatus}" /></td>
-                      <th><!-- buttons --></th>
+                      <c:if test="${actionStatus != null}">
+                        <td><strong><c:out value="${actionStatus}" /></strong></td>
+                      </c:if>
+                      <td>
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/byid/${instanceInfo.id}/restart"
+                              method="post">
+                          <button type="submit">Restart</button>
+                        </form>
+                      </td>
                     </tr>
                   </table>
                 </c:otherwise>

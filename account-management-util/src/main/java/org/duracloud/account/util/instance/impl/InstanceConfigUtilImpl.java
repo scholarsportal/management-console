@@ -68,13 +68,15 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         int primaryProviderAccountId =
             instance.getPrimaryStorageProviderAccountId();
         storageAccts.add(getStorageAccount(providerAcctRepo,
-                                           primaryProviderAccountId));
+                                           primaryProviderAccountId,
+                                           true));
         // Secondary Storage Providers
         Set<Integer> providerAccountIds =
             instance.getSecondaryStorageProviderAccountIds();
         for(int providerAccountId : providerAccountIds) {
             storageAccts.add(getStorageAccount(providerAcctRepo,
-                                               providerAccountId));
+                                               providerAccountId,
+                                               false));
         }
 
         config.setStorageAccounts(storageAccts);
@@ -83,7 +85,8 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     private StorageAccount getStorageAccount(
         DuracloudProviderAccountRepo providerAcctRepo,
-        int providerAccountId) {
+        int providerAccountId,
+        boolean primary) {
         try {
             ProviderAccount provider =
                 providerAcctRepo.findById(providerAccountId);
@@ -92,6 +95,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                                    provider.getUsername(),
                                    provider.getPassword(),
                                    translateType(provider.getProviderType()));
+            storageAccount.setPrimary(primary);
             return storageAccount;
         } catch(DBNotFoundException e) {
             String error = "Storage Provider Account with ID: " +
@@ -118,11 +122,12 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String instanceHost = instance.getHostName();
 
         // Get the Server Image (for version)
-        String version;
+        String servicesAdminVersion;
         try {
             ServerImage image =
                 repoMgr.getServerImageRepo().findById(instance.getImageId());
-            version = image.getVersion();
+            String version = image.getVersion();
+            servicesAdminVersion = version.replaceAll("-SNAPSHOT", ".SNAPSHOT");
         } catch(DBNotFoundException e) {
             String error = "Server Image with ID: " + instance.getImageId() +
                            " does not exist in the database.";
@@ -135,7 +140,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         primaryInstance.setHost(instanceHost);
         primaryInstance.setServicesAdminPort(DEFAULT_SERVICES_ADMIN_PORT);
         primaryInstance.setServicesAdminContext(
-            DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX + version);
+            DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX + servicesAdminVersion);
         config.setPrimaryInstance(primaryInstance);
 
         // User Store

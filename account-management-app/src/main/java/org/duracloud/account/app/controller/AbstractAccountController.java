@@ -12,6 +12,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -34,9 +35,15 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String ACCOUNTS_PATH = "/accounts";
     public static final String ACCOUNT_PATH = "/byid/{accountId}";
     public static final String EDIT_PATH = "/edit";
+    public static final String STATEMENT_PATH =  ACCOUNT_PATH + "/statement";
+    public static final String INSTANCE_PATH = ACCOUNT_PATH + "/instance";
+    public static final String INSTANCE_RESTART_PATH =
+        INSTANCE_PATH + "/byid/{instanceId}/restart";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
     public static final String INSTANCE_INFO_KEY = "instanceInfo";
     public static final String INSTANCE_STATUS_KEY = "instanceStatus";
+    public static final String ACTION_STATUS = "actionStatus";
+
     @Autowired(required = true)
     protected AccountManagerService accountManagerService;
     @Autowired(required = true)
@@ -108,6 +115,23 @@ public abstract class AbstractAccountController extends AbstractController {
             model.addAttribute(INSTANCE_STATUS_KEY,
                                instanceService.getStatus());
         }
+    }
+
+    protected void loadInstanceInfo(int accountId, int instanceId, Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.getInstanceService(accountId, instanceId);
+        model.addAttribute(INSTANCE_INFO_KEY,
+                           instanceService.getInstanceInfo());
+        model.addAttribute(INSTANCE_STATUS_KEY,
+                           instanceService.getStatus());
+    }
+
+    protected void restartInstance(int accountId, int instanceId)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.getInstanceService(accountId, instanceId);
+        instanceService.restart();
     }
 
     /**

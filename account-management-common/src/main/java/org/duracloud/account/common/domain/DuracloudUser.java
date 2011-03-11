@@ -49,8 +49,23 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
         this.counter = counter;
     }
 
+    /**
+     * Set rights for all accounts to which a user has access
+     * @param accountRights
+     */
     public void setAccountRights(Set<AccountRights> accountRights) {
         this.accountRights = accountRights;
+    }
+
+    /**
+     * Set rights for a single account to which a user has access
+     * @param singleAccountRights
+     */
+    public void setAccountRights(AccountRights singleAccountRights) {
+        if(null == this.accountRights) {
+            this.accountRights = new HashSet<AccountRights>();
+        }
+        this.accountRights.add(singleAccountRights);
     }
 
     public Set<Role> getRolesByAcct(int accountId) {

@@ -14,7 +14,6 @@ import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
-import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
@@ -36,7 +35,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudRepoMgr repoMgr;
     protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
-    protected DuracloudInstanceService service;
+    protected DuracloudInstanceServiceImpl service;
     protected DuracloudProviderAccountRepo providerAcctRepo;
     protected ProviderAccount providerAcct;
     protected DuracloudInstanceRepo instanceRepo;

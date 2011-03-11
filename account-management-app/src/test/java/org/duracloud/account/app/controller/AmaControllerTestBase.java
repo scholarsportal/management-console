@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,6 +13,9 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Before;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
@@ -23,6 +23,7 @@ import org.junit.Before;
 public class AmaControllerTestBase {
    protected static final String TEST_USERNAME = "testuser";
     protected static final Integer TEST_ACCOUNT_ID = 1;
+    protected static final Integer TEST_INSTANCE_ID = 1;
 
     protected AccountManagerService accountManagerService;
     

@@ -69,12 +69,27 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetInstance() throws Exception {
-        initializeMockInstanceManagerService();
+        initializeMockInstanceManagerService(false);
         accountController.setInstanceManagerService(this.instanceManagerService);
 
         Model model = new ExtendedModelMap();
         accountController.getInstance(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+
+        EasyMock.verify(instanceManagerService, instanceService);
+    }
+
+    @Test
+    public void testRestartInstance() throws Exception {
+        initializeMockInstanceManagerService(true);
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.restartInstance(TEST_ACCOUNT_ID,
+                                          TEST_INSTANCE_ID,
+                                          model);
+        Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+        Assert.assertTrue(model.containsAttribute(AccountController.ACTION_STATUS));
 
         EasyMock.verify(instanceManagerService, instanceService);
     }
@@ -172,7 +187,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController.setAuthenticationManager(authManager);
     }
 
-    private void initializeMockInstanceManagerService() throws Exception {
+    private void initializeMockInstanceManagerService(boolean restart) throws Exception {
         instanceManagerService =
             EasyMock.createMock(DuracloudInstanceManagerService.class);
 
@@ -181,10 +196,12 @@ public class AccountControllerTest extends AmaControllerTestBase {
             new HashSet<DuracloudInstanceService>();
         instanceServices.add(instanceService);
 
-        EasyMock.expect(
-            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
-            .andReturn(instanceServices)
-            .times(1);
+        if(!restart) {
+            EasyMock.expect(
+                instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+                .andReturn(instanceServices)
+                .times(1);
+        }
 
         EasyMock.expect(instanceService.getStatus())
             .andReturn("status")
@@ -196,6 +213,17 @@ public class AccountControllerTest extends AmaControllerTestBase {
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
             .times(1);
+
+        if(restart) {
+            EasyMock.expect(instanceManagerService.
+                getInstanceService(EasyMock.anyInt(), EasyMock.anyInt()))
+                .andReturn(instanceService)
+                .anyTimes();
+
+            instanceService.restart();
+            EasyMock.expectLastCall()
+                .times(1);
+        }
 
         EasyMock.replay(instanceManagerService, instanceService);
     }

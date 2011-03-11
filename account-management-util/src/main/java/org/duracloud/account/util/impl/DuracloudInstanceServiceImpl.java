@@ -120,9 +120,33 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
     @Override
     public void restart() {
+        restart(true);
+    }
+
+    protected void restart(boolean wait) {
         computeProvider.restart(instance.getProviderInstanceId());
-        // TODO: Should likely be a wait in here
-        initialize();
+        if(wait) {
+            int waitMinutes = 5;
+            new ThreadedInitializer(waitMinutes).start();
+        } else {
+            initialize();
+        }
+    }
+
+    private class ThreadedInitializer extends Thread {
+        private int waitMinutes;
+
+        public ThreadedInitializer(int waitMinutes) {
+            this.waitMinutes = waitMinutes;
+        }
+
+        public void run() {
+            try {
+                sleep(waitMinutes * 60000);
+            } catch(InterruptedException e) {
+            }
+            initialize();
+        }
     }
 
     @Override
@@ -158,8 +182,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
             DuracloudUserRepo userRepo = repoMgr.getUserRepo();
             Set<DuracloudUser> users = new HashSet<DuracloudUser>();
-            for(AccountRights right : acctRights) {
-                users.add(userRepo.findById(right.getUserId()));
+            for(AccountRights rights : acctRights) {
+                DuracloudUser user = userRepo.findById(rights.getUserId());
+                user.setAccountRights(rights);
+                users.add(user);
             }
             setUserRoles(users);
         } catch(DBNotFoundException e) {

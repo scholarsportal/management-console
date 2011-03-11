@@ -143,7 +143,7 @@ public class DuracloudInstanceServiceImplTest
 
         replayMocks();
 
-        service.restart();
+        service.restart(false);
     }
 
     @Test

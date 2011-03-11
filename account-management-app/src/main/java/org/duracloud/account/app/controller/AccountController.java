@@ -9,6 +9,7 @@ import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,18 +55,32 @@ public class AccountController extends AbstractAccountController {
         return ACCOUNT_HOME;
     }
 
-    @RequestMapping(value = { ACCOUNT_PATH + "/statement" }, method = RequestMethod.GET)
+    @RequestMapping(value = { STATEMENT_PATH }, method = RequestMethod.GET)
     public String getStatement(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         return "account-statement";
     }
 
-    @RequestMapping(value = { ACCOUNT_PATH + "/instance" }, method = RequestMethod.GET)
+    @RequestMapping(value = { INSTANCE_PATH }, method = RequestMethod.GET)
     public String getInstance(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
         loadInstanceInfo(accountId, model);
+        return "account-instance";
+    }
+
+    @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
+    public String restartInstance(@PathVariable int accountId,
+                                  @PathVariable int instanceId,
+                                  Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        restartInstance(accountId, instanceId);
+        loadAccountInfo(accountId, model);
+        loadInstanceInfo(accountId, instanceId, model);
+        model.addAttribute(ACTION_STATUS,
+                           "Instance restarted successfully, it will be " +
+                           "available for use in 5 minutes.");
         return "account-instance";
     }
 
