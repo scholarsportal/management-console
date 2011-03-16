@@ -177,8 +177,11 @@ public class AccountUsersController extends AbstractAccountController {
 
         Role role = Role.valueOf(accountUserEditForm.getRole());
         log.info("New role: {}", role);
-        
-        userService.setUserRights(accountId, userId, role);
+
+        Set<Role> roles = role.getRoleHierarchy();
+        userService.setUserRights(accountId,
+                                  userId, 
+                                  roles.toArray(new Role[roles.size()]));
 
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }

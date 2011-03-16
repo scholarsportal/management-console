@@ -191,17 +191,19 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         // set up mocks, and args
         int acctId = 7;
         int userId = 9;
-        Role role = Role.ROLE_ADMIN;
 
         AccountUserEditForm acctUserEditForm = new AccountUserEditForm();
-        acctUserEditForm.setRole(role.name());
+        acctUserEditForm.setRole(Role.ROLE_ADMIN.name());
 
         BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
         EasyMock.replay(bindingResult);
         Model model = new ExtendedModelMap();
 
-        EasyMock.expect(userService.setUserRights(acctId, userId, role))
+        EasyMock.expect(userService.setUserRights(acctId,
+                                                  userId,
+                                                  Role.ROLE_ADMIN,
+                                                  Role.ROLE_USER))
             .andReturn(true);
 
         replayMocks();
