@@ -36,11 +36,14 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     private DuracloudRepoMgr repoMgr;
     private DuracloudUserService userService;
+    private AccountManagerServiceUtil accountServiceUtil;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
-                                     DuracloudUserService duracloudUserService) {
+                                     DuracloudUserService duracloudUserService,
+                                     AccountManagerServiceUtil accountServiceUtil) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
+        this.accountServiceUtil = accountServiceUtil;
     }
 
     @Override
@@ -74,13 +77,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     @Override
     public AccountService getAccount(int accountId)
         throws AccountNotFoundException {
-        try {
-            AccountInfo acctInfo = getAccountRepo().findById(accountId);
-            return new AccountServiceImpl(acctInfo, repoMgr);
-
-        } catch (DBNotFoundException e) {
-            throw new AccountNotFoundException();
-        }
+        return accountServiceUtil.getAccount(accountId);
     }
 
     @Override

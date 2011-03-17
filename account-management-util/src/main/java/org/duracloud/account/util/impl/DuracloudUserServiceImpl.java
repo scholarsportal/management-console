@@ -19,6 +19,7 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,12 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 	private Logger log = LoggerFactory.getLogger(DuracloudUserServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
+    private UserDetailsPropagator propagator;
     
-    public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
+    public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
+                                    UserDetailsPropagator propagator) {
         this.repoMgr = duracloudRepoMgr;
+        this.propagator = propagator;
     }
 
     @Override
@@ -87,6 +91,21 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public boolean setUserRights(int acctId, int userId, Role... roles) {
+        Set<Role> roleSet = new HashSet<Role>();
+        for (Role role : roles) {
+            roleSet.add(role);
+        }
+
+        boolean result = doSetUserRights(acctId, userId, roleSet);
+        if(result) {
+            log.debug("Propagating user update for: " + acctId + ", " +
+                      userId + ", " + asString(roleSet));
+            propagator.propagateRights(acctId, userId, roleSet);
+        }
+        return result;
+    }
+
+    private boolean doSetUserRights(int acctId, int userId, Set<Role> roles) {
         if(null == roles) {
             throw new IllegalArgumentException("Role may not be null");
         }
@@ -113,6 +132,20 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
         return updatedNeeded;
     }
+
+    private String asString(Set<Role> roles) {
+        StringBuilder sb = new StringBuilder();
+        for (Role role : roles) {
+            sb.append(role.name());
+            sb.append(",");
+        }
+
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }    
 
     private void retryUpdateRights(int acctId,
                                    int userId,
@@ -161,6 +194,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public void revokeUserRights(int acctId, int userId) {
+        doRevokeUserRights(acctId, userId);
+
+        log.debug("Propagating revocation for: " + acctId + ", " + userId);
+        propagator.propagateRevocation(acctId, userId);
+    }
+
+    public void doRevokeUserRights(int acctId, int userId) {
         DuracloudRightsRepo rightsRepo = getRightsRepo();
         try {
             AccountRights rights =

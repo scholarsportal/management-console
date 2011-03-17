@@ -24,6 +24,7 @@
         scope="singleton"
         name="userDetailsService">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="userDetailsPropagator" />
   </bean>
 
   <bean id="accountManagerService"
@@ -31,6 +32,13 @@
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="duracloudUserService"/>
+    <constructor-arg ref="accountManagerServiceUtil"/>
+  </bean>
+
+  <bean id="accountManagerServiceUtil"
+        class="org.duracloud.account.util.impl.AccountManagerServiceUtil"
+        scope="singleton">
+    <constructor-arg ref="repoMgr"/>
   </bean>
 
   <bean id="computeProviderFactory"
@@ -62,7 +70,7 @@
   <bean id="userDetailsPropagator"
         class="org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl">
     <constructor-arg ref="instanceManagerService" />
-    <constructor-arg ref="accountManagerService" />
+    <constructor-arg ref="accountManagerServiceUtil" />
   </bean>
 
 </beans>

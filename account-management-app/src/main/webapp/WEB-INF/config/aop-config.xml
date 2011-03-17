@@ -9,9 +9,4 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
   <!--Enables auto-detection and proxying of Aspects-->
   <aop:aspectj-autoproxy/>
 
-  <!--This Aspect cuts across updates on DuracloudUserService-->
-  <bean class="org.duracloud.account.util.aop.DuracloudUserServiceAspect">
-    <constructor-arg ref="userDetailsPropagator" />
-  </bean>
-
 </beans>

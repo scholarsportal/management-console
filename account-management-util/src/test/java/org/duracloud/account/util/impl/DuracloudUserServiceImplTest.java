@@ -13,6 +13,7 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -26,17 +27,21 @@ import java.util.Set;
  */
 public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
-    private DuracloudUserServiceImpl userService;
-
     private static final int acctId = 1;
     private static final int userId = 1;
+
+    @Before
+    @Override
+    public void before() throws Exception {
+        super.before();
+        userService = new DuracloudUserServiceImpl(repoMgr, propagator);
+    }
 
     @Test
     public void testIsUsernameAvailable() throws Exception {
         String existingName = "name-existing";
         String newName = "name-new";
         setUpIsUsernameAvailable(existingName, newName);
-        userService = new DuracloudUserServiceImpl(repoMgr);
 
         Assert.assertFalse(userService.isUsernameAvailable(existingName));
         Assert.assertTrue(userService.isUsernameAvailable(newName));
@@ -56,7 +61,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String newName = "new-username";
         String existingName = "existing-username";
         setUpCreateNewUser(newName, existingName);
-        userService = new DuracloudUserServiceImpl(repoMgr);
 
         String password = "password";
         String firstName = "firstName";
@@ -108,7 +112,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         int userId = 7;
         DuracloudUser user = newDuracloudUser(userId, "some-username");
         setUpAddUserToAccount(user);
-        userService = new DuracloudUserServiceImpl(repoMgr);
 
         Set<Role> roles = user.getRolesByAcct(acctId);
         Assert.assertNotNull(roles);
@@ -143,43 +146,36 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testSetUserRightsStartAsNull() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole((Role)null);
     }
 
     @Test
     public void testSetUserRightsStartAsUser() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_USER);
     }
 
     @Test
     public void testSetUserRightsStartAsAdmin() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_ADMIN);
     }
 
     @Test
     public void testSetUserRightsStartAsOwner() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_OWNER);
     }
 
     @Test
     public void testSetUserRightsStartAsRoot() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_ROOT);
     }
 
         @Test
     public void testSetUserRightsStartAsInit() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_INIT);
     }
 
     @Test
     public void testSetUserRightsStartAsMulti() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         testSetRole(Role.ROLE_INIT, Role.ROLE_ADMIN);
     }
 
@@ -198,6 +194,12 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     private Capture<AccountRights> setUpSetRights(Role... initialRoles)
         throws Exception {
+        propagator.propagateRights(EasyMock.eq(acctId),
+                                   EasyMock.eq(userId),
+                                   EasyMock.isA(Set.class));
+        EasyMock.expectLastCall()
+            .anyTimes();
+
         AccountRights startingRights = getRightsWithRoles(initialRoles);
         EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
                                                             EasyMock.anyInt()))
@@ -278,8 +280,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     public void testRedeemAccountInvitation() throws Exception {
         String redemptionCode = "ABCD";
         setUpRedeemAccountInvitation(redemptionCode);
-        userService = new DuracloudUserServiceImpl(repoMgr);
-
         userService.redeemAccountInvitation(userId, redemptionCode);
     }
 
@@ -312,12 +312,17 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         invitationRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
+        propagator.propagateRights(EasyMock.eq(acctId),
+                                   EasyMock.eq(userId),
+                                   EasyMock.isA(Set.class));
+        EasyMock.expectLastCall()
+            .times(1);
+
         replayMocks();
     }
 
     @Test
     public void testRevokeUserRights() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         setUpRevokeUserRights();
         userService.revokeUserRights(acctId, userId);
     }
@@ -331,6 +336,10 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         rightsRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
+
+        propagator.propagateRevocation(EasyMock.eq(acctId), EasyMock.eq(userId));
+        EasyMock.expectLastCall()
+            .times(1);
 
         replayMocks();
     }
@@ -349,8 +358,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testLoadDuracloudUserByUsername() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
-
         String username = "test-username";
         setUpLoadDuracloudUserByUsername(username, null);
 
@@ -372,7 +379,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testLoadDuracloudUserByUsernameException0() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         String username = "junk-username";
         Exception exception = new DBNotFoundException("canned-exception");
         setUpLoadDuracloudUserByUsername(username, exception);
@@ -387,7 +393,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testLoadDuracloudUserByUsernameException1() throws Exception {
-        userService = new DuracloudUserServiceImpl(repoMgr);
         String username = "junk-username";
         Exception exception = new DBUninitializedException("canned-exception");
         setUpLoadDuracloudUserByUsername(username, exception);

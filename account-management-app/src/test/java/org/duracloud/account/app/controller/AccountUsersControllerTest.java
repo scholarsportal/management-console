@@ -200,10 +200,10 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.replay(bindingResult);
         Model model = new ExtendedModelMap();
 
-        EasyMock.expect(userService.setUserRights(acctId,
-                                                  userId,
-                                                  Role.ROLE_ADMIN,
-                                                  Role.ROLE_USER))
+        EasyMock.expect(userService.setUserRights(EasyMock.eq(acctId),
+                                                  EasyMock.eq(userId),
+                                                  EasyMock.isA(Role.class),
+                                                  EasyMock.isA(Role.class)))
             .andReturn(true);
 
         replayMocks();

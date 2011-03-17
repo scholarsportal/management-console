@@ -13,6 +13,7 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -25,15 +26,23 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
     private AccountManagerServiceImpl accountManagerService;
     private DuracloudUserService userService;
+    private AccountManagerServiceUtil serviceUtil;
 
     private static final int NUM_ACCTS = 4;
     private static final int NOT_AN_ACCT_ID = 98;
 
+    @Before
+    @Override
+    public void before() throws Exception {
+        super.before();
+        serviceUtil = new AccountManagerServiceUtil((repoMgr));
+    }
+
     @Test
     public void testCreateAccount() throws Exception {
         setUpCreateAccount();
-        accountManagerService = new AccountManagerServiceImpl(repoMgr,
-                                                              userService);
+        accountManagerService =
+            new AccountManagerServiceImpl(repoMgr, userService, serviceUtil);
 
         int userId = 0;
         DuracloudUser user = new DuracloudUser(userId,
@@ -88,8 +97,8 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     @Test
     public void testLookupAccountsByUsername() throws Exception {
         setUpLookupAccountsByUsername();
-        accountManagerService = new AccountManagerServiceImpl(repoMgr,
-                                                              userService);
+        accountManagerService =
+            new AccountManagerServiceImpl(repoMgr, userService, serviceUtil);
 
         int userId = 1;
         Set<AccountInfo> infos = accountManagerService.findAccountsByUserId(
@@ -117,8 +126,8 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     @Test
     public void testGetAccount() throws Exception {
         setUpGetAccount();
-        accountManagerService = new AccountManagerServiceImpl(repoMgr,
-                                                              userService);
+        accountManagerService =
+            new AccountManagerServiceImpl(repoMgr, userService, serviceUtil);
 
         // success case
         int accountId = 1;
@@ -149,8 +158,8 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     @Test
     public void testCheckSubdomain() throws Exception {
         setUpCheckSubdomain();
-        accountManagerService = new AccountManagerServiceImpl(repoMgr,
-                                                              userService);
+        accountManagerService =
+            new AccountManagerServiceImpl(repoMgr, userService, serviceUtil);
 
         // success case
         String subdomain = "random-subdomain";

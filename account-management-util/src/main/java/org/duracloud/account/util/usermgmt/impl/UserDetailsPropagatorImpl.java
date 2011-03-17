@@ -7,10 +7,10 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.impl.AccountManagerServiceUtil;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
@@ -30,14 +30,14 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     private Logger log = LoggerFactory.getLogger(UserDetailsPropagatorImpl.class);
 
     private DuracloudInstanceManagerService instanceManagerService;
-    private AccountManagerService accountManagerService;
+    private AccountManagerServiceUtil accountServiceUtil;
 
     private Exception error = null;
 
     public UserDetailsPropagatorImpl(DuracloudInstanceManagerService instanceManagerService,
-                                     AccountManagerService accountManagerService) {
+                                     AccountManagerServiceUtil accountServiceUtil) {
         this.instanceManagerService = instanceManagerService;
-        this.accountManagerService = accountManagerService;
+        this.accountServiceUtil = accountServiceUtil;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     private Set<DuracloudUser> findUsers(int acctId) {
         Set<DuracloudUser> users = new HashSet<DuracloudUser>();
         try {
-            users = accountManagerService.getAccount(acctId).getUsers();
+            users = accountServiceUtil.getAccount(acctId).getUsers();
 
         } catch (AccountNotFoundException e) {
             log.error("Unable to get users for acct: " + acctId, e);

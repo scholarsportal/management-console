@@ -12,6 +12,7 @@ import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -33,6 +34,8 @@ public class DuracloudServiceTestBase {
     protected DuracloudRightsRepo rightsRepo;
     protected DuracloudUserInvitationRepo invitationRepo;
     protected DuracloudInstanceRepo instanceRepo;
+    protected UserDetailsPropagator propagator;
+    protected DuracloudUserServiceImpl userService;
 
     protected IdUtil idUtil;
 
@@ -54,6 +57,8 @@ public class DuracloudServiceTestBase {
                                              DuracloudUserInvitationRepo.class);
         instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
                                            DuracloudInstanceRepo.class);
+        propagator = EasyMock.createMock("UserDetailsPropagator",
+                                         UserDetailsPropagator.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
@@ -102,6 +107,7 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(rightsRepo);
         EasyMock.verify(invitationRepo);
         EasyMock.verify(instanceRepo);
+        EasyMock.verify(propagator);
         EasyMock.verify(idUtil);
     }
 
@@ -143,6 +149,7 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(rightsRepo);
         EasyMock.replay(invitationRepo);
         EasyMock.replay(instanceRepo);
+        EasyMock.replay(propagator);
         EasyMock.replay(idUtil);
         EasyMock.replay(repoMgr);
     }
