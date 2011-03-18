@@ -139,7 +139,7 @@
                          test="${u.id lt 0}">
                           <li>
                             <a
-                             href="${pageContext.request.contextPath}/users/redeem/${u.redemptionCode}">
+                             href="${u.redemptionURL}">
                             Redemption URL</a>
                           </li>
                         </c:if>

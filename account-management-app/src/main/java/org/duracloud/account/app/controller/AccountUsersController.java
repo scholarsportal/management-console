@@ -10,6 +10,8 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.notification.NotificationMgr;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +55,9 @@ public class AccountUsersController extends AbstractAccountController {
         ACCOUNT_USERS_MAPPING + "/byid/{userId}/edit";
 
     public static final String USERS_KEY = "users";
+
+    @Autowired
+    private NotificationMgr notificationMgr;
 
     /**
      * 
@@ -95,11 +101,13 @@ public class AccountUsersController extends AbstractAccountController {
         AccountService service = getAccountService(accountId);
 
         for (String emailAddress : emailAddresses) {
-            UserInvitation ui = service.createUserInvitation(emailAddress);
-            log.debug("created user invitation on account {} for {} expiring on {}",
-                new Object[] {
-                    ui.getAccountId(), ui.getUserEmail(),
-                    ui.getExpirationDate() });
+            UserInvitation ui = service.inviteUser(emailAddress,
+                                                   notificationMgr.getEmailer());
+            log.debug(
+                "created user invitation on account {} for {} expiring on {}",
+                new Object[]{ui.getAccountId(),
+                             ui.getUserEmail(),
+                             ui.getExpirationDate()});
         }
 
         // FIXME pause for a moment to let the async calls to
@@ -217,15 +225,12 @@ public class AccountUsersController extends AbstractAccountController {
      * @param accountUsers
      * @param pendingUserInvitations
      */
-    private void appendInvitationsToAccountUserList(
-        List<AccountUser> accountUsers,
-        Set<UserInvitation> pendingUserInvitations) {
+    private void appendInvitationsToAccountUserList(List<AccountUser> accountUsers,
+                                                    Set<UserInvitation> pendingUserInvitations) {
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
         for (UserInvitation ui : pendingUserInvitations) {
-            accountUsers.add(new PendingAccountUser(ui.getId(),
-                ui.getUserEmail(),
-                resolveStatus(ui),
-                Arrays.asList(new Role[]{Role.ROLE_USER}),
-                ui.getRedemptionCode()));
+            accountUsers.add(new PendingAccountUser(ui, roles));
         }
     }
 
@@ -352,31 +357,36 @@ public class AccountUsersController extends AbstractAccountController {
 
     public class PendingAccountUser extends AccountUser {
 
-        /**
-         * @param invitationId
-         * @param email
-         * @param status
-         * @param role
-         */
+        private UserInvitation invitation;
 
-        private int invitationId;
-        private String redemptionCode;
-
-        public PendingAccountUser(
-            int invitationId, String email, InvitationStatus status, Collection<Role> roles,
-            String redemptionCode) {
-            super(-1, "------", "------", "------", email, status, roles, true);
-            this.invitationId = invitationId;
-            this.redemptionCode = redemptionCode;
+        public PendingAccountUser(UserInvitation ui, Collection<Role> roles) {
+            super(-1,
+                  "------",
+                  "------",
+                  "------",
+                  ui.getUserEmail(),
+                  resolveStatus(ui),
+                  roles,
+                  true);
+            this.invitation = ui;
         }
 
         public int getInvitationId() {
-            return this.invitationId;
+            return this.invitation.getId();
         }
 
         public String getRedemptionCode() {
-            return this.redemptionCode;
+            return this.invitation.getRedemptionCode();
         }
 
+        public String getRedemptionURL() {
+            return this.invitation.getRedemptionURL();
+        }
+
+    }
+
+    // This method is only used for test. The actual member is autowired.
+    protected void setNotificationMgr(NotificationMgr notificationMgr) {
+        this.notificationMgr = notificationMgr;
     }
 }

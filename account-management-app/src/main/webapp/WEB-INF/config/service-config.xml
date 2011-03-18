@@ -24,7 +24,7 @@
   <bean id="notificationMgr"
         class="org.duracloud.account.util.notification.NotificationMgrImpl">
     <constructor-arg ref="notificationFactory"/>
-    <constructor-arg value="notification@duracloud.org"/>
+    <constructor-arg value="notifications@duracloud.org"/>
   </bean>
 
   <bean id="duracloudUserService"

@@ -8,6 +8,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 
 import java.util.Set;
@@ -71,9 +72,10 @@ public interface AccountService {
      * returned by this method, as it may be useful to an administrator.
      *
      * @param emailAddress address at which to invite user
+     * @param emailer      utility for sending mail
      * @return UserInvitation
      */
-    public UserInvitation createUserInvitation(String emailAddress)
+    public UserInvitation inviteUser(String emailAddress, Emailer emailer)
         throws DBConcurrentUpdateException;
 
     /**

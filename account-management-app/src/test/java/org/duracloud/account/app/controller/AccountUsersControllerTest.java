@@ -13,6 +13,8 @@ import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.notification.Emailer;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,6 +35,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     private AccountUsersController accountUsersController;
     private AccountService accountService;
     private DuracloudUserService userService;
+    private NotificationMgr notificationMgr;
 
     @Before
     public void before() throws Exception {
@@ -43,62 +46,75 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
                                              AccountService.class);
         userService = EasyMock.createMock("DuracloudUserService",
                                           DuracloudUserService.class);
+        notificationMgr = EasyMock.createMock("NotificationMgr",
+                                              NotificationMgr.class);
     }
 
     @Test
     public void testSendInvitations() throws Exception {
-        accountService = EasyMock.createMock(AccountService.class);
-
-        
-        EasyMock
-            .expect(accountService.retrieveAccountInfo()).andReturn(createAccountInfo())
-            .times(1);
+        EasyMock.expect(accountService.retrieveAccountInfo()).andReturn(
+            createAccountInfo()).times(1);
 
         UserInvitation ui = createUserInvitation();
-        
-        EasyMock.expect(accountService.createUserInvitation(ui.getUserEmail())).andReturn(ui);
-        
-        EasyMock
-        .expect(accountService.getPendingInvitations()).andReturn(new HashSet<UserInvitation>(Arrays.asList(new UserInvitation[]{ui})))
-        .times(1);
 
-        EasyMock.expect(accountService.getUsers()).andReturn(
-            new HashSet<DuracloudUser>(Arrays
-                .asList(new DuracloudUser[] { createUser() }))).times(1);
+        Emailer emailer = EasyMock.createMock("Emailer", Emailer.class);
+        EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
+        EasyMock.replay(emailer, notificationMgr);
 
-        EasyMock
-            .expect(accountManagerService.getAccount(TEST_ACCOUNT_ID))
-            .andReturn(accountService).times(1);
+        EasyMock.expect(accountService.inviteUser(ui.getUserEmail(), emailer))
+            .andReturn(ui);
 
-       replayMocks();
-       
-       BindingResult result = EasyMock.createMock(BindingResult.class);
-       EasyMock.expect(result.hasErrors()).andReturn(false);
-       EasyMock.replay(result);
-       
-       this.accountUsersController.setAccountManagerService(accountManagerService);
-       Model model = new ExtendedModelMap();
-       InvitationForm invitationForm = new InvitationForm();
-       invitationForm.setEmailAddresses("test@duracloud.org");
-       
-       
-       this.accountUsersController.sendInvitations(TEST_ACCOUNT_ID, invitationForm, result, model);
-        Collection<AccountUser> accountUsers =
-            (Collection<AccountUser>) model.asMap()
-                .get(AccountUsersController.USERS_KEY);
-       Assert.assertNotNull(accountUsers);
+        EasyMock.expect(accountService.getPendingInvitations())
+            .andReturn(new HashSet<UserInvitation>(Arrays.asList(new UserInvitation[]{
+                ui})))
+            .times(1);
 
-       boolean foundInvitation = false;
-       
-       for(AccountUser au : accountUsers){
-           if(au instanceof AccountUsersController.PendingAccountUser){
-               Assert.assertTrue(((PendingAccountUser)au).getInvitationId() == ui.getId());
-               foundInvitation = true;
-           }
-       }
-       
-       Assert.assertTrue(foundInvitation);
-       EasyMock.verify(this.accountManagerService, this.accountService, result);
+        EasyMock.expect(accountService.getUsers())
+            .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[]{
+                createUser()})))
+            .times(1);
+
+        EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID))
+            .andReturn(accountService)
+            .times(1);
+
+        replayMocks();
+
+        BindingResult result = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(result.hasErrors()).andReturn(false);
+        EasyMock.replay(result);
+
+        this.accountUsersController.setNotificationMgr(notificationMgr);
+        this.accountUsersController.setAccountManagerService(
+            accountManagerService);
+        Model model = new ExtendedModelMap();
+        InvitationForm invitationForm = new InvitationForm();
+        invitationForm.setEmailAddresses("test@duracloud.org");
+
+        // call under test.
+        this.accountUsersController.sendInvitations(TEST_ACCOUNT_ID,
+                                                    invitationForm,
+                                                    result,
+                                                    model);
+
+        Collection<AccountUser> accountUsers = (Collection<AccountUser>) model.asMap()
+            .get(AccountUsersController.USERS_KEY);
+        Assert.assertNotNull(accountUsers);
+
+        boolean foundInvitation = false;
+        for (AccountUser au : accountUsers) {
+            if (au instanceof AccountUsersController.PendingAccountUser) {
+                PendingAccountUser pending = (PendingAccountUser)au;
+                Assert.assertEquals(pending.getInvitationId(), ui.getId());
+                foundInvitation = true;
+            }
+        }
+
+        Assert.assertTrue(foundInvitation);
+        EasyMock.verify(this.accountManagerService,
+                        this.accountService,
+                        notificationMgr,
+                        result);
     }
 
     /**

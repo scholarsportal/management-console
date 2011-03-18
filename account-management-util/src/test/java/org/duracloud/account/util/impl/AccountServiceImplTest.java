@@ -8,7 +8,9 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.easymock.Capture;
 import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -112,17 +114,34 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
    }
 
     @Test
-    public void testCreateUserInvitation() throws Exception {
+    public void testInviteUser() throws Exception {
         String email = "test@duracloud.org";
         EasyMock.expect(this.idUtil.newUserInvitationId()).andReturn(1);
-                
+
         this.invitationRepo.save(EasyMock.isA(UserInvitation.class));
-        
         EasyMock.expectLastCall();
+
+        Emailer emailer = EasyMock.createMock("Emailer", Emailer.class);
+
+        Capture<String> capturedBody = new Capture<String>();
+        emailer.send(EasyMock.isA(String.class),
+                     EasyMock.capture(capturedBody),
+                     EasyMock.eq(email));
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(emailer);
         replayMocks();
-        UserInvitation ui = this.acctService.createUserInvitation(email);
+
+        UserInvitation ui = this.acctService.inviteUser(email, emailer);
         Assert.assertTrue(ui.getId() == 1);
         Assert.assertTrue(ui.getRedemptionCode().length() > 3);
+
+        String body = capturedBody.getValue();
+        Assert.assertNotNull(body);
+        Assert.assertTrue("Email body !contain the redemption code: " + body,
+                          body.contains(ui.getRedemptionCode()));
+
+        EasyMock.verify(emailer);
     }
 
     

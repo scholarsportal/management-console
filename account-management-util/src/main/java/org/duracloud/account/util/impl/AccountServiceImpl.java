@@ -15,6 +15,8 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,22 +115,38 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public UserInvitation createUserInvitation(String emailAddress)
+    public UserInvitation inviteUser(String emailAddress, Emailer emailer)
         throws DBConcurrentUpdateException {
-        
-        String redemptionCode =
-            DigestUtils.md5DigestAsHex((emailAddress + System
-                .currentTimeMillis()).getBytes());
+
+        String code = emailAddress + System.currentTimeMillis();
+        String redemptionCode = DigestUtils.md5DigestAsHex(code.getBytes());
 
         int id = repoMgr.getIdUtil().newUserInvitationId();
         int acctId = account.getId();
-        UserInvitation userInvitation =
-            new UserInvitation(id, acctId, emailAddress, 14, redemptionCode);
+        int expirationDays = 14;
+        UserInvitation userInvitation = new UserInvitation(id,
+                                                           acctId,
+                                                           emailAddress,
+                                                           expirationDays,
+                                                           redemptionCode);
         getUserInvitationRepo().save(userInvitation);
-
-        // TODO: Send invitation to user via emailAddress
+        sendEmail(userInvitation, emailer);
 
         return userInvitation;
+    }
+
+    private void sendEmail(UserInvitation invitation, Emailer emailer) {
+        try {
+            emailer.send(invitation.getSubject(),
+                         invitation.getBody(),
+                         invitation.getUserEmail());
+
+        } catch (Exception e) {
+            String msg =
+                "Error: Unable to send email to: " + invitation.getUserEmail();
+            log.error(msg);
+            throw new UnsentEmailException(msg, e);
+        }
     }
 
     @Override
