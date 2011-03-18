@@ -6,6 +6,9 @@ package org.duracloud.account.app.controller;
 import java.io.InputStream;
 
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.xml.AmaInitDocumentBinding;
+import org.duracloud.account.util.notification.NotificationMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +31,18 @@ public class InitController extends AbstractController {
     @Autowired
     private DuracloudRepoMgr repoMgr;
 
+    @Autowired
+    private NotificationMgr notificationMgr;
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> initialize(InputStream request) {
         String text = "initialization successful";
         HttpStatus status = HttpStatus.OK;
+
+        AmaConfig config = AmaInitDocumentBinding.createAmaConfigFrom(request);
         try {
-            repoMgr.initialize(request);
+            repoMgr.initialize(config);
+            notificationMgr.initialize(config);
 
         } catch (Exception e) {
             text = "initialization failed: " + e.getMessage();
@@ -47,5 +56,10 @@ public class InitController extends AbstractController {
     // This method is only used by tests. It is not required for injection.
     protected void setRepoMgr(DuracloudRepoMgr repoMgr) {
         this.repoMgr = repoMgr;
+    }
+
+    // This method is only used by tests. It is not required for injection.
+    protected void setNotificationMgr(NotificationMgr notificationMgr) {
+        this.notificationMgr = notificationMgr;
     }
 }

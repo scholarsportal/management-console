@@ -57,7 +57,7 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>account-management-security</artifactId>
+      <artifactId>account-management-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 

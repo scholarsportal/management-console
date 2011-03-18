@@ -44,8 +44,8 @@ public class AmaInitDocumentBindingTest {
         AmaConfig amaConfig = AmaInitDocumentBinding.createAmaConfigFrom(xml);
         Assert.assertNotNull(amaConfig);
 
-        Assert.assertEquals(username, amaConfig.getAwsUsername());
-        Assert.assertEquals(password, amaConfig.getAwsPassword());
+        Assert.assertEquals(username, amaConfig.getUsername());
+        Assert.assertEquals(password, amaConfig.getPassword());
 
         Assert.assertEquals("/init", amaConfig.getInitResource());
     }
@@ -66,8 +66,8 @@ public class AmaInitDocumentBindingTest {
     @Test
     public void testCreateDocumentFrom() throws Exception {
         AmaConfig amaConfig = new AmaConfig();
-        amaConfig.setAwsUsername(username);
-        amaConfig.setAwsPassword(password);
+        amaConfig.setUsername(username);
+        amaConfig.setPassword(password);
 
         String doc = AmaInitDocumentBinding.createDocumentFrom(amaConfig);
         Assert.assertNotNull(doc);

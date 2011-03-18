@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.init.domain.AmaConfig;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -98,7 +99,7 @@ public class DbUtilTest {
     private DuracloudRepoMgr createMockRepoMgr(BaseRepo mockRepo) {
         DuracloudRepoMgr repoMgr = EasyMock.createMock(DuracloudRepoMgr.class);
 
-        repoMgr.initialize(EasyMock.isA(InputStream.class));
+        repoMgr.initialize(EasyMock.isA(AmaConfig.class));
         EasyMock.expectLastCall().anyTimes();
 
         Set<BaseRepo> repos = new HashSet<BaseRepo>();

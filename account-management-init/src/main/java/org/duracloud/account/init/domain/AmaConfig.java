@@ -58,19 +58,19 @@ public class AmaConfig extends BaseConfig implements AppConfig {
         return INIT_RESOURCE;
     }
 
-    public String getAwsUsername() {
+    public String getUsername() {
         return awsUsername;
     }
 
-    public void setAwsUsername(String awsUsername) {
+    public void setUsername(String awsUsername) {
         this.awsUsername = awsUsername;
     }
 
-    public String getAwsPassword() {
+    public String getPassword() {
         return awsPassword;
     }
 
-    public void setAwsPassword(String awsPassword) {
+    public void setPassword(String awsPassword) {
         this.awsPassword = awsPassword;
     }
 }

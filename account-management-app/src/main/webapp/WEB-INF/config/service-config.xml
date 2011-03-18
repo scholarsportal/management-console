@@ -18,6 +18,15 @@
     <constructor-arg ref="idUtil"/>
   </bean>
 
+  <bean id="notificationFactory"
+        class="org.duracloud.notification.AmazonNotificationFactory"/>
+  
+  <bean id="notificationMgr"
+        class="org.duracloud.account.util.notification.NotificationMgrImpl">
+    <constructor-arg ref="notificationFactory"/>
+    <constructor-arg value="notification@duracloud.org"/>
+  </bean>
+
   <bean id="duracloudUserService"
         class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
         primary="true"

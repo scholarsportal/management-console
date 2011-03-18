@@ -5,15 +5,11 @@ package org.duracloud.account.db.amazonsimple;
 
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.impl.IdUtilImpl;
+import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.common.model.Credential;
-import org.duracloud.common.util.EncryptionUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Andrew Woods
@@ -23,26 +19,18 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
 
     private AmazonSimpleDBRepoMgr repoMgr;
     private IdUtil idUtil;
-    private InputStream xml;
+
+    private String TEST_PREFIX = "TEST_DOMAIN";
 
     @Before
     public void setUp() throws Exception {
         idUtil = new IdUtilImpl();
-        repoMgr = new AmazonSimpleDBRepoMgr(idUtil);
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        if (null != xml) {
-            xml.close();
-        }
+        repoMgr = new AmazonSimpleDBRepoMgr(idUtil, TEST_PREFIX);
     }
 
     @Test
     public void testInitialize() throws Exception {
-        String text = initializationXml();
-        xml = new ByteArrayInputStream(text.getBytes());
-        repoMgr.initialize(xml);
+        repoMgr.initialize(amaConfig());
 
         // No exceptions indicates success.
         repoMgr.getUserRepo();
@@ -58,18 +46,15 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
         repoMgr.getIdUtil().newAccountId();
     }
 
-    private String initializationXml() throws Exception {
-        EncryptionUtil encrypter = new EncryptionUtil();
+    private AmaConfig amaConfig() throws Exception {
         Credential cred = getCredential();
-        String username = encrypter.encrypt(cred.getUsername());
-        String password = encrypter.encrypt(cred.getPassword());
+        String username = cred.getUsername();
+        String password = cred.getPassword();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<credential>");
-        sb.append("  <username>" + username + "</username>");
-        sb.append("  <password>" + password + "</password>");
-        sb.append("</credential>");
+        AmaConfig config = new AmaConfig();
+        config.setUsername(username);
+        config.setPassword(password);
 
-        return sb.toString();
+        return config;
     }
 }

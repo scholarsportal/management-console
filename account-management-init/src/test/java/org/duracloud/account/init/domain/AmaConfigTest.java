@@ -4,7 +4,6 @@
 package org.duracloud.account.init.domain;
 
 import org.duracloud.common.util.EncryptionUtil;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +24,8 @@ public class AmaConfigTest {
     @Before
     public void setUp() throws Exception {
         amaConfig = new AmaConfig();
-        amaConfig.setAwsUsername(username);
-        amaConfig.setAwsPassword(password);
+        amaConfig.setUsername(username);
+        amaConfig.setPassword(password);
 
         encryptionUtil = new EncryptionUtil();
     }

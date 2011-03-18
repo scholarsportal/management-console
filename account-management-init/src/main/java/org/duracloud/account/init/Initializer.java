@@ -3,8 +3,8 @@
  */
 package org.duracloud.account.init;
 
+import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.init.domain.AmaConfig;
-import org.duracloud.account.security.domain.InitUserCredential;
 import org.duracloud.appconfig.domain.AppConfig;
 import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.BaseConfig;

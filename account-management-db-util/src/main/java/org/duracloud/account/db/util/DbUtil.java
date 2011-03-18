@@ -6,6 +6,7 @@ package org.duracloud.account.db.util;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.BaseDomainData;
@@ -22,6 +23,8 @@ import org.duracloud.account.db.amazonsimple.AmazonSimpleDBRepoMgr;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.impl.IdUtilImpl;
+import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.xml.AmaInitDocumentBinding;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,13 +81,24 @@ public class DbUtil {
 
     private DuracloudRepoMgr getRepoManager(File credentialFile) {
         DuracloudRepoMgr repoMgr = new AmazonSimpleDBRepoMgr(new IdUtilImpl());
-        FileInputStream credStream;
+        FileInputStream credStream = null;
+        AmaConfig config = null;
         try {
             credStream = new FileInputStream(credentialFile);
+            config = AmaInitDocumentBinding.createAmaConfigFrom(credStream);
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
+
+        } finally {
+            IOUtils.closeQuietly(credStream);
         }
-        repoMgr.initialize(credStream);
+
+        if (null == config) {
+            throw new RuntimeException("Error creating AmaConfig.");
+        }
+        
+        repoMgr.initialize(config);
         return repoMgr;
     }
 

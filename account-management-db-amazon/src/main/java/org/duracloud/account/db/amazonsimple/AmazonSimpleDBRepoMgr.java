@@ -16,16 +16,10 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBUninitializedException;
-import org.duracloud.common.error.DuraCloudCheckedException;
-import org.duracloud.common.model.Credential;
-import org.duracloud.common.util.EncryptionUtil;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.duracloud.account.init.domain.AmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,26 +55,12 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     }
 
     @Override
-    public void initialize(InputStream xml) throws DBException {
+    public void initialize(AmaConfig config) throws DBException {
         log.debug("initializing");
 
-        Credential credential;
-        try {
-            credential = readCredential(xml);
-
-        } catch (Exception e) {
-            String msg = "Error initializing: " + e.getMessage();
-            log.error(msg, e);
-            throw new DBException(msg, e);
-        }
-
-        doInitialize(credential);
-    }
-
-    private void doInitialize(Credential credential) {
         AmazonSimpleDBClientMgr dbClientMgr =
-            new AmazonSimpleDBClientMgr(credential.getUsername(),
-                                        credential.getPassword());
+            new AmazonSimpleDBClientMgr(config.getUsername(),
+                                        config.getPassword());
 
         if (null != DOMAIN_PREFIX) {
             String userTable = DOMAIN_PREFIX + "_USER_DOMAIN";
@@ -135,25 +115,6 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
                           serverImageRepo,
                           providerAccountRepo,
                           serviceRepositoryRepo);
-    }
-
-    private Credential readCredential(InputStream xml) throws Exception {
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(xml);
-        Element credential = doc.getRootElement();
-
-        String encUsername = credential.getChildText("username");
-        String encPassword = credential.getChildText("password");
-        if (null == encUsername || null == encPassword) {
-            String msg = "Error initializing: username and/or password null.";
-            log.error(msg);
-            throw new DuraCloudCheckedException(msg);
-        }
-
-        EncryptionUtil encryptUtil = new EncryptionUtil();
-        String username = encryptUtil.decrypt(encUsername);
-        String password = encryptUtil.decrypt(encPassword);
-        return new Credential(username, password);
     }
 
     @Override

@@ -5,8 +5,8 @@ package org.duracloud.account.security.web;
 
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.security.domain.InitUserCredential;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

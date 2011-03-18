@@ -4,7 +4,6 @@
 package org.duracloud.account.init.xml;
 
 import org.duracloud.account.init.domain.AmaConfig;
-import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.EncryptionUtil;
 import org.jdom.Document;
@@ -41,12 +40,12 @@ public class AmaInitDocumentBinding {
 
             String encUsername = root.getChildText("username");
             String encPassword = root.getChildText("password");
-            config.setAwsUsername(decrypt(encUsername));
-            config.setAwsPassword(decrypt(encPassword));
+            config.setUsername(decrypt(encUsername));
+            config.setPassword(decrypt(encPassword));
 
         } catch (Exception e) {
             String error = "Error encountered attempting to parse " +
-                "Duradmin configuration xml: " + e.getMessage();
+                "AMA configuration xml: " + e.getMessage();
             log.error(error);
             throw new DuraCloudRuntimeException(error, e);
         }
@@ -64,12 +63,12 @@ public class AmaInitDocumentBinding {
         StringBuilder xml = new StringBuilder();
 
         if (null != amaConfig) {
-            String awsUsername = encrypt(amaConfig.getAwsUsername());
-            String awsPassword = encrypt(amaConfig.getAwsPassword());
+            String username = encrypt(amaConfig.getUsername());
+            String password = encrypt(amaConfig.getPassword());
 
             xml.append("<credential>");
-            xml.append("  <username>" + awsUsername + "</username>");
-            xml.append("  <password>" + awsPassword + "</password>");
+            xml.append("  <username>" + username + "</username>");
+            xml.append("  <password>" + password + "</password>");
             xml.append("</credential>");
         }
         return xml.toString();

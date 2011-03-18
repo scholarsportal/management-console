@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.security.domain;
+package org.duracloud.account.common.domain;
 
+import org.duracloud.account.common.domain.InitUserCredential;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**

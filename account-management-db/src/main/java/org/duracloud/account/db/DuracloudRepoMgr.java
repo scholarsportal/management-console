@@ -3,6 +3,8 @@
  */
 package org.duracloud.account.db;
 
+import org.duracloud.account.init.domain.AmaConfig;
+
 import java.io.InputStream;
 import java.util.Set;
 
@@ -12,7 +14,7 @@ import java.util.Set;
  */
 public interface DuracloudRepoMgr {
 
-    public void initialize(InputStream xml);
+    public void initialize(AmaConfig config);
 
     public DuracloudUserRepo getUserRepo();
 
