@@ -38,10 +38,15 @@ public class AmaInitDocumentBinding {
             Document doc = builder.build(xml);
             Element root = doc.getRootElement();
 
-            String encUsername = root.getChildText("username");
-            String encPassword = root.getChildText("password");
+            Element credential = root.getChild("credential");
+            String encUsername = credential.getChildText("username");
+            String encPassword = credential.getChildText("password");
             config.setUsername(decrypt(encUsername));
             config.setPassword(decrypt(encPassword));
+
+            config.setHost(root.getChildText("host"));
+            config.setPort(root.getChildText("port"));
+            config.setCtxt(root.getChildText("ctxt"));
 
         } catch (Exception e) {
             String error = "Error encountered attempting to parse " +
@@ -65,11 +70,19 @@ public class AmaInitDocumentBinding {
         if (null != amaConfig) {
             String username = encrypt(amaConfig.getUsername());
             String password = encrypt(amaConfig.getPassword());
+            String host = amaConfig.getHost();
+            String port = amaConfig.getPort();
+            String ctxt = amaConfig.getCtxt();
 
-            xml.append("<credential>");
-            xml.append("  <username>" + username + "</username>");
-            xml.append("  <password>" + password + "</password>");
-            xml.append("</credential>");
+            xml.append("<ama>");
+            xml.append("  <credential>");
+            xml.append("    <username>" + username + "</username>");
+            xml.append("    <password>" + password + "</password>");
+            xml.append("  </credential>");
+            xml.append("  <host>" + host + "</host>");
+            xml.append("  <port>" + port + "</port>");
+            xml.append("  <ctxt>" + ctxt + "</ctxt>");
+            xml.append("</ama>");
         }
         return xml.toString();
     }

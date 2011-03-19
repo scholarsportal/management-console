@@ -23,6 +23,9 @@ public class AmaInitDocumentBindingTest {
     private InputStream xml;
     private String username = "user-name";
     private String password = "pass-word";
+    private String host = "host";
+    private String port = "8765";
+    private String ctxt = "ctxt";
 
     private EncryptionUtil encryptionUtil;
 
@@ -46,6 +49,9 @@ public class AmaInitDocumentBindingTest {
 
         Assert.assertEquals(username, amaConfig.getUsername());
         Assert.assertEquals(password, amaConfig.getPassword());
+        Assert.assertEquals(host, amaConfig.getHost());
+        Assert.assertEquals(port, amaConfig.getPort());
+        Assert.assertEquals(ctxt, amaConfig.getCtxt());
 
         Assert.assertEquals("/init", amaConfig.getInitResource());
     }
@@ -55,10 +61,15 @@ public class AmaInitDocumentBindingTest {
         String encPassword = encryptionUtil.encrypt(password);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<credential>");
-        sb.append("  <username>" + encUsername + "</username>");
-        sb.append("  <password>" + encPassword + "</password>");
-        sb.append("</credential>");
+        sb.append("<ama>");
+        sb.append("  <credential>");
+        sb.append("    <username>" + encUsername + "</username>");
+        sb.append("    <password>" + encPassword + "</password>");
+        sb.append("  </credential>");
+        sb.append("  <host>" + host + "</host>");
+        sb.append("  <port>" + port + "</port>");
+        sb.append("  <ctxt>" + ctxt + "</ctxt>");
+        sb.append("</ama>");
 
         return new ByteArrayInputStream(sb.toString().getBytes());
     }
@@ -68,6 +79,9 @@ public class AmaInitDocumentBindingTest {
         AmaConfig amaConfig = new AmaConfig();
         amaConfig.setUsername(username);
         amaConfig.setPassword(password);
+        amaConfig.setHost(host);
+        amaConfig.setPort(port);
+        amaConfig.setCtxt(ctxt);
 
         String doc = AmaInitDocumentBinding.createDocumentFrom(amaConfig);
         Assert.assertNotNull(doc);
@@ -76,5 +90,9 @@ public class AmaInitDocumentBindingTest {
         String encPassword = encryptionUtil.encrypt(password);
         Assert.assertTrue(doc.contains(encUsername));
         Assert.assertTrue(doc.contains(encPassword));
+
+        Assert.assertTrue(doc.contains(host));
+        Assert.assertTrue(doc.contains(port));
+        Assert.assertTrue(doc.contains(ctxt));
     }
 }

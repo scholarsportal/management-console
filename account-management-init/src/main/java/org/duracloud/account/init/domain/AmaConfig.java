@@ -26,6 +26,9 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     private String awsUsername;
     private String awsPassword;
+    private String host;
+    private String port;
+    private String ctxt;
 
     @Override
     protected String getQualifier() {
@@ -72,5 +75,29 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public void setPassword(String awsPassword) {
         this.awsPassword = awsPassword;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getCtxt() {
+        return ctxt;
+    }
+
+    public void setCtxt(String ctxt) {
+        this.ctxt = ctxt;
     }
 }

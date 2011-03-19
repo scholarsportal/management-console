@@ -18,6 +18,9 @@ public class AmaConfigTest {
 
     private String username = "user-name";
     private String password = "pass-word";
+    private String host = "host";
+    private String port = "8008";
+    private String ctxt = "context";
 
     private EncryptionUtil encryptionUtil;
 
@@ -26,6 +29,9 @@ public class AmaConfigTest {
         amaConfig = new AmaConfig();
         amaConfig.setUsername(username);
         amaConfig.setPassword(password);
+        amaConfig.setHost(host);
+        amaConfig.setPort(port);
+        amaConfig.setCtxt(ctxt);
 
         encryptionUtil = new EncryptionUtil();
     }
@@ -39,6 +45,10 @@ public class AmaConfigTest {
         String encPassword = encryptionUtil.encrypt(password);
         Assert.assertTrue(xml.contains(encUsername));
         Assert.assertTrue(xml.contains(encPassword));
+
+        Assert.assertTrue(xml.contains(host));
+        Assert.assertTrue(xml.contains(port));
+        Assert.assertTrue(xml.contains(ctxt));
     }
 
     @Test

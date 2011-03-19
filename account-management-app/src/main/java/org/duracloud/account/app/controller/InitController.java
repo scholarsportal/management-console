@@ -5,6 +5,7 @@ package org.duracloud.account.app.controller;
 
 import java.io.InputStream;
 
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
@@ -43,6 +44,9 @@ public class InitController extends AbstractController {
         try {
             repoMgr.initialize(config);
             notificationMgr.initialize(config);
+            UserInvitation.setAmaHost(config.getHost());
+            UserInvitation.setAmaPort(config.getPort());
+            UserInvitation.setAmaCtxt(config.getCtxt());
 
         } catch (Exception e) {
             text = "initialization failed: " + e.getMessage();

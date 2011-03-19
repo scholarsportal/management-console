@@ -81,9 +81,17 @@ public class Initializer extends BaseConfig {
                                               amaPort,
                                               amaContext,
                                               restHelper);
+
+            // In order not to duplicate these three elements in the properties
+            // file, they are set on the config object directly.
+            AmaConfig amaConfig = new AmaConfig();
+            amaConfig.setHost(amaHost);
+            amaConfig.setPort(amaPort);
+            amaConfig.setCtxt(amaContext);
+
             amaWithConfig = new ApplicationWithConfig(amaKey);
             amaWithConfig.setApplication(ama);
-            amaWithConfig.setConfig(new AmaConfig());
+            amaWithConfig.setConfig(amaConfig);
 
         } else {
             String msg = "ama endpoint !loaded";
