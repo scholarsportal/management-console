@@ -40,8 +40,8 @@ public interface DuracloudUserService {
     public void sendPasswordReminder(int userId);
 
     public void changePassword(
-        int userId, String oldPassword, String newPassword)
-        throws DBNotFoundException, InvalidPasswordException;
+        int userId, String oldPassword, boolean oldPasswoedEncoded, String newPassword)
+        throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException;
 
     public DuracloudUser loadDuracloudUserByUsername(String username)
         throws DBNotFoundException;

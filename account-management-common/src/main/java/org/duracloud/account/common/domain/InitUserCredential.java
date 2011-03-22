@@ -4,6 +4,7 @@
 package org.duracloud.account.common.domain;
 
 import org.duracloud.common.model.Credential;
+import org.duracloud.common.util.ChecksumUtil;
 
 /**
  * @author Andrew Woods
@@ -34,4 +35,8 @@ public class InitUserCredential extends Credential {
         return password;
     }
 
+    public String getInitEncodedPassword() {
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+        return util.generateChecksum(getInitPassword());
+    }
 }

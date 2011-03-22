@@ -33,6 +33,7 @@
 
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
+  <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />
   <definition name="user-home" template="/WEB-INF/jspx/users/user/user-home.jspx" />
   <definition name="user-welcome" template="/WEB-INF/jspx/users/user/new-user-welcome.jspx" />
   <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />

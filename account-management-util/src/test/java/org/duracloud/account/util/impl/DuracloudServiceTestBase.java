@@ -13,6 +13,7 @@ import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -112,7 +113,9 @@ public class DuracloudServiceTestBase {
     }
 
     protected DuracloudUser newDuracloudUser(int userId, String username) {
-        String password = "password";
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+
+        String password = util.generateChecksum("password");
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "email";

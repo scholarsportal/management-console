@@ -4,6 +4,7 @@
 package org.duracloud.account.common.domain;
 
 import org.duracloud.account.common.domain.InitUserCredential;
+import org.duracloud.common.util.ChecksumUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,5 +38,9 @@ public class InitUserCredentialTest {
         InitUserCredential init = new InitUserCredential();
         Assert.assertEquals(init.getUsername(), username);
         Assert.assertEquals(init.getPassword(), password);
+
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+        Assert.assertEquals(util.generateChecksum(password),
+                            init.getInitEncodedPassword());
     }
 }

@@ -21,6 +21,7 @@ import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,10 +65,12 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String lastName,
                                        String email)
         throws DBConcurrentUpdateException, UserAlreadyExistsException {
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+
         int newUserId = getIdUtil().newUserId();
         DuracloudUser user = new DuracloudUser(newUserId,
                                                username,
-                                               password,
+                                               util.generateChecksum(password),
                                                firstName,
                                                lastName,
                                                email
@@ -219,20 +222,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public void changePassword(int userId,
                                String oldPassword,
-                               String newPassword) throws DBNotFoundException,InvalidPasswordException {
-        
+                               boolean oldPasswoedEncoded,
+                               String newPassword) throws DBNotFoundException,InvalidPasswordException,DBConcurrentUpdateException {
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+
         DuracloudUser user = getUserRepo().findById(userId);
+        if(!oldPasswoedEncoded)
+            oldPassword = util.generateChecksum(oldPassword);
         if(!user.getPassword().equals(oldPassword)){
             throw new InvalidPasswordException(userId);
         }
-        
-        //FIXME not implemented!
-        //I'm refraining from doing more with this one - not sure 
-        //whether we want to add a set on the password of DuracloudUser
-        //or (more probable) push the implementation down into the
-        //repo layer.
-        log.error("NOT IMPLEMENTED!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        
+
+        user.setPassword(util.generateChecksum(newPassword));
+        getUserRepo().save(user);
     }
 
     @Override

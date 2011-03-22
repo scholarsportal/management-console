@@ -32,7 +32,7 @@ public class InitUserDetailService implements UserDetailsService {
 
         DuracloudUser initUser = new DuracloudUser(-1,
                                                    init.getUsername(),
-                                                   init.getPassword(),
+                                                   init.getInitEncodedPassword(),
                                                    "Init",
                                                    "User",
                                                    "none@none.org");

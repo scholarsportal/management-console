@@ -38,7 +38,12 @@
 
           <jsp:include
 	         page="/WEB-INF/jspx/includes/login-form.jspx" />
-        
+
+            <a
+             id="forgot-password-link"
+             href="${pageContext.request.contextPath}/users/forgot-password">
+
+            Forgot Password</a>
         </c:when>
         <c:otherwise>
               <p>You are logged in as ${principal.username}</p>

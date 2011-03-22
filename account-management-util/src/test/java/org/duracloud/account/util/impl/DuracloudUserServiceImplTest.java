@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
+import org.duracloud.account.util.error.InvalidPasswordException;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -352,7 +353,40 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testChangePassword() throws Exception {
-        // TODO: complete test
+        String username = "test-username";
+        String password = "test-newPassword";
+        setUpChangePassword(username, password);;
+
+        userService.changePassword(userId, "password", false, password);
+    }
+
+    @Test
+    public void testChangeIncorrectPassword() throws Exception {
+        Exception exception = new InvalidPasswordException(userId);
+
+        String username = "test-username";
+        String password = "test-newPassword";
+        setUpChangePassword(username, password);;
+
+        try {
+            userService.changePassword(userId, "incorrect-password", false, password);
+            Assert.fail("exception expected");
+        } catch(InvalidPasswordException e) {
+            Assert.assertNotNull(e);
+        }
+    }
+
+    private void setUpChangePassword(String username, String newPassword)
+        throws Exception {
+        DuracloudUser user = newDuracloudUser(userId, username);
+
+        EasyMock.expect(userRepo.findById(userId))
+            .andReturn(user)
+            .anyTimes();
+
+        userRepo.save(user);
+        EasyMock.expectLastCall().anyTimes();
+
         replayMocks();
     }
 

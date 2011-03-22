@@ -88,6 +88,11 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
         return password;
     }
 
+    public void setPassword(String password) {
+        checkNotBlank("password", password);
+        this.password = password;
+    }
+
     public String getFirstName() {
         return firstName;
     }

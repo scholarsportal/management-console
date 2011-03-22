@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,9 @@ import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.notification.Emailer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,9 +50,11 @@ public class UserController extends AbstractController {
      */
     public static final String USER_KEY = "user";
     public static final String NEW_USER_VIEW = "user-new";
+    public static final String FORGOT_PASSWORD_VIEW = "forgot-password";
     public static final String NEW_USER_WELCOME = "user-welcome";
 
     public static final String USER_HOME = "user-home";
+    public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
     public static final String USER_ACCOUNTS = "user-accounts";
 
     public static final String USER_MAPPING = "/byid/{username}";
@@ -67,6 +73,7 @@ public class UserController extends AbstractController {
     private static final String CHANGE_PASSWORD_VIEW = "user-change-password";
     private static final String USER_PROFILE_FORM_KEY = "userProfileEditForm";
     private static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
+    private static final String FORGOT_PASSWORD_FORM_KEY = "forgotPasswordForm";
     @Autowired
     private AccountManagerService accountManagerService;
 
@@ -75,6 +82,9 @@ public class UserController extends AbstractController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private NotificationMgr notificationMgr;
 
     /**
      * 
@@ -99,6 +109,13 @@ public class UserController extends AbstractController {
         NewUserForm newUserForm = new NewUserForm();
         newUserForm.setRedemptionCode(removeRedemptionCodeFromSession(request));
         return new ModelAndView(NEW_USER_VIEW, "newUserForm", newUserForm);
+    }
+
+    @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.GET)
+    public ModelAndView getForgotPasswordForm(HttpServletRequest request) {
+        log.info("serving up ForgotPasswordForm");
+        ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+        return new ModelAndView(FORGOT_PASSWORD_VIEW, FORGOT_PASSWORD_FORM_KEY, forgotPasswordForm);
     }
 
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
@@ -148,7 +165,8 @@ public class UserController extends AbstractController {
      * 
      */
     private void addRedemptionFailedMessage() {
-        addErrorMessage("The redemption code you supplied is invalid. We are unable to add you to an account.");
+        addErrorMessage(
+            "The redemption code you supplied is invalid. We are unable to add you to an account.");
     }
 
     /**
@@ -204,9 +222,12 @@ public class UserController extends AbstractController {
         log.info("updating user profile for {}", username);
         int id = this.userService.loadDuracloudUserByUsername(username).getId();
         this.userService.storeUserDetails(id,
-            form.getFirstName(),
-            form.getLastName(),
-            form.getEmail());
+                                          form.getFirstName(),
+                                          form.getLastName(),
+                                          form.getEmail());
+
+        // FIXME updates aren't propagating immediately
+        sleepMomentarily();
         return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
@@ -217,15 +238,15 @@ public class UserController extends AbstractController {
         model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
         // add related model objects
         addUserToModel(this.userService.loadDuracloudUserByUsername(username),
-            model);
+                       model);
         return CHANGE_PASSWORD_VIEW;
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
-    public String changePassword(
+    public String changePassword (
         @PathVariable String username,
         @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
-        BindingResult result, Model model) throws DBNotFoundException {
+        BindingResult result, Model model) throws Exception {
 
         DuracloudUser user =
             this.userService.loadDuracloudUserByUsername(username);
@@ -236,7 +257,7 @@ public class UserController extends AbstractController {
             int id = user.getId();
             try {
                 this.userService.changePassword(id,
-                    form.getOldPassword(),
+                    form.getOldPassword(), false,
                     form.getPassword());
                 return "redirect:" + PREFIX + "/users/byid/" + username;
             } catch (InvalidPasswordException e) {
@@ -274,8 +295,8 @@ public class UserController extends AbstractController {
         throws DBNotFoundException {
 
         log.debug("opening welcome page for for {}: accountId={}",
-            username,
-            accountId);
+                  username,
+                  accountId);
         ModelAndView mav = new ModelAndView(NEW_USER_WELCOME);
         if (accountId != null) {
             mav.addObject("accountId", accountId);
@@ -344,6 +365,59 @@ public class UserController extends AbstractController {
         }
 
         return redirect;
+    }
+
+    @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)
+    public String forgotPassword(
+        @ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
+        BindingResult result, Model model, HttpServletRequest request)
+        throws Exception {
+        if (!result.hasErrors()) {
+            DuracloudUser user = null;
+            try {
+                user = this.userService.loadDuracloudUserByUsername(
+                    forgotPasswordForm.getUsername());
+            } catch (DBNotFoundException e) {
+                result.addError(new FieldError(FORGOT_PASSWORD_FORM_KEY,
+                    "username",
+                    "The username does not exist"));
+                return FORGOT_PASSWORD_VIEW;
+            }
+
+            Random r = new Random();
+            String password = Long.toString(Math.abs(r.nextLong()), 36);
+
+
+            this.userService.changePassword(user.getId(),
+                        user.getPassword(), true,
+                        password);
+
+            sendEmail(user.getEmail(), password);
+
+            String redirect =
+                "redirect:"
+                    + PREFIX + "/login";
+
+            return redirect;
+        }
+
+        return FORGOT_PASSWORD_VIEW;
+    }
+
+    private void sendEmail(String emailAddress, String newPassword) {
+        Emailer emailer = notificationMgr.getEmailer();
+
+        try {
+            emailer.send("Duracloud Account Management - Forgot Password",
+                         "Please use the following password to login: " + newPassword,
+                         emailAddress);
+
+        } catch (Exception e) {
+            String msg =
+                "Error: Unable to send email to: " + emailAddress;
+            log.error(msg);
+            throw new UnsentEmailException(msg, e);
+        }
     }
 
     /**
