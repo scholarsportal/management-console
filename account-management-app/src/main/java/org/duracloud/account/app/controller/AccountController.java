@@ -11,6 +11,7 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.duracloud.account.util.sys.EventMonitor;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -47,6 +49,9 @@ public class AccountController extends AbstractAccountController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private Set<EventMonitor> eventMonitors;
 
     @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
     public String getHome(@PathVariable int accountId, Model model)
@@ -120,6 +125,11 @@ public class AccountController extends AbstractAccountController {
                 AccountService service =
                     this.accountManagerService.createAccount(accountInfo, user);
 
+                Iterator<EventMonitor> itr = eventMonitors.iterator();
+                while (itr.hasNext()) {
+                    itr.next().accountCreated(accountInfo, user);
+                }
+
                 // FIXME seems like there is some latency between successfully
                 // creating
                 // a new user and the user actually being visible to subsequent
@@ -180,4 +190,11 @@ public class AccountController extends AbstractAccountController {
         this.idUtil = idUtil;
     }
 
+    // This method is only for unit testing. Normally it is autowired.
+    protected void addEventMonitor(EventMonitor eventMonitor) {
+        if (null == this.eventMonitors) {
+            this.eventMonitors = new HashSet<EventMonitor>();
+        }
+        this.eventMonitors.add(eventMonitor);
+    }
 }

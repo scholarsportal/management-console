@@ -43,17 +43,15 @@ public class UserInvitationTest {
 
     @Test
     public void testGetRedemptionURL() throws Exception {
-        String host = "localhost";
-        String port = "8080";
-        String ctxt = "ama";
+        String host = AmaEndpoint.getHost();
+        String port = AmaEndpoint.getPort();
+        String ctxt = AmaEndpoint.getCtxt();
         verifyUrl(host, port, ctxt);
 
         String newHost = "junkhost";
-        String newCtxt = "abc";
         String newPort = "443";
-        UserInvitation.setAmaHost(newHost);
-        UserInvitation.setAmaPort(newPort);
-        UserInvitation.setAmaCtxt(newCtxt);
+        String newCtxt = "abc";
+        AmaEndpoint.initialize(newHost, newPort, newCtxt);
 
         verifyUrl(newHost, newPort, newCtxt);
     }

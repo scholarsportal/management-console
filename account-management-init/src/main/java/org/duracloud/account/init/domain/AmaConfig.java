@@ -10,6 +10,11 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Andrew Woods
  *         Date: Jan 28, 2011
@@ -23,12 +28,15 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public static final String awsUsernameKey = "username";
     public static final String awsPasswordKey = "password";
+    public static final String adminEmailKey = "admin";
 
     private String awsUsername;
     private String awsPassword;
     private String host;
     private String port;
     private String ctxt;
+
+    private Map<String, String> adminAddresses = new HashMap<String, String>();
 
     @Override
     protected String getQualifier() {
@@ -37,12 +45,16 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     @Override
     protected void loadProperty(String key, String value) {
-        key = key.toLowerCase();
-        if (key.equalsIgnoreCase(awsUsernameKey)) {
+        String prefix = getPrefix(key.toLowerCase());
+        if (prefix.equalsIgnoreCase(awsUsernameKey)) {
             this.awsUsername = value;
 
-        } else if (key.equalsIgnoreCase(awsPasswordKey)) {
+        } else if (prefix.equalsIgnoreCase(awsPasswordKey)) {
             this.awsPassword = value;
+
+        } else if (prefix.equalsIgnoreCase(adminEmailKey)) {
+            String id = getSuffix(key);
+            adminAddresses.put(id, value);
 
         } else {
             String msg = "unknown key: " + key + " (" + value + ")";
@@ -99,5 +111,13 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public void setCtxt(String ctxt) {
         this.ctxt = ctxt;
+    }
+
+    public Collection<String> getAdminAddresses() {
+        return adminAddresses.values();
+    }
+
+    public void addAdminAddress(String id, String adminAddress) {
+        this.adminAddresses.put(id, adminAddress);
     }
 }

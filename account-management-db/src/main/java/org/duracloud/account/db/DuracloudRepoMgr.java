@@ -4,15 +4,15 @@
 package org.duracloud.account.db;
 
 import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.domain.Initable;
 
-import java.io.InputStream;
 import java.util.Set;
 
 /**
  * @author Andrew Woods
  *         Date: Dec 9, 2010
  */
-public interface DuracloudRepoMgr {
+public interface DuracloudRepoMgr extends Initable {
 
     public void initialize(AmaConfig config);
 

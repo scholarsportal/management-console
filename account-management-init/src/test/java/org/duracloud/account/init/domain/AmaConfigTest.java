@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Andrew Woods
  *         Date: Feb 1, 2011
@@ -21,6 +24,8 @@ public class AmaConfigTest {
     private String host = "host";
     private String port = "8008";
     private String ctxt = "context";
+    private String admin0 = "a@g.com";
+    private String admin1 = "x@y.org";
 
     private EncryptionUtil encryptionUtil;
 
@@ -32,6 +37,8 @@ public class AmaConfigTest {
         amaConfig.setHost(host);
         amaConfig.setPort(port);
         amaConfig.setCtxt(ctxt);
+        amaConfig.addAdminAddress("0", admin0);
+        amaConfig.addAdminAddress("1", admin1);
 
         encryptionUtil = new EncryptionUtil();
     }
@@ -49,6 +56,8 @@ public class AmaConfigTest {
         Assert.assertTrue(xml.contains(host));
         Assert.assertTrue(xml.contains(port));
         Assert.assertTrue(xml.contains(ctxt));
+        Assert.assertTrue(xml.contains(admin0));
+        Assert.assertTrue(xml.contains(admin1));
     }
 
     @Test

@@ -203,8 +203,14 @@ public class Initializer extends BaseConfig {
         }
     }
 
+    // This method is just used for test.
     public Application getAma() {
         return amaWithConfig.getApplication();
+    }
+
+    // This method is just used for test.
+    public AmaConfig getConfig() {
+        return (AmaConfig) amaWithConfig.getConfig();
     }
 
 }

@@ -5,14 +5,18 @@ package org.duracloud.account.app.controller;
 
 import java.io.InputStream;
 
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.domain.Initable;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
 import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.account.util.sys.EventMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +39,10 @@ public class InitController extends AbstractController {
     @Autowired
     private NotificationMgr notificationMgr;
 
+    @Autowired
+    @Qualifier("sysMonitor")
+    private Initable systemMonitor;
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<String> initialize(InputStream request) {
         String text = "initialization successful";
@@ -44,9 +52,10 @@ public class InitController extends AbstractController {
         try {
             repoMgr.initialize(config);
             notificationMgr.initialize(config);
-            UserInvitation.setAmaHost(config.getHost());
-            UserInvitation.setAmaPort(config.getPort());
-            UserInvitation.setAmaCtxt(config.getCtxt());
+            systemMonitor.initialize(config);
+            AmaEndpoint.initialize(config.getHost(),
+                                   config.getPort(),
+                                   config.getCtxt());
 
         } catch (Exception e) {
             text = "initialization failed: " + e.getMessage();
@@ -65,5 +74,10 @@ public class InitController extends AbstractController {
     // This method is only used by tests. It is not required for injection.
     protected void setNotificationMgr(NotificationMgr notificationMgr) {
         this.notificationMgr = notificationMgr;
+    }
+
+    // This method is only used by tests. It is not required for injection.
+    public void setSystemMonitor(Initable systemMonitor) {
+        this.systemMonitor = systemMonitor;
     }
 }

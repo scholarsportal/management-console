@@ -14,8 +14,9 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.duracloud.account.util.sys.EventMonitor;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,12 +40,27 @@ public class AccountControllerTest extends AmaControllerTestBase {
     private AccountController accountController;
     private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudInstanceService instanceService;
+    private EventMonitor systemMonitor;
+    private EventMonitor customerMonitor;
 
     @Before
     public void before() throws Exception {
         super.before();
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
+    }
+
+    @After
+    public void tearDown() {
+        if (null != systemMonitor) {
+            EasyMock.verify(systemMonitor);
+        }
+
+        if (null != customerMonitor) {
+            EasyMock.verify(customerMonitor);
+        }
+        systemMonitor = null;
+        customerMonitor = null;
     }
 
     /* FIXME: Properly set up mock account controller to pass verification - bb
@@ -118,14 +134,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .get(AccountController.NEW_ACCOUNT_FORM_KEY));
     }
 
-    /**
-     * Test method for
-     * {@link org.duracloud.account.app.controller.AccountController#add(org.duracloud.account.app.controller.NewAccountForm, org.springframework.validation.BindingResult, org.springframework.ui.Model)}
-     * .
-     * 
-     * @throws DBNotFoundException
-     * @throws SubdomainAlreadyExistsException
-     */
     @Test
     public void testAdd() throws Exception {
         intializeAuthManager();
@@ -138,19 +146,38 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         IdUtil idUtil = EasyMock.createNiceMock(IdUtil.class);
 
-        AccountManagerService ams =
-            EasyMock.createMock(AccountManagerService.class);
-        AccountService as = EasyMock.createMock(AccountService.class);
+        AccountService as = EasyMock.createMock("AccountService",
+                                                AccountService.class);
+        AccountInfo acctInfo = createAccountInfo();
         EasyMock.expect(as.retrieveAccountInfo())
-            .andReturn(createAccountInfo())
+            .andReturn(acctInfo)
             .anyTimes();
 
+        AccountManagerService ams = EasyMock.createMock("AccountManagerService",
+                                                        AccountManagerService.class);
         EasyMock.expect(ams.createAccount(EasyMock.isA(AccountInfo.class),
-            EasyMock.isA(DuracloudUser.class))).andReturn(as);
-        EasyMock.replay(ams, as, idUtil);
+                                          EasyMock.isA(DuracloudUser.class)))
+            .andReturn(as);
+
+        systemMonitor = EasyMock.createMock("SystemMonitor",
+                                            EventMonitor.class);
+        systemMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
+                                     EasyMock.isA(DuracloudUser.class));
+        EasyMock.expectLastCall();
+
+        customerMonitor = EasyMock.createMock("CustomerMonitor",
+                                              EventMonitor.class);
+        customerMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
+                                       EasyMock.isA(DuracloudUser.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(ams, as, idUtil, systemMonitor, customerMonitor);
 
         accountController.setAccountManagerService(ams);
         accountController.setIdUtil(idUtil);
+        accountController.addEventMonitor(systemMonitor);
+        accountController.addEventMonitor(customerMonitor);
+
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setSubdomain("testdomain");
         Model model = new ExtendedModelMap();

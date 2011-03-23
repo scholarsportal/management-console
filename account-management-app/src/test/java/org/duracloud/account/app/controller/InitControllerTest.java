@@ -11,10 +11,10 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.domain.Initable;
 import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.account.util.notification.NotificationMgrImpl;
 import org.duracloud.common.util.EncryptionUtil;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +31,7 @@ public class InitControllerTest {
     private InitController controller;
     private DuracloudRepoMgr repoMgr;
     private NotificationMgr notificationMgr;
+    private Initable systemMonitor;
 
     private String host = "a-host";
     private String port = "a-port";
@@ -39,16 +40,17 @@ public class InitControllerTest {
     @Before
     public void setUp() throws Exception {
         repoMgr = EasyMock.createMock(DuracloudRepoMgr.class);
-        notificationMgr = EasyMock.createMock(NotificationMgrImpl.class);
+        notificationMgr = EasyMock.createMock(NotificationMgr.class);
+        systemMonitor = EasyMock.createMock("SystemMonitor", Initable.class);
         controller = new InitController();
         controller.setRepoMgr(repoMgr);
         controller.setNotificationMgr(notificationMgr);
+        controller.setSystemMonitor(systemMonitor);
     }
 
     @After
     public void tearDown() {
-        EasyMock.verify(repoMgr);
-        EasyMock.verify(notificationMgr);
+        EasyMock.verify(repoMgr, notificationMgr, systemMonitor);
     }
 
     @Test
@@ -60,6 +62,10 @@ public class InitControllerTest {
         notificationMgr.initialize(EasyMock.isA(AmaConfig.class));
         EasyMock.expectLastCall();
         EasyMock.replay(notificationMgr);
+
+        systemMonitor.initialize(EasyMock.isA(AmaConfig.class));
+        EasyMock.expectLastCall();
+        EasyMock.replay(systemMonitor);
 
         UserInvitation invitation = new UserInvitation(1, 2, "x", 3, "y");
         String url = invitation.getRedemptionURL();
@@ -84,8 +90,7 @@ public class InitControllerTest {
         repoMgr.initialize(EasyMock.isA(AmaConfig.class));
         EasyMock.expectLastCall().andThrow(new DBUninitializedException(
             "canned-exception"));
-        EasyMock.replay(repoMgr);
-        EasyMock.replay(notificationMgr);
+        EasyMock.replay(repoMgr, notificationMgr, systemMonitor);
 
         ResponseEntity<String> response = controller.initialize(inputStream());
         Assert.assertNotNull(response);

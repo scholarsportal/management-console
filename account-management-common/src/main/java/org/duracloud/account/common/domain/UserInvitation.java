@@ -10,11 +10,6 @@ import java.util.Date;
  */
 public class UserInvitation extends BaseDomainData {
 
-    // These are default values that can be over-written by ama initialization.
-    private static String amaHost = "localhost";
-    private static String amaCtxt = "ama";
-    private static String amaPort = "8080";
-
     private int accountId;
     private String userEmail;
     private Date creationDate;
@@ -77,21 +72,14 @@ public class UserInvitation extends BaseDomainData {
     }
 
     public String getRedemptionURL() {
+        String amaHost = AmaEndpoint.getHost();
+        String amaPort = AmaEndpoint.getPort();
+        String amaCtxt = AmaEndpoint.getCtxt();
         return "http://" + amaHost + ":" + amaPort + "/" + amaCtxt +
             "/users/redeem/" + getRedemptionCode();
     }
 
-    public static void setAmaHost(String amaHost) {
-        UserInvitation.amaHost = amaHost;
-    }
 
-    public static void setAmaCtxt(String amaCtxt) {
-        UserInvitation.amaCtxt = amaCtxt;
-    }
-
-    public static void setAmaPort(String amaPort) {
-        UserInvitation.amaPort = amaPort;
-    }
 
     public String getSubject() {
         return "DuraCloud Account Invitation";

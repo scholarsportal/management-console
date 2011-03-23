@@ -27,6 +27,17 @@
     <constructor-arg value="notifications@duracloud.org"/>
   </bean>
 
+  <bean id="systemMonitor"
+        class="org.duracloud.account.util.sys.impl.SystemMonitorImpl">
+    <constructor-arg ref="notificationMgr"/>
+    <qualifier value="sysMonitor"/>
+  </bean>
+
+  <bean id="customerMonitor"
+        class="org.duracloud.account.util.sys.impl.CustomerMonitorImpl">
+    <constructor-arg ref="notificationMgr"/>
+  </bean>
+
   <bean id="duracloudUserService"
         class="org.duracloud.account.util.impl.DuracloudUserServiceImpl"
         primary="true"

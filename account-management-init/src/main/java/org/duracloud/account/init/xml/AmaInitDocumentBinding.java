@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Andrew Woods
@@ -44,6 +46,16 @@ public class AmaInitDocumentBinding {
             config.setUsername(decrypt(encUsername));
             config.setPassword(decrypt(encPassword));
 
+            Element admin = root.getChild("admin");
+            if (null != admin) {
+                Iterator<Element> emails = admin.getChildren().iterator();
+                while (emails.hasNext()) {
+                    Element email = emails.next();
+                    config.addAdminAddress(email.getAttributeValue("id"),
+                                           email.getText());
+                }
+            }
+
             config.setHost(root.getChildText("host"));
             config.setPort(root.getChildText("port"));
             config.setCtxt(root.getChildText("ctxt"));
@@ -73,12 +85,25 @@ public class AmaInitDocumentBinding {
             String host = amaConfig.getHost();
             String port = amaConfig.getPort();
             String ctxt = amaConfig.getCtxt();
+            Collection emails = amaConfig.getAdminAddresses();
 
             xml.append("<ama>");
             xml.append("  <credential>");
             xml.append("    <username>" + username + "</username>");
             xml.append("    <password>" + password + "</password>");
             xml.append("  </credential>");
+
+
+            if (null != emails && emails.size() > 0) {
+                int i = 0;
+                xml.append("  <admin>");
+                Iterator<String> itr = emails.iterator();
+                while (itr.hasNext()) {
+                    xml.append("    <email id='" + i++ + "'>" + itr.next() +
+                                   "</email>");
+                }
+                xml.append("  </admin>");
+            }
             xml.append("  <host>" + host + "</host>");
             xml.append("  <port>" + port + "</port>");
             xml.append("  <ctxt>" + ctxt + "</ctxt>");

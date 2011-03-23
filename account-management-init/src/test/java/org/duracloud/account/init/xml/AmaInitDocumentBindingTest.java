@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * @author Andrew Woods
@@ -26,6 +27,8 @@ public class AmaInitDocumentBindingTest {
     private String host = "host";
     private String port = "8765";
     private String ctxt = "ctxt";
+    private String admin0 = "a@g.com";
+    private String admin1 = "x@y.org";
 
     private EncryptionUtil encryptionUtil;
 
@@ -53,6 +56,11 @@ public class AmaInitDocumentBindingTest {
         Assert.assertEquals(port, amaConfig.getPort());
         Assert.assertEquals(ctxt, amaConfig.getCtxt());
 
+        Collection<String> admins = amaConfig.getAdminAddresses();
+        Assert.assertEquals(2, admins.size());
+        Assert.assertTrue(admins.contains(admin0));
+        Assert.assertTrue(admins.contains(admin1));
+
         Assert.assertEquals("/init", amaConfig.getInitResource());
     }
 
@@ -66,6 +74,10 @@ public class AmaInitDocumentBindingTest {
         sb.append("    <username>" + encUsername + "</username>");
         sb.append("    <password>" + encPassword + "</password>");
         sb.append("  </credential>");
+        sb.append("  <admin>");
+        sb.append("    <email id='0'>" + admin0 + "</email>");
+        sb.append("    <email id='1'>" + admin1 + "</email>");
+        sb.append("  </admin>");
         sb.append("  <host>" + host + "</host>");
         sb.append("  <port>" + port + "</port>");
         sb.append("  <ctxt>" + ctxt + "</ctxt>");
@@ -82,6 +94,8 @@ public class AmaInitDocumentBindingTest {
         amaConfig.setHost(host);
         amaConfig.setPort(port);
         amaConfig.setCtxt(ctxt);
+        amaConfig.addAdminAddress("0", admin0);
+        amaConfig.addAdminAddress("1", admin1);
 
         String doc = AmaInitDocumentBinding.createDocumentFrom(amaConfig);
         Assert.assertNotNull(doc);
@@ -94,5 +108,7 @@ public class AmaInitDocumentBindingTest {
         Assert.assertTrue(doc.contains(host));
         Assert.assertTrue(doc.contains(port));
         Assert.assertTrue(doc.contains(ctxt));
+        Assert.assertTrue(doc.contains(admin0));
+        Assert.assertTrue(doc.contains(admin1));
     }
 }

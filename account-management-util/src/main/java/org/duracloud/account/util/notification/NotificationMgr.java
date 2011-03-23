@@ -4,6 +4,7 @@
 package org.duracloud.account.util.notification;
 
 import org.duracloud.account.init.domain.AmaConfig;
+import org.duracloud.account.init.domain.Initable;
 import org.duracloud.notification.Emailer;
 
 /**
@@ -12,7 +13,7 @@ import org.duracloud.notification.Emailer;
  * @author Andrew Woods
  *         Date: 3/17/11
  */
-public interface NotificationMgr {
+public interface NotificationMgr extends Initable {
 
     /**
      * This method initializes the NotificationMgr.

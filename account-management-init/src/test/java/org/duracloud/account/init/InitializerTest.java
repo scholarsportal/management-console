@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -31,6 +32,9 @@ public class InitializerTest {
     private String username = "username";
     private String password = "password";
 
+    private String admin0 = "a@g.com";
+    private String admin1 = "x@y.org";
+
     @Test
     public void testLoad() throws Exception {
         Properties props = createProps();
@@ -41,6 +45,7 @@ public class InitializerTest {
 
         Initializer config = new Initializer(propsFile);
         verifyApplicationInitializer(config);
+        verifyAmaConfig(config.getConfig());
     }
 
     private Properties createProps() {
@@ -64,6 +69,13 @@ public class InitializerTest {
 
         props.put(user, username);
         props.put(pass, password);
+
+        int i = 0;
+        String email0 = ama + AmaConfig.adminEmailKey + dot + i++;
+        String email1 = ama + AmaConfig.adminEmailKey + dot + i++;
+        props.put(email0, admin0);
+        props.put(email1, admin1);
+
         return props;
     }
 
@@ -82,6 +94,36 @@ public class InitializerTest {
         Assert.assertEquals(amaHost, host);
         Assert.assertEquals(amaPort, port);
         Assert.assertEquals(amaContext, context);
+    }
+
+    private void verifyAmaConfig(AmaConfig config) {
+        Assert.assertNotNull(config);
+
+        String host = config.getHost();
+        String port = config.getPort();
+        String ctxt = config.getCtxt();
+        Assert.assertNotNull(host);
+        Assert.assertNotNull(port);
+        Assert.assertNotNull(ctxt);
+
+        Assert.assertEquals(amaHost, host);
+        Assert.assertEquals(amaPort, port);
+        Assert.assertEquals(amaContext, ctxt);
+
+        String user = config.getUsername();
+        String pass = config.getPassword();
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(pass);
+
+        Assert.assertEquals(username, user);
+        Assert.assertEquals(password, pass);
+
+        Collection<String> emails = config.getAdminAddresses();
+        Assert.assertNotNull(emails);
+
+        Assert.assertEquals(2, emails.size());
+        Assert.assertTrue(emails.contains(admin0));
+        Assert.assertTrue(emails.contains(admin1));
     }
 
 }
