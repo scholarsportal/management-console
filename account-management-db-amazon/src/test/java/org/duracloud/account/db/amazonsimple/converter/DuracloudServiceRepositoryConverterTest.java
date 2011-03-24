@@ -15,6 +15,7 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRe
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.PASSWORD_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SERVICE_REPOSITORY_TYPE_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SPACE_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.VERSION_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.USERNAME_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
@@ -29,6 +30,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
         ServiceRepository.ServiceRepositoryType.VERIFIED;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
+    private static final String version = "version";
     private static final String username = "username";
     private static final String password = "password";
     private static final int counter = 4;
@@ -44,6 +46,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
                                      serviceRepositoryType,
                                      hostName,
                                      spaceId,
+                                     version,
                                      username,
                                      password,
                                      counter);
@@ -57,8 +60,9 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
         List<Attribute> testAtts = new ArrayList<Attribute>();
         testAtts.add(new Attribute(SERVICE_REPOSITORY_TYPE_ATT,
                                    repoCvtr.asString(serviceRepositoryType)));
-        testAtts.add(new Attribute(SPACE_ID_ATT, spaceId));
         testAtts.add(new Attribute(HOST_NAME_ATT, hostName));
+        testAtts.add(new Attribute(SPACE_ID_ATT, spaceId));
+        testAtts.add(new Attribute(VERSION_ATT, version));
         testAtts.add(new Attribute(USERNAME_ATT, username));
         testAtts.add(new Attribute(PASSWORD_ATT, password));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
@@ -71,6 +75,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
 
         Assert.assertNotNull(serviceRepo.getServiceRepositoryType());
         Assert.assertNotNull(serviceRepo.getSpaceId());
+        Assert.assertNotNull(serviceRepo.getVersion());
         Assert.assertNotNull(serviceRepo.getHostName());
         Assert.assertNotNull(serviceRepo.getUsername());
         Assert.assertNotNull(serviceRepo.getPassword());
@@ -80,6 +85,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
                             serviceRepo.getServiceRepositoryType());
         Assert.assertEquals(hostName, serviceRepo.getHostName());
         Assert.assertEquals(spaceId, serviceRepo.getSpaceId());
+        Assert.assertEquals(version, serviceRepo.getVersion());
         Assert.assertEquals(username, serviceRepo.getUsername());
         Assert.assertEquals(password, serviceRepo.getPassword());
     }

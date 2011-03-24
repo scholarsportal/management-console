@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.DESCRIPTION;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.DESCRIPTION_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.PROVIDER_ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.PROVIDER_IMAGE_ID_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.VERSION;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.VERSION_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
 /**
@@ -53,8 +53,8 @@ public class DuracloudServerImageConverterTest extends DomainConverterTest<Serve
         List<Attribute> testAtts = new ArrayList<Attribute>();
         testAtts.add(new Attribute(PROVIDER_ACCOUNT_ID_ATT, imgCvtr.asString(providerAccountId)));
         testAtts.add(new Attribute(PROVIDER_IMAGE_ID_ATT, providerImageId));
-        testAtts.add(new Attribute(VERSION, version));
-        testAtts.add(new Attribute(DESCRIPTION, description));
+        testAtts.add(new Attribute(VERSION_ATT, version));
+        testAtts.add(new Attribute(DESCRIPTION_ATT, description));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }

@@ -31,6 +31,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         "SERVICE_REPOSITORY_TYPE";
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String SPACE_ID_ATT = "SPACE_ID";
+    protected static final String VERSION_ATT = "VERSION";
     protected static final String USERNAME_ATT = "USERNAME";
     protected static final String PASSWORD_ATT = "PASSWORD";
 
@@ -51,6 +52,10 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         atts.add(new ReplaceableAttribute(
             SPACE_ID_ATT,
             serviceRepo.getSpaceId(),
+            true));
+        atts.add(new ReplaceableAttribute(
+            VERSION_ATT,
+            serviceRepo.getVersion(),
             true));
         atts.add(new ReplaceableAttribute(
             USERNAME_ATT,
@@ -77,6 +82,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         ServiceRepository.ServiceRepositoryType serviceRepositoryType = null;
         String hostName = null;
         String spaceId = null;
+        String version = null;
         String username = null;
         String password = null;
 
@@ -94,6 +100,9 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
 
             } else if (SPACE_ID_ATT.equals(name)) {
                 spaceId = value;
+
+            } else if (VERSION_ATT.equals(name)) {
+                version = value;
 
             } else if (USERNAME_ATT.equals(name)) {
                 username = value;
@@ -116,6 +125,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
                                      serviceRepositoryType,
                                      hostName,
                                      spaceId,
+                                     version,
                                      username,
                                      password,
                                      counter);

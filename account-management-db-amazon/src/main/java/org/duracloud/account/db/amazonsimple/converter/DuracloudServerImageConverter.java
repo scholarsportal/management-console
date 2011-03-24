@@ -30,8 +30,8 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
     protected static final String PROVIDER_ACCOUNT_ID_ATT =
         "PROVIDER_ACCOUNT_ID";
     protected static final String PROVIDER_IMAGE_ID_ATT = "PROVIDER_IMAGE_ID";
-    protected static final String VERSION = "VERSION";
-    protected static final String DESCRIPTION = "DESCRIPTION";
+    protected static final String VERSION_ATT = "VERSION";
+    protected static final String DESCRIPTION_ATT = "DESCRIPTION";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(
@@ -47,12 +47,10 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
             PROVIDER_IMAGE_ID_ATT,
             image.getProviderImageId(),
             true));
-        atts.add(new ReplaceableAttribute(
-            VERSION,
+        atts.add(new ReplaceableAttribute(VERSION_ATT,
             image.getVersion(),
             true));
-        atts.add(new ReplaceableAttribute(
-            DESCRIPTION,
+        atts.add(new ReplaceableAttribute(DESCRIPTION_ATT,
             image.getDescription(),
             true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
@@ -82,10 +80,10 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
             } else if (PROVIDER_IMAGE_ID_ATT.equals(name)) {
                 providerImageId = value;
 
-            } else if (VERSION.equals(name)) {
+            } else if (VERSION_ATT.equals(name)) {
                 version = value;
 
-            } else if (DESCRIPTION.equals(name)) {
+            } else if (DESCRIPTION_ATT.equals(name)) {
                 description = value;
 
             } else {

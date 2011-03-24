@@ -125,6 +125,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
     protected void restart(boolean wait) {
         computeProvider.restart(instance.getProviderInstanceId());
+
+        // TODO: It would be a better solution to poll the instance in order
+        //       to determine when it is available to be initialized rather
+        //       than just waiting 5 minutes.
         if(wait) {
             int waitMinutes = 5;
             new ThreadedInitializer(waitMinutes).start();

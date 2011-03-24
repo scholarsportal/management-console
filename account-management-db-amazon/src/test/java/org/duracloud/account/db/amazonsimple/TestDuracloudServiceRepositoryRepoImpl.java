@@ -29,6 +29,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         ServiceRepository.ServiceRepositoryType.VERIFIED;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
+    private static final String version = "version";
     private static final String username = "username";
     private static final String password = "password";
 
@@ -132,6 +133,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
                                      serviceRepositoryType,
                                      hostName,
                                      spaceId,
+                                     version,
                                      username,
                                      password);
     }

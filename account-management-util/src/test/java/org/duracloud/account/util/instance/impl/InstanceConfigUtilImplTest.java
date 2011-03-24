@@ -212,12 +212,14 @@ public class InstanceConfigUtilImplTest {
             ServiceRepository.ServiceRepositoryType.VERIFIED;
         String serviceRepoHost = "serviceRepoHost";
         String serviceRepoSpaceId = "serviceRepoSpaceId";
+        String serviceRepoVersion = "serviceRepoVersion";
         String serviceRepoUsername = "serviceRepoUsername";
         String serviceRepoPassword = "serviceRepoPassword";
         ServiceRepository serviceRepo = new ServiceRepository(serviceRepoId,
                                                               serviceRepoType,
                                                               serviceRepoHost,
                                                               serviceRepoSpaceId,
+                                                              serviceRepoVersion,
                                                               serviceRepoUsername,
                                                               serviceRepoPassword);
         EasyMock.expect(serviceRepositoryRepo.findById(serviceRepoId))
