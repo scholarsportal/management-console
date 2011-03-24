@@ -71,7 +71,14 @@ public class AmazonSimpleDBRepoMgrTest {
         }
 
         try {
-            repoMgr.getProviderAccountRepo();
+            repoMgr.getComputeProviderAccountRepo();
+            Assert.fail("exception expected");
+        } catch (DBUninitializedException e) {
+            numExceptions++;
+        }
+
+        try {
+            repoMgr.getStorageProviderAccountRepo();
             Assert.fail("exception expected");
         } catch (DBUninitializedException e) {
             numExceptions++;
@@ -92,7 +99,7 @@ public class AmazonSimpleDBRepoMgrTest {
             numExceptions++;
         }
 
-        Assert.assertEquals(9, numExceptions);
+        Assert.assertEquals(10, numExceptions);
     }
 
 }

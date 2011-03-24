@@ -28,7 +28,9 @@ public interface DuracloudRepoMgr extends Initable {
 
     public DuracloudServerImageRepo getServerImageRepo();
 
-    public DuracloudProviderAccountRepo getProviderAccountRepo();
+    public DuracloudComputeProviderAccountRepo getComputeProviderAccountRepo();
+
+    public DuracloudStorageProviderAccountRepo getStorageProviderAccountRepo();
 
     public DuracloudServiceRepositoryRepo getServiceRepositoryRepo();
 

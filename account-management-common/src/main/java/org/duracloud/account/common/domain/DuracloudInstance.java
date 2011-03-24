@@ -29,18 +29,18 @@ public class DuracloudInstance extends BaseDomainData {
     private String providerInstanceId;
 
     /**
-     * The ID of the ProviderAccount which is the compute provider for
+     * The ID of the ComputeProviderAccount which is the compute provider for
      * an instance
      */
     private int computeProviderAccountId;
 
     /**
-     * The ID of a ProviderAccount which is used for primary storage
+     * The ID of a StorageProviderAccount which is used for primary storage
      */
     private int primaryStorageProviderAccountId;
 
     /**
-     * The IDs of all ProviderAccounts which are used for secondary storage
+     * The IDs of all StorageProviderAccounts which are used for secondary storage
      */
     private Set<Integer> secondaryStorageProviderAccountIds;
 

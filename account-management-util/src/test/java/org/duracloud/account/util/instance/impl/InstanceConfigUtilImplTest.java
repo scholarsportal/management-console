@@ -4,17 +4,18 @@
 package org.duracloud.account.util.instance.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.storage.domain.StorageAccount;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class InstanceConfigUtilImplTest {
 
     protected DuracloudInstance instance;
     protected DuracloudRepoMgr repoMgr;
-    protected DuracloudProviderAccountRepo providerAcctRepo;
+    protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
     protected DuracloudServerImageRepo serverImageRepo;
     protected DuracloudServiceRepositoryRepo serviceRepositoryRepo;
 
@@ -51,9 +52,9 @@ public class InstanceConfigUtilImplTest {
                                        DuracloudInstance.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
-        providerAcctRepo =
-            EasyMock.createMock("DuracloudProviderAccountRepo",
-                                DuracloudProviderAccountRepo.class);
+        storageProviderAcctRepo =
+            EasyMock.createMock("DuracloudStorageProviderAccountRepo",
+                                DuracloudStorageProviderAccountRepo.class);
         serverImageRepo =
             EasyMock.createMock("DuracloudServerImageRepo",
                                 DuracloudServerImageRepo.class);
@@ -66,8 +67,7 @@ public class InstanceConfigUtilImplTest {
 
     protected void replayMocks() {
         EasyMock.replay(instance,
-                        repoMgr,
-                        providerAcctRepo,
+                        repoMgr, storageProviderAcctRepo,
                         serverImageRepo,
                         serviceRepositoryRepo);
     }
@@ -75,8 +75,7 @@ public class InstanceConfigUtilImplTest {
     @After
     public void teardown() {
         EasyMock.verify(instance,
-                        repoMgr,
-                        providerAcctRepo,
+                        repoMgr, storageProviderAcctRepo,
                         serverImageRepo,
                         serviceRepositoryRepo);
     }
@@ -123,24 +122,23 @@ public class InstanceConfigUtilImplTest {
 
         String pUser = "primaryUsername";
         String pPass = "primaryPassword";
-        ProviderAccount.ProviderType primaryType =
-            ProviderAccount.ProviderType.AMAZON;
-        ProviderAccount primaryProviderAccount =
-            new ProviderAccount(primaryProviderId, primaryType, pUser, pPass);
-        EasyMock.expect(providerAcctRepo.findById(primaryProviderId))
-            .andReturn(primaryProviderAccount);
+        boolean rrs = false;
+        StorageProviderType primaryType = StorageProviderType.AMAZON_S3;
+        StorageProviderAccount primaryStorageProviderAccount =
+            new StorageProviderAccount(primaryProviderId, primaryType, pUser, pPass, rrs);
+        EasyMock.expect(storageProviderAcctRepo.findById(primaryProviderId))
+            .andReturn(primaryStorageProviderAccount);
 
         String sUser = "secondaryUsername";
         String sPass = "secondaryPassword";
-        ProviderAccount.ProviderType secondaryType =
-            ProviderAccount.ProviderType.RACKSPACE;
-        ProviderAccount secondaryProviderAccount =
-            new ProviderAccount(secondaryProviderId, secondaryType, sUser, sPass);
-        EasyMock.expect(providerAcctRepo.findById(secondaryProviderId))
-            .andReturn(secondaryProviderAccount);
+        StorageProviderType secondaryType = StorageProviderType.RACKSPACE;
+        StorageProviderAccount secondaryStorageProviderAccount =
+            new StorageProviderAccount(secondaryProviderId, secondaryType, sUser, sPass, rrs);
+        EasyMock.expect(storageProviderAcctRepo.findById(secondaryProviderId))
+            .andReturn(secondaryStorageProviderAccount);
 
-        EasyMock.expect(repoMgr.getProviderAccountRepo())
-            .andReturn(providerAcctRepo)
+        EasyMock.expect(repoMgr.getStorageProviderAccountRepo())
+            .andReturn(storageProviderAcctRepo)
             .times(1);
 
         replayMocks();
@@ -156,12 +154,12 @@ public class InstanceConfigUtilImplTest {
             assertNotNull(storageAccount);
             int storageAccountId = Integer.parseInt(storageAccount.getId());
             if(storageAccountId == primaryProviderId) {
-                assertEquals(instanceConfigUtil.translateType(primaryType),
+                assertEquals(primaryType,
                              storageAccount.getType());
                 assertEquals(pUser, storageAccount.getUsername());
                 assertEquals(pPass, storageAccount.getPassword());
             } else if(storageAccountId == secondaryProviderId) {
-                assertEquals(instanceConfigUtil.translateType(secondaryType),
+                assertEquals(secondaryType,
                              storageAccount.getType());
                 assertEquals(sUser, storageAccount.getUsername());
                 assertEquals(sPass, storageAccount.getPassword());

@@ -10,12 +10,13 @@ import org.apache.commons.io.IOUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.BaseDomainData;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -194,8 +195,10 @@ public class DbUtil {
             repo = repoMgr.getInstanceRepo();
         } else if(item instanceof ServerImage) {
             repo = repoMgr.getServerImageRepo();
-        } else if(item instanceof ProviderAccount) {
-            repo = repoMgr.getProviderAccountRepo();
+        } else if(item instanceof ComputeProviderAccount) {
+            repo = repoMgr.getComputeProviderAccountRepo();
+        } else if(item instanceof StorageProviderAccount) {
+            repo = repoMgr.getStorageProviderAccountRepo();
         } else if(item instanceof ServiceRepository) {
             repo = repoMgr.getServiceRepositoryRepo();
         } else {
@@ -234,8 +237,10 @@ public class DbUtil {
                       DuracloudInstance.class);
         xstream.alias(ServerImage.class.getSimpleName(),
                       ServerImage.class);
-        xstream.alias(ProviderAccount.class.getSimpleName(),
-                      ProviderAccount.class);
+        xstream.alias(ComputeProviderAccount.class.getSimpleName(),
+                      ComputeProviderAccount.class);
+        xstream.alias(StorageProviderAccount.class.getSimpleName(),
+                      StorageProviderAccount.class);
         xstream.alias(ServiceRepository.class.getSimpleName(),
                       ServiceRepository.class);        
         xstream.alias(Role.class.getSimpleName(), Role.class);

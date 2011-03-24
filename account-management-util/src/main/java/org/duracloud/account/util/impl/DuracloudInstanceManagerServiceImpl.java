@@ -41,7 +41,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     @Override
     public DuracloudInstanceService createInstance(int accountId, int imageId) {
         // Get AccountInfo for this account
-        // Get credentials for compute provider from ProviderAccount pointed
+        // Get credentials for compute provider from ComputeProviderAccount pointed
         //   to by AccountInfo (?) - needs to be added to AccountInfo
         // Create a ComputeProvider using credentials, call start(imageId)
         // Attach elastic IP (?) - should be done in ComputeProvider.start()

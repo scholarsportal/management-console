@@ -8,10 +8,10 @@ import com.amazonaws.services.simpledb.model.Item;
 import com.amazonaws.services.simpledb.model.PutAttributesRequest;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
-import org.duracloud.account.common.domain.ProviderAccount;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
+import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
-import org.duracloud.account.db.amazonsimple.converter.DuracloudProviderAccountConverter;
+import org.duracloud.account.db.amazonsimple.converter.DuracloudStorageProviderAccountConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
@@ -22,39 +22,40 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Feb 1, 2011
  */
-public class DuracloudProviderAccountRepoImpl extends BaseDuracloudRepoImpl
-    implements DuracloudProviderAccountRepo {
+public class DuracloudStorageProviderAccountRepoImpl extends BaseDuracloudRepoImpl
+    implements DuracloudStorageProviderAccountRepo {
 
-    private static final String DEFAULT_DOMAIN = "DURACLOUD_PROVIDER_ACCOUNTS";
+    private static final String DEFAULT_DOMAIN = "DURACLOUD_STORAGE_PROVIDER_ACCOUNTS";
 
-    private final DomainConverter<ProviderAccount> converter;
+    private final DomainConverter<StorageProviderAccount> converter;
 
-    public DuracloudProviderAccountRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr) {
+    public DuracloudStorageProviderAccountRepoImpl(
+        AmazonSimpleDBClientMgr amazonSimpleDBClientMgr) {
         this(amazonSimpleDBClientMgr, DEFAULT_DOMAIN);
     }
 
-    public DuracloudProviderAccountRepoImpl(AmazonSimpleDBClientMgr amazonSimpleDBClientMgr,
-                                            String domain) {
+    public DuracloudStorageProviderAccountRepoImpl(
+        AmazonSimpleDBClientMgr amazonSimpleDBClientMgr, String domain) {
         super(new AmazonSimpleDBCaller(),
               amazonSimpleDBClientMgr.getClient(),
               domain);
-        this.log = LoggerFactory.getLogger(DuracloudProviderAccountRepoImpl.class);
+        this.log = LoggerFactory.getLogger(DuracloudStorageProviderAccountRepoImpl.class);
 
-        this.converter = new DuracloudProviderAccountConverter();
+        this.converter = new DuracloudStorageProviderAccountConverter();
         this.converter.setDomain(domain);
 
         createDomainIfNecessary();
     }
 
     @Override
-    public ProviderAccount findById(int id) throws DBNotFoundException {
+    public StorageProviderAccount findById(int id) throws DBNotFoundException {
         Item item = findItemById(id);
         List<Attribute> atts = item.getAttributes();
         return converter.fromAttributes(atts, idFromString(item.getName()));
     }
 
     @Override
-    public void save(ProviderAccount item) throws DBConcurrentUpdateException {
+    public void save(StorageProviderAccount item) throws DBConcurrentUpdateException {
         UpdateCondition condition = getUpdateCondition(item.getCounter());
 
         List<ReplaceableAttribute> atts =

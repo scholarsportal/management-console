@@ -3,16 +3,18 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ProviderAccount;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
@@ -36,8 +38,10 @@ public class DuracloudInstanceServiceTestBase {
     protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
     protected DuracloudInstanceServiceImpl service;
-    protected DuracloudProviderAccountRepo providerAcctRepo;
-    protected ProviderAccount providerAcct;
+    protected DuracloudComputeProviderAccountRepo computeProviderAcctRepo;
+    protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
+    protected ComputeProviderAccount computeProviderAcct;
+    protected StorageProviderAccount storageProviderAcct;
     protected DuracloudInstanceRepo instanceRepo;
     protected InstanceUpdater instanceUpdater;
     protected DuracloudRightsRepo rightsRepo;
@@ -58,10 +62,14 @@ public class DuracloudInstanceServiceTestBase {
                                                   ComputeProviderUtil.class);
         computeProvider = EasyMock.createMock("DuracloudComputeProvider",
                                               DuracloudComputeProvider.class);
-        providerAcctRepo = EasyMock.createMock("DuracloudProviderAccountRepo",
-                                               DuracloudProviderAccountRepo.class);
-        providerAcct = EasyMock.createMock("ProviderAccount",
-                                           ProviderAccount.class);
+        computeProviderAcctRepo = EasyMock.createMock("DuracloudComputeProviderAccountRepo",
+                                               DuracloudComputeProviderAccountRepo.class);
+        computeProviderAcct = EasyMock.createMock("ComputeProviderAccount",
+                                                  ComputeProviderAccount.class);
+        storageProviderAcctRepo = EasyMock.createMock("DuracloudStorageProviderAccountRepo",
+                                               DuracloudStorageProviderAccountRepo.class);
+        storageProviderAcct = EasyMock.createMock("StorageProviderAccount",
+                                           StorageProviderAccount.class);
         instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
                                            DuracloudInstanceRepo.class);
         instanceUpdater = EasyMock.createMock("InstanceUpdaterImpl",
@@ -88,8 +96,10 @@ public class DuracloudInstanceServiceTestBase {
         EasyMock.replay(instance,
                         repoMgr,
                         computeProvider,
-                        providerAcctRepo,
-                        providerAcct,
+                        computeProviderAcctRepo,
+                        computeProviderAcct,
+                        storageProviderAcctRepo,
+                        storageProviderAcct,
                         instanceRepo,
                         instanceUpdater,
                         rightsRepo,
@@ -103,8 +113,10 @@ public class DuracloudInstanceServiceTestBase {
         EasyMock.verify(instance,
                         repoMgr,
                         computeProvider,
-                        providerAcctRepo,
-                        providerAcct,
+                        computeProviderAcctRepo,
+                        computeProviderAcct,
+                        storageProviderAcctRepo,
+                        storageProviderAcct,
                         instanceRepo,
                         instanceUpdater,
                         rightsRepo,
@@ -114,21 +126,21 @@ public class DuracloudInstanceServiceTestBase {
     }
 
     protected void setUpInitComputeProvider() throws Exception {
-        EasyMock.expect(repoMgr.getProviderAccountRepo())
-            .andReturn(providerAcctRepo)
+        EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
+            .andReturn(computeProviderAcctRepo)
             .times(1);
-        EasyMock.expect(providerAcctRepo.findById(EasyMock.anyInt()))
-            .andReturn(providerAcct)
+        EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(computeProviderAcct)
             .times(1);
         EasyMock.expect(computeProviderUtil
                             .getComputeProvider(EasyMock.isA(String.class),
                                                 EasyMock.isA(String.class)))
             .andReturn(null)
             .times(1);
-        EasyMock.expect(providerAcct.getUsername())
+        EasyMock.expect(computeProviderAcct.getUsername())
             .andReturn("user")
             .times(1);
-        EasyMock.expect(providerAcct.getPassword())
+        EasyMock.expect(computeProviderAcct.getPassword())
             .andReturn("pass")
             .times(1);
         EasyMock.expect(instance.getComputeProviderAccountId())

@@ -15,7 +15,8 @@ public interface IdUtil {
                            DuracloudUserInvitationRepo userInvitationRepo,
                            DuracloudInstanceRepo instanceRepo,
                            DuracloudServerImageRepo serverImageRepo,
-                           DuracloudProviderAccountRepo providerAccountRepo,
+                           DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
+                           DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo);
 
     int newAccountId();
@@ -30,7 +31,9 @@ public interface IdUtil {
 
     int newServerImageId();
 
-    int newProviderAccountId();
+    int newComputeProviderAccountId();
+
+    int newStorageProviderAccountId();
 
     int newServiceRepositoryId();
 }

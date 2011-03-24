@@ -39,7 +39,8 @@ public class TestAmazonSimpleDBRepoMgr extends BaseTestDuracloudRepoImpl {
         repoMgr.getUserInvitationRepo();
         repoMgr.getInstanceRepo();
         repoMgr.getServerImageRepo();
-        repoMgr.getProviderAccountRepo();
+        repoMgr.getComputeProviderAccountRepo();
+        repoMgr.getStorageProviderAccountRepo();
         repoMgr.getServiceRepositoryRepo();
 
         // IdUtil only throws when a direct call is made.

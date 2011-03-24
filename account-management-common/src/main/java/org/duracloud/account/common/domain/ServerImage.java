@@ -10,7 +10,7 @@ package org.duracloud.account.common.domain;
 public class ServerImage extends BaseDomainData {
 
     /**
-     * The ID of the ProviderAccount on which this server image is hosted.
+     * The ID of the ComputeProviderAccount on which this server image is hosted.
      */
     private int providerAccountId;
 

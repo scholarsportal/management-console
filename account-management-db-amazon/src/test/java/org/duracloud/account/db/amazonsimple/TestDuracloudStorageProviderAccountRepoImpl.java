@@ -3,9 +3,10 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import org.duracloud.account.common.domain.ProviderAccount;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -19,25 +20,26 @@ import java.util.List;
  * @author: Bill Branan
  * Date: Feb 2, 2011
  */
-public class TestDuracloudProviderAccountRepoImpl extends BaseTestDuracloudRepoImpl {
+public class TestDuracloudStorageProviderAccountRepoImpl extends BaseTestDuracloudRepoImpl {
 
-    private DuracloudProviderAccountRepoImpl providerAccountRepo;
+    private DuracloudStorageProviderAccountRepoImpl providerAccountRepo;
 
-    private static final String DOMAIN = "TEST_DURACLOUD_PROVIDER_ACCOUNTS";
+    private static final String DOMAIN = "TEST_DURACLOUD_STORAGE_PROVIDER_ACCOUNTS";
 
-    private static final ProviderAccount.ProviderType providerType =
-        ProviderAccount.ProviderType.AMAZON;
+    private static final StorageProviderType providerType =
+        StorageProviderType.AMAZON_S3;
     private static final String username = "username";
     private static final String password = "password";
+    private static final boolean rrs = true;
 
     @Before
     public void setUp() throws Exception {
         providerAccountRepo = createProviderAccountRepo();
     }
 
-    private static DuracloudProviderAccountRepoImpl createProviderAccountRepo()
+    private static DuracloudStorageProviderAccountRepoImpl createProviderAccountRepo()
         throws Exception {
-        return new DuracloudProviderAccountRepoImpl(getDBManager(), DOMAIN);
+        return new DuracloudStorageProviderAccountRepoImpl(getDBManager(), DOMAIN);
     }
 
     @After
@@ -68,9 +70,9 @@ public class TestDuracloudProviderAccountRepoImpl extends BaseTestDuracloudRepoI
 
     @Test
     public void testGetIds() throws Exception {
-        ProviderAccount providerAcct0 = createProviderAccount(0);
-        ProviderAccount providerAcct1 = createProviderAccount(1);
-        ProviderAccount providerAcct2 = createProviderAccount(2);
+        StorageProviderAccount providerAcct0 = createProviderAccount(0);
+        StorageProviderAccount providerAcct1 = createProviderAccount(1);
+        StorageProviderAccount providerAcct2 = createProviderAccount(2);
 
         providerAccountRepo.save(providerAcct0);
         providerAccountRepo.save(providerAcct1);
@@ -94,7 +96,7 @@ public class TestDuracloudProviderAccountRepoImpl extends BaseTestDuracloudRepoI
         // test concurrency
         verifyCounter(providerAcct0, 1);
 
-        ProviderAccount providerAcct = null;
+        StorageProviderAccount providerAcct = null;
         while (null == providerAcct) {
             providerAcct = providerAccountRepo.findById(providerAcct0.getId());
         }
@@ -117,7 +119,7 @@ public class TestDuracloudProviderAccountRepoImpl extends BaseTestDuracloudRepoI
 
     @Test
     public void testDelete() throws Exception {
-        ProviderAccount providerAcct = createProviderAccount(0);
+        StorageProviderAccount providerAcct = createProviderAccount(0);
         providerAccountRepo.save(providerAcct);
         verifyRepoSize(providerAccountRepo, 1);
 
@@ -125,22 +127,23 @@ public class TestDuracloudProviderAccountRepoImpl extends BaseTestDuracloudRepoI
         verifyRepoSize(providerAccountRepo, 0);
     }
 
-    private ProviderAccount createProviderAccount(int id) {
-        return new ProviderAccount(id,
-                                   providerType,
-                                   username,
-                                   password);
+    private StorageProviderAccount createProviderAccount(int id) {
+        return new StorageProviderAccount(id,
+                                          providerType,
+                                          username,
+                                          password,
+                                          rrs);
     }
 
-    private void verifyAccount(final ProviderAccount providerAcct) {
-        new DBCaller<ProviderAccount>() {
-            protected ProviderAccount doCall() throws Exception {
+    private void verifyAccount(final StorageProviderAccount providerAcct) {
+        new DBCaller<StorageProviderAccount>() {
+            protected StorageProviderAccount doCall() throws Exception {
                 return providerAccountRepo.findById(providerAcct.getId());
             }
         }.call(providerAcct);
     }
 
-    private void verifyCounter(final ProviderAccount providerAcct, final int counter) {
+    private void verifyCounter(final StorageProviderAccount providerAcct, final int counter) {
         new DBCaller<Integer>() {
             protected Integer doCall() throws Exception {
                 return providerAccountRepo.findById(providerAcct.getId()).getCounter();

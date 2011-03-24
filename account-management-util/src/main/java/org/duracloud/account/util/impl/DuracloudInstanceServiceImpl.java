@@ -5,13 +5,13 @@ package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
+import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
@@ -93,9 +93,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private void initializeComputeProvider()
         throws DBNotFoundException {
 
-        DuracloudProviderAccountRepo providerAcctRepo =
-            repoMgr.getProviderAccountRepo();
-        ProviderAccount computeProviderAcct =
+        DuracloudComputeProviderAccountRepo providerAcctRepo =
+            repoMgr.getComputeProviderAccountRepo();
+        ComputeProviderAccount computeProviderAcct =
             providerAcctRepo.findById(instance.getComputeProviderAccountId());
 
         this.computeProvider = computeProviderUtil

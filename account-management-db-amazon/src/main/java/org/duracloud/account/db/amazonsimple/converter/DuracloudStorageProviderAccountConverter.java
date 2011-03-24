@@ -6,8 +6,9 @@ package org.duracloud.account.db.amazonsimple.converter;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.util.SimpleDBUtils;
-import org.duracloud.account.common.domain.ProviderAccount;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.util.FormatUtil;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -20,20 +21,21 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
  * @author: Bill Branan
  * Date: Feb 1, 2011
  */
-public class DuracloudProviderAccountConverter extends BaseDomainConverter
-    implements DomainConverter<ProviderAccount> {
+public class DuracloudStorageProviderAccountConverter extends BaseDomainConverter
+    implements DomainConverter<StorageProviderAccount> {
 
-    public DuracloudProviderAccountConverter() {
-        log = LoggerFactory.getLogger(DuracloudProviderAccountConverter.class);
+    public DuracloudStorageProviderAccountConverter() {
+        log = LoggerFactory.getLogger(DuracloudStorageProviderAccountConverter.class);
     }
 
     protected static final String PROVIDER_TYPE_ATT = "PROVIDER_TYPE";
     protected static final String USERNAME_ATT = "USERNAME";
     protected static final String PASSWORD_ATT = "PASSWORD";
+    protected static final String RRS_ATT = "RRS";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(
-        ProviderAccount account) {
+        StorageProviderAccount account) {
         List<ReplaceableAttribute> atts = new ArrayList<ReplaceableAttribute>();
 
         String counter = FormatUtil.padded(account.getCounter() + 1);
@@ -49,22 +51,27 @@ public class DuracloudProviderAccountConverter extends BaseDomainConverter
             PASSWORD_ATT,
             account.getPassword(),
             true));
+        atts.add(new ReplaceableAttribute(
+            RRS_ATT,
+            String.valueOf(account.isRrs()),
+            true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
     }
 
-    protected String asString(ProviderAccount.ProviderType providerType) {
+    protected String asString(StorageProviderType providerType) {
         return providerType.name();
     }
 
     @Override
-    public ProviderAccount fromAttributes(Collection<Attribute> atts, int id) {
+    public StorageProviderAccount fromAttributes(Collection<Attribute> atts, int id) {
         int counter = -1;
 
-        ProviderAccount.ProviderType providerType = null;
+        StorageProviderType providerType = null;
         String username = null;
         String password = null;
+        boolean rrs = false;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -81,6 +88,9 @@ public class DuracloudProviderAccountConverter extends BaseDomainConverter
             } else if (PASSWORD_ATT.equals(name)) {
                 password = value;
 
+            } else if (RRS_ATT.equals(name)) {
+                rrs = Boolean.valueOf(value);
+
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -92,15 +102,16 @@ public class DuracloudProviderAccountConverter extends BaseDomainConverter
             }
         }
 
-        return new ProviderAccount(id,
+        return new StorageProviderAccount(id,
                                providerType,
                                username,
                                password,
+                               rrs,
                                counter);
     }
 
-    protected ProviderAccount.ProviderType typeFromString(String strType) {
-        return ProviderAccount.ProviderType.valueOf(strType.trim());
+    protected StorageProviderType typeFromString(String strType) {
+        return StorageProviderType.valueOf(strType.trim());
     }
 
 }

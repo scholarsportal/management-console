@@ -4,8 +4,9 @@
 package org.duracloud.account.db.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
@@ -29,7 +30,8 @@ public class IdUtilImpl implements IdUtil {
     private int userInvitationId = -1;
     private int instanceId = -1;
     private int serverImageId = -1;
-    private int providerAccountId = -1;
+    private int computeProviderAccountId = -1;
+    private int storageProviderAccountId = -1;
     private int serviceRepositoryId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
@@ -38,7 +40,8 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudUserInvitationRepo userInvitationRepo,
                            DuracloudInstanceRepo instanceRepo,
                            DuracloudServerImageRepo serverImageRepo,
-                           DuracloudProviderAccountRepo providerAccountRepo,
+                           DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
+                           DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
@@ -46,7 +49,8 @@ public class IdUtilImpl implements IdUtil {
         this.userInvitationId = max(userInvitationRepo.getIds());
         this.instanceId = max(instanceRepo.getIds());
         this.serverImageId = max(serverImageRepo.getIds());
-        this.providerAccountId = max(providerAccountRepo.getIds());
+        this.computeProviderAccountId = max(computeProviderAccountRepo.getIds());
+        this.storageProviderAccountId = max(storageProviderAccountRepo.getIds());
         this.serviceRepositoryId = max(serviceRepositoryRepo.getIds());
     }
 
@@ -100,9 +104,15 @@ public class IdUtilImpl implements IdUtil {
     }
 
     @Override
-    public int newProviderAccountId() {
+    public int newComputeProviderAccountId() {
         checkInitialized();
-        return ++providerAccountId;
+        return ++computeProviderAccountId;
+    }
+
+    @Override
+    public int newStorageProviderAccountId() {
+        checkInitialized();
+        return ++storageProviderAccountId;
     }
 
     @Override

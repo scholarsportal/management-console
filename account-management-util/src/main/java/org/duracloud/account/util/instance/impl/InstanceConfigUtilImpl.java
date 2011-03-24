@@ -4,11 +4,11 @@
 package org.duracloud.account.util.instance.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.ProviderAccount;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.db.DuracloudProviderAccountRepo;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
@@ -18,7 +18,6 @@ import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.storage.domain.StorageAccount;
-import org.duracloud.storage.domain.StorageProviderType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,21 +59,21 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     public DurastoreConfig getDurastoreConfig() {
         DurastoreConfig config = new DurastoreConfig();
-        DuracloudProviderAccountRepo providerAcctRepo =
-            repoMgr.getProviderAccountRepo();
+        DuracloudStorageProviderAccountRepo storageProviderAcctRepo =
+            repoMgr.getStorageProviderAccountRepo();
         Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
 
         // Primary Storage Provider
         int primaryProviderAccountId =
             instance.getPrimaryStorageProviderAccountId();
-        storageAccts.add(getStorageAccount(providerAcctRepo,
+        storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                            primaryProviderAccountId,
                                            true));
         // Secondary Storage Providers
         Set<Integer> providerAccountIds =
             instance.getSecondaryStorageProviderAccountIds();
         for(int providerAccountId : providerAccountIds) {
-            storageAccts.add(getStorageAccount(providerAcctRepo,
+            storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                                providerAccountId,
                                                false));
         }
@@ -84,35 +83,23 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
     }
 
     private StorageAccount getStorageAccount(
-        DuracloudProviderAccountRepo providerAcctRepo,
+        DuracloudStorageProviderAccountRepo storageProviderAcctRepo,
         int providerAccountId,
         boolean primary) {
         try {
-            ProviderAccount provider =
-                providerAcctRepo.findById(providerAccountId);
+            StorageProviderAccount provider =
+                storageProviderAcctRepo.findById(providerAccountId);
             StorageAccount storageAccount =
                 new StorageAccount(String.valueOf(providerAccountId),
                                    provider.getUsername(),
                                    provider.getPassword(),
-                                   translateType(provider.getProviderType()));
+                                   provider.getProviderType());
             storageAccount.setPrimary(primary);
             return storageAccount;
         } catch(DBNotFoundException e) {
             String error = "Storage Provider Account with ID: " +
                 providerAccountId + " does not exist in the database.";
             throw new DuracloudProviderAccountNotAvailableException(error, e);
-        }
-    }
-
-    protected StorageProviderType translateType(ProviderAccount.ProviderType type) {
-        if(type.equals(type.AMAZON)) {
-            return StorageProviderType.AMAZON_S3;
-        } else if(type.equals(type.RACKSPACE)) {
-            return StorageProviderType.RACKSPACE;
-        } else if(type.equals(type.MICROSOFT)) {
-            return StorageProviderType.MICROSOFT_AZURE;
-        } else {
-            return StorageProviderType.UNKNOWN;
         }
     }
 
