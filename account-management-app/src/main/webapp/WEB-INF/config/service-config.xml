@@ -53,6 +53,12 @@
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="duracloudUserService"/>
     <constructor-arg ref="accountManagerServiceUtil"/>
+    <constructor-arg>
+      <set>
+        <ref bean="systemMonitor"/>
+        <ref bean="customerMonitor"/>
+      </set>
+    </constructor-arg>
   </bean>
 
   <bean id="accountManagerServiceUtil"

@@ -50,9 +50,6 @@ public class AccountController extends AbstractAccountController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private Set<EventMonitor> eventMonitors;
-
     @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
     public String getHome(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
@@ -125,11 +122,6 @@ public class AccountController extends AbstractAccountController {
                 AccountService service =
                     this.accountManagerService.createAccount(accountInfo, user);
 
-                Iterator<EventMonitor> itr = eventMonitors.iterator();
-                while (itr.hasNext()) {
-                    itr.next().accountCreated(accountInfo, user);
-                }
-
                 // FIXME seems like there is some latency between successfully
                 // creating
                 // a new user and the user actually being visible to subsequent
@@ -190,11 +182,4 @@ public class AccountController extends AbstractAccountController {
         this.idUtil = idUtil;
     }
 
-    // This method is only for unit testing. Normally it is autowired.
-    protected void addEventMonitor(EventMonitor eventMonitor) {
-        if (null == this.eventMonitors) {
-            this.eventMonitors = new HashSet<EventMonitor>();
-        }
-        this.eventMonitors.add(eventMonitor);
-    }
 }

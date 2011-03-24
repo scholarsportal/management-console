@@ -18,10 +18,12 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.duracloud.account.util.sys.EventMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -37,17 +39,38 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     private DuracloudRepoMgr repoMgr;
     private DuracloudUserService userService;
     private AccountManagerServiceUtil accountServiceUtil;
+    private Set<EventMonitor> eventMonitors;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                      DuracloudUserService duracloudUserService,
-                                     AccountManagerServiceUtil accountServiceUtil) {
+                                     AccountManagerServiceUtil accountServiceUtil,
+                                     Set<EventMonitor> eventMonitors) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
         this.accountServiceUtil = accountServiceUtil;
+        this.eventMonitors = eventMonitors;
     }
 
     @Override
-    public synchronized AccountService createAccount(AccountInfo accountInfo,
+    public AccountService createAccount(AccountInfo accountInfo,
+                                        DuracloudUser owner)
+        throws SubdomainAlreadyExistsException {
+        log.debug("Creating account, acct:{}, owner:{}",
+                  accountInfo.getSubdomain(),
+                  owner.getUsername());
+
+        AccountService acctService = doCreateAccount(accountInfo, owner);
+
+        // Notify monitors if account created successfully.
+        Iterator<EventMonitor> itr = eventMonitors.iterator();
+        while (itr.hasNext()) {
+            itr.next().accountCreated(accountInfo, owner);
+        }
+
+        return acctService;
+    }
+
+    private synchronized AccountService doCreateAccount(AccountInfo accountInfo,
                                                      DuracloudUser owner)
         throws SubdomainAlreadyExistsException {
         if (!subdomainAvailable(accountInfo.getSubdomain())) {

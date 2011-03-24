@@ -40,27 +40,12 @@ public class AccountControllerTest extends AmaControllerTestBase {
     private AccountController accountController;
     private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudInstanceService instanceService;
-    private EventMonitor systemMonitor;
-    private EventMonitor customerMonitor;
 
     @Before
     public void before() throws Exception {
         super.before();
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
-    }
-
-    @After
-    public void tearDown() {
-        if (null != systemMonitor) {
-            EasyMock.verify(systemMonitor);
-        }
-
-        if (null != customerMonitor) {
-            EasyMock.verify(customerMonitor);
-        }
-        systemMonitor = null;
-        customerMonitor = null;
     }
 
     /* FIXME: Properly set up mock account controller to pass verification - bb
@@ -159,24 +144,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
                                           EasyMock.isA(DuracloudUser.class)))
             .andReturn(as);
 
-        systemMonitor = EasyMock.createMock("SystemMonitor",
-                                            EventMonitor.class);
-        systemMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
-                                     EasyMock.isA(DuracloudUser.class));
-        EasyMock.expectLastCall();
-
-        customerMonitor = EasyMock.createMock("CustomerMonitor",
-                                              EventMonitor.class);
-        customerMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
-                                       EasyMock.isA(DuracloudUser.class));
-        EasyMock.expectLastCall();
-
-        EasyMock.replay(ams, as, idUtil, systemMonitor, customerMonitor);
+        EasyMock.replay(ams, as, idUtil);
 
         accountController.setAccountManagerService(ams);
         accountController.setIdUtil(idUtil);
-        accountController.addEventMonitor(systemMonitor);
-        accountController.addEventMonitor(customerMonitor);
 
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setSubdomain("testdomain");
