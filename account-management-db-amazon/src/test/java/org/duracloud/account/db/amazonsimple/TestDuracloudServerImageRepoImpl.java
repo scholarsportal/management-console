@@ -29,6 +29,7 @@ public class TestDuracloudServerImageRepoImpl extends BaseTestDuracloudRepoImpl 
     private static final String providerImageId = "provider-image-id";
     private static final String version = "version-1";
     private static final String description = "description";
+    private static final String dcRootPassword = "rootpass";
 
     @Before
     public void setUp() throws Exception {
@@ -130,7 +131,8 @@ public class TestDuracloudServerImageRepoImpl extends BaseTestDuracloudRepoImpl 
                                providerAccountId,
                                providerImageId,
                                version,
-                               description);
+                               description,
+                               dcRootPassword);
     }
 
     private void verifyAccount(final ServerImage serverImg) {

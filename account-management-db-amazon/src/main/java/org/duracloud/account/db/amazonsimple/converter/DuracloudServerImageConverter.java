@@ -32,6 +32,7 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
     protected static final String PROVIDER_IMAGE_ID_ATT = "PROVIDER_IMAGE_ID";
     protected static final String VERSION_ATT = "VERSION";
     protected static final String DESCRIPTION_ATT = "DESCRIPTION";
+    protected static final String DC_ROOT_PASSWORD_ATT = "DC_ROOT_PASSWORD";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(
@@ -53,6 +54,10 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
         atts.add(new ReplaceableAttribute(DESCRIPTION_ATT,
             image.getDescription(),
             true));
+        atts.add(new ReplaceableAttribute(
+            DC_ROOT_PASSWORD_ATT,
+            image.getDcRootPassword(),
+            true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -66,6 +71,7 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
         String providerImageId = null;
         String version = null;
         String description = null;
+        String dcRootPassword = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -86,6 +92,9 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
             } else if (DESCRIPTION_ATT.equals(name)) {
                 description = value;
 
+            } else if (DC_ROOT_PASSWORD_ATT.equals(name)) {
+                dcRootPassword = value;
+
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -102,6 +111,7 @@ public class DuracloudServerImageConverter extends BaseDomainConverter
                                providerImageId,
                                version,
                                description,
+                               dcRootPassword,
                                counter);
     }
 

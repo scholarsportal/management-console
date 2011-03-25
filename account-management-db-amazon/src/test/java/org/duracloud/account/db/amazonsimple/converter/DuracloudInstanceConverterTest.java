@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Set;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.IMAGE_ID_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.HOST_NAME_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PROVIDER_INSTANCE_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.COMPUTE_PROVIDER_ACCOUNT_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.HOST_NAME_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.IMAGE_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PROVIDER_INSTANCE_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.SERVICE_REPOSITORY_IDS_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.DC_ROOT_USERNAME_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.DC_ROOT_PASSWORD_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
 /**
@@ -39,8 +37,6 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
     private static final int primaryStorageProviderAccountId = 5;
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> serviceRepositoryIds = null;
-    private static final String dcRootUsername = "johnhenry";
-    private static final String dcRootPassword = "steel";    
     private static final int counter = 4;
 
     @BeforeClass
@@ -69,8 +65,6 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
                                      serviceRepositoryIds,
-                                     dcRootUsername,
-                                     dcRootPassword,
                                      counter);
     }
 
@@ -90,8 +84,6 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
                                    insCvtr.idsAsString(secondaryStorageProviderAccountIds)));
         testAtts.add(new Attribute(SERVICE_REPOSITORY_IDS_ATT,
                                    insCvtr.idsAsString(serviceRepositoryIds)));
-        testAtts.add(new Attribute(DC_ROOT_USERNAME_ATT, dcRootUsername));
-        testAtts.add(new Attribute(DC_ROOT_PASSWORD_ATT, dcRootPassword));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -108,8 +100,6 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         Assert.assertNotNull(instance.getPrimaryStorageProviderAccountId());
         Assert.assertNotNull(instance.getSecondaryStorageProviderAccountIds());
         Assert.assertNotNull(instance.getServiceRepositoryIds());
-        Assert.assertNotNull(instance.getDcRootUsername());
-        Assert.assertNotNull(instance.getDcRootPassword());
 
         Assert.assertEquals(counter, instance.getCounter());
         Assert.assertEquals(imageId, instance.getImageId());
@@ -124,8 +114,6 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
                             instance.getSecondaryStorageProviderAccountIds());
         Assert.assertEquals(serviceRepositoryIds,
                             instance.getServiceRepositoryIds());
-        Assert.assertEquals(dcRootUsername, instance.getDcRootUsername());
-        Assert.assertEquals(dcRootPassword, instance.getDcRootPassword());
     }
 
 }

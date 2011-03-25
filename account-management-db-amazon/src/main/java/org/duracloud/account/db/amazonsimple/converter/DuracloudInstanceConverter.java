@@ -41,8 +41,6 @@ public class DuracloudInstanceConverter
         "COMPUTE_PROVIDER_ACCOUNT_ID";
     protected static final String SERVICE_REPOSITORY_IDS_ATT =
         "SERVICE_REPOSITORY_IDS";
-    protected static final String DC_ROOT_USERNAME_ATT = "DC_ROOT_USERNAME";
-    protected static final String DC_ROOT_PASSWORD_ATT = "DC_ROOT_PASSWORD";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(DuracloudInstance instance) {
@@ -77,14 +75,6 @@ public class DuracloudInstanceConverter
             SERVICE_REPOSITORY_IDS_ATT,
             idsAsString(instance.getServiceRepositoryIds()),
             true));
-        atts.add(new ReplaceableAttribute(
-            DC_ROOT_USERNAME_ATT,
-            instance.getDcRootUsername(),
-            true));
-        atts.add(new ReplaceableAttribute(
-            DC_ROOT_PASSWORD_ATT,
-            instance.getDcRootPassword(),
-            true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -100,8 +90,6 @@ public class DuracloudInstanceConverter
         int primaryStorageProviderAccountId = -1;
         Set<Integer> secondaryStorageProviderAccountIds = null;
         Set<Integer> serviceRepositoryIds = null;
-        String dcRootUsername = null;
-        String dcRootPassword = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -138,12 +126,6 @@ public class DuracloudInstanceConverter
             } else if (SERVICE_REPOSITORY_IDS_ATT.equals(name)) {
                 serviceRepositoryIds = idsFromString(value);                
 
-            } else if (DC_ROOT_USERNAME_ATT.equals(name)) {
-                dcRootUsername = value;
-
-            } else if (DC_ROOT_PASSWORD_ATT.equals(name)) {
-                dcRootPassword = value;
-
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -163,8 +145,6 @@ public class DuracloudInstanceConverter
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
                                      serviceRepositoryIds,
-                                     dcRootUsername,
-                                     dcRootPassword,
                                      counter);
     }
 

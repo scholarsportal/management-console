@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.DC_ROOT_PASSWORD_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.DESCRIPTION_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.PROVIDER_ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.PROVIDER_IMAGE_ID_ATT;
@@ -28,6 +29,7 @@ public class DuracloudServerImageConverterTest extends DomainConverterTest<Serve
     private static final String providerImageId = "provider-image-id";
     private static final String version = "version-1";
     private static final String description = "description";
+    private static final String dcRootPassword = "rootpass";
     private static final int counter = 4;
 
     @Override
@@ -42,6 +44,7 @@ public class DuracloudServerImageConverterTest extends DomainConverterTest<Serve
                                providerImageId,
                                version,
                                description,
+                               dcRootPassword,
                                counter);
     }
 
@@ -55,6 +58,7 @@ public class DuracloudServerImageConverterTest extends DomainConverterTest<Serve
         testAtts.add(new Attribute(PROVIDER_IMAGE_ID_ATT, providerImageId));
         testAtts.add(new Attribute(VERSION_ATT, version));
         testAtts.add(new Attribute(DESCRIPTION_ATT, description));
+        testAtts.add(new Attribute(DC_ROOT_PASSWORD_ATT, dcRootPassword));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -67,13 +71,14 @@ public class DuracloudServerImageConverterTest extends DomainConverterTest<Serve
         Assert.assertNotNull(serverImage.getProviderImageId());
         Assert.assertNotNull(serverImage.getVersion());
         Assert.assertNotNull(serverImage.getDescription());
+        Assert.assertNotNull(serverImage.getDcRootPassword());
 
         Assert.assertEquals(counter, serverImage.getCounter());
         Assert.assertEquals(providerAccountId, serverImage.getProviderAccountId());
         Assert.assertEquals(providerImageId, serverImage.getProviderImageId());
         Assert.assertEquals(version, serverImage.getVersion());
         Assert.assertEquals(description, serverImage.getDescription());
-
+        Assert.assertEquals(dcRootPassword, serverImage.getDcRootPassword());
     }
 
 }

@@ -35,8 +35,6 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final int primaryStorageProviderAccountId = 5;
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> serviceRepositoryIds = null;
-    private static final String dcRootUsername = "johnhenry";
-    private static final String dcRootPassword = "steel";
 
     @BeforeClass
     public static void init() {
@@ -151,9 +149,7 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
                                      computeProviderAccountId,
                                      primaryStorageProviderAccountId,
                                      secondaryStorageProviderAccountIds,
-                                     serviceRepositoryIds,
-                                     dcRootUsername,
-                                     dcRootPassword);
+                                     serviceRepositoryIds);
     }
 
     private void verifyInstance(final DuracloudInstance inst) {

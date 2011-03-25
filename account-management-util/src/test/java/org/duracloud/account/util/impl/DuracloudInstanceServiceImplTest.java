@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.appconfig.domain.DuradminConfig;
@@ -95,12 +96,6 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instance.getProviderInstanceId())
             .andReturn("id")
             .times(1);
-        EasyMock.expect(instance.getDcRootUsername())
-            .andReturn("user")
-            .times(2);
-        EasyMock.expect(instance.getDcRootPassword())
-            .andReturn("pass")
-            .times(2);
         EasyMock.expect(instance.getHostName())
             .andReturn("host")
             .times(2);
@@ -141,9 +136,32 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expectLastCall()
             .times(1);
 
+        setUpServerImageMocks();
+
         replayMocks();
 
         service.restart(false);
+    }
+
+    private void setUpServerImageMocks() throws Exception {
+        int imageId = 7;
+        String rootPassword = "rootpass";
+        ServerImage serverImage = new ServerImage(imageId,
+                                                  0,
+                                                  "provider-image-id",
+                                                  "version",
+                                                  "description", 
+                                                  rootPassword);
+
+        EasyMock.expect(repoMgr.getServerImageRepo())
+            .andReturn(serverImageRepo)
+            .times(1);
+        EasyMock.expect(instance.getImageId())
+            .andReturn(imageId)
+            .times(1);
+        EasyMock.expect(serverImageRepo.findById(imageId))
+            .andReturn(serverImage)
+            .times(1);
     }
 
     @Test
@@ -158,7 +176,9 @@ public class DuracloudInstanceServiceImplTest
     }
 
     @Test
-    public void testSetUserRoles() {
+    public void testSetUserRoles() throws Exception {
+        setUpServerImageMocks();
+
         Capture<Set<SecurityUserBean>> capture = new Capture<Set<SecurityUserBean>>();
         setUpUserRoleMocks(capture);
         Set<DuracloudUser> users = createUsers();
@@ -180,8 +200,6 @@ public class DuracloudInstanceServiceImplTest
     }
 
     private DuracloudInstance createInstanceExpectations() {
-        EasyMock.expect(instance.getDcRootUsername()).andReturn("username");
-        EasyMock.expect(instance.getDcRootPassword()).andReturn("password");
         EasyMock.expect(instance.getHostName()).andReturn("hostname");
         return instance;
     }

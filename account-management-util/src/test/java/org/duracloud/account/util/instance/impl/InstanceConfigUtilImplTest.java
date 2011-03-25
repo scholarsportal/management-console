@@ -190,7 +190,8 @@ public class InstanceConfigUtilImplTest {
                                                   0,
                                                   "providerImageId",
                                                   serverImageVersion,
-                                                  "description");
+                                                  "description",
+                                                  "rootPass");
         EasyMock.expect(serverImageRepo.findById(serverImageId))
             .andReturn(serverImage)
             .times(1);

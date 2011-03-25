@@ -9,15 +9,18 @@ import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
+import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
@@ -51,6 +54,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
     private InstanceConfigUtil instanceConfigUtil;
+    private Credential rootCredential;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
@@ -86,7 +90,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         }
 
         if (null == instanceConfigUtil) {
-            this.instanceConfigUtil = new InstanceConfigUtilImpl(instance, repoMgr);
+            this.instanceConfigUtil =
+                new InstanceConfigUtilImpl(instance, repoMgr);
         }
     }
 
@@ -167,9 +172,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         DuraserviceConfig duraserviceConfig =
             instanceConfigUtil.getDuraserviceConfig();
 
-        Credential rootCredential = new Credential(instance.getDcRootUsername(),
-                                                   instance.getDcRootPassword());
-        RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
+        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
         String host = instance.getHostName();
 
         instanceUpdater.initializeInstance(host,
@@ -241,12 +244,26 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     }
 
     private void updateUserDetails(Set<SecurityUserBean> userBeans) {
-        Credential rootCredential = new Credential(instance.getDcRootUsername(),
-                                                   instance.getDcRootPassword());
-        RestHttpHelper restHelper = new RestHttpHelper(rootCredential);
+        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
         String host = instance.getHostName();
 
         instanceUpdater.updateUserDetails(host, userBeans, restHelper);
+    }
+
+    private Credential getRootCredential() {
+        if(null == rootCredential) {
+            try {
+                DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
+                ServerImage serverImage = imageRepo.findById(instance.getImageId());
+                String rootPassword = serverImage.getDcRootPassword();
+                rootCredential = new Credential(ServerImage.DC_ROOT_USERNAME,
+                                                rootPassword);
+            } catch(DBNotFoundException e) {
+                throw new
+                    DuracloudServerImageNotAvailableException(e.getMessage(), e);
+            }
+        }
+        return rootCredential;
     }
 
 }

@@ -207,7 +207,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         DuracloudInstance instance =
             new DuracloudInstance(0, 0, "host", "providerInstanceId", 0, 0,
-                                  null, null, "username", "password");
+                                  null, null);
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
             .times(1);
