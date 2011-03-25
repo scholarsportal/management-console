@@ -111,7 +111,7 @@
 
 	<sec:authentication property="principal" var="principal" />
 
-	<c:if test="${principal == 'anonymousUser'}">
+	<c:if test="${(principal == 'anonymousUser') || (empty principal)}">
 		<li><a id="login-link" accesskey="l" class="icon-link"
 			href="${pageContext.request.contextPath}/login"> <i class="pre"></i>
 		Login</a></li>

@@ -23,7 +23,7 @@
         <c:choose>
         
               <c:when
-       test="${principal == 'anonymousUser'}">
+       test="${(principal == 'anonymousUser') || (empty principal)}">
               <p>Already have a Duracloud profile?
               
               <c:choose>
@@ -56,7 +56,7 @@
 
     <div
      class="dc-subgroup">
-      <c:if test="${principal == 'anonymousUser'}">
+      <c:if test="${(principal == 'anonymousUser') || (empty principal)}">
       
       <h2>New Users</h2>
 

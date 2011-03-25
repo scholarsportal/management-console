@@ -23,6 +23,7 @@ import org.duracloud.notification.Emailer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -436,6 +437,8 @@ public class UserController extends AbstractController {
 
         // force logout
         request.getSession().invalidate();
+        SecurityContextHolder.clearContext();
+
         // add the redemption code to the session
         request.getSession(true).setAttribute("redemptionCode", redemptionCode);
         ModelAndView mav = new ModelAndView(HomeController.HOME_VIEW_ID);
