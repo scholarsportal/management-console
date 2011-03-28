@@ -12,6 +12,11 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,10 +31,12 @@ public class AmaControllerTestBase {
     protected static final Integer TEST_INSTANCE_ID = 1;
 
     protected AccountManagerService accountManagerService;
+    protected AuthenticationManager authenticationManager;
+
     
     @Before
     public void before() throws Exception {
-        setupSimpleAccountManagerService();
+        intializeAuthManager();
     }
 
     protected void setupSimpleAccountManagerService()
@@ -43,6 +50,17 @@ public class AmaControllerTestBase {
 
         EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
         EasyMock.replay(accountManagerService, as);
+    }
+
+    protected void intializeAuthManager() {
+        SecurityContext ctx = new SecurityContextImpl();
+        Authentication auth = EasyMock.createMock(Authentication.class);
+        EasyMock.expect(auth.getName()).andReturn(TEST_USERNAME).anyTimes();
+        authenticationManager =
+            EasyMock.createNiceMock(AuthenticationManager.class);
+        EasyMock.replay(auth, authenticationManager);
+        ctx.setAuthentication(auth);
+        SecurityContextHolder.setContext(ctx);
     }
 
     /**

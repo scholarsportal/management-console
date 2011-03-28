@@ -35,7 +35,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     @Override
     public void before() throws Exception {
         super.before();
-        userService = new DuracloudUserServiceImpl(repoMgr, propagator);
+        userService = new DuracloudUserServiceImpl(repoMgr, notificationMgr, propagator);
     }
 
     @Test

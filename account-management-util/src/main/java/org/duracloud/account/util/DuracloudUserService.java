@@ -10,6 +10,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.error.UnsentEmailException;
 
 /**
  * @author Andrew Woods Date: Oct 8, 2010
@@ -40,8 +41,12 @@ public interface DuracloudUserService {
     public void sendPasswordReminder(int userId);
 
     public void changePassword(
-        int userId, String oldPassword, boolean oldPasswoedEncoded, String newPassword)
+        int userId, String oldPassword, boolean oldPasswordEncoded, String newPassword)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException;
+
+    public void forgotPassword(String username)
+        throws DBNotFoundException, InvalidPasswordException,
+               DBConcurrentUpdateException, UnsentEmailException;
 
     public DuracloudUser loadDuracloudUserByUsername(String username)
         throws DBNotFoundException;

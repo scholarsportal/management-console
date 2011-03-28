@@ -19,9 +19,12 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.notification.Emailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +32,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -41,10 +45,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private DuracloudRepoMgr repoMgr;
     private UserDetailsPropagator propagator;
+    private NotificationMgr notificationMgr;
     
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
+                                    NotificationMgr notificationMgr,
                                     UserDetailsPropagator propagator) {
         this.repoMgr = duracloudRepoMgr;
+        this.notificationMgr = notificationMgr;
         this.propagator = propagator;
     }
 
@@ -222,12 +229,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public void changePassword(int userId,
                                String oldPassword,
-                               boolean oldPasswoedEncoded,
-                               String newPassword) throws DBNotFoundException,InvalidPasswordException,DBConcurrentUpdateException {
+                               boolean oldPasswordEncoded,
+                               String newPassword)
+        throws DBNotFoundException,InvalidPasswordException,DBConcurrentUpdateException {
         ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
 
         DuracloudUser user = getUserRepo().findById(userId);
-        if(!oldPasswoedEncoded)
+        if(!oldPasswordEncoded)
             oldPassword = util.generateChecksum(oldPassword);
         if(!user.getPassword().equals(oldPassword)){
             throw new InvalidPasswordException(userId);
@@ -235,6 +243,34 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         user.setPassword(util.generateChecksum(newPassword));
         getUserRepo().save(user);
+    }
+
+    @Override
+    public void forgotPassword(String username)
+        throws DBNotFoundException, InvalidPasswordException,
+               DBConcurrentUpdateException, UnsentEmailException {
+        DuracloudUser user = loadDuracloudUserByUsername(username);
+
+        Random r = new Random();
+        String generatedPassword = Long.toString(Math.abs(r.nextLong()), 36);
+
+        changePassword(user.getId(),
+                       user.getPassword(),
+                       true,
+                       generatedPassword);
+
+        try {
+            Emailer emailer = notificationMgr.getEmailer();
+
+            emailer.send("Duracloud Account Management - Forgot Password",
+                         "Please use the following password to login: "
+                         + generatedPassword, user.getEmail());
+        } catch (Exception e) {
+            String msg =
+                "Error: Unable to send email to user: " + username;
+            log.error(msg);
+            throw new UnsentEmailException(msg, e);
+        }
     }
 
     @Override

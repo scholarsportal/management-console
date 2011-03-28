@@ -44,6 +44,7 @@
         scope="singleton"
         name="userDetailsService">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
   </bean>
 

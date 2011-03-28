@@ -35,6 +35,7 @@
     <authentication-provider user-service-ref="userDetailsService" >
       <password-encoder ref="passwordEncoder"/>
     </authentication-provider>
+    <authentication-provider user-service-ref="userDetailsService" />
   </authentication-manager>
 
   <beans:bean id="initDetailsService" class="org.duracloud.account.security.web.InitUserDetailService"/>

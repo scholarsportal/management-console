@@ -44,6 +44,9 @@ public class AccountControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
+
+        setupSimpleAccountManagerService();
+
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
     }
@@ -109,7 +112,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
      */
     @Test
     public void testOpenAddForm() throws Exception {
-        intializeAuthManager();
+        accountController.setAuthenticationManager(authenticationManager);
         initializeMockUserService();
 
         Model model = new ExtendedModelMap();
@@ -121,7 +124,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testAdd() throws Exception {
-        intializeAuthManager();
+        accountController.setAuthenticationManager(authenticationManager);
         initializeMockUserService();
 
         BindingResult result = EasyMock.createMock(BindingResult.class);
@@ -171,18 +174,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .anyTimes();
         EasyMock.replay(userService);
         accountController.setUserService(userService);
-    }
-
-    private void intializeAuthManager() {
-        SecurityContext ctx = new SecurityContextImpl();
-        Authentication auth = EasyMock.createMock(Authentication.class);
-        EasyMock.expect(auth.getName()).andReturn(TEST_USERNAME).anyTimes();
-        AuthenticationManager authManager =
-            EasyMock.createNiceMock(AuthenticationManager.class);
-        EasyMock.replay(auth, authManager);
-        ctx.setAuthentication(auth);
-        SecurityContextHolder.setContext(ctx);
-        accountController.setAuthenticationManager(authManager);
     }
 
     private void initializeMockInstanceManagerService(boolean restart) throws Exception {
