@@ -24,15 +24,10 @@
        class="dc-main-content">
         <div
          class="dc-subgroup">
-          <h2>An unexpected error occurred!</h2>
+          <h2>An error has occurred, please try again. If the error continues contact Duracloud.</h2>
 
           <p>${ex.message}</p>
 
-          <div
-           class="dc-subgroup-body"
-           style="height:300; overflow:auto">
-            <p>${ex.stacktrace}</p>
-          </div>
         </div>
       </div>
     </tiles:putAttribute>

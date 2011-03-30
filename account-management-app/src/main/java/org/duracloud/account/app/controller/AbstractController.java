@@ -11,6 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
 
 /**
  * Base class for all controllers.
@@ -67,5 +70,11 @@ public abstract class AbstractController {
 
     public void destroy() {
         log.info("destroying " + this.toString());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception e) {
+        log.error(e.getMessage(), e);
+        return new ModelAndView("exception", "ex", e);
     }
 }
