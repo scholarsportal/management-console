@@ -64,7 +64,7 @@
                         <form:label
                          for="role"
                          cssErrorClass="error"
-                         path="role">Account Type</form:label>
+                         path="role">Role</form:label>
                       </td>
 
                       <td
@@ -77,13 +77,21 @@
                       </td>
                     </tr>
                   </table>
+                    
+                <div
+                 class="button-bar">
+                  <a
+                   class="button"
+                   id="cancel-button"
+                   href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/">
+                  Cancel</a>
 
-                  <div
-                   class="button-bar">
-                    <button
-                     id="account-users-save-button"
-                     type="submit">Save</button>
-                  </div>
+                  <button
+                   type="submit">
+
+
+                  Save</button>
+                </div>
                 </form:form>
               </div>
             </div>

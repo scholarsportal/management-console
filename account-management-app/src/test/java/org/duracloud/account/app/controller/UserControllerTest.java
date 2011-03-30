@@ -33,11 +33,6 @@ public class UserControllerTest  extends AmaControllerTestBase {
         userController = new UserController();
     }
 
-    @After
-    public void after() throws Exception {
-//        EasyMock.verify(userService);
-    }
-
     @Test
     public void testGetNewForm() {
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
@@ -103,6 +98,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
         obj = map.get(userController.USER_KEY);
         Assert.assertNotNull(obj);
         Assert.assertTrue(obj instanceof DuracloudUser);
+
+        EasyMock.verify(userService);
     }
 
     @Test
@@ -343,7 +340,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
         Assert.assertNotNull(obj);
         Assert.assertTrue(obj instanceof DuracloudUser);
 
-        EasyMock.verify(bindingResult);
+        EasyMock.verify(bindingResult, userService);
     }
 
     private void initializeMockUserService() throws Exception {

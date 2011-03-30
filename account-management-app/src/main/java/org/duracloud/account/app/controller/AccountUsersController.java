@@ -10,18 +10,21 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -100,14 +103,26 @@ public class AccountUsersController extends AbstractAccountController {
             EmailAddressesParser.parse(invitationForm.getEmailAddresses());
         AccountService service = getAccountService(accountId);
 
+        List<String> failedEmailAddresses =  new ArrayList<String>();
+
         for (String emailAddress : emailAddresses) {
-            UserInvitation ui = service.inviteUser(emailAddress,
-                                                   notificationMgr.getEmailer());
-            log.debug(
+            try {
+                UserInvitation ui = service.inviteUser(emailAddress,
+                                                       notificationMgr.getEmailer());
+                log.debug(
                 "created user invitation on account {} for {} expiring on {}",
                 new Object[]{ui.getAccountId(),
                              ui.getUserEmail(),
                              ui.getExpirationDate()});
+            } catch(UnsentEmailException e) {
+                failedEmailAddresses.add(emailAddress);
+            }
+        }
+
+        if(!failedEmailAddresses.isEmpty()) {
+            result.addError(new ObjectError("emailAddresses",
+                    "Unable to send an email to the following recipients, but the user has been added: " + failedEmailAddresses));
+            return USERS_INVITE_VIEW_ID;
         }
 
         // FIXME pause for a moment to let the async calls to
@@ -164,6 +179,8 @@ public class AccountUsersController extends AbstractAccountController {
                 break;
             }
         }
+
+        loadAccountInfo(accountId, model);        
 
         model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, editForm);
 

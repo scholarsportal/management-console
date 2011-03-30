@@ -61,10 +61,15 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
         AccountService acctService = doCreateAccount(accountInfo, owner);
 
+
         // Notify monitors if account created successfully.
         Iterator<EventMonitor> itr = eventMonitors.iterator();
         while (itr.hasNext()) {
-            itr.next().accountCreated(accountInfo, owner);
+            try {
+                itr.next().accountCreated(accountInfo, owner);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
         }
 
         return acctService;

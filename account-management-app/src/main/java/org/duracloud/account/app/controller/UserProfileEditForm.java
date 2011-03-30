@@ -9,6 +9,7 @@ package org.duracloud.account.app.controller;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -21,6 +22,7 @@ public class UserProfileEditForm {
     @NotBlank(message="Last name is required")
     private String lastName;
 
+    @NotEmpty(message = "Email must be specified.")
     @Email(message="Email is invalid")
     private String email;
 

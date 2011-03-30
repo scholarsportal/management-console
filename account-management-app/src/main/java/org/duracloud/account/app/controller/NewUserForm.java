@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @FieldMatch(first="password", second="passwordConfirm", message="Password confirmation does not match.")
 public class NewUserForm {
-	@Length(min = 6, max = 20, message="Username must be between 6 and 20 characters in length.")
+	@Length(min = 4, max = 20, message="Username must be between 4 and 20 characters in length.")
 	@UniqueUsernameConstraint(message="Username is not available; please choose another.")
 	private String username;
 
@@ -31,6 +31,7 @@ public class NewUserForm {
 	@NotBlank (message = "Last name is empty.")
 	private String lastName;
 
+    @NotEmpty(message = "Email must be specified.")
 	@Email(message = "Email is invalid.")
 	private String email;
 

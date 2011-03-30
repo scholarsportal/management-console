@@ -81,20 +81,20 @@
                     </td>
                   </tr>
                 </table>
-                <div class="button-bar">
-                  <ul class="horizontal-list">
-                    <li>
-                  <button
+
+                <div
+                 class="button-bar">
+                  <a
+                   class="button"
                    id="cancel-button"
-                   type="button">Cancel</button>
-                   </li>
-                    <li>
+                   href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/">
+                  Cancel</a>
+
                   <button
-                   id="invite-users-button"
-                   type="submit">Invite</button>
-                    </li>
-                  </ul>
-                
+                   type="submit">
+
+
+                  Invite</button>
                 </div>
               </form:form>
             </div>
