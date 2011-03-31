@@ -3,10 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Set;
-
-import javax.validation.Valid;
-
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
@@ -19,6 +16,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -44,33 +47,65 @@ public class ProviderController extends AbstractAccountController {
 
         AccountService accountService =
             accountManagerService.getAccount(accountId);
-        Set<StorageProviderType> providers = accountService.getStorageProviders();
-        log.info("Providers before add: " + providers);
-        providers.add(StorageProviderType.fromString(providerForm.getProvider()));
-        log.info("Providers after add: " + providers);
-        accountService.setStorageProviders(providers);
+        accountService.addStorageProvider(
+            StorageProviderType.fromString(providerForm.getProvider()));
 
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         return "account-providers";
     }
 
-    @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{provider}/delete", method = RequestMethod.POST)
+    @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{providerId}/delete", method = RequestMethod.POST)
     public String deleteProviderFromAccount(
-        @PathVariable int accountId, @PathVariable String provider, Model model)
+        @PathVariable int accountId, @PathVariable int providerId, Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException {
-        log.info("delete provider {} from account {}", provider, accountId);
+        log.info("delete provider {} from account {}", providerId, accountId);
 
         AccountService accountService =
             accountManagerService.getAccount(accountId);
-        Set<StorageProviderType> providers = accountService.getStorageProviders();
-        log.info("Providers before delete: " + providers);
-        providers.remove(StorageProviderType.fromString(provider));
-        log.info("Providers after delete: " + providers);
-        accountService.setStorageProviders(providers);
+        accountService.removeStorageProvider(providerId);
 
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         return "account-providers";
+    }
+
+    private void loadProviderInfo(int accountId, Model model)
+        throws AccountNotFoundException {
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+
+        StorageProviderAccount primarySP =
+            accountService.getPrimaryStorageProvider();
+        model.addAttribute("primaryProvider", primarySP);
+
+        Set<StorageProviderAccount> secondarySPs =
+            accountService.getSecondaryStorageProviders();
+        model.addAttribute("secondaryProviders", secondarySPs);
+
+        // Get available providers for account
+        ProviderForm providerForm = new ProviderForm();
+        List<StorageProviderType> availableProviderTypes =
+            new ArrayList<StorageProviderType>();
+
+        Set<StorageProviderType> usedTypes = new HashSet<StorageProviderType>();
+        for(StorageProviderAccount secondaryAcct : secondarySPs) {
+            usedTypes.add(secondaryAcct.getProviderType());
+        }
+
+        if(!usedTypes.contains(StorageProviderType.RACKSPACE)) {
+            availableProviderTypes.add(StorageProviderType.RACKSPACE);
+        }
+        if(!usedTypes.contains(StorageProviderType.MICROSOFT_AZURE)) {
+            availableProviderTypes.add(StorageProviderType.MICROSOFT_AZURE);
+        }
+
+        if(availableProviderTypes.size() > 0) {
+            providerForm.setStorageProviders(availableProviderTypes);
+        } else {
+            providerForm.setStorageProviders(null);
+        }
+
+        model.addAttribute("providerForm", providerForm);
     }
 }

@@ -35,10 +35,13 @@ public class AccountManagerServiceUtil {
         throws AccountNotFoundException {
         try {
             AccountInfo acctInfo = repoMgr.getAccountRepo().findById(accountId);
-            return new AccountServiceImpl(acctInfo, repoMgr);
-
+            DuracloudProviderAccountUtil providerAccountUtil =
+                new DuracloudProviderAccountUtil(repoMgr);
+            return new AccountServiceImpl(acctInfo,
+                                          repoMgr,
+                                          providerAccountUtil);
         } catch (DBNotFoundException e) {
-            throw new AccountNotFoundException();
+            throw new AccountNotFoundException(accountId);
         }
     }
 

@@ -108,7 +108,8 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     private void doPropagate(int acctId, Set<DuracloudUser> users) {
         log.debug("propagating user roles for acct: " + acctId);
 
-        Set<DuracloudInstanceService> services = getInstanceServices(acctId);
+        Set<DuracloudInstanceService> services =
+            instanceManagerService.getInstanceServices(acctId);
         for (DuracloudInstanceService service : services) {
             DuracloudInstance instanceInfo = service.getInstanceInfo();
             log.debug("propagating user roles: {}, {}",
@@ -119,15 +120,4 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         }
     }
 
-    private Set<DuracloudInstanceService> getInstanceServices(int acctId) {
-        Set<DuracloudInstanceService> services = new HashSet<DuracloudInstanceService>();
-        try {
-            services = instanceManagerService.getInstanceServices(acctId);
-
-        } catch (AccountNotFoundException e) {
-            log.error("Unable to get instances for: " + acctId, e);
-            error = e;
-        }
-        return services;
-    }
 }

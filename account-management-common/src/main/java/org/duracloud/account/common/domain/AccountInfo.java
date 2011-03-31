@@ -3,43 +3,81 @@
  */
 package org.duracloud.account.common.domain;
 
-import org.duracloud.storage.domain.StorageProviderType;
-
 import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public class AccountInfo extends BaseDomainData {
+    /*
+     * The subdomain of duracloud.org which will be used to access the instance
+     * associated with this account
+     */
     private String subdomain;
-    private String acctName;
-    private String orgName;
-    private String department;
-    private int paymentInfoId;
-    private Set<Integer> instanceIds;
-    private Set<StorageProviderType> storageProviders;
 
-	public AccountInfo(int id,
-                       String subdomain,
-			           Set<StorageProviderType> storageProviders) {
-		this(id, subdomain, null, null, null, -1, null, storageProviders, 0);
-	}
+    /*
+     * The display name of the account
+     */
+    private String acctName;
+
+    /*
+     * The name of the organization responsible for the content in this account
+     */
+    private String orgName;
+
+    /*
+     * The name of the department (if applicable) of the organization
+     * responsible for the content in this account
+     */
+    private String department;
+
+    /**
+     * The ID of the ComputeProviderAccount which is the compute provider for
+     * an instance
+     */
+    private int computeProviderAccountId;
+
+    /**
+     * The ID of a StorageProviderAccount which is used for primary storage
+     */
+    private int primaryStorageProviderAccountId;
+
+    /**
+     * The IDs of all StorageProviderAccounts which are used for secondary storage
+     */
+    private Set<Integer> secondaryStorageProviderAccountIds;
+
+    /**
+     * The IDs of all ServiceRepositories used to store service binaries
+     */
+    private Set<Integer> secondaryServiceRepositoryIds;
+
+    /*
+     * The ID of the PaymentInfo which tracks the payment details for this
+     * account
+     */
+    private int paymentInfoId;    
+
 	public AccountInfo(int id,
                        String subdomain,
                        String acctName,
                        String orgName,
 			           String department,
-                       int paymentInfoId,
-                       Set<Integer> instanceIds,
-			           Set<StorageProviderType> storageProviders) {
+                       int computeProviderAccountId,
+                       int primaryStorageProviderAccountId,
+                       Set<Integer> secondaryStorageProviderAccountIds,
+                       Set<Integer> secondaryServiceRepositoryIds,
+                       int paymentInfoId) {
 		this(id,
              subdomain,
              acctName,
              orgName,
              department,
+             computeProviderAccountId,
+             primaryStorageProviderAccountId,
+             secondaryStorageProviderAccountIds,
+             secondaryServiceRepositoryIds,
              paymentInfoId,
-             instanceIds,
-             storageProviders,
              0);
 	}
 
@@ -48,9 +86,11 @@ public class AccountInfo extends BaseDomainData {
                        String acctName,
                        String orgName,
                        String department,
+                       int computeProviderAccountId,
+                       int primaryStorageProviderAccountId,
+                       Set<Integer> secondaryStorageProviderAccountIds,
+                       Set<Integer> secondaryServiceRepositoryIds,
                        int paymentInfoId,
-                       Set<Integer> instanceIds,
-                       Set<StorageProviderType> storageProviders,
                        int counter) {
 		super();
 		this.id = id;
@@ -58,18 +98,16 @@ public class AccountInfo extends BaseDomainData {
 		this.acctName = acctName;
 		this.orgName = orgName;
 		this.department = department;
+        this.computeProviderAccountId = computeProviderAccountId;
+        this.primaryStorageProviderAccountId = primaryStorageProviderAccountId;
+        this.secondaryStorageProviderAccountIds = secondaryStorageProviderAccountIds;
+        this.secondaryServiceRepositoryIds = secondaryServiceRepositoryIds;
         this.paymentInfoId = paymentInfoId;
-        this.instanceIds = instanceIds;
-		this.storageProviders = storageProviders;
         this.counter = counter;
 	}
 
     public String getSubdomain() {
         return subdomain;
-    }
-
-    public void setSubdomain(String subdomain) {
-        this.subdomain = subdomain;
     }
 
     public String getAcctName() {
@@ -94,30 +132,26 @@ public class AccountInfo extends BaseDomainData {
 
     public void setDepartment(String department) {
         this.department = department;
+    }    
+
+    public int getComputeProviderAccountId() {
+        return computeProviderAccountId;
+    }
+
+    public int getPrimaryStorageProviderAccountId() {
+        return primaryStorageProviderAccountId;
+    }
+
+    public Set<Integer> getSecondaryStorageProviderAccountIds() {
+        return secondaryStorageProviderAccountIds;
+    }
+
+    public Set<Integer> getSecondaryServiceRepositoryIds() {
+        return secondaryServiceRepositoryIds;
     }
 
     public int getPaymentInfoId() {
         return paymentInfoId;
-    }
-
-    public void setPaymentInfoId(int paymentInfoId) {
-        this.paymentInfoId = paymentInfoId;
-    }
-
-    public Set<Integer> getInstanceIds() {
-        return instanceIds;
-    }
-
-    public void setInstanceIds(Set<Integer> instanceIds) {
-        this.instanceIds = instanceIds;
-    }
-
-    public Set<StorageProviderType> getStorageProviders() {
-        return storageProviders;
-    }
-
-    public void setStorageProviders(Set<StorageProviderType> storageProviders) {
-        this.storageProviders = storageProviders;
     }
 
     /*
@@ -134,7 +168,14 @@ public class AccountInfo extends BaseDomainData {
 
         AccountInfo that = (AccountInfo) o;
 
+        if (computeProviderAccountId != that.computeProviderAccountId) {
+            return false;
+        }
         if (paymentInfoId != that.paymentInfoId) {
+            return false;
+        }
+        if (primaryStorageProviderAccountId !=
+            that.primaryStorageProviderAccountId) {
             return false;
         }
         if (acctName != null ? !acctName.equals(that.acctName) :
@@ -145,16 +186,20 @@ public class AccountInfo extends BaseDomainData {
             that.department != null) {
             return false;
         }
-        if (instanceIds != null ? !instanceIds.equals(that.instanceIds) :
-            that.instanceIds != null) {
-            return false;
-        }
         if (orgName != null ? !orgName.equals(that.orgName) :
             that.orgName != null) {
             return false;
         }
-        if (storageProviders != null ? !storageProviders
-            .equals(that.storageProviders) : that.storageProviders != null) {
+        if (secondaryServiceRepositoryIds !=
+            null ? !secondaryServiceRepositoryIds
+            .equals(that.secondaryServiceRepositoryIds) :
+            that.secondaryServiceRepositoryIds != null) {
+            return false;
+        }
+        if (secondaryStorageProviderAccountIds !=
+            null ? !secondaryStorageProviderAccountIds
+            .equals(that.secondaryStorageProviderAccountIds) :
+            that.secondaryStorageProviderAccountIds != null) {
             return false;
         }
         if (subdomain != null ? !subdomain.equals(that.subdomain) :
@@ -167,18 +212,21 @@ public class AccountInfo extends BaseDomainData {
 
     /*
      * Generated by IntelliJ
-     */    
+     */
     @Override
     public int hashCode() {
         int result = subdomain != null ? subdomain.hashCode() : 0;
         result = 31 * result + (acctName != null ? acctName.hashCode() : 0);
         result = 31 * result + (orgName != null ? orgName.hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + computeProviderAccountId;
+        result = 31 * result + primaryStorageProviderAccountId;
+        result = 31 * result + (secondaryStorageProviderAccountIds !=
+            null ? secondaryStorageProviderAccountIds.hashCode() : 0);
+        result = 31 * result + (secondaryServiceRepositoryIds !=
+            null ? secondaryServiceRepositoryIds.hashCode() : 0);
         result = 31 * result + paymentInfoId;
-        result =
-            31 * result + (instanceIds != null ? instanceIds.hashCode() : 0);
-        result = 31 * result +
-            (storageProviders != null ? storageProviders.hashCode() : 0);
         return result;
     }
+
 }

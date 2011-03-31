@@ -3,11 +3,11 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Set;
 
@@ -35,12 +35,12 @@ public interface AccountManagerService {
 			throws AccountNotFoundException;
 
 	/**
-	 * @param accountInfo
+	 * @param accountCreationInfo
 	 * @return AccountService
 	 * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
 	 * 
 	 */
-	public AccountService createAccount(AccountInfo accountInfo,
+	public AccountService createAccount(AccountCreationInfo accountCreationInfo,
 			DuracloudUser owner) throws SubdomainAlreadyExistsException;
 
 	/**

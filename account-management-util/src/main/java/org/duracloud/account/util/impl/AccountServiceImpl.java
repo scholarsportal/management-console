@@ -7,14 +7,17 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -34,13 +37,17 @@ public class AccountServiceImpl implements AccountService {
     // writes go to both it and the persistence layer.
     private AccountInfo account;
     private DuracloudRepoMgr repoMgr;
+    private DuracloudProviderAccountUtil providerAccountUtil;
 
     /**
      * @param acct
      */
-    public AccountServiceImpl(AccountInfo acct, DuracloudRepoMgr repoMgr) {
+    public AccountServiceImpl(AccountInfo acct,
+                              DuracloudRepoMgr repoMgr,
+                              DuracloudProviderAccountUtil providerAccountUtil) {
         this.account = acct;
         this.repoMgr = repoMgr;
+        this.providerAccountUtil = providerAccountUtil;
     }
 
     @Override
@@ -75,16 +82,59 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Set<StorageProviderType> getStorageProviders() {
-        return account.getStorageProviders();
+    public StorageProviderAccount getPrimaryStorageProvider() {
+        int primaryId = account.getPrimaryStorageProviderAccountId();
+        DuracloudStorageProviderAccountRepo repo =
+            repoMgr.getStorageProviderAccountRepo();
+        try {
+            return repo.findById(primaryId);
+        } catch(DBNotFoundException e) {
+            throw new DuracloudProviderAccountNotAvailableException(
+                e.getMessage(), e);
+        }
     }
 
     @Override
-    public void setStorageProviders(
-        Set<StorageProviderType> storageProviderTypes)
+    public Set<StorageProviderAccount> getSecondaryStorageProviders() {
+        DuracloudStorageProviderAccountRepo repo =
+            repoMgr.getStorageProviderAccountRepo();
+        Set<StorageProviderAccount> accounts =
+            new HashSet<StorageProviderAccount>();
+
+        try {
+            for(int id : account.getSecondaryStorageProviderAccountIds()) {
+                accounts.add(repo.findById(id));
+            }
+        } catch(DBNotFoundException e) {
+            throw new DuracloudProviderAccountNotAvailableException(
+                e.getMessage(), e);
+        }
+
+        return accounts;
+    }
+
+    @Override
+    public void addStorageProvider(StorageProviderType storageProviderType)
         throws DBConcurrentUpdateException {
-        account.setStorageProviders(storageProviderTypes);
+        int id = providerAccountUtil.
+            createEmptyStorageProviderAccount(storageProviderType);
+        account.getSecondaryStorageProviderAccountIds().add(id);
         repoMgr.getAccountRepo().save(account);
+    }
+
+    @Override
+    public void removeStorageProvider(int storageProviderId)
+        throws DBConcurrentUpdateException {
+        if(account.getSecondaryStorageProviderAccountIds()
+                  .remove(storageProviderId)) {
+            repoMgr.getAccountRepo().save(account);
+            repoMgr.getStorageProviderAccountRepo().delete(storageProviderId);
+        } else {
+            throw new DuracloudProviderAccountNotAvailableException(
+                "The storage provider account with ID " + storageProviderId +
+                " is not associated with account with id " + account.getId() +
+                " as a secondary storage provider.");
+        }
     }
 
     @Override

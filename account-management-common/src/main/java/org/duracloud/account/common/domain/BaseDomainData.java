@@ -9,6 +9,12 @@ package org.duracloud.account.common.domain;
  */
 public abstract class BaseDomainData implements Identifiable {
 
+    /**
+     * A generic placeholder value which can be assigned to data which does
+     * not yet have a known value, but needs to be updated in the future.
+     */
+    public static final String PLACEHOLDER_VALUE = "TBD";
+
     protected int id;
     protected int counter;
 

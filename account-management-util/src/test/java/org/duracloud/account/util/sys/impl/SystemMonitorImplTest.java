@@ -3,20 +3,14 @@
  */
 package org.duracloud.account.util.sys.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.init.domain.AmaConfig;
-import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.notification.Emailer;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -56,7 +50,7 @@ public class SystemMonitorImplTest extends EventMonitorTestBase {
 
         String subdomain = "sub-domain";
         String username = "user-name";
-        AccountInfo acctInfo = newAccountInfo(subdomain);
+        AccountCreationInfo acctInfo = newAccountCreationInfo(subdomain);
         DuracloudUser user = newDuracloudUser(username);
 
         // call under test

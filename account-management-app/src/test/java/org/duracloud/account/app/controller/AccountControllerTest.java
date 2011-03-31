@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -14,9 +15,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.sys.EventMonitor;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -143,14 +142,13 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         AccountManagerService ams = EasyMock.createMock("AccountManagerService",
                                                         AccountManagerService.class);
-        EasyMock.expect(ams.createAccount(EasyMock.isA(AccountInfo.class),
+        EasyMock.expect(ams.createAccount(EasyMock.isA(AccountCreationInfo.class),
                                           EasyMock.isA(DuracloudUser.class)))
             .andReturn(as);
 
         EasyMock.replay(ams, as, idUtil);
 
         accountController.setAccountManagerService(ams);
-        accountController.setIdUtil(idUtil);
 
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setSubdomain("testdomain");
@@ -197,15 +195,14 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .times(1);
 
         DuracloudInstance instance =
-            new DuracloudInstance(0, 0, "host", "providerInstanceId", 0, 0,
-                                  null, null);
+            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId");
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
             .times(1);
 
         if(restart) {
             EasyMock.expect(instanceManagerService.
-                getInstanceService(EasyMock.anyInt(), EasyMock.anyInt()))
+                getInstanceService(EasyMock.anyInt()))
                 .andReturn(instanceService)
                 .anyTimes();
 

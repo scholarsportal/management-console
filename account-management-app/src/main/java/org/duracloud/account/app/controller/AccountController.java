@@ -3,15 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
-import org.duracloud.account.util.sys.EventMonitor;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -43,9 +41,6 @@ import java.util.Set;
 public class AccountController extends AbstractAccountController {
 
     public static final String NEW_ACCOUNT_FORM_KEY = "newAccountForm";
-
-    @Autowired
-    private IdUtil idUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -68,8 +63,22 @@ public class AccountController extends AbstractAccountController {
     public String getInstance(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
         loadAccountInfo(accountId, model);
-        loadInstanceInfo(accountId, model);
+        loadAccountInstances(accountId, model);
         return "account-instance";
+    }
+
+    private void loadAccountInstances(int accountId, Model model) {
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if(instanceServices.size() > 0) {
+            // Handle only a single instance for the time being
+            DuracloudInstanceService instanceService =
+                instanceServices.iterator().next();
+            model.addAttribute(INSTANCE_INFO_KEY,
+                               instanceService.getInstanceInfo());
+            model.addAttribute(INSTANCE_STATUS_KEY,
+                               instanceService.getStatus());
+        }
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
@@ -77,13 +86,30 @@ public class AccountController extends AbstractAccountController {
                                   @PathVariable int instanceId,
                                   Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
-        restartInstance(accountId, instanceId);
+        restartInstance(instanceId);
         loadAccountInfo(accountId, model);
-        loadInstanceInfo(accountId, instanceId, model);
+        loadInstanceInfo(instanceId, model);
         model.addAttribute(ACTION_STATUS,
                            "Instance restarted successfully, it will be " +
-                           "available for use in 5 minutes.");
+                               "available for use in 5 minutes.");
         return "account-instance";
+    }
+
+    protected void loadInstanceInfo(int instanceId, Model model)
+        throws DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.getInstanceService(instanceId);
+        model.addAttribute(INSTANCE_INFO_KEY,
+                           instanceService.getInstanceInfo());
+        model.addAttribute(INSTANCE_STATUS_KEY,
+                           instanceService.getStatus());
+    }
+
+    protected void restartInstance(int instanceId)
+        throws DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.getInstanceService(instanceId);
+        instanceService.restart();
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
@@ -106,21 +132,20 @@ public class AccountController extends AbstractAccountController {
 
         if (!result.hasErrors()) {
             try {
+                // TODO: This needs to be populated based on user selection of storage providers
+                Set<StorageProviderType> secondaryStorageProviderTypes =
+                    new HashSet<StorageProviderType>();
 
-                int paymentInfoId = -1;
-                Set<Integer> instanceIds = null;
-                AccountInfo accountInfo =
-                    new AccountInfo(idUtil.newAccountId(),
-                        newAccountForm.getSubdomain(),
-                        newAccountForm.getAcctName(),
-                        newAccountForm.getOrgName(),
-                        newAccountForm.getDepartment(),
-                        paymentInfoId,
-                        instanceIds,
-                        new HashSet<StorageProviderType>(newAccountForm.getStorageProviders()));
+                AccountCreationInfo accountCreationInfo =
+                    new AccountCreationInfo(newAccountForm.getSubdomain(),
+                                            newAccountForm.getAcctName(),
+                                            newAccountForm.getOrgName(),
+                                            newAccountForm.getDepartment(),
+                                            StorageProviderType.AMAZON_S3,
+                                            secondaryStorageProviderTypes);
 
-                AccountService service =
-                    this.accountManagerService.createAccount(accountInfo, user);
+                AccountService service = this.accountManagerService.
+                    createAccount(accountCreationInfo, user);
 
                 // FIXME seems like there is some latency between successfully
                 // creating
@@ -172,14 +197,6 @@ public class AccountController extends AbstractAccountController {
     public void setAuthenticationManager(
         AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    public IdUtil getIdUtil() {
-        return idUtil;
-    }
-
-    public void setIdUtil(IdUtil idUtil) {
-        this.idUtil = idUtil;
     }
 
 }

@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util.sys.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.sys.EventMonitor;
@@ -26,7 +26,8 @@ public abstract class EventMonitorBase implements EventMonitor {
     }
 
     @Override
-    public void accountCreated(AccountInfo acctInfo, DuracloudUser user) {
+    public void accountCreated(AccountCreationInfo acctInfo,
+                               DuracloudUser user) {
         log.debug("Acct created for, user:{}, acct:{}",
                   user.getUsername(),
                   acctInfo.getSubdomain());
@@ -40,9 +41,9 @@ public abstract class EventMonitorBase implements EventMonitor {
         emailer.send(subj, body, recipients);
     }
 
-    protected abstract String buildSubj(AccountInfo acctInfo);
+    protected abstract String buildSubj(AccountCreationInfo acctInfo);
 
-    protected abstract String buildBody(AccountInfo acctInfo,
+    protected abstract String buildBody(AccountCreationInfo acctInfo,
                                         DuracloudUser user);
 
     protected abstract String[] buildRecipients(DuracloudUser user);

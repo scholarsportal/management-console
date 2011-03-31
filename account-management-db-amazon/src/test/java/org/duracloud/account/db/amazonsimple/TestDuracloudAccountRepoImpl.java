@@ -6,7 +6,6 @@ package org.duracloud.account.db.amazonsimple;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,19 +32,21 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final String acctName = "account-name";
     private static final String orgName = "org-name";
     private static final String department = "department";
+    private static final int computeProviderAccountId = 1;
+    private static final int primaryStorageProviderAccountId = 5;
+    private static Set<Integer> secondaryStorageProviderAccountIds = null;
+    private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static Set<Integer> instanceIds = null;
-    private static Set<StorageProviderType> storageProviders = null;
 
     @BeforeClass
     public static void initialize() throws Exception {
-        instanceIds = new HashSet<Integer>();
-        instanceIds.add(new Integer(1));
-        instanceIds.add(new Integer(2));
+        secondaryStorageProviderAccountIds = new HashSet<Integer>();
+        secondaryStorageProviderAccountIds.add(10);
+        secondaryStorageProviderAccountIds.add(15);
 
-        storageProviders = new HashSet<StorageProviderType>();
-        storageProviders.add(StorageProviderType.AMAZON_S3);
-        storageProviders.add(StorageProviderType.RACKSPACE);
+        secondaryServiceRepositoryIds = new HashSet<Integer>();
+        secondaryServiceRepositoryIds.add(1);
+        secondaryServiceRepositoryIds.add(2);
     }
 
     @Before
@@ -148,9 +149,11 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                acctName,
                                orgName,
                                department,
-                               paymentInfoId,
-                               instanceIds,
-                               storageProviders);
+                               computeProviderAccountId,
+                               primaryStorageProviderAccountId,
+                               secondaryStorageProviderAccountIds,
+                               secondaryServiceRepositoryIds,
+                               paymentInfoId);
     }
 
     private void verifyAccount(final AccountInfo acct) {

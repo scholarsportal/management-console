@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util.sys.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.notification.Emailer;
@@ -12,9 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -53,7 +51,7 @@ public class EventMonitorTestBase {
         return new DuracloudUser(userId++, username, null, fname, null, email);
     }
 
-    protected AccountInfo newAccountInfo(String subdomain) {
-        return new AccountInfo(acctId++, subdomain, null);
+    protected AccountCreationInfo newAccountCreationInfo(String subdomain) {
+        return new AccountCreationInfo(subdomain, null, null, null, null, null);
     }
 }

@@ -3,7 +3,6 @@
  */
 package org.duracloud.account.util;
 
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 
 import java.util.Set;
@@ -22,28 +21,25 @@ public interface DuracloudInstanceManagerService {
     public DuracloudInstanceService createInstance(int accountId, int imageId);
 
     /**
-     * Retrieves the DuraCloud instance with the given ID and associated with
-     * the given account, wrapped in a class which provides services on the
-     * instance.
+     * Retrieves the DuraCloud instance with the given ID wrapped in a class
+     * which provides services on the instance.
      *
      * @return
      * @throws DuracloudInstanceNotAvailableException
      *
      */
-    public DuracloudInstanceService getInstanceService(int accountId,
-                                                       int instanceId)
-        throws AccountNotFoundException, DuracloudInstanceNotAvailableException;
+    public DuracloudInstanceService getInstanceService(int instanceId)
+        throws DuracloudInstanceNotAvailableException;
 
     /**
      * Retrieves the Set of DuraCloud instances associated with a given account,
-     * wrapped in a class which provides services on the instances.
+     * wrapped in a class which provides services on the instances. If no
+     * instances exist for the account, an empty set is returned.
      *
      * @param accountId
      * @return
-     * @throws DuracloudInstanceNotAvailableException
      *
      */
-    public Set<DuracloudInstanceService> getInstanceServices(int accountId)
-        throws AccountNotFoundException;
+    public Set<DuracloudInstanceService> getInstanceServices(int accountId);
 
 }

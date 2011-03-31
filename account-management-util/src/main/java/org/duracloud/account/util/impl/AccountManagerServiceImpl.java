@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -19,6 +20,7 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.util.sys.EventMonitor;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,33 +42,35 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     private DuracloudUserService userService;
     private AccountManagerServiceUtil accountServiceUtil;
     private Set<EventMonitor> eventMonitors;
+    private DuracloudProviderAccountUtil providerAccountUtil;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                      DuracloudUserService duracloudUserService,
                                      AccountManagerServiceUtil accountServiceUtil,
+                                     DuracloudProviderAccountUtil providerAccountUtil,
                                      Set<EventMonitor> eventMonitors) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
         this.accountServiceUtil = accountServiceUtil;
+        this.providerAccountUtil = providerAccountUtil;
         this.eventMonitors = eventMonitors;
     }
 
     @Override
-    public AccountService createAccount(AccountInfo accountInfo,
+    public AccountService createAccount(AccountCreationInfo accountCreationInfo,
                                         DuracloudUser owner)
         throws SubdomainAlreadyExistsException {
         log.debug("Creating account, acct:{}, owner:{}",
-                  accountInfo.getSubdomain(),
+                  accountCreationInfo.getSubdomain(),
                   owner.getUsername());
 
-        AccountService acctService = doCreateAccount(accountInfo, owner);
-
+        AccountService acctService = doCreateAccount(accountCreationInfo, owner);
 
         // Notify monitors if account created successfully.
         Iterator<EventMonitor> itr = eventMonitors.iterator();
         while (itr.hasNext()) {
             try {
-                itr.next().accountCreated(accountInfo, owner);
+                itr.next().accountCreated(accountCreationInfo, owner);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -75,28 +79,58 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         return acctService;
     }
 
-    private synchronized AccountService doCreateAccount(AccountInfo accountInfo,
-                                                     DuracloudUser owner)
+    private synchronized AccountService doCreateAccount(AccountCreationInfo accountCreationInfo,
+                                                        DuracloudUser owner)
         throws SubdomainAlreadyExistsException {
-        if (!subdomainAvailable(accountInfo.getSubdomain())) {
+        if (!subdomainAvailable(accountCreationInfo.getSubdomain())) {
             throw new SubdomainAlreadyExistsException();
         }
         try {
             int acctId = getIdUtil().newAccountId();
+
+            int computeProviderAccountId =
+                providerAccountUtil.createEmptyComputeProviderAccount();
+
+            StorageProviderType primaryStorageType =
+                accountCreationInfo.getPrimaryStorageProviderType();
+            int primaryStorageProviderAccountId =
+                providerAccountUtil.
+                    createEmptyStorageProviderAccount(primaryStorageType);
+
+            Set<Integer> secondaryStorageProviderAccountIds =
+                new HashSet<Integer>();
+            for(StorageProviderType storageType :
+                accountCreationInfo.getSecondaryStorageProviderTypes()) {
+                int id = providerAccountUtil.
+                    createEmptyStorageProviderAccount(storageType);
+                secondaryStorageProviderAccountIds.add(id);
+            }
+                        
+            // Empty set for now. Will want to provide a way for users to
+            // specify service repos, but likely not on account creation.
+            Set<Integer> secondaryServiceRepositoryIds = new HashSet<Integer>();
+            
+            // TODO: Hook up to payment data
+            int paymentInfoId = -1;
+
             AccountInfo newAccountInfo =
                 new AccountInfo(acctId,
-                                accountInfo.getSubdomain(),
-                                accountInfo.getAcctName(),
-                                accountInfo.getOrgName(),
-                                accountInfo.getDepartment(),
-                                accountInfo.getPaymentInfoId(),
-                                accountInfo.getInstanceIds(),
-                                accountInfo.getStorageProviders());
+                                accountCreationInfo.getSubdomain(),
+                                accountCreationInfo.getAcctName(),
+                                accountCreationInfo.getOrgName(),
+                                accountCreationInfo.getDepartment(),
+                                computeProviderAccountId,
+                                primaryStorageProviderAccountId,
+                                secondaryStorageProviderAccountIds,
+                                secondaryServiceRepositoryIds,
+                                paymentInfoId);
 
             getAccountRepo().save(newAccountInfo);
 
             userService.setUserRights(acctId, owner.getId(), Role.ROLE_OWNER);
-            return new AccountServiceImpl(newAccountInfo, repoMgr);
+            return new AccountServiceImpl(newAccountInfo,
+                                          repoMgr,
+                                          providerAccountUtil);
         } catch (DBConcurrentUpdateException ex) {
             throw new Error(ex);
         }

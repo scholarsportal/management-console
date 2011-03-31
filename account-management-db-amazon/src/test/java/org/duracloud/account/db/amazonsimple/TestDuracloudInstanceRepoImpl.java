@@ -10,11 +10,9 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,23 +27,10 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final String DOMAIN = "TEST_DURACLOUD_INSTANCES";
 
     private static final int imageId = 10;
+    private static final int accountId = 12;
     private static final String hostName = "host";
     private static final String providerInstanceId = "ABCD";
-    private static final int computeProviderAccountId = 1;
-    private static final int primaryStorageProviderAccountId = 5;
-    private static Set<Integer> secondaryStorageProviderAccountIds = null;
-    private static Set<Integer> serviceRepositoryIds = null;
 
-    @BeforeClass
-    public static void init() {
-        secondaryStorageProviderAccountIds = new HashSet<Integer>();
-        secondaryStorageProviderAccountIds.add(10);
-        secondaryStorageProviderAccountIds.add(15);
-
-        serviceRepositoryIds = new HashSet<Integer>();
-        serviceRepositoryIds.add(1);
-        serviceRepositoryIds.add(2);
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -129,6 +114,11 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
         Assert.assertTrue(thrown);
 
         verifyCounter(inst0, 2);
+
+        verifyInstancesByAccountId(accountId,
+                                   inst0.getId(),
+                                   inst1.getId(),
+                                   inst2.getId());
     }
 
     @Test
@@ -144,12 +134,9 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
     private DuracloudInstance createInstance(int id) {
         return new DuracloudInstance(id,
                                      imageId,
+                                     accountId,
                                      hostName,
-                                     providerInstanceId,
-                                     computeProviderAccountId,
-                                     primaryStorageProviderAccountId,
-                                     secondaryStorageProviderAccountIds,
-                                     serviceRepositoryIds);
+                                     providerInstanceId);
     }
 
     private void verifyInstance(final DuracloudInstance inst) {
@@ -166,6 +153,15 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
                 return instRepo.findById(inst.getId()).getCounter();
             }
         }.call(counter);
+    }
+
+    private void verifyInstancesByAccountId(final int accountId,
+                                            final Integer... instanceIds) {
+        new DBCallerVarArg<Integer>() {
+            protected Set<Integer> doCall() throws Exception {
+                return instRepo.findByAccountId(accountId);
+            }
+        }.call(instanceIds);
     }
 
 }

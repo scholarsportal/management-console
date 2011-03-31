@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -27,16 +27,21 @@ public class DuracloudInstanceManagerServiceImplTest
     public void testGetInstanceService() throws Exception {
         setUpInitComputeProvider();
 
-        int acctId = 1;
         int instanceId = 2;
-
-        setUpGetInstanceIds(instanceId, 2);
+        int invalidInstanceId = -2;
 
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)
-            .times(1);
-        EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
+            .times(2);
+
+        // A known instance ID returns a valid instance
+        EasyMock.expect(instanceRepo.findById(instanceId))
             .andReturn(instance)
+            .times(1);
+
+        // An invalid instance ID throws
+        EasyMock.expect(instanceRepo.findById(invalidInstanceId))
+            .andThrow(new DBNotFoundException("Not Found"))
             .times(1);
 
         replayMocks();
@@ -46,11 +51,12 @@ public class DuracloudInstanceManagerServiceImplTest
                                                     computeProviderUtil);
 
         DuracloudInstanceService instanceService =
-            managerService.getInstanceService(acctId, instanceId);
+            managerService.getInstanceService(instanceId);
         assertNotNull(instanceService);
 
         try {
-            instanceService = managerService.getInstanceService(acctId, -10);
+            instanceService =
+                managerService.getInstanceService(invalidInstanceId);
             fail("Exception expected");
         } catch(DuracloudInstanceNotAvailableException expected) {
             assertNotNull(expected);
@@ -64,7 +70,7 @@ public class DuracloudInstanceManagerServiceImplTest
         int acctId = 1;
         int instanceId = 2;
         
-        setUpGetInstanceIds(instanceId, 1);
+        setUpGetInstanceIds(acctId, instanceId, 1);
 
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)
@@ -85,17 +91,17 @@ public class DuracloudInstanceManagerServiceImplTest
         assertEquals(1, instanceServices.size());
     }
 
-    private void setUpGetInstanceIds(int instanceId, int times) throws Exception{
-        EasyMock.expect(repoMgr.getAccountRepo())
-            .andReturn(accountRepo)
+    private void setUpGetInstanceIds(int accountId,
+                                     int instanceId,
+                                     int times) throws Exception{
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
             .times(times);
+
         Set<Integer> instanceIds = new HashSet<Integer>();
         instanceIds.add(instanceId);
-        AccountInfo accountInfo =
-            new AccountInfo(0, "subdomain", "acctName", "orgName", "dept",
-                            0, instanceIds, null);
-        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
-            .andReturn(accountInfo)
+        EasyMock.expect(instanceRepo.findByAccountId(accountId))
+            .andReturn(instanceIds)
             .times(times);
     }
 

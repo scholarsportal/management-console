@@ -3,16 +3,19 @@
  */
 package org.duracloud.account.util.instance.impl;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
 import org.duracloud.account.util.error.DuracloudServiceRepositoryNotAvailableException;
+import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -63,15 +66,17 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
             repoMgr.getStorageProviderAccountRepo();
         Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
 
+        AccountInfo account = getAccount();
+
         // Primary Storage Provider
         int primaryProviderAccountId =
-            instance.getPrimaryStorageProviderAccountId();
+            account.getPrimaryStorageProviderAccountId();
         storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                            primaryProviderAccountId,
                                            true));
         // Secondary Storage Providers
         Set<Integer> providerAccountIds =
-            instance.getSecondaryStorageProviderAccountIds();
+            account.getSecondaryStorageProviderAccountIds();
         for(int providerAccountId : providerAccountIds) {
             storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                                providerAccountId,
@@ -80,6 +85,16 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
         config.setStorageAccounts(storageAccts);
         return config;
+    }
+
+    private AccountInfo getAccount() {
+        DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
+        try {
+            return accountRepo.findById(instance.getAccountId());
+        } catch(DBNotFoundException e) {
+            throw new InstanceAccountNotFoundException(instance.getId(),
+                                                       instance.getAccountId());
+        }
     }
 
     private StorageAccount getStorageAccount(
@@ -145,8 +160,9 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String serviceStoreHost;
         String serviceStoreSpaceId;
         String serviceStoreUsername;
-        String serviceStorePassword;
-        Set<Integer> repoIds = instance.getServiceRepositoryIds();
+        String serviceStorePassword;        
+        Set<Integer> repoIds = getAccount().getSecondaryServiceRepositoryIds();
+
         if(null != repoIds && repoIds.size() > 0) {
             int serviceRepoId = repoIds.iterator().next();
             try {

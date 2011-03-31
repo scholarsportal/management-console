@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -21,7 +22,7 @@ import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 
@@ -36,6 +37,7 @@ public class DuracloudInstanceServiceTestBase {
 
     protected int accountId = 1;
     protected DuracloudInstance instance;
+    protected AccountInfo account;
     protected DuracloudRepoMgr repoMgr;
     protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
@@ -60,6 +62,7 @@ public class DuracloudInstanceServiceTestBase {
 
         instance = EasyMock.createMock("DuracloudInstance",
                                        DuracloudInstance.class);
+        account = EasyMock.createMock("AccountInfo", AccountInfo.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
         computeProviderUtil = EasyMock.createMock("ComputeProviderUtil",
@@ -101,7 +104,9 @@ public class DuracloudInstanceServiceTestBase {
 
     protected void replayMocks() {
         EasyMock.replay(instance,
+                        account,
                         repoMgr,
+                        computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
                         computeProviderAcct,
@@ -120,7 +125,9 @@ public class DuracloudInstanceServiceTestBase {
     @After
     public void teardown() {
         EasyMock.verify(instance,
+                        account,
                         repoMgr,
+                        computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
                         computeProviderAcct,
@@ -137,26 +144,37 @@ public class DuracloudInstanceServiceTestBase {
     }
 
     protected void setUpInitComputeProvider() throws Exception {
+        EasyMock.expect(repoMgr.getAccountRepo())
+            .andReturn(accountRepo)
+            .anyTimes();
+        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
+            .andReturn(account)
+            .anyTimes();
+        EasyMock.expect(instance.getAccountId())
+            .andReturn(1)
+            .anyTimes();
+
         EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
             .andReturn(computeProviderAcctRepo)
-            .times(1);
+            .anyTimes();
         EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(computeProviderAcct)
-            .times(1);
-        EasyMock.expect(computeProviderUtil
-                            .getComputeProvider(EasyMock.isA(String.class),
-                                                EasyMock.isA(String.class)))
-            .andReturn(null)
-            .times(1);
-        EasyMock.expect(computeProviderAcct.getUsername())
-            .andReturn("user")
-            .times(1);
-        EasyMock.expect(computeProviderAcct.getPassword())
-            .andReturn("pass")
-            .times(1);
-        EasyMock.expect(instance.getComputeProviderAccountId())
+            .anyTimes();
+        EasyMock.expect(account.getComputeProviderAccountId())
             .andReturn(1)
-            .times(1);
+            .anyTimes();
+        
+        String user = "username";
+        String pass = "password";
+        EasyMock.expect(computeProviderUtil.getComputeProvider(user, pass))
+            .andReturn(computeProvider)
+            .anyTimes();
+        EasyMock.expect(computeProviderAcct.getUsername())
+            .andReturn(user)
+            .anyTimes();
+        EasyMock.expect(computeProviderAcct.getPassword())
+            .andReturn(pass)
+            .anyTimes();
     }
 
     protected DuracloudUser newDuracloudUser(int userId, String username) {

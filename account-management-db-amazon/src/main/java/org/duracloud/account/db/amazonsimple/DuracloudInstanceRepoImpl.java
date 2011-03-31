@@ -16,7 +16,11 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.ACCOUNT_ID_ATT;
 
 /**
  * @author: Bill Branan
@@ -53,6 +57,22 @@ public class DuracloudInstanceRepoImpl
         Item item = findItemById(id);
         List<Attribute> atts = item.getAttributes();
         return converter.fromAttributes(atts, idFromString(item.getName()));
+    }
+
+    @Override
+    public Set<Integer> findByAccountId(int accountId)
+        throws DBNotFoundException {
+        List<Item> items =
+            findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(accountId));
+        return getInstanceIdsFromItems(items);
+    }
+
+    private Set<Integer> getInstanceIdsFromItems(List<Item> items) {
+        Set<Integer> instanceIds = new HashSet<Integer>();
+        for(Item item : items) {
+            instanceIds.add(idFromString(item.getName()));
+        }
+        return instanceIds;
     }
 
     @Override

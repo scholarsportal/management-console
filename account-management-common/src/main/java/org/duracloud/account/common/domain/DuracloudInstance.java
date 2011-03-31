@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.Set;
-
 /**
  * @author Bill Branan
  *         Date: Dec 17, 2010
@@ -15,6 +13,11 @@ public class DuracloudInstance extends BaseDomainData {
      * The ID of the Image on which this instance is based.
      */
     private int imageId;
+
+    /**
+     * The ID of the Account for which this instance was created
+     */
+    private int accountId;
 
     /**
      * The host name at which this instance is available.
@@ -28,68 +31,39 @@ public class DuracloudInstance extends BaseDomainData {
      */
     private String providerInstanceId;
 
-    /**
-     * The ID of the ComputeProviderAccount which is the compute provider for
-     * an instance
-     */
-    private int computeProviderAccountId;
-
-    /**
-     * The ID of a StorageProviderAccount which is used for primary storage
-     */
-    private int primaryStorageProviderAccountId;
-
-    /**
-     * The IDs of all StorageProviderAccounts which are used for secondary storage
-     */
-    private Set<Integer> secondaryStorageProviderAccountIds;
-
-    /**
-     * The IDs of all ServiceRepositories used to store service binaries
-     */
-    private Set<Integer> serviceRepositoryIds;
-
     public DuracloudInstance(int id,
                              int imageId,
+                             int accountId,
                              String hostName,
-                             String providerInstanceId,
-                             int computeProviderAccountId,
-                             int primaryStorageProviderAccountId,
-                             Set<Integer> secondaryStorageProviderAccountIds,
-                             Set<Integer> serviceRepositoryIds) {
+                             String providerInstanceId) {
         this(id,
              imageId,
+             accountId,
              hostName,
              providerInstanceId,
-             computeProviderAccountId,
-             primaryStorageProviderAccountId,
-             secondaryStorageProviderAccountIds,
-             serviceRepositoryIds,
              0);
     }
 
     public DuracloudInstance(int id,
                              int imageId,
+                             int accountId,
                              String hostName,
                              String providerInstanceId,
-                             int computeProviderAccountId,
-                             int primaryStorageProviderAccountId,
-                             Set<Integer> secondaryStorageProviderAccountIds,
-                             Set<Integer> serviceRepositoryIds,
                              int counter) {
         this.id = id;
         this.imageId = imageId;
+        this.accountId = accountId;
         this.hostName = hostName;
         this.providerInstanceId = providerInstanceId;
-        this.computeProviderAccountId = computeProviderAccountId;
-        this.primaryStorageProviderAccountId = primaryStorageProviderAccountId;
-        this.secondaryStorageProviderAccountIds = secondaryStorageProviderAccountIds;
-        this.serviceRepositoryIds = serviceRepositoryIds;
         this.counter = counter;
     }
 
     public int getImageId() {
         return imageId;
+    }
+
+    public int getAccountId() {
+        return accountId;
     }
 
     public String getHostName() {
@@ -98,22 +72,6 @@ public class DuracloudInstance extends BaseDomainData {
 
     public String getProviderInstanceId() {
         return providerInstanceId;
-    }
-
-    public int getComputeProviderAccountId() {
-        return computeProviderAccountId;
-    }
-
-    public int getPrimaryStorageProviderAccountId() {
-        return primaryStorageProviderAccountId;
-    }
-
-    public Set<Integer> getSecondaryStorageProviderAccountIds() {
-        return secondaryStorageProviderAccountIds;
-    }
-
-    public Set<Integer> getServiceRepositoryIds() {
-        return serviceRepositoryIds;
     }
 
     /*
@@ -130,14 +88,10 @@ public class DuracloudInstance extends BaseDomainData {
 
         DuracloudInstance that = (DuracloudInstance) o;
 
-        if (computeProviderAccountId != that.computeProviderAccountId) {
+        if (accountId != that.accountId) {
             return false;
         }
         if (imageId != that.imageId) {
-            return false;
-        }
-        if (primaryStorageProviderAccountId !=
-            that.primaryStorageProviderAccountId) {
             return false;
         }
         if (hostName != null ? !hostName.equals(that.hostName) :
@@ -147,17 +101,6 @@ public class DuracloudInstance extends BaseDomainData {
         if (providerInstanceId != null ? !providerInstanceId
             .equals(that.providerInstanceId) :
             that.providerInstanceId != null) {
-            return false;
-        }
-        if (secondaryStorageProviderAccountIds !=
-            null ? !secondaryStorageProviderAccountIds
-            .equals(that.secondaryStorageProviderAccountIds) :
-            that.secondaryStorageProviderAccountIds != null) {
-            return false;
-        }
-        if (serviceRepositoryIds != null ? !serviceRepositoryIds
-            .equals(that.serviceRepositoryIds) :
-            that.serviceRepositoryIds != null) {
             return false;
         }
 
@@ -170,16 +113,10 @@ public class DuracloudInstance extends BaseDomainData {
     @Override
     public int hashCode() {
         int result = imageId;
+        result = 31 * result + accountId;
         result = 31 * result + (hostName != null ? hostName.hashCode() : 0);
         result = 31 * result +
             (providerInstanceId != null ? providerInstanceId.hashCode() : 0);
-        result = 31 * result + computeProviderAccountId;
-        result = 31 * result + primaryStorageProviderAccountId;
-        result = 31 * result + (secondaryStorageProviderAccountIds !=
-            null ? secondaryStorageProviderAccountIds.hashCode() : 0);
-        result = 31 * result +
-            (serviceRepositoryIds != null ? serviceRepositoryIds
-                .hashCode() : 0);
         return result;
     }
 

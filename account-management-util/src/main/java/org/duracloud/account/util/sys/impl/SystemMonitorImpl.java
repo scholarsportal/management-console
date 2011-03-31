@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util.sys.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.init.domain.AmaConfig;
@@ -47,12 +47,13 @@ public class SystemMonitorImpl extends EventMonitorBase implements Initable {
     }
 
     @Override
-    protected String buildSubj(AccountInfo acctInfo) {
+    protected String buildSubj(AccountCreationInfo acctInfo) {
         return "New DuraCloud Account: " + acctInfo.getSubdomain();
     }
 
     @Override
-    protected String buildBody(AccountInfo acctInfo, DuracloudUser user) {
+    protected String buildBody(AccountCreationInfo acctInfo,
+                               DuracloudUser user) {
         log.debug("Building email for, user:{}, acct:{}",
                   user.getUsername(),
                   acctInfo.getSubdomain());
@@ -64,10 +65,12 @@ public class SystemMonitorImpl extends EventMonitorBase implements Initable {
         printer.printf("username: %1$s%n", user.getUsername());
         printer.printf("subdomain: %1$s%n", acctInfo.getSubdomain());
 
-        Set<StorageProviderType> providers = acctInfo.getStorageProviders();
+        Set<StorageProviderType> providers =
+            acctInfo.getSecondaryStorageProviderTypes();
         if (null != providers && providers.size() > 0) {
             printer.printf("storage providers: %n");
-            for (StorageProviderType provider : acctInfo.getStorageProviders()) {
+            printer.printf("    %1s%n", acctInfo.getPrimaryStorageProviderType());
+            for (StorageProviderType provider : acctInfo.getSecondaryStorageProviderTypes()) {
                 printer.printf("    %1s%n", provider);
             }
         }

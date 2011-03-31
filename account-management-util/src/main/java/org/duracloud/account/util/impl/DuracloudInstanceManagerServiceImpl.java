@@ -3,16 +3,13 @@
  */
 package org.duracloud.account.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.compute.ComputeProviderUtil;
-import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,39 +53,12 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     }
 
     @Override
-    public DuracloudInstanceService getInstanceService(int accountId,
-                                                       int instanceId)
-        throws AccountNotFoundException,
-               DuracloudInstanceNotAvailableException {
-        return getInstanceService(accountId, instanceId, true);
-    }
-
-    private DuracloudInstanceService getInstanceService(int accountId,
-                                                        int instanceId,
-                                                        boolean verify)
-        throws AccountNotFoundException,
-               DuracloudInstanceNotAvailableException {
-
-        if(verify) {
-            Set<Integer> instanceIds = getInstanceIds(accountId);
-            boolean found = false;
-            for(int id : instanceIds) {
-                if(id == instanceId) {
-                    found = true;
-                }
-            }
-            if(!found) {
-                String error = "The instance ID " + instanceId +
-                               " does not exist in the instance-ids list " +
-                               "for the account with ID " + accountId;
-                throw new DuracloudInstanceNotAvailableException(error);
-            }
-        }
-
+    public DuracloudInstanceService getInstanceService(int instanceId)
+        throws DuracloudInstanceNotAvailableException {
         DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
         try {
             DuracloudInstance instance = instanceRepo.findById(instanceId);
-            return new DuracloudInstanceServiceImpl(accountId,
+            return new DuracloudInstanceServiceImpl(instance.getAccountId(),
                                                     instance,
                                                     repoMgr,
                                                     computeUtil);
@@ -98,8 +68,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     }
 
     @Override
-    public Set<DuracloudInstanceService> getInstanceServices(int accountId)
-        throws AccountNotFoundException {
+    public Set<DuracloudInstanceService> getInstanceServices(int accountId) {
 
         Set<Integer> instanceIds = getInstanceIds(accountId);
         Set<DuracloudInstanceService> instanceServices =
@@ -108,11 +77,10 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         if(null != instanceIds) {
             for(int instanceId : instanceIds) {
                 try {
-                    instanceServices.add(
-                        getInstanceService(accountId, instanceId, false));
+                    instanceServices.add(getInstanceService(instanceId));
                 } catch(DuracloudInstanceNotAvailableException e) {
-                    log.error("The instance ID: " + instanceId +
-                              " was included in the instance-ids list for " +
+                    log.error("The instance with ID: " + instanceId +
+                              " was found to be associated with the " +
                               "account with ID: " +  accountId +
                               " but the instance could not be found!");
                 }
@@ -121,14 +89,12 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         return instanceServices;
     }
 
-    private Set<Integer> getInstanceIds(int accountId)
-        throws AccountNotFoundException {
+    private Set<Integer> getInstanceIds(int accountId) {
         try {
-            DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
-            AccountInfo accountInfo = accountRepo.findById(accountId);
-            return accountInfo.getInstanceIds();
+            DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
+            return instanceRepo.findByAccountId(accountId);
         } catch (DBNotFoundException e) {
-            throw new AccountNotFoundException(accountId);
+            return new HashSet<Integer>();
         }
     }
 }

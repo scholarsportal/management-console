@@ -60,19 +60,24 @@
                           </th>
                         </tr>
 
+                        <tr>
+                          <td>${primaryProvider.providerType}</td>
+                          <td></td>
+                          <td></td>
+                        </tr>
 
 
                           <c:forEach
                            var="p"
-                           items="${providers}">
+                           items="${secondaryProviders}">
                             <tr>
-                              <td>${p}</td>
+                              <td>${p.providerType}</td>
 
                               <td></td>
 
                               <td style="visibility: hidden">
                                 <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/byid/${p}/delete"
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/byid/${p.id}/delete"
                                  method="post">
                                   <button
                                    type="submit">

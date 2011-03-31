@@ -9,20 +9,15 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The default view for this application
@@ -102,38 +97,6 @@ public abstract class AbstractAccountController extends AbstractController {
         addAccountInfoToModel(accountInfo, model);
     }
 
-    protected void loadInstanceInfo(int accountId, Model model)
-        throws AccountNotFoundException {
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if(instanceServices.size() > 0) {
-            // Handle only a single instance for the time being
-            DuracloudInstanceService instanceService =
-                instanceServices.iterator().next();
-            model.addAttribute(INSTANCE_INFO_KEY,
-                               instanceService.getInstanceInfo());
-            model.addAttribute(INSTANCE_STATUS_KEY,
-                               instanceService.getStatus());
-        }
-    }
-
-    protected void loadInstanceInfo(int accountId, int instanceId, Model model)
-        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
-        DuracloudInstanceService instanceService =
-            instanceManagerService.getInstanceService(accountId, instanceId);
-        model.addAttribute(INSTANCE_INFO_KEY,
-                           instanceService.getInstanceInfo());
-        model.addAttribute(INSTANCE_STATUS_KEY,
-                           instanceService.getStatus());
-    }
-
-    protected void restartInstance(int accountId, int instanceId)
-        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
-        DuracloudInstanceService instanceService =
-            instanceManagerService.getInstanceService(accountId, instanceId);
-        instanceService.restart();
-    }
-
     /**
      * @param accountId
      * @param suffix
@@ -151,29 +114,4 @@ public abstract class AbstractAccountController extends AbstractController {
         model.addAttribute("billingInfo", new CreditCardPaymentInfo());
     }
 
-
-    protected void loadProviderInfo(int accountId, Model model)
-        throws AccountNotFoundException {
-        AccountService accountService =
-            accountManagerService.getAccount(accountId);
-        Set<StorageProviderType> providers = accountService.getStorageProviders();
-        log.info("Providers: " + providers);
-        
-        model.addAttribute("providers", providers);
-
-        ProviderForm providerForm = new ProviderForm();
-        //TODO get available providers for account
-        List<StorageProviderType> providerList = new ArrayList<StorageProviderType>();
-        if(!providers.contains(StorageProviderType.AMAZON_S3))
-            providerList.add(StorageProviderType.AMAZON_S3);
-        if(!providers.contains(StorageProviderType.RACKSPACE))        
-            providerList.add(StorageProviderType.RACKSPACE);
-
-        if(providerList.size() > 0)
-            providerForm.setStorageProviders(providerList);
-        else
-            providerForm.setStorageProviders(null);
-
-        model.addAttribute("providerForm", providerForm);
-    }
 }

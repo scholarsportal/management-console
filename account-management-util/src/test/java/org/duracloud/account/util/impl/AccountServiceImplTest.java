@@ -7,11 +7,13 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.Capture;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,34 +42,89 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
             storageProviders.add(provider);
         }
 
-        Set<StorageProviderType> emptySet = new HashSet<StorageProviderType>();
-        acctInfo = new AccountInfo(acctId, subdomain, emptySet);
-        acctService = new AccountServiceImpl(acctInfo, repoMgr);
+        acctInfo = newAccountInfo(acctId, subdomain);
+        acctService =
+            new AccountServiceImpl(acctInfo, repoMgr, providerAccountUtil);
 
     }
 
     @Test
-    public void testGetSetStorageProviders() throws Exception {
-        setUpGetSetStorageProviders();
-
-        Set<StorageProviderType> providers = acctService.getStorageProviders();
-        Assert.assertEquals(0, providers.size());
-
-        acctService.setStorageProviders(storageProviders);
-        providers = acctService.getStorageProviders();
-        Assert.assertNotNull(providers);
-
-        Assert.assertTrue(storageProviders.size() > 0);
-        Assert.assertEquals(storageProviders.size(), providers.size());
-        for (StorageProviderType provider : providers) {
-            Assert.assertTrue(storageProviders.contains(provider));
-        }
+    public void testGetPrimaryStorageProvider() throws Exception {
+        StorageProviderAccount storageAcct = setUpGetStorageProviders();
+        StorageProviderAccount retVal = acctService.getPrimaryStorageProvider();
+        Assert.assertNotNull(retVal);
+        Assert.assertEquals(storageAcct, retVal);
     }
 
-    private void setUpGetSetStorageProviders() throws Exception {
-        accountRepo.save(acctInfo);
-        EasyMock.expectLastCall();
+    @Test
+    public void testGetSecondaryStorageProviders() throws Exception {
+        StorageProviderAccount storageAcct = setUpGetStorageProviders();
+        Set<StorageProviderAccount> retVals = acctService.getSecondaryStorageProviders();
+        Assert.assertNotNull(retVals);
+        Assert.assertEquals(1, retVals.size());
+        Assert.assertEquals(storageAcct, retVals.iterator().next());
+    }
+
+    private StorageProviderAccount setUpGetStorageProviders() throws Exception {
+        EasyMock.expect(repoMgr.getStorageProviderAccountRepo())
+            .andReturn(storageProviderAcctRepo)
+            .times(1);
+
+        StorageProviderAccount storageAcct =
+            new StorageProviderAccount(1, StorageProviderType.AMAZON_S3,
+                                       "username", "password", false);
+        EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(storageAcct)
+            .times(1);
+
         replayMocks();
+
+        return storageAcct;
+    }
+
+    @Test
+    public void testAddStorageProvider() throws Exception {
+        StorageProviderType typeToAdd = StorageProviderType.MICROSOFT_AZURE;
+
+        EasyMock.expect(providerAccountUtil.
+            createEmptyStorageProviderAccount(typeToAdd))
+            .andReturn(0)
+            .times(1);
+
+        accountRepo.save(EasyMock.isA(AccountInfo.class));
+        EasyMock.expectLastCall()
+            .times(1);
+
+        replayMocks();
+
+        acctService.addStorageProvider(typeToAdd);
+    }
+
+    @Test
+    public void testRemoveStorageProvider() throws Exception {
+        accountRepo.save(EasyMock.isA(AccountInfo.class));
+        EasyMock.expectLastCall()
+            .times(1);
+
+        EasyMock.expect(repoMgr.getStorageProviderAccountRepo())
+            .andReturn(storageProviderAcctRepo)
+            .times(1);
+
+        storageProviderAcctRepo.delete(0);
+        EasyMock.expectLastCall()
+            .times(1);
+
+        replayMocks();
+
+        acctService.removeStorageProvider(0);
+
+        // Item has been removed, should fail a subsequent request
+        try {
+            acctService.removeStorageProvider(0);
+            Assert.fail("Exception expected");
+        } catch(DuracloudProviderAccountNotAvailableException e) {
+            Assert.assertNotNull(e);
+        }
     }
 
     @Test

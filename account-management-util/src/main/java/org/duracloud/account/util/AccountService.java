@@ -6,6 +6,7 @@ package org.duracloud.account.util;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.notification.Emailer;
@@ -52,15 +53,36 @@ public interface AccountService {
     public String getSubdomain();
 
     /**
+     * Retrieves the primary storage provider account info
+     *
      * @return
      */
-    public Set<StorageProviderType> getStorageProviders();
+    public StorageProviderAccount getPrimaryStorageProvider();
 
     /**
-     * @param storageProviderTypes
+     * Retrieves the info for all secondary storage provider accounts
+     *
+     * @return
      */
-    public void setStorageProviders(
-        Set<StorageProviderType> storageProviderTypes)
+    public Set<StorageProviderAccount> getSecondaryStorageProviders();
+
+    /**
+     * Adds a new secondary storage provider to this account.
+     *
+     * @param storageProviderType
+     * @throws DBConcurrentUpdateException
+     */
+    public void addStorageProvider(StorageProviderType storageProviderType)
+        throws DBConcurrentUpdateException;
+
+    /**
+     * Removes a storage provider from the list of secondary storage providers
+     * for this account. The primary storage provider cannot be removed.
+     *
+     * @param storageProviderId
+     * @throws DBConcurrentUpdateException
+     */
+    public void removeStorageProvider(int storageProviderId)
         throws DBConcurrentUpdateException;
 
     /**

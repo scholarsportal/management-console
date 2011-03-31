@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util.sys.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -40,7 +40,7 @@ public class CustomerMonitorImplTest extends EventMonitorTestBase {
 
         String subdomain = "sub-domain";
         String username = "user-name";
-        AccountInfo acctInfo = newAccountInfo(subdomain);
+        AccountCreationInfo acctInfo = newAccountCreationInfo(subdomain);
         DuracloudUser user = newDuracloudUser(username);
 
         // call under test

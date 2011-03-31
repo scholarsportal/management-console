@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 
@@ -30,17 +29,10 @@ public class DuracloudInstanceConverter
     }
 
     protected static final String IMAGE_ID_ATT = "IMAGE_ID";
+    public static final String ACCOUNT_ID_ATT = "ACCOUNT_ID";
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String PROVIDER_INSTANCE_ID_ATT =
         "PROVIDER_INSTANCE_ID";
-    protected static final String PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT =
-        "PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID";
-    protected static final String SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT =
-        "SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS";
-    protected static final String COMPUTE_PROVIDER_ACCOUNT_ID_ATT =
-        "COMPUTE_PROVIDER_ACCOUNT_ID";
-    protected static final String SERVICE_REPOSITORY_IDS_ATT =
-        "SERVICE_REPOSITORY_IDS";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(DuracloudInstance instance) {
@@ -52,28 +44,16 @@ public class DuracloudInstanceConverter
             asString(instance.getImageId()),
             true));
         atts.add(new ReplaceableAttribute(
+            ACCOUNT_ID_ATT,
+            asString(instance.getAccountId()),
+            true));
+        atts.add(new ReplaceableAttribute(
             HOST_NAME_ATT,
             instance.getHostName(),
             true));
         atts.add(new ReplaceableAttribute(
             PROVIDER_INSTANCE_ID_ATT,
             instance.getProviderInstanceId(),
-            true));
-        atts.add(new ReplaceableAttribute(
-            PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT,
-            asString(instance.getPrimaryStorageProviderAccountId()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
-            idsAsString(instance.getSecondaryStorageProviderAccountIds()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            COMPUTE_PROVIDER_ACCOUNT_ID_ATT,
-            asString(instance.getComputeProviderAccountId()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            SERVICE_REPOSITORY_IDS_ATT,
-            idsAsString(instance.getServiceRepositoryIds()),
             true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
@@ -84,12 +64,9 @@ public class DuracloudInstanceConverter
     public DuracloudInstance fromAttributes(Collection<Attribute> atts, int id) {
         int counter = -1;
         int imageId = -1;
+        int accountId = -1;
         String hostName = null;
         String providerInstanceId = null;
-        int computeProviderAccountId = -1;
-        int primaryStorageProviderAccountId = -1;
-        Set<Integer> secondaryStorageProviderAccountIds = null;
-        Set<Integer> serviceRepositoryIds = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -100,31 +77,14 @@ public class DuracloudInstanceConverter
             } else if (IMAGE_ID_ATT.equals(name)) {
                 imageId = idFromString(value, "Image", "Instance", id);
 
+            } else if (ACCOUNT_ID_ATT.equals(name)) {
+                accountId = idFromString(value, "Account", "Instance", id);
+
             } else if (HOST_NAME_ATT.equals(name)) {
                 hostName = value;
 
             } else if (PROVIDER_INSTANCE_ID_ATT.equals(name)) {
                 providerInstanceId = value;
-
-            } else if (COMPUTE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
-                computeProviderAccountId =
-                    idFromString(value,
-                                 "Compute Provider Account",
-                                 "Instance",
-                                 id);
-
-            } else if (PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
-                primaryStorageProviderAccountId =
-                    idFromString(value,
-                                 "Primary Storage Provider Account",
-                                 "Instance",
-                                 id);
-
-            } else if (SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT.equals(name)) {
-                secondaryStorageProviderAccountIds = idsFromString(value);
-
-            } else if (SERVICE_REPOSITORY_IDS_ATT.equals(name)) {
-                serviceRepositoryIds = idsFromString(value);                
 
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
@@ -139,12 +99,9 @@ public class DuracloudInstanceConverter
 
         return new DuracloudInstance(id,
                                      imageId,
+                                     accountId,
                                      hostName,
                                      providerInstanceId,
-                                     computeProviderAccountId,
-                                     primaryStorageProviderAccountId,
-                                     secondaryStorageProviderAccountIds,
-                                     serviceRepositoryIds,
                                      counter);
     }
 

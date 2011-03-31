@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util.sys;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 
 /**
@@ -16,8 +16,9 @@ public interface EventMonitor {
      * This method defines the contract for receiving notification of the
      * 'account-creation' event.
      *
-     * @param acctInfo of new account
+     * @param accountCreationInfo of new account
      * @param user     who created new account
      */
-    public void accountCreated(AccountInfo acctInfo, DuracloudUser user);
+    public void accountCreated(AccountCreationInfo accountCreationInfo,
+                               DuracloudUser user);
 }

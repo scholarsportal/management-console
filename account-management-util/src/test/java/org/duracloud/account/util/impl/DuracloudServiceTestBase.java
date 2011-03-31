@@ -3,12 +3,14 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
@@ -20,7 +22,6 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,8 @@ public class DuracloudServiceTestBase {
     protected DuracloudInstanceRepo instanceRepo;
     protected UserDetailsPropagator propagator;
     protected DuracloudUserServiceImpl userService;
+    protected DuracloudProviderAccountUtil providerAccountUtil;
+    protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
 
     protected IdUtil idUtil;
 
@@ -60,8 +63,14 @@ public class DuracloudServiceTestBase {
                                              DuracloudUserInvitationRepo.class);
         instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
                                            DuracloudInstanceRepo.class);
+        storageProviderAcctRepo =
+            EasyMock.createMock("DuracloudStorageProviderAccountRepo",
+                                DuracloudStorageProviderAccountRepo.class);
         propagator = EasyMock.createMock("UserDetailsPropagator",
                                          UserDetailsPropagator.class);
+        providerAccountUtil =
+            EasyMock.createMock("DuracloudProviderAccountUtil",
+                                DuracloudProviderAccountUtil.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
@@ -113,6 +122,8 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(rightsRepo);
         EasyMock.verify(invitationRepo);
         EasyMock.verify(instanceRepo);
+        EasyMock.verify(storageProviderAcctRepo);
+        EasyMock.verify(providerAccountUtil);
         EasyMock.verify(propagator);
         EasyMock.verify(idUtil);
     }
@@ -136,19 +147,35 @@ public class DuracloudServiceTestBase {
         return newAccountInfo(acctId, "subdomain-" + acctId);
     }
 
+    protected AccountCreationInfo newAccountCreationInfo(int acctId,
+                                                         String subdomain) {
+        Set<StorageProviderType> secStorProvTypes =
+            new HashSet<StorageProviderType>();
+        return new AccountCreationInfo(subdomain,
+                                       "account-" + acctId,
+                                       "org-" + acctId,
+                                       "dept-" + acctId,
+                                       StorageProviderType.AMAZON_S3,
+                                       secStorProvTypes);
+    }
+
     protected AccountInfo newAccountInfo(int acctId, String subdomain) {
+        int computeProvAcctId = 0;
+        int primStorageProvAcctId = 0;
+        Set<Integer> secStorageProvAcctIds = new HashSet<Integer>();
+        secStorageProvAcctIds.add(0);
+        Set<Integer> secServiceRepoIds = new HashSet<Integer>();
         int paymentInfoId = 0;
-        Set<Integer> instanceIds = new HashSet<Integer>();
-        Set<StorageProviderType> storageProviders = new HashSet<StorageProviderType>(
-            Arrays.asList(StorageProviderType.values()));
         return new AccountInfo(acctId,
                                subdomain,
                                "account-" + acctId,
                                "org-" + acctId,
                                "dept-" + acctId,
-                               paymentInfoId,
-                               instanceIds,
-                               storageProviders);
+                               computeProvAcctId,
+                               primStorageProvAcctId,
+                               secStorageProvAcctIds,
+                               secServiceRepoIds,
+                               paymentInfoId);
     }
 
     protected void replayMocks() {
@@ -158,6 +185,8 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(rightsRepo);
         EasyMock.replay(invitationRepo);
         EasyMock.replay(instanceRepo);
+        EasyMock.replay(storageProviderAcctRepo);
+        EasyMock.replay(providerAccountUtil);
         EasyMock.replay(propagator);
         EasyMock.replay(idUtil);
         EasyMock.replay(repoMgr);

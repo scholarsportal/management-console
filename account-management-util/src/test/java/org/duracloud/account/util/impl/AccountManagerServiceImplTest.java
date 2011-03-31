@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -12,6 +13,7 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.sys.EventMonitor;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -71,6 +73,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
                                                               serviceUtil,
+                                                              providerAccountUtil,
                                                               eventMonitors);
 
         int userId = 0;
@@ -83,7 +86,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
         int acctId = 0;
         String subdomain = "testdomain";
-        AccountInfo info = newAccountInfo(acctId, subdomain);
+        AccountCreationInfo info = newAccountCreationInfo(acctId, subdomain);
 
         AccountService as = accountManagerService.createAccount(info, user);
         Assert.assertNotNull(as);
@@ -95,6 +98,15 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private void setUpCreateAccount() throws Exception {
+        EasyMock.expect(providerAccountUtil.createEmptyComputeProviderAccount())
+            .andReturn(1)
+            .times(1);
+        EasyMock.expect(
+            providerAccountUtil.createEmptyStorageProviderAccount(
+                EasyMock.isA(StorageProviderType.class)))
+            .andReturn(1)
+            .times(1);
+
         userService = EasyMock.createMock(DuracloudUserService.class);
         EasyMock.expect(userService.setUserRights(EasyMock.anyInt(),
                                                   EasyMock.anyInt(),
@@ -120,11 +132,11 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
         EasyMock.expect(idUtil.newAccountId()).andReturn(NUM_ACCTS + 1);
 
-        systemMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
+        systemMonitor.accountCreated(EasyMock.isA(AccountCreationInfo.class),
                                      EasyMock.isA(DuracloudUser.class));
         EasyMock.expectLastCall();
 
-        customerMonitor.accountCreated(EasyMock.isA(AccountInfo.class),
+        customerMonitor.accountCreated(EasyMock.isA(AccountCreationInfo.class),
                                        EasyMock.isA(DuracloudUser.class));
         EasyMock.expectLastCall();
 
@@ -137,6 +149,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
                                                               serviceUtil,
+                                                              providerAccountUtil,
                                                               eventMonitors);
 
         int userId = 1;
@@ -168,6 +181,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
                                                               serviceUtil,
+                                                              providerAccountUtil,
                                                               eventMonitors);
 
         // success case
@@ -202,6 +216,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
                                                               serviceUtil,
+                                                              providerAccountUtil,
                                                               eventMonitors);
 
         // success case

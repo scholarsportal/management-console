@@ -10,11 +10,10 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.impl.AccountManagerServiceUtil;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
-import org.easymock.classextension.EasyMock;
 import org.easymock.IAnswer;
+import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -111,8 +110,7 @@ public class UserDetailsPropagatorImplTest {
         propagator.propagateRevocation(acctId, userId);
     }
 
-    private void createAccountManagerExpectation()
-        throws AccountNotFoundException {
+    private void createAccountManagerExpectation() throws Exception {
         accountManagerService =
             EasyMock.createMock("AccountManagerServiceUtil",
                                 AccountManagerServiceUtil.class);
@@ -125,7 +123,7 @@ public class UserDetailsPropagatorImplTest {
     }
 
     private void createInstanceManagerExpectation(boolean revoke)
-        throws AccountNotFoundException {
+        throws Exception {
         instanceManagerService = EasyMock.createMock(
             "DuracloudInstanceManagerService",
             DuracloudInstanceManagerService.class);
