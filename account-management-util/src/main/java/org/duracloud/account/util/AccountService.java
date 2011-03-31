@@ -49,6 +49,8 @@ public interface AccountService {
      */
     public void storeSubdomain(String subdomain);
 
+    public String getSubdomain();
+
     /**
      * @return
      */

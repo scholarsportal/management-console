@@ -115,6 +115,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getSubdomain() {
+        return account.getSubdomain();
+    }
+
+    @Override
     public UserInvitation inviteUser(String emailAddress, Emailer emailer)
         throws DBConcurrentUpdateException {
 
