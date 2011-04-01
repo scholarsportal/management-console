@@ -9,6 +9,8 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 
+import org.springframework.security.access.annotation.Secured;
+
 import java.util.Set;
 
 /**
@@ -21,6 +23,7 @@ public interface AccountManagerService {
 	 * 
 	 * @return true if the subdomain is available, otherwise file.
 	 */
+    @Secured({"role:ROLE_USER, scope:any"})
 	public boolean subdomainAvailable(String subdomain);
 
 	/**
@@ -31,6 +34,7 @@ public interface AccountManagerService {
 	 * @throws org.duracloud.account.util.error.AccountNotFoundException
 	 * 
 	 */
+    @Secured({"role:ROLE_USER, scope:self-acct"})
 	public AccountService getAccount(int accountId)
 			throws AccountNotFoundException;
 
@@ -40,6 +44,7 @@ public interface AccountManagerService {
 	 * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
 	 * 
 	 */
+    @Secured({"role:ROLE_USER, scope:any"})
 	public AccountService createAccount(AccountCreationInfo accountCreationInfo,
 			DuracloudUser owner) throws SubdomainAlreadyExistsException;
 
@@ -49,5 +54,6 @@ public interface AccountManagerService {
 	 *         If there are no accounts associated with the specified user, an
 	 *         empty set is returned.
 	 */
+    @Secured({"role:ROLE_USER, scope:self"})
 	public Set<AccountInfo> findAccountsByUserId(int userId);
 }

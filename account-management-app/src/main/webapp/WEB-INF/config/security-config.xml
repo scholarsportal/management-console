@@ -45,21 +45,19 @@
    <beans:constructor-arg value="256"/>
   </beans:bean>
 
-  <beans:bean id="globalAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" >
-    <beans:property name="allowIfAllAbstainDecisions" value="true"/>
+  <beans:bean id="acctMgrVoter" class="org.duracloud.account.security.vote.AccountManagerAccessDecisionVoter">
+    <beans:constructor-arg ref="repoMgr"/>
+  </beans:bean>
+
+  <beans:bean id="methodAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" >
+    <beans:property name="allowIfAllAbstainDecisions" value="false"/>
     <beans:property name="decisionVoters" >
-      <beans:list>
-        <beans:bean class="org.duracloud.account.security.web.AccountAccessDecisionVoter"/>
-        <beans:bean class="org.duracloud.account.security.web.UserAccessDecisionVoter"/>
-      </beans:list>
+      <beans:ref bean="acctMgrVoter"/>
     </beans:property>
   </beans:bean>
   
-  <global-method-security access-decision-manager-ref="globalAccessDecisionManager" pre-post-annotations="enabled" >
-    <!--<protect-pointcut expression="execution(* org.duracloud.account.util.*UserService.*(..))"-->
-      <!--access="ROLE_USER" />-->
-    <!--<protect-pointcut expression="execution(* org.duracloud.account.util.Account*Service.*(..))"-->
-      <!--access="ROLE_USER" />-->
-  </global-method-security>
+  <global-method-security
+    access-decision-manager-ref="methodAccessDecisionManager"
+    secured-annotations="enabled" />
   
 </beans:beans>

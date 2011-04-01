@@ -19,11 +19,11 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.DigestUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -173,8 +173,10 @@ public class AccountServiceImpl implements AccountService {
     public UserInvitation inviteUser(String emailAddress, Emailer emailer)
         throws DBConcurrentUpdateException {
 
+        ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+
         String code = emailAddress + System.currentTimeMillis();
-        String redemptionCode = DigestUtils.md5DigestAsHex(code.getBytes());
+        String redemptionCode = cksumUtil.generateChecksum(code);
 
         int id = repoMgr.getIdUtil().newUserInvitationId();
         int acctId = account.getId();
