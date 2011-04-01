@@ -89,7 +89,9 @@ public class DuracloudServiceTestBase {
         EasyMock.expect(invitationRepo.getIds()).andReturn(invitationIds).anyTimes();
         EasyMock.expect(instanceRepo.getIds()).andReturn(instanceIds).anyTimes();
 
-        EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).anyTimes();
+        EasyMock.expect(repoMgr.getUserRepo())
+            .andReturn(userRepo)
+            .anyTimes();
         EasyMock.expect(repoMgr.getAccountRepo())
             .andReturn(accountRepo)
             .anyTimes();

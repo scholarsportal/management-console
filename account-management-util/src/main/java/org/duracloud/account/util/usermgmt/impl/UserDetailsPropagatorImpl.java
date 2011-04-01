@@ -57,7 +57,17 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         }
 
         doPropagate(acctId, newUsers);
+        checkForErrors(acctId, userId);
+    }
 
+    @Override
+    public void propagatePasswordUpdate(int acctId, int userId) {
+        Set<DuracloudUser> users = findUsers(acctId);
+        doPropagate(acctId, users);
+        checkForErrors(acctId, userId);
+    }
+
+    private void checkForErrors(int acctId, int userId) {
         if (null != error) {
             throw new DuraCloudRuntimeException(
                 "Failed to propagate: acctId" + acctId + ", userId" + userId,

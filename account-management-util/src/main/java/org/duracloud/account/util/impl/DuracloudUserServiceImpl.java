@@ -20,10 +20,10 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.notification.Emailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,17 +232,29 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                boolean oldPasswordEncoded,
                                String newPassword)
         throws DBNotFoundException,InvalidPasswordException,DBConcurrentUpdateException {
-        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+        if(null != newPassword && !newPassword.equals(oldPassword)) {
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
 
-        DuracloudUser user = getUserRepo().findById(userId);
-        if(!oldPasswordEncoded)
-            oldPassword = util.generateChecksum(oldPassword);
-        if(!user.getPassword().equals(oldPassword)){
-            throw new InvalidPasswordException(userId);
+            DuracloudUser user = getUserRepo().findById(userId);
+            if(!oldPasswordEncoded) {
+                oldPassword = util.generateChecksum(oldPassword);
+            }
+            if(!user.getPassword().equals(oldPassword)){
+                throw new InvalidPasswordException(userId);
+            }
+
+            user.setPassword(util.generateChecksum(newPassword));
+            getUserRepo().save(user);
+
+            log.debug("Propagating update for user: " + userId);
+            Set<AccountRights> rightsSet =
+                repoMgr.getRightsRepo().findByUserId(userId);
+            // Propagate changes for each of the user's accounts
+            for(AccountRights rights : rightsSet) {
+                propagator.propagatePasswordUpdate(rights.getAccountId(),
+                                                   userId);
+            }
         }
-
-        user.setPassword(util.generateChecksum(newPassword));
-        getUserRepo().save(user);
     }
 
     @Override

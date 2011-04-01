@@ -355,7 +355,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     public void testChangePassword() throws Exception {
         String username = "test-username";
         String password = "test-newPassword";
-        setUpChangePassword(username, password);;
+        setUpChangePassword(username, true);
 
         userService.changePassword(userId, "password", false, password);
     }
@@ -366,7 +366,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         String username = "test-username";
         String password = "test-newPassword";
-        setUpChangePassword(username, password);;
+        setUpChangePassword(username, false);
 
         try {
             userService.changePassword(userId, "incorrect-password", false, password);
@@ -376,7 +376,14 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         }
     }
 
-    private void setUpChangePassword(String username, String newPassword)
+    @Test
+    public void testChangePasswordToSamePassword() throws Exception {
+        replayMocks();
+        String password = "password";
+        userService.changePassword(userId, password, false, password);
+    }
+
+    private void setUpChangePassword(String username, boolean expectPropagate)
         throws Exception {
         DuracloudUser user = newDuracloudUser(userId, username);
 
@@ -386,6 +393,15 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         userRepo.save(user);
         EasyMock.expectLastCall().anyTimes();
+
+        if(expectPropagate) {
+            EasyMock.expect(rightsRepo.findByUserId(userId))
+                .andReturn(getRightsSet())
+                .times(1);
+            propagator.propagatePasswordUpdate(acctId, userId);
+            EasyMock.expectLastCall()
+                .times(1);
+        }
 
         replayMocks();
     }
@@ -449,12 +465,8 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                 .andReturn(user)
                 .anyTimes();
 
-            Set<AccountRights> rights = new HashSet<AccountRights>();
-            Set<Role> roles = new HashSet<Role>();
-            roles.add(Role.ROLE_USER);
-            rights.add(new AccountRights(0, acctId, userId, roles));
             EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
-                .andReturn(rights)
+                .andReturn(getRightsSet())
                 .anyTimes();            
         } else {
             EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
@@ -462,6 +474,14 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         }
 
         replayMocks();
+    }
+
+    private Set<AccountRights> getRightsSet() {
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+        rights.add(new AccountRights(0, acctId, userId, roles));
+        return rights;
     }
 
 }

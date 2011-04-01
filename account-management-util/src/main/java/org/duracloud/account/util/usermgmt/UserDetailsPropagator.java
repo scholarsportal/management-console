@@ -4,7 +4,6 @@
 package org.duracloud.account.util.usermgmt;
 
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.error.DBNotFoundException;
 
 import java.util.Set;
 
@@ -24,7 +23,6 @@ public interface UserDetailsPropagator {
      * @param acctId of DuraCloud acct to update
      * @param userId of user with updated rights
      * @param roles  new roles of arg user
-     * @throws DBNotFoundException
      */
     public void propagateRights(int acctId, int userId, Set<Role> roles);
 
@@ -34,7 +32,15 @@ public interface UserDetailsPropagator {
      *
      * @param acctId of DuraCloud acct to update
      * @param userId of user with revoked rights
-     * @throws DBNotFoundException
      */
     public void propagateRevocation(int acctId, int userId);
+
+    /**
+     * This method propagates the update of a user's password down to the
+     * underlying DuraCloud webapps for the given account.
+     *
+     * @param acctId of DuraCloud acct to update
+     * @param userId of the user who has changed their password
+     */
+    public void propagatePasswordUpdate(int acctId, int userId);
 }
