@@ -13,68 +13,128 @@ import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
 
 /**
+ * This interface defines the contract for loading, storing, and managing
+ * DuracloudUser entities.
+ *
  * @author Andrew Woods Date: Oct 8, 2010
  */
 public interface DuracloudUserService {
 
+    /**
+     * This method returns true if no other user has created a profile with the
+     * arg username.
+     *
+     * @param username sought
+     * @return true if not already used
+     */
     public boolean isUsernameAvailable(String username);
 
-    public DuracloudUser createNewUser(
-        String username, String password, String firstName, String lastName,
-        String email)
+    /**
+     * This method creates and persists a new user.
+     *
+     * @param username  of new user
+     * @param password  of new user
+     * @param firstName of new user
+     * @param lastName  of new user
+     * @param email     of new user
+     * @return DuracloudUser
+     * @throws DBConcurrentUpdateException
+     * @throws UserAlreadyExistsException
+     */
+    public DuracloudUser createNewUser(String username,
+                                       String password,
+                                       String firstName,
+                                       String lastName,
+                                       String email)
         throws DBConcurrentUpdateException, UserAlreadyExistsException;
 
     /**
-     * Sets the roles of a user in an account.
-     * 
+     * This method sets the roles of a user in an account.
+     * <p/>
      * Note that this method only sets a user to new roles. To remove a user
      * from an account, use revokeAllRights().
+     *
      * @return true if an update was performed.
      */
     public boolean setUserRights(int acctId, int userId, Role... roles);
 
     /**
-     * Removes all rights to an account for a given user.
+     * This method removes all rights to an account for a given user.
+     *
+     * @param acctId on which rights will be revoked
+     * @param userId of user whose rights will be revoked
      */
     public void revokeUserRights(int acctId, int userId);
 
-    public void sendPasswordReminder(int userId);
-
-    public void changePassword(
-        int userId, String oldPassword, boolean oldPasswordEncoded, String newPassword)
+    /**
+     * This method changes the password of the user with the arg userId from
+     * the oldPassword to the newPassword.
+     *
+     * @param userId             of user who is seeking a password change
+     * @param oldPassword
+     * @param oldPasswordEncoded flag noting if the password is hashed
+     * @param newPassword
+     * @throws DBNotFoundException
+     * @throws InvalidPasswordException
+     * @throws DBConcurrentUpdateException
+     */
+    public void changePassword(int userId,
+                               String oldPassword,
+                               boolean oldPasswordEncoded,
+                               String newPassword)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException;
 
+    /**
+     * This method generates a random password, replaces the existing password
+     * with the randomly generated one, and sends an email to the address on
+     * file for the given username.
+     *
+     * @param username of user who forgot their password
+     * @throws DBNotFoundException
+     * @throws InvalidPasswordException
+     * @throws DBConcurrentUpdateException
+     * @throws UnsentEmailException
+     */
     public void forgotPassword(String username)
-        throws DBNotFoundException, InvalidPasswordException,
-               DBConcurrentUpdateException, UnsentEmailException;
+        throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException, UnsentEmailException;
 
+    /**
+     * This method loads a DuracloudUser from the persistence layer and
+     * populate its rights info.
+     *
+     * @param username of user to load
+     * @return DuracloudUser
+     * @throws DBNotFoundException
+     */
     public DuracloudUser loadDuracloudUserByUsername(String username)
         throws DBNotFoundException;
 
     /**
-     * Redeems an invitation to add this user to a DuraCloud account.
-     * 
-     * @param userId
-     *            the id of the user which will be added to the account
-     *            indicated in the invitation
-     * @param redemptionCode
-     *            code which was sent to the user as part of the invitation to
-     *            become part of an account
+     * This method redeems an invitation to add this user to a DuraCloud
+     * account.
+     *
+     * @param userId         the id of the user which will be added to the account
+     *                       indicated in the invitation
+     * @param redemptionCode code which was sent to the user as part of the invitation to
+     *                       become part of an account
      * @return the account id associated with the newly redeemed invitation.
      */
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
 
     /**
-     * 
-     * @param userId
-     * @param firstName non-blank value
-     * @param lastName non-blank value
-     * @param email non-blank value
+     * This method persists the arg user details.
+     *
+     * @param userId    of user
+     * @param firstName of user
+     * @param lastName  of user
+     * @param email     of user
      * @throws DBConcurrentUpdateException
      */
-    public void storeUserDetails(
-        int userId, String firstName, String lastName, String email)
+    public void storeUserDetails(int userId,
+                                 String firstName,
+                                 String lastName,
+                                 String email)
         throws DBNotFoundException, DBConcurrentUpdateException;
 
 }

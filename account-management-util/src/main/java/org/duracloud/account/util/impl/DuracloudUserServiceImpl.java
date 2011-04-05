@@ -222,11 +222,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }    
 
     @Override
-    public void sendPasswordReminder(int userId) {
-        // Default method body
-    }
-
-    @Override
     public void changePassword(int userId,
                                String oldPassword,
                                boolean oldPasswordEncoded,
