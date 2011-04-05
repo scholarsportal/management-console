@@ -7,7 +7,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,23 +17,25 @@ import org.springframework.security.core.Authentication;
 import java.util.Collection;
 
 /**
- * This class votes on calls to the AccountManagerService.
+ * This class votes on calls to the DuracloudInstanceManagerService.
  *
  * @author Andrew Woods
- *         Date: 3/31/11
+ *         Date: 4/5/11
  */
-public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
+public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
 
     private Logger log = LoggerFactory.getLogger(
         AccountManagerAccessDecisionVoter.class);
 
-    public AccountManagerAccessDecisionVoter(DuracloudRepoMgr repoMgr) {
+    private final int ACCT_ID_INDEX = 0;
+
+    public InstanceManagerAccessDecisionVoter(DuracloudRepoMgr repoMgr) {
         super(repoMgr);
     }
 
     @Override
     protected Class getTargetService() {
-        return AccountManagerService.class;
+        return DuracloudInstanceManagerService.class;
     }
 
     @Override
@@ -56,20 +58,13 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
         String role = securedRule.getRole();
         String scope = securedRule.getScope();
 
-        Collection<String> userRoles = getUserRoles(authentication);
-
         if (scope.equals("any")) {
+            Collection<String> userRoles = getUserRoles(authentication);
             decision = voteHasRole(role, userRoles);
 
         } else if (scope.equals("self-acct")) {
-            int acctId = getIntArg(invocation.getArguments());
+            int acctId = getAccountIdArg(invocation.getArguments());
             decision = voteUserHasRoleOnAccount(user, role, acctId);
-
-        } else if (scope.equals("self")) {
-            if (voteHasRole(role, userRoles) == ACCESS_GRANTED) {
-                int userId = getIntArg(invocation.getArguments());
-                decision = voteMyUserId(user, userId);
-            }
 
         } else {
             String err = "Invalid scope: " + scope;
@@ -80,12 +75,11 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
         return castVote(decision, invocation);
     }
 
-
-    private int getIntArg(Object[] arguments) {
-        if (arguments.length != 1) {
+    private int getAccountIdArg(Object[] arguments) {
+        if (arguments.length != 1 || arguments.length != 2) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Integer) arguments[0];
+        return (Integer) arguments[ACCT_ID_INDEX];
     }
 
     private int castVote(int decision, MethodInvocation invocation) {

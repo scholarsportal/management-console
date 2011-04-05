@@ -4,6 +4,7 @@
 package org.duracloud.account.util;
 
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.Set;
 
@@ -19,12 +20,14 @@ public interface DuracloudInstanceManagerService {
      * Starts a new instance for the given account based on the given
      * DuraCloud software version
      */
+    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
     public DuracloudInstanceService createInstance(int accountId, String version);
 
     /**
      * Retrieves all of the active DuraCloud versions
      * @return set of version options
      */
+    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
     public Set<String> getVersions();
 
     /**
@@ -35,6 +38,7 @@ public interface DuracloudInstanceManagerService {
      * @throws DuracloudInstanceNotAvailableException
      *
      */
+    @Secured({"role:ROLE_USER, scope:any"})
     public DuracloudInstanceService getInstanceService(int instanceId)
         throws DuracloudInstanceNotAvailableException;
 
@@ -47,6 +51,7 @@ public interface DuracloudInstanceManagerService {
      * @return
      *
      */
+    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
     public Set<DuracloudInstanceService> getInstanceServices(int accountId);
 
 }
