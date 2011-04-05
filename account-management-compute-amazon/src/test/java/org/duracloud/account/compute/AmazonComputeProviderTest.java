@@ -4,6 +4,7 @@
 package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.AssociateAddressRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
@@ -14,8 +15,10 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import org.easymock.Capture;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
+
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -27,10 +30,16 @@ public class AmazonComputeProviderTest {
 
     @Test
     public void testStart() throws Exception {
+        String instanceId = "my-instance-id";
+        String imageId = "abcd-image-id";
+        String securityGroup = "security-group";
+        String keyname = "keyname";
+        String elasticIp = "127.0.0.1";
+
+        // Set up mock
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
 
-        String instanceId = "my-instance-id";
         RunInstancesResult result =
             new RunInstancesResult().withReservation(
                 new Reservation().withInstances(
@@ -42,17 +51,32 @@ public class AmazonComputeProviderTest {
             mockEC2Client.runInstances(EasyMock.capture(requestCapture)))
             .andReturn(result)
             .times(1);
+
+        Capture<AssociateAddressRequest> associateCapture =
+            new Capture<AssociateAddressRequest>();
+        mockEC2Client.associateAddress(EasyMock.capture(associateCapture));
+        EasyMock.expectLastCall()
+            .times(1);
+
         EasyMock.replay(mockEC2Client);
 
+        // Run test
         AmazonComputeProvider computeProvider =
             new AmazonComputeProvider(mockEC2Client);
-        String imageId = "abcd-image-id";
-        String resultInstanceId = computeProvider.start(imageId);
+        String resultInstanceId =
+            computeProvider.start(imageId, securityGroup, keyname, elasticIp);
         assertEquals(instanceId, resultInstanceId);
 
         EasyMock.verify(mockEC2Client);
         RunInstancesRequest request = requestCapture.getValue();
         assertEquals(imageId, request.getImageId());
+        List<String> requestSecurityGroups = request.getSecurityGroups();
+        assertEquals(1, requestSecurityGroups.size());
+        assertEquals(securityGroup, requestSecurityGroups.iterator().next());
+        assertEquals(keyname, request.getKeyName());
+
+        AssociateAddressRequest associateRequest = associateCapture.getValue();
+        assertEquals(elasticIp, associateRequest.getPublicIp());
     }
 
     @Test

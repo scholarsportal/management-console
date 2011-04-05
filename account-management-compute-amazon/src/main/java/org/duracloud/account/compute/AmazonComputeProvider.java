@@ -4,6 +4,7 @@
 package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.AssociateAddressRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
@@ -14,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Bill Branan
@@ -36,14 +39,27 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     }
 
     @Override
-    public String start(String providerImageId) {
+    public String start(String providerImageId,
+                        String securityGroup,
+                        String keyname,
+                        String elasticIp) {
         RunInstancesRequest request =
             new RunInstancesRequest(providerImageId, 1, 1);
-        // TODO - request.setSecurityGroups();
-        // TODO - request.setKeyName();
+
+        Set<String> securityGroups = new HashSet<String>();
+        securityGroups.add(securityGroup);
+        request.setSecurityGroups(securityGroups);
+        request.setKeyName(keyname);
+
         RunInstancesResult result = ec2Client.runInstances(request);
-        return result.getReservation().getInstances().iterator().next()
-                     .getInstanceId();
+        String instanceId = result.getReservation().getInstances()
+                                  .iterator().next().getInstanceId();
+
+        AssociateAddressRequest associateRequest =
+            new AssociateAddressRequest(instanceId, elasticIp);
+        ec2Client.associateAddress(associateRequest);
+
+        return instanceId;
     }
 
     @Override

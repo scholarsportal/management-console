@@ -6,6 +6,7 @@ package org.duracloud.account.util.instance.impl;
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -24,14 +25,11 @@ import java.util.Set;
  * @author Andrew Woods
  *         Date: Feb 3, 2011
  */
-public class InstanceUpdaterImpl implements InstanceUpdater {
+public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
 
     private Logger log = LoggerFactory.getLogger(InstanceUpdaterImpl.class);
 
     private final static String port = "443";
-    private final static String duraserviceContext = "duraservice";
-    private final static String durastoreContext = "durastore";
-    private final static String duradminContext = "duradmin";
 
     @Override
     public void initializeInstance(String host,
@@ -97,17 +95,17 @@ public class InstanceUpdaterImpl implements InstanceUpdater {
 
     private Application getDuradminApplication(String host,
                                                RestHttpHelper restHelper) {
-        return new Application(host, port, duradminContext, restHelper);
+        return new Application(host, port, DURADMIN_CONTEXT, restHelper);
     }
 
     private Application getDurastoreApplication(String host,
                                                 RestHttpHelper restHelper) {
-        return new Application(host, port, durastoreContext, restHelper);
+        return new Application(host, port, DURASTORE_CONTEXT, restHelper);
     }
 
     private Application getDuraserviceApplication(String host,
                                                   RestHttpHelper restHelper) {
-        return new Application(host, port, duraserviceContext, restHelper);
+        return new Application(host, port, DURASERVICE_CONTEXT, restHelper);
     }
 
     private void checkResponse(String name,

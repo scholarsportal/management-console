@@ -13,6 +13,11 @@ public class DuracloudProviderAccountNotAvailableException extends DuraCloudRunt
 
     private static final long serialVersionUID = 1L;
 
+    public DuracloudProviderAccountNotAvailableException(int providerAccountId) {
+        super("Compute Provider Account with ID " + providerAccountId +
+              " could not be found in the database");
+    }
+
     public DuracloudProviderAccountNotAvailableException(String message) {
         super(message);
     }

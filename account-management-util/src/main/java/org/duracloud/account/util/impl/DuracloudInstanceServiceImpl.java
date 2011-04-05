@@ -23,8 +23,10 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
+import org.duracloud.account.util.instance.InstanceAccessUtil;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.appconfig.domain.DuradminConfig;
@@ -47,7 +49,8 @@ import java.util.Set;
  */
 public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
-    private Logger log = LoggerFactory.getLogger(DuracloudInstanceServiceImpl.class);
+    private Logger log =
+        LoggerFactory.getLogger(DuracloudInstanceServiceImpl.class);
 
     private int accountId;
     private DuracloudInstance instance;
@@ -57,6 +60,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private InstanceUpdater instanceUpdater;
     private InstanceConfigUtil instanceConfigUtil;
     private Credential rootCredential;
+    private int timeoutMinutes = 5;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
@@ -125,48 +129,53 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
     @Override
     public void stop() {
+        // Terminate the instance
         computeProvider.stop(instance.getProviderInstanceId());
+        // Remove this instance from the DB
+        repoMgr.getInstanceRepo().delete(instance.getId());
     }
 
     @Override
     public void restart() {
-        restart(true);
-    }
-
-    protected void restart(boolean wait) {
         computeProvider.restart(instance.getProviderInstanceId());
-
-        // TODO: It would be a better solution to poll the instance in order
-        //       to determine when it is available to be initialized rather
-        //       than just waiting 5 minutes.
-        if(wait) {
-            int waitMinutes = 5;
-            new ThreadedInitializer(waitMinutes).start();
-        } else {
-            initialize();
-        }
+        doInitialize(true);
     }
 
     private class ThreadedInitializer extends Thread {
-        private int waitMinutes;
+        private int timeoutMinutes;
 
-        public ThreadedInitializer(int waitMinutes) {
-            this.waitMinutes = waitMinutes;
+        public ThreadedInitializer(int timeoutMinutes) {
+            this.timeoutMinutes = timeoutMinutes;
         }
 
         public void run() {
-            try {
-                sleep(waitMinutes * 60000);
-            } catch(InterruptedException e) {
-            }
-            initialize();
+            InstanceAccessUtil accessUtil = new InstanceAccessUtilImpl();
+            accessUtil.waitInstanceAvailable(instance.getHostName(),
+                                             timeoutMinutes * 60000);
+            doInitialize(false);
         }
     }
 
     @Override
     public void initialize() {
-        initializeInstance();
-        initializeUserRoles();
+        doInitialize(true);
+    }
+
+    protected void doInitialize(boolean wait) {
+        if(wait && timeoutMinutes > 0) {
+            new ThreadedInitializer(timeoutMinutes).start();
+        } else {
+            initializeInstance();
+            initializeUserRoles();
+        }
+    }
+
+    /*
+     * Sets the number of minutes to wait for an instance to be available.
+     * This method is intended to be used only for testing purposes.
+     */
+    protected void setInitializeTimeout(int timeoutMinutes) {
+        this.timeoutMinutes = timeoutMinutes;
     }
 
     private void initializeInstance() {

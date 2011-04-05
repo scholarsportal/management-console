@@ -19,6 +19,7 @@ import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
@@ -54,6 +55,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudServerImageRepo serverImageRepo;
     protected ServerImage serverImage;
+    protected IdUtil idUtil;
 
     @Before
     public void setup() throws Exception {
@@ -92,6 +94,7 @@ public class DuracloudInstanceServiceTestBase {
         serverImageRepo = EasyMock.createMock("DuracloudServerImageRepo",
                                               DuracloudServerImageRepo.class);
         serverImage = EasyMock.createMock("ServerImage", ServerImage.class);
+        idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
@@ -119,7 +122,8 @@ public class DuracloudInstanceServiceTestBase {
                         instanceConfigUtil,
                         accountRepo,
                         serverImageRepo,
-                        serverImage);
+                        serverImage,
+                        idUtil);
     }
 
     @After
@@ -140,7 +144,8 @@ public class DuracloudInstanceServiceTestBase {
                         instanceConfigUtil,
                         accountRepo,
                         serverImageRepo,
-                        serverImage);
+                        serverImage,
+                        idUtil);
     }
 
     protected void setUpInitComputeProvider() throws Exception {

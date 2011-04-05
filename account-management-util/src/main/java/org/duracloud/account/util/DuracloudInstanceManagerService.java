@@ -16,9 +16,16 @@ import java.util.Set;
 public interface DuracloudInstanceManagerService {
 
     /**
-     * Starts a new instance for the given account from the given image.
+     * Starts a new instance for the given account based on the given
+     * DuraCloud software version
      */
-    public DuracloudInstanceService createInstance(int accountId, int imageId);
+    public DuracloudInstanceService createInstance(int accountId, String version);
+
+    /**
+     * Retrieves all of the active DuraCloud versions
+     * @return set of version options
+     */
+    public Set<String> getVersions();
 
     /**
      * Retrieves the DuraCloud instance with the given ID wrapped in a class

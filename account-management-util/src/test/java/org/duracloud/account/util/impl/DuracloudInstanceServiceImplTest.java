@@ -68,7 +68,18 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expectLastCall()
             .times(1);
         EasyMock.expect(instance.getProviderInstanceId())
-            .andReturn("id")
+            .andReturn("provider-id")
+            .times(1);
+
+        int instanceId = 42;
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
+            .times(1);
+        instanceRepo.delete(instanceId);
+        EasyMock.expectLastCall().times(1);
+
+        EasyMock.expect(instance.getId())
+            .andReturn(instanceId)
             .times(1);
 
         replayMocks();
@@ -77,10 +88,30 @@ public class DuracloudInstanceServiceImplTest
     }
 
     @Test
+    public void testInitialize() throws Exception {
+        setUpInitializeMocks();
+        replayMocks();
+        service.initialize();
+    }
+
+    @Test
     public void testRestart() throws Exception {
         computeProvider.restart(EasyMock.isA(String.class));
         EasyMock.expectLastCall()
             .times(1);
+        EasyMock.expect(instance.getProviderInstanceId())
+            .andReturn("id")
+            .times(1);
+
+        setUpInitializeMocks();
+        replayMocks();
+
+        service.restart();
+    }
+
+    private void setUpInitializeMocks() throws Exception {
+        // Set timeout to 0, to prevent waiting for instance availability
+        service.setInitializeTimeout(0);
 
         DuradminConfig duradminConfig = new DuradminConfig();
         EasyMock.expect(instanceConfigUtil.getDuradminConfig())
@@ -93,9 +124,6 @@ public class DuracloudInstanceServiceImplTest
             .andReturn(new DuraserviceConfig())
             .times(1);
 
-        EasyMock.expect(instance.getProviderInstanceId())
-            .andReturn("id")
-            .times(1);
         EasyMock.expect(instance.getHostName())
             .andReturn("host")
             .times(2);
@@ -137,10 +165,6 @@ public class DuracloudInstanceServiceImplTest
             .times(1);
 
         setUpServerImageMocks();
-
-        replayMocks();
-
-        service.restart(false);
     }
 
     private void setUpServerImageMocks() throws Exception {
@@ -150,7 +174,7 @@ public class DuracloudInstanceServiceImplTest
                                                   0,
                                                   "provider-image-id",
                                                   "version",
-                                                  "description", 
+                                                  "description",
                                                   rootPassword);
 
         EasyMock.expect(repoMgr.getServerImageRepo())
