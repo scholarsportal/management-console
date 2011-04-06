@@ -11,6 +11,7 @@ import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import org.duracloud.account.compute.error.InstanceStartupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,27 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
 	private Logger log = LoggerFactory.getLogger(AmazonComputeProvider.class);
 
+    private static final int STARTUP_WAIT_TIME = 300000; // 5 min
+    private static final int SLEEP_TIME = 5000;
+
     private AmazonEC2Client ec2Client;
+
+    private enum InstanceState {
+        PENDING("pending"),
+        RUNNING("running"),
+        SHUTTING_DOWN("shutting-down"),
+        TERMINATED("terminated");
+
+        private String value;
+
+        private InstanceState(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 
     public AmazonComputeProvider(String accessKey, String secretKey) {
         this.ec2Client =
@@ -38,11 +59,19 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         this.ec2Client = ec2Client;
     }
 
-    @Override
+        @Override
     public String start(String providerImageId,
                         String securityGroup,
                         String keyname,
                         String elasticIp) {
+        return doStart(providerImageId, securityGroup, keyname, elasticIp, true);
+    }
+
+    protected String doStart(String providerImageId,
+                             String securityGroup,
+                             String keyname,
+                             String elasticIp,
+                             boolean wait) {
         RunInstancesRequest request =
             new RunInstancesRequest(providerImageId, 1, 1);
 
@@ -55,11 +84,45 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         String instanceId = result.getReservation().getInstances()
                                   .iterator().next().getInstanceId();
 
+        if(wait) {
+            boolean running = waitInstanceRunning(instanceId, STARTUP_WAIT_TIME);
+            if(!running) {
+                stop(instanceId);
+                String err = "Instance with ID " + instanceId +
+                    " did not start within " + STARTUP_WAIT_TIME/60000 +
+                    " minutes. The instance has been shut down.";
+                throw new InstanceStartupException(err);
+            }
+        }
+
         AssociateAddressRequest associateRequest =
             new AssociateAddressRequest(instanceId, elasticIp);
         ec2Client.associateAddress(associateRequest);
 
         return instanceId;
+    }
+
+    public boolean waitInstanceRunning(String instanceId, long timeout) {
+        long start = System.currentTimeMillis();
+        while(!InstanceState.RUNNING.getValue().equals(getStatus(instanceId))) {
+            long now = System.currentTimeMillis();
+            if(now - start > timeout) {
+                log.warn("EC2 instance with ID " + instanceId +
+                   " was not available prior to wait timeout of " +
+                   timeout + " milliseconds.");
+                return false;
+            } else {
+                sleep(SLEEP_TIME);
+            }
+        }
+        return true;
+    }
+
+    private void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch(InterruptedException e) {
+        }
     }
 
     @Override

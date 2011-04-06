@@ -41,6 +41,7 @@ import java.util.Set;
 public class AccountController extends AbstractAccountController {
 
     public static final String NEW_ACCOUNT_FORM_KEY = "newAccountForm";
+    public static final String NEW_INSTANCE_FORM = "instanceForm";
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -78,7 +79,30 @@ public class AccountController extends AbstractAccountController {
                                instanceService.getInstanceInfo());
             model.addAttribute(INSTANCE_STATUS_KEY,
                                instanceService.getStatus());
+        } else {
+            Set<String> versions = instanceManagerService.getVersions();
+            model.addAttribute(DC_VERSIONS_KEY, versions);
+            model.addAttribute(NEW_INSTANCE_FORM, new AccountInstanceForm());
         }
+    }
+
+    @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
+    public String startInstance(@PathVariable int accountId,
+                                @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
+                                Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        startInstance(accountId, instanceForm.getVersion());
+        loadAccountInfo(accountId, model);
+        loadAccountInstances(accountId, model);
+        model.addAttribute(ACTION_STATUS,
+                           "Instance STARTED successfully, it will be " +
+                           "available for use in 5 minutes.");
+        return "account-instance";
+    }
+
+    protected void startInstance(int accountId, String version) {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.createInstance(accountId, version);
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
@@ -88,21 +112,11 @@ public class AccountController extends AbstractAccountController {
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         restartInstance(instanceId);
         loadAccountInfo(accountId, model);
-        loadInstanceInfo(instanceId, model);
+        loadAccountInstances(accountId, model);
         model.addAttribute(ACTION_STATUS,
-                           "Instance restarted successfully, it will be " +
-                               "available for use in 5 minutes.");
+                           "Instance RESTARTED successfully, it will be " +
+                           "available for use in 5 minutes.");
         return "account-instance";
-    }
-
-    protected void loadInstanceInfo(int instanceId, Model model)
-        throws DuracloudInstanceNotAvailableException {
-        DuracloudInstanceService instanceService =
-            instanceManagerService.getInstanceService(instanceId);
-        model.addAttribute(INSTANCE_INFO_KEY,
-                           instanceService.getInstanceInfo());
-        model.addAttribute(INSTANCE_STATUS_KEY,
-                           instanceService.getStatus());
     }
 
     protected void restartInstance(int instanceId)
@@ -110,6 +124,25 @@ public class AccountController extends AbstractAccountController {
         DuracloudInstanceService instanceService =
             instanceManagerService.getInstanceService(instanceId);
         instanceService.restart();
+    }
+
+    @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)
+    public String stopInstance(@PathVariable int accountId,
+                               @PathVariable int instanceId,
+                               Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        stopInstance(instanceId);
+        loadAccountInfo(accountId, model);
+        loadAccountInstances(accountId, model);
+        model.addAttribute(ACTION_STATUS, "Instance STOPPED successfully.");
+        return "account-instance";
+    }
+
+    protected void stopInstance(int instanceId)
+        throws DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService =
+            instanceManagerService.getInstanceService(instanceId);
+        instanceService.stop();
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)

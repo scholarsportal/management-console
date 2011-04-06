@@ -19,11 +19,6 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -72,7 +67,9 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetInstance() throws Exception {
-        initializeMockInstanceManagerService(false);
+        initializeMockInstanceManagerService();
+        replayMocks();
+
         accountController.setInstanceManagerService(this.instanceManagerService);
 
         Model model = new ExtendedModelMap();
@@ -84,17 +81,54 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testRestartInstance() throws Exception {
-        initializeMockInstanceManagerService(true);
+        initializeMockInstanceManagerService();
+        initRestart(TEST_ACCOUNT_ID);
+        replayMocks();
         accountController.setInstanceManagerService(this.instanceManagerService);
 
         Model model = new ExtendedModelMap();
         accountController.restartInstance(TEST_ACCOUNT_ID,
                                           TEST_INSTANCE_ID,
                                           model);
+        verifyResult(model);
+    }
+
+    private void verifyResult(Model model) {
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
         Assert.assertTrue(model.containsAttribute(AccountController.ACTION_STATUS));
 
         EasyMock.verify(instanceManagerService, instanceService);
+    }
+
+    @Test
+    public void testStartInstance() throws Exception {
+        String version = "1.0";
+        initializeMockInstanceManagerService();
+        initStart(TEST_ACCOUNT_ID, version);
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        AccountInstanceForm instanceForm = new AccountInstanceForm();
+        instanceForm.setVersion(version);
+        accountController.startInstance(TEST_ACCOUNT_ID,
+                                        instanceForm,
+                                        model);
+        verifyResult(model);
+    }
+
+    @Test
+    public void testStopInstance() throws Exception {
+        initializeMockInstanceManagerService();
+        initStop(TEST_ACCOUNT_ID);
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.stopInstance(TEST_ACCOUNT_ID,
+                                       TEST_INSTANCE_ID,
+                                       model);
+        verifyResult(model);
     }
 
     @Test
@@ -174,7 +208,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         accountController.setUserService(userService);
     }
 
-    private void initializeMockInstanceManagerService(boolean restart) throws Exception {
+    private void initializeMockInstanceManagerService() throws Exception {
         instanceManagerService =
             EasyMock.createMock(DuracloudInstanceManagerService.class);
 
@@ -183,12 +217,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
             new HashSet<DuracloudInstanceService>();
         instanceServices.add(instanceService);
 
-        if(!restart) {
-            EasyMock.expect(
-                instanceManagerService.getInstanceServices(EasyMock.anyInt()))
-                .andReturn(instanceServices)
-                .times(1);
-        }
+        EasyMock.expect(
+            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            .andReturn(instanceServices)
+            .times(1);
 
         EasyMock.expect(instanceService.getStatus())
             .andReturn("status")
@@ -199,19 +231,39 @@ public class AccountControllerTest extends AmaControllerTestBase {
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
             .times(1);
+    }
 
-        if(restart) {
-            EasyMock.expect(instanceManagerService.
-                getInstanceService(EasyMock.anyInt()))
-                .andReturn(instanceService)
-                .anyTimes();
+    private void initRestart(int accountId) throws Exception {
+        EasyMock.expect(instanceManagerService.
+            getInstanceService(accountId))
+            .andReturn(instanceService)
+            .anyTimes();
 
-            instanceService.restart();
-            EasyMock.expectLastCall()
-                .times(1);
-        }
+        instanceService.restart();
+        EasyMock.expectLastCall()
+            .times(1);
+    }
 
-        EasyMock.replay(instanceManagerService, instanceService);
+    private void initStart(int accountId, String version) throws Exception {
+        EasyMock.expect(instanceManagerService.
+            createInstance(accountId, version))
+            .andReturn(instanceService)
+            .anyTimes();
+    }
+
+    private void initStop(int accountId) throws Exception {
+        EasyMock.expect(instanceManagerService.
+            getInstanceService(accountId))
+            .andReturn(instanceService)
+            .anyTimes();
+
+        instanceService.stop();
+        EasyMock.expectLastCall()
+            .times(1);
+    }
+
+    private void replayMocks() {
+       EasyMock.replay(instanceManagerService, instanceService);
     }
 
 }

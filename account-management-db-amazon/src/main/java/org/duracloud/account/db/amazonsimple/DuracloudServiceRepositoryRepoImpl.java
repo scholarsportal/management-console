@@ -16,7 +16,11 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.VERSION_ATT;
 
 /**
  * @author: Bill Branan
@@ -68,4 +72,14 @@ public class DuracloudServiceRepositoryRepoImpl
         caller.putAttributes(db, request);
     }
 
+    @Override
+    public Set<ServiceRepository> findByVersion(String version) throws DBNotFoundException {
+        List<Item> items = findItemsByAttribute(VERSION_ATT, version);
+        Set<ServiceRepository> set = new HashSet<ServiceRepository>();
+        for(Item item : items) {
+            set.add(converter.fromAttributes(item.getAttributes(),
+                                             idFromString(item.getName())));
+        }
+        return set;
+    }
 }

@@ -72,7 +72,6 @@ public class DuracloudInstanceManagerServiceImplTest
         int imageId = 1;
         String username = "username";
         String password = "password";
-        String version = "1.0";
         String providerImageId = "1";
         String securityGroup = "security-group";
         String keypair = "keypair";
@@ -95,13 +94,6 @@ public class DuracloudInstanceManagerServiceImplTest
             .times(1);
         EasyMock.expect(computeProviderAcctRepo.findById(computeProvAcctId))
             .andReturn(computeProviderAcct)
-            .times(1);
-
-        EasyMock.expect(repoMgr.getServerImageRepo())
-            .andReturn(serverImageRepo)
-            .times(1);
-        EasyMock.expect(serverImageRepo.findById(imageId))
-            .andReturn(serverImage)
             .times(1);
 
         EasyMock.expect(computeProviderUtil.getComputeProvider(username,
@@ -143,6 +135,9 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(idUtil.newInstanceId())
             .andReturn(instanceId)
             .times(1);
+        EasyMock.expect(serverImage.getId())
+            .andReturn(imageId)
+            .times(1);
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)
             .times(1);
@@ -154,7 +149,7 @@ public class DuracloudInstanceManagerServiceImplTest
         replayMocks();
 
         DuracloudInstance instance =
-            managerService.doCreateInstance(accountId, imageId);
+            managerService.doCreateInstance(accountId, serverImage);
         assertNotNull(instance);
     }
 

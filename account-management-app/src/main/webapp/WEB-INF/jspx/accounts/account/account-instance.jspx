@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
- version="2.0"
- xmlns="http://www.w3.org/1999/xhtml"
- xmlns:jsp="http://java.sun.com/JSP/Page"
- xmlns:tiles="http://tiles.apache.org/tags-tiles"
- xmlns:c="http://java.sun.com/jsp/jstl/core">
+        version="2.0"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:jsp="http://java.sun.com/JSP/Page"
+        xmlns:tiles="http://tiles.apache.org/tags-tiles"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:form="http://www.springframework.org/tags/form">
   <jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 
   <tiles:insertDefinition name="app-base">
@@ -23,6 +24,18 @@
               <c:choose>
                 <c:when test="${instanceStatus == null}">
                   <h3>No instance associated with this account.</h3>
+                  <form:form
+                    id="instance-start-form"
+                    method="post"
+                    action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/start"
+                    modelAttribute="instanceForm">
+                    <form:select
+                      id="versions"
+                      cssErrorClass="error"
+                      path="version"
+                      items="${dcVersions}" />
+                    <button type="submit">Start New Instance</button>
+                  </form:form>
                 </c:when>
                 <c:otherwise>
                   <table>
@@ -44,6 +57,10 @@
                         <form action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/byid/${instanceInfo.id}/restart"
                               method="post">
                           <button type="submit">Restart</button>
+                        </form>
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/byid/${instanceInfo.id}/stop"
+                              method="post">
+                          <button type="submit">Stop</button>
                         </form>
                       </td>
                     </tr>

@@ -63,8 +63,11 @@ public class AmazonComputeProviderTest {
         // Run test
         AmazonComputeProvider computeProvider =
             new AmazonComputeProvider(mockEC2Client);
-        String resultInstanceId =
-            computeProvider.start(imageId, securityGroup, keyname, elasticIp);
+        String resultInstanceId = computeProvider.doStart(imageId,
+                                                          securityGroup,
+                                                          keyname,
+                                                          elasticIp,
+                                                          false);
         assertEquals(instanceId, resultInstanceId);
 
         EasyMock.verify(mockEC2Client);

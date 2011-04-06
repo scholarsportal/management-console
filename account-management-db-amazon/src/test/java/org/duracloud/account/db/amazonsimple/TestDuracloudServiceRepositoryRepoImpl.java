@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -29,9 +30,13 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         ServiceRepository.ServiceRepositoryType.VERIFIED;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
-    private static final String version = "version";
     private static final String username = "username";
     private static final String password = "password";
+
+    private static final ServiceRepository.ServiceRepositoryType verifiedType =
+        ServiceRepository.ServiceRepositoryType.VERIFIED;
+    private static final ServiceRepository.ServiceRepositoryType privateType =
+        ServiceRepository.ServiceRepositoryType.PRIVATE;
 
     @Before
     public void setUp() throws Exception {
@@ -71,9 +76,16 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     @Test
     public void testGetIds() throws Exception {
-        ServiceRepository serviceRepo0 = createServiceRepo(0);
-        ServiceRepository serviceRepo1 = createServiceRepo(1);
-        ServiceRepository serviceRepo2 = createServiceRepo(2);
+        String version1 = "1.0";
+        String version2 = "2.0";
+
+
+        ServiceRepository serviceRepo0 =
+            createServiceRepo(0, verifiedType,version1);
+        ServiceRepository serviceRepo1 =
+            createServiceRepo(1, verifiedType, version2);
+        ServiceRepository serviceRepo2 =
+            createServiceRepo(2, privateType, version2);
 
         serviceRepositoryRepo.save(serviceRepo0);
         serviceRepositoryRepo.save(serviceRepo1);
@@ -90,9 +102,12 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
             }
         }.call(expectedIds.size());
 
-        verifyAccount(serviceRepo0);
-        verifyAccount(serviceRepo1);
-        verifyAccount(serviceRepo2);
+        verifyFindById(serviceRepo0);
+        verifyFindById(serviceRepo1);
+        verifyFindById(serviceRepo2);
+
+        verifyFindByVersion(version1, serviceRepo0);
+        verifyFindByVersion(version2, serviceRepo1, serviceRepo2);
 
         // test concurrency
         verifyCounter(serviceRepo0, 1);
@@ -120,7 +135,8 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     @Test
     public void testDelete() throws Exception {
-        ServiceRepository serviceRepo0 = createServiceRepo(0);
+        ServiceRepository serviceRepo0 =
+            createServiceRepo(0, verifiedType, "0.0");
         serviceRepositoryRepo.save(serviceRepo0);
         verifyRepoSize(serviceRepositoryRepo, 1);
 
@@ -128,9 +144,12 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         verifyRepoSize(serviceRepositoryRepo, 0);
     }
 
-    private ServiceRepository createServiceRepo(int id) {
+    private ServiceRepository createServiceRepo(int id,
+                                                ServiceRepository.
+                                                    ServiceRepositoryType type,
+                                                String version) {
         return new ServiceRepository(id,
-                                     serviceRepositoryType,
+                                     type,
                                      hostName,
                                      spaceId,
                                      version,
@@ -138,7 +157,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
                                      password);
     }
 
-    private void verifyAccount(final ServiceRepository serviceRepo) {
+    private void verifyFindById(final ServiceRepository serviceRepo) {
         new DBCaller<ServiceRepository>() {
             protected ServiceRepository doCall() throws Exception {
                 return serviceRepositoryRepo.findById(serviceRepo.getId());
@@ -152,6 +171,15 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
                 return serviceRepositoryRepo.findById(serviceRepo.getId()).getCounter();
             }
         }.call(counter);
+    }
+
+    private void verifyFindByVersion(final String version,
+                                     final ServiceRepository... serviceRepos) {
+        new DBCallerVarArg<ServiceRepository>() {
+            protected Set<ServiceRepository> doCall() throws Exception {
+                return serviceRepositoryRepo.findByVersion(version);
+            }
+        }.call(serviceRepos);
     }
 
 }

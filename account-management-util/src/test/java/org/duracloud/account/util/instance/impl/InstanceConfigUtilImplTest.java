@@ -213,47 +213,39 @@ public class InstanceConfigUtilImplTest {
             .andReturn(serverImageId)
             .times(1);
 
-        String serverImageVersion = "version";
+        String version = "version";
         ServerImage serverImage = new ServerImage(serverImageId,
                                                   0,
                                                   "providerImageId",
-                                                  serverImageVersion,
+                                                  version,
                                                   "description",
                                                   "rootPass");
         EasyMock.expect(serverImageRepo.findById(serverImageId))
             .andReturn(serverImage)
             .times(1);
 
-        int accountId = 14;
-        setUpGetAccount(accountId);
-
-        int serviceRepoId = 1;
-        Set<Integer> serviceRepoIds = new HashSet<Integer>();
-        serviceRepoIds.add(serviceRepoId);
-        EasyMock.expect(account.getSecondaryServiceRepositoryIds())
-            .andReturn(serviceRepoIds)
-            .times(1);
-
         EasyMock.expect(repoMgr.getServiceRepositoryRepo())
             .andReturn(serviceRepositoryRepo)
             .times(1);
 
+        Set<ServiceRepository> serviceRepos = new HashSet<ServiceRepository>();
         ServiceRepository.ServiceRepositoryType serviceRepoType =
             ServiceRepository.ServiceRepositoryType.VERIFIED;
+        int serviceRepoId = 1;
         String serviceRepoHost = "serviceRepoHost";
         String serviceRepoSpaceId = "serviceRepoSpaceId";
-        String serviceRepoVersion = "serviceRepoVersion";
         String serviceRepoUsername = "serviceRepoUsername";
         String serviceRepoPassword = "serviceRepoPassword";
         ServiceRepository serviceRepo = new ServiceRepository(serviceRepoId,
                                                               serviceRepoType,
                                                               serviceRepoHost,
                                                               serviceRepoSpaceId,
-                                                              serviceRepoVersion,
+                                                              version,
                                                               serviceRepoUsername,
                                                               serviceRepoPassword);
-        EasyMock.expect(serviceRepositoryRepo.findById(serviceRepoId))
-            .andReturn(serviceRepo)
+        serviceRepos.add(serviceRepo);
+        EasyMock.expect(serviceRepositoryRepo.findByVersion(version))
+            .andReturn(serviceRepos)
             .times(1);
 
         replayMocks();
@@ -270,7 +262,7 @@ public class InstanceConfigUtilImplTest {
         assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICES_ADMIN_PORT,
                      primaryInstance.getServicesAdminPort());
         assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX +
-                     serverImageVersion,
+                     version,
                      primaryInstance.getServicesAdminContext());
 
         // User Store

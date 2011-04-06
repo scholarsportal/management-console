@@ -31,7 +31,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         "SERVICE_REPOSITORY_TYPE";
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String SPACE_ID_ATT = "SPACE_ID";
-    protected static final String VERSION_ATT = "VERSION";
+    public static final String VERSION_ATT = "VERSION";
     protected static final String USERNAME_ATT = "USERNAME";
     protected static final String PASSWORD_ATT = "PASSWORD";
 

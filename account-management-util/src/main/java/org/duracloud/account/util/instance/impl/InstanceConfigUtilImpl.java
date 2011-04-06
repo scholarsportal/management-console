@@ -124,12 +124,14 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String instanceHost = instance.getHostName();
 
         // Get the Server Image (for version)
+        String imageVersion;
         String servicesAdminVersion;
         try {
             ServerImage image =
                 repoMgr.getServerImageRepo().findById(instance.getImageId());
-            String version = image.getVersion();
-            servicesAdminVersion = version.replaceAll("-SNAPSHOT", ".SNAPSHOT");
+            imageVersion= image.getVersion();
+            servicesAdminVersion =
+                imageVersion.replaceAll("-SNAPSHOT", ".SNAPSHOT");
         } catch(DBNotFoundException e) {
             String error = "Server Image with ID: " + instance.getImageId() +
                            " does not exist in the database.";
@@ -160,29 +162,29 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String serviceStoreHost;
         String serviceStoreSpaceId;
         String serviceStoreUsername;
-        String serviceStorePassword;        
-        Set<Integer> repoIds = getAccount().getSecondaryServiceRepositoryIds();
+        String serviceStorePassword;
 
-        if(null != repoIds && repoIds.size() > 0) {
-            int serviceRepoId = repoIds.iterator().next();
-            try {
-                ServiceRepository serviceRepo =
-                    repoMgr.getServiceRepositoryRepo().findById(serviceRepoId);
-                serviceStoreHost = serviceRepo.getHostName();
-                serviceStoreSpaceId = serviceRepo.getSpaceId();
-                serviceStoreUsername = serviceRepo.getUsername();
-                serviceStorePassword = serviceRepo.getPassword();
-            } catch(DBNotFoundException e) {
-                String error = "Server Image with ID: " + instance.getImageId() +
-                               " does not exist in the database.";
-                throw new DuracloudServiceRepositoryNotAvailableException(error, e);
-            }
-        } else {
-            String error = "Instance with ID: " + instance.getId() +
-                           " does not include any service repositories " +
-                           "in the database.";
-            throw new DuracloudServiceRepositoryNotAvailableException(error);
+        Set<ServiceRepository> serviceRepos;
+        try {
+            serviceRepos =
+                repoMgr.getServiceRepositoryRepo().findByVersion(imageVersion);
+        } catch(DBNotFoundException e) {
+            String error = "No Service Repositories for version " +
+                            imageVersion + " exist in the database.";
+            throw new DuracloudServiceRepositoryNotAvailableException(error, e);
         }
+
+        /* TODO: Make use of secondary service repos
+        Set<Integer> secondaryRepoIds =
+            getAccount().getSecondaryServiceRepositoryIds();
+        */
+
+        // The list should only be size == 1, so just use the first repo for now
+        ServiceRepository serviceRepo = serviceRepos.iterator().next();
+        serviceStoreHost = serviceRepo.getHostName();
+        serviceStoreSpaceId = serviceRepo.getSpaceId();
+        serviceStoreUsername = serviceRepo.getUsername();
+        serviceStorePassword = serviceRepo.getPassword();
 
         // Service Store
         DuraserviceConfig.ServiceStore serviceStore

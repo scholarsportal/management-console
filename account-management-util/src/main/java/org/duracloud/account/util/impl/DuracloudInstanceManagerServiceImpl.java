@@ -87,7 +87,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         Set<ServerImage> serverImages = getServerImages();
         for(ServerImage image : serverImages) {
             if(version.equals(image.getVersion())) {
-                return createInstance(accountId, image.getId());
+                return createInstance(accountId, image);
             }
         }
 
@@ -95,20 +95,21 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         throw new DuracloudInstanceCreationException(err);
     }
 
-    private DuracloudInstanceService createInstance(int accountId, int imageId) {
+    private DuracloudInstanceService createInstance(int accountId,
+                                                    ServerImage image) {
         try {
-            DuracloudInstance instance = doCreateInstance(accountId, imageId);
+            DuracloudInstance instance = doCreateInstance(accountId, image);
             return initializeInstance(accountId, instance);
         } catch(DBNotFoundException e) {
             String err = "Could not create instance for account with ID " +
-                         accountId + " based on image with ID " + imageId +
-                         " due to error: " + e.getMessage();
+                         accountId + " based on image with ID " +
+                         image.getId() + " due to error: " + e.getMessage();
             throw new DuracloudInstanceCreationException(err, e);
         }
     }
 
     protected DuracloudInstance doCreateInstance(int accountId,
-                                                 int imageId)
+                                                 ServerImage image)
         throws DBNotFoundException {
         // Get Account information
         AccountInfo account = repoMgr.getAccountRepo().findById(accountId);
@@ -117,9 +118,6 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         int cpAccountId = account.getComputeProviderAccountId();
         ComputeProviderAccount computeProviderAcct =
             repoMgr.getComputeProviderAccountRepo().findById(cpAccountId);
-
-        // Get info about the server image which will be used to create instance
-        ServerImage image = repoMgr.getServerImageRepo().findById(imageId);
 
         // Get access to a duracloud compute provider
         DuracloudComputeProvider computeProvider =
@@ -137,7 +135,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         String hostName = account.getSubdomain() + HOST_SUFFIX;
         int instanceId = repoMgr.getIdUtil().newInstanceId();
         DuracloudInstance instance = new DuracloudInstance(instanceId,
-                                                           imageId,
+                                                           image.getId(),
                                                            accountId,
                                                            hostName,
                                                            providerInstanceId);

@@ -25,7 +25,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
         long start = System.currentTimeMillis();
         while(!instanceAvailable(hostname)) {
             long now = System.currentTimeMillis();
-            if(start + now > start + timeout) {
+            if(now - start > timeout) {
                 log.warn("Instance at host " + hostname +
                    " was not available prior to wait timeout of " +
                    timeout + " milliseconds. Returning anyway.");
