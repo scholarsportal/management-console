@@ -51,18 +51,18 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
         }
 
         // Collect user making the call.
-        DuracloudUser user = (DuracloudUser) authentication.getPrincipal();
+        DuracloudUser user = getCurrentUser(authentication);
 
         // Collect security constraints on method.
         SecuredRule securedRule = getRule(configAttributes);
-        String role = securedRule.getRole();
-        String scope = securedRule.getScope();
+        String role = securedRule.getRole().name();
+        SecuredRule.Scope scope = securedRule.getScope();
 
-        if (scope.equals("any")) {
+        if (scope.equals(SecuredRule.Scope.ANY)) {
             Collection<String> userRoles = getUserRoles(authentication);
             decision = voteHasRole(role, userRoles);
 
-        } else if (scope.equals("self-acct")) {
+        } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
             int acctId = getAccountIdArg(invocation.getArguments());
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
@@ -76,7 +76,7 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
     }
 
     private int getAccountIdArg(Object[] arguments) {
-        if (arguments.length != 1 || arguments.length != 2) {
+        if (arguments.length != 1 && arguments.length != 2) {
             log.error("Illegal number of args: " + arguments.length);
         }
         return (Integer) arguments[ACCT_ID_INDEX];

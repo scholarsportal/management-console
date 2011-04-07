@@ -332,6 +332,10 @@ public class UserController extends AbstractController {
         // to the repository (due to amazon async I believe).
         sleepMomentarily();
 
+        reauthenticate(user.getUsername(),
+            user.getPassword(),
+            this.authenticationManager);
+
         String redemptionCode = newUserForm.getRedemptionCode();
         int accountId = -1;
         if (!StringUtils.isEmpty(redemptionCode)) {
@@ -346,10 +350,6 @@ public class UserController extends AbstractController {
                 addRedemptionFailedMessage();
             }
         }
-
-        reauthenticate(user.getUsername(),
-            user.getPassword(),
-            this.authenticationManager);
 
         String redirect =
             "redirect:"

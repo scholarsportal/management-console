@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.security.domain.SecuredRule;
 import org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -75,7 +76,7 @@ public class InstanceManagerAccessDecisionVoterTest {
                                               userRole,
                                               withAuthorities);
         invocation = createInvocation(null);
-        securityConfig = createSecurityConfig("any");
+        securityConfig = createSecurityConfig(SecuredRule.Scope.ANY);
 
         doTest(expectedDecision);
     }
@@ -111,7 +112,7 @@ public class InstanceManagerAccessDecisionVoterTest {
                                               userRole,
                                               withAuthorities);
         invocation = createInvocation(acctId);
-        securityConfig = createSecurityConfig("self-acct");
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ACCT);
         repoMgr = createRepoMgr(createRights(userRole));
 
         doTest(expectedDecision);
@@ -187,11 +188,11 @@ public class InstanceManagerAccessDecisionVoterTest {
         return inv;
     }
 
-    private Collection<ConfigAttribute> createSecurityConfig(String scope) {
+    private Collection<ConfigAttribute> createSecurityConfig(SecuredRule.Scope scope) {
         Collection<ConfigAttribute> attributes = new HashSet<ConfigAttribute>();
 
         ConfigAttribute att = new SecurityConfig(
-            "role:" + accessRole.name() + ",scope:" + scope);
+            "role:" + accessRole.name() + ",scope:" + scope.name());
         attributes.add(att);
 
         return attributes;

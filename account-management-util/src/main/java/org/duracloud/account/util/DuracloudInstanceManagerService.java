@@ -20,14 +20,14 @@ public interface DuracloudInstanceManagerService {
      * Starts a new instance for the given account based on the given
      * DuraCloud software version
      */
-    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public DuracloudInstanceService createInstance(int accountId, String version);
 
     /**
      * Retrieves all of the active DuraCloud versions
      * @return set of version options
      */
-    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
+    @Secured({"role:ROLE_USER, scope:ANY"})
     public Set<String> getVersions();
 
     /**
@@ -38,7 +38,7 @@ public interface DuracloudInstanceManagerService {
      * @throws DuracloudInstanceNotAvailableException
      *
      */
-    @Secured({"role:ROLE_USER, scope:any"})
+    @Secured({"role:ROLE_USER, scope:ANY"})
     public DuracloudInstanceService getInstanceService(int instanceId)
         throws DuracloudInstanceNotAvailableException;
 
@@ -51,7 +51,7 @@ public interface DuracloudInstanceManagerService {
      * @return
      *
      */
-    @Secured({"role:ROLE_ADMIN, scope:self-acct"})
+    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
     public Set<DuracloudInstanceService> getInstanceServices(int accountId);
 
 }

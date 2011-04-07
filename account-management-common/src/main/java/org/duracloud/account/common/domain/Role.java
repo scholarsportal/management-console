@@ -15,7 +15,8 @@ public enum Role {
     ROLE_ROOT("Root"),
     ROLE_OWNER("Owner"),
     ROLE_ADMIN("Administrator"),
-    ROLE_USER("User");
+    ROLE_USER("User"),
+    ROLE_ANONYMOUS("Anonymous");
 
     private GrantedAuthority authority;
     private String displayName;
@@ -44,6 +45,8 @@ public enum Role {
                 hierarchy.add(ROLE_ADMIN);
             case ROLE_USER:
                 hierarchy.add(ROLE_USER);
+            case ROLE_ANONYMOUS:
+                hierarchy.add(ROLE_ANONYMOUS);
                 break;
             case ROLE_INIT:
                 // not in hierarchy
@@ -51,5 +54,21 @@ public enum Role {
         }
 
         return hierarchy;
+    }
+
+    public static Role highestRole(Set<Role> roles) {
+        Role highest = null;
+        if (roles.contains(Role.ROLE_ROOT)) {
+            return Role.ROLE_ROOT;
+        } else if (roles.contains(Role.ROLE_OWNER)) {
+            return Role.ROLE_OWNER;
+        } else if (roles.contains(Role.ROLE_ADMIN)) {
+            return Role.ROLE_ADMIN;
+        } else if (roles.contains(Role.ROLE_USER)) {
+            return Role.ROLE_USER;
+        } else if (roles.contains(Role.ROLE_ANONYMOUS)) {
+            return Role.ROLE_ANONYMOUS;
+        }
+        return highest;
     }
 }

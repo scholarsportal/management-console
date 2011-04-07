@@ -11,6 +11,7 @@ import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.springframework.security.access.annotation.Secured;
 
 /**
  * This interface defines the contract for loading, storing, and managing
@@ -27,6 +28,7 @@ public interface DuracloudUserService {
      * @param username sought
      * @return true if not already used
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public boolean isUsernameAvailable(String username);
 
     /**
@@ -41,6 +43,7 @@ public interface DuracloudUserService {
      * @throws DBConcurrentUpdateException
      * @throws UserAlreadyExistsException
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudUser createNewUser(String username,
                                        String password,
                                        String firstName,
@@ -56,6 +59,7 @@ public interface DuracloudUserService {
      *
      * @return true if an update was performed.
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT_PEER_UPDATE"})
     public boolean setUserRights(int acctId, int userId, Role... roles);
 
     /**
@@ -64,6 +68,7 @@ public interface DuracloudUserService {
      * @param acctId on which rights will be revoked
      * @param userId of user whose rights will be revoked
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT_PEER"})
     public void revokeUserRights(int acctId, int userId);
 
     /**
@@ -78,6 +83,7 @@ public interface DuracloudUserService {
      * @throws InvalidPasswordException
      * @throws DBConcurrentUpdateException
      */
+    @Secured({"role:ROLE_USER, scope:SELF"})
     public void changePassword(int userId,
                                String oldPassword,
                                boolean oldPasswordEncoded,
@@ -95,6 +101,7 @@ public interface DuracloudUserService {
      * @throws DBConcurrentUpdateException
      * @throws UnsentEmailException
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public void forgotPassword(String username)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException, UnsentEmailException;
 
@@ -106,6 +113,7 @@ public interface DuracloudUserService {
      * @return DuracloudUser
      * @throws DBNotFoundException
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudUser loadDuracloudUserByUsername(String username)
         throws DBNotFoundException;
 
@@ -119,6 +127,7 @@ public interface DuracloudUserService {
      *                       become part of an account
      * @return the account id associated with the newly redeemed invitation.
      */
+    @Secured({"role:ROLE_USER, scope:SELF"})
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
 
@@ -131,6 +140,7 @@ public interface DuracloudUserService {
      * @param email     of user
      * @throws DBConcurrentUpdateException
      */
+    @Secured({"role:ROLE_USER, scope:SELF"})
     public void storeUserDetails(int userId,
                                  String firstName,
                                  String lastName,

@@ -20,6 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -128,8 +129,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private void setUpAddUserToAccount(DuracloudUser user) throws Exception {
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
+        Set<Role> roles = Role.ROLE_USER.getRoleHierarchy();
         AccountRights rights = new AccountRights(0,
                                                  acctId,
                                                  user.getId(),
@@ -422,9 +422,17 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         Collection<GrantedAuthority> authorities = user.getAuthorities();
         Assert.assertNotNull(authorities);
-        Assert.assertEquals(1, authorities.size());
-        Assert.assertEquals(Role.ROLE_USER.name(),
-                            authorities.iterator().next().getAuthority());
+        Assert.assertEquals(2, authorities.size());
+
+        Set<String> roleNames = new HashSet<String>();
+        Iterator<GrantedAuthority> itr = authorities.iterator();
+        while (itr.hasNext()) {
+            roleNames.add(itr.next().getAuthority());
+        }
+
+        for (Role role : Role.ROLE_USER.getRoleHierarchy()) {
+            Assert.assertTrue(roleNames.contains(role.name()));
+        }
     }
 
     @Test

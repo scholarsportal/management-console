@@ -200,7 +200,10 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
      */
     public Collection<GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        authorities.add(new GrantedAuthorityImpl(Role.ROLE_USER.name()));
+        for (Role role : Role.ROLE_USER.getRoleHierarchy()) {
+            authorities.add(new GrantedAuthorityImpl(role.name()));
+        }
+
         if (accountRights != null) {
             for (AccountRights rights : accountRights) {
                 Set<Role> roles = rights.getRoles();

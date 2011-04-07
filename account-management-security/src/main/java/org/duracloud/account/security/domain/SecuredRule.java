@@ -3,18 +3,22 @@
  */
 package org.duracloud.account.security.domain;
 
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.util.StringTokenizer;
 
 /**
+ * This class defines a bean used to constrain the access rules over secured
+ * method calls.
+ *
  * @author Andrew Woods
  *         Date: 4/1/11
  */
 public class SecuredRule {
 
-    private String role;
-    private String scope;
+    private Role role;
+    private Scope scope;
 
     private static final String delim = ",";
     private static final String prefixRole = "role:";
@@ -41,20 +45,37 @@ public class SecuredRule {
             doThrow("Scope must begin with " + prefixScope + ", " + rule);
         }
 
-        this.role = fullRole.substring(prefixRole.length());
-        this.scope = fullScope.substring(prefixScope.length());
+        this.role = Role.valueOf(fullRole.substring(prefixRole.length()));
+        this.scope = Scope.valueOf(fullScope.substring(prefixScope.length()));
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public String getScope() {
+    public Scope getScope() {
         return scope;
     }
 
     private void doThrow(String msg) {
         throw new IllegalArgumentException("Invalid rule: " + msg);
+    }
+
+    public static enum Scope {
+        // applies to any user or account
+        ANY,
+        // applies to calling user's own profile
+        SELF,
+        // applies to accounts with which calling user is a member
+        SELF_ACCT,
+        // applies to accounts with which calling user is a member AND
+        //  the peer involved has rights on the account that are less than
+        //  or equal to the caller's rights.
+        SELF_ACCT_PEER,
+        // applies to accounts with which calling user is a member AND
+        //  the peer involved has current and proposed rights on the account
+        //  that are less than or equal to the caller's rights.
+        SELF_ACCT_PEER_UPDATE;
     }
 
 }

@@ -23,7 +23,7 @@ public interface AccountManagerService {
 	 * 
 	 * @return true if the subdomain is available, otherwise file.
 	 */
-    @Secured({"role:ROLE_USER, scope:any"})
+    @Secured({"role:ROLE_USER, scope:ANY"})
 	public boolean subdomainAvailable(String subdomain);
 
 	/**
@@ -34,7 +34,7 @@ public interface AccountManagerService {
 	 * @throws org.duracloud.account.util.error.AccountNotFoundException
 	 * 
 	 */
-    @Secured({"role:ROLE_USER, scope:self-acct"})
+    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
 	public AccountService getAccount(int accountId)
 			throws AccountNotFoundException;
 
@@ -44,7 +44,7 @@ public interface AccountManagerService {
 	 * @throws org.duracloud.account.util.error.UsernameAlreadyExistsException
 	 * 
 	 */
-    @Secured({"role:ROLE_USER, scope:any"})
+    @Secured({"role:ROLE_USER, scope:ANY"})
 	public AccountService createAccount(AccountCreationInfo accountCreationInfo,
 			DuracloudUser owner) throws SubdomainAlreadyExistsException;
 
@@ -54,6 +54,6 @@ public interface AccountManagerService {
 	 *         If there are no accounts associated with the specified user, an
 	 *         empty set is returned.
 	 */
-    @Secured({"role:ROLE_USER, scope:self"})
+    @Secured({"role:ROLE_USER, scope:SELF"})
 	public Set<AccountInfo> findAccountsByUserId(int userId);
 }

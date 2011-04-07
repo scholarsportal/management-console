@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.security.domain.SecuredRule;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.impl.AccountManagerServiceImpl;
 import org.easymock.EasyMock;
@@ -75,7 +76,7 @@ public class AccountManagerAccessDecisionVoterTest {
         int userId = 5;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(null);
-        securityConfig = createSecurityConfig("any");
+        securityConfig = createSecurityConfig(SecuredRule.Scope.ANY);
 
         doTest(expectedDecision);
     }
@@ -108,7 +109,7 @@ public class AccountManagerAccessDecisionVoterTest {
         int acctId = 9;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(acctId);
-        securityConfig = createSecurityConfig("self-acct");
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ACCT);
         repoMgr = createRepoMgr(createRights(userRole));
 
         doTest(expectedDecision);
@@ -147,7 +148,7 @@ public class AccountManagerAccessDecisionVoterTest {
         int targetUserId = targetId > -1 ? targetId : userId;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(userRole.equals(accessRole) ? targetUserId : null);
-        securityConfig = createSecurityConfig("self");
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF);
 
         doTest(expectedDecision);
     }
@@ -220,11 +221,11 @@ public class AccountManagerAccessDecisionVoterTest {
         return inv;
     }
 
-    private Collection<ConfigAttribute> createSecurityConfig(String scope) {
+    private Collection<ConfigAttribute> createSecurityConfig(SecuredRule.Scope scope) {
         Collection<ConfigAttribute> attributes = new HashSet<ConfigAttribute>();
 
         ConfigAttribute att = new SecurityConfig(
-            "role:" + accessRole.name() + ",scope:" + scope);
+            "role:" + accessRole.name() + ",scope:" + scope.name());
         attributes.add(att);
 
         return attributes;

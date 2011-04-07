@@ -244,8 +244,7 @@ public class AccountUsersController extends AbstractAccountController {
      */
     private void appendInvitationsToAccountUserList(List<AccountUser> accountUsers,
                                                     Set<UserInvitation> pendingUserInvitations) {
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
+        Set<Role> roles = Role.ROLE_USER.getRoleHierarchy();
         for (UserInvitation ui : pendingUserInvitations) {
             accountUsers.add(new PendingAccountUser(ui, roles));
         }

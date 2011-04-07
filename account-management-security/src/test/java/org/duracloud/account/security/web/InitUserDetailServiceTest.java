@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -49,24 +52,16 @@ public class InitUserDetailServiceTest {
         Collection<GrantedAuthority> authorities = userDetails.getAuthorities();
         Assert.assertNotNull(authorities);
 
-        Assert.assertEquals(2, authorities.size());
-        boolean foundUser = false;
-        boolean foundInit = false;
-        for (GrantedAuthority authority : authorities) {
-
-            String authName = authority.getAuthority();
-            if (Role.ROLE_USER.name().equals(authName)) {
-                foundUser = true;
-
-            } else if (Role.ROLE_INIT.name().equals(authName)) {
-                foundInit = true;
-
-            } else {
-                Assert.fail("Unexpected authority: " + authName);
-            }
+        Assert.assertEquals(3, authorities.size());
+        
+        Set<String> roleNames = new HashSet<String>();
+        Iterator<GrantedAuthority> itr = authorities.iterator();
+        while (itr.hasNext()) {
+            roleNames.add(itr.next().getAuthority());
         }
-        Assert.assertTrue("user role", foundUser);
-        Assert.assertTrue("init role", foundInit);
 
+        for (Role role : Role.ROLE_USER.getRoleHierarchy()) {
+            Assert.assertTrue(roleNames.contains(role.name()));
+        }
     }
 }

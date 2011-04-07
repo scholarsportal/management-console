@@ -49,23 +49,23 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
         }
 
         // Collect user making the call.
-        DuracloudUser user = (DuracloudUser) authentication.getPrincipal();
+        DuracloudUser user = getCurrentUser(authentication);
 
         // Collect security constraints on method.
         SecuredRule securedRule = getRule(configAttributes);
-        String role = securedRule.getRole();
-        String scope = securedRule.getScope();
+        String role = securedRule.getRole().name();
+        SecuredRule.Scope scope = securedRule.getScope();
 
         Collection<String> userRoles = getUserRoles(authentication);
 
-        if (scope.equals("any")) {
+        if (scope.equals(SecuredRule.Scope.ANY)) {
             decision = voteHasRole(role, userRoles);
 
-        } else if (scope.equals("self-acct")) {
+        } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
             int acctId = getIntArg(invocation.getArguments());
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
-        } else if (scope.equals("self")) {
+        } else if (scope.equals(SecuredRule.Scope.SELF)) {
             if (voteHasRole(role, userRoles) == ACCESS_GRANTED) {
                 int userId = getIntArg(invocation.getArguments());
                 decision = voteMyUserId(user, userId);

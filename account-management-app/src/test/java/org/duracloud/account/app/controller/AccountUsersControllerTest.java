@@ -219,6 +219,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(userService.setUserRights(EasyMock.eq(acctId),
                                                   EasyMock.eq(userId),
                                                   EasyMock.isA(Role.class),
+                                                  EasyMock.isA(Role.class),
                                                   EasyMock.isA(Role.class)))
             .andReturn(true);
 

@@ -44,11 +44,13 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
      */
     protected abstract Class getTargetService();
 
+    @Override
     public boolean supports(ConfigAttribute attribute) {
         log.debug("supports attribute{}", attribute.getAttribute());
         return true;
     }
 
+    @Override
     public boolean supports(Class<?> clazz) {
         log.debug("supports {}", clazz.getName());
         return MethodInvocation.class.isAssignableFrom(clazz);
@@ -91,12 +93,17 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
     protected int voteUserHasRoleOnAccount(DuracloudUser user,
                                            String role,
                                            int acctId) {
-        AccountRights rights = getUserRightsForAcct(user, acctId);
+        log.debug("Does user {} have role {} on acct {}?",
+                  new Object[]{user.getId(), role, acctId});
+
+        AccountRights rights = getUserRightsForAcct(user.getId(), acctId);
         if (null == rights) {
             return ACCESS_DENIED;
         }
 
         Set<Role> acctRoles = rights.getRoles();
+        log.debug("Roles found: {}", acctRoles);
+
         if (acctRoles != null && acctRoles.size() > 0) {
             for (Role acctRole : acctRoles) {
                 if (role.equals(acctRole.authority().getAuthority())) {
@@ -107,15 +114,24 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         return ACCESS_DENIED;
     }
 
-    private AccountRights getUserRightsForAcct(DuracloudUser user, int acctId) {
+    protected int numUsersForAccount(int acctId) {
+        Set<AccountRights> rights = null;
+        try {
+            rights = repoMgr.getRightsRepo().findByAccountId(acctId);
+        } catch (DBNotFoundException e) {
+            log.warn("Account not found: {}", acctId);
+        }
+        return (null != rights) ? rights.size() : 0;
+    }
+
+    protected AccountRights getUserRightsForAcct(int userId, int acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         AccountRights rights = null;
         try {
-            rights = rightsRepo.findByAccountIdAndUserId(acctId, user.getId());
+            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
 
         } catch (DBNotFoundException e) {
-            log.error("No rights for {}:{}, {}",
-                      new Object[]{user.getUsername(), user.getId(), acctId});
+            log.error("No rights for user:{}, acct:{}", userId, acctId);
         }
         return rights;
     }
@@ -124,7 +140,21 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         return user.getId() == userId ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
-
+    protected DuracloudUser getCurrentUser(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            log.debug("Unknown user {}", principal);
+            return new DuracloudUser(-1,
+                                     (String) principal,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     -1);
+        } else {
+            return (DuracloudUser) principal;
+        }
+    }
 
     protected String asString(int decision) {
         String s = "unknown";

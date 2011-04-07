@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.security.domain;
 
+import org.duracloud.account.common.domain.Role;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,8 +17,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class SecuredRuleTest {
 
-    private final String role = "ROLE_USER";
-    private final String scope = "any";
+    private final Role role = Role.ROLE_USER;
+    private final SecuredRule.Scope scope = SecuredRule.Scope.ANY;
 
     @Test
     public void testNull() {

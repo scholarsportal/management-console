@@ -33,6 +33,7 @@ public class RoleTest {
         expectedHierarchy.add(Role.ROLE_OWNER);
         expectedHierarchy.add(Role.ROLE_ADMIN);
         expectedHierarchy.add(Role.ROLE_USER);
+        expectedHierarchy.add(Role.ROLE_ANONYMOUS);
 
         verifyHierarchy(expectedHierarchy, Role.ROLE_ROOT.getRoleHierarchy());
 
@@ -41,6 +42,7 @@ public class RoleTest {
         expectedHierarchy.add(Role.ROLE_OWNER);
         expectedHierarchy.add(Role.ROLE_ADMIN);
         expectedHierarchy.add(Role.ROLE_USER);
+        expectedHierarchy.add(Role.ROLE_ANONYMOUS);
 
         verifyHierarchy(expectedHierarchy, Role.ROLE_OWNER.getRoleHierarchy());
 
@@ -48,12 +50,14 @@ public class RoleTest {
         expectedHierarchy = new HashSet<Role>();
         expectedHierarchy.add(Role.ROLE_ADMIN);
         expectedHierarchy.add(Role.ROLE_USER);
+        expectedHierarchy.add(Role.ROLE_ANONYMOUS);
 
         verifyHierarchy(expectedHierarchy, Role.ROLE_ADMIN.getRoleHierarchy());
 
         // test user
         expectedHierarchy = new HashSet<Role>();
         expectedHierarchy.add(Role.ROLE_USER);
+        expectedHierarchy.add(Role.ROLE_ANONYMOUS);
 
         verifyHierarchy(expectedHierarchy, Role.ROLE_USER.getRoleHierarchy());
 
@@ -70,6 +74,26 @@ public class RoleTest {
         Assert.assertTrue(hierarchy.size() > 0);
         Assert.assertEquals(expectedHierarchy.size(), hierarchy.size());
         Assert.assertEquals(expectedHierarchy, hierarchy);
+    }
+
+    @Test
+    public void testHighestRole() {
+        verifyHighestRole(Role.ROLE_ROOT);
+        verifyHighestRole(Role.ROLE_OWNER);
+        verifyHighestRole(Role.ROLE_ADMIN);
+        verifyHighestRole(Role.ROLE_USER);
+        verifyHighestRole(Role.ROLE_ANONYMOUS);
+        verifyHighestRole(Role.ROLE_INIT);
+    }
+
+    private void verifyHighestRole(Role role) {
+        Set<Role> roles = role.getRoleHierarchy();
+
+        if (Role.ROLE_INIT == role) {
+            Assert.assertEquals(null, Role.highestRole(roles));
+        } else {
+            Assert.assertEquals(role, Role.highestRole(roles));
+        }
     }
 
 }
