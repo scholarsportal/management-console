@@ -123,7 +123,8 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                 primaryStorageProviderAccountId,
                                 secondaryStorageProviderAccountIds,
                                 secondaryServiceRepositoryIds,
-                                paymentInfoId);
+                                paymentInfoId,
+                                AccountInfo.AccountStatus.PENDING);
 
             getAccountRepo().save(newAccountInfo);
 

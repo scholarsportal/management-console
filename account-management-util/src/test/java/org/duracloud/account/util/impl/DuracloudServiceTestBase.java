@@ -168,6 +168,7 @@ public class DuracloudServiceTestBase {
         secStorageProvAcctIds.add(0);
         Set<Integer> secServiceRepoIds = new HashSet<Integer>();
         int paymentInfoId = 0;
+        AccountInfo.AccountStatus status = AccountInfo.AccountStatus.PENDING;
         return new AccountInfo(acctId,
                                subdomain,
                                "account-" + acctId,
@@ -177,7 +178,8 @@ public class DuracloudServiceTestBase {
                                primStorageProvAcctId,
                                secStorageProvAcctIds,
                                secServiceRepoIds,
-                               paymentInfoId);
+                               paymentInfoId,
+                               status);
     }
 
     protected void replayMocks() {

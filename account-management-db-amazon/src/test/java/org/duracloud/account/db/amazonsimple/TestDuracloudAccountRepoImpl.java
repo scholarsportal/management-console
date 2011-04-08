@@ -37,6 +37,8 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
+    private static AccountInfo.AccountStatus status =
+        AccountInfo.AccountStatus.PENDING;
 
     @BeforeClass
     public static void initialize() throws Exception {
@@ -153,7 +155,8 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                primaryStorageProviderAccountId,
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
-                               paymentInfoId);
+                               paymentInfoId,
+                               status);
     }
 
     private void verifyAccount(final AccountInfo acct) {

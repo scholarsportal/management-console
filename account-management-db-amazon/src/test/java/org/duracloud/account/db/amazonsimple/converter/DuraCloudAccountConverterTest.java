@@ -4,7 +4,6 @@
 package org.duracloud.account.db.amazonsimple.converter;
 
 import com.amazonaws.services.simpledb.model.Attribute;
-import junit.framework.Assert;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.junit.BeforeClass;
 
@@ -24,6 +23,7 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountCo
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SECONDARY_SERVICE_REPOSITORY_IDS_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.STATUS_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SUBDOMAIN_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
@@ -44,6 +44,8 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
+    private static AccountInfo.AccountStatus status =
+        AccountInfo.AccountStatus.PENDING;
     private static final int counter = 4;
 
     @BeforeClass
@@ -78,6 +80,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
+                               status,
                                counter);
     }
 
@@ -100,6 +103,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                    acctCvtr.idsAsString(secondaryServiceRepositoryIds)));
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
+        testAtts.add(new Attribute(STATUS_ATT, status.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -118,21 +122,23 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertNotNull(acct.getSecondaryStorageProviderAccountIds());
         assertNotNull(acct.getSecondaryServiceRepositoryIds());
         assertNotNull(acct.getPaymentInfoId());
+        assertNotNull(acct.getStatus());
 
         assertEquals(counter, acct.getCounter());
         assertEquals(subdomain, acct.getSubdomain());
         assertEquals(acctName, acct.getAcctName());
         assertEquals(orgName, acct.getOrgName());
         assertEquals(department, acct.getDepartment());
-        Assert.assertEquals(computeProviderAccountId,
-                            acct.getComputeProviderAccountId());
-        Assert.assertEquals(primaryStorageProviderAccountId,
-                            acct.getPrimaryStorageProviderAccountId());
-        Assert.assertEquals(secondaryStorageProviderAccountIds,
-                            acct.getSecondaryStorageProviderAccountIds());
-        Assert.assertEquals(secondaryServiceRepositoryIds,
-                            acct.getSecondaryServiceRepositoryIds());
+        assertEquals(computeProviderAccountId,
+                     acct.getComputeProviderAccountId());
+        assertEquals(primaryStorageProviderAccountId,
+                     acct.getPrimaryStorageProviderAccountId());
+        assertEquals(secondaryStorageProviderAccountIds,
+                     acct.getSecondaryStorageProviderAccountIds());
+        assertEquals(secondaryServiceRepositoryIds,
+                     acct.getSecondaryServiceRepositoryIds());
         assertEquals(paymentInfoId, acct.getPaymentInfoId());
+        assertEquals(status, acct.getStatus());
     }
 
 }

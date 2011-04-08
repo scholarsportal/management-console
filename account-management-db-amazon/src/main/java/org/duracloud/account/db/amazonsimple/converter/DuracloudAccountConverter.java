@@ -40,6 +40,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
     protected static final String SECONDARY_SERVICE_REPOSITORY_IDS_ATT =
         "SECONDARY_SERVICE_REPOSITORY_IDS";
     protected static final String PAYMENT_INFO_ID_ATT = "PAYMENT_INFO_ID";
+    protected static final String STATUS_ATT = "STATUS";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(AccountInfo acct) {
@@ -77,6 +78,9 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         atts.add(new ReplaceableAttribute(PAYMENT_INFO_ID_ATT,
                                           asString(acct.getPaymentInfoId()),
                                           true));
+        atts.add(new ReplaceableAttribute(STATUS_ATT,
+                                          acct.getStatus().name(),
+                                          true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -93,6 +97,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         int primaryStorageProviderAccountId = -1;
         Set<Integer> secondaryStorageProviderAccountIds = null;
         Set<Integer> secondaryServiceRepositoryIds = null;
+        AccountInfo.AccountStatus status = null;
         int paymentInfoId = -1;
 
         for (Attribute att : atts) {
@@ -137,6 +142,9 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                 paymentInfoId =
                     idFromString(value, "Payment Info", "Account", id);
 
+            } else if (STATUS_ATT.equals(name)) {
+                status = AccountInfo.AccountStatus.valueOf(value);
+
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -158,6 +166,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
+                               status,
                                counter);
     }
 

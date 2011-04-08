@@ -69,7 +69,7 @@ public class AmaControllerTestBase {
     protected AccountInfo createAccountInfo() {
         return new AccountInfo(
             TEST_ACCOUNT_ID, "testdomain", "test", "test", "test", 0, 0, null,
-            null, 0);
+            null, 0, null);
     }
 
     protected DuracloudUser createUser() {
