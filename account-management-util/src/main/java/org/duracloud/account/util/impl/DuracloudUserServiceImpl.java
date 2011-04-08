@@ -17,6 +17,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
@@ -139,9 +140,39 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         boolean updatedNeeded = !newRoles.equals(oldRoles);
         if (updatedNeeded) {
+            if(oldRoles != null &&
+               oldRoles.contains(Role.ROLE_OWNER) &&
+               !newRoles.contains(Role.ROLE_OWNER))
+            {
+                verifyAccountOwnerExists(acctId, userId, rightsRepo);
+            }
+            
             retryUpdateRights(acctId, userId, newRoles, rights);
         }
         return updatedNeeded;
+    }
+
+    private void verifyAccountOwnerExists(int acctId,
+                                          int userId,
+                                          DuracloudRightsRepo rightsRepo) {
+        try {
+            Set<AccountRights> acctRightsSet =
+                rightsRepo.findByAccountId(acctId);
+            Set<Integer> owners = new HashSet<Integer>();
+            for(AccountRights acctRights : acctRightsSet) {
+                if(acctRights.getRoles().contains(Role.ROLE_OWNER)) {
+                    owners.add(acctRights.getUserId());
+                }
+            }
+            if(owners.size() <= 1 && owners.contains(userId)) {
+                String err = "Cannot remove owner rights from user with ID " +
+                    userId + " from account with ID " + acctId +
+                    ". This account must maintain at least one owner.";
+                throw new AccountRequiresOwnerException(err);
+            }
+        } catch(DBNotFoundException e) {
+            log.error("Could not find rights associated with account " + acctId);
+        }
     }
 
     private String asString(Set<Role> roles) {
@@ -213,6 +244,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     public void doRevokeUserRights(int acctId, int userId) {
         DuracloudRightsRepo rightsRepo = getRightsRepo();
+        verifyAccountOwnerExists(acctId, userId, rightsRepo);
         try {
             AccountRights rights =
                 rightsRepo.findByAccountIdAndUserId(acctId, userId);

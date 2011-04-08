@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
+import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -161,16 +162,36 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testSetUserRightsStartAsOwnerFail() throws Exception {
+        try {
+            testSetRole(Role.ROLE_OWNER);
+            Assert.fail("AccountRequiresOwnerException Expected");
+        } catch(AccountRequiresOwnerException e) {
+            Assert.assertNotNull(e);
+        }
+    }
+
+    @Test
+    public void testSetUserRightsStartAsRootFail() throws Exception {
+        try {
+            testSetRole(Role.ROLE_ROOT);
+            Assert.fail("AccountRequiresOwnerException Expected");
+        } catch(AccountRequiresOwnerException e) {
+            Assert.assertNotNull(e);
+        }
+    }
+
+    @Test
     public void testSetUserRightsStartAsOwner() throws Exception {
-        testSetRole(Role.ROLE_OWNER);
+        testSetRole(2, Role.ROLE_OWNER);
     }
 
     @Test
     public void testSetUserRightsStartAsRoot() throws Exception {
-        testSetRole(Role.ROLE_ROOT);
+        testSetRole(2, Role.ROLE_ROOT);
     }
 
-        @Test
+    @Test
     public void testSetUserRightsStartAsInit() throws Exception {
         testSetRole(Role.ROLE_INIT);
     }
@@ -181,7 +202,13 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private void testSetRole(Role... initialRoles) throws Exception {
-        Capture<AccountRights> capture = setUpSetRights(initialRoles);
+        testSetRole(1, initialRoles);
+    }
+
+    private void testSetRole(int numAccounts,
+                             Role... initialRoles) throws Exception {
+        Capture<AccountRights> capture =
+            setUpSetRights(numAccounts, initialRoles);
         testSetRole(initialRoles, capture, Role.ROLE_USER);
         testSetRole(initialRoles, capture, Role.ROLE_ADMIN);
         testSetRole(initialRoles, capture, Role.ROLE_OWNER);
@@ -193,8 +220,21 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_ROOT);
     }
 
-    private Capture<AccountRights> setUpSetRights(Role... initialRoles)
+    private Capture<AccountRights> setUpSetRights(int numAccounts,
+                                                  Role... initialRoles)
         throws Exception {
+        Set<Role> initRoles = getRolesWithHierarchy(initialRoles);
+        Set<AccountRights> rightsSet = new HashSet<AccountRights>();
+        for(int i=1; i<=numAccounts; i++) {
+            AccountRights rights =
+                new AccountRights(i, acctId, i, initRoles);
+            rightsSet.add(rights);
+        }
+
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(rightsSet)
+            .anyTimes();
+
         propagator.propagateRights(EasyMock.eq(acctId),
                                    EasyMock.eq(userId),
                                    EasyMock.isA(Set.class));
@@ -216,6 +256,11 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private AccountRights getRightsWithRoles(Role... roles) {
+        Set<Role> rolesWithHierarchy = getRolesWithHierarchy(roles);
+        return new AccountRights(0, acctId, userId, rolesWithHierarchy);
+    }
+
+    private Set<Role> getRolesWithHierarchy(Role[] roles) {
         Set<Role> rolesWithHierarchy = new HashSet<Role>();
         if(null != roles) {
             for (Role role : roles) {
@@ -224,7 +269,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                 }
             }
         }
-        return new AccountRights(0, acctId, userId, rolesWithHierarchy);
+        return rolesWithHierarchy;
     }
 
     private void testSetRole(Role[] initialRoles,
@@ -324,12 +369,38 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testRevokeUserRights() throws Exception {
-        setUpRevokeUserRights();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+
+        setUpRevokeUserRights(roles);
         userService.revokeUserRights(acctId, userId);
     }
 
-    private void setUpRevokeUserRights() throws Exception {
-        AccountRights rights = new AccountRights(0, acctId, userId, null);
+    @Test
+    public void testRevokeUserRightsOwner() throws Exception {
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+        roles.add(Role.ROLE_ADMIN);
+        roles.add(Role.ROLE_OWNER);
+
+        setUpRevokeUserRights(roles);
+        try {
+            userService.revokeUserRights(acctId, userId);
+            Assert.fail("AccountRequiresOwnerException Expected");
+        } catch (AccountRequiresOwnerException e) {
+            Assert.assertNotNull(e);
+        }
+    }
+
+    private void setUpRevokeUserRights(Set<Role> roles) throws Exception {
+        AccountRights rights = new AccountRights(0, acctId, userId, roles);
+        Set<AccountRights> rightsSet = new HashSet<AccountRights>();
+        rightsSet.add(rights);
+
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(rightsSet)
+            .times(1);
+
         EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
                                                             EasyMock.anyInt()))
             .andReturn(rights)
@@ -338,9 +409,11 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         rightsRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
-        propagator.propagateRevocation(EasyMock.eq(acctId), EasyMock.eq(userId));
-        EasyMock.expectLastCall()
-            .times(1);
+        if(!roles.contains(Role.ROLE_OWNER)) {
+            propagator.propagateRevocation(EasyMock.eq(acctId), EasyMock.eq(userId));
+            EasyMock.expectLastCall()
+                .times(1);
+        }
 
         replayMocks();
     }
