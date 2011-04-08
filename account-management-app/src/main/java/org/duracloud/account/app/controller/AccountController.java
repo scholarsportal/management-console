@@ -4,6 +4,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountCreationInfo;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
@@ -63,14 +64,19 @@ public class AccountController extends AbstractAccountController {
     @RequestMapping(value = { INSTANCE_PATH }, method = RequestMethod.GET)
     public String getInstance(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
-        loadAccountInfo(accountId, model);
-        loadAccountInstances(accountId, model);
+        populateAccountInModel(accountId, model);
         return "account-instance";
     }
 
-    private void loadAccountInstances(int accountId, Model model) {
+    private void populateAccountInModel(int accountId, Model model)
+        throws AccountNotFoundException {
+        AccountInfo acctInfo = loadAccountInfo(accountId, model);
+        loadAccountInstances(acctInfo, model);
+    }
+
+    private void loadAccountInstances(AccountInfo accountInfo, Model model) {
         Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
+            instanceManagerService.getInstanceServices(accountInfo.getId());
         if(instanceServices.size() > 0) {
             // Handle only a single instance for the time being
             DuracloudInstanceService instanceService =
@@ -80,9 +86,12 @@ public class AccountController extends AbstractAccountController {
             model.addAttribute(INSTANCE_STATUS_KEY,
                                instanceService.getStatus());
         } else {
-            Set<String> versions = instanceManagerService.getVersions();
-            model.addAttribute(DC_VERSIONS_KEY, versions);
-            model.addAttribute(NEW_INSTANCE_FORM, new AccountInstanceForm());
+            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+                Set<String> versions = instanceManagerService.getVersions();
+                model.addAttribute(DC_VERSIONS_KEY, versions);
+                model.addAttribute(NEW_INSTANCE_FORM,
+                                   new AccountInstanceForm());
+            }
         }
     }
 
@@ -92,8 +101,7 @@ public class AccountController extends AbstractAccountController {
                                 Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         startInstance(accountId, instanceForm.getVersion());
-        loadAccountInfo(accountId, model);
-        loadAccountInstances(accountId, model);
+        populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,
                            "Instance STARTED successfully, it will be " +
                            "available for use in 5 minutes.");
@@ -111,8 +119,7 @@ public class AccountController extends AbstractAccountController {
                                   Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         restartInstance(instanceId);
-        loadAccountInfo(accountId, model);
-        loadAccountInstances(accountId, model);
+        populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,
                            "Instance RESTARTED successfully, it will be " +
                            "available for use in 5 minutes.");
@@ -132,8 +139,7 @@ public class AccountController extends AbstractAccountController {
                                Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         stopInstance(instanceId);
-        loadAccountInfo(accountId, model);
-        loadAccountInstances(accountId, model);
+        populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS, "Instance STOPPED successfully.");
         return "account-instance";
     }

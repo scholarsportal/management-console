@@ -80,6 +80,12 @@
 
                   <td>${accountInfo.department}</td>
                 </tr>
+
+                <tr>
+                  <td>Status</td>
+
+                  <td>${accountInfo.status}</td>
+                </tr>
               </table>
             </div>
 

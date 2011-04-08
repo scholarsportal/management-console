@@ -89,17 +89,19 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param accountId
      * @param model
      */
-    protected void loadAccountInfo(int accountId, Model model)
+    protected AccountInfo loadAccountInfo(int accountId, Model model)
         throws AccountNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
-        loadAccountInfo(accountService, model);
+        return loadAccountInfo(accountService, model);
     }
 
     
-    protected void loadAccountInfo(AccountService accountService, Model model){
+    protected AccountInfo loadAccountInfo(AccountService accountService,
+                                          Model model){
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
         addAccountInfoToModel(accountInfo, model);
+        return accountInfo;
     }
 
     /**

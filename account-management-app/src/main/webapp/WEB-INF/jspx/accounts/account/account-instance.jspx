@@ -24,18 +24,26 @@
               <c:choose>
                 <c:when test="${instanceStatus == null}">
                   <h3>No instance associated with this account.</h3>
-                  <form:form
-                    id="instance-start-form"
-                    method="post"
-                    action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/start"
-                    modelAttribute="instanceForm">
-                    <form:select
-                      id="versions"
-                      cssErrorClass="error"
-                      path="version"
-                      items="${dcVersions}" />
-                    <button type="submit">Start New Instance</button>
-                  </form:form>
+                  <c:choose>
+                    <c:when test="${accountInfo.status == 'ACTIVE'}">
+                      <form:form
+                        id="instance-start-form"
+                        method="post"
+                        action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/instance/start"
+                        modelAttribute="instanceForm">
+                        <form:select
+                          id="versions"
+                          cssErrorClass="error"
+                          path="version"
+                          items="${dcVersions}" />
+                        <button type="submit">Start New Instance</button>
+                      </form:form>
+                    </c:when>
+                    <c:otherwise>
+                        <h3>This status of this account is currently PENDING. Once this account
+                            becomes active, it will be possible to start an instance.</h3>
+                    </c:otherwise>
+                  </c:choose>
                 </c:when>
                 <c:otherwise>
                   <table>
