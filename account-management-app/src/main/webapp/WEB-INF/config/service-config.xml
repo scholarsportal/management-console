@@ -20,7 +20,7 @@
 
   <bean id="notificationFactory"
         class="org.duracloud.notification.AmazonNotificationFactory"/>
-  
+
   <bean id="notificationMgr"
         class="org.duracloud.account.util.notification.NotificationMgrImpl">
     <constructor-arg ref="notificationFactory"/>
@@ -53,7 +53,7 @@
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="duracloudUserService"/>
-    <constructor-arg ref="accountManagerServiceUtil"/>
+    <constructor-arg ref="accountServiceFactory"/>
     <constructor-arg ref="providerAccountUtil"/>
     <constructor-arg>
       <set>
@@ -63,10 +63,14 @@
     </constructor-arg>
   </bean>
 
-  <bean id="accountManagerServiceUtil"
-        class="org.duracloud.account.util.impl.AccountManagerServiceUtil"
-        scope="singleton">
+  <bean id="annotationParser" class="org.duracloud.account.util.security.impl.AnnotationParserImpl"/>
+
+  <bean id="accountServiceFactory" class="org.duracloud.account.util.impl.AccountServiceFactoryImpl">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="acctVoter"/>
+    <constructor-arg ref="securityContextUtil"/>
+    <constructor-arg ref="providerAccountUtil"/>
+    <constructor-arg ref="annotationParser"/>
   </bean>
 
   <bean id="providerAccountUtil"
@@ -104,7 +108,7 @@
   <bean id="userDetailsPropagator"
         class="org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl">
     <constructor-arg ref="instanceManagerService" />
-    <constructor-arg ref="accountManagerServiceUtil" />
+    <constructor-arg ref="accountServiceFactory" />
   </bean>
 
 </beans>

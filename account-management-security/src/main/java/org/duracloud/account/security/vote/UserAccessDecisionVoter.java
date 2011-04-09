@@ -31,7 +31,6 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     private Logger log = LoggerFactory.getLogger(UserAccessDecisionVoter.class);
 
     private final int ACCT_ID_INDEX = 0;
-    private final int USERNAME_INDEX = 0;
     private final int USER_ID_INDEX = 0;
     private final int OTHER_USER_ID_INDEX = 1;
     private final int NEW_ROLES_INDEX = 2;

@@ -14,6 +14,7 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.sys.EventMonitor;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -30,7 +31,6 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
     private AccountManagerServiceImpl accountManagerService;
     private DuracloudUserService userService;
-    private AccountManagerServiceUtil serviceUtil;
 
     private EventMonitor systemMonitor;
     private EventMonitor customerMonitor;
@@ -43,7 +43,6 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     @Override
     public void before() throws Exception {
         super.before();
-        serviceUtil = new AccountManagerServiceUtil((repoMgr));
 
         systemMonitor = EasyMock.createMock("SystemMonitor",
                                             EventMonitor.class);
@@ -72,7 +71,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         setUpCreateAccount();
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
-                                                              serviceUtil,
+                                                              accountServiceFactory,
                                                               providerAccountUtil,
                                                               eventMonitors);
 
@@ -90,11 +89,6 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
         AccountService as = accountManagerService.createAccount(info, user);
         Assert.assertNotNull(as);
-
-        AccountInfo ai = as.retrieveAccountInfo();
-        Assert.assertNotNull(ai);
-        Assert.assertNotNull(ai.getId());
-        Assert.assertEquals(subdomain, ai.getSubdomain());
     }
 
     private void setUpCreateAccount() throws Exception {
@@ -140,6 +134,13 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
                                        EasyMock.isA(DuracloudUser.class));
         EasyMock.expectLastCall();
 
+        AccountService accountService = EasyMock.createMock("AccountService",
+                                                            AccountService.class);
+        EasyMock.replay(accountService);
+
+        EasyMock.expect(accountServiceFactory.getAccount(EasyMock.isA(
+            AccountInfo.class))).andReturn(accountService);
+
         replayMocks();
     }
 
@@ -148,7 +149,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         setUpLookupAccountsByUsername();
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
-                                                              serviceUtil,
+                                                              accountServiceFactory,
                                                               providerAccountUtil,
                                                               eventMonitors);
 
@@ -180,14 +181,14 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         setUpGetAccount();
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
-                                                              serviceUtil,
+                                                              accountServiceFactory,
                                                               providerAccountUtil,
                                                               eventMonitors);
 
         // success case
         int accountId = 1;
         AccountService service = accountManagerService.getAccount(accountId);
-        Assert.assertEquals(accountId, service.retrieveAccountInfo().getId());
+        Assert.assertNotNull(service);
 
         // failure case
         try {
@@ -201,11 +202,15 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
     private void setUpGetAccount() throws Exception {
         int acctId = 1;
-        EasyMock.expect(accountRepo.findById(EasyMock.anyInt())).andReturn(
-            newAccountInfo(acctId));
+        AccountService service = EasyMock.createMock("AccountService",
+                                                     AccountService.class);
+        EasyMock.replay(service);
 
-        EasyMock.expect(accountRepo.findById(NOT_AN_ACCT_ID))
-            .andThrow(new DBNotFoundException("canned-exception"));
+        EasyMock.expect(accountServiceFactory.getAccount(acctId)).andReturn(
+            service);
+
+        EasyMock.expect(accountServiceFactory.getAccount(NOT_AN_ACCT_ID))
+            .andThrow(new AccountNotFoundException(NOT_AN_ACCT_ID));
 
         replayMocks();
     }
@@ -215,7 +220,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         setUpCheckSubdomain();
         accountManagerService = new AccountManagerServiceImpl(repoMgr,
                                                               userService,
-                                                              serviceUtil,
+                                                              accountServiceFactory,
                                                               providerAccountUtil,
                                                               eventMonitors);
 

@@ -14,6 +14,7 @@ import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
+import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.util.ChecksumUtil;
@@ -41,6 +42,7 @@ public class DuracloudServiceTestBase {
     protected UserDetailsPropagator propagator;
     protected DuracloudUserServiceImpl userService;
     protected DuracloudProviderAccountUtil providerAccountUtil;
+    protected AccountServiceFactory accountServiceFactory;
     protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
 
     protected IdUtil idUtil;
@@ -71,6 +73,8 @@ public class DuracloudServiceTestBase {
         providerAccountUtil =
             EasyMock.createMock("DuracloudProviderAccountUtil",
                                 DuracloudProviderAccountUtil.class);
+        accountServiceFactory = EasyMock.createMock("AccountServiceFactory",
+                                                    AccountServiceFactory.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
@@ -126,6 +130,7 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(instanceRepo);
         EasyMock.verify(storageProviderAcctRepo);
         EasyMock.verify(providerAccountUtil);
+        EasyMock.verify(accountServiceFactory);
         EasyMock.verify(propagator);
         EasyMock.verify(idUtil);
     }
@@ -191,6 +196,7 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(instanceRepo);
         EasyMock.replay(storageProviderAcctRepo);
         EasyMock.replay(providerAccountUtil);
+        EasyMock.replay(accountServiceFactory);
         EasyMock.replay(propagator);
         EasyMock.replay(idUtil);
         EasyMock.replay(repoMgr);

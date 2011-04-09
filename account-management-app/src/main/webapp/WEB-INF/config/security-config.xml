@@ -38,6 +38,8 @@
     <authentication-provider user-service-ref="userDetailsService" />
   </authentication-manager>
 
+  <beans:bean id="securityContextUtil" class="org.duracloud.account.util.security.SecurityContextUtil"/>
+
   <beans:bean id="initDetailsService" class="org.duracloud.account.security.web.InitUserDetailService"/>
 
   <beans:bean id="passwordEncoder"
@@ -46,6 +48,10 @@
   </beans:bean>
 
   <beans:bean id="acctMgrVoter" class="org.duracloud.account.security.vote.AccountManagerAccessDecisionVoter">
+    <beans:constructor-arg ref="repoMgr"/>
+  </beans:bean>
+
+  <beans:bean id="acctVoter" class="org.duracloud.account.security.vote.AccountAccessDecisionVoter">
     <beans:constructor-arg ref="repoMgr"/>
   </beans:bean>
 

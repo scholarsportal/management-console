@@ -16,6 +16,7 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
@@ -40,18 +41,18 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     private DuracloudRepoMgr repoMgr;
     private DuracloudUserService userService;
-    private AccountManagerServiceUtil accountServiceUtil;
+    private AccountServiceFactory accountServiceFactory;
     private Set<EventMonitor> eventMonitors;
     private DuracloudProviderAccountUtil providerAccountUtil;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                      DuracloudUserService duracloudUserService,
-                                     AccountManagerServiceUtil accountServiceUtil,
+                                     AccountServiceFactory accountServiceFactory,
                                      DuracloudProviderAccountUtil providerAccountUtil,
                                      Set<EventMonitor> eventMonitors) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
-        this.accountServiceUtil = accountServiceUtil;
+        this.accountServiceFactory = accountServiceFactory;
         this.providerAccountUtil = providerAccountUtil;
         this.eventMonitors = eventMonitors;
     }
@@ -129,9 +130,8 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             getAccountRepo().save(newAccountInfo);
 
             userService.setUserRights(acctId, owner.getId(), Role.ROLE_OWNER);
-            return new AccountServiceImpl(newAccountInfo,
-                                          repoMgr,
-                                          providerAccountUtil);
+            return accountServiceFactory.getAccount(newAccountInfo);
+            
         } catch (DBConcurrentUpdateException ex) {
             throw new Error(ex);
         }
@@ -140,7 +140,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     @Override
     public AccountService getAccount(int accountId)
         throws AccountNotFoundException {
-        return accountServiceUtil.getAccount(accountId);
+        return accountServiceFactory.getAccount(accountId);
     }
 
     @Override

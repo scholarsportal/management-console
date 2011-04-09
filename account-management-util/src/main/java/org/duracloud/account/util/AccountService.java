@@ -11,6 +11,7 @@ import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.Set;
 
@@ -23,6 +24,7 @@ public interface AccountService {
     /**
      * @return
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public AccountInfo retrieveAccountInfo();
 
     /**
@@ -30,6 +32,7 @@ public interface AccountService {
      * @param orgName
      * @param department
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void storeAccountInfo(String acctName,
                                  String orgName,
                                  String department)
@@ -38,18 +41,27 @@ public interface AccountService {
     /**
      * @return
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public PaymentInfo retrievePaymentInfo();
 
     /**
      * @param paymentInfo
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void storePaymentInfo(PaymentInfo paymentInfo);
 
     /**
      * @param subdomain
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void storeSubdomain(String subdomain);
 
+    /**
+     * This method returns the subdomain associated with this account.
+     *
+     * @return subdomain
+     */
+    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
     public String getSubdomain();
 
     /**
@@ -57,6 +69,7 @@ public interface AccountService {
      *
      * @return
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public StorageProviderAccount getPrimaryStorageProvider();
 
     /**
@@ -64,6 +77,7 @@ public interface AccountService {
      *
      * @return
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public Set<StorageProviderAccount> getSecondaryStorageProviders();
 
     /**
@@ -72,6 +86,7 @@ public interface AccountService {
      * @param storageProviderType
      * @throws DBConcurrentUpdateException
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void addStorageProvider(StorageProviderType storageProviderType)
         throws DBConcurrentUpdateException;
 
@@ -82,12 +97,14 @@ public interface AccountService {
      * @param storageProviderId
      * @throws DBConcurrentUpdateException
      */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void removeStorageProvider(int storageProviderId)
         throws DBConcurrentUpdateException;
 
     /**
      * @return empty list
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public Set<DuracloudUser> getUsers();
 
     /**
@@ -99,6 +116,7 @@ public interface AccountService {
      * @param emailer      utility for sending mail
      * @return UserInvitation
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public UserInvitation inviteUser(String emailAddress, Emailer emailer)
         throws DBConcurrentUpdateException;
 
@@ -108,6 +126,7 @@ public interface AccountService {
      *
      * @return UserInvitation set
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public Set<UserInvitation> getPendingInvitations()
         throws DBConcurrentUpdateException;
 
@@ -116,5 +135,6 @@ public interface AccountService {
      * @param invitationId
      * @throws DBConcurrentUpdateException
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void deleteUserInvitation(int invitationId) throws DBConcurrentUpdateException;
 }
