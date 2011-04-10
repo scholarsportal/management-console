@@ -51,7 +51,7 @@ public interface DuracloudInstanceManagerService {
      * @return
      *
      */
-    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public Set<DuracloudInstanceService> getInstanceServices(int accountId);
 
 }

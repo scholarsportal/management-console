@@ -78,6 +78,12 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
+    public int getAccountId() {
+        throwIfAccessDenied();
+        return accountService.getAccountId();
+    }
+
+    @Override
     public AccountInfo retrieveAccountInfo() {
         throwIfAccessDenied();
         return accountService.retrieveAccountInfo();

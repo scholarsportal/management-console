@@ -8,6 +8,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.security.domain.SecuredRule;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;
@@ -57,15 +58,26 @@ public class AccountAccessDecisionVoter extends BaseAccessDecisionVoter {
         String role = securedRule.getRole().name();
         SecuredRule.Scope scope = securedRule.getScope();
 
-        Collection<String> userRoles = getUserRoles(authentication);
+        if (scope.equals(SecuredRule.Scope.ANY)) {
+            Collection<String> userRoles = getUserRoles(authentication);
+            decision = super.voteHasRole(role, userRoles);
 
-        // FIXME: add access decision logic.
+        } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
+            int acctId = getAcctId(invocation);
+            decision = voteUserHasRoleOnAccount(user, role, acctId);
 
-        return castVote(ACCESS_GRANTED, invocation);
+        } else {
+            String err = "Invalid scope: " + scope;
+            log.error(err);
+            throw new DuraCloudRuntimeException(err);
+        }
+
+        return castVote(decision, invocation);
     }
 
-    private boolean hasVote(int vote) {
-        return vote == ACCESS_GRANTED;
+    private int getAcctId(MethodInvocation invocation) {
+        AccountService acctService = (AccountService) invocation.getThis();
+        return acctService.getAccountId();
     }
 
     private int castVote(int decision, MethodInvocation invocation) {

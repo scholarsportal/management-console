@@ -21,6 +21,15 @@ import java.util.Set;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
 public interface AccountService {
+
+    /**
+     * This method returns the id of account
+     *
+     * @return account id
+     */
+    @Secured("role:ROLE_ANONYMOUS, scope:ANY")
+    public int getAccountId();
+
     /**
      * @return
      */
@@ -104,7 +113,7 @@ public interface AccountService {
     /**
      * @return empty list
      */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public Set<DuracloudUser> getUsers();
 
     /**

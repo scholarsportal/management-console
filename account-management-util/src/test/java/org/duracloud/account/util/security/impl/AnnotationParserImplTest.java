@@ -53,5 +53,25 @@ public class AnnotationParserImplTest {
             Assert.assertTrue(val, val.startsWith("role"));
         }
     }
+
+    @Test
+    public void testScopeCorrectOnGetAccountId() {
+        Map<String, Object[]> methodAnnotations = parser.getMethodAnnotationsForClass(
+            annotationClass,
+            targetClass);
+
+        Assert.assertNotNull(methodAnnotations);
+
+        Object[] values = methodAnnotations.get("getAccountId");
+        Assert.assertNotNull(values);
+
+        Assert.assertEquals(1, values.length);
+
+        String val = (String) values[0];
+        Assert.assertEquals("role:ROLE_ANONYMOUS, scope:ANY", val);
+        // The above security config needs to be of 'scope' ANY for the
+        //  AccountAccessDecisionVoter to have access to the acctId of the
+        //  target AccountInfo.
+    }
 }
 

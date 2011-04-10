@@ -77,6 +77,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public int getAccountId() {
+        return account.getId();
+    }
+
+    @Override
     public AccountInfo retrieveAccountInfo() {
         return account;
     }
