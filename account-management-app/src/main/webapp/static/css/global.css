@@ -99,15 +99,30 @@ body {
 	*font-size:	90%; /* IE only */
 	margin-right:10px !important;
 }
-
-h1, h2, h3
+h1, h2 
+,  h3
 {
 	font-family:Helvetica, Sans-Serif;
 }
 
-h1 { font-size:2em; font-weight:normal; }
-h2 { font-size:1.3em; font-weight:normal; }
+h1 {
+	font-size:1.7em;
+	font-weight:bold;
+	color: #FFF;
+}
+h2 {
+	font-size:1.3em;
+	font-weight:bold;
+	background-image: url(../img/panel_header_back.jpg);
+	background-repeat: repeat-x;
+	background-position: left top;
+}
 h3 { font-size:1em; }
+h4 {
+	font-size:1em;
+	color: #FFF;
+}
+
 
 
 li a{
@@ -186,11 +201,13 @@ table.standard-form{
 
 
 .button-bar {
-	margin-top:10px;	
+	margin-top:10px;
+	
 }
 
 .button-bar *{
-	float:right;	
+	float:right;
+		
 }
 
 
@@ -362,7 +379,7 @@ ing-right:10px;
 .dc-subgroup {
 	padding:0px 0px 5px 0px;
 	background-color: #ccc;
-	min-height:300px;
+	min-height:150px;
 }
 
 
@@ -378,6 +395,7 @@ ing-right:10px;
 .dc-subgroup .button {
 	color:#bbb;	
 }
+
 .dc-subgroup > h2 > span:last-child{
 	float:right;
 }
@@ -386,6 +404,12 @@ ing-right:10px;
 	padding:10px 5px 10px 5px;
 	background-color:#bbb;
 	
+}
+
+.dc-second-subgroup h2 {
+	padding:20px 10px 20px 10px;
+	background-color:#bbb;
+
 }
 
 .dc-subgroup-body-header{
@@ -403,7 +427,9 @@ ing-right:10px;
 .dc-subgroup-body{
 	padding:10px;	
 }
-
+.dc-second-subgroup-body{
+	padding:20px;
+}
 
 li.account {
 	padding:5px;
@@ -427,4 +453,13 @@ li.account:hover {
 .dc-subgroup li:last-child {
 	border-bottom: 0;
 	
+}
+
+.instructions {
+	font-size: .8em;
+	margin-bottom: 20px;
+}
+.providerSelctionRow {
+	margin-left: 15px;
+	padding-left: 15px;
 }

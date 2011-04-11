@@ -15,7 +15,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +32,7 @@ import java.util.Set;
  */
 public class AccountControllerTest extends AmaControllerTestBase {
     private AccountController accountController;
+    private DuracloudUserService userService;
     private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudInstanceService instanceService;
 
@@ -40,6 +41,9 @@ public class AccountControllerTest extends AmaControllerTestBase {
         super.before();
 
         setupSimpleAccountManagerService();
+        
+        userService = EasyMock.createMock("DuracloudUserService",
+                                          DuracloudUserService.class);
 
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
@@ -67,6 +71,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetInstance() throws Exception {
+        initializeMockUserServiceLoadUser();
         initializeMockInstanceManagerService();
         replayMocks();
 
@@ -77,6 +82,15 @@ public class AccountControllerTest extends AmaControllerTestBase {
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
 
         EasyMock.verify(instanceManagerService, instanceService);
+    }
+
+    private void initializeMockUserServiceLoadUser() throws DBNotFoundException {
+        userService =
+            EasyMock.createMock(DuracloudUserService.class);
+        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
+            .andReturn(createUser())
+            .anyTimes();
+        accountController.setUserService(userService);
     }
 
     @Test

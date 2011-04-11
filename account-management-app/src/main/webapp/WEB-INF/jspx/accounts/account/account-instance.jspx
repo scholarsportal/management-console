@@ -14,12 +14,14 @@
     <tiles:putAttribute name="header-extensions" value="" />
 
     <tiles:putAttribute name="body">
-      <tiles:insertDefinition name="account-base">
-        <tiles:putAttribute name="mainTab" value="instance"/>
+      <tiles:insertDefinition name="user-base">
 
         <tiles:putAttribute name="content">
+          <div class="button-bar">
+            <h4>${accountInfo.subdomain}</h4></div>
+          <h1>Instance Information</h1>
           <div class="dc-subgroup">
-            <h2>Instance</h2>
+            <h2>Manage Instance</h2>
             <div class="dc-subgroup-body">
               <c:choose>
                 <c:when test="${instanceStatus == null}">
@@ -77,6 +79,15 @@
               </c:choose>
             </div>
           </div>
+            <div
+             class="button-bar">
+
+              <a
+               class="button"
+               id="cancel-button"
+               href="${pageContext.request.contextPath}/users/byid/${user.username}">
+              Done</a>
+            </div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

@@ -252,7 +252,10 @@ span.off i,
 
 .plus { background-image:url(../img/icon_sm_plus.png); }
 .featured .plus { background-image:url(../img/icon_sm_plus_featured.png); }
-.pencil { background-image:url(../img/icon_sm_pencil.png); }
+.pencil {
+	background-image:url(../img/icon_sm_pencil.png);
+	float: left; !important
+}
 .trash { background-image:url(../img/icon_sm_trash.png); }
 .x { background:url(../img/icon_sm_x.png); }
 .lock { background-image:url(../img/icon_sm_lock.png); }

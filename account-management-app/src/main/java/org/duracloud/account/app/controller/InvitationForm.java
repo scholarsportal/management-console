@@ -8,7 +8,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.annotation.EmailAddressesConstraint;
-
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -16,6 +16,7 @@ import org.duracloud.account.annotation.EmailAddressesConstraint;
  */
 public class InvitationForm {
     @EmailAddressesConstraint
+    @NotBlank(message = "Email address must be specified.")
     private String emailAddresses = null;
 
     public void setEmailAddresses(String emailAddresses) {

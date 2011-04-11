@@ -13,13 +13,17 @@
 		<tiles:putAttribute name="header-extensions" value="" />
 
 		<tiles:putAttribute name="body">
-			<tiles:insertDefinition name="account-base">
-				<tiles:putAttribute name="mainTab" value="providers" />
+			<tiles:insertDefinition name="user-base">
 
 				<tiles:putAttribute name="content">
+                  <div class="button-bar">
+                    <h4>${accountInfo.subdomain}</h4></div>
+                  <h1>Account Information</h1>
+
                   <div
                    class="dc-subgroup">
                     <h2>Providers</h2>
+                      <div class="providerSelctionRow">
                     <h3>
                       <form:form
                         id="provider-add-form"
@@ -28,6 +32,7 @@
                         modelAttribute="providerForm">
 
                         <c:if test="${providerForm.storageProviders != null}">
+                            <br />
 
                           Add a Provider:
                         <form:select
@@ -35,7 +40,7 @@
                          cssErrorClass="error"
                          path="provider"
                          items="${providerForm.storageProviders}" />
-                        <button
+                        <button style="margin-left:8px !important"
                          id="provider-add-button"
                          type="submit">
                             <i class="pre plus"></i>
@@ -47,22 +52,20 @@
                         </c:if>
                       </form:form>
                     </h3>
-
+                    </div>
                     <div
                      class="dc-subgroup-body">
                       <table>
                         <tr>
                           <th>Provider</th>
 
-                          <th>Status</th>
-
-                          <th style="visibility: hidden">
+                          <th>
                           </th>
                         </tr>
 
                         <tr>
                           <td>${primaryProvider.providerType}</td>
-                          <td></td>
+                          <td>(Primary)</td>
                           <td></td>
                         </tr>
 
@@ -73,9 +76,11 @@
                             <tr>
                               <td>${p.providerType}</td>
 
-                              <td></td>
+                              <td>(Secondary)</td>
 
-                              <td style="visibility: hidden">
+                              <td>
+                               <c:if
+                                test="${accountInfo.status == 'PENDING'}">
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers/byid/${p.id}/delete"
                                  method="post">
@@ -87,10 +92,21 @@
 
                                   Delete</button>
                                 </form>
+                               </c:if>
                               </td>
                             </tr>
                           </c:forEach>
                       </table>
+                      <div style="height:20px;"></div>
+
+                      <div
+                       class="button-bar">
+                        <a
+                         class="button"
+                         id="cancel-button"
+                         href="${pageContext.request.contextPath}/users/byid/${user.username}/accounts">
+                        Done</a>
+                      </div>
                     </div>
                   </div>
 

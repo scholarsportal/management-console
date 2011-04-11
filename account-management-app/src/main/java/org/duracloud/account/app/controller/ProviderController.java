@@ -5,6 +5,7 @@ package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -31,10 +32,10 @@ public class ProviderController extends AbstractAccountController {
 
     @RequestMapping(value = { PROVIDER_PATH }, method = RequestMethod.GET)
     public String getProviders(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
-
+        addUserToModel(model);
         return "account-providers";
     }
 
@@ -49,10 +50,7 @@ public class ProviderController extends AbstractAccountController {
             accountManagerService.getAccount(accountId);
         accountService.addStorageProvider(
             StorageProviderType.fromString(providerForm.getProvider()));
-
-        loadAccountInfo(accountId, model);
-        loadProviderInfo(accountId, model);
-        return "account-providers";
+        return formatAccountRedirect(Integer.toString(accountId), "/providers");
     }
 
     @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{providerId}/delete", method = RequestMethod.POST)
@@ -64,48 +62,6 @@ public class ProviderController extends AbstractAccountController {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         accountService.removeStorageProvider(providerId);
-
-        loadAccountInfo(accountId, model);
-        loadProviderInfo(accountId, model);
-        return "account-providers";
-    }
-
-    private void loadProviderInfo(int accountId, Model model)
-        throws AccountNotFoundException {
-        AccountService accountService =
-            accountManagerService.getAccount(accountId);
-
-        StorageProviderAccount primarySP =
-            accountService.getPrimaryStorageProvider();
-        model.addAttribute("primaryProvider", primarySP);
-
-        Set<StorageProviderAccount> secondarySPs =
-            accountService.getSecondaryStorageProviders();
-        model.addAttribute("secondaryProviders", secondarySPs);
-
-        // Get available providers for account
-        ProviderForm providerForm = new ProviderForm();
-        List<StorageProviderType> availableProviderTypes =
-            new ArrayList<StorageProviderType>();
-
-        Set<StorageProviderType> usedTypes = new HashSet<StorageProviderType>();
-        for(StorageProviderAccount secondaryAcct : secondarySPs) {
-            usedTypes.add(secondaryAcct.getProviderType());
-        }
-
-        if(!usedTypes.contains(StorageProviderType.RACKSPACE)) {
-            availableProviderTypes.add(StorageProviderType.RACKSPACE);
-        }
-        if(!usedTypes.contains(StorageProviderType.MICROSOFT_AZURE)) {
-            availableProviderTypes.add(StorageProviderType.MICROSOFT_AZURE);
-        }
-
-        if(availableProviderTypes.size() > 0) {
-            providerForm.setStorageProviders(availableProviderTypes);
-        } else {
-            providerForm.setStorageProviders(null);
-        }
-
-        model.addAttribute("providerForm", providerForm);
+        return formatAccountRedirect(Integer.toString(accountId), "/providers");
     }
 }

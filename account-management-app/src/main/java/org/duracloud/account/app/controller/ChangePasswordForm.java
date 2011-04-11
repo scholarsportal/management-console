@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 @FieldMatch(first="password", second="passwordConfirm", message="The passwords do not match.")
 public class ChangePasswordForm {
-    
+    @NotBlank(message = "Password must be specified.")
     private String password;
     private String passwordConfirm;
     

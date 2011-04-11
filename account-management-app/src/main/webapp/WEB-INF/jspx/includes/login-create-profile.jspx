@@ -11,9 +11,8 @@
    contentType="application/xhtml+xml;charset=UTF-8" />
 
   <sec:authentication property="principal" var="principal" />
- 
-  <div
-   class="two-by-one-layout">
+  <h1>Login</h1>
+  <div class="two-by-one-layout">
     <div
      class="dc-subgroup">
       <h2>Current Users</h2>
@@ -24,7 +23,7 @@
         
               <c:when
        test="${(principal == 'anonymousUser') || (empty principal)}">
-              <p>Already have a Duracloud profile?
+              <p class="instructions">Already have a Duracloud profile?
               
               <c:choose>
                 <c:when test="${not empty redemptionCode}">
@@ -40,7 +39,7 @@
 	         page="/WEB-INF/jspx/includes/login-form.jspx" />
 
             <a
-             id="forgot-password-link"
+             id="forgot-password-link" class="instructions"
              href="${pageContext.request.contextPath}/users/forgot-password">
 
             Forgot Password</a>
@@ -62,9 +61,8 @@
 
       <div
        class="dc-subgroup-body">
-        <p>Don't have a Duracloud profile yet? No problem - create a new one
+        <p class="instructions">Don't have a Duracloud profile yet? No problem - create a new one
         here.</p>
-
         <ul>
           <li>
             <a
@@ -77,10 +75,10 @@
 
             Create New Profile</a>
           </li>
-        </ul>
+      </ul>
       </div>
       </c:if>
     </div>
-  </div>
+</div>
 </jsp:root>
 

@@ -6,6 +6,9 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -16,8 +19,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The default view for this application
@@ -121,4 +131,57 @@ public abstract class AbstractAccountController extends AbstractController {
         model.addAttribute("billingInfo", new CreditCardPaymentInfo());
     }
 
+    protected void loadProviderInfo(int accountId, Model model)
+        throws AccountNotFoundException {
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+
+        StorageProviderAccount primarySP =
+            accountService.getPrimaryStorageProvider();
+        model.addAttribute("primaryProvider", primarySP);
+
+        Set<StorageProviderAccount> secondarySPs =
+            accountService.getSecondaryStorageProviders();
+        model.addAttribute("secondaryProviders", secondarySPs);
+
+        // Get available providers for account
+        ProviderForm providerForm = new ProviderForm();
+        List<StorageProviderType> availableProviderTypes =
+            new ArrayList<StorageProviderType>();
+
+        Set<StorageProviderType> usedTypes = new HashSet<StorageProviderType>();
+        for(StorageProviderAccount secondaryAcct : secondarySPs) {
+            usedTypes.add(secondaryAcct.getProviderType());
+        }
+
+        if(!usedTypes.contains(StorageProviderType.RACKSPACE)) {
+            availableProviderTypes.add(StorageProviderType.RACKSPACE);
+        }
+        if(!usedTypes.contains(StorageProviderType.MICROSOFT_AZURE)) {
+            availableProviderTypes.add(StorageProviderType.MICROSOFT_AZURE);
+        }
+
+        if(availableProviderTypes.size() > 0) {
+            providerForm.setStorageProviders(availableProviderTypes);
+        } else {
+            providerForm.setStorageProviders(null);
+        }
+
+        model.addAttribute("providerForm", providerForm);
+    }
+
+
+    protected void addUserToModel(Model model) throws DBNotFoundException {
+        model.addAttribute(UserController.USER_KEY, getUser());
+    }
+
+    /**
+     * @return
+     */
+    protected DuracloudUser getUser() throws DBNotFoundException {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        String username = authentication.getName();
+        return this.userService.loadDuracloudUserByUsername(username);
+    }
 }

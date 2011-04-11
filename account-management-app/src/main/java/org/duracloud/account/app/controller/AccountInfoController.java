@@ -3,6 +3,7 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +64,8 @@ public class AccountInfoController extends AbstractAccountController {
         // FIXME seems like there is some latency
         sleepMomentarily();
 
-        loadAccountInfo(accountId, model);
-        return ACCOUNT_DETAILS_VIEW_ID;
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:/users/byid/" + username;
     }
 }

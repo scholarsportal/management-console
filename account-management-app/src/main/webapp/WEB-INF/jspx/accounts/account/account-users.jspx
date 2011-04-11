@@ -4,6 +4,7 @@
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
@@ -21,42 +22,31 @@
     <tiles:putAttribute
      name="body">
       <tiles:insertDefinition
-       name="account-base">
-        <tiles:putAttribute
-         name="mainTab"
-         value="users" />
+       name="user-base">
 
         <tiles:putAttribute
          name="content">
+          <div class="button-bar"><h4>${accountInfo.subdomain}</h4></div>
+          <h1>Edit Account Users</h1>
           <div
            id="account-list"
            class="dc-subgroup">
-            <h2>Users 
-            <a
-             href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invite"
-             class="button">
-            <i
-             class="pre plus">
-            </i>
-
-            Invite New Users</a>
+            <h2>
+                Active Users
             </h2>
-
-            <div
-             class="dc-subgroup-body">
-              <table>
+              <table width="90%" align="center">
                 <tr>
-                  <th>Username</th>
+                  <th align="left">Username</th>
 
-                  <th>Name</th>
+                  <th align="left">Name</th>
 
-                  <th>Email Address</th>
+                  <th align="left">Email Address</th>
 
-                  <th>Role</th>
+                  <th align="left">Role</th>
 
-                  <th>Status</th>
+                  <th align="left">Change Role</th>
 
-                  <th>
+                  <th align="left">
                   </th>
                 </tr>
 
@@ -64,13 +54,13 @@
                  var="u"
                  items="${users}">
                   <tr>
-                    <td>${u.username}</td>
+                    <td align="left">${u.username}</td>
 
-                    <td>${u.firstName} ${u.lastName}</td>
+                    <td align="left">${u.firstName} ${u.lastName}</td>
 
-                    <td>${u.email}</td>
+                    <td align="left">${u.email}</td>
 
-                    <td>
+                    <td align="left">
                       <c:forEach
                        items="${u.roles}"
                        var="role"
@@ -78,47 +68,51 @@
                       <c:if
                        test="${status.count &gt; 1}">,</c:if>
 
-                      ${role}</c:forEach>
+                      ${role.displayName}</c:forEach>
                     </td>
+                      
+                     <c:choose>
+                          <c:when test="${u.deletable}">
+                        <form:form
+                         id="account-users-edit-form"
+                         method="post"
+                         action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/edit"
+                         modelAttribute="accountUsersEditForm">
+                          <jsp:include
+                           page="/WEB-INF/jspx/includes/global-errors.jspx">
+                            <jsp:param
+                             name="formName"
+                             value="accountUsersEditForm" />
+                          </jsp:include>
+                              <td align="left"
+                               class="value required">
+                                <form:select
+                                 id="role"
+                                 cssErrorClass="error"
+                                 path="role"
+                                 items="${roleList}"
+                                        itemLabel="displayName"/>
 
-                    <td>${u.status}</td>
 
-                    <td>
+                          <button
+                           type="submit">
+
+
+                          Save</button>
+                              </td>
+                        </form:form>
+
+                    </c:when>
+                    <c:otherwise>
+                      <td align="left"></td>
+                    </c:otherwise>
+                    </c:choose>
+                    <td align="left">
                       <ul
                        class="horizontal-list">
-                        <li>
-                          <a
-                           href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/edit"
-                           style="visibility:${u.id lt 0 ? 'hidden' : 'visible'}"
-                           id="edit-user-${u.id}-link"
-                           class="button">
-                          <i
-                           class="pre pencil">
-                          </i>
-
-                          Edit</a>
-                        </li>
-
                         <c:if
                          test="${u.deletable}">
                           <li>
-                            <c:choose>
-                              <c:when
-                               test="${u.id lt 0}">
-                                <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invitations/byid/${u.invitationId}/delete"
-                                 method="post">
-                                  <button
-                                   type="submit">
-                                  <i
-                                   class="pre trash">
-                                  </i>
-
-                                  Delete</button>
-                                </form>
-                              </c:when>
-
-                              <c:otherwise>
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/delete"
                                  method="post">
@@ -130,17 +124,6 @@
 
                                   Delete</button>
                                 </form>
-                              </c:otherwise>
-                            </c:choose>
-                          </li>
-                        </c:if>
-
-                        <c:if
-                         test="${u.id lt 0}">
-                          <li>
-                            <a
-                             href="${u.redemptionURL}">
-                            Redemption URL</a>
                           </li>
                         </c:if>
                       </ul>
@@ -149,7 +132,108 @@
                 </c:forEach>
               </table>
             </div>
-          </div>
+            
+            <br />
+
+          <div
+           class="dc-subgroup">
+            <h2>
+                Pending Users
+            </h2>
+              <table width="90%" align="center">
+                <tr>
+                  <th align="left" valign="middle">Email</th>
+
+                  <th align="left" valign="middle">
+                  </th>
+                </tr>
+              <c:choose>
+                <c:when
+                 test="${not empty pendingUserInvitations}">
+
+                <c:forEach
+                 var="up"
+                 items="${pendingUserInvitations}">
+                  <tr>
+                    <td align="left" valign="middle">${up.email}</td>
+
+                    <td align="left" valign="middle">
+                      <ul
+                       class="horizontal-list">
+                          <li>
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invitations/byid/${up.invitationId}/delete"
+                                 method="post">
+                                  <button
+                                   type="submit">
+                                  <i
+                                   class="pre trash">
+                                  </i>
+
+                                  Delete</button>
+                                </form>
+                          </li>
+
+                        <c:if
+                         test="${up.id lt 0}">
+                          <li>
+                            <a
+                             href="${up.redemptionURL}">
+                            Redemption URL</a>
+                          </li>
+                        </c:if>
+                      </ul>
+                    </td>
+                  </tr>
+                </c:forEach>
+
+                </c:when>
+
+                <c:otherwise>
+                  <p>There are no pending users.</p>
+                </c:otherwise>
+              </c:choose>
+
+              <jsp:include
+               page="/WEB-INF/jspx/includes/global-errors.jspx">
+                <jsp:param
+                 name="formName"
+                 value="invitationForm" />
+              </jsp:include>
+             <form:form
+               id="invitation-form"
+               modelAttribute="invitationForm"
+               method="POST">
+                  <tr>
+
+                    <td align="left" valign="middle"
+                     class="value required">
+                      <form:input
+                       cssErrorClass="error"
+                       id="email-addresses"
+                       path="emailAddresses"
+                       />
+                    </td>
+                      <td align="left" valign="middle">
+                <div>
+                  <button
+                   type="submit">
+                  Invite</button>
+                </div></td>
+
+                  </tr>
+              </form:form>
+              </table>
+            </div>
+                <div
+                 class="button-bar">
+
+                  <a
+                   class="button"
+                   id="cancel-button"
+                   href="${pageContext.request.contextPath}/users/byid/${user.username}">
+                  Done</a>
+                </div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

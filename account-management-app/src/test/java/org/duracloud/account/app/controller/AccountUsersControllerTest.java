@@ -9,13 +9,14 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.notification.Emailer;
-import org.easymock.EasyMock;
+import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,8 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
 
     @Before
     public void before() throws Exception {
+        super.before();
+
         accountUsersController = new AccountUsersController();
         accountManagerService = EasyMock.createMock("AccountManagerService",
                                                     AccountManagerService.class);
@@ -97,20 +100,10 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
                                                     result,
                                                     model);
 
-        Collection<AccountUser> accountUsers = (Collection<AccountUser>) model.asMap()
-            .get(AccountUsersController.USERS_KEY);
+        Collection<AccountUsersController.PendingAccountUser> accountUsers = (Collection<AccountUsersController.PendingAccountUser>) model.asMap()
+            .get("pendingUserInvitations");
         Assert.assertNotNull(accountUsers);
-
-        boolean foundInvitation = false;
-        for (AccountUser au : accountUsers) {
-            if (au instanceof AccountUsersController.PendingAccountUser) {
-                PendingAccountUser pending = (PendingAccountUser)au;
-                Assert.assertEquals(pending.getInvitationId(), ui.getId());
-                foundInvitation = true;
-            }
-        }
-
-        Assert.assertTrue(foundInvitation);
+        Assert.assertFalse(accountUsers.isEmpty());
         EasyMock.verify(this.accountManagerService,
                         this.accountService,
                         notificationMgr,
@@ -131,7 +124,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGet() throws Exception {
-        setupGet();
+        setupGet(TEST_ACCOUNT_ID);
         replayMocks();
 
         Model model = new ExtendedModelMap();
@@ -145,8 +138,8 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         Assert.assertTrue(model.containsAttribute(AccountUsersController.USERS_KEY));
     }
 
-    private void setupGet()
-        throws DBConcurrentUpdateException, AccountNotFoundException {
+    private void setupGet(int accountId)
+        throws DBConcurrentUpdateException, AccountNotFoundException, DBNotFoundException {
         this.accountManagerService =
             EasyMock.createMock(AccountManagerService.class);
         accountService = EasyMock.createMock(AccountService.class);
@@ -162,9 +155,14 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
             .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() })))
             .times(1);
 
-        EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID))
+        EasyMock.expect(accountManagerService.getAccount(accountId))
             .andReturn(accountService);
         this.accountUsersController.setAccountManagerService(accountManagerService);
+
+        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
+            .andReturn(createUser())
+            .anyTimes();
+        accountUsersController.setUserService(userService);
     }
     
     @Test
@@ -194,7 +192,9 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         this.accountUsersController.setUserService(userService);
         EasyMock.replay(userService);
         Model model = new ExtendedModelMap();
-        this.accountUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID, 1, model);
+        this.accountUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID,
+                                                          1,
+                                                          model);
         EasyMock.verify(userService);
     }
 
@@ -215,6 +215,8 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
         EasyMock.replay(bindingResult);
         Model model = new ExtendedModelMap();
+
+        setupGet(acctId);
 
         EasyMock.expect(userService.setUserRights(EasyMock.eq(acctId),
                                                   EasyMock.eq(userId),

@@ -11,7 +11,9 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.notification.NotificationMgr;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -72,7 +74,48 @@ public class AccountUsersController extends AbstractAccountController {
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
         throws Exception {
+        addUserToModel(model);
+        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+
+        model.addAttribute("invitationForm", new InvitationForm());
         return get(getAccountService(accountId), model);
+    }
+
+    @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
+    public String sendInvitation(
+        @PathVariable int accountId,
+        @ModelAttribute("invitationForm") @Valid InvitationForm invitationForm,
+        BindingResult result, Model model) throws Exception {
+        log.info("sending invitation from account {}", accountId);
+        if (result.hasErrors()) {
+            model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+            addUserToModel(model);
+            get(getAccountService(accountId), model);
+            return ACCOUNT_USERS_VIEW_ID;
+        }
+        String emailAddress = invitationForm.getEmailAddresses();
+        AccountService service = getAccountService(accountId);
+
+            try {
+                UserInvitation ui = service.inviteUser(emailAddress,
+                                                       notificationMgr.getEmailer());
+                log.debug(
+                "created user invitation on account {} for {} expiring on {}",
+                new Object[]{ui.getAccountId(),
+                             ui.getUserEmail(),
+                             ui.getExpirationDate()});
+            } catch(UnsentEmailException e) {
+                result.addError(new ObjectError("emailAddresses",
+                    "Unable to send an email to the following recipient, but the user has been added: " + emailAddress));
+            }
+
+
+        // FIXME pause for a moment to let the async calls to
+        // the database percolate.
+        // what happens if an async call fails?
+        sleepMomentarily();
+        addUserToModel(model);
+        return get(service, model);
     }
 
     protected String get(AccountService accountService, Model model)
@@ -141,6 +184,8 @@ public class AccountUsersController extends AbstractAccountController {
             accountId);
         AccountService service = getAccountService(accountId);
         service.deleteUserInvitation(invitationId);
+        // FIXME pause for a moment to let the async calls to
+        sleepMomentarily();
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
@@ -189,7 +234,10 @@ public class AccountUsersController extends AbstractAccountController {
 
     @ModelAttribute("roleList")
     public List<Role> getRoleList() {
-        List<Role> roles = Arrays.asList(Role.values());
+        List<Role> roles = new ArrayList<Role>();
+        roles.add(Role.ROLE_USER);
+        roles.add(Role.ROLE_ADMIN);
+        roles.add(Role.ROLE_OWNER);
         return roles;
     }
 
@@ -208,7 +256,10 @@ public class AccountUsersController extends AbstractAccountController {
                                   userId, 
                                   roles.toArray(new Role[roles.size()]));
 
-        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        addUserToModel(model);
+        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+        model.addAttribute("invitationForm", new InvitationForm());
+        return get(getAccountService(accountId), model);
     }
 
     /**
@@ -230,24 +281,26 @@ public class AccountUsersController extends AbstractAccountController {
         Set<DuracloudUser> users = accountService.getUsers();
         Set<UserInvitation> pendingUserInvitations =
             accountService.getPendingInvitations();
-        model.addAttribute("pendingUserInvitations", pendingUserInvitations);
+
         addAccountInfoToModel(accountInfo, model);
         List<AccountUser> accountUsers =
             buildUserList(accountInfo.getId(), users);
-        appendInvitationsToAccountUserList(accountUsers, pendingUserInvitations);
+        addInvitationsToModel(pendingUserInvitations, model);
         model.addAttribute(USERS_KEY, accountUsers);
     }
 
     /**
-     * @param accountUsers
+     * @param model
      * @param pendingUserInvitations
      */
-    private void appendInvitationsToAccountUserList(List<AccountUser> accountUsers,
-                                                    Set<UserInvitation> pendingUserInvitations) {
+    private void addInvitationsToModel(Set<UserInvitation> pendingUserInvitations,
+                                       Model model) {
+        Set<PendingAccountUser> pendingUsers = new HashSet<PendingAccountUser>();
         Set<Role> roles = Role.ROLE_USER.getRoleHierarchy();
         for (UserInvitation ui : pendingUserInvitations) {
-            accountUsers.add(new PendingAccountUser(ui, roles));
+            pendingUsers.add(new PendingAccountUser(ui, roles));
         }
+        model.addAttribute("pendingUserInvitations", pendingUsers);
     }
 
     /**
@@ -276,8 +329,9 @@ public class AccountUsersController extends AbstractAccountController {
                     u.getLastName(),
                     u.getEmail(),
                     InvitationStatus.ACTIVE,
-                    u.getRolesByAcct(accountId),
-                    u.isOwnerForAcct(accountId) || hasMoreThanOneOwner);
+                    u.getRoleByAcct(accountId),
+                    (!u.isOwnerForAcct(accountId) ||
+                         (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
             list.add(au);
         }
 

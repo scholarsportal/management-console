@@ -10,7 +10,7 @@
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
 
-  <p>All fields marked 
+  <p class="instructions">All fields marked 
   <span
    class="required" />
 

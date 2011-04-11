@@ -63,8 +63,9 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = { INSTANCE_PATH }, method = RequestMethod.GET)
     public String getInstance(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         populateAccountInModel(accountId, model);
+        addUserToModel(model);
         return "account-instance";
     }
 
@@ -160,10 +161,6 @@ public class AccountController extends AbstractAccountController {
         return NEW_ACCOUNT_VIEW;
     }
 
-    private void addUserToModel(Model model) throws DBNotFoundException {
-        model.addAttribute(UserController.USER_KEY, getUser());
-    }
-
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
     public String add(
         @ModelAttribute(NEW_ACCOUNT_FORM_KEY) @Valid NewAccountForm newAccountForm,
@@ -196,38 +193,16 @@ public class AccountController extends AbstractAccountController {
 
                 int id = service.retrieveAccountInfo().getId();
                 String idText = Integer.toString(id);
-                user = getUser();
-
-                // reauthenticate
-                // FIXME I'm not sure that this is the right way to accomplish
-                // updating the account rights within the current security
-                // context.
-                // The question: will the password be available in this context?
-                // Or will it be hashed or null?
-                reauthenticate(user, authenticationManager);
-                return formatAccountRedirect(idText, "/");
+                return formatAccountRedirect(idText, "/providers");
             } catch (SubdomainAlreadyExistsException ex) {
                 result.addError(new ObjectError("subdomain",
                     "The subdomain you selected is already in use. Please choose another."));
-            } catch (DBNotFoundException e) {
-                log.error(e.getMessage(), e);
-                throw new Error("This should never happen", e);
             }
         }
 
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
 
-    }
-
-    /**
-     * @return
-     */
-    private DuracloudUser getUser() throws DBNotFoundException {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String username = authentication.getName();
-        return this.userService.loadDuracloudUserByUsername(username);
     }
 
     public AuthenticationManager getAuthenticationManager() {

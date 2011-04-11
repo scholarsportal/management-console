@@ -23,9 +23,6 @@
      name="body">
       <tiles:insertDefinition
        name="user-base">
-        <tiles:putAttribute
-         name="mainTab"
-         value="accounts" />
 
         <tiles:putAttribute
          name="content">

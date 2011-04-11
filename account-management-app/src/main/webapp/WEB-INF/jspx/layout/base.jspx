@@ -90,22 +90,15 @@
 <ul class="horizontal-list" style="margin-top: 10px;">
 	<sec:authorize ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
 		<sec:authentication property="principal.username" var="username" />
-		<li><i class="pre"></i>${username}</li>
+		<li><i class="pre"></i>Welcome ${username}</li>
 
 		<li><a id="user-profile-link" accesskey="p" class="icon-link"
 			href="${pageContext.request.contextPath }/users/byid/${username}">
-		<i class="pre "></i> Profile</a></li>
+		<i class="pre "></i> Home</a></li>
 
-		<li><sec:authorize ifAllGranted="ROLE_ROOT">
-			<li><a id="accounts-link" class="icon-link"
-				href="${pageContext.request.contextPath}/accounts/"> <i
-				class="pre"></i> View All Accounts</a></li>
-		</sec:authorize>
 		<li><a id="logout-link" accesskey="l"
 			href="${pageContext.request.contextPath}/j_spring_security_logout"
 			class="icon-link logout"> <i class="pre logoff"></i>Logout</a></li>
-
-		</li>
 
 	</sec:authorize>
 
@@ -116,9 +109,10 @@
 			href="${pageContext.request.contextPath}/login"> <i class="pre"></i>
 		Login</a></li>
 	</c:if>
-
+<!--
 	<li id="help"><a class="icon-link" href="#"><i
 		class="pre help"></i>Help</a></li>
+-->
 </ul>
 </div>
 </div>

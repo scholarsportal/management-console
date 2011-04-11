@@ -24,18 +24,29 @@
      name="body">
       <tiles:insertDefinition
        name="user-base">
-        <tiles:putAttribute
-         name="mainTab"
-         value="accounts" />
 
         <tiles:putAttribute
          name="content">
+            <div class="button-bar">
+                <a
+                 href="${pageContext.request.contextPath}/users/byid/${user.username}/edit"
+                 class="button">
+                <i
+                 class="pre pencil">
+                </i>
+
+                Edit Profile</a></div>
+        <h1>Account Management
+        </h1>
           <div
            id="account-list"
            class="dc-subgroup">
             <h2>
               Your Accounts
+            </h2>
 
+            <div
+             class="dc-subgroup-body">
                 <a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
@@ -43,22 +54,25 @@
                  class="pre plus">
                 </i>
 
-                Add Duracloud Account</a>
-            </h2>
-
-            <div
-             class="dc-subgroup-body">
+                Add DuraCloud Account</a>
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
-                  <table>
+                  <table width="1245">
                       <tr>
-                        <th>
+                        <th align="left" valign="middle">
                           Account
                         </th>
-                        <th>
-                          Role
+                        <th align="left" valign="middle">
+                          Status
                         </th>
+                        <th width="10" valign="middle">
+                          
+                        </th>
+                        <th width="120" align="right" valign="middle"></th>
+                        <th width="120" align="right" valign="middle"></th>
+                        <th width="120" align="right" valign="middle"></th>
+                        <th width="120" align="right" valign="middle"></th>
                       </tr>
                     <c:forEach
                      var="a"
@@ -66,16 +80,39 @@
 
 
                       <tr class="account">
-                        <td>
-                        <a
-                         id="account-home-${id}-link"
-                         href="${pageContext.request.contextPath}/accounts/byid/${a.id}">
-                          ${a.acctName} (${a.orgName} - ${a.department})
+                        <td align="left" valign="middle">
+                           ${a.subdomain}
+                        </td>
+                        <td align="left" valign="middle">
+                           ${a.status}
+                        </td>
+                        <td align="right" valign="middle">
+                           </td>
+                        <td align="right" valign="middle">
+                            <c:if
+                       test="${a.status == 'ACTIVE'}">
+                        <a class="button"
+                         id="account-${id}-duradmin-link"
+                         href="http://${a.subdomain}/duradmin"
+                         target="_blank">
+                          Launch Duradmin
                           </a>
-                        </td>
-                        <td>
-                          {roles here}
-                        </td>
+                            </c:if>
+                            </td>
+                            <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+
+                        <td align="right" valign="middle"><a class="button"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details"
+                             > <span
+                             class="pre plus"> </span> View Account Information</a></td>
+                        <td align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
+                             class="button"> Manage Users and Roles</a></td>
+                        <td align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance"
+                             class="button"> Manage instance</a></td>
+                                
+                            </sec:authorize>
                       </tr>
 
 
@@ -85,7 +122,7 @@
                 </c:when>
 
                 <c:otherwise>
-                  <p>There are no Duracloud accounts associated with this user profile.</p>
+                  <p>You currently have no DuraCloud accounts, please add an account to begin.</p>
                 </c:otherwise>
               </c:choose>
             </div>

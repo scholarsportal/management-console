@@ -145,7 +145,7 @@ public class UserController extends AbstractController {
                 sleepMomentarily();
                 user = this.userService.loadDuracloudUserByUsername(username);
                 reauthenticate(user, this.authenticationManager);
-                return getUserWelcome(username, accountId);
+
             } catch (InvalidRedemptionCodeException e) {
                 log.error("redemption failed for {} on redemption {}",
                     username,
@@ -154,9 +154,7 @@ public class UserController extends AbstractController {
             }
         }
 
-        ModelAndView mav = new ModelAndView(USER_HOME);
-        prepareModel(username, mav);
-        return mav;
+        return getUserAccounts(username);
     }
 
     /**
@@ -200,6 +198,9 @@ public class UserController extends AbstractController {
         form.setLastName(user.getLastName());
         form.setEmail(user.getEmail());
         model.addAttribute(USER_PROFILE_FORM_KEY, form);
+
+        model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+        
         addUserToModel(user, model);
         return USER_EDIT_VIEW;
     }
@@ -265,7 +266,14 @@ public class UserController extends AbstractController {
 
         log.debug("password form has errors for {}: returning...", username);
         addUserToModel(user, model);
-        return CHANGE_PASSWORD_VIEW;
+
+        UserProfileEditForm editForm = new UserProfileEditForm();
+        
+        editForm.setFirstName(user.getFirstName());
+        editForm.setLastName(user.getLastName());
+        editForm.setEmail(user.getEmail());
+        model.addAttribute(USER_PROFILE_FORM_KEY, editForm);
+        return USER_EDIT_VIEW;
 
     }
 
@@ -353,8 +361,7 @@ public class UserController extends AbstractController {
 
         String redirect =
             "redirect:"
-                + PREFIX + "/users/byid/" + newUserForm.getUsername()
-                + "/welcome";
+                + PREFIX + "/users/byid/" + newUserForm.getUsername();
 
         if (accountId > -1) {
             redirect += "?accountId=" + accountId;

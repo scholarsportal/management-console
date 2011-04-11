@@ -18,13 +18,13 @@
     <tiles:putAttribute
      name="body">
       <tiles:insertDefinition
-       name="account-base">
-        <tiles:putAttribute
-         name="mainTab"
-         value="details" />
+       name="user-base">
 
         <tiles:putAttribute
          name="content">
+          <div class="button-bar">
+             <h4>${accountInfo.subdomain}</h4></div>
+          <h1>Account Information</h1>
           <div
            class="two-by-one-layout">
             <div
@@ -49,14 +49,14 @@
                   <table
                    class="standard-form">
                     <tr>
-                      <td
+                      <td width="30%" nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
                          path="orgName">Organization Name</form:label>
                       </td>
 
-                      <td
+                      <td width="70%" align="left"
                        class="value required">
                         <form:input
                          cssErrorClass="error"
@@ -67,14 +67,14 @@
                     </tr>
 
                     <tr>
-                      <td
+                      <td nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
                          path="department">Department</form:label>
                       </td>
 
-                      <td
+                      <td align="left"
                        class="value required">
                         <form:input
                          cssErrorClass="error"
@@ -84,14 +84,14 @@
                     </tr>
 
                     <tr>
-                      <td
+                      <td nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
                          path="acctName">Account Name</form:label>
                       </td>
 
-                      <td
+                      <td align="left"
                        class="value required">
                         <form:input
                          cssErrorClass="error"
@@ -109,7 +109,7 @@
                    href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/">
                   Cancel</a>
 
-                  <button
+                  <button style="vertical-align:top"
                    type="submit">
 
 

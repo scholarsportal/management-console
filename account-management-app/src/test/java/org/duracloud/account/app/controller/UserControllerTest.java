@@ -118,7 +118,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
 
         ModelAndView mv = userController.getUser(TEST_USERNAME, request);
 
-        Assert.assertEquals(userController.USER_HOME, mv.getViewName());
+        Assert.assertEquals(userController.USER_ACCOUNTS, mv.getViewName());
 
         Map map = mv.getModel();
         Assert.assertNotNull(map);
@@ -216,7 +216,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
 
         Assert.assertNotNull(view);
         Assert.assertEquals(
-            "redirect:/users/byid/" + TEST_USERNAME + "/welcome", view);
+            "redirect:/users/byid/" + TEST_USERNAME, view);
 
         EasyMock.verify(bindingResult, newUserForm, userService);
     }
@@ -330,7 +330,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
                                                     model);
 
         Assert.assertNotNull(view);
-        Assert.assertEquals(userController.CHANGE_PASSWORD_VIEW, view);
+        Assert.assertEquals(userController.USER_EDIT_VIEW, view);
 
         Map map = model.asMap();
         Assert.assertNotNull(map);

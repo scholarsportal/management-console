@@ -4,7 +4,8 @@
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
- xmlns:c="http://java.sun.com/jsp/jstl/core">
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:sec="http://www.springframework.org/security/tags">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
 
@@ -21,14 +22,14 @@
     <tiles:putAttribute
      name="body">
       <tiles:insertDefinition
-       name="account-base">
-        <tiles:putAttribute
-         name="mainTab"
-         value="details" />
+       name="user-base">
 
         <tiles:putAttribute
          name="content">
-          <h1>Account and Billing Information</h1>
+          <div class="button-bar">
+            <h4>${accountInfo.subdomain}</h4></div>
+
+          <h1>Account Information</h1>
 
           <div
            class="two-by-one-layout">
@@ -36,7 +37,7 @@
              id="account-details"
              class="dc-subgroup">
               <h2>
-                <span>Account Information</span>
+                <span>Account Identification</span>
 
                 <span>
                   <ul
@@ -58,12 +59,6 @@
 
               <table>
                 <tr>
-                  <td>Subdomain</td>
-
-                  <td>${accountInfo.subdomain}</td>
-                </tr>
-
-                               <tr>
                   <td>Account Name</td>
 
                   <td>${accountInfo.acctName}</td>
@@ -90,19 +85,21 @@
             </div>
 
             <div
-             id="billing-details"
+             id="provider-details"
              class="dc-subgroup">
               <h2>
-                <span>Billing Information</span>
+                  <span>Provider Information</span>
+                  <span>
 
-                <span>
+                  <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+
                   <ul
                    class="horizontal-list">
                     <li>
                       <a
-                       id="billing-edit-link"
+                       id="provider-edit-link"
                        class="button"
-                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/billing/edit">
+                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/providers">
                       <i
                        class="pre pencil">
                       </i>
@@ -110,73 +107,45 @@
                       Edit</a>
                     </li>
                   </ul>
-                </span>
+                  </sec:authorize>
+                  </span>
+
               </h2>
 
-              <table
-               class="standard-property">
-                <tr>
-                  <td>Street Address</td>
+              <table>
+                        <tr>
+                          <td>${primaryProvider.providerType}</td>
+                          <td>(Primary)</td>
+                        </tr>
+                      <c:forEach
+                           var="p"
+                           items="${secondaryProviders}">
+                            <tr>
+                              <td>${p.providerType}</td>
 
-                  <td>
-                    ${billingInfo.streetAddress0}
-                      <br></br>
-                    ${billingInfo.streetAddress1}
-                      <br></br>
-                    ${billingInfo.streetAddress2}
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>City</td>
-
-                  <td>${billingInfo.city}</td>
-                </tr>
-
-                <tr>
-                  <td>State</td>
-
-                  <td>${billingInfo.state}</td>
-                </tr>
-
-                <tr>
-                  <td>Country</td>
-
-                  <td>${billingInfo.country}</td>
-                </tr>
-
-                <tr>
-                  <td>Postal Code</td>
-
-                  <td>${billingInfo.postalCode}</td>
-                </tr>
-
-                <tr>
-                  <td>Name on card</td>
-
-                  <td>${billingInfo.nameOnCard}</td>
-                </tr>
-
-                <tr>
-                  <td>Card Number</td>
-
-                  <td>${billingInfo.cardNumber}</td>
-                </tr>
-
-                <tr>
-                  <td>Expiration Date</td>
-
-                  <td>${billingInfo.expDate}</td>
-                </tr>
-
-                <tr>
-                  <td>CVC Number</td>
-
-                  <td>${billingInfo.cvc}</td>
-                </tr>
+                              <td>(Secondary)</td>
+                            </tr>
+                          </c:forEach>
               </table>
             </div>
           </div>
+
+<br />
+<br />
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+   <tr>
+ <td><div
+              class="button-bar">
+
+               <a
+                class="button"
+                id="cancel-button"
+                href="${pageContext.request.contextPath}/users/byid/${user.username}">
+               Done</a>
+             </div></td>
+   </tr>
+ </table>
+
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>
