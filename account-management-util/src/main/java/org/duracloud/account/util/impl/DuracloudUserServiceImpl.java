@@ -164,7 +164,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                     owners.add(acctRights.getUserId());
                 }
             }
-            if(owners.size() <= 1 && owners.contains(userId)) {
+            if(owners.size() == 1 && owners.contains(userId)) {
                 String err = "Cannot remove owner rights from user with ID " +
                     userId + " from account with ID " + acctId +
                     ". This account must maintain at least one owner.";
