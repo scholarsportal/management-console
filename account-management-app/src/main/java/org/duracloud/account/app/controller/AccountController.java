@@ -101,6 +101,7 @@ public class AccountController extends AbstractAccountController {
                                 Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         startInstance(accountId, instanceForm.getVersion());
+        sleepMomentarily();
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,
                            "Instance STARTED successfully, it will be " +

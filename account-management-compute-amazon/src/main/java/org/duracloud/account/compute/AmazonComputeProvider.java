@@ -85,13 +85,14 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                                   .iterator().next().getInstanceId();
 
         if(wait) {
-            boolean running = waitInstanceRunning(instanceId, STARTUP_WAIT_TIME);
-            if(!running) {
-                stop(instanceId);
-                String err = "Instance with ID " + instanceId +
-                    " did not start within " + STARTUP_WAIT_TIME/60000 +
-                    " minutes. The instance has been shut down.";
-                throw new InstanceStartupException(err);
+            // Two step verification, to ensure that the
+            // instance is known to be running.
+            if(waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
+                if(!waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
+                    startError(instanceId);
+                }
+            } else {
+                startError(instanceId);
             }
         }
 
@@ -100,6 +101,14 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         ec2Client.associateAddress(associateRequest);
 
         return instanceId;
+    }
+
+    private void startError(String instanceId) {
+        stop(instanceId);
+        String err = "Instance with ID " + instanceId +
+            " did not start within " + STARTUP_WAIT_TIME/60000 +
+            " minutes. The instance has been shut down.";
+        throw new InstanceStartupException(err);
     }
 
     public boolean waitInstanceRunning(String instanceId, long timeout) {
