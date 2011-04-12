@@ -20,6 +20,7 @@ import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
+import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
@@ -40,6 +41,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudInstance instance;
     protected AccountInfo account;
     protected DuracloudRepoMgr repoMgr;
+    protected DuracloudInstanceServiceFactory instanceServiceFactory;
     protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
     protected DuracloudInstanceServiceImpl service;
@@ -67,6 +69,9 @@ public class DuracloudInstanceServiceTestBase {
         account = EasyMock.createMock("AccountInfo", AccountInfo.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
+        instanceServiceFactory = EasyMock.createMock(
+            "DuracloudInstanceServiceFactory",
+            DuracloudInstanceServiceFactory.class);
         computeProviderUtil = EasyMock.createMock("ComputeProviderUtil",
                                                   ComputeProviderUtil.class);
         computeProvider = EasyMock.createMock("DuracloudComputeProvider",
@@ -109,6 +114,7 @@ public class DuracloudInstanceServiceTestBase {
         EasyMock.replay(instance,
                         account,
                         repoMgr,
+                        instanceServiceFactory,
                         computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
@@ -131,6 +137,7 @@ public class DuracloudInstanceServiceTestBase {
         EasyMock.verify(instance,
                         account,
                         repoMgr,
+                        instanceServiceFactory,
                         computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
@@ -156,7 +163,7 @@ public class DuracloudInstanceServiceTestBase {
             .andReturn(account)
             .anyTimes();
         EasyMock.expect(instance.getAccountId())
-            .andReturn(1)
+            .andReturn(accountId)
             .anyTimes();
 
         EasyMock.expect(repoMgr.getComputeProviderAccountRepo())

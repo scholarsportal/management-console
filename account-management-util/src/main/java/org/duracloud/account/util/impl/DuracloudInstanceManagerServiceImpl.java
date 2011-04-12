@@ -16,6 +16,7 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.error.DuracloudInstanceCreationException;
 import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.slf4j.Logger;
@@ -37,11 +38,14 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
 
     private DuracloudRepoMgr repoMgr;
     private ComputeProviderUtil computeUtil;
+    private DuracloudInstanceServiceFactory instanceServiceFactory;
 
     public DuracloudInstanceManagerServiceImpl(DuracloudRepoMgr repoMgr,
-                                               ComputeProviderUtil computeUtil) {
+                                               ComputeProviderUtil computeUtil,
+                                               DuracloudInstanceServiceFactory instanceServiceFactory) {
         this.repoMgr = repoMgr;
         this.computeUtil = computeUtil;
+        this.instanceServiceFactory = instanceServiceFactory;
     }
 
     @Override
@@ -99,7 +103,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                                     ServerImage image) {
         try {
             DuracloudInstance instance = doCreateInstance(accountId, image);
-            return initializeInstance(accountId, instance);
+            return initializeInstance(instance);
         } catch(DBNotFoundException e) {
             String err = "Could not create instance for account with ID " +
                          accountId + " based on image with ID " +
@@ -149,14 +153,11 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         return instance;
     }
 
-    private DuracloudInstanceService initializeInstance(int accountId,
-                                                        DuracloudInstance instance)
-        throws DBNotFoundException{
-        DuracloudInstanceService instanceService =
-            new DuracloudInstanceServiceImpl(accountId,
-                                             instance,
-                                             repoMgr,
-                                             computeUtil);
+    private DuracloudInstanceService initializeInstance(DuracloudInstance instance)
+        throws DBNotFoundException {
+        DuracloudInstanceService instanceService = instanceServiceFactory.getInstance(
+            instance);
+
         instanceService.initialize();
 
         return instanceService;
@@ -169,10 +170,8 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
         try {
             DuracloudInstance instance = instanceRepo.findById(instanceId);
-            return new DuracloudInstanceServiceImpl(instance.getAccountId(),
-                                                    instance,
-                                                    repoMgr,
-                                                    computeUtil);
+            return instanceServiceFactory.getInstance(instance);
+
         } catch(DBNotFoundException e) {
             throw new DuracloudInstanceNotAvailableException(e.getMessage(), e);
         }

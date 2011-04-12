@@ -178,6 +178,7 @@ public class InstanceManagerAccessDecisionVoterTest {
 
         DuracloudInstanceManagerServiceImpl serviceImpl = new DuracloudInstanceManagerServiceImpl(
             null,
+            null,
             null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);

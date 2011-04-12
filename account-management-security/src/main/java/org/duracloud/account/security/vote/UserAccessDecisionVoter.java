@@ -121,10 +121,6 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
         return castVote(decision, invocation);
     }
 
-    private boolean hasVote(int vote) {
-        return vote == ACCESS_GRANTED;
-    }
-
     private int voteUserHasRoleOnAcctToManageOther(int userId,
                                                    int acctId,
                                                    int otherUserId) {
@@ -142,57 +138,6 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
         return voteRolesAreSufficientToUpdateOther(rights.getRoles(),
                                                    other.getRoles());
-    }
-
-    private int voteUserHasRoleOnAcctToUpdateOthersRoles(int userId,
-                                                         int acctId,
-                                                         int otherUserId,
-                                                         Set<Role> otherRoles) {
-        log.debug("Voting if user {} has roles on acct {} to manage {}.",
-                  new Object[]{userId, acctId, otherUserId});
-
-        AccountRights rights = getUserRightsForAcct(userId, acctId);
-        AccountRights other = getUserRightsForAcct(otherUserId, acctId);
-
-        if (null == rights || null == other) {
-            log.warn("No rights found for users {}, {} on acct {}",
-                     new Object[]{userId, otherUserId, acctId});
-            return ACCESS_DENIED;
-        }
-
-        boolean existing = hasVote(voteRolesAreSufficientToUpdateOther(rights.getRoles(),
-                                                                       other.getRoles()));
-
-        boolean updates = hasVote(voteRolesAreSufficientToUpdateOther(rights.getRoles(),
-                                                                      otherRoles));
-
-        log.debug("Are {} sufficient to update both {} and {}?",
-                  new Object[]{rights.getRoles(),
-                               other.getRoles(),
-                               otherRoles});
-
-        return existing && updates ? ACCESS_GRANTED : ACCESS_DENIED;
-    }
-
-    private int voteRolesAreSufficientToUpdateOther(Set<Role> roles,
-                                                    Set<Role> other) {
-        if (null == roles || null == other) {
-            log.warn("Null roles one or more {}, {}", roles, other);
-            return ACCESS_DENIED;
-        }
-
-        Role otherHighestRole = Role.highestRole(other);
-        if (null == otherHighestRole) {
-            log.warn("No highest role found for {}", other);
-            return ACCESS_DENIED;
-        }
-
-        boolean userHasRole = roles.contains(otherHighestRole);
-        log.debug("Roles {} has permission to manage other {}",
-                  roles,
-                  otherHighestRole);
-
-        return userHasRole ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
     private int voteUserIsCreatingNewAcct(DuracloudUser user,

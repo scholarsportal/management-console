@@ -5,6 +5,7 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.Set;
 
@@ -17,30 +18,43 @@ import java.util.Set;
 public interface DuracloudInstanceService {
 
     /**
+     * Gets the id of the account
+     *
+     * @return acctId
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public int getAccountId();
+
+    /**
      * Gets information about the underlying Duracloud instance.
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudInstance getInstanceInfo();
 
     /**
      * Returns the state of the Duracloud instance.
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public String getStatus();
 
     /**
      * Stops the instance.
      * Stopped instances cannot be restarted (stop == terminate).
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void stop();
 
     /**
      * Restarts the server instance and calls initialize
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void restart();
 
     /**
      * Collects all of the necessary information and initializes a
      * Duracloud instance
      */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void initialize();
 
     /**
@@ -49,6 +63,7 @@ public interface DuracloudInstanceService {
      * running instance.
      * @param users to update
      */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"}) // should be admin
     public void setUserRoles(Set<DuracloudUser> users);    
 
 }

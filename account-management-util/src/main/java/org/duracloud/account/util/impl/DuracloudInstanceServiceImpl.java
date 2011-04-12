@@ -118,6 +118,11 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     }
 
     @Override
+    public int getAccountId() {
+        return accountId;
+    }
+
+    @Override
     public DuracloudInstance getInstanceInfo() {
         return instance;
     }

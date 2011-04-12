@@ -33,7 +33,8 @@ public class DuracloudInstanceManagerServiceImplTest
         super.setup();
         managerService =
             new DuracloudInstanceManagerServiceImpl(repoMgr,
-                                                    computeProviderUtil);
+                                                    computeProviderUtil,
+                                                    instanceServiceFactory);
     }
 
     @Test
@@ -160,6 +161,9 @@ public class DuracloudInstanceManagerServiceImplTest
         int instanceId = 2;
         int invalidInstanceId = -2;
 
+        EasyMock.expect(instanceServiceFactory.getInstance(instance))
+            .andReturn(service);
+
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)
             .times(2);
@@ -199,6 +203,9 @@ public class DuracloudInstanceManagerServiceImplTest
         int instanceId = 2;
         
         setUpGetInstanceIds(acctId, instanceId, 1);
+
+        EasyMock.expect(instanceServiceFactory.getInstance(instance))
+            .andReturn(service);
 
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)

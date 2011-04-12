@@ -90,11 +90,20 @@
     <constructor-arg ref="computeProviderFactory"/>
   </bean>
 
+  <bean id="instanceServiceFactory" class="org.duracloud.account.util.impl.DuracloudInstanceServiceFactoryImpl">
+    <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="instanceVoter"/>
+    <constructor-arg ref="securityContextUtil"/>
+    <constructor-arg ref="computeProviderUtil"/>
+    <constructor-arg ref="annotationParser"/>
+  </bean>
+
   <bean id="instanceManagerService"
         class="org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="computeProviderUtil"/>
+    <constructor-arg ref="instanceServiceFactory"/>
   </bean>
 
   <bean id="rootAccountManagerService"
