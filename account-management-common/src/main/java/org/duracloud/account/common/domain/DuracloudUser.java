@@ -82,16 +82,9 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
 
     public Set<Role> getRoleByAcct(int accountId) {
         Set<Role> roles = getRolesByAcct(accountId);
-
+        
         Set<Role> role = new HashSet<Role>(0);
-
-        if(roles.contains(Role.ROLE_OWNER)) {
-            role.add(Role.ROLE_OWNER);
-        } else if(roles.contains(Role.ROLE_ADMIN)) {
-            role.add(Role.ROLE_ADMIN);
-        } else if(roles.contains(Role.ROLE_USER)) {
-            role.add(Role.ROLE_USER);
-        }
+        role.add(Role.highestRole(roles));
         return role;
     }
 
