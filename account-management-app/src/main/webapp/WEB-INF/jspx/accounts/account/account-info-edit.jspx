@@ -25,8 +25,7 @@
           <div class="button-bar">
              <h4>${accountInfo.subdomain}</h4></div>
           <h1>Account Information</h1>
-          <div
-           class="two-by-one-layout">
+          <div>
             <div
              class="dc-subgroup">
               <h2>Edit Account Information</h2>
@@ -49,7 +48,7 @@
                   <table
                    class="standard-form">
                     <tr>
-                      <td width="30%" nowrap="nowrap"
+                      <td nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
@@ -100,7 +99,9 @@
                       </td>
                     </tr>
                   </table>
-
+            <div
+             style="height: 20px;">
+            </div>
                 <div
                  class="button-bar">
                   <a
@@ -115,6 +116,8 @@
 
                   Save</button>
                 </div>
+            <div style="height: 20px;">
+            </div>
                 </form:form>
               </div>
             </div>

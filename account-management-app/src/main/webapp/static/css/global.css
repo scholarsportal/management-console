@@ -202,7 +202,8 @@ table.standard-form{
 
 .button-bar {
 	margin-top:10px;
-	
+	margin-right:10px;
+
 }
 
 .button-bar *{
@@ -221,8 +222,12 @@ input.error,.global-errors{
 }
 
 div.global-errors{
-	padding:5px; 
+	padding:5px;
 	margin-bottom:5px;
+	margin-right: 8px;
+	margin-left: 8px;
+	margin-top:5px;
+	font-size: 11px;
 }
 .global-errors li{
 	padding:5px; 
@@ -377,9 +382,13 @@ ing-right:10px;
 
 
 .dc-subgroup {
-	padding:0px 0px 5px 0px;
 	background-color: #ccc;
-	min-height:150px;
+	min-height:200px;
+	margin-bottom: 20px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 5px;
+	padding-left: 0px;
 }
 
 
@@ -458,6 +467,7 @@ li.account:hover {
 .instructions {
 	font-size: .8em;
 	margin-bottom: 20px;
+	margin-left: 8px; !important
 }
 .providerSelctionRow {
 	margin-left: 15px;

@@ -19,13 +19,13 @@
         <tiles:putAttribute name="content">
           <div class="button-bar">
             <h4>${accountInfo.subdomain}</h4></div>
-          <h1>Instance Information</h1>
+          <h1>Instance Manager</h1>
           <div class="dc-subgroup">
-            <h2>Manage Instance</h2>
+            <h2>Your Instance</h2>
             <div class="dc-subgroup-body">
               <c:choose>
                 <c:when test="${instanceStatus == null}">
-                  <h3>No instance associated with this account.</h3>
+                  <p class="instructions"><strong>No instance associated with this account.</strong></p>
                   <c:choose>
                     <c:when test="${accountInfo.status == 'ACTIVE'}">
                       <form:form
@@ -38,12 +38,12 @@
                           cssErrorClass="error"
                           path="version"
                           items="${dcVersions}" />
-                        <button type="submit">Start New Instance</button>
+                        <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                     </c:when>
                     <c:otherwise>
-                        <h3>This status of this account is currently PENDING. Once this account
-                            becomes active, it will be possible to start an instance.</h3>
+                        <p class="instructions">This status of this account is currently PENDING. Once this account
+                            becomes active, it will be possible to start an instance.</p>
                     </c:otherwise>
                   </c:choose>
                 </c:when>

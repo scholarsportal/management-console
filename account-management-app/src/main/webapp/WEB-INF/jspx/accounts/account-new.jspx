@@ -26,14 +26,17 @@
 
         <tiles:putAttribute
          name="content">
+		 <h1>Create New Account
+        </h1>
           <div
-           class="two-by-one-layout">
+           >
             <div
              class="dc-subgroup">
-              <h2>Create New Account</h2>
-
+              <h2>Account Indentity Details</h2>
+				
               <div
-               class="dc-subgroup-body">
+               class="dc-subgroup">
+			   <br /><div class="instructions"> Please complete the information to begin creating your account.</div>
                 <jsp:include
                  page="/WEB-INF/jspx/includes/global-errors.jspx">
                   <jsp:param

@@ -24,11 +24,11 @@
      name="body">
       <div
        class="dc-main-content">
-        <div
-         class="two-by-one-layout">
+        <h1>Create a New Duracloud Profile</h1>
+        <div>
           <div
            class="dc-subgroup">
-            <h2>Create a New Duracloud Profile</h2>
+            <h2>Profile Details</h2>
 
             <div
              class="dc-subgroup-body">
@@ -158,13 +158,17 @@
                     </td>
                   </tr>
                 </table>
-
+            <div
+             style="height: 20px;">
+            </div>
                 <div
                  class="button-bar">
                   <button
                    id="create-user-button"
                    type="submit">Create Profile</button>
-                </div>
+                </div><div
+             style="height: 20px;">
+            </div>
               </form:form>
             </div>
           </div>

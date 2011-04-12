@@ -54,11 +54,11 @@
                  class="pre plus">
                 </i>
 
-                Add DuraCloud Account</a>
+                Add DuraCloud Account</a><br /><br />
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
-                  <table width="1245">
+                  <table width="100%">
                       <tr>
                         <th align="left" valign="middle">
                           Account
@@ -93,7 +93,7 @@
                        test="${a.status == 'ACTIVE'}">
                         <a class="button"
                          id="account-${id}-duradmin-link"
-                         href="http://${a.subdomain}/duradmin"
+                         href="http://${a.subdomain}.duracloud.org/duradmin"
                          target="_blank">
                           Launch Duradmin
                           </a>
