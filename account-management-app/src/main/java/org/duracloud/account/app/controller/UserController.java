@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,8 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
@@ -75,6 +78,10 @@ public class UserController extends AbstractController {
     public static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
     public static final String FORGOT_PASSWORD_FORM_KEY = "forgotPasswordForm";
     public static final String NEW_USER_FORM_KEY = "newUserForm";
+    public static final String INSTANCE_INFO_KEY = "instanceInfo";
+    public static final String INSTANCE_STATUS_KEY = "instanceStatus";
+    public static final String DC_VERSIONS_KEY = "dcVersions";
+    public static final String NEW_INSTANCE_FORM = "instanceForm";
     @Autowired
     private AccountManagerService accountManagerService;
 
@@ -83,6 +90,9 @@ public class UserController extends AbstractController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired(required = true)
+    protected DuracloudInstanceManagerService instanceManagerService;
 
     /**
      * 
@@ -286,6 +296,34 @@ public class UserController extends AbstractController {
         Set<AccountInfo> accounts =
             this.accountManagerService.findAccountsByUserId(user.getId());
         mav.addObject("accounts", accounts);
+
+        Iterator<AccountInfo> iterator = accounts.iterator();
+        if(iterator.hasNext()) {
+            AccountInfo acctInfo = iterator.next();
+            loadAccountInstances(acctInfo, mav);
+        }
+
+    }
+
+    private void loadAccountInstances(AccountInfo accountInfo, ModelAndView model) {
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountInfo.getId());
+        if(instanceServices.size() > 0) {
+            // Handle only a single instance for the time being
+            DuracloudInstanceService instanceService =
+                instanceServices.iterator().next();
+            model.addObject(INSTANCE_INFO_KEY,
+                               instanceService.getInstanceInfo());
+            model.addObject(INSTANCE_STATUS_KEY,
+                               instanceService.getStatus());
+        } else {
+            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+                Set<String> versions = instanceManagerService.getVersions();
+                model.addObject(DC_VERSIONS_KEY, versions);
+                model.addObject(NEW_INSTANCE_FORM,
+                                   new AccountInstanceForm());
+            }
+        }
     }
 
     private void addUserToModel(DuracloudUser user, Model model) {

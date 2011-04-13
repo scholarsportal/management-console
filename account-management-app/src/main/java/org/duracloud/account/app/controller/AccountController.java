@@ -107,7 +107,10 @@ public class AccountController extends AbstractAccountController {
         model.addAttribute(ACTION_STATUS,
                            "Instance STARTED successfully, it will be " +
                            "available for use in 5 minutes.");
-        return "account-instance";
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
     protected void startInstance(int accountId, String version) {
@@ -125,7 +128,10 @@ public class AccountController extends AbstractAccountController {
         model.addAttribute(ACTION_STATUS,
                            "Instance RESTARTED successfully, it will be " +
                            "available for use in 5 minutes.");
-        return "account-instance";
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
     protected void restartInstance(int instanceId)
@@ -143,7 +149,10 @@ public class AccountController extends AbstractAccountController {
         stopInstance(instanceId);
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS, "Instance STOPPED successfully.");
-        return "account-instance";
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
     protected void stopInstance(int instanceId)

@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -414,11 +415,19 @@ public class UserControllerTest  extends AmaControllerTestBase {
             EasyMock.createMock(AccountManagerService.class);
         Set set =
             EasyMock.createMock(Set.class);
+        Iterator iterator = EasyMock.createMock(Iterator.class);
+
+        EasyMock.expect(iterator.hasNext())
+            .andReturn(false)
+            .anyTimes();
+        EasyMock.expect(set.iterator())
+            .andReturn(iterator)
+            .anyTimes();
 
         EasyMock.expect(accountManagerService.findAccountsByUserId(EasyMock.anyInt()))
             .andReturn(set)
             .anyTimes();
-        EasyMock.replay(accountManagerService);
+        EasyMock.replay(accountManagerService, set, iterator);
         userController.setAccountManagerService(accountManagerService);
     }
 }

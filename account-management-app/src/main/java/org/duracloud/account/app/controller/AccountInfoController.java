@@ -2,8 +2,8 @@ package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +49,7 @@ public class AccountInfoController extends AbstractAccountController {
     public String editInfo(@PathVariable int accountId,
                            @ModelAttribute(EDIT_ACCOUNT_INFO_FORM_KEY) @Valid AccountEditForm accountEditForm,
 					   BindingResult result,
-					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException, DBNotFoundException {
         log.info("editInfo account {}", accountId);
 
         if (result.hasErrors()) {
@@ -64,8 +64,9 @@ public class AccountInfoController extends AbstractAccountController {
         // FIXME seems like there is some latency
         sleepMomentarily();
 
-        String username =
-            SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:/users/byid/" + username;
+        loadAccountInfo(accountId, model);
+        loadProviderInfo(accountId, model);
+        addUserToModel(model);
+        return ACCOUNT_DETAILS_VIEW_ID;
     }
 }

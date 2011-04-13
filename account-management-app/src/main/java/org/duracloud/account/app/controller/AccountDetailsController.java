@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.storage.domain.StorageProviderType;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import javax.validation.Valid;
+import org.springframework.validation.BindingResult;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -34,6 +39,20 @@ public class AccountDetailsController extends AbstractAccountController {
         loadProviderInfo(accountId, model);
         addUserToModel(model);
         return ACCOUNT_DETAILS_VIEW_ID;
+    }
+
+    @RequestMapping(value = ACCOUNT_DETAILS_PATH + "/providers/add", method = RequestMethod.POST)
+    public String addProvider(@PathVariable int accountId,
+                           @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
+					   BindingResult result,
+					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+        log.info("addProvider account {}", accountId);
+
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+        accountService.addStorageProvider(StorageProviderType.fromString(
+            providerForm.getProvider()));
+        return formatAccountRedirect(Integer.toString(accountId), "/details");
     }
 
 }

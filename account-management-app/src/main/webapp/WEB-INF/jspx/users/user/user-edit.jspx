@@ -29,7 +29,7 @@
          name="content">
           <h1>Edit Profile</h1>
             <div
-             id="account-list"
+             id="edit-profile"
              class="dc-subgroup">
               
           <form:form
@@ -115,7 +115,7 @@
                    type="submit">
 
 
-                  Update</button>
+                  Save</button>
                 </div>
                 </div>
               </div>
@@ -136,7 +136,6 @@
               <div
                class="dc-second-subgroup-body">
 
-              <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
               <jsp:include
                page="/WEB-INF/jspx/includes/global-errors.jspx">
                 <jsp:param
@@ -206,7 +205,7 @@
                    type="submit">
 
 
-                  Update</button>
+                  Save</button>
                 </div>
 
 
@@ -220,7 +219,7 @@
                    class="button"
                    id="cancel-button"
                    href="${pageContext.request.contextPath}/users/byid/${user.username}">
-                  Done</a>
+                  Back</a>
                 </div>
             <div style="height:20px;"></div>
 

@@ -27,26 +27,16 @@
 
         <tiles:putAttribute
          name="content">
-            <div class="button-bar">
-                <a
-                 href="${pageContext.request.contextPath}/users/byid/${user.username}/edit"
-                 class="button">
-                <i
-                 class="pre pencil">
-                </i>
-
-                Edit Profile</a></div>
-        <h1>Account Management
-        </h1>
+        <h5>Management Console
+        </h5>
+<div style="height:20px" ></div>
           <div
            id="account-list"
            class="dc-subgroup">
-            <h2>
-              Your Accounts
-            </h2>
 
             <div
              class="dc-subgroup-body">
+                <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                 <a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
@@ -54,11 +44,13 @@
                  class="pre plus">
                 </i>
 
-                Add DuraCloud Account</a><br /><br />
+                Add DuraCloud Account</a>
+                </sec:authorize>
+                <br /><br />
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
-                  <table width="100%">
+                    <table width="100%">
                       <tr>
                         <th align="left" valign="middle">
                           Account
@@ -69,7 +61,6 @@
                         <th width="10" valign="middle">
                           
                         </th>
-                        <th width="120" align="right" valign="middle"></th>
                         <th width="120" align="right" valign="middle"></th>
                         <th width="120" align="right" valign="middle"></th>
                         <th width="120" align="right" valign="middle"></th>
@@ -104,15 +95,76 @@
                         <td align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details"
                              > <span
-                             class="pre plus"> </span> View Account Information</a></td>
+                             class="pre plus"> </span> Account Information</a></td>
                         <td align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
                              class="button"> Manage Users and Roles</a></td>
-                        <td align="right" valign="middle"><a
-                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance"
-                             class="button"> Manage instance</a></td>
-                                
-                            </sec:authorize>
+                        </sec:authorize>
+                      </tr>
+                      <tr class="account">
+                        <td colspan="6" align="left" valign="middle">
+<div class="instance-panel">
+                        <div >
+              <c:choose>
+                <c:when test="${instanceStatus == null}">
+                  <p class="instructions"><strong>No instance associated with this account.</strong></p>
+                  <c:choose>
+                    <c:when test="${a.status == 'ACTIVE'}">
+                      <form:form
+                        id="instance-start-form"
+                        method="post"
+                        action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/start"
+                        modelAttribute="instanceForm">
+                        <form:select
+                          id="versions"
+                          cssErrorClass="error"
+                          path="version"
+                          items="${dcVersions}" />
+                        <button style="margin-left:8px !important" type="submit">Start New Instance</button>
+                      </form:form>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="instructions">This status of this account is currently PENDING. Once this account
+                            becomes active, it will be possible to start an instance.</p>
+                    </c:otherwise>
+                  </c:choose>
+                </c:when>
+                <c:otherwise>
+<table>
+                    <tr>
+                      <th>Host Name</th>
+                      <th>Status</th>
+                      <c:if test="${actionStatus != null}">
+                        <th>Notice</th>
+                      </c:if>
+                      <th><!-- buttons --></th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <td><c:out value="${instanceInfo.hostName}" /></td>
+                      <td><c:out value="${instanceStatus}" /></td>
+                      <c:if test="${actionStatus != null}">
+                        <td><strong><c:out value="${actionStatus}" /></strong></td>
+                      </c:if>
+                      <td>
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/restart"
+                              method="post">
+                          <button type="submit">Restart</button>
+                        </form>
+                        
+                      </td>
+                      <td><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/stop"
+                              method="post">
+                          <button type="submit">Stop</button>
+                        </form></td>
+                    </tr>
+                  </table>
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </div>
+
+</td>
                       </tr>
 
 
@@ -122,7 +174,7 @@
                 </c:when>
 
                 <c:otherwise>
-                  <p>You currently have no DuraCloud accounts, please add an account to begin.</p>
+                  <p>You currently have no DuraCloud accounts, you must be invited to an account.</p>
                 </c:otherwise>
               </c:choose>
             </div>

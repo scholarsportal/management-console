@@ -22,8 +22,6 @@
 
         <tiles:putAttribute
          name="content">
-          <div class="button-bar">
-             <h4>${accountInfo.subdomain}</h4></div>
           <h1>Account Information</h1>
           <div>
             <div

@@ -99,19 +99,19 @@ body {
 	*font-size:	90%; /* IE only */
 	margin-right:10px !important;
 }
-h1, h2 
-,  h3
+h2, h3
 {
 	font-family:Helvetica, Sans-Serif;
 }
-
 h1 {
-	font-size:1.7em;
+	font-size:1.0em;
 	font-weight:bold;
-	color: #FFF;
+	color: #999;
+	
 }
+
 h2 {
-	font-size:1.3em;
+	font-size:1.0em;
 	font-weight:bold;
 	background-image: url(../img/panel_header_back.jpg);
 	background-repeat: repeat-x;
@@ -122,7 +122,11 @@ h4 {
 	font-size:1em;
 	color: #FFF;
 }
-
+h5{
+	font-size:1.0em;
+	font-weight:bold;
+	color: #999;
+}
 
 
 li a{
@@ -276,15 +280,15 @@ div.global-errors{
 	background-repeat:no-repeat;
 	display:inline-block;
 	float:left;
-	height:20px;
+	height:40px;
 	font-size:20px;
-	padding-top:25px;
+	padding-top:33px;
 }
 
 #dc-logo
 {
-	background-image:url(../img/logo_top_duracloud.png);
-	width:110px;
+	background-image:url(../img/logo_top_duracloud_lg.png);
+	
 }
 
 #dc-app-title
@@ -300,7 +304,7 @@ div.global-errors{
 
 .pane-L1-body
 {
-	margin-top:42px;
+	margin-top:5px;
 	background:url(../img/bg_L1.png) no-repeat top right;
 	padding-top:5px;
 	min-height:600px;
@@ -410,9 +414,11 @@ ing-right:10px;
 }
 
 .dc-subgroup h2 {
-	padding:10px 5px 10px 5px;
 	background-color:#bbb;
-	
+	padding-top: 10px;
+	padding-right: 5px;
+	padding-bottom: 10px;
+	padding-left: 10px;	
 }
 
 .dc-second-subgroup h2 {
@@ -473,3 +479,9 @@ li.account:hover {
 	margin-left: 15px;
 	padding-left: 15px;
 }
+.instance-panel{
+	background-color: #c1c1c1;
+	padding: 8px;
+	border: 1px solid #4D4D4D;	
+	
+	}

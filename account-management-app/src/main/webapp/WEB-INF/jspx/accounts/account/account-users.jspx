@@ -5,6 +5,7 @@
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:sec="http://www.springframework.org/security/tags"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
@@ -26,7 +27,6 @@
 
         <tiles:putAttribute
          name="content">
-          <div class="button-bar"><h4>${accountInfo.subdomain}</h4></div>
           <h1>Manage Account Users</h1>
           <div
            id="account-list"
@@ -84,10 +84,9 @@
                              name="formName"
                              value="accountUsersEditForm" />
                           </jsp:include>
-                              <td align="left"
-                               class="value required">
+                              <td align="left">
                                 <form:select
-                                 id="role"
+                                 id="role" 
                                  cssErrorClass="error"
                                  path="role"
                                  items="${roleList}"
@@ -132,6 +131,51 @@
                 </c:forEach>
               </table>
             </div>
+
+<div
+           id="invite-list"
+           class="dc-subgroup" style="min-height:120px !important">
+            <h2>
+                Invite Users
+            </h2><br />
+            <h3>
+                To invite a user to this account enter their email address here.
+            </h3>
+              <table width="90%" align="right">
+                <form:form
+               id="invitation-form"
+               modelAttribute="invitationForm"
+               method="POST">
+                  <tr>
+<td></td>
+                    <td align="left" valign="middle"
+                     >
+                      <form:input
+                       cssErrorClass="error"
+                       id="email-addresses"
+                       path="emailAddresses"
+                       />
+                    </td>
+                      <td align="left" valign="middle">
+                <div>
+                  <button
+                   type="submit">
+                  Invite</button>
+                </div>
+				</td>
+				<td>
+				<jsp:include
+               page="/WEB-INF/jspx/includes/global-errors.jspx">
+                <jsp:param
+                 name="formName"
+                 value="invitationForm" />
+              </jsp:include>
+				</td>
+
+                  </tr>
+              </form:form>
+              </table>
+            </div>
             
             
 
@@ -173,6 +217,7 @@
                                   Delete</button>
                                 </form>
                           </li>
+                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
 
                         <c:if
                          test="${up.id lt 0}">
@@ -182,6 +227,8 @@
                             Redemption URL</a>
                           </li>
                         </c:if>
+                          </sec:authorize>
+
                       </ul>
                     </td>
                   </tr>
@@ -192,41 +239,7 @@
                 <c:otherwise>
                   <br /><p class="instructions">There are no pending users.</p>
                 </c:otherwise>
-              </c:choose>
-
-              
-             <form:form
-               id="invitation-form"
-               modelAttribute="invitationForm"
-               method="POST">
-                  <tr>
-
-                    <td align="left" valign="middle"
-                     class="value required">
-                      <form:input
-                       cssErrorClass="error"
-                       id="email-addresses"
-                       path="emailAddresses"
-                       />
-                    </td>
-                      <td align="left" valign="middle">
-                <div>
-                  <button
-                   type="submit">
-                  Invite</button>
-                </div>
-				</td>
-				<td>
-				<jsp:include
-               page="/WEB-INF/jspx/includes/global-errors.jspx">
-                <jsp:param
-                 name="formName"
-                 value="invitationForm" />
-              </jsp:include>
-				</td>
-
-                  </tr>
-              </form:form>
+              </c:choose>   
               </table>
             </div>
                 <div
@@ -236,7 +249,7 @@
                    class="button"
                    id="cancel-button"
                    href="${pageContext.request.contextPath}/users/byid/${user.username}">
-                  Done</a>
+                  Back</a>
                 </div>
 				<div style="height:20px"></div>
         </tiles:putAttribute>

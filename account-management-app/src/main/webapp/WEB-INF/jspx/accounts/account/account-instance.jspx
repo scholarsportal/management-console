@@ -17,8 +17,6 @@
       <tiles:insertDefinition name="user-base">
 
         <tiles:putAttribute name="content">
-          <div class="button-bar">
-            <h4>${accountInfo.subdomain}</h4></div>
           <h1>Instance Manager</h1>
           <div class="dc-subgroup">
             <h2>Your Instance</h2>
@@ -86,7 +84,7 @@
                class="button"
                id="cancel-button"
                href="${pageContext.request.contextPath}/users/byid/${user.username}">
-              Done</a>
+              Back</a>
             </div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
