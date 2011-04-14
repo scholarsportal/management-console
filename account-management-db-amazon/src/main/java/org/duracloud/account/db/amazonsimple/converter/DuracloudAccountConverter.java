@@ -27,7 +27,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         log = LoggerFactory.getLogger(DuracloudAccountConverter.class);
     }
 
-    protected static final String SUBDOMAIN_ATT = "SUBDOMAIN";
+    public static final String SUBDOMAIN_ATT = "SUBDOMAIN";
     protected static final String ACCT_NAME_ATT = "ACCT_NAME";
     protected static final String ORG_NAME_ATT = "ORG_NAME";
     protected static final String DEPARTMENT_ATT = "DEPARTMENT";

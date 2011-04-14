@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SUBDOMAIN_ATT;
+
 /**
  * @author Andrew Woods
  *         Date: Oct 10, 2010
@@ -63,6 +65,15 @@ public class DuracloudAccountRepoImpl extends BaseDuracloudRepoImpl implements D
                                                                 atts,
                                                                 condition);
         caller.putAttributes(db, request);
+    }
+
+    @Override
+    public AccountInfo findBySubdomain(String subdomain)
+        throws DBNotFoundException {
+        List<Item> items = findItemsByAttribute(SUBDOMAIN_ATT, subdomain);
+        Item item = items.iterator().next(); // Only one result expected
+        return converter.fromAttributes(item.getAttributes(),
+                                        idFromString(item.getName()));
     }
 
 }

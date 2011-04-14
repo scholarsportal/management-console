@@ -28,7 +28,9 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
 
     private static final String DOMAIN = "TEST_DURACLOUD_ACCOUNTS";
 
-    private static final String subdomain = "subdomain";
+    private static final String subdomain0 = "subdomain0";
+    private static final String subdomain1 = "subdomain1";
+    private static final String subdomain2 = "subdomain2";
     private static final String acctName = "account-name";
     private static final String orgName = "org-name";
     private static final String department = "department";
@@ -88,9 +90,9 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @Test
     public void testGetIds() throws Exception {
-        AccountInfo acct0 = createAccount(0);
-        AccountInfo acct1 = createAccount(1);
-        AccountInfo acct2 = createAccount(2);
+        AccountInfo acct0 = createAccount(0, subdomain0);
+        AccountInfo acct1 = createAccount(1, subdomain1);
+        AccountInfo acct2 = createAccount(2, subdomain2);
 
         accountRepo.save(acct0);
         accountRepo.save(acct1);
@@ -110,6 +112,10 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyAccount(acct0);
         verifyAccount(acct1);
         verifyAccount(acct2);
+
+        verifyAccountBySubdomain(subdomain0, acct0);
+        verifyAccountBySubdomain(subdomain1, acct1);
+        verifyAccountBySubdomain(subdomain2, acct2);
 
         // test concurrency
         verifyCounter(acct0, 1);
@@ -137,7 +143,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @Test
     public void testDelete() throws Exception {
-        AccountInfo acct0 = createAccount(0);
+        AccountInfo acct0 = createAccount(0, subdomain0);
         accountRepo.save(acct0);
         verifyRepoSize(accountRepo, 1);
 
@@ -145,7 +151,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRepoSize(accountRepo, 0);
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(int id, String subdomain) {
         return new AccountInfo(id,
                                subdomain,
                                acctName,
@@ -163,6 +169,15 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         new DBCaller<AccountInfo>() {
             protected AccountInfo doCall() throws Exception {
                 return accountRepo.findById(acct.getId());
+            }
+        }.call(acct);
+    }
+
+    private void verifyAccountBySubdomain(final String subdomain,
+                                          final AccountInfo acct) {
+        new DBCaller<AccountInfo>() {
+            protected AccountInfo doCall() throws Exception {
+                return accountRepo.findBySubdomain(subdomain);
             }
         }.call(acct);
     }

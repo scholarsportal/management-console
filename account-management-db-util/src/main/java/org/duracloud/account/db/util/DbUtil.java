@@ -46,7 +46,7 @@ import java.util.Set;
  */
 public class DbUtil {
 
-    public enum COMMAND {GET, PUT, CLEAR};
+    public enum COMMAND {GET, PUT, CLEAR, FILL};
 
     private final Logger log = LoggerFactory.getLogger(DbUtil.class);    
 
@@ -77,6 +77,10 @@ public class DbUtil {
         } else if(COMMAND.CLEAR.equals(command)) {
             doGet();
             doClear();
+        } else if(COMMAND.FILL.equals(command)) {
+            doGet();
+            DbUtilFiller filler = new DbUtilFiller(repoMgr);
+            filler.fill();
         }
     }
 
@@ -249,5 +253,5 @@ public class DbUtil {
 
         return xstream;
     }
-    
+
 }

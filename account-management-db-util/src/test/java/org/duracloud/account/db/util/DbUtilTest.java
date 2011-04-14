@@ -10,7 +10,7 @@ import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.init.domain.AmaConfig;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
