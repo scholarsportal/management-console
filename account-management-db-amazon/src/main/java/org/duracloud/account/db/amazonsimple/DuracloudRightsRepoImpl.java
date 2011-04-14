@@ -88,19 +88,19 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
 
         Set<AccountRights> rights = getAccountRightsFromItems(items);
         if (isRootRights(rights)) {
-            Set<Role> rootRoles = rights.iterator().next().getRoles();
+            Set<Role> rootRoles = Role.ROLE_ROOT.getRoleHierarchy();
             rights = getAllAccountRights(userId, rootRoles);
         }
         return rights;
     }
 
     private boolean isRootRights(Set<AccountRights> rights) {
-        // root user should only be a member of the wildcard account.
-        if (rights.size() != 1) {
-            return false;
+        for (AccountRights r : rights) {
+            if (r.getRoles().contains(Role.ROLE_ROOT)) {
+                return true;
+            }
         }
-
-        return rights.iterator().next().getRoles().contains(Role.ROLE_ROOT);
+        return false;
     }
 
     private Set<AccountRights> getAllAccountRights(int userId,
@@ -184,7 +184,7 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
     /**
      * This method returns the accountRights for the arg accountId and userId.
      * If no such item is found, and the arg userId belongs to the root user,
-     * then and accountRights for the root user is returned with the
+     * then an accountRights for the root user is returned with the
      * rights.acctId set to the arg accountId.
      *
      * @param accountId of account
@@ -205,10 +205,10 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
             // find item.
             item = findItemByAttributes(attributes);
 
-        } catch (Exception e) {
+        } catch (DBNotFoundException e) {
             // item not found
             for (AccountRights root : getRootAccountRights(accountId)) {
-                // was the target user root?
+                // was the target user a root user?
                 if (root.getUserId() == userId) {
                     rootRights = new AccountRights(root.getId(),
                                                    accountId,
@@ -220,7 +220,7 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
 
             // item not found and not root.
             if (null == rootRights) {
-                throw new DBNotFoundException(e);
+                throw e;
             }
         }
 
