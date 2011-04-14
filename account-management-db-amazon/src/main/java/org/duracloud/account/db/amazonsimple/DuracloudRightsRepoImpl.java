@@ -133,13 +133,18 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
     @Override
     public Set<AccountRights> findByAccountId(int accountId)
         throws DBNotFoundException {
-        List<Item> items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
-            accountId));
-
-        Set<AccountRights> rights = getAccountRightsFromItems(items);
+        Set<AccountRights> rights = doFindByAccountId(accountId);
         Set<AccountRights> rootAccountRights = getRootAccountRights(accountId);
         rights.addAll(rootAccountRights);
         return rights;
+    }
+
+    private Set<AccountRights> doFindByAccountId(int accountId)
+        throws DBNotFoundException {
+        List<Item> items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
+            accountId));
+
+        return getAccountRightsFromItems(items);
     }
 
     /**
@@ -147,7 +152,7 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
      * rights.acctId to the arg accountId.
      * @param accountId
      * @return
-     * @throws DBNotFoundException
+     * @throws DBNotFoundException if no account exists with arg accountId
      */
     private Set<AccountRights> getRootAccountRights(int accountId)
         throws DBNotFoundException {
@@ -206,7 +211,10 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
             item = findItemByAttributes(attributes);
 
         } catch (DBNotFoundException e) {
-            // item not found
+            // item not found, does account exist?
+            doFindByAccountId(accountId);
+
+            // account exists
             for (AccountRights root : getRootAccountRights(accountId)) {
                 // was the target user a root user?
                 if (root.getUserId() == userId) {

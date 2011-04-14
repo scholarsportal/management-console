@@ -220,10 +220,20 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         AccountRights rootRights2 = createRights(4, 2, userIdR, Role.ROLE_ROOT);
         verifyRightsByAccountIdAndUserId(2, userIdR, rootRights2);
 
-        // search for non-existant user
+        // search for non-existent user
+        verifyInvalidCases(1, 99);
+
+        // search for non-existent acct (with admin)
+        verifyInvalidCases(99, userId1);
+
+        // search for non-existent acct (with root)
+        verifyInvalidCases(99, userIdR);
+    }
+
+    private void verifyInvalidCases(int acctId, int userId) {
         boolean thrown = false;
         try {
-            rightsRepo.findByAccountIdAndUserId(1, 99);
+            rightsRepo.findByAccountIdAndUserId(acctId, userId);
             Assert.fail("exception expected");
 
         } catch (Exception e) {
