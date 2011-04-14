@@ -88,10 +88,10 @@
                                 <form:select
                                  id="role" 
                                  cssErrorClass="error"
-                                 path="role"
-                                 items="${roleList}"
-                                        itemLabel="displayName"/>
-
+                                 path="role">
+                                <form:option value="${role.displayName}" />
+                                <form:options items="${roleList}"  itemLabel="displayName" />
+                              </form:select>
 
                           <button style="margin-left:8px !important"
                            type="submit">
@@ -132,22 +132,22 @@
               </table>
             </div>
 
-<div
+          <div
            id="invite-list"
-           class="dc-subgroup" style="min-height:120px !important">
+           class="dc-subgroup" style="min-height:150px !important">
             <h2>
                 Invite Users
             </h2><br />
-            <h3>
+            <p  class="instructions">
                 To invite a user to this account enter their email address here.
-            </h3>
+            </p>
               <table width="90%" align="right">
                 <form:form
                id="invitation-form"
                modelAttribute="invitationForm"
                method="POST">
                   <tr>
-<td></td>
+                    <td></td>
                     <td align="left" valign="middle"
                      >
                       <form:input

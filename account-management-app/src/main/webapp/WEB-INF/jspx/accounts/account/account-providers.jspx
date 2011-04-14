@@ -103,7 +103,7 @@
                          class="button"
                          id="cancel-button"
                          href="${pageContext.request.contextPath}/users/byid/${user.username}/accounts">
-                        Back</a>
+                        Done</a>
                       </div>
 					  <div style="height:20px;"></div>
                     </div>

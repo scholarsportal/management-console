@@ -115,6 +115,8 @@ public class AccountUsersController extends AbstractAccountController {
         // what happens if an async call fails?
         sleepMomentarily();
         addUserToModel(model);
+        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+        model.addAttribute("invitationForm", new InvitationForm());
         return get(service, model);
     }
 
@@ -322,17 +324,20 @@ public class AccountUsersController extends AbstractAccountController {
         boolean hasMoreThanOneOwner =
             accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
-            AccountUser au =
-                new AccountUser(u.getId(),
-                    u.getUsername(),
-                    u.getFirstName(),
-                    u.getLastName(),
-                    u.getEmail(),
-                    InvitationStatus.ACTIVE,
-                    u.getRoleByAcct(accountId),
-                    (!u.isOwnerForAcct(accountId) ||
-                         (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
-            list.add(au);
+            Set<Role> role = u.getRoleByAcct(accountId);
+            if(!role.contains(Role.ROLE_ROOT)) {
+                AccountUser au =
+                    new AccountUser(u.getId(),
+                        u.getUsername(),
+                        u.getFirstName(),
+                        u.getLastName(),
+                        u.getEmail(),
+                        InvitationStatus.ACTIVE,
+                        role,
+                        (!u.isOwnerForAcct(accountId) ||
+                             (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
+                list.add(au);
+            }
         }
 
         return list;

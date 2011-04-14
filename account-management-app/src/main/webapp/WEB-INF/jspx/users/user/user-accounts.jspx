@@ -29,8 +29,8 @@
          name="content">
         <h5>Management Console
         </h5>
-<div style="height:20px" ></div>
-          <div
+        <div style="height:20px" ></div>
+        <div
            id="account-list"
            class="dc-subgroup">
 
@@ -44,70 +44,45 @@
                  class="pre plus">
                 </i>
 
-                Add DuraCloud Account</a>
-                </sec:authorize>
-                <br /><br />
+                Add DuraCloud Account</a><br />
+              </sec:authorize>
+                <strong><br />
+                Accounts</strong>
+                    <br />
+                <br />
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
-                    <table width="100%">
-                      <tr>
-                        <th align="left" valign="middle">
-                          Account
-                        </th>
-                        <th align="left" valign="middle">
-                          Status
-                        </th>
-                        <th width="10" valign="middle">
-                          
-                        </th>
-                        <th width="120" align="right" valign="middle"></th>
-                        <th width="120" align="right" valign="middle"></th>
-                        <th width="120" align="right" valign="middle"></th>
-                      </tr>
                     <c:forEach
                      var="a"
                      items="${accounts}">
 
-
+                <table width="100%" class="account-record" style="border-left:4px !important" >
                       <tr class="account">
                         <td align="left" valign="middle">
-                           ${a.subdomain}
+                           <strong style="font-size:18px;  color:#09F !important">${a.subdomain}</strong>
+                            <span class="instructions" style="margin-left:">Status: ${a.status} </span>
                         </td>
-                        <td align="left" valign="middle">
-                           ${a.status}
-                        </td>
-                        <td align="right" valign="middle">
-                           </td>
-                        <td align="right" valign="middle">
-                            <c:if
-                       test="${a.status == 'ACTIVE'}">
-                        <a class="button"
-                         id="account-${id}-duradmin-link"
-                         href="http://${a.subdomain}.duracloud.org/duradmin"
-                         target="_blank">
-                          Launch Duradmin
-                          </a>
-                            </c:if>
-                            </td>
-                            <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                        <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
-                        <td align="right" valign="middle"><a class="button"
+                        <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details"
                              > <span
                              class="pre plus"> </span> Account Information</a></td>
-                        <td align="right" valign="middle"><a
+                        <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
                              class="button"> Manage Users and Roles</a></td>
                         </sec:authorize>
                       </tr>
                       <tr class="account">
-                        <td colspan="6" align="left" valign="middle">
-<div class="instance-panel">
+                        <td colspan="4" align="left" valign="middle">
+                        <div >
                         <div >
               <c:choose>
                 <c:when test="${instanceStatus == null}">
                   <p class="instructions"><strong>No instance associated with this account.</strong></p>
+                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+
                   <c:choose>
                     <c:when test="${a.status == 'ACTIVE'}">
                       <form:form
@@ -128,37 +103,45 @@
                             becomes active, it will be possible to start an instance.</p>
                     </c:otherwise>
                   </c:choose>
+                    </sec:authorize>
+
                 </c:when>
                 <c:otherwise>
-<table>
+                <div class="instance-panel"><table>
                     <tr>
-                      <th>Host Name</th>
-                      <th>Status</th>
+                      <th align="left">Host Name</th>
+                      <th width="173" align="center">Status</th>
+                      <th width="73" align="left"></th>
+                      <th width="58" align="left"></th>
                       <c:if test="${actionStatus != null}">
-                        <th>Notice</th>
+                        <th align="left">Notice</th>
                       </c:if>
-                      <th><!-- buttons --></th>
-                      <th></th>
-                    </tr>
+                      </tr>
                     <tr>
-                      <td><c:out value="${instanceInfo.hostName}" /></td>
-                      <td><c:out value="${instanceStatus}" /></td>
+                      <td align="left" valign="middle"><c:out value="${instanceInfo.hostName}" /><a class="button" style="margin-left:25px !important"
+                         id="account-${id}-duradmin-link"
+                         href="http://${a.subdomain}.duracloud.org/duradmin"
+                         target="_blank">Launch DuraCloud</a></td>
+                      <td align="center" valign="middle" class="instructions"><em>
+                        <c:out value="${instanceStatus}" />
+                      </em></td>
+                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/restart"
+                              method="post">
+                        <button type="submit">Restart</button>
+                      </form></td>
+                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/stop"
+                              method="post">
+                        <button type="submit">Stop</button>
+                      </form></td>
                       <c:if test="${actionStatus != null}">
-                        <td><strong><c:out value="${actionStatus}" /></strong></td>
+                        <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
                       </c:if>
-                      <td>
-                        <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/restart"
-                              method="post">
-                          <button type="submit">Restart</button>
-                        </form>
-                        
-                      </td>
-                      <td><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/stop"
-                              method="post">
-                          <button type="submit">Stop</button>
-                        </form></td>
+                    </sec:authorize>
+
                     </tr>
-                  </table>
+                  </table></div>
+                  <br />
                 </c:otherwise>
               </c:choose>
             </div>
@@ -168,17 +151,18 @@
                       </tr>
 
 
-                    </c:forEach>
+                    
                     
                   </table>
+                    </c:forEach>
                 </c:when>
 
                 <c:otherwise>
-                  <p>You currently have no DuraCloud accounts, you must be invited to an account.</p>
+                  <p><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
                 </c:otherwise>
               </c:choose>
-            </div>
-          </div>
+  </div>
+</div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

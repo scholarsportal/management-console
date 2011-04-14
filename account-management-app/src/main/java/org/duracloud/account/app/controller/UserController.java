@@ -296,6 +296,8 @@ public class UserController extends AbstractController {
         Set<AccountInfo> accounts =
             this.accountManagerService.findAccountsByUserId(user.getId());
         mav.addObject("accounts", accounts);
+        mav.addObject(NEW_INSTANCE_FORM,
+                           new AccountInstanceForm());
 
         Iterator<AccountInfo> iterator = accounts.iterator();
         if(iterator.hasNext()) {
@@ -320,8 +322,6 @@ public class UserController extends AbstractController {
             if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
                 Set<String> versions = instanceManagerService.getVersions();
                 model.addObject(DC_VERSIONS_KEY, versions);
-                model.addObject(NEW_INSTANCE_FORM,
-                                   new AccountInstanceForm());
             }
         }
     }
