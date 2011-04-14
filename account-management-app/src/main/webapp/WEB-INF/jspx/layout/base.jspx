@@ -114,7 +114,7 @@
 		<li><i class="pre"></i>Welcome ${username} </li>
 
 		<li><a id="user-profile-link" accesskey="p" class="icon-link"
-			href="${pageContext.request.contextPath}/users/byid/${user.username}/edit">
+			href="${pageContext.request.contextPath}/users/byid/${username}/edit">
 		<i class="pre "></i> My Profile </a> </li>
         <li style="margin-left:8px"> | </li>
 

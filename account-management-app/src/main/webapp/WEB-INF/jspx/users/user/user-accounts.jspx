@@ -60,17 +60,17 @@
                 <table width="100%" class="account-record" style="border-left:4px !important" >
                       <tr class="account">
                         <td align="left" valign="middle">
-                           <strong style="font-size:18px;  color:#09F !important">${a.subdomain}</strong>
-                            <span class="instructions" style="margin-left:">Status: ${a.status} </span>
+                           <strong style="font-size:18px;  color:#09F !important">${a.accountInfo.acctName}</strong>
+                            <span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span>
                         </td>
                         <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
                         <td width="90" align="right" valign="middle"><a class="button"
-                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
                              > <span
                              class="pre plus"> </span> Account Information</a></td>
                         <td width="90" align="right" valign="middle"><a
-                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
                         </sec:authorize>
                       </tr>
@@ -79,22 +79,22 @@
                         <div >
                         <div >
               <c:choose>
-                <c:when test="${instanceStatus == null}">
+                <c:when test="${a.instanceStatus == null}">
                   <p class="instructions"><strong>No instance associated with this account.</strong></p>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
                   <c:choose>
-                    <c:when test="${a.status == 'ACTIVE'}">
+                    <c:when test="${a.accountInfo.status == 'ACTIVE'}">
                       <form:form
                         id="instance-start-form"
                         method="post"
-                        action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/start"
+                        action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
                         <form:select
                           id="versions"
                           cssErrorClass="error"
                           path="version"
-                          items="${dcVersions}" />
+                          items="${a.versions}" />
                         <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                     </c:when>
@@ -113,29 +113,29 @@
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
                       <th width="58" align="left"></th>
-                      <c:if test="${actionStatus != null}">
+                      <c:if test="${a.instanceStatus != null}">
                         <th align="left">Notice</th>
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle"><c:out value="${instanceInfo.hostName}" /><a class="button" style="margin-left:25px !important"
-                         id="account-${id}-duradmin-link"
-                         href="http://${a.subdomain}.duracloud.org/duradmin"
+                      <td align="left" valign="middle"><c:out value="${a.instance.hostName}" /><a class="button" style="margin-left:25px !important"
+                         id="account-${a.accountInfo.id}-duradmin-link"
+                         href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
                          target="_blank">Launch DuraCloud</a></td>
                       <td align="center" valign="middle" class="instructions"><em>
-                        <c:out value="${instanceStatus}" />
+                        <c:out value="${a.instanceStatus}" />
                       </em></td>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
-                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/restart"
+                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
                               method="post">
                         <button type="submit">Restart</button>
                       </form></td>
-                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/instance/byid/${instanceInfo.id}/stop"
+                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
                               method="post">
                         <button type="submit">Stop</button>
                       </form></td>
-                      <c:if test="${actionStatus != null}">
-                        <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
+                      <c:if test="${a.instanceStatus != null}">
+                        <td align="left" valign="middle"><strong><c:out value="${a.instanceStatus}" /></strong></td>
                       </c:if>
                     </sec:authorize>
 

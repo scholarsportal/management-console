@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
@@ -295,35 +297,39 @@ public class UserController extends AbstractController {
         mav.addObject(USER_KEY, user);
         Set<AccountInfo> accounts =
             this.accountManagerService.findAccountsByUserId(user.getId());
-        mav.addObject("accounts", accounts);
         mav.addObject(NEW_INSTANCE_FORM,
                            new AccountInstanceForm());
 
-        Iterator<AccountInfo> iterator = accounts.iterator();
-        if(iterator.hasNext()) {
-            AccountInfo acctInfo = iterator.next();
-            loadAccountInstances(acctInfo, mav);
-        }
+        Set<DuracloudAccount> duracloudAccounts =
+            new HashSet<DuracloudAccount>();
 
+        Iterator<AccountInfo> iterator = accounts.iterator();
+        while(iterator.hasNext()) {
+            AccountInfo acctInfo = iterator.next();
+            duracloudAccounts.add(loadAccountInstances(acctInfo, mav));
+        }
+        mav.addObject("accounts", duracloudAccounts);
     }
 
-    private void loadAccountInstances(AccountInfo accountInfo, ModelAndView model) {
+    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, ModelAndView model) {
+        DuracloudAccount duracloudAccount = new DuracloudAccount();
+        duracloudAccount.setAccountInfo(accountInfo);
+
         Set<DuracloudInstanceService> instanceServices =
             instanceManagerService.getInstanceServices(accountInfo.getId());
         if(instanceServices.size() > 0) {
             // Handle only a single instance for the time being
             DuracloudInstanceService instanceService =
                 instanceServices.iterator().next();
-            model.addObject(INSTANCE_INFO_KEY,
-                               instanceService.getInstanceInfo());
-            model.addObject(INSTANCE_STATUS_KEY,
-                               instanceService.getStatus());
+            duracloudAccount.setInstance(instanceService.getInstanceInfo());
+            duracloudAccount.setInstanceStatus(instanceService.getStatus());
         } else {
             if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
                 Set<String> versions = instanceManagerService.getVersions();
-                model.addObject(DC_VERSIONS_KEY, versions);
+                duracloudAccount.setVersions(versions);
             }
         }
+        return duracloudAccount;
     }
 
     private void addUserToModel(DuracloudUser user, Model model) {
