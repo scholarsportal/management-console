@@ -156,8 +156,9 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRightsByUserId(userId1, rights0);
         verifyRightsByUserId(userId2, rights1, rights2);
         verifyRightsByUserId(userIdR,
-                             createRights(1, 1, userIdR, Role.ROLE_ROOT),
-                             createRights(1, 2, userIdR, Role.ROLE_ROOT));
+                             createRights(5, 1, userIdR, Role.ROLE_ROOT),
+                             createRights(6, 2, userIdR, Role.ROLE_ROOT),
+                             createRights(7, 0, userIdR, Role.ROLE_ROOT));
 
     }
 

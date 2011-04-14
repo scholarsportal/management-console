@@ -112,14 +112,11 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
 
         Set<AccountRights> allRights = getAccountRightsFromItems(all);
         for (AccountRights r : allRights) {
-            // do not include the wildcard account in result set.
-            if (r.getAccountId() != WILDCARD_ACCT_ID) {
-                rights.add(new AccountRights(r.getId(),
-                                             r.getAccountId(),
-                                             userId,
-                                             rootRoles,
-                                             r.getCounter()));
-            }
+            rights.add(new AccountRights(r.getId(),
+                                         r.getAccountId(),
+                                         userId,
+                                         rootRoles,
+                                         r.getCounter()));
         }
         return rights;
     }
@@ -152,10 +149,8 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
      * rights.acctId to the arg accountId.
      * @param accountId
      * @return
-     * @throws DBNotFoundException if no account exists with arg accountId
      */
-    private Set<AccountRights> getRootAccountRights(int accountId)
-        throws DBNotFoundException {
+    private Set<AccountRights> getRootAccountRights(int accountId) {
         List<Item> items = null;
         try {
             items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
