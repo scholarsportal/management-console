@@ -46,22 +46,25 @@ public class UserInvitationTest {
         String host = AmaEndpoint.getHost();
         String port = AmaEndpoint.getPort();
         String ctxt = AmaEndpoint.getCtxt();
-        verifyUrl(host, port, ctxt);
+        String pcol = port.equals("443") ? "https" : "http";
+
+        verifyUrl(pcol, host, port, ctxt);
 
         String newHost = "junkhost";
         String newPort = "443";
         String newCtxt = "abc";
+        String newPcol = "https";
         AmaEndpoint.initialize(newHost, newPort, newCtxt);
 
-        verifyUrl(newHost, newPort, newCtxt);
+        verifyUrl(newPcol, newHost, newPort, newCtxt);
     }
 
-    private void verifyUrl(String host, String port, String ctxt) {
+    private void verifyUrl(String pcol, String host, String port, String ctxt) {
         String url = invitation.getRedemptionURL();
         Assert.assertNotNull(url);
 
         Assert.assertEquals(
-            "http://" + host + ":" + port + "/" + ctxt + "/users/redeem/" +
+            pcol + "://" + host + ":" + port + "/" + ctxt + "/users/redeem/" +
                 redemptionCode, url);
     }
 }
