@@ -34,7 +34,7 @@ public interface DuracloudInstanceService {
     /**
      * Returns the state of the Duracloud instance.
      */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
     public String getStatus();
 
     /**
