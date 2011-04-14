@@ -142,8 +142,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         if (updatedNeeded) {
             if(oldRoles != null &&
                oldRoles.contains(Role.ROLE_OWNER) &&
-               !newRoles.contains(Role.ROLE_OWNER))
-            {
+               !newRoles.contains(Role.ROLE_OWNER)) {
+
                 verifyAccountOwnerExists(acctId, userId, rightsRepo);
             }
             
@@ -158,12 +158,25 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         try {
             Set<AccountRights> acctRightsSet =
                 rightsRepo.findByAccountId(acctId);
+
+            // Determine the list of root users
+            Set<Integer> roots = new HashSet<Integer>();
+            for(AccountRights acctRights : acctRightsSet) {
+                if(acctRights.getRoles().contains(Role.ROLE_ROOT)) {
+                    roots.add(acctRights.getUserId());
+                }
+            }
+
+            // Determine the list of owners who are not root users
             Set<Integer> owners = new HashSet<Integer>();
             for(AccountRights acctRights : acctRightsSet) {
-                if(acctRights.getRoles().contains(Role.ROLE_OWNER)) {
+                if(acctRights.getRoles().contains(Role.ROLE_OWNER) &&
+                   !roots.contains(acctRights.getUserId())) {
                     owners.add(acctRights.getUserId());
                 }
             }
+
+            // Ensure at least one non-root owner is maintained on the account
             if(owners.size() == 1 && owners.contains(userId)) {
                 String err = "Cannot remove owner rights from user with ID " +
                     userId + " from account with ID " + acctId +

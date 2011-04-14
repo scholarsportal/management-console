@@ -172,16 +172,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testSetUserRightsStartAsRootFail() throws Exception {
-        try {
-            testSetRole(Role.ROLE_ROOT);
-            Assert.fail("AccountRequiresOwnerException Expected");
-        } catch(AccountRequiresOwnerException e) {
-            Assert.assertNotNull(e);
-        }
-    }
-
-    @Test
     public void testSetUserRightsStartAsOwner() throws Exception {
         testSetRole(2, Role.ROLE_OWNER);
     }
