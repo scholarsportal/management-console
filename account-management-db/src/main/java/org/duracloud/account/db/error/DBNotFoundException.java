@@ -13,4 +13,8 @@ public class DBNotFoundException extends DuraCloudCheckedException {
     public DBNotFoundException(String msg) {
         super(msg);
     }
+
+    public DBNotFoundException(Exception e) {
+        super(e);
+    }
 }

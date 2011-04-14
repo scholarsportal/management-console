@@ -24,15 +24,18 @@ import java.util.Collections;
  */
 public class IdUtilImpl implements IdUtil {
 
-    private int accountId = -1;
-    private int userId = -1;
-    private int rightsId = -1;
-    private int userInvitationId = -1;
-    private int instanceId = -1;
-    private int serverImageId = -1;
-    private int computeProviderAccountId = -1;
-    private int storageProviderAccountId = -1;
-    private int serviceRepositoryId = -1;
+    /**
+     * All ids will begin at 1.
+     */
+    private int accountId = 0;
+    private int userId = 0;
+    private int rightsId = 0;
+    private int userInvitationId = 0;
+    private int instanceId = 0;
+    private int serverImageId = 0;
+    private int computeProviderAccountId = 0;
+    private int storageProviderAccountId = 0;
+    private int serviceRepositoryId = 0;
 
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudAccountRepo accountRepo,
@@ -58,11 +61,11 @@ public class IdUtilImpl implements IdUtil {
         // this check is necessary because Collections.max(int)
         // throws a NoSuchElementException when the collection
         // is empty.
-        return c.isEmpty() ? 0 : Collections.max(c);
+        return c.isEmpty() ? 1 : Collections.max(c);
     }
 
     private void checkInitialized() {
-        if (accountId < 0 || userId < 0 || rightsId < 0 || userInvitationId < 0) {
+        if (accountId < 1 || userId < 1 || rightsId < 1 || userInvitationId < 1) {
             throw new DBUninitializedException("IdUtil must be initialized");
         }
     }

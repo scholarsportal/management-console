@@ -48,17 +48,18 @@ public class BaseTestDuracloudRepoImpl {
 
             while (!callComplete && tries < maxTries) {
                 try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e1) {
+                    // do nothing
+                }
+                try {
                     callComplete = expected.equals(doCall());
 
                 } catch (DBException dbe) {
                     callComplete = true;
 
                 } catch (Exception e) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        // do nothing
-                    }
+                    // do nothing
                 }
                 tries++;
             }
@@ -77,9 +78,10 @@ public class BaseTestDuracloudRepoImpl {
             int maxTries = 20;
             int tries = 0;
 
+            Set<T> allReceived = null;
             while (!callComplete && tries < maxTries) {
                 try {
-                    Set<T> allReceived = doCall();
+                    allReceived = doCall();
                     int expectedCount = allExpected.length;
                     if(allReceived.size() == expectedCount) {
                         int equalsCount = 0;
@@ -107,8 +109,8 @@ public class BaseTestDuracloudRepoImpl {
                 tries++;
             }
             Assert.assertTrue(
-                "expected set not found after " + tries + " tries.",
-                callComplete);
+                "expected: " + allReceived + ", expected set not found after " +
+                    tries + " tries.", callComplete);
         }
 
         protected abstract Set<T> doCall() throws Exception;

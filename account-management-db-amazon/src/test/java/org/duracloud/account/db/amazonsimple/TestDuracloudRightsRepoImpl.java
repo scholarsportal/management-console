@@ -29,17 +29,6 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
 
     private static final String DOMAIN = "TEST_DURACLOUD_RIGHTS";
 
-    private static final int accountId = 100;
-    private static final int userId = 200;
-    private static Set<Role> roles;
-
-    @BeforeClass
-    public static void initialize() throws Exception {
-        roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
-        roles.add(Role.ROLE_ADMIN);
-    }
-
     @Before
     public void setUp() throws Exception {
         rightsRepo = createRightsRepo();
@@ -51,7 +40,7 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @After
     public void tearDown() throws Exception {
-        for(Integer itemId : rightsRepo.getItemIds()) {
+        for (Integer itemId : rightsRepo.getItemIds()) {
             rightsRepo.delete(itemId);
         }
         verifyRepoSize(rightsRepo, 0);
@@ -77,9 +66,9 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @Test
     public void testGetIds() throws Exception {
-        AccountRights rights0 = createRights(0, 0, 0);
-        AccountRights rights1 = createRights(1, 0, 1);
-        AccountRights rights2 = createRights(2, 1, 1);
+        AccountRights rights0 = createRights(1, 1, 1);
+        AccountRights rights1 = createRights(2, 1, 2);
+        AccountRights rights2 = createRights(3, 2, 2);
 
         rightsRepo.save(rights0);
         rightsRepo.save(rights1);
@@ -100,15 +89,15 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRights(rights1);
         verifyRights(rights2);
 
-        verifyRightsByAccountId(0, rights0, rights1);
-        verifyRightsByAccountId(1, rights2);
+        verifyRightsByAccountId(1, rights0, rights1);
+        verifyRightsByAccountId(2, rights2);
 
-        verifyRightsByUserId(0, rights0);
-        verifyRightsByUserId(1, rights1, rights2);
+        verifyRightsByUserId(1, rights0);
+        verifyRightsByUserId(2, rights1, rights2);
 
-        verifyRightsByAccountIdAndUserId(0, 0, rights0);
-        verifyRightsByAccountIdAndUserId(0, 1, rights1);
-        verifyRightsByAccountIdAndUserId(1, 1, rights2);
+        verifyRightsByAccountIdAndUserId(1, 1, rights0);
+        verifyRightsByAccountIdAndUserId(1, 2, rights1);
+        verifyRightsByAccountIdAndUserId(2, 2, rights2);
 
         // test concurrency
         verifyCounter(rights0, 1);
@@ -136,7 +125,7 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @Test
     public void testDelete() throws Exception {
-        AccountRights rights0 = createRights(0, 0, 0);
+        AccountRights rights0 = createRights(1, 1, 1);
         rightsRepo.save(rights0);
         verifyRepoSize(rightsRepo, 1);
 
@@ -144,8 +133,116 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRepoSize(rightsRepo, 0);
     }
 
-    private AccountRights createRights(int id, int accountId, int userId) {
+    @Test
+    public void testRootFindByUserId()
+        throws DBConcurrentUpdateException, DBNotFoundException {
+        int userId1 = 1;
+        int userId2 = 2;
+        int userIdR = 3; // root
+
+        AccountRights rights0 = createRights(1, 1, userId1);
+        AccountRights rights1 = createRights(2, 1, userId2);
+        AccountRights rights2 = createRights(3, 2, userId2);
+        AccountRights rightsR = createRights(4, 0, userIdR, Role.ROLE_ROOT);
+
+        rightsRepo.save(rights0);
+        rightsRepo.save(rights1);
+        rightsRepo.save(rights2);
+        rightsRepo.save(rightsR);
+
+        // make sure all saves have committed
+        verifyRepoSize(rightsRepo, 4);
+
+        verifyRightsByUserId(userId1, rights0);
+        verifyRightsByUserId(userId2, rights1, rights2);
+        verifyRightsByUserId(userIdR,
+                             createRights(1, 1, userIdR, Role.ROLE_ROOT),
+                             createRights(1, 2, userIdR, Role.ROLE_ROOT));
+
+    }
+
+    @Test
+    public void testRootFindByAcctId() throws DBConcurrentUpdateException {
+        int userId1 = 1;
+        int userId2 = 2;
+        int userIdR = 3; // root
+
+        AccountRights rights0 = createRights(1, 1, userId1);
+        AccountRights rights1 = createRights(2, 1, userId2);
+        AccountRights rights2 = createRights(3, 2, userId2);
+        AccountRights rightsR = createRights(4, 0, userIdR, Role.ROLE_ROOT);
+
+        rightsRepo.save(rights0);
+        rightsRepo.save(rights1);
+        rightsRepo.save(rights2);
+        rightsRepo.save(rightsR);
+
+        // make sure all saves have committed
+        verifyRepoSize(rightsRepo, 4);
+
+        AccountRights rootRights1 = createRights(4, 1, userIdR, Role.ROLE_ROOT);
+        verifyRightsByAccountId(1, rights0, rights1, rootRights1);
+
+        AccountRights rootRights2 = createRights(4, 2, userIdR, Role.ROLE_ROOT);
+        verifyRightsByAccountId(2, rights2, rootRights2);
+    }
+
+
+    @Test
+    public void testRootFindByAcctIdAndUserId()
+        throws DBConcurrentUpdateException, DBNotFoundException {
+        int userId1 = 1;
+        int userId2 = 2;
+        int userIdR = 3; // root
+
+        AccountRights rights0 = createRights(1, 1, userId1);
+        AccountRights rights1 = createRights(2, 1, userId2);
+        AccountRights rights2 = createRights(3, 2, userId2);
+        AccountRights rightsR = createRights(4, 0, userIdR, Role.ROLE_ROOT);
+
+        rightsRepo.save(rights0);
+        rightsRepo.save(rights1);
+        rightsRepo.save(rights2);
+        rightsRepo.save(rightsR);
+
+        // make sure all saves have committed
+        verifyRepoSize(rightsRepo, 4);
+
+        // check standard cases
+        verifyRightsByAccountIdAndUserId(1, userId1, rights0);
+        verifyRightsByAccountIdAndUserId(1, userId2, rights1);
+        verifyRightsByAccountIdAndUserId(2, userId2, rights2);
+
+        // check root cases
+        AccountRights rootRights1 = createRights(4, 1, userIdR, Role.ROLE_ROOT);
+        verifyRightsByAccountIdAndUserId(1, userIdR, rootRights1);
+
+        AccountRights rootRights2 = createRights(4, 2, userIdR, Role.ROLE_ROOT);
+        verifyRightsByAccountIdAndUserId(2, userIdR, rootRights2);
+
+        // search for non-existant user
+        boolean thrown = false;
+        try {
+            rightsRepo.findByAccountIdAndUserId(1, 99);
+            Assert.fail("exception expected");
+
+        } catch (Exception e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
+    }
+
+
+    private AccountRights createRights(int id,
+                                       int accountId,
+                                       int userId,
+                                       Role role) {
+        Set<Role> roles = role.getRoleHierarchy();
         return new AccountRights(id, accountId, userId, roles);
+    }
+
+    private AccountRights createRights(int id, int accountId, int userId) {
+        return createRights(id, accountId, userId, Role.ROLE_ADMIN);
     }
 
     private void verifyRights(final AccountRights rights) {

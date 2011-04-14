@@ -259,4 +259,25 @@ public abstract class BaseDuracloudRepoImpl {
         caller.deleteDomainAsync(db, request);
     }
 
+    /**
+     * This method returns all rows of the table.
+     * @return all items in table
+     * @throws DBNotFoundException
+     */
+    protected List<Item> findAllItems() throws DBNotFoundException {
+        SelectRequest request = new SelectRequest("select * from " + domain);
+
+        SelectResult result = caller.select(db, request);
+        if (null == result) {
+            throw new DBException("Null result: " + domain);
+        }
+
+        List<Item> items = result.getItems();
+        if (null == items || items.size() == 0) {
+            throw new DBNotFoundException("No items found in: " + domain);
+        }
+
+        return items;
+    }
+
 }

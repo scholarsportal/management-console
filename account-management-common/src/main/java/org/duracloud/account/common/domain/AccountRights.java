@@ -85,4 +85,15 @@ public class AccountRights extends BaseDomainData {
         result = 31 * result + (roles != null ? roles.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(accountId);
+        sb.append(":");
+        sb.append(userId);
+        sb.append(":");
+        sb.append(roles);
+        return sb.toString();
+    }
 }

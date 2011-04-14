@@ -9,10 +9,12 @@ import com.amazonaws.services.simpledb.model.PutAttributesRequest;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
 import org.duracloud.account.db.amazonsimple.converter.DuracloudRightsConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudRightsCon
 public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements DuracloudRightsRepo {
 
     private static final String DEFAULT_DOMAIN = "DURACLOUD_RIGHTS";
+    private static final int WILDCARD_ACCT_ID = 0;
 
     private final DomainConverter<AccountRights> converter;
 
@@ -72,30 +75,162 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
         caller.putAttributes(db, request);
     }
 
+    /**
+     * If the arg userId is for a root user, all accounts are returned.
+     * @param userId of user
+     * @return accountRights set
+     * @throws DBNotFoundException
+     */
     @Override
     public Set<AccountRights> findByUserId(int userId) throws DBNotFoundException {
         List<Item> items =
             findItemsByAttribute(USER_ID_ATT, String.valueOf(userId));
-        return getAccountRightsFromItems(items);
+
+        Set<AccountRights> rights = getAccountRightsFromItems(items);
+        if (isRootRights(rights)) {
+            Set<Role> rootRoles = rights.iterator().next().getRoles();
+            rights = getAllAccountRights(userId, rootRoles);
+        }
+        return rights;
     }
 
+    private boolean isRootRights(Set<AccountRights> rights) {
+        // root user should only be a member of the wildcard account.
+        if (rights.size() != 1) {
+            return false;
+        }
+
+        return rights.iterator().next().getRoles().contains(Role.ROLE_ROOT);
+    }
+
+    private Set<AccountRights> getAllAccountRights(int userId,
+                                                   Set<Role> rootRoles)
+        throws DBNotFoundException {
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+
+        List<Item> all = findAllItems();
+
+        Set<AccountRights> allRights = getAccountRightsFromItems(all);
+        for (AccountRights r : allRights) {
+            // do not include the wildcard account in result set.
+            if (r.getAccountId() != WILDCARD_ACCT_ID) {
+                rights.add(new AccountRights(r.getId(),
+                                             r.getAccountId(),
+                                             userId,
+                                             rootRoles,
+                                             r.getCounter()));
+            }
+        }
+        return rights;
+    }
+
+    /**
+     * All root users will be added to the result set.
+     * @param accountId of account
+     * @return accountRights set
+     * @throws DBNotFoundException
+     */
     @Override
-    public Set<AccountRights> findByAccountId(int accountId) throws DBNotFoundException {
-        List<Item> items =
-            findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(accountId));
-        return getAccountRightsFromItems(items);
+    public Set<AccountRights> findByAccountId(int accountId)
+        throws DBNotFoundException {
+        List<Item> items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
+            accountId));
+
+        Set<AccountRights> rights = getAccountRightsFromItems(items);
+        Set<AccountRights> rootAccountRights = getRootAccountRights(accountId);
+        rights.addAll(rootAccountRights);
+        return rights;
     }
 
+    /**
+     * This method returns AccountRights for each root user and sets the
+     * rights.acctId to the arg accountId.
+     * @param accountId
+     * @return
+     * @throws DBNotFoundException
+     */
+    private Set<AccountRights> getRootAccountRights(int accountId)
+        throws DBNotFoundException {
+        List<Item> items = null;
+        try {
+            items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
+                WILDCARD_ACCT_ID));
+
+        } catch (Exception e) {
+            // do nothing.
+        }
+
+        Set<AccountRights> rootAccountRights = new HashSet<AccountRights>();
+        if (null == items) {
+            return rootAccountRights;
+        }
+
+        Set<AccountRights> rights = getAccountRightsFromItems(items);
+        for (AccountRights r : rights) {
+            if (r.getRoles().contains(Role.ROLE_ROOT)) {
+                rootAccountRights.add(new AccountRights(r.getId(),
+                                                        accountId,
+                                                        r.getUserId(),
+                                                        r.getRoles(),
+                                                        r.getCounter()));
+            } else {
+                log.warn("Unexpected accountRights: " + r);
+            }
+        }
+
+        return rootAccountRights;
+    }
+
+    /**
+     * This method returns the accountRights for the arg accountId and userId.
+     * If no such item is found, and the arg userId belongs to the root user,
+     * then and accountRights for the root user is returned with the
+     * rights.acctId set to the arg accountId.
+     *
+     * @param accountId of account
+     * @param userId of user
+     * @return
+     * @throws DBNotFoundException
+     */
     @Override
     public AccountRights findByAccountIdAndUserId(int accountId,
                                                   int userId) throws DBNotFoundException {
         Map attributes = new HashMap<String, String>();
         attributes.put(ACCOUNT_ID_ATT, String.valueOf(accountId));
         attributes.put(USER_ID_ATT, String.valueOf(userId));
-        Item item = findItemByAttributes(attributes);
 
-        List<Attribute> atts = item.getAttributes();
-        return converter.fromAttributes(atts, idFromString(item.getName()));
+        AccountRights rootRights = null;
+        Item item = null;
+        try {
+            // find item.
+            item = findItemByAttributes(attributes);
+
+        } catch (Exception e) {
+            // item not found
+            for (AccountRights root : getRootAccountRights(accountId)) {
+                // was the target user root?
+                if (root.getUserId() == userId) {
+                    rootRights = new AccountRights(root.getId(),
+                                                   accountId,
+                                                   root.getUserId(),
+                                                   root.getRoles(),
+                                                   root.getCounter());
+                }
+            }
+
+            // item not found and not root.
+            if (null == rootRights) {
+                throw new DBNotFoundException(e);
+            }
+        }
+
+        if (null != item) {
+            List<Attribute> atts = item.getAttributes();
+            return converter.fromAttributes(atts, idFromString(item.getName()));
+
+        } else {
+            return rootRights;
+        }
     }
 
     private Set<AccountRights> getAccountRightsFromItems(List<Item> items) {
