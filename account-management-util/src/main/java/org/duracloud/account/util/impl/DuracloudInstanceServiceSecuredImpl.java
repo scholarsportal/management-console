@@ -86,6 +86,12 @@ public class DuracloudInstanceServiceSecuredImpl implements DuracloudInstanceSer
     }
 
     @Override
+    public String getInstanceVersion() {
+        throwIfAccessDenied();
+        return instanceService.getInstanceVersion();
+    }
+
+    @Override
     public String getStatus() {
         throwIfAccessDenied();
         return instanceService.getStatus();

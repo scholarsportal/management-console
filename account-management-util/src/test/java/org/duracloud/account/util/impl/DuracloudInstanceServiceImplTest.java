@@ -201,6 +201,15 @@ public class DuracloudInstanceServiceImplTest
     }
 
     @Test
+    public void testGetInstanceVersion() throws Exception {
+        setUpServerImageMocks();
+        replayMocks();
+
+        String instanceVersion = service.getInstanceVersion();
+        assertEquals("version", instanceVersion);
+    }
+
+    @Test
     public void testSetUserRoles() throws Exception {
         setUpServerImageMocks();
 

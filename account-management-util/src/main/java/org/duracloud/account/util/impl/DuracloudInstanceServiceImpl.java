@@ -128,6 +128,12 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     }
 
     @Override
+    public String getInstanceVersion() {
+        ServerImage serverImage = getServerImage();
+        return serverImage.getVersion();
+    }
+
+    @Override
     public String getStatus() {
         return computeProvider.getStatus(instance.getProviderInstanceId());
     }
@@ -271,18 +277,22 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
     private Credential getRootCredential() {
         if(null == rootCredential) {
-            try {
-                DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
-                ServerImage serverImage = imageRepo.findById(instance.getImageId());
-                String rootPassword = serverImage.getDcRootPassword();
-                rootCredential = new Credential(ServerImage.DC_ROOT_USERNAME,
-                                                rootPassword);
-            } catch(DBNotFoundException e) {
-                throw new
-                    DuracloudServerImageNotAvailableException(e.getMessage(), e);
-            }
+            ServerImage serverImage = getServerImage();
+            String rootPassword = serverImage.getDcRootPassword();
+            rootCredential = new Credential(ServerImage.DC_ROOT_USERNAME,
+                                            rootPassword);
         }
         return rootCredential;
     }
+
+    private ServerImage getServerImage() {
+        try {
+            DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
+            return imageRepo.findById(instance.getImageId());
+        } catch(DBNotFoundException e) {
+            throw new
+                DuracloudServerImageNotAvailableException(e.getMessage(), e);
+        }
+    }    
 
 }

@@ -118,6 +118,7 @@
                 <div class="instance-panel"><table>
                     <tr>
                       <th align="left">Host Name</th>
+                      <th width="173" align="center">Version</th>
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
                       <th width="58" align="left"></th>
@@ -132,6 +133,9 @@
                          href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
                          target="_blank">Launch Duracloud<br />
                         Administrator</a></td>
+                      <td align="center" valign="middle" class="instructions">
+                        <c:out value="${a.instanceVersion}" />
+                      </td>
                       <td align="center" valign="middle" class="instructions"><em>
                         <c:out value="${a.instanceStatus}" />
                       </em></td>

@@ -9,6 +9,8 @@ public class DuracloudAccount {
 
     private String instanceStatus;
 
+    private String instanceVersion;
+
     private Set<String> versions;
 
     public AccountInfo getAccountInfo() {
@@ -33,6 +35,14 @@ public class DuracloudAccount {
 
     public void setInstanceStatus(String instanceStatus) {
         this.instanceStatus = instanceStatus;
+    }
+
+    public String getInstanceVersion() {
+        return instanceVersion;
+    }
+
+    public void setInstanceVersion(String instanceVersion) {
+        this.instanceVersion = instanceVersion;
     }
 
     public Set<String> getVersions() {

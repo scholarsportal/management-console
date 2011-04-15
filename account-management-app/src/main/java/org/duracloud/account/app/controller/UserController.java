@@ -3,13 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudAccount;
@@ -22,11 +15,9 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
-import org.duracloud.account.util.notification.NotificationMgr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +30,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The default view for this application
@@ -320,6 +317,8 @@ public class UserController extends AbstractController {
                 instanceServices.iterator().next();
             duracloudAccount.setInstance(instanceService.getInstanceInfo());
             duracloudAccount.setInstanceStatus(instanceService.getStatus());
+            duracloudAccount.setInstanceVersion(
+                instanceService.getInstanceVersion());
         } else {
             if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
                 Set<String> versions = instanceManagerService.getVersions();

@@ -32,6 +32,12 @@ public interface DuracloudInstanceService {
     public DuracloudInstance getInstanceInfo();
 
     /**
+     * Gets the version of this instance
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public String getInstanceVersion();
+
+    /**
      * Returns the state of the Duracloud instance.
      */
     @Secured({"role:ROLE_USER, scope:SELF_ACCT"})

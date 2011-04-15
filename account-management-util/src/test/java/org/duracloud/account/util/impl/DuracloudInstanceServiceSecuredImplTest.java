@@ -117,6 +117,17 @@ public class DuracloudInstanceServiceSecuredImplTest {
     }
 
     @Test
+    public void testGetInstanceVersion() throws Exception {
+        EasyMock.expect(wrappedInstanceService.getInstanceVersion())
+            .andReturn(null);
+
+        setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
+        replayMocks();
+
+        instanceService.getInstanceVersion();
+    }
+
+    @Test
     public void testGetInstanceInfoFail() throws Exception {
         setMockVoterExpectations(AccessDecisionVoter.ACCESS_ABSTAIN);
         replayMocks();
