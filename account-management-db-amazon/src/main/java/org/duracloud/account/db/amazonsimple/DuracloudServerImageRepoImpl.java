@@ -14,9 +14,12 @@ import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
 import org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServerImageConverter.LATEST_ATT;
 
 /**
  * @author: Bill Branan
@@ -52,6 +55,30 @@ public class DuracloudServerImageRepoImpl
         Item item = findItemById(id);
         List<Attribute> atts = item.getAttributes();
         return converter.fromAttributes(atts, idFromString(item.getName()));
+    }
+
+    @Override
+    public ServerImage findLatest() {
+        List<Item> items;
+        try {
+            items = findItemsByAttribute(LATEST_ATT, String.valueOf(true));
+        } catch(DBNotFoundException e) {
+            String err = "No server image is marked as latest!";
+            throw new DuraCloudRuntimeException(err);
+        }
+
+        if(items.size() == 1) {
+            Item item = items.iterator().next();
+            return converter.fromAttributes(item.getAttributes(),
+                                            idFromString(item.getName()));
+        } else { // items.size() > 1
+            String err = "More than one server image marked as latest " +
+                "was found. One of the following needs to be updated:";
+            for(Item item : items) {
+                err += (" " + item.getName()) ;
+            }
+            throw new DuraCloudRuntimeException(err);
+        }
     }
 
     @Override

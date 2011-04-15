@@ -6,6 +6,7 @@ package org.duracloud.account.db.amazonsimple;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -14,6 +15,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author: Bill Branan
@@ -69,9 +73,9 @@ public class TestDuracloudServerImageRepoImpl extends BaseTestDuracloudRepoImpl 
 
     @Test
     public void testGetIds() throws Exception {
-        ServerImage serverImg0 = createServerImage(0);
-        ServerImage serverImg1 = createServerImage(1);
-        ServerImage serverImg2 = createServerImage(2);
+        ServerImage serverImg0 = createServerImage(0, false);
+        ServerImage serverImg1 = createServerImage(1, false);
+        ServerImage serverImg2 = createServerImage(2, true);
 
         serverImageRepo.save(serverImg0);
         serverImageRepo.save(serverImg1);
@@ -117,8 +121,31 @@ public class TestDuracloudServerImageRepoImpl extends BaseTestDuracloudRepoImpl 
     }
 
     @Test
+    public void testGetLatest() throws Exception {
+        ServerImage serverImg0 = createServerImage(0, false);
+        serverImageRepo.save(serverImg0);
+        ServerImage serverImg1 = createServerImage(1, false);
+        serverImageRepo.save(serverImg1);
+
+        // Should fail, no server image marked as latest
+        verifyLatestFail(serverImg0);
+
+        ServerImage serverImg2 = createServerImage(2, true);
+        serverImageRepo.save(serverImg2);
+
+        // Should succeed, one server image is marked as latest
+        verifyLatest(serverImg2);
+
+        ServerImage serverImg3 = createServerImage(3, true);
+        serverImageRepo.save(serverImg3);
+
+        // Should fail, more than one server image marked as latest
+        verifyLatestFail(serverImg3);
+    }
+
+    @Test
     public void testDelete() throws Exception {
-        ServerImage serverImg0 = createServerImage(0);
+        ServerImage serverImg0 = createServerImage(0, false);
         serverImageRepo.save(serverImg0);
         verifyRepoSize(serverImageRepo, 1);
 
@@ -126,19 +153,42 @@ public class TestDuracloudServerImageRepoImpl extends BaseTestDuracloudRepoImpl 
         verifyRepoSize(serverImageRepo, 0);
     }
 
-    private ServerImage createServerImage(int id) {
+    private ServerImage createServerImage(int id, boolean latest) {
         return new ServerImage(id,
                                providerAccountId,
                                providerImageId,
                                version,
                                description,
-                               dcRootPassword);
+                               dcRootPassword,
+                               latest);
     }
 
     private void verifyAccount(final ServerImage serverImg) {
         new DBCaller<ServerImage>() {
             protected ServerImage doCall() throws Exception {
                 return serverImageRepo.findById(serverImg.getId());
+            }
+        }.call(serverImg);
+    }
+
+    private void verifyLatest(final ServerImage serverImg) {
+        new DBCaller<ServerImage>() {
+            protected ServerImage doCall() throws Exception {
+                return serverImageRepo.findLatest();
+            }
+        }.call(serverImg);
+    }
+
+    private void verifyLatestFail(final ServerImage serverImg) {
+        new DBCaller<ServerImage>() {
+            protected ServerImage doCall() throws Exception {
+                try {
+                    serverImageRepo.findLatest();
+                    fail("Exception expected");
+                } catch(DuraCloudRuntimeException e) {
+                    assertNotNull(e);
+                }
+                return serverImg;
             }
         }.call(serverImg);
     }

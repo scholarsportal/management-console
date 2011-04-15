@@ -58,10 +58,10 @@ public class DuracloudInstanceManagerServiceImplTest
             .andReturn(imageIds)
             .times(1);
 
-        ServerImage one = new ServerImage(1, 1, "1", "1.0", "1", "1");
+        ServerImage one = new ServerImage(1, 1, "1", "1.0", "1", "1", false);
         EasyMock.expect(serverImageRepo.findById(EasyMock.anyInt()))
             .andReturn(one);
-        ServerImage two = new ServerImage(2, 2, "2", "2.0", "2", "2");
+        ServerImage two = new ServerImage(2, 2, "2", "2.0", "2", "2", false);
         EasyMock.expect(serverImageRepo.findById(EasyMock.anyInt()))
             .andReturn(two);
     }

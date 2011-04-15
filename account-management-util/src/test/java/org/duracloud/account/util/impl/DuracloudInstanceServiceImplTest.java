@@ -175,7 +175,8 @@ public class DuracloudInstanceServiceImplTest
                                                   "provider-image-id",
                                                   "version",
                                                   "description",
-                                                  rootPassword);
+                                                  rootPassword,
+                                                  false);
 
         EasyMock.expect(repoMgr.getServerImageRepo())
             .andReturn(serverImageRepo)

@@ -60,7 +60,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     private InstanceUpdater instanceUpdater;
     private InstanceConfigUtil instanceConfigUtil;
     private Credential rootCredential;
-    private int timeoutMinutes = 5;
+    private int timeoutMinutes = 20;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
