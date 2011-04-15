@@ -41,7 +41,7 @@ public class AccountDetailsController extends AbstractAccountController {
         return ACCOUNT_DETAILS_VIEW_ID;
     }
 
-    @RequestMapping(value = ACCOUNT_DETAILS_PATH + "/providers/add", method = RequestMethod.POST)
+    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
     public String addProvider(@PathVariable int accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
 					   BindingResult result,

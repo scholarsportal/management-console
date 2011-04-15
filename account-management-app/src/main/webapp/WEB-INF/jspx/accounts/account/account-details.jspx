@@ -106,7 +106,7 @@
                       <form:form
                         id="provider-add-form"
                         method="post"
-                        action="providers/add"
+                        action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/add"
                         modelAttribute="providerForm">
 
                         <c:if test="${providerForm.storageProviders != null}">
