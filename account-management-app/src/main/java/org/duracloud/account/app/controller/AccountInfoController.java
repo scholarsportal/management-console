@@ -36,7 +36,7 @@ public class AccountInfoController extends AbstractAccountController {
         AccountEditForm editForm = new AccountEditForm();
         editForm.setDepartment(accountInfo.getDepartment());
         editForm.setOrgName(accountInfo.getOrgName());
-        editForm.setAcctName(accountInfo.getSubdomain());
+        editForm.setAcctName(accountInfo.getAcctName());
 
         model.addAttribute(EDIT_ACCOUNT_INFO_FORM_KEY, editForm);
 
