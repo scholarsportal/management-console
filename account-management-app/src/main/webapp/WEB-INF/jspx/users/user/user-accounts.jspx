@@ -113,7 +113,7 @@
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
                       <th width="58" align="left"></th>
-                      <c:if test="${a.instanceStatus != null}">
+                      <c:if test="${actionStatus != null}">
                         <th align="left">Notice</th>
                       </c:if>
                       </tr>
@@ -134,8 +134,8 @@
                               method="post">
                         <button type="submit">Stop</button>
                       </form></td>
-                      <c:if test="${a.instanceStatus != null}">
-                        <td align="left" valign="middle"><strong><c:out value="${a.instanceStatus}" /></strong></td>
+                      <c:if test="${actionStatus != null}">
+                        <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
                       </c:if>
                     </sec:authorize>
 

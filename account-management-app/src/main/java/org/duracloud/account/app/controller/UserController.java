@@ -80,9 +80,6 @@ public class UserController extends AbstractController {
     public static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
     public static final String FORGOT_PASSWORD_FORM_KEY = "forgotPasswordForm";
     public static final String NEW_USER_FORM_KEY = "newUserForm";
-    public static final String INSTANCE_INFO_KEY = "instanceInfo";
-    public static final String INSTANCE_STATUS_KEY = "instanceStatus";
-    public static final String DC_VERSIONS_KEY = "dcVersions";
     public static final String NEW_INSTANCE_FORM = "instanceForm";
     @Autowired
     private AccountManagerService accountManagerService;
