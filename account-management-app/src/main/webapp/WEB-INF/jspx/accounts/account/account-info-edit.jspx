@@ -25,8 +25,14 @@
           <h1>Account Information</h1>
           <div>
             <div
-             class="dc-subgroup">
-              <h2>Edit Account Information</h2>
+             class="account-record">
+<table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Edit Account Information</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
+              
 
               <div
                class="dc-subgroup-body">
@@ -44,16 +50,16 @@
                   </jsp:include>
 
                   <table
-                   class="standard-form">
+                   class="datatablesimple">
                     <tr>
-                      <td nowrap="nowrap"
+                      <td width="25%" align="right" nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="orgName">Organization Name</form:label>
+                         path="orgName">Organization Name:</form:label>
                       </td>
 
-                      <td width="70%" align="left"
+                      <td width="75%" align="left"
                        class="value required">
                         <form:input
                          cssErrorClass="error"
@@ -64,11 +70,11 @@
                     </tr>
 
                     <tr>
-                      <td nowrap="nowrap"
+                      <td align="right" nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="department">Department</form:label>
+                         path="department">Department:</form:label>
                       </td>
 
                       <td align="left"
@@ -81,11 +87,11 @@
                     </tr>
 
                     <tr>
-                      <td nowrap="nowrap"
+                      <td align="right" nowrap="nowrap"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="acctName">Account Name</form:label>
+                         path="acctName">Account Name:</form:label>
                       </td>
 
                       <td align="left"

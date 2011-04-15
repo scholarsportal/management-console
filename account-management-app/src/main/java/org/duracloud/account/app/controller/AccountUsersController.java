@@ -218,7 +218,7 @@ public class AccountUsersController extends AbstractAccountController {
                         u.getLastName(),
                         u.getEmail(),
                         InvitationStatus.ACTIVE,
-                        u.getRolesByAcct(accountId),
+                        u.getRoleByAcct(accountId),
                         false);
                 //TODO set current role for select box - based on hierarchy?
                 //editForm.setRole();
@@ -298,9 +298,8 @@ public class AccountUsersController extends AbstractAccountController {
     private void addInvitationsToModel(Set<UserInvitation> pendingUserInvitations,
                                        Model model) {
         Set<PendingAccountUser> pendingUsers = new HashSet<PendingAccountUser>();
-        Set<Role> roles = Role.ROLE_USER.getRoleHierarchy();
         for (UserInvitation ui : pendingUserInvitations) {
-            pendingUsers.add(new PendingAccountUser(ui, roles));
+            pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
         }
         model.addAttribute("pendingUserInvitations", pendingUsers);
     }
@@ -324,8 +323,8 @@ public class AccountUsersController extends AbstractAccountController {
         boolean hasMoreThanOneOwner =
             accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
-            Set<Role> role = u.getRoleByAcct(accountId);
-            if(!role.contains(Role.ROLE_ROOT)) {
+            Role role = u.getRoleByAcct(accountId);
+            if(!role.equals(Role.ROLE_ROOT)) {
                 AccountUser au =
                     new AccountUser(u.getId(),
                         u.getUsername(),
@@ -372,7 +371,7 @@ public class AccountUsersController extends AbstractAccountController {
     public class AccountUser {
         public AccountUser(
             int id, String username, String firstName, String lastName,
-            String email, InvitationStatus status, Collection<Role> roles, boolean deletable) {
+            String email, InvitationStatus status, Role role, boolean deletable) {
             super();
             this.id = id;
             this.username = username;
@@ -380,7 +379,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.lastName = lastName;
             this.email = email;
             this.status = status;
-            this.roles = roles;
+            this.role = role;
             this.deletable = deletable;
         }
 
@@ -390,7 +389,7 @@ public class AccountUsersController extends AbstractAccountController {
         private String lastName;
         private String email;
         private InvitationStatus status;
-        private Collection<Role> roles;
+        private Role role;
         private boolean deletable;
 
         public int getId() {
@@ -417,8 +416,8 @@ public class AccountUsersController extends AbstractAccountController {
             return status;
         }
 
-        public Collection<Role> getRoles() {
-            return roles;
+        public Role getRole() {
+            return role;
         }
 
         public boolean isDeletable() {
@@ -434,14 +433,14 @@ public class AccountUsersController extends AbstractAccountController {
 
         private UserInvitation invitation;
 
-        public PendingAccountUser(UserInvitation ui, Collection<Role> roles) {
+        public PendingAccountUser(UserInvitation ui, Role role) {
             super(-1,
                   "------",
                   "------",
                   "------",
                   ui.getUserEmail(),
                   resolveStatus(ui),
-                  roles,
+                  role,
                   true);
             this.invitation = ui;
         }

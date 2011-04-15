@@ -34,12 +34,14 @@
            class="two-by-one-layout">
             <div
              id="account-details"
-             class="dc-subgroup">
-              <h2>
-                <span>Account Identification</span>
+             class="account-record">
 
-                <span>
-                  <ul
+
+              <table width="100%">
+                <tr>
+                  <td><strong class="accountlabel">Account Identification</strong></td>
+                  <td align="right"><span>
+              <ul
                    class="horizontal-list">
                     <li>
                       <a
@@ -53,35 +55,34 @@
                       Edit</a>
                     </li>
                   </ul>
-                </span>
-              </h2>
-
-              <table>
+                </span></td>
+                </tr>
+              </table><div style="height:20px"></div><table class="datatablesimple">
                 <tr>
-                  <td>Subdomain</td>
+                  <td width="22%" align="right">Subdomain:</td>
 
-                  <td>${accountInfo.subdomain}</td>
+                  <td width="78%">${accountInfo.subdomain}</td>
                 </tr>
                 <tr>
-                  <td>Account Name</td>
+                  <td align="right">Account Name:</td>
 
                   <td>${accountInfo.acctName}</td>
                 </tr>
 
                 <tr>
-                  <td>Organization Name</td>
+                  <td align="right">Organization Name:</td>
 
                   <td>${accountInfo.orgName}</td>
                 </tr>
 
                 <tr>
-                  <td>Department</td>
+                  <td align="right">Department:</td>
 
                   <td>${accountInfo.department}</td>
                 </tr>
 
                 <tr>
-                  <td>Status</td>
+                  <td align="right">Status</td>
 
                   <td>${accountInfo.status}</td>
                 </tr>
@@ -90,10 +91,15 @@
 
             <div
              id="provider-details"
-             class="dc-subgroup">
-              <h2>Provider Information
-              </h2>
-              <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+             class="account-record">
+             
+              <table width="100%" border="0" cellpadding="4" cellspacing="0" >
+                <tr>
+                  <td><strong class="accountlabel">Provider Information</strong></td>
+                </tr>
+              </table><div style="height:20px"></div><table border="0">
+                <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')"><tr>
+                  <td>            
 
                       <div class="providerSelctionRow">
                     <h3>
@@ -122,9 +128,10 @@
                       </form:form>
                     </h3>
                     </div>
-              </sec:authorize>
-
-              <table>
+              </td>
+                </tr></sec:authorize>
+                <tr>
+                  <td><table class="datatablesimple">
                         <tr>
                           <td>${primaryProvider.providerType}</td>
                           <td>(Primary)</td>
@@ -137,29 +144,29 @@
 
                               <td>(Secondary)</td>
                             </tr>
-                          </c:forEach>
+                    </c:forEach>
+              </table></td>
+                </tr>
+                <tr>
+                  <td class="datatablesimple"><p class="instructions">If you would like to remove a Storage Provider please contact DuraCloud support.</p></td>
+                </tr>
               </table>
-                <br />
-                <br />
-              <p class="instructions">If you would like to remove a Storage Provider please contact DuraCloud support.</p>
+ 
+
+             
             </div>
-          </div>
+</div>
 
-<br />
-<br />
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
    <tr>
- <td><div
-              class="button-bar">
-
-               <a
-                class="button"
+ <td align="right"><a
+                class="button featured"
                 id="cancel-button"
                 href="${pageContext.request.contextPath}/users/byid/${user.username}">
                Back</a>
-             </div></td>
-   </tr>
- </table>
+     </td>
+  </tr>
+</table>
 
         </tiles:putAttribute>
       </tiles:insertDefinition>

@@ -31,11 +31,15 @@
           <div
            >
             <div
-             class="dc-subgroup">
-              <h2>Account Indentity Details</h2>
-				
-              <div
-               class="dc-subgroup">
+             class="account-record">
+<table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Account Indentity Details</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
+
+              <div>
 			   <br /><div class="instructions"> Please complete the information to begin creating your account.</div>
                 <jsp:include
                  page="/WEB-INF/jspx/includes/global-errors.jspx">
@@ -49,16 +53,16 @@
                  modelAttribute="newAccountForm"
                  method="POST">
                   <table
-                   class="standard-form">
+                   class="datatablesimple">
                     <tr>
-                      <td
+                      <td width="16%" align="right"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="orgName">Organization Name</form:label>
+                         path="orgName">Organization Name:</form:label>
                       </td>
 
-                      <td
+                      <td width="84%"
                        class="value required">
                         <form:input
                          cssErrorClass="error"
@@ -69,12 +73,11 @@
                     </tr>
 
                     <tr>
-                      <td
+                      <td align="right"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="acctName">Account Name</form:label>
-                      </td>
+                         path="acctName">Account Name:</form:label></td>
 
                       <td
                        class="value required">
@@ -86,11 +89,11 @@
                     </tr>
 
                     <tr>
-                      <td
+                      <td align="right"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="department">Department</form:label>
+                         path="department">Department:</form:label>
                       </td>
 
                       <td
@@ -103,11 +106,11 @@
                     </tr>
 
                     <tr>
-                      <td
+                      <td align="right"
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="subdomain">Subdomain</form:label>
+                         path="subdomain">Subdomain:</form:label>
                       </td>
 
                       <td
@@ -119,8 +122,9 @@
                       </td>
                     </tr>
                   </table>
-
-                  <div
+          <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><div
                    class="button-bar">
                     <a
                      class="button"
@@ -131,14 +135,17 @@
                     <button
                      id="create-account-button"
                      type="submit">Create</button>
-                  </div>
+                  </div></td>
+            </tr>
+          </table>
+                  
                 </form:form>
               </div>
             </div>
 
             <div>
             </div>
-          </div>
+</div>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

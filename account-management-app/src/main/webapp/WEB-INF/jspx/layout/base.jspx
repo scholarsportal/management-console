@@ -144,7 +144,7 @@
 <div class="yui-b" role="main"><tiles:insertAttribute name="body" />
 </div>
 </div>
-</div>
+</div><br />
 <div id="ft">
 	<div class="outer" id="footer-content">
 

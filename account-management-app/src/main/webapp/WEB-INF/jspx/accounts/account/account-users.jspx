@@ -30,11 +30,14 @@
           <h1>Manage Account Users</h1>
           <div
            id="account-list"
-           class="dc-subgroup">
-            <h2>
-                Active Users
-            </h2><br />
-              <table width="90%" align="center">
+           class="account-record">
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel"> Active Users</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
+                <table class="datatablesimple">
                 <tr>
                   <th align="left">Username</th>
 
@@ -60,16 +63,7 @@
 
                     <td align="left">${u.email}</td>
 
-                    <td align="left">
-                      <c:forEach
-                       items="${u.roles}"
-                       var="role"
-                       varStatus="status">
-                      <c:if
-                       test="${status.count &gt; 1}">,</c:if>
-
-                      ${role.displayName}</c:forEach>
-                    </td>
+                    <td align="left">${u.role.displayName}</td>
                       
                      <c:choose>
                           <c:when test="${u.deletable}">
@@ -86,10 +80,10 @@
                           </jsp:include>
                               <td align="left">
                                 <form:select
-                                 id="role" 
+                                 id="role"
                                  cssErrorClass="error"
                                  path="role">
-                                <form:option value="${role.displayName}" />
+                                <form:option value="${u.role}" label="${u.role.displayName}"/>
                                 <form:options items="${roleList}"  itemLabel="displayName" />
                               </form:select>
 
@@ -134,14 +128,17 @@
 
           <div
            id="invite-list"
-           class="dc-subgroup" style="min-height:150px !important">
-            <h2>
-                Invite Users
-            </h2><br />
+           class="account-record" style="min-height:150px !important">
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel"> Invite Users</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
             <p  class="instructions">
                 To invite a user to this account enter their email address here.
             </p>
-              <table width="90%" align="right">
+              <table width="90%">
                 <form:form
                id="invitation-form"
                modelAttribute="invitationForm"
@@ -175,16 +172,19 @@
                   </tr>
               </form:form>
               </table>
-            </div>
+</div>
             
             
 
           <div
-           class="dc-subgroup">
-            <h2>
-                Pending Users
-            </h2><br />
-              <table width="90%" align="center">
+           class="account-record">
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel"> Pending Users</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
+              <table width="90%" class="datatablesimple">
                 <tr>
                   <th align="left" valign="middle">Email</th>
 
@@ -242,15 +242,14 @@
               </c:choose>   
               </table>
             </div>
-                <div
-                 class="button-bar">
-
-                  <a
-                   class="button"
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+               <tr>
+             <td align="right"><a
+                   class="button featured"
                    id="cancel-button"
                    href="${pageContext.request.contextPath}/users/byid/${user.username}">
-                  Back</a>
-                </div>
+                  Back</a></td></tr></table>
+            
 				<div style="height:20px"></div>
         </tiles:putAttribute>
       </tiles:insertDefinition>

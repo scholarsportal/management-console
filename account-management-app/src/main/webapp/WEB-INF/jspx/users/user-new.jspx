@@ -21,17 +21,19 @@
     </tiles:putAttribute>
 
     <tiles:putAttribute
-     name="body">
-      <div
-       class="dc-main-content">
-        <h1>Create a New Duracloud Profile</h1>
-        <div>
-          <div
-           class="dc-subgroup">
-            <h2>Profile Details</h2>
+     name="body"><h1>Create a New Duracloud Profile</h1>
+     
+<div
+           class="account-record">
+             <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Profile Details</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
 
-            <div
-             class="dc-subgroup-body">
+
+            
               <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
               <jsp:include
                page="/WEB-INF/jspx/includes/global-errors.jspx">
@@ -45,19 +47,19 @@
                modelAttribute="newUserForm"
                method="POST">
                 <form:hidden path="redemptionCode"/>
-                <table
-                 class="standard-form">
+                <table width="100%"
+                 class="datatablesimple">
                   <tr>
-                    <td
+                    <td width="16%" align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="first-name-text"
                        autofocus="true"
-                       path="firstName">First Name</form:label>
+                       path="firstName">First Name:</form:label>
                     </td>
 
-                    <td
+                    <td width="84%"
                      class="value required">
                       <form:input
                        cssErrorClass="error"
@@ -67,12 +69,12 @@
                   </tr>
 
                   <tr>
-                    <td
+                    <td align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="last-name-text"
-                       path="lastName">Last Name</form:label>
+                       path="lastName">Last Name:</form:label>
                     </td>
 
                     <td
@@ -85,12 +87,12 @@
                   </tr>
 
                   <tr>
-                    <td
+                    <td align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="email-text"
-                       path="email">Email</form:label>
+                       path="email">Email:</form:label>
                     </td>
 
                     <td
@@ -103,12 +105,12 @@
                   </tr>
 
                   <tr>
-                    <td
+                    <td align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="username-text"
-                       path="username">Username</form:label>
+                       path="username">Username:</form:label>
                     </td>
 
                     <td
@@ -121,12 +123,12 @@
                   </tr>
 
                   <tr>
-                    <td
+                    <td align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="password-text"
-                       path="password">Password</form:label>
+                       path="password">Password:</form:label>
                     </td>
 
                     <td
@@ -140,12 +142,12 @@
                   </tr>
 
                   <tr>
-                    <td
+                    <td align="right"
                      class="label">
                       <form:label
                        cssErrorClass="error"
                        for="password-confirm-text"
-                       path="passwordConfirm">Confirm Password</form:label>
+                       path="passwordConfirm">Confirm Password:</form:label>
                     </td>
 
                     <td
@@ -158,26 +160,20 @@
                     </td>
                   </tr>
                 </table>
-            <div
-             style="height: 20px;">
-            </div>
-                <div
-                 class="button-bar">
+
+            
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="right"><div class="button-bar">
                   <button
                    id="create-user-button"
                    type="submit">Create Profile</button>
-                </div><div
-             style="height: 20px;">
-            </div>
-              </form:form>
-            </div>
-          </div>
-
-          <div>
-<!-- holds place -->
-          </div>
-        </div>
-      </div>
+                </div></td>
+                </tr>
+              </table>
+          </form:form>
+</div>
+      
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

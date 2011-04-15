@@ -80,12 +80,9 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
         return roles;
     }
 
-    public Set<Role> getRoleByAcct(int accountId) {
+    public Role getRoleByAcct(int accountId) {
         Set<Role> roles = getRolesByAcct(accountId);
-        
-        Set<Role> role = new HashSet<Role>(0);
-        role.add(Role.highestRole(roles));
-        return role;
+        return Role.highestRole(roles);
     }
 
     public String getUsername() {

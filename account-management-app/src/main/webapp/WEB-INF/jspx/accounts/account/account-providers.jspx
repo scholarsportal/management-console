@@ -19,8 +19,13 @@
                   <h1>Account Information</h1>
 
                   <div
-                   class="dc-subgroup">
-                    <h2>Storage Providers Configuration</h2>
+                   class="account-record">
+<table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Storage Providers Configuration</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
                       <div class="providerSelctionRow">
                     <h3>
                       <form:form
@@ -53,7 +58,7 @@
                     </div>
                     <div
                      class="dc-subgroup-body">
-                      <table>
+                      <table class="datatablesimple">
                         <tr>
                           <th>Provider</th>
 
@@ -96,16 +101,21 @@
                           </c:forEach>
                       </table>
                       <div style="height:20px;"></div>
-
-                      <div
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td><div
                        class="button-bar">
                         <a
                          class="button"
                          id="cancel-button"
                          href="${pageContext.request.contextPath}/users/byid/${user.username}/accounts">
                         Done</a>
-                      </div>
-					  <div style="height:20px;"></div>
+
+                      </div></td>
+                          </tr>
+                        </table>
+                      
+					  
                     </div>
                   </div>
 

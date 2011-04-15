@@ -27,7 +27,7 @@
 
         <tiles:putAttribute
          name="content">
-        <h5>Management Console
+       <h5>Management Console
         </h5>
         <div style="height:20px" ></div>
         <div
@@ -36,8 +36,15 @@
 
             <div
              class="dc-subgroup-body">
-                <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                <a
+                <h1>
+                  <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                  </sec:authorize>
+                </h1>
+                
+<table border="0" cellspacing="0" cellpadding="4">
+  <tr>
+    <td class="accountlabel"><strong>Accounts</strong></td>
+    <td align="right"><sec:authorize access="hasAnyRole('ROLE_ROOT')"><a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
                 <i
@@ -45,11 +52,11 @@
                 </i>
 
                 Add DuraCloud Account</a><br />
-              </sec:authorize>
-                <strong><br />
-                Accounts</strong>
-                    <br />
-                <br />
+              </sec:authorize></td>
+  </tr>
+</table>
+<br />
+              
               <c:choose>
                 <c:when
                  test="${not empty accounts}">
@@ -57,12 +64,13 @@
                      var="a"
                      items="${accounts}">
 
-                <table width="100%" class="account-record" style="border-left:4px !important" >
+                <table width="100%" class="account-record">
                       <tr class="account">
                         <td align="left" valign="middle">
-                           <strong style="font-size:18px;  color:#09F !important">${a.accountInfo.acctName}</strong>
-                            <span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span>
+                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+                            
                         </td>
+                        <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
                         <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
                         <td width="90" align="right" valign="middle"><a class="button"
@@ -75,12 +83,12 @@
                         </sec:authorize>
                       </tr>
                       <tr class="account">
-                        <td colspan="4" align="left" valign="middle">
+                        <td colspan="5" align="left" valign="middle">
                         <div >
                         <div >
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
-                  <p class="instructions"><strong>No instance associated with this account.</strong></p>
+                  <p class="dc-main-content"><strong>No instance associated with this account.</strong></p>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
                   <c:choose>
@@ -99,7 +107,7 @@
                       </form:form>
                     </c:when>
                     <c:otherwise>
-                        <p class="instructions">This status of this account is currently PENDING. Once this account
+                        <p class="dc-main-content">This status of this account is currently PENDING. Once this account
                             becomes active, it will be possible to start an instance.</p>
                     </c:otherwise>
                   </c:choose>
@@ -118,10 +126,12 @@
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle"><c:out value="${a.instance.hostName}" /><a class="button" style="margin-left:25px !important"
+                      <td align="left" valign="middle"><c:out value="${a.instance.hostName}" />
+                        <a class="button durabutton" style="margin-left:25px !important"
                          id="account-${a.accountInfo.id}-duradmin-link"
                          href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                         target="_blank">Launch DuraCloud</a></td>
+                         target="_blank">Launch Duracloud<br />
+                        Administrator</a></td>
                       <td align="center" valign="middle" class="instructions"><em>
                         <c:out value="${a.instanceStatus}" />
                       </em></td>
@@ -158,7 +168,7 @@
                 </c:when>
 
                 <c:otherwise>
-                  <p><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
+                  <p class="dc-main-content"><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
                 </c:otherwise>
               </c:choose>
   </div>

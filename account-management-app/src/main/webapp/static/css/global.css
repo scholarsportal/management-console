@@ -226,18 +226,21 @@ input.error,.global-errors{
 }
 
 div.global-errors{
-	padding:5px;
-	margin-bottom:5px;
-	margin-right: 8px;
-	margin-left: 8px;
-	margin-top:5px;
-	font-size: 11px;
+    padding:5px;
+    margin-bottom:5px;
+    margin-right: 8px;
+    margin-left: 8px;
+    margin-top:5px;
+    font-size: 11px;
+    color:#515151 !important;
 }
+
 .global-errors li{
-	padding:5px; 
-	list-style-type: square;
-	list-style-position: inside;
-	border-bottom:0 !important;
+    padding:5px;
+    list-style-type: square;
+    list-style-position: inside;
+    border-bottom:0 !important;
+    color:#515151 !important;
 }
 
 .two-by-one-layout > div:first-child{
@@ -435,7 +438,7 @@ ing-right:10px;
 	width:100%;
 }
 .dc-subgroup table > tr {
-	border-bottom: 1px solid #aaa;
+
 }
 
 
@@ -480,8 +483,84 @@ li.account:hover {
 	padding-left: 15px;
 }
 .instance-panel{
-	background-color: #c1c1c1;
 	padding: 8px;
-	border: 1px solid #4D4D4D;	
+	border: 1px solid #4D4D4D;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	background-image: url(../img/instance-pane-back.png);
+	background-repeat: repeat-x;
+	background-position: left center;
+	}
+.button.durabutton{
+	background-image: url(../img/durabutton.png);
+	background-repeat: no-repeat;
+	background-position: center left;
+	height:25px;
 	
+	margin-left: 25px;
+	text-align: left;
+	color: #333;
+	vertical-align: middle;
+	font-weight: bold;
+	font-size: 11px;
+	padding-left: 80px;
+	}	
+	.button.durabutton:hover{
+	background-image: url(../img/durabutton.png);
+	background-repeat: no-repeat;
+	background-position: center left;
+	height:25px;
+	
+	margin-left: 25px;
+	text-align: left;
+	color: #09F;
+	vertical-align: middle;
+	font-weight: bold;
+	font-size: 11px;
+	padding-left: 80px;
+	border-color:#09F;
+	}
+
+.account-record {
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 4px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #515151;
+	border-right-color: #515151;
+	border-bottom-color: #515151;
+	border-left-color: #515151;
+	margin-bottom: 15px;
+	background-image: url(../img/acccount-record-back.png);
+	background-repeat: repeat-x;
+	background-position: center -5px;
+	min-height:250px;
+}
+.datatablesimple {
+	color: #515151;
+	margin-left: 25px;
+	font-weight: bold;
+	width: 95%;
+}
+.datatablesimple tr {
+	margin-left: 25px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #515151;
+}
+
+
+.accountlabel
+{
+	font-size:18px;
+	margin-left:8px;
+	margin-right:20px;
+	margin-top: 8px;
+	margin-bottom: 15px;
+	font-weight: bold;
+	color: #494949;
 	}
