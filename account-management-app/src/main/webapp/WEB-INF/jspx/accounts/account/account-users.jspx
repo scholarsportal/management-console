@@ -84,9 +84,29 @@
                                  cssErrorClass="error"
                                  path="role">
                                 <form:option value="${u.role}" label="${u.role.displayName}"/>
-                                <form:options items="${roleList}"  itemLabel="displayName" />
+                                <c:if test="${u.role == ownerRole}">
+                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                        <form:option value="${adminRole}" label="${adminRole.displayName}"/>
+                                        <form:option value="${userRole}" label="${userRole.displayName}"/>
+                                    </sec:authorize>
+                                </c:if>
+                                <c:if test="${u.role == adminRole}">
+                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                        <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
+                                    </sec:authorize>
+                                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                                        <form:option value="${userRole}" label="${userRole.displayName}"/>
+                                    </sec:authorize>
+                                </c:if>
+                                <c:if test="${u.role == userRole}">
+                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                        <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
+                                    </sec:authorize>
+                                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                                        <form:option value="${adminRole}" label="${adminRole.displayName}"/>
+                                    </sec:authorize>
+                                </c:if>
                               </form:select>
-
                           <button style="margin-left:8px !important"
                            type="submit">
 
@@ -115,7 +135,7 @@
                                    class="pre trash">
                                   </i>
 
-                                  Delete</button>
+                                  Remove from Account</button>
                                 </form>
                           </li>
                         </c:if>

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
+import org.springframework.security.access.AccessDeniedException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,13 +234,19 @@ public class AccountUsersController extends AbstractAccountController {
         return ACCOUNT_USERS_EDIT_ID;
     }
 
-    @ModelAttribute("roleList")
-    public List<Role> getRoleList() {
-        List<Role> roles = new ArrayList<Role>();
-        roles.add(Role.ROLE_USER);
-        roles.add(Role.ROLE_ADMIN);
-        roles.add(Role.ROLE_OWNER);
-        return roles;
+    @ModelAttribute("ownerRole")
+    public Role getOwnerRole() {
+        return Role.ROLE_OWNER;
+    }
+
+    @ModelAttribute("adminRole")
+    public Role getAdminRole() {
+        return Role.ROLE_ADMIN;
+    }
+
+    @ModelAttribute("userRole")
+    public Role getUserRole() {
+        return Role.ROLE_USER;
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
@@ -253,15 +259,26 @@ public class AccountUsersController extends AbstractAccountController {
         Role role = Role.valueOf(accountUserEditForm.getRole());
         log.info("New role: {}", role);
 
+        boolean exception = false;
         Set<Role> roles = role.getRoleHierarchy();
-        userService.setUserRights(accountId,
-                                  userId, 
-                                  roles.toArray(new Role[roles.size()]));
+        try {
+            userService.setUserRights(accountId,
+                                      userId,
+                                      roles.toArray(new Role[roles.size()]));
+        } catch(AccessDeniedException e) {
+            result.addError(new ObjectError("role",
+                                "You are unauthorized to set the role for this user"));
+            exception = true;
+        }
+
+
 
         addUserToModel(model);
-        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+        if(!exception)
+            model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
         model.addAttribute("invitationForm", new InvitationForm());
-        return get(getAccountService(accountId), model);
+        get(getAccountService(accountId), model);
+        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
     /**
