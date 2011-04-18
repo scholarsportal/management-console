@@ -33,9 +33,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The default view for this application
@@ -295,7 +295,7 @@ public class UserController extends AbstractController {
                            new AccountInstanceForm());
 
         Set<DuracloudAccount> duracloudAccounts =
-            new HashSet<DuracloudAccount>();
+            new TreeSet<DuracloudAccount>();
 
         Iterator<AccountInfo> iterator = accounts.iterator();
         while(iterator.hasNext()) {

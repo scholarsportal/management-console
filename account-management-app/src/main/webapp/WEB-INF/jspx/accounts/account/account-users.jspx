@@ -238,15 +238,11 @@
                                 </form>
                           </li>
                           <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-
-                        <c:if
-                         test="${up.id lt 0}">
                           <li>
                             <a
                              href="${up.redemptionURL}" class="instructions">
                             Redemption URL</a>
                           </li>
-                        </c:if>
                           </sec:authorize>
 
                       </ul>

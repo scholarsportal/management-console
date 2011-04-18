@@ -2,7 +2,7 @@ package org.duracloud.account.common.domain;
 
 import java.util.Set;
 
-public class DuracloudAccount {
+public class DuracloudAccount implements Comparable<DuracloudAccount> {
     private AccountInfo accountInfo;
 
     private DuracloudInstance instance;
@@ -51,5 +51,10 @@ public class DuracloudAccount {
 
     public void setVersions(Set<String> versions) {
         this.versions = versions;
+    }
+
+    @Override
+    public int compareTo(DuracloudAccount o) {
+        return this.accountInfo.compareTo(o.accountInfo);
     }
 }

@@ -11,11 +11,10 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.UnsentEmailException;
-import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.notification.NotificationMgr;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,15 +23,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.security.access.AccessDeniedException;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 
@@ -304,6 +302,7 @@ public class AccountUsersController extends AbstractAccountController {
         addAccountInfoToModel(accountInfo, model);
         List<AccountUser> accountUsers =
             buildUserList(accountInfo.getId(), users);
+        Collections.sort(accountUsers);
         addInvitationsToModel(pendingUserInvitations, model);
         model.addAttribute(USERS_KEY, accountUsers);
     }
@@ -314,7 +313,7 @@ public class AccountUsersController extends AbstractAccountController {
      */
     private void addInvitationsToModel(Set<UserInvitation> pendingUserInvitations,
                                        Model model) {
-        Set<PendingAccountUser> pendingUsers = new HashSet<PendingAccountUser>();
+        Set<PendingAccountUser> pendingUsers = new TreeSet<PendingAccountUser>();
         for (UserInvitation ui : pendingUserInvitations) {
             pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
         }
@@ -385,7 +384,7 @@ public class AccountUsersController extends AbstractAccountController {
      * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
      * 
      */
-    public class AccountUser {
+    public class AccountUser implements Comparable<AccountUser> {
         public AccountUser(
             int id, String username, String firstName, String lastName,
             String email, InvitationStatus status, Role role, boolean deletable) {
@@ -440,26 +439,25 @@ public class AccountUsersController extends AbstractAccountController {
         public boolean isDeletable() {
             return this.deletable;
         }
+
+        @Override
+        public int compareTo(AccountUser o) {
+            return this.getUsername().compareTo(o.getUsername());
+        }
     }
 
     public static enum InvitationStatus {
         ACTIVE, PENDING, EXPIRED
     }
 
-    public class PendingAccountUser extends AccountUser {
+    public class PendingAccountUser implements Comparable<PendingAccountUser> {
 
         private UserInvitation invitation;
+        private Role role;
 
         public PendingAccountUser(UserInvitation ui, Role role) {
-            super(-1,
-                  "------",
-                  "------",
-                  "------",
-                  ui.getUserEmail(),
-                  resolveStatus(ui),
-                  role,
-                  true);
             this.invitation = ui;
+            this.role = role;
         }
 
         public int getInvitationId() {
@@ -474,6 +472,14 @@ public class AccountUsersController extends AbstractAccountController {
             return this.invitation.getRedemptionURL();
         }
 
+        public String getEmail() {
+            return this.invitation.getUserEmail();
+        }
+
+        @Override
+        public int compareTo(PendingAccountUser o) {
+            return this.getEmail().compareTo(o.getEmail());
+        }
     }
 
     // This method is only used for test. The actual member is autowired.
