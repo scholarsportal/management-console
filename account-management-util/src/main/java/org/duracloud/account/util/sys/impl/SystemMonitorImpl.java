@@ -75,10 +75,7 @@ public class SystemMonitorImpl extends EventMonitorBase implements Initable {
             }
         }
 
-        String host = AmaEndpoint.getHost();
-        String port = AmaEndpoint.getPort();
-        String ctxt = AmaEndpoint.getCtxt();
-        printer.println("http://" + host + ":" + port + "/" + ctxt);
+        printer.println(AmaEndpoint.getUrl());
         printer.printf("%n%nYour friend,%nMichael Jackson%n");
 
         printer.close();

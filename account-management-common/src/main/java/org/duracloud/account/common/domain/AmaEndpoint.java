@@ -30,4 +30,10 @@ public class AmaEndpoint {
     public static String getPort() {
         return port;
     }
+
+    public static String getUrl() {
+        String proto = port.equals("443") ? "https" : "http";
+        return proto + "://" + host + ":" + port + "/" + ctxt;
+    }
+
 }

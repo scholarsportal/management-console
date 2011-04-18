@@ -63,11 +63,7 @@ public class CustomerMonitorImpl extends EventMonitorBase {
         printer.print("Feel free to invite additional users to the account, ");
         printer.print("monitor your service status, and update your account ");
         printer.printf("preferences at: %n");
-
-        String host = AmaEndpoint.getHost();
-        String port = AmaEndpoint.getPort();
-        String ctxt = AmaEndpoint.getCtxt();
-        printer.printf("    http://%1$s:%2$s/%3$s%n%n", host, port, ctxt);
+        printer.printf("    %1$s%n%n", AmaEndpoint.getUrl());
 
         printer.printf("%nThank you,%nDuraCloud Team%n");
 

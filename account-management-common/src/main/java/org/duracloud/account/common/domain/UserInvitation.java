@@ -72,13 +72,7 @@ public class UserInvitation extends BaseDomainData {
     }
 
     public String getRedemptionURL() {
-        String amaHost = AmaEndpoint.getHost();
-        String amaPort = AmaEndpoint.getPort();
-        String amaCtxt = AmaEndpoint.getCtxt();
-
-        String proto = amaPort.equals("443") ? "https" : "http";
-        return proto + "://" + amaHost + ":" + amaPort + "/" + amaCtxt +
-            "/users/redeem/" + getRedemptionCode();
+        return AmaEndpoint.getUrl() + "/users/redeem/" + getRedemptionCode();
     }
 
 

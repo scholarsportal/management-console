@@ -4,6 +4,7 @@
 package org.duracloud.account.util.instance.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
@@ -57,6 +58,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDuraserviceHost(instance.getHostName());
         config.setDuraservicePort(DEFAULT_SSL_PORT);
         config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
+        config.setAmaUrl(AmaEndpoint.getUrl());
         return config;
     }
 

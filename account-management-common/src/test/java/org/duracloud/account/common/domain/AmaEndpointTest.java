@@ -31,4 +31,21 @@ public class AmaEndpointTest {
         Assert.assertEquals(port, AmaEndpoint.getPort());
         Assert.assertEquals(ctxt, AmaEndpoint.getCtxt());
     }
+
+    @Test
+    public void testUrl() {
+        String host = AmaEndpoint.getHost();
+        String port = AmaEndpoint.getPort();
+        String ctxt = AmaEndpoint.getCtxt();
+
+        Assert.assertNotNull(host);
+        Assert.assertNotNull(port);
+        Assert.assertNotNull(ctxt);
+
+        String url = AmaEndpoint.getUrl();
+        Assert.assertNotNull(url);
+
+        String expectedUrl = "http://" + host + ":" + port + "/" + ctxt;
+        Assert.assertEquals(expectedUrl, url);
+    }
 }

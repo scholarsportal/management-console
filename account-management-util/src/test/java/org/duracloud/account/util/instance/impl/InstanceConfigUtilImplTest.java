@@ -4,6 +4,7 @@
 package org.duracloud.account.util.instance.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
@@ -116,6 +117,8 @@ public class InstanceConfigUtilImplTest {
                      config.getDuraservicePort());
         assertEquals(DuraserviceConfig.QUALIFIER,
                      config.getDuraserviceContext());
+
+        assertEquals(AmaEndpoint.getUrl(), config.getAmaUrl());
 
     }
 
