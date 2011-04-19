@@ -279,7 +279,50 @@ public class UserAccessDecisionVoterTest {
         invocation = createInvocation(acctId,
                                       userRole.equals(accessRole) ? targetUserId : -1,
                                       username);
-        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF);
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ID);
+
+        doTest(expectedDecision);
+    }
+
+
+    @Test
+    public void testScopeSelfName() throws DBNotFoundException {
+        Role userRole = accessRole;
+        int expectedDecision = AccessDecisionVoter.ACCESS_GRANTED;
+        doTestScopeSelfName(userRole, expectedDecision);
+    }
+
+    @Test
+    public void testScopeSelfNameFailRole() throws DBNotFoundException {
+        Role userRole = badRole;
+        int expectedDecision = AccessDecisionVoter.ACCESS_DENIED;
+        doTestScopeSelfName(userRole, expectedDecision);
+    }
+
+    @Test
+    public void testScopeSelfNameFailName() throws DBNotFoundException {
+        Role userRole = accessRole;
+        int expectedDecision = AccessDecisionVoter.ACCESS_DENIED;
+        String targetUsername = "bad-username";
+        doTestScopeSelfName(userRole, expectedDecision, targetUsername);
+    }
+
+    private void doTestScopeSelfName(Role userRole, int expectedDecision) {
+        doTestScopeSelfName(userRole, expectedDecision, null);
+    }
+
+    private void doTestScopeSelfName(Role userRole,
+                                     int expectedDecision,
+                                     String targetName) {
+        int acctId = -1;
+        int userId = -1;
+        String username = "good-username";
+        String targetUserName = targetName != null ? targetName : username;
+        authentication = createAuthentication(userId,
+                                              username,
+                                              userRole.getRoleHierarchy());
+        invocation = createInvocation(acctId, userId, targetUserName);
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_NAME);
 
         doTest(expectedDecision);
     }
@@ -324,10 +367,16 @@ public class UserAccessDecisionVoterTest {
     }
 
     private Authentication createAuthentication(int userId, Set<Role> roles) {
+        return createAuthentication(userId, "username", roles);
+    }
+
+    private Authentication createAuthentication(int userId,
+                                                String username,
+                                                Set<Role> roles) {
         Authentication auth = EasyMock.createMock("Authentication",
                                                   Authentication.class);
         DuracloudUser user = new DuracloudUser(userId,
-                                               "username",
+                                               username,
                                                "password",
                                                "firstName",
                                                "lastName",

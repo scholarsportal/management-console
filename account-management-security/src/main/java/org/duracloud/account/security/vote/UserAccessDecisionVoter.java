@@ -32,6 +32,7 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
     private final int ACCT_ID_INDEX = 0;
     private final int USER_ID_INDEX = 0;
+    private final int USER_NAME_INDEX = 0;
     private final int OTHER_USER_ID_INDEX = 1;
     private final int NEW_ROLES_INDEX = 2;
 
@@ -72,12 +73,20 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
         if (scope.equals(SecuredRule.Scope.ANY)) {
             decision = voteHasRole(role, userRoles);
 
-        } else if (scope.equals(SecuredRule.Scope.SELF)) {
+        } else if (scope.equals(SecuredRule.Scope.SELF_ID)) {
             // Does user have required role AND
             //  is call acting on the calling user's userId?
             if (hasVote(voteHasRole(role, userRoles))) {
                 int userId = getUserIdArg(methodArgs);
                 decision = voteMyUserId(user, userId);
+            }
+
+        } else if (scope.equals(SecuredRule.Scope.SELF_NAME)) {
+            // Does user have required role AND
+            //  is call acting on the calling user's username?
+            if (hasVote(voteHasRole(role, userRoles))) {
+                String username = getUsernameArg(methodArgs);
+                decision = voteMyUsername(user, username);
             }
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT_PEER)) {
@@ -120,6 +129,8 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
         return castVote(decision, invocation);
     }
+
+
 
     private int voteUserHasRoleOnAcctToManageOther(int userId,
                                                    int acctId,
@@ -194,6 +205,13 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
             log.error("Illegal number of args: " + arguments.length);
         }
         return (Integer) arguments[USER_ID_INDEX];
+    }
+
+    private String getUsernameArg(Object[] arguments) {
+           if (arguments.length <= USER_NAME_INDEX) {
+            log.error("Illegal number of args: " + arguments.length);
+        }
+        return (String) arguments[USER_NAME_INDEX];
     }
 
     /**

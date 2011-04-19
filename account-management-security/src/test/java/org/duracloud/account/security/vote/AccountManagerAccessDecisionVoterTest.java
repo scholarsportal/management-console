@@ -11,7 +11,6 @@ import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.impl.AccountManagerServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -25,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -148,7 +146,7 @@ public class AccountManagerAccessDecisionVoterTest {
         int targetUserId = targetId > -1 ? targetId : userId;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(userRole.equals(accessRole) ? targetUserId : null);
-        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF);
+        securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ID);
 
         doTest(expectedDecision);
     }

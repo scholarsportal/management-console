@@ -208,6 +208,10 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         return user.getId() == userId ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
+    protected int voteMyUsername(DuracloudUser user, String username) {
+        return user.getUsername().equals(username) ? ACCESS_GRANTED : ACCESS_DENIED;
+    }
+
     protected DuracloudUser getCurrentUser(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof String) {

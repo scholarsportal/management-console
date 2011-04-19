@@ -355,7 +355,7 @@ public class UserController extends AbstractController {
     private void prepareModel(String username, ModelAndView mav)
         throws DBNotFoundException {
         DuracloudUser user =
-            this.userService.loadDuracloudUserByUsername(username);
+            this.userService.loadDuracloudUserByUsernameInternal(username);
         prepareModel(user, mav);
     }
 
@@ -417,6 +417,7 @@ public class UserController extends AbstractController {
         throws Exception {
         if (!result.hasErrors()) {
             try {
+                // FIXME: Needs to be a verification question before this call.
                 this.userService.forgotPassword(
                     forgotPasswordForm.getUsername());
             } catch (DBNotFoundException e) {

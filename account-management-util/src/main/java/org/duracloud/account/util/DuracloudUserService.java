@@ -83,7 +83,7 @@ public interface DuracloudUserService {
      * @throws InvalidPasswordException
      * @throws DBConcurrentUpdateException
      */
-    @Secured({"role:ROLE_USER, scope:SELF"})
+    @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void changePassword(int userId,
                                String oldPassword,
                                boolean oldPasswordEncoded,
@@ -113,8 +113,12 @@ public interface DuracloudUserService {
      * @return DuracloudUser
      * @throws DBNotFoundException
      */
-    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    @Secured({"role:ROLE_USER, scope:SELF_NAME"})
     public DuracloudUser loadDuracloudUserByUsername(String username)
+        throws DBNotFoundException;
+
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
         throws DBNotFoundException;
 
     /**
@@ -127,7 +131,7 @@ public interface DuracloudUserService {
      *                       become part of an account
      * @return the account id associated with the newly redeemed invitation.
      */
-    @Secured({"role:ROLE_USER, scope:SELF"})
+    @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
 
@@ -140,7 +144,7 @@ public interface DuracloudUserService {
      * @param email     of user
      * @throws DBConcurrentUpdateException
      */
-    @Secured({"role:ROLE_USER, scope:SELF"})
+    @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void storeUserDetails(int userId,
                                  String firstName,
                                  String lastName,

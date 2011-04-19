@@ -4,7 +4,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
@@ -79,7 +79,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
 
     @Test
     public void testGetChangePasswordForm() throws Exception {
-        initializeMockUserServiceLoadUser();
+        boolean internal = false;
+        initializeMockUserServiceLoadUser(internal);
 
         Model model = new ExtendedModelMap();
         String view = userController.changePassword(TEST_USERNAME, model);
@@ -106,7 +107,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
     @Test
     public void testGetUser() throws Exception {
         setupAccountManagerService();
-        initializeMockUserServiceLoadUser();
+        boolean internal = true;
+        initializeMockUserServiceLoadUser(internal);
 
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         HttpSession session = EasyMock.createMock(HttpSession.class);
@@ -315,7 +317,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
 
     @Test
     public void testChangePasswordErrors() throws Exception {
-        initializeMockUserServiceLoadUser();
+        boolean internal = false;
+        initializeMockUserServiceLoadUser(internal);
 
         Model model = new ExtendedModelMap();        
         BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
@@ -358,12 +361,18 @@ public class UserControllerTest  extends AmaControllerTestBase {
         userController.setUserService(userService);
     }
 
-    private void initializeMockUserServiceLoadUser() throws Exception {
+    private void initializeMockUserServiceLoadUser(boolean internal) throws Exception {
         userService =
             EasyMock.createMock(DuracloudUserService.class);
-        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
-            .andReturn(createUser())
-            .anyTimes();
+
+        if (internal) {
+            EasyMock.expect(userService.loadDuracloudUserByUsernameInternal(
+                TEST_USERNAME)).andReturn(createUser()).anyTimes();
+
+        } else {
+            EasyMock.expect(userService.loadDuracloudUserByUsername(
+                TEST_USERNAME)).andReturn(createUser()).anyTimes();
+        }
         EasyMock.replay(userService);
         userController.setUserService(userService);
     }

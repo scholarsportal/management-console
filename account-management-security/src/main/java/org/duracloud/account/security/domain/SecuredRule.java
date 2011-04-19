@@ -64,8 +64,10 @@ public class SecuredRule {
     public static enum Scope {
         // applies to any user or account
         ANY,
-        // applies to calling user's own profile
-        SELF,
+        // applies to calling user's own profile (by userId)
+        SELF_ID,
+        // applies to calling user's own profile (by username)
+        SELF_NAME,
         // applies to accounts with which calling user is a member
         SELF_ACCT,
         // applies to accounts with which calling user is a member AND

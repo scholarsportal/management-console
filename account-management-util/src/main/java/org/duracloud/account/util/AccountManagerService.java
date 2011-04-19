@@ -54,6 +54,6 @@ public interface AccountManagerService {
 	 *         If there are no accounts associated with the specified user, an
 	 *         empty set is returned.
 	 */
-    @Secured({"role:ROLE_USER, scope:SELF"})
+    @Secured({"role:ROLE_USER, scope:SELF_ID"})
 	public Set<AccountInfo> findAccountsByUserId(int userId);
 }

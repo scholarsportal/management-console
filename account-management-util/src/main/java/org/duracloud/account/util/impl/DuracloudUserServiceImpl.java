@@ -302,7 +302,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     public void forgotPassword(String username)
         throws DBNotFoundException, InvalidPasswordException,
                DBConcurrentUpdateException, UnsentEmailException {
-        DuracloudUser user = loadDuracloudUserByUsername(username);
+        DuracloudUser user = loadDuracloudUserByUsernameInternal(username);
 
         Random r = new Random();
         String generatedPassword = Long.toString(Math.abs(r.nextLong()), 36);
@@ -339,19 +339,25 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
     }
 
-	@Override
-	public DuracloudUser loadDuracloudUserByUsername(String username)
-			throws DBNotFoundException {
+    @Override
+    public DuracloudUser loadDuracloudUserByUsername(String username)
+        throws DBNotFoundException {
+        return loadDuracloudUserByUsernameInternal(username);
+    }
+
+    @Override
+    public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
+        throws DBNotFoundException {
         DuracloudUser user = getUserRepo().findByUsername(username);
 
-		try {
-			user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
-		} catch (DBNotFoundException e) {
-		    // Not all users are associated with an account.
-			log.debug("No account rights found for {}", user.getUsername());
-		}
-		
-		return user;
+        try {
+            user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
+        } catch (DBNotFoundException e) {
+            // Not all users are associated with an account.
+            log.debug("No account rights found for {}", user.getUsername());
+        }
+
+        return user;
     }
 
     @Override

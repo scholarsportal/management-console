@@ -65,7 +65,7 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
             int acctId = getIntArg(invocation.getArguments());
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
-        } else if (scope.equals(SecuredRule.Scope.SELF)) {
+        } else if (scope.equals(SecuredRule.Scope.SELF_ID)) {
             if (voteHasRole(role, userRoles) == ACCESS_GRANTED) {
                 int userId = getIntArg(invocation.getArguments());
                 decision = voteMyUserId(user, userId);
