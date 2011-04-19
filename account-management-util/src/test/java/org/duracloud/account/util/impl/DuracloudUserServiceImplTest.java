@@ -47,6 +47,8 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         setUpIsUsernameAvailable(existingName, newName);
 
         Assert.assertFalse(userService.isUsernameAvailable(existingName));
+        Assert.assertFalse(userService.isUsernameAvailable("root"));
+        Assert.assertFalse(userService.isUsernameAvailable("RooT"));
         Assert.assertTrue(userService.isUsernameAvailable(newName));
     }
 

@@ -58,6 +58,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public boolean isUsernameAvailable(String username) {
+        if ("root".equalsIgnoreCase(username)) {
+            return false;
+        }
+
         try {
             getUserRepo().findByUsername(username);
             return false;
