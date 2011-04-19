@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.NotBlank;
  * Date: 4/6/11
  */
 public class AccountInstanceForm {
-    @NotBlank(message = "You must specify a version.")
     private String version;
 
     public String getVersion() {

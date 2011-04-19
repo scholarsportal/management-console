@@ -103,8 +103,7 @@
     </sec:authorize>
     </c:otherwise>
     </c:choose>
-    <span
-	id="dc-app-title">Management Console</span></div>
+</div>
 </div>
 <div id="right" class="float-r outer">
 <div id="dc-user" class="float-r">
@@ -146,7 +145,7 @@
 </div>
 </div><br />
 <div id="ft">
-	<div class="outer" id="footer-content">
+	<div class="outer" id="footer-content" style="margin-left:15px">
 
 	<div class="float-r" id="logo-ds"></div>
 	Duracloud Account Manager Release v${project.version}

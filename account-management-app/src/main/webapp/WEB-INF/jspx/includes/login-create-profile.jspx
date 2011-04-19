@@ -12,13 +12,19 @@
 
   <sec:authentication property="principal" var="principal" />
   <h1>Login</h1>
-  <div class="two-by-one-layout">
+  <div>
     <div
-     class="dc-subgroup">
-      <h2>Current Users</h2>
+     class="account-record">
+      
+    <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Current Users</td>
+              </tr>
+            </table>
+      <div style="height:20px"></div>
 
       <div
-       class="dc-subgroup-body">
+       class="datatablesimple">
         <c:choose>
         
               <c:when
@@ -39,7 +45,7 @@
 	         page="/WEB-INF/jspx/includes/login-form.jspx" />
 
             <a
-             id="forgot-password-link" class="instructions"
+             id="forgot-password-link" class="button primary"
              href="${pageContext.request.contextPath}/users/forgot-password">
 
             Forgot Password</a>
@@ -54,13 +60,19 @@
     </div>
 
     <div
-     class="dc-subgroup">
+     class="account-record">
       <c:if test="${(principal == 'anonymousUser') || (empty principal)}">
       
-      <h2>New Users</h2>
+
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">New Users</td>
+              </tr>
+            </table>
+        <div style="height:20px"></div>
 
       <div
-       class="dc-subgroup-body">
+       class="datatablesimple">
         <p class="instructions">Don't have a Duracloud profile yet? No problem - create a new one
         here.</p>
         <ul>

@@ -21,9 +21,8 @@
     </tiles:putAttribute>
 
     <tiles:putAttribute
-     name="body"><h1>Create a New Duracloud Profile</h1>
-     
-<div
+     name="body"><div style="margin-left:15px !important; margin-right:15px !important"><h1>Create a New Duracloud Profile </h1><br />
+        <div id="account-list"
            class="account-record">
              <table border="0" cellspacing="0" cellpadding="0">
               <tr>
@@ -47,7 +46,7 @@
                modelAttribute="newUserForm"
                method="POST">
                 <form:hidden path="redemptionCode"/>
-                <table width="100%"
+                <table
                  class="datatablesimple">
                   <tr>
                     <td width="16%" align="right"
@@ -59,7 +58,7 @@
                        path="firstName">First Name:</form:label>
                     </td>
 
-                    <td width="84%"
+                    <td
                      class="value required">
                       <form:input
                        cssErrorClass="error"
@@ -160,19 +159,26 @@
                     </td>
                   </tr>
                 </table>
-
-            
+            <div style="height:20px"></div>
+            <div>
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td align="right"><div class="button-bar">
-                  <button
-                   id="create-user-button"
-                   type="submit">Create Profile</button>
-                </div></td>
+                  <td align="right">
+                      <button
+                       id="create-user-button"
+                       type="submit">Create Profile</button>
+                      <a
+                       class="button"
+                       id="cancel-button"
+                       href="${pageContext.request.contextPath}">
+                      Cancel</a>
+                  </td>
                 </tr>
-              </table>
+
+              </table></div>
+              <div style="height:20px"></div>
           </form:form>
-</div>
+        </div></div>
       
     </tiles:putAttribute>
   </tiles:insertDefinition>

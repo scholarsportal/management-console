@@ -226,21 +226,20 @@ input.error,.global-errors{
 }
 
 div.global-errors{
-    padding:5px;
-    margin-bottom:5px;
-    margin-right: 8px;
-    margin-left: 8px;
-    margin-top:5px;
-    font-size: 11px;
-    color:#515151 !important;
+	padding:5px;
+	margin-bottom:5px;
+	margin-right: 8px;
+	margin-left: 8px;
+	margin-top:5px;
+	font-size: 11px;
+	color:#515151 !important;
 }
-
 .global-errors li{
-    padding:5px;
-    list-style-type: square;
-    list-style-position: inside;
-    border-bottom:0 !important;
-    color:#515151 !important;
+	padding:5px; 
+	list-style-type: square;
+	list-style-position: inside;
+	border-bottom:0 !important;
+	color:#515151 !important;
 }
 
 .two-by-one-layout > div:first-child{
@@ -275,6 +274,8 @@ div.global-errors{
 #dc-logo-panel
 {
 	padding-left:10px;
+
+	
 }
 
 #dc-logo,
@@ -284,20 +285,37 @@ div.global-errors{
 	display:inline-block;
 	float:left;
 	height:40px;
-	font-size:20px;
-	padding-top:33px;
-}
+	font-size:28px;
+	padding-top:26px;
+	white-space: nowrap;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
 
+}
+#dc-app-title-img
+{
+	background-repeat:no-repeat;
+	display:inline-block;
+	float:left;
+	height:40px;
+	font-size:28px;
+	padding-top:26px;
+	white-space: nowrap;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+}
 #dc-logo
 {
-	background-image:url(../img/logo_top_duracloud_lg.png);
+		width:531px;
+		background-image: url(../img/logo_top_mc_lg.png);
+	
 	
 }
 
 #dc-app-title
 {
-	background-image:url(../img/app_title.png);
-	width:280px;
+	background-image:url(../img/logo_top_mc_lg.png);
+	width:531px;
 }
 
 #hd,#bd, .dc-main-tabs
@@ -389,13 +407,20 @@ ing-right:10px;
 
 
 .dc-subgroup {
-	background-color: #ccc;
 	min-height:200px;
 	margin-bottom: 20px;
 	padding-top: 0px;
 	padding-right: 0px;
 	padding-bottom: 5px;
 	padding-left: 0px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border: 1px solid #2C2C2C;
+	background-image: url(../img/dc-subgroup-back.png);
+	background-repeat: repeat-x;
+	background-position: left top;
+	
 }
 
 
@@ -474,23 +499,56 @@ li.account:hover {
 }
 
 .instructions {
-	font-size: .8em;
+	font-size: 0.8em;
 	margin-bottom: 20px;
-	margin-left: 8px; !important
+	margin-left: 8px;
+ 	color: #515151 !important;	
 }
 .providerSelctionRow {
 	margin-left: 15px;
 	padding-left: 15px;
 }
 .instance-panel{
-	padding: 8px;
+	padding: 9px;
 	border: 1px solid #4D4D4D;
-	margin-top: 15px;
-	margin-bottom: 15px;
-	background-image: url(../img/instance-pane-back.png);
+	margin-top: 9px;
+	margin-bottom: 9px;
+	font-size: 11px;	
+		-moz-border-radius:5px;	
+	-webkit-border-radius:5px;
+	border-radius:5px;
+
+	}
+.instance-panel.active {
+
+	background-image: url(../img/active-instance-pane-back.png);
 	background-repeat: repeat-x;
 	background-position: left center;
-	}
+}
+.instance-panel.inactive {
+
+	background-image: url(../img/inactive-instance-pane-back.png);
+	background-repeat: repeat-x;
+	background-position: left center;
+	
+}
+
+.instance-panel.error {
+
+	background-image: url(../img/error-instance-pane-back.png);
+	background-repeat: repeat-x;
+	background-position: left center;
+}
+
+.instance-panel.alert {
+
+	background-image: url(../img/alert-instance-pane-back.png);
+	background-repeat: repeat-x;
+	background-position: left center;
+	color: #6C6C6C !important;
+}
+
+
 .button.durabutton{
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
@@ -525,7 +583,7 @@ li.account:hover {
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
-	border-left-width: 4px;
+	border-left-width: 1px;
 	border-top-style: solid;
 	border-right-style: solid;
 	border-bottom-style: solid;
@@ -538,12 +596,15 @@ li.account:hover {
 	background-image: url(../img/acccount-record-back.png);
 	background-repeat: repeat-x;
 	background-position: center -5px;
-	min-height:250px;
+	min-height:200px;
+	background-color: #CCC;
+	-moz-border-radius:8px;	
+	-webkit-border-radius:8px;
+	border-radius:8px;
 }
 .datatablesimple {
 	color: #515151;
 	margin-left: 25px;
-	font-weight: bold;
 	width: 95%;
 }
 .datatablesimple tr {
@@ -551,16 +612,19 @@ li.account:hover {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: #515151;
+	font-size:11px !important;
 }
 
 
 .accountlabel
 {
-	font-size:18px;
+	font-size:16px;
 	margin-left:8px;
 	margin-right:20px;
-	margin-top: 8px;
-	margin-bottom: 15px;
+	margin-top: 4px;
 	font-weight: bold;
 	color: #494949;
+	font-family: Verdana, Helvetica, sans-serif;
+	display: block;
+	vertical-align: middle;
 	}

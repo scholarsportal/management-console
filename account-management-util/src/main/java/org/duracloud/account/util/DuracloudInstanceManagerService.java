@@ -31,6 +31,13 @@ public interface DuracloudInstanceManagerService {
     public Set<String> getVersions();
 
     /**
+     * Retrieves the latest DuraCloud version
+     * @return latest version
+     */
+    @Secured({"role:ROLE_USER, scope:ANY"})
+    public String getLatestVersion();
+
+    /**
      * Retrieves the DuraCloud instance with the given ID wrapped in a class
      * which provides services on the instance.
      *

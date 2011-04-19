@@ -58,6 +58,13 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         return versions;
     }
 
+    @Override
+    public String getLatestVersion() {
+        DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
+        ServerImage image = imageRepo.findLatest();
+        return image.getVersion();
+    }
+
     private Set<ServerImage> getServerImages() {
         DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
         Set<Integer> imageIds = imageRepo.getIds();

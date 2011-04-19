@@ -67,6 +67,26 @@ public class DuracloudInstanceManagerServiceImplTest
     }
 
     @Test
+    public void testGetLatestVersion() throws Exception {
+        setupGetLatestImage();
+        replayMocks();
+
+        String resultVersion = managerService.getLatestVersion();
+        assertEquals("1.0", resultVersion);
+    }
+
+    private void setupGetLatestImage() throws Exception {
+        EasyMock.expect(repoMgr.getServerImageRepo())
+            .andReturn(serverImageRepo)
+            .times(1);
+
+        ServerImage latest = new ServerImage(1, 1, "1", "1.0", "1", "1", false);
+        EasyMock.expect(serverImageRepo.findLatest())
+            .andReturn(latest)
+            .times(1);
+    }
+
+    @Test
     public void testCreateInstance() throws Exception {
         int accountId = 33;
         int computeProvAcctId = 5;

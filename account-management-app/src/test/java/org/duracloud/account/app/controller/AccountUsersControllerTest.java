@@ -189,6 +189,10 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         userService.revokeUserRights(TEST_ACCOUNT_ID, 1);
         EasyMock.expectLastCall();
         
+        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
+            .andReturn(createUser())
+            .anyTimes();
+        
         this.accountUsersController.setUserService(userService);
         EasyMock.replay(userService);
         Model model = new ExtendedModelMap();

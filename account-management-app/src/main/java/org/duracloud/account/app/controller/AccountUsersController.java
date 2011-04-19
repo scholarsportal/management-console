@@ -195,6 +195,10 @@ public class AccountUsersController extends AbstractAccountController {
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
         userService.revokeUserRights(accountId, userId);
+        DuracloudUser user = getUser();
+
+        if(user.getId() == userId)
+            return "redirect:/users/byid/" + user.getUsername();
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 

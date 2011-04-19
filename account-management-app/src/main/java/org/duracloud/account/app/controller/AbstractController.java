@@ -75,6 +75,9 @@ public abstract class AbstractController {
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception e) {
         log.error(e.getMessage(), e);
-        return new ModelAndView("exception", "ex", e);
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return new ModelAndView("redirect:/users/byid/" + username, "ex", e);
+
     }
 }

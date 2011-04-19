@@ -36,15 +36,10 @@
 
             <div
              class="dc-subgroup-body">
-                <h1>
-                  <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                  </sec:authorize>
-                </h1>
-                
-<table border="0" cellspacing="0" cellpadding="4">
-  <tr>
-    <td class="accountlabel"><strong>Accounts</strong></td>
-    <td align="right"><sec:authorize access="hasAnyRole('ROLE_ROOT')"><a
+            <table border="0" cellspacing="0" cellpadding="4">
+              <tr>
+                <td class="accountlabel"><strong>Accounts</strong></td>
+                <td align="right"><sec:authorize access="hasAnyRole('ROLE_ROOT')"><a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
                 <i
@@ -63,8 +58,8 @@
                     <c:forEach
                      var="a"
                      items="${accounts}">
-
-                <table width="100%" class="account-record">
+                <div class="account-record" style="min-height:100px !important">
+                <table width="100%">
                       <tr class="account">
                         <td align="left" valign="middle">
                           <strong class="accountlabel">${a.accountInfo.acctName}</strong>
@@ -88,34 +83,37 @@
                         <div >
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
-                  <p class="dc-main-content"><strong>No instance associated with this account.</strong></p>
+                  <div class="instance-panel error"><strong>No instance associated with this account.</strong></div>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
 
-                  <c:choose>
+                 <c:choose>
                     <c:when test="${a.accountInfo.status == 'ACTIVE'}">
+                      <div class="instance-panel inactive">
                       <form:form
                         id="instance-start-form"
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
+                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                         <form:select
                           id="versions"
                           cssErrorClass="error"
                           path="version"
                           items="${a.versions}" />
+                          </sec:authorize>
                         <button style="margin-left:8px !important" type="submit">Start New Instance</button>
-                      </form:form>
+                      </form:form></div>
                     </c:when>
                     <c:otherwise>
-                        <p class="dc-main-content">This status of this account is currently PENDING. Once this account
-                            becomes active, it will be possible to start an instance.</p>
+                    <div class="instance-panel alert"> This status of this account is currently PENDING. Once this account
+                            becomes active, it will be possible to start an instance.</div>
                     </c:otherwise>
                   </c:choose>
                     </sec:authorize>
 
                 </c:when>
                 <c:otherwise>
-                <div class="instance-panel"><table>
+                <div class="instance-panel active"><table>
                     <tr>
                       <th align="left">Host Name</th>
                       <th width="173" align="center">Version</th>
@@ -131,7 +129,7 @@
                         <a class="button durabutton" style="margin-left:25px !important"
                          id="account-${a.accountInfo.id}-duradmin-link"
                          href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                         target="_blank">Launch Duracloud<br />
+                         target="_blank">Launch DuraCloud<br />
                         Administrator</a></td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
@@ -155,7 +153,7 @@
 
                     </tr>
                   </table></div>
-                  <br />
+                  
                 </c:otherwise>
               </c:choose>
             </div>
@@ -168,6 +166,7 @@
                     
                     
                   </table>
+                </div>
                     </c:forEach>
                 </c:when>
 
