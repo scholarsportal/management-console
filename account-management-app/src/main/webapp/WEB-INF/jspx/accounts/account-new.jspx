@@ -118,7 +118,7 @@
                         <form:input
                          cssErrorClass="error"
                          id="subdomain-text"
-                         path="subdomain" /> <strong>.duracloud.org</strong> (Subdoamin must be 4-25 characters long)
+                         path="subdomain" /> <strong>.duracloud.org</strong> (Subdomain must be 4-25 characters long)
                       </td>
                     </tr>
                   </table>

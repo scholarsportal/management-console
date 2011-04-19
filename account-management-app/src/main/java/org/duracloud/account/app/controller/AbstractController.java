@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 
 /**
  * Base class for all controllers.
@@ -73,11 +74,12 @@ public abstract class AbstractController {
     }
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception e) {
+    public ModelAndView handleException(Exception e, HttpSession session) {
         log.error(e.getMessage(), e);
+        session.setAttribute("error", e.getMessage());
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return new ModelAndView("redirect:/users/byid/" + username, "ex", e);
+        return new ModelAndView("redirect:/users/byid/" + username);
 
     }
 }

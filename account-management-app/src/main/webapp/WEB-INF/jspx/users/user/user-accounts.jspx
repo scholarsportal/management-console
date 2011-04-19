@@ -30,6 +30,14 @@
        <h5>Management Console
         </h5>
         <div style="height:20px" ></div>
+
+        <c:if test="${sessionScope.error != null}">
+          <div class="instance-panel alert">
+            <strong>The following error has occurred: <c:out value="${sessionScope.error}" /></strong>
+          </div>
+          <c:remove var="error" scope="session" />
+        </c:if>
+
         <div
            id="account-list"
            class="dc-subgroup">
