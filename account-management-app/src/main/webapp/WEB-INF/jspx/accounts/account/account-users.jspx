@@ -30,7 +30,7 @@
           <h1>Manage Account Users</h1>
           <div
            id="account-list"
-           class="account-record">
+           class="account-record user-list">
             <table border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="accountlabel"> Active Users</td>
@@ -207,7 +207,7 @@
             
 
           <div
-           class="account-record">
+           class="account-record user-list">
             <table border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="accountlabel"> Pending Users</td>

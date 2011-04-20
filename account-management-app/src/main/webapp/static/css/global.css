@@ -633,6 +633,11 @@ li.account:hover {
 	-webkit-border-radius:8px;
 	border-radius:8px;
 }
+
+.user-list {
+    padding-bottom:20px;
+}
+
 .datatablesimple {
 	color: #515151;
 	margin-left: 25px;
