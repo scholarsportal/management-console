@@ -515,13 +515,13 @@ li.account:hover {
 }
 
 .instructions {
-	font-size: 0.8em;
+	font-size: 0.9em;
 	margin-bottom: 20px;
 	margin-left: 8px;
  	color: #515151 !important;	
 }
 .lighttext {
-	font-size: 0.8em;
+	font-size: 0.9em;
 	margin-bottom: 20px;
 	margin-left: 8px;
 	color: #CCC !important;
@@ -566,6 +566,14 @@ li.account:hover {
 .instance-panel.alert {
 
 	background-image: url(../img/alert-instance-pane-back.png);
+	background-repeat: repeat-x;
+	background-position: left center;
+	color: #6C6C6C !important;
+}
+
+.instance-panel.notice {
+
+	background-image: url(../img/notice-instance-pane-back.png);
 	background-repeat: repeat-x;
 	background-position: left center;
 	color: #6C6C6C !important;

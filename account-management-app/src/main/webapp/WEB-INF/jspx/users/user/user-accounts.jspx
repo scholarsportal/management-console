@@ -91,7 +91,7 @@
                         <div >
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
-                  <div class="instance-panel error"><strong>No instance associated with this account.</strong>
+                  <div class="instance-panel notice"><strong>No instance associated with this account.</strong>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
                     <c:if test="${a.accountInfo.status != 'ACTIVE'}">
                         This status of this account is currently PENDING. Once this account
