@@ -30,6 +30,9 @@
 <link href="${pageContext.request.contextPath}/static/css/blue-buttons.css"
 	rel="stylesheet" type="text/css" />
 
+<link rel="shortcut icon"
+      href="${pageContext.request.contextPath}/static/img/favicon.ico" />
+
 <script src="http://code.jquery.com/jquery-1.4.3.js"
 	xml:space="preserve">
 </script>
