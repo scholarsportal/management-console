@@ -140,7 +140,7 @@
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/delete"
                                  method="post">
                                   <button style="margin-right:8px !important" 
-                                   type="submit" onclick="AskAndSubmit(this)">
+                                   type="submit" onclick="AskAndSubmit(this); return false;">
                                   <i
                                    class="pre trash">
                                   </i>

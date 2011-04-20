@@ -91,11 +91,16 @@
                         <div >
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
-                  <div class="instance-panel error"><strong>No instance associated with this account.</strong></div>
+                  <div class="instance-panel error"><strong>No instance associated with this account.</strong>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
-
-                 <c:choose>
-                    <c:when test="${a.accountInfo.status == 'ACTIVE'}">
+                    <c:if test="${a.accountInfo.status != 'ACTIVE'}">
+                        This status of this account is currently PENDING. Once this account
+                            becomes active, it will be possible to start an instance.
+                    </c:if>
+                    </sec:authorize>
+                  </div>
+                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                    <c:if test="${a.accountInfo.status == 'ACTIVE'}">
                       <div class="instance-panel inactive">
                       <form:form
                         id="instance-start-form"
@@ -111,12 +116,7 @@
                           </sec:authorize>
                         <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form></div>
-                    </c:when>
-                    <c:otherwise>
-                    <div class="instance-panel alert"> This status of this account is currently PENDING. Once this account
-                            becomes active, it will be possible to start an instance.</div>
-                    </c:otherwise>
-                  </c:choose>
+                    </c:if>
                     </sec:authorize>
 
                 </c:when>
@@ -158,11 +158,11 @@
                       </script>
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
                               method="post">
-                        <button type="submit" onclick="AskAndSubmit(this)">Restart</button>
+                        <button type="submit" onclick="AskAndSubmit(this); return false;">Restart</button>
                       </form></td>
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
                               method="post">
-                        <button type="submit" onclick="AskAndSubmit(this)">Stop</button>
+                        <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>
                       </form></td>
                       <c:if test="${actionStatus != null}">
                         <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
