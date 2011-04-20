@@ -5,7 +5,9 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -24,6 +26,7 @@ import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.notification.Emailer;
 import org.slf4j.Logger;
@@ -58,7 +61,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public boolean isUsernameAvailable(String username) {
-        if ("root".equalsIgnoreCase(username)) {
+        if (isReservedName(username)) {
             return false;
         }
 
@@ -68,6 +71,12 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         } catch (DBNotFoundException e) {
             return true;
         }
+    }
+
+    private boolean isReservedName(String username) {
+        Credential init = new InitUserCredential();
+        return ServerImage.DC_ROOT_USERNAME.equalsIgnoreCase(username) ||
+            init.getUsername().equalsIgnoreCase(username);
     }
 
     @Override

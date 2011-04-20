@@ -5,7 +5,9 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.DBUninitializedException;
@@ -46,9 +48,13 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String newName = "name-new";
         setUpIsUsernameAvailable(existingName, newName);
 
+        String rootName = ServerImage.DC_ROOT_USERNAME;
+        String initName = new InitUserCredential().getUsername();
         Assert.assertFalse(userService.isUsernameAvailable(existingName));
         Assert.assertFalse(userService.isUsernameAvailable("root"));
         Assert.assertFalse(userService.isUsernameAvailable("RooT"));
+        Assert.assertFalse(userService.isUsernameAvailable(rootName));
+        Assert.assertFalse(userService.isUsernameAvailable(initName));
         Assert.assertTrue(userService.isUsernameAvailable(newName));
     }
 
