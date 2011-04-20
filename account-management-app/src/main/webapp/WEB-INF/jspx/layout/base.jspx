@@ -144,9 +144,9 @@
 	<div class="outer" id="footer-content" style="margin-left:15px">
 
 	<div class="float-r" id="logo-ds"></div>
-	  Duracloud Management Console v${project.version}${prefix.revision}${prefix.specialStatus}
+	  Duracloud Management Console
       <span class="sep"> | </span>
-      &#169;
+      &#169;2011
       <script type="text/javascript">document.write(new Date().getFullYear());</script>
       <a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>
       <span class="sep"> | </span>
