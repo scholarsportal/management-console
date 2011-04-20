@@ -126,11 +126,21 @@
                         <c:if
                          test="${u.deletable}">
                           <li>
+                              <script type="text/javascript" language="JavaScript">
+                                function AskAndSubmit(t)
+                                {
+                                  var answer = confirm("Are you sure you want to remove this user?");
+                                  if (answer)
+                                  {
+                                    t.form.submit();
+                                  }
+                                }
+                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/delete"
                                  method="post">
                                   <button style="margin-right:8px !important" 
-                                   type="submit">
+                                   type="submit" onclick="AskAndSubmit(this)">
                                   <i
                                    class="pre trash">
                                   </i>
