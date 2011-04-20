@@ -370,7 +370,7 @@ public class AccountUsersController extends AbstractAccountController {
         Set<DuracloudUser> users, int accountId) {
         int ownerCount = 0;
         for (DuracloudUser u : users) {
-            if (u.isOwnerForAcct(accountId)) {
+            if (u.isOwnerForAcct(accountId) && !u.isRootForAcct(accountId)) {
                 ownerCount++;
                 if (ownerCount > 1) {
                     return true;
