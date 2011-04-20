@@ -30,7 +30,23 @@ body {
 ol, ul {
 	list-style: none;
 }
-
+.field{
+	background-color: #585B5E;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: inset;
+	border-right-style: inset;
+	border-bottom-style: inset;
+	border-left-style: inset;
+	border-top-color: #36383A;
+	border-right-color: #36383A;
+	border-bottom-color: #585B5E;
+	border-left-color: #36383A;
+	color: #CCC;
+	padding: 2px;
+	}
 ul.bullets,
 #static-panel ul
 {
@@ -328,7 +344,7 @@ div.global-errors{
 	margin-top:5px;
 	background:url(../img/bg_L1.png) no-repeat top right;
 	padding-top:5px;
-	min-height:600px;
+	min-height:200px;
 }
 
 .pane-L1-body a
@@ -420,7 +436,7 @@ ing-right:10px;
 	background-image: url(../img/dc-subgroup-back.png);
 	background-repeat: repeat-x;
 	background-position: left top;
-	
+	background-color: #666;	
 }
 
 
@@ -504,6 +520,13 @@ li.account:hover {
 	margin-left: 8px;
  	color: #515151 !important;	
 }
+.lighttext {
+	font-size: 0.8em;
+	margin-bottom: 20px;
+	margin-left: 8px;
+	color: #CCC !important;
+}
+
 .providerSelctionRow {
 	margin-left: 15px;
 	padding-left: 15px;

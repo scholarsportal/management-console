@@ -28,7 +28,7 @@
        property="principal"
        var="principal" />
 
-        <jsp:include page="/WEB-INF/jspx/includes/login-create-profile.jspx"/>
+        <jsp:include page="/WEB-INF/jspx/includes/login-form.jspx"/>
 
       </div>
     </tiles:putAttribute>

@@ -7,8 +7,6 @@
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
-  
-  
   <c:if
    test="${not empty param.error}">
     <div
@@ -23,56 +21,88 @@
    id="loginForm"
    action="${pageContext.request.contextPath}/j_spring_security_check"
    method="POST">
-    <table
-     class="standard-form">
+    <table width="100%">
+
       <tr>
-        <td style="width:9%" 
-         class="label">
-          <label
-           for="username">Username</label>
-        </td>
+        <td align="right" valign="middle"
+         ></td>
+        <td align="left" valign="middle"
+         ></td>
+        <td valign="middle"
+         ></td>
+      </tr>
+      <tr>
+        <td width="20%" align="right" valign="middle"
+         ></td>
+        <td align="left" valign="middle"
+         ></td>
+        <td  valign="middle"
+         ></td>
+      </tr>
+      <tr>
+        <td align="right" valign="middle"
+         ><span class="label" >
+        <label
+           for="username" class="lighttext">Username:</label>
+        </span></td>
 
-        <td
-         class="value required">
-          <input
-           type="text"
-           id="username"
+        <td align="left" valign="middle"
+         ><input
            name="j_username"
-           autofocus="true" />
-        </td>
+           type="text"
+           autofocus="true" class="field"
+           id="username" /></td>
 
-        <td
-         class="field-errors">
+        <td valign="middle"
+         >
         </td>
       </tr>
 
       <tr>
-        <td
-         class="label">
-          <label
-           for="password">Password</label>
+        <td align="right" valign="middle"
+         ><span class="lighttext">Password:</span></td>
+
+        <td align="left" valign="middle"
+         ><input
+           name="j_password"
+           type="password" class="field"
+           id="password" />
         </td>
 
-        <td
-         class="value required">
-          <input
-           id="password"
-           type="password"
-           name="j_password" />
+        <td valign="middle"
+         >
         </td>
+      </tr>
+      <tr>
+        <td align="right" valign="middle"
+         ></td>
+        <td align="left" valign="middle"
+         ><button class="primary"
+       type="submit"
+       id="login-button">Login</button></td>
+        <td valign="middle"
+         class="field-errors"></td>
+      </tr>
+      <tr>
+        <td align="left" valign="middle"
+         class="lighttext"></td>
+        <td align="left" valign="middle"
+         class="lighttext">
+            <a class="lighttext" style="margin-left:0 !important"
+             id="forgot-password-link"
+             href="${pageContext.request.contextPath}/users/forgot-password">
 
-        <td
-         class="field-errors">
+            Forgot Password</a>    |  
+        <a class="lighttext" style="margin-left:0 !important"
+             id="new-user-link"
+             href="${pageContext.request.contextPath}/users/new"
+             >Create New Profile</a></td>
+        <td valign="middle">
         </td>
       </tr>
     </table>
 
-    <div
-     class="button-bar">
-      <button
-       type="submit"
-       id="login-button">Login</button>
-    </div>
-  </form>
+
+</form>
 </jsp:root>
 

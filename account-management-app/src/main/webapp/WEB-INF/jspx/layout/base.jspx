@@ -122,13 +122,6 @@
 			class="icon-link logout"> <i class="pre logoff"></i>Logout</a></li>
 
 	</sec:authorize>
-
-
-	<c:if test="${(principal == 'anonymousUser') || (empty principal)}">
-		<li><a id="login-link" accesskey="l" class="icon-link"
-			href="${pageContext.request.contextPath}/login"> <i class="pre"></i>
-		Login</a></li>
-	</c:if>
 <!--
 	<li id="help"><a class="icon-link" href="#"><i
 		class="pre help"></i>Help</a></li>

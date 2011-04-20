@@ -23,7 +23,7 @@
      name="body">
       <div
        class="dc-main-content">
-        <jsp:include page="/WEB-INF/jspx/includes/login-create-profile.jspx"/>
+        <jsp:include page="/WEB-INF/jspx/includes/login-form.jspx"/>
       </div>
     </tiles:putAttribute>
   </tiles:insertDefinition>
