@@ -300,14 +300,15 @@ public class UserController extends AbstractController {
         Iterator<AccountInfo> iterator = accounts.iterator();
         while(iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
-            duracloudAccounts.add(loadAccountInstances(acctInfo, mav));
+            duracloudAccounts.add(loadAccountInstances(acctInfo, user, mav));
         }
         mav.addObject("accounts", duracloudAccounts);
     }
 
-    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, ModelAndView model) {
+    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, DuracloudUser user, ModelAndView model) {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
+        duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
 
         Set<DuracloudInstanceService> instanceServices =
             instanceManagerService.getInstanceServices(accountInfo.getId());

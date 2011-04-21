@@ -47,7 +47,9 @@
             <table border="0" cellspacing="0" cellpadding="4">
               <tr>
                 <td class="accountlabel"><strong>Accounts</strong></td>
-                <td align="right"><sec:authorize access="hasAnyRole('ROLE_ROOT')"><a
+                <td align="right">
+              <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                <a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
                 <i
@@ -74,7 +76,7 @@
                             
                         </td>
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
-                        <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                        <c:if test="${a.userRole != 'ROLE_USER'}">
 
                         <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
@@ -83,7 +85,7 @@
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
-                        </sec:authorize>
+                        </c:if>
                       </tr>
                       <tr class="account">
                         <td colspan="5" align="left" valign="middle">
@@ -92,14 +94,14 @@
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
                   <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
-                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                    <c:if test="${a.userRole != 'ROLE_USER'}">
                     <c:if test="${a.accountInfo.status != 'ACTIVE'}"><span class="instructions">
                         This status of this account is currently PENDING. Once this account
                             becomes active, it will be possible to start an instance.</span>
                     </c:if>
-                    </sec:authorize>
+                    </c:if>
                   </div>
-                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                    <c:if test="${a.userRole != 'ROLE_USER'}">
                     <c:if test="${a.accountInfo.status == 'ACTIVE'}">
                       <div class="instance-panel inactive">
                       <form:form
@@ -107,17 +109,17 @@
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
-                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                          <c:if test="${a.userRole == 'ROLE_ROOT'}">
                         <form:select
                           id="versions"
                           cssErrorClass="error"
                           path="version"
                           items="${a.versions}" />
-                          </sec:authorize>
+                          </c:if>
                         <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form></div>
                     </c:if>
-                    </sec:authorize>
+                    </c:if>
 
                 </c:when>
                 <c:otherwise>
@@ -145,7 +147,7 @@
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceStatus}" />
                       </td>
-                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                      <c:if test="${a.userRole != 'ROLE_USER'}">
                       <script type="text/javascript" language="JavaScript">
                         function AskAndSubmit(t)
                         {
@@ -167,7 +169,7 @@
                       <c:if test="${actionStatus != null}">
                         <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
                       </c:if>
-                    </sec:authorize>
+                    </c:if>
 
                     </tr>
                   </table></div>

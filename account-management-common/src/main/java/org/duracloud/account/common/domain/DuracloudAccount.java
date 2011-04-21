@@ -13,6 +13,16 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
 
     private Set<String> versions;
 
+    private Role userRole;
+
+    public Role getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(Role userRole) {
+        this.userRole = userRole;
+    }
+
     public AccountInfo getAccountInfo() {
         return accountInfo;
     }
