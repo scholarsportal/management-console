@@ -376,24 +376,36 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException {
+
+        DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
+
+        // Retrieve the invitation
+        UserInvitation invitation;
         try {
-            DuracloudUserInvitationRepo invRepo =
-                repoMgr.getUserInvitationRepo();
-
-            // Retrieve the invitation
-            UserInvitation invitation =
-                invRepo.findByRedemptionCode(redemptionCode);
-
-            // Add the user to the account
-            setUserRights(invitation.getAccountId(), userId, Role.ROLE_USER);
-
-            // Delete the invitation
-            invRepo.delete(invitation.getId());
-            
-            //return accountId
-            return invitation.getAccountId();
+            invitation = invRepo.findByRedemptionCode(redemptionCode);
         } catch(DBNotFoundException e) {
             throw new InvalidRedemptionCodeException(redemptionCode);
+        }
+
+        // Add the user to the account if they are not already a member
+        if(!userHasAccountRights(userId, invitation.getAccountId())) {
+            setUserRights(invitation.getAccountId(), userId, Role.ROLE_USER);
+        }
+
+        // Delete the invitation
+        invRepo.delete(invitation.getId());
+
+        //return accountId
+        return invitation.getAccountId();
+    }
+
+    private boolean userHasAccountRights(int userId, int accountId) {
+        DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+        try {
+            rightsRepo.findByAccountIdAndUserId(userId, accountId);
+            return true;
+        } catch(DBNotFoundException e) {
+            return false;
         }
     }
 
