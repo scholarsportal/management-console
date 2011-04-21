@@ -114,11 +114,7 @@
                    href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/">
                   Cancel</a>
 
-                  <button style="vertical-align:top"
-                   type="submit">
-
-
-                  Save</button>
+                  <button class="save" type="submit">Save</button>
                 </div>
             <div style="height: 20px;">
             </div>

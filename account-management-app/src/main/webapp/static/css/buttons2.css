@@ -152,6 +152,12 @@ span.switch i,
 	width:14px;
 }
 
+button.save
+{
+    vertical-align:top;
+    padding-bottom:5px;
+}
+
 .icon-link:hover i
 {
 	background-position:left 0;
