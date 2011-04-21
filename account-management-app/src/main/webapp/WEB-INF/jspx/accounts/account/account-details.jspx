@@ -98,10 +98,9 @@
                   <td><strong class="accountlabel">Provider Information</strong></td>
                 </tr>
               </table><div style="height:20px"></div><table border="0">
-                <c:if test="${accountInfo.status != 'ACTIVE'}">
-                <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                  <tr>
-                  <td>            
+                  <td>
 
                       <div class="providerSelctionRow">
                     <h3>
@@ -133,7 +132,6 @@
               </td>
                 </tr>
                 </sec:authorize>
-                </c:if>
                 <tr>
                   <td><table class="datatablesimple">
                         <tr>
@@ -152,7 +150,7 @@
               </table></td>
                 </tr>
                 <tr>
-                  <td class="datatablesimple"><p class="instructions">If you would like to remove a Storage Provider please contact DuraCloud support.</p></td>
+                  <td class="datatablesimple"><p class="instructions">If you would like to add or remove a Storage Provider please contact DuraCloud support.</p></td>
                 </tr>
               </table>
  

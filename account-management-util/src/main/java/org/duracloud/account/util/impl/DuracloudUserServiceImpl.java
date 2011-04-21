@@ -402,7 +402,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private boolean userHasAccountRights(int userId, int accountId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         try {
-            rightsRepo.findByAccountIdAndUserId(userId, accountId);
+            rightsRepo.findByAccountIdAndUserId(accountId, userId);
             return true;
         } catch(DBNotFoundException e) {
             return false;
