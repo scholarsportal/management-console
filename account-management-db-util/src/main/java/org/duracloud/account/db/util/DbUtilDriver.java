@@ -113,10 +113,10 @@ public class DbUtilDriver {
         sb.append("PUT - updates db based on files in work-dir");
         sb.append("\n\n\t\t");
         sb.append("CLEAR - performs a GET, then removes all data from db");        
-        sb.append("\n\n\t");
+        sb.append("\n\n\t\t");
         sb.append("FILL - performs a GET, then assists in filling out missing data");
         sb.append("\n\n\t");
-        sb.append("where [get/put/clear] is one of get, put, or clear commands");
+        sb.append("where [get/put/clear/fill] is one of get, put, clear or fill commands");
         sb.append("\n\n\t");
         sb.append("where [credentials-file] is an xml file containing provider");
         sb.append("\n\n\t\t");
