@@ -5,16 +5,12 @@ package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.PutAttributesRequest;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
 import org.duracloud.account.db.amazonsimple.converter.DuracloudRightsConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
@@ -122,10 +118,17 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
     @Override
     public Set<AccountRights> findByAccountId(int accountId)
         throws DBNotFoundException {
-        Set<AccountRights> rights = doFindByAccountId(accountId);
+        Set<AccountRights> userAccountRights = doFindByAccountId(accountId);
         Set<AccountRights> rootAccountRights = getRootAccountRights(accountId);
-        rights.addAll(rootAccountRights);
-        return rights;
+
+        // Add user rights to root rights list
+        for(AccountRights userRight : userAccountRights) {
+            if(!inRootRights(userRight, rootAccountRights)) {
+                rootAccountRights.add(userRight);
+            }
+        }
+
+        return rootAccountRights;
     }
 
     private Set<AccountRights> doFindByAccountId(int accountId)
@@ -134,6 +137,17 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
             accountId));
 
         return getAccountRightsFromItems(items);
+    }
+
+    private boolean inRootRights(AccountRights userRight,
+                                 Set<AccountRights> rootRights) {
+        for(AccountRights rootRight : rootRights) {
+            if(userRight.getUserId() == rootRight.getUserId() &&
+               userRight.getAccountId() == rootRight.getAccountId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

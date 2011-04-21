@@ -11,11 +11,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -188,6 +186,28 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRightsByAccountId(2, rights2, rootRights2);
     }
 
+    @Test
+    public void testRootAndOwnerFindByAcctId() throws DBConcurrentUpdateException {
+        int userId1 = 1;
+        int userId2 = 2;
+        int userIdR = 3; // root
+
+        AccountRights rights0 = createRights(1, 1, userId1);
+        AccountRights rights1 = createRights(2, 1, userId2);
+        AccountRights rightsR0 = createRights(3, 1, userIdR, Role.ROLE_OWNER);
+        AccountRights rightsR1 = createRights(4, 0, userIdR, Role.ROLE_ROOT);
+
+        rightsRepo.save(rights0);
+        rightsRepo.save(rights1);
+        rightsRepo.save(rightsR0);
+        rightsRepo.save(rightsR1);
+
+        // make sure all saves have committed
+        verifyRepoSize(rightsRepo, 4);
+
+        AccountRights rootRights1 = createRights(4, 1, userIdR, Role.ROLE_ROOT);
+        verifyRightsByAccountId(1, rights0, rights1, rootRights1);
+    }
 
     @Test
     public void testRootFindByAcctIdAndUserId()
