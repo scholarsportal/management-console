@@ -91,11 +91,11 @@
                         <div >
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
-                  <div class="instance-panel notice"><strong>No instance associated with this account.</strong>
+                  <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
-                    <c:if test="${a.accountInfo.status != 'ACTIVE'}">
+                    <c:if test="${a.accountInfo.status != 'ACTIVE'}"><span class="instructions">
                         This status of this account is currently PENDING. Once this account
-                            becomes active, it will be possible to start an instance.
+                            becomes active, it will be possible to start an instance.</span>
                     </c:if>
                     </sec:authorize>
                   </div>
@@ -133,7 +133,7 @@
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle"><c:out value="${a.instance.hostName}" />
+                      <td align="left" valign="middle" class="instructions"><c:out value="${a.instance.hostName}" />
                         <a class="button durabutton" style="margin-left:25px !important"
                          id="account-${a.accountInfo.id}-duradmin-link"
                          href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
@@ -142,9 +142,9 @@
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
                       </td>
-                      <td align="center" valign="middle" class="instructions"><em>
+                      <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceStatus}" />
-                      </em></td>
+                      </td>
                     <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
                       <script type="text/javascript" language="JavaScript">
                         function AskAndSubmit(t)
@@ -189,7 +189,7 @@
                 </c:when>
 
                 <c:otherwise>
-                  <p class="dc-main-content"><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
+                  <p class="lighttext"><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
                 </c:otherwise>
               </c:choose>
   </div>

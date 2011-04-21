@@ -7,7 +7,9 @@
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
-  <c:if
+  
+  
+<c:if
    test="${not empty param.error}">
     <div
      class="global-errors">
@@ -24,6 +26,18 @@
     <table width="100%">
 
       <tr>
+        <td width="17%" align="right" valign="middle"
+         ></td>
+        <td width="35%" align="right" valign="middle"
+         ></td>
+        <td width="21%" align="left" valign="middle"
+         ></td>
+        <td width="27%" valign="middle"
+         ></td>
+      </tr>
+      <tr>
+        <td align="right" valign="middle"
+         ></td>
         <td align="right" valign="middle"
          ></td>
         <td align="left" valign="middle"
@@ -32,21 +46,14 @@
          ></td>
       </tr>
       <tr>
-        <td width="20%" align="right" valign="middle"
-         ></td>
-        <td align="left" valign="middle"
-         ></td>
-        <td  valign="middle"
-         ></td>
-      </tr>
-      <tr>
-        <td align="right" valign="middle"
+        <td rowspan="2" align="left" valign="middle" 
+         ><div class="title">Login</div></td>
+        <td align="right" valign="middle" class="lighttext"
          ><span class="label" >
         <label
-           for="username" class="lighttext">Username:</label>
+           for="username" class="lighttext">Username</label>
         </span></td>
-
-        <td align="left" valign="middle"
+        <td align="right" valign="middle"
          ><input
            name="j_username"
            type="text"
@@ -59,10 +66,9 @@
       </tr>
 
       <tr>
+        <td align="right" valign="middle" class="lighttext"
+         ><span class="lighttext">Password</span></td>
         <td align="right" valign="middle"
-         ><span class="lighttext">Password:</span></td>
-
-        <td align="left" valign="middle"
          ><input
            name="j_password"
            type="password" class="field"
@@ -76,24 +82,22 @@
       <tr>
         <td align="right" valign="middle"
          ></td>
-        <td align="left" valign="middle"
+        <td align="right" valign="middle" class="lighttext"
+         ></td>
+        <td align="right" valign="middle"
          ><button class="primary"
        type="submit"
        id="login-button">Login</button></td>
-        <td valign="middle"
-         class="field-errors"></td>
+        <td valign="middle"></td>
       </tr>
       <tr>
         <td align="left" valign="middle"
          class="lighttext"></td>
         <td align="left" valign="middle"
-         class="lighttext">
-            <a class="lighttext" style="margin-left:0 !important"
-             id="forgot-password-link"
-             href="${pageContext.request.contextPath}/users/forgot-password">
-
-            Forgot Password</a>    |  
-        <a class="lighttext" style="margin-left:0 !important"
+         class="lighttext"></td>
+        <td align="right" valign="middle" nowrap="nowrap"
+         class="lighttext"><a class="lighttext" style="margin-left:0 !important"
+             href="${pageContext.request.contextPath}/users/forgot-password">Forgot Password</a> | <a class="lighttext" style="margin-left:0 !important"
              id="new-user-link"
              href="${pageContext.request.contextPath}/users/new"
              >Create New Profile</a></td>

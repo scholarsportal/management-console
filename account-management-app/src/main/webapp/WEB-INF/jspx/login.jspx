@@ -9,7 +9,7 @@
    contentType="application/xhtml+xml;charset=UTF-8" />
 
   <tiles:insertDefinition
-   name="app-base">
+   name="login-base">
     <tiles:putAttribute
      name="title"
      value="Account Management App: Login" />

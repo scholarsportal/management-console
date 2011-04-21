@@ -32,20 +32,13 @@ ol, ul {
 }
 .field{
 	background-color: #585B5E;
-	border-top-width: 1px;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-left-width: 1px;
-	border-top-style: inset;
-	border-right-style: inset;
-	border-bottom-style: inset;
-	border-left-style: inset;
-	border-top-color: #36383A;
-	border-right-color: #36383A;
-	border-bottom-color: #585B5E;
-	border-left-color: #36383A;
-	color: #CCC;
-	padding: 2px;
+    border-color: #36383A #36383A #727576;
+    border-style: solid;
+    border-width: 1px;
+    color: #CCCCCC;
+    font-size: 14px;
+    padding: 3px;
+    width: 200px;
 	}
 ul.bullets,
 #static-panel ul
@@ -168,11 +161,29 @@ li a:hover{
 
 /*YUI CSS**********************/
 #doc3 {
-	margin:auto 0px;	
+	margin:auto 0px;
+}
+#doc-l {
+	margin:auto 0px;
+	width:80%;
 }
 
+.footer-text-login{
+	width:80%;
+	clear: right;
+	font-size: 10px;
+	color: #4A4A4A;
+	float: left;
+	text-align: left;
+	margin-top: 5px;
+	margin-left: 10px;
+	}
+	.footer-text-login a{
 
+	font-size: 10px;
+	color: #4A4A4A;
 
+	}
 .required:before
 { 
 	content:"*";
@@ -331,14 +342,41 @@ div.global-errors{
 #dc-app-title
 {
 	background-image:url(../img/logo_top_mc_lg.png);
-	width:531px;
+	width:100%;
+	background-repeat: no-repeat;
+}
+#duraspace-logo
+{
+	background-image:url(../img/logo_duraspace_onwhite.gif);
+	width:130px;
+	background-repeat: no-repeat;
+	height:60px;
+	float: right;
+	margin-top:5px;
 }
 
 #hd,#bd, .dc-main-tabs
 {
-	min-width:960px;
+	min-width:70%;
 }
-
+.pane-L1-body-login
+{
+	margin-top:10px;
+	background:url(../img/bg_L1.png) no-repeat top right;
+	padding-top:5px;
+	min-height:200px;
+	width: 100%;
+	left: -15px;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	margin-left: -20px;
+}
+.pane-L1-body-login a
+{
+	text-decoration: none;	
+	
+}
 .pane-L1-body
 {
 	margin-top:5px;
@@ -515,13 +553,13 @@ li.account:hover {
 }
 
 .instructions {
-	font-size: 0.9em;
+	font-size: 11px;
 	margin-bottom: 20px;
 	margin-left: 8px;
  	color: #515151 !important;	
 }
 .lighttext {
-	font-size: 0.9em;
+	font-size: 10pt;
 	margin-bottom: 20px;
 	margin-left: 8px;
 	color: #CCC !important;
@@ -664,3 +702,11 @@ li.account:hover {
 	display: block;
 	vertical-align: middle;
 	}
+	
+.title{
+	font-family:Helvetica,Sans-Serif;
+	font-size:1.8em;
+	color:#666666;
+	margin-top: 2px;
+	margin-left: 25px;
+}
