@@ -55,16 +55,9 @@ public class DuracloudStorageProviderAccountRepoImpl extends BaseDuracloudRepoIm
     }
 
     @Override
-    public void save(StorageProviderAccount item) throws DBConcurrentUpdateException {
-        UpdateCondition condition = getUpdateCondition(item.getCounter());
-
-        List<ReplaceableAttribute> atts =
-            converter.toAttributesAndIncrement(item);
-        PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                idAsString(item),
-                                                                atts,
-                                                                condition);
-        caller.putAttributes(db, request);
+    public void save(StorageProviderAccount item)
+        throws DBConcurrentUpdateException {
+        doSave(item, converter);
     }
 
 }

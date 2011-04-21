@@ -104,7 +104,6 @@ public class AccountController extends AbstractAccountController {
         if(instanceForm.getVersion() == null)
             instanceForm.setVersion(instanceManagerService.getLatestVersion());
         startInstance(accountId, instanceForm.getVersion());
-        sleepMomentarily();
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,
                            "Instance STARTED successfully, it will be " +
@@ -194,13 +193,6 @@ public class AccountController extends AbstractAccountController {
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);
-
-                // FIXME seems like there is some latency between successfully
-                // creating
-                // a new user and the user actually being visible to subsequent
-                // calls
-                // to the repository (due to amazon async I believe).
-                sleepMomentarily();
 
                 int id = service.retrieveAccountInfo().getId();
                 String idText = Integer.toString(id);

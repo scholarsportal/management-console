@@ -69,15 +69,7 @@ public class DuracloudUserInvitationRepoImpl extends BaseDuracloudRepoImpl imple
 
     @Override
     public void save(UserInvitation item) throws DBConcurrentUpdateException {
-        UpdateCondition condition = getUpdateCondition(item.getCounter());
-
-        List<ReplaceableAttribute> atts =
-            converter.toAttributesAndIncrement(item);
-        PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                idAsString(item),
-                                                                atts,
-                                                                condition);
-        caller.putAttributes(db, request);
+        doSave(item, converter);
     }
 
     @Override

@@ -56,16 +56,9 @@ public class DuracloudComputeProviderAccountRepoImpl extends BaseDuracloudRepoIm
     }
 
     @Override
-    public void save(ComputeProviderAccount item) throws DBConcurrentUpdateException {
-        UpdateCondition condition = getUpdateCondition(item.getCounter());
-
-        List<ReplaceableAttribute> atts =
-            converter.toAttributesAndIncrement(item);
-        PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                idAsString(item),
-                                                                atts,
-                                                                condition);
-        caller.putAttributes(db, request);
+    public void save(ComputeProviderAccount item)
+        throws DBConcurrentUpdateException {
+        doSave(item, converter);
     }
 
 }

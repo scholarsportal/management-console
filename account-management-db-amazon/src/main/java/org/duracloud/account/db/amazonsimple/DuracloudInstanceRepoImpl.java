@@ -76,16 +76,9 @@ public class DuracloudInstanceRepoImpl
     }
 
     @Override
-    public void save(DuracloudInstance item) throws DBConcurrentUpdateException {
-        UpdateCondition condition = getUpdateCondition(item.getCounter());
-
-        List<ReplaceableAttribute> atts =
-            converter.toAttributesAndIncrement(item);
-        PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                idAsString(item),
-                                                                atts,
-                                                                condition);
-        caller.putAttributes(db, request);
+    public void save(DuracloudInstance item)
+        throws DBConcurrentUpdateException {
+        doSave(item, converter);
     }
 
 }

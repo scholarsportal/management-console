@@ -61,9 +61,6 @@ public class AccountInfoController extends AbstractAccountController {
                              accountEditForm.getOrgName(),
                              accountEditForm.getDepartment());
 
-        // FIXME seems like there is some latency
-        sleepMomentarily();
-
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         addUserToModel(model);

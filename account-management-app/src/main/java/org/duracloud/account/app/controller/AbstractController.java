@@ -32,17 +32,6 @@ public abstract class AbstractController {
     public static final String EDIT_MAPPING = "/edit";
 
     /**
-     * 
-     */
-    protected void sleepMomentarily() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * @param user
      */
     protected void reauthenticate(
@@ -52,9 +41,6 @@ public abstract class AbstractController {
             authenticationManager);
     }
 
-    /**
-     * @param user
-     */
     protected void reauthenticate(
         String username, String password,
         AuthenticationManager authenticationManager) {

@@ -56,15 +56,7 @@ public class DuracloudAccountRepoImpl extends BaseDuracloudRepoImpl implements D
 
     @Override
     public void save(AccountInfo item) throws DBConcurrentUpdateException {
-        UpdateCondition condition = getUpdateCondition(item.getCounter());
-
-        List<ReplaceableAttribute> atts =
-            converter.toAttributesAndIncrement(item);
-        PutAttributesRequest request = new PutAttributesRequest(domain,
-                                                                idAsString(item),
-                                                                atts,
-                                                                condition);
-        caller.putAttributes(db, request);
+        doSave(item, converter);
     }
 
     @Override

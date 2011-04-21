@@ -122,7 +122,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         boolean result = doSetUserRights(acctId, userId, roleSet);
         if(result) {
-            sleep(500, "Waiting for account rights to persist.");
             log.debug("Propagating user update for: " + acctId + ", " +
                       userId + ", " + asString(roleSet));
             propagator.propagateRights(acctId, userId, roleSet);
@@ -432,13 +431,4 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         getUserRepo().save(user);
     }
 
-    private void sleep(int millis, String msg) {
-        log.debug(msg);
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
-    }
-    
 }

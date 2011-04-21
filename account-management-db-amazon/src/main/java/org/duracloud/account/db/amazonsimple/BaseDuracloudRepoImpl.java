@@ -4,16 +4,12 @@
 package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-import com.amazonaws.services.simpledb.model.CreateDomainRequest;
-import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
-import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
-import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.ListDomainsRequest;
-import com.amazonaws.services.simpledb.model.ListDomainsResult;
-import com.amazonaws.services.simpledb.model.SelectRequest;
-import com.amazonaws.services.simpledb.model.SelectResult;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
+import com.amazonaws.services.simpledb.model.*;
+import org.duracloud.account.common.domain.BaseDomainData;
 import org.duracloud.account.common.domain.Identifiable;
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.util.FormatUtil;
@@ -89,10 +85,9 @@ public abstract class BaseDuracloudRepoImpl {
     }
 
     public Item findItemById(int id) throws DBNotFoundException {
-        boolean consistent = true;
-        SelectRequest request = new SelectRequest(
-            "select * from " + domain + " where itemName() = '" + id + "'",
-            consistent);
+        String query =
+            "select * from " + domain + " where itemName() = '" + id + "'";
+        SelectRequest request = newSelectRequest(query);
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
@@ -117,9 +112,10 @@ public abstract class BaseDuracloudRepoImpl {
 
     public List<Item> findItemsByAttribute(String attName, String attValue)
         throws DBNotFoundException {
-        SelectRequest request = new SelectRequest(
-            "select * from " + domain + " where " +
-                attName + " = '" + attValue + "'");
+        String query =
+            "select * from " + domain + " where " + attName + " = '" +
+                attValue + "'";
+        SelectRequest request = newSelectRequest(query);
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
@@ -160,7 +156,7 @@ public abstract class BaseDuracloudRepoImpl {
             }
         }
 
-        SelectRequest request = new SelectRequest(selectStatement);
+        SelectRequest request = newSelectRequest(selectStatement);
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
@@ -197,6 +193,19 @@ public abstract class BaseDuracloudRepoImpl {
         return msg.toString();
     }
 
+    protected void doSave(BaseDomainData item, DomainConverter converter)
+        throws DBConcurrentUpdateException {
+        UpdateCondition condition = getUpdateCondition(item.getCounter());
+
+        List<ReplaceableAttribute> atts = converter.toAttributesAndIncrement(
+            item);
+        PutAttributesRequest request = new PutAttributesRequest(domain,
+                                                                idAsString(item),
+                                                                atts,
+                                                                condition);
+        caller.putAttributes(db, request);
+    }
+
     protected UpdateCondition getUpdateCondition(Integer counter) {
         UpdateCondition condition;
         if (0 == counter) {
@@ -212,7 +221,7 @@ public abstract class BaseDuracloudRepoImpl {
 
     public Set<Integer> getItemIds() {
         String query = "select itemName() from " + domain;
-        SelectRequest request = new SelectRequest(query);
+        SelectRequest request = newSelectRequest(query);
         SelectResult result = caller.select(db, request);
 
         Set<Integer> ids = new HashSet<Integer>();
@@ -265,7 +274,8 @@ public abstract class BaseDuracloudRepoImpl {
      * @throws DBNotFoundException
      */
     protected List<Item> findAllItems() throws DBNotFoundException {
-        SelectRequest request = new SelectRequest("select * from " + domain);
+        String query = "select * from " + domain;
+        SelectRequest request = newSelectRequest(query);
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
@@ -278,6 +288,11 @@ public abstract class BaseDuracloudRepoImpl {
         }
 
         return items;
+    }
+
+    private SelectRequest newSelectRequest(String query) {
+        boolean consistent = true;
+        return new SelectRequest(query, consistent);
     }
 
 }

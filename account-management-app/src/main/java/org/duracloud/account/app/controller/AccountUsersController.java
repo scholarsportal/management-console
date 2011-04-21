@@ -108,10 +108,6 @@ public class AccountUsersController extends AbstractAccountController {
             }
 
 
-        // FIXME pause for a moment to let the async calls to
-        // the database percolate.
-        // what happens if an async call fails?
-        sleepMomentarily();
         addUserToModel(model);
         model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
         model.addAttribute("invitationForm", new InvitationForm());
@@ -168,10 +164,6 @@ public class AccountUsersController extends AbstractAccountController {
             return USERS_INVITE_VIEW_ID;
         }
 
-        // FIXME pause for a moment to let the async calls to
-        // the database percolate.
-        // what happens if an async call fails?
-        sleepMomentarily();
         return get(service, model);
     }
 
@@ -184,8 +176,7 @@ public class AccountUsersController extends AbstractAccountController {
             accountId);
         AccountService service = getAccountService(accountId);
         service.deleteUserInvitation(invitationId);
-        // FIXME pause for a moment to let the async calls to
-        sleepMomentarily();
+
         return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 

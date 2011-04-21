@@ -147,8 +147,7 @@ public class UserController extends AbstractController {
                 accountId =
                     this.userService.redeemAccountInvitation(user.getId(),
                         redemptionCode);
-                // FIXME
-                sleepMomentarily();
+
                 user = this.userService.loadDuracloudUserByUsername(username);
                 reauthenticate(user, this.authenticationManager);
 
@@ -229,8 +228,6 @@ public class UserController extends AbstractController {
                                           form.getLastName(),
                                           form.getEmail());
 
-        // FIXME updates aren't propagating immediately
-        sleepMomentarily();
         return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
@@ -365,6 +362,8 @@ public class UserController extends AbstractController {
         @ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
         BindingResult result, Model model, HttpServletRequest request)
         throws Exception {
+        String name = null == newUserForm ? "null" : newUserForm.getUsername();
+        log.debug("Add new user: {}", name);
         if (result.hasErrors()) {
             return NEW_USER_VIEW;
         }
@@ -376,11 +375,6 @@ public class UserController extends AbstractController {
                     newUserForm.getLastName(),
                     newUserForm.getEmail());
 
-        // FIXME seems like there is some latency between successfully creating
-        // a new user and the user actually being visible to subsequent calls
-        // to the repository (due to amazon async I believe).
-        sleepMomentarily();
-
         reauthenticate(user.getUsername(),
             user.getPassword(),
             this.authenticationManager);
@@ -389,12 +383,10 @@ public class UserController extends AbstractController {
         int accountId = -1;
         if (!StringUtils.isEmpty(redemptionCode)) {
             try {
-
                 accountId =
                     this.userService.redeemAccountInvitation(user.getId(),
                         redemptionCode);
-                // FIXME credentials aren't propagating immediately
-                sleepMomentarily();
+
             } catch (InvalidRedemptionCodeException ex) {
                 addRedemptionFailedMessage();
             }
@@ -454,7 +446,7 @@ public class UserController extends AbstractController {
     public ModelAndView redeemUser(
         HttpServletRequest request, @PathVariable String redemptionCode)
         throws DBNotFoundException {
-        log.debug("getting redeem invitation {}", redemptionCode);
+        log.info("getting redeem invitation {}", redemptionCode);
 
         // force logout
         request.getSession().invalidate();
