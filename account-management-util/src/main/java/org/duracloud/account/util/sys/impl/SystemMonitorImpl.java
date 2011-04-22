@@ -39,6 +39,8 @@ public class SystemMonitorImpl extends EventMonitorBase implements Initable {
     public void initialize(AmaConfig config) {
         Collection emails = config.getAdminAddresses();
         if (null != emails && emails.size() > 0) {
+            recipients.clear();
+
             Iterator<String> itr = emails.iterator();
             while (itr.hasNext()) {
                 recipients.add(itr.next());
