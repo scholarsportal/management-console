@@ -12,7 +12,7 @@
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
 	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
 
-<title>Duracloud : <tiles:insertAttribute name="title"
+<title>DuraCloud : <tiles:insertAttribute name="title"
 	ignore="true" /></title>
 
 <link rel="stylesheet" type="text/css"
@@ -144,7 +144,7 @@
 	<div class="outer" id="footer-content" style="margin-left:15px">
 
 	<div class="float-r" id="logo-ds"></div>
-	  Duracloud Management Console
+	  DuraCloud Management Console
       <span class="sep"> | </span>
       &#169;2011
       <script type="text/javascript">document.write(new Date().getFullYear());</script>
