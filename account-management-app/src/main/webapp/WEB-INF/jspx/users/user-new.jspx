@@ -166,6 +166,7 @@
                   <td align="right">
                       <button
                        id="create-user-button"
+                       class="save"
                        type="submit">Create Profile</button>
                       <a
                        class="button"
