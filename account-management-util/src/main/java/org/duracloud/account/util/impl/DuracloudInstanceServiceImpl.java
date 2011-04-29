@@ -257,11 +257,18 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
             }
 
             List<String> grants = new ArrayList<String>();
+            boolean root = false;
             for (Role role : roles) {
                 grants.add(role.name());
+
+                if(role.equals(Role.ROLE_ROOT)) {
+                    root = true;
+                }
             }
 
-            userBeans.add(new SecurityUserBean(username, password, grants));
+            if(!root) { // Do not include root users in user list for instance
+                userBeans.add(new SecurityUserBean(username, password, grants));
+            }
         }
 
         // do the update

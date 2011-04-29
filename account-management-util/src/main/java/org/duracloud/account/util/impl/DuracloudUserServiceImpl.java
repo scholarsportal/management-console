@@ -303,11 +303,22 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             Set<AccountRights> rightsSet =
                 repoMgr.getRightsRepo().findByUserId(userId);
             // Propagate changes for each of the user's accounts
-            for(AccountRights rights : rightsSet) {
-                propagator.propagatePasswordUpdate(rights.getAccountId(),
-                                                   userId);
+            if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
+                for(AccountRights rights : rightsSet) {
+                    propagator.propagatePasswordUpdate(rights.getAccountId(),
+                                                       userId);
+                }
             }
         }
+    }
+
+    private boolean isUserRoot(Set<AccountRights> rightsSet) {
+        for(AccountRights rights : rightsSet) {
+            if(rights.getRoles().contains(Role.ROLE_ROOT)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
