@@ -423,10 +423,19 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testChangePassword() throws Exception {
+    public void testChangePasswordUser() throws Exception {
         String username = "test-username";
         String password = "test-newPassword";
-        setUpChangePassword(username, true);
+        setUpChangePassword(username, true, true, Role.ROLE_USER);
+
+        userService.changePassword(userId, "password", false, password);
+    }
+
+    @Test
+    public void testChangePasswordRoot() throws Exception {
+        String username = "root-username";
+        String password = "root-newPassword";
+        setUpChangePassword(username, true, false, Role.ROLE_ROOT);
 
         userService.changePassword(userId, "password", false, password);
     }
@@ -437,7 +446,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         String username = "test-username";
         String password = "test-newPassword";
-        setUpChangePassword(username, false);
+        setUpChangePassword(username, false, false, Role.ROLE_USER);
 
         try {
             userService.changePassword(userId, "incorrect-password", false, password);
@@ -454,7 +463,10 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         userService.changePassword(userId, password, false, password);
     }
 
-    private void setUpChangePassword(String username, boolean expectPropagate)
+    private void setUpChangePassword(String username,
+                                     boolean expectNoErrors,
+                                     boolean expectPropagate,
+                                     Role userRole)
         throws Exception {
         DuracloudUser user = newDuracloudUser(userId, username);
 
@@ -465,10 +477,13 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         userRepo.save(user);
         EasyMock.expectLastCall().anyTimes();
 
-        if(expectPropagate) {
+        if(expectNoErrors) {
             EasyMock.expect(rightsRepo.findByUserId(userId))
-                .andReturn(getRightsSet())
+                .andReturn(getRightsSet(userRole))
                 .times(1);
+        }
+
+        if(expectPropagate) {
             propagator.propagatePasswordUpdate(acctId, userId);
             EasyMock.expectLastCall()
                 .times(1);
@@ -488,8 +503,9 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         Set<Role> roles = user.getRolesByAcct(acctId);
         Assert.assertNotNull(roles);
-        Assert.assertEquals(1, roles.size());
-        Assert.assertEquals(Role.ROLE_USER, roles.iterator().next());
+        Assert.assertEquals(2, roles.size());
+        Assert.assertTrue(roles.contains(Role.ROLE_USER));
+        Assert.assertTrue(roles.contains(Role.ROLE_ANONYMOUS));
 
         Collection<GrantedAuthority> authorities = user.getAuthorities();
         Assert.assertNotNull(authorities);
@@ -545,7 +561,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                 .anyTimes();
 
             EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
-                .andReturn(getRightsSet())
+                .andReturn(getRightsSet(Role.ROLE_USER))
                 .anyTimes();            
         } else {
             EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
@@ -555,11 +571,10 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         replayMocks();
     }
 
-    private Set<AccountRights> getRightsSet() {
+    private Set<AccountRights> getRightsSet(Role role) {
         Set<AccountRights> rights = new HashSet<AccountRights>();
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
-        rights.add(new AccountRights(0, acctId, userId, roles));
+        rights.add(
+            new AccountRights(0, acctId, userId, role.getRoleHierarchy()));
         return rights;
     }
 
