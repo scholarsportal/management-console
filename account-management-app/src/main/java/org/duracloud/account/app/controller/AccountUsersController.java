@@ -4,6 +4,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
@@ -294,7 +295,11 @@ public class AccountUsersController extends AbstractAccountController {
         Set<UserInvitation> pendingUserInvitations =
             accountService.getPendingInvitations();
 
-        addAccountInfoToModel(accountInfo, model);
+        DuracloudAccount duracloudAccount = new DuracloudAccount();
+        duracloudAccount.setAccountInfo(accountInfo);
+        duracloudAccount.setUserRole(getUser().getRoleByAcct(accountInfo.getId()));
+        model.addAttribute("account", duracloudAccount);
+
         List<AccountUser> accountUsers =
             buildUserList(accountInfo.getId(), users);
         Collections.sort(accountUsers);

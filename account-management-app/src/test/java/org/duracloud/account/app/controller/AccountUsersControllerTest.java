@@ -81,6 +81,10 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
             .andReturn(accountService)
             .times(1);
 
+        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
+            .andReturn(createUser())
+            .anyTimes();
+
         replayMocks();
 
         BindingResult result = EasyMock.createMock(BindingResult.class);
@@ -90,6 +94,8 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         this.accountUsersController.setNotificationMgr(notificationMgr);
         this.accountUsersController.setAccountManagerService(
             accountManagerService);
+        this.accountUsersController.setUserService(userService);
+
         Model model = new ExtendedModelMap();
         InvitationForm invitationForm = new InvitationForm();
         invitationForm.setEmailAddresses("test@duracloud.org");
@@ -134,7 +140,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     }
 
     private void verifyGet(Model model) {
-        Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
+        Assert.assertTrue(model.containsAttribute("account"));
         Assert.assertTrue(model.containsAttribute(AccountUsersController.USERS_KEY));
     }
 

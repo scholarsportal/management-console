@@ -6,7 +6,6 @@ public class AccountEditForm {
     @NotBlank(message = "You must specify an organization.")
     private String orgName;
 
-    @NotBlank(message = "You must specify a department.")
     private String department;
 
     @NotBlank(message = "You must specify an account name.")
