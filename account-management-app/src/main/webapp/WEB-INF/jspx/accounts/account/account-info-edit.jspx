@@ -77,8 +77,8 @@
                          path="department">Department:</form:label>
                       </td>
 
-                      <td align="left"
-                       class="value required">
+                      <td
+                       class="value unrequired">
                         <form:input
                          cssErrorClass="error"
                          id="department-text"

@@ -5,7 +5,6 @@
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:form="http://www.springframework.org/tags/form"
- xmlns:sec="http://www.springframework.org/security/tags"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
@@ -14,7 +13,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${accountInfo.id} :: Users" />
+     value="Account Management App: ${account.accountInfo.id} :: Users" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -70,7 +69,7 @@
                         <form:form
                          id="account-users-edit-form"
                          method="post"
-                         action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/edit"
+                         action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/byid/${u.id}/edit"
                          modelAttribute="accountUsersEditForm">
                           <jsp:include
                            page="/WEB-INF/jspx/includes/global-errors.jspx">
@@ -85,26 +84,26 @@
                                  path="role">
                                 <form:option value="${u.role}" label="${u.role.displayName}"/>
                                 <c:if test="${u.role == ownerRole}">
-                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
                                         <form:option value="${adminRole}" label="${adminRole.displayName}"/>
                                         <form:option value="${userRole}" label="${userRole.displayName}"/>
-                                    </sec:authorize>
+                                    </c:if>
                                 </c:if>
                                 <c:if test="${u.role == adminRole}">
-                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
                                         <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
-                                    </sec:authorize>
-                                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                                    </c:if>
+                                    <c:if test="${account.userRole != 'ROLE_USER'}">
                                         <form:option value="${userRole}" label="${userRole.displayName}"/>
-                                    </sec:authorize>
+                                    </c:if>
                                 </c:if>
                                 <c:if test="${u.role == userRole}">
-                                    <sec:authorize access="hasAnyRole('ROLE_OWNER','ROLE_ROOT')">
+                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
                                         <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
-                                    </sec:authorize>
-                                    <sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_OWNER','ROLE_ROOT')">
+                                    </c:if>
+                                    <c:if test="${account.userRole != 'ROLE_USER'}">
                                         <form:option value="${adminRole}" label="${adminRole.displayName}"/>
-                                    </sec:authorize>
+                                    </c:if>
                                 </c:if>
                               </form:select>
                           <button style="margin-left:8px !important"
@@ -137,7 +136,7 @@
                                 }
                               </script>
                                 <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/byid/${u.id}/delete"
+                                 action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/byid/${u.id}/delete"
                                  method="post">
                                   <button style="margin-right:8px !important" 
                                    type="submit" onclick="AskAndSubmit(this); return false;">
@@ -236,7 +235,7 @@
                        class="horizontal-list">
                           <li>
                                 <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/users/invitations/byid/${up.invitationId}/delete"
+                                 action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/invitations/byid/${up.invitationId}/delete"
                                  method="post">
                                   <button
                                    type="submit">
@@ -247,13 +246,13 @@
                                   Delete</button>
                                 </form>
                           </li>
-                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                          <c:if test="${account.userRole == 'ROLE_ROOT'}">
                           <li>
                             <a
                              href="${up.redemptionURL}" class="instructions">
                             Redemption URL</a>
                           </li>
-                          </sec:authorize>
+                          </c:if>
 
                       </ul>
                     </td>

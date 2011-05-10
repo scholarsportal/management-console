@@ -97,7 +97,7 @@
                       </td>
 
                       <td
-                       class="value required">
+                       class="value unrequired">
                         <form:input
                          cssErrorClass="error"
                          id="department-text"
