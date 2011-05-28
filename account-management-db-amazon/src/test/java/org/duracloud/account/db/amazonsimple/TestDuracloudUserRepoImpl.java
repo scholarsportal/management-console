@@ -30,6 +30,8 @@ public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
     private String firstName = "punky";
     private String lastName = "brewster";
     private String email = "pb@home.com";
+    private String securityQuestion = "question";
+    private String securityAnswer = "answer";
 
     @Before
     public void setUp() throws Exception {
@@ -130,7 +132,8 @@ public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
     }
 
     private DuracloudUser createUser(int id, String name) {
-        return new DuracloudUser(id, name, password, firstName, lastName, email);
+        return new DuracloudUser(id, name, password, firstName, lastName, email,
+                                 securityQuestion, securityAnswer);
     }
 
     private void verifyUser(final DuracloudUser user) {

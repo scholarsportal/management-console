@@ -84,7 +84,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String password,
                                        String firstName,
                                        String lastName,
-                                       String email)
+                                       String email,
+                                       String securityQuestion,
+                                       String securityAnswer)
         throws DBConcurrentUpdateException, UserAlreadyExistsException {
         ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
 
@@ -94,7 +96,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                                util.generateChecksum(password),
                                                firstName,
                                                lastName,
-                                               email
+                                               email,
+                                               securityQuestion,
+                                               securityAnswer
                                                );
         
         throwIfUserExists(user);
@@ -300,14 +304,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             getUserRepo().save(user);
 
             log.debug("Propagating update for user: " + userId);
-            Set<AccountRights> rightsSet =
-                repoMgr.getRightsRepo().findByUserId(userId);
-            // Propagate changes for each of the user's accounts
-            if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
-                for(AccountRights rights : rightsSet) {
-                    propagator.propagatePasswordUpdate(rights.getAccountId(),
-                                                       userId);
+            try {
+                Set<AccountRights> rightsSet =
+                    repoMgr.getRightsRepo().findByUserId(userId);
+                // Propagate changes for each of the user's accounts
+                if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
+                    for(AccountRights rights : rightsSet) {
+                        propagator.propagatePasswordUpdate(rights.getAccountId(),
+                                                           userId);
+                    }
                 }
+            } catch (DBNotFoundException e) {
+                // Not all users are associated with an account.
+                log.debug("No account rights found for {}", user.getUsername());
             }
         }
     }
@@ -322,10 +331,17 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void forgotPassword(String username)
+    public void forgotPassword(String username,
+                               String securityQuestion,
+                               String securityAnswer)
         throws DBNotFoundException, InvalidPasswordException,
                DBConcurrentUpdateException, UnsentEmailException {
         DuracloudUser user = loadDuracloudUserByUsernameInternal(username);
+
+        if(!user.getSecurityQuestion().equalsIgnoreCase(securityQuestion) ||
+           !user.getSecurityAnswer().equalsIgnoreCase(securityAnswer)) {
+            throw new InvalidPasswordException(user.getId());
+        }
 
         Random r = new Random();
         String generatedPassword = Long.toString(Math.abs(r.nextLong()), 36);
@@ -433,12 +449,15 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public void storeUserDetails(
-        int userId, String firstName, String lastName, String email)
+        int userId, String firstName, String lastName, String email,
+        String securityQuestion, String securityAnswer)
         throws DBNotFoundException, DBConcurrentUpdateException {
         DuracloudUser user = getUserRepo().findById(userId);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
+        user.setSecurityQuestion(securityQuestion);
+        user.setSecurityAnswer(securityAnswer);
         getUserRepo().save(user);
     }
 

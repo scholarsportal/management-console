@@ -254,7 +254,9 @@ public class InstanceAccessDecisionVoterTest {
                                                "password",
                                                "firstName",
                                                "lastName",
-                                               "email");
+                                               "email",
+                                               "question",
+                                               "answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         if (scope.equals(SecuredRule.Scope.ANY)) {
@@ -345,7 +347,9 @@ public class InstanceAccessDecisionVoterTest {
                                                "password",
                                                "first-name",
                                                "last-name",
-                                               "email");
+                                               "email",
+                                               "question",
+                                               "answer");
         user.setAccountRights(right);
         return user;
     }

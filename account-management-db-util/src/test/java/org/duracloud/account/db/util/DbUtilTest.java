@@ -83,7 +83,8 @@ public class DbUtilTest {
             .anyTimes();
 
         DuracloudUser data =
-            new DuracloudUser(0, "user", "pass", "First", "Last", "e@mail.com");
+            new DuracloudUser(0, "user", "pass", "First", "Last",
+                              "e@mail.com", "question", "answer");
         EasyMock.expect(repo.findById(EasyMock.anyInt()))
             .andReturn(data)
             .anyTimes();

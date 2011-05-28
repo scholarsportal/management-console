@@ -74,7 +74,8 @@ public class AmaControllerTestBase {
 
     protected DuracloudUser createUser() {
         DuracloudUser user =
-            new DuracloudUser(0, TEST_USERNAME, "test", "test", "test", "test");
+            new DuracloudUser(0, TEST_USERNAME, "test", "test", "test", "test",
+                              "test", "test");
         Set<AccountRights> rights = new HashSet<AccountRights>();
         Set<Role> roles = new HashSet<Role>();
         roles.add(Role.ROLE_OWNER);

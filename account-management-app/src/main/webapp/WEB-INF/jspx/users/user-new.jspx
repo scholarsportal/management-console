@@ -158,6 +158,42 @@
                        path="passwordConfirm" />
                     </td>
                   </tr>
+
+                  <tr>
+                    <td align="right"
+                     class="label">
+                      <form:label
+                       cssErrorClass="error"
+                       for="securityQuestion-text"
+                       path="securityQuestion">Question:</form:label>
+                    </td>
+
+                    <td
+                     class="value required">
+                      <form:input
+                       cssErrorClass="error"
+                       id="securityQuestion-text"
+                       path="securityQuestion" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td align="right"
+                     class="label">
+                      <form:label
+                       cssErrorClass="error"
+                       for="securityAnswer-text"
+                       path="securityAnswer">Answer:</form:label>
+                    </td>
+
+                    <td
+                     class="value required">
+                      <form:input
+                       cssErrorClass="error"
+                       id="securityAnswer-text"
+                       path="securityAnswer" />
+                    </td>
+                  </tr>
                 </table>
             <div style="height:20px"></div>
             <div>

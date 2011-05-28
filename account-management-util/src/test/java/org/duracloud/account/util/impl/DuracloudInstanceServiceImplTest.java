@@ -153,7 +153,8 @@ public class DuracloudInstanceServiceImplTest
             .times(1);
 
         DuracloudUser user =
-            new DuracloudUser(userId, "user", "pass", "first", "last", "email");
+            new DuracloudUser(userId, "user", "pass", "first", "last",
+                              "email", "question", "answer");
         user.setAccountRights(accountRights);
         EasyMock.expect(userRepo.findById(userId))
             .andReturn(user)

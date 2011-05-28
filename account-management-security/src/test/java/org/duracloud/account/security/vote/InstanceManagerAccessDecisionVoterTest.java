@@ -156,7 +156,9 @@ public class InstanceManagerAccessDecisionVoterTest {
                                                "password",
                                                "firstName",
                                                "lastName",
-                                               "email");
+                                               "email",
+                                               "question",
+                                               "answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();

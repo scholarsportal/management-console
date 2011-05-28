@@ -124,7 +124,9 @@ public class AccountAccessDecisionVoterTest {
                                                "password",
                                                "firstName",
                                                "lastName",
-                                               "email");
+                                               "email",
+                                               "question",
+                                               "answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         return auth;

@@ -48,7 +48,8 @@ public class EventMonitorTestBase {
     protected DuracloudUser newDuracloudUser(String username) {
         String fname = username.toUpperCase();
         String email = username + "@g.com";
-        return new DuracloudUser(userId++, username, null, fname, null, email);
+        return new DuracloudUser(userId++, username, null, fname, null, email,
+                                 null, null);
     }
 
     protected AccountCreationInfo newAccountCreationInfo(String subdomain) {

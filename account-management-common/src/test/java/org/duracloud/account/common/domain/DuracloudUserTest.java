@@ -30,6 +30,8 @@ public class DuracloudUserTest {
     private static final String firstName = "first-name";
     private static final String password = "password";
     private static final String username = "username";
+    private static final String securityQuestion = "question";
+    private static final String securityAnswer = "answer";
 
     private static final int acctId0 = 0;
     private static final int acctId1 = 1;
@@ -57,6 +59,8 @@ public class DuracloudUserTest {
                                  firstName,
                                  lastName,
                                  email,
+                                 securityQuestion,
+                                 securityAnswer,
                                  0);
         user.setAccountRights(rights);
     }

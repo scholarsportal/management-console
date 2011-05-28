@@ -222,6 +222,8 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
                                      null,
                                      null,
                                      null,
+                                     null,
+                                     null,
                                      -1);
         } else {
             return (DuracloudUser) principal;

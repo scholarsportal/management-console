@@ -15,6 +15,8 @@ import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConve
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.FIRSTNAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.LASTNAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.PASSWORD_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.SECURITY_ANSWER_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.SECURITY_QUESTION_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserConverter.USERNAME_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
@@ -30,6 +32,8 @@ public class DuracloudUserConverterTest extends DomainConverterTest<DuracloudUse
     private static final String firstName = "firstName";
     private static final String lastName = "lastName";
     private static final String email = "email";
+    private static final String securityQuestion = "question";
+    private static final String securityAnswer = "answer";
     private static final int counter = 4;
 
     @Override
@@ -45,6 +49,8 @@ public class DuracloudUserConverterTest extends DomainConverterTest<DuracloudUse
                                  firstName,
                                  lastName,
                                  email,
+                                 securityQuestion,
+                                 securityAnswer,
                                  counter);
     }
 
@@ -56,6 +62,8 @@ public class DuracloudUserConverterTest extends DomainConverterTest<DuracloudUse
         testAtts.add(new Attribute(FIRSTNAME_ATT, firstName));
         testAtts.add(new Attribute(LASTNAME_ATT, lastName));
         testAtts.add(new Attribute(EMAIL_ATT, email));
+        testAtts.add(new Attribute(SECURITY_QUESTION_ATT, securityQuestion));
+        testAtts.add(new Attribute(SECURITY_ANSWER_ATT, securityAnswer));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -70,6 +78,8 @@ public class DuracloudUserConverterTest extends DomainConverterTest<DuracloudUse
         Assert.assertNotNull(user.getFirstName());
         Assert.assertNotNull(user.getLastName());
         Assert.assertNotNull(user.getEmail());
+        Assert.assertNotNull(user.getSecurityQuestion());
+        Assert.assertNotNull(user.getSecurityAnswer());
 
         Assert.assertEquals(counter, user.getCounter());
         Assert.assertEquals(username, user.getUsername());
@@ -77,6 +87,8 @@ public class DuracloudUserConverterTest extends DomainConverterTest<DuracloudUse
         Assert.assertEquals(firstName, user.getFirstName());
         Assert.assertEquals(lastName, user.getLastName());
         Assert.assertEquals(email, user.getEmail());
+        Assert.assertEquals(securityQuestion, user.getSecurityQuestion());
+        Assert.assertEquals(securityAnswer, user.getSecurityAnswer());
     }
 
 }

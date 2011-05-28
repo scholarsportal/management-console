@@ -65,7 +65,9 @@ public class AccessDecisionVoterTestBase {
                 "test",
                 "test",
                 "test",
-                "test@test");
+                "test@test",
+                "test",
+                "test");
         Set<AccountRights> rights = new HashSet<AccountRights>();
         rights.add(new AccountRights(0, accountId, userId, authorities));
         user.setAccountRights(rights);

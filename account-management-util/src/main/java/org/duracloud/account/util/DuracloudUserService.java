@@ -39,6 +39,8 @@ public interface DuracloudUserService {
      * @param firstName of new user
      * @param lastName  of new user
      * @param email     of new user
+     * @param securityQuestion of new user
+     * @param securityAnswer of new user
      * @return DuracloudUser
      * @throws DBConcurrentUpdateException
      * @throws UserAlreadyExistsException
@@ -48,7 +50,9 @@ public interface DuracloudUserService {
                                        String password,
                                        String firstName,
                                        String lastName,
-                                       String email)
+                                       String email,
+                                       String securityQuestion,
+                                       String securityAnswer)
         throws DBConcurrentUpdateException, UserAlreadyExistsException;
 
     /**
@@ -96,13 +100,17 @@ public interface DuracloudUserService {
      * file for the given username.
      *
      * @param username of user who forgot their password
+     * @param securityQuestion of user who forgot their password
+     * @param securityAnswer of user who forgot their password
      * @throws DBNotFoundException
      * @throws InvalidPasswordException
      * @throws DBConcurrentUpdateException
      * @throws UnsentEmailException
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
-    public void forgotPassword(String username)
+    public void forgotPassword(String username,
+                               String securityQuestion,
+                               String securityAnswer)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException, UnsentEmailException;
 
     /**
@@ -142,13 +150,17 @@ public interface DuracloudUserService {
      * @param firstName of user
      * @param lastName  of user
      * @param email     of user
+     * @param securityQuestion of user
+     * @param securityAnswer of user
      * @throws DBConcurrentUpdateException
      */
     @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void storeUserDetails(int userId,
                                  String firstName,
                                  String lastName,
-                                 String email)
+                                 String email,
+                                 String securityQuestion,
+                                 String securityAnswer)
         throws DBNotFoundException, DBConcurrentUpdateException;
 
 }

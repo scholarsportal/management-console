@@ -142,12 +142,16 @@ public class DuracloudServiceTestBase {
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "email";
+        String securityQuestion = "question";
+        String securityAnswer = "answer";
         return new DuracloudUser(userId,
                                  username,
                                  password,
                                  firstName,
                                  lastName,
-                                 email);
+                                 email,
+                                 securityQuestion,
+                                 securityAnswer);
     }
 
     protected AccountInfo newAccountInfo(int acctId) {

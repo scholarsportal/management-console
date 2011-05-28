@@ -194,12 +194,16 @@ public class DuracloudInstanceServiceTestBase {
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "email";
+        String securityQuestion = "question";
+        String securityAnswer = "answer";
         return new DuracloudUser(userId,
                                  username,
                                  password,
                                  firstName,
                                  lastName,
-                                 email);
+                                 email,
+                                 securityQuestion,
+                                 securityAnswer);
     }
 
 }

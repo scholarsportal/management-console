@@ -155,6 +155,10 @@ public class UserControllerTest  extends AmaControllerTestBase {
             andReturn("").anyTimes();
         EasyMock.expect(editForm.getEmail()).
             andReturn("").anyTimes();
+        EasyMock.expect(editForm.getSecurityQuestion()).
+            andReturn("").anyTimes();
+        EasyMock.expect(editForm.getSecurityAnswer()).
+            andReturn("").anyTimes();
 
         EasyMock.replay(bindingResult, editForm);
 
@@ -210,6 +214,10 @@ public class UserControllerTest  extends AmaControllerTestBase {
             andReturn("").anyTimes();
         EasyMock.expect(newUserForm.getEmail()).
             andReturn("").anyTimes();
+        EasyMock.expect(newUserForm.getSecurityQuestion()).
+            andReturn("").anyTimes();
+        EasyMock.expect(newUserForm.getSecurityAnswer()).
+            andReturn("").anyTimes();
         EasyMock.expect(newUserForm.getRedemptionCode()).
             andReturn("").anyTimes();
 
@@ -253,6 +261,10 @@ public class UserControllerTest  extends AmaControllerTestBase {
             andReturn(false).anyTimes();
         EasyMock.expect(forgotPasswordForm.getUsername()).
             andReturn(TEST_USERNAME).anyTimes();
+        EasyMock.expect(forgotPasswordForm.getSecurityQuestion()).
+            andReturn("").anyTimes();
+        EasyMock.expect(forgotPasswordForm.getSecurityAnswer()).
+            andReturn("").anyTimes();
 
         EasyMock.replay(bindingResult, forgotPasswordForm);
 
@@ -354,6 +366,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
                                                   EasyMock.isA(String.class),
                                                   EasyMock.isA(String.class),
                                                   EasyMock.isA(String.class),
+                                                  EasyMock.isA(String.class),
+                                                  EasyMock.isA(String.class),
                                                   EasyMock.isA(String.class)))
             .andReturn(createUser())
             .anyTimes();
@@ -386,6 +400,8 @@ public class UserControllerTest  extends AmaControllerTestBase {
         userService.storeUserDetails(EasyMock.anyInt(),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
+                                     EasyMock.isA(String.class),
+                                     EasyMock.isA(String.class),
                                      EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
         EasyMock.replay(userService);
@@ -395,7 +411,9 @@ public class UserControllerTest  extends AmaControllerTestBase {
     private void initializeForgotPasswordMockUserService() throws Exception {
         userService =
             EasyMock.createMock(DuracloudUserService.class);
-        userService.forgotPassword(TEST_USERNAME);
+        userService.forgotPassword(EasyMock.eq(TEST_USERNAME),
+                                   EasyMock.isA(String.class),
+                                   EasyMock.isA(String.class));
         EasyMock.expectLastCall()
             .anyTimes();
         EasyMock.replay(userService);

@@ -24,6 +24,9 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
     private String firstName;
     private String lastName;
     private String email;
+    private String securityQuestion;
+    private String securityAnswer;
+
     private Set<AccountRights> accountRights;
 
     private boolean enabled = true;
@@ -33,19 +36,21 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
 
     public DuracloudUser(
         int id, String username, String password, String firstName,
-        String lastName, String email) {
-        this(id, username, password, firstName, lastName, email, 0);
+        String lastName, String email, String securityQuestion, String securityAnswer) {
+        this(id, username, password, firstName, lastName, email, securityQuestion, securityAnswer, 0);
     }
 
     public DuracloudUser(
         int id, String username, String password, String firstName,
-        String lastName, String email, int counter) {
+        String lastName, String email, String securityQuestion, String securityAnswer, int counter) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
         this.counter = counter;
     }
 
@@ -124,6 +129,24 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
         checkNotBlank("email", email);
         this.email = email;
     }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion){
+        checkNotBlank("securityQuestion", securityQuestion);
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
+    public void setSecurityAnswer(String securityAnswer){
+        checkNotBlank("securityAnswer", securityAnswer);
+        this.securityAnswer = securityAnswer;
+    }
     private void checkNotBlank(String field, String value) throws IllegalArgumentException{
         if(StringUtils.isBlank(value)){
             throw new IllegalArgumentException(field + " is blank");
@@ -163,6 +186,14 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
             ? !username.equals(that.username) : that.username != null) {
             return false;
         }
+        if (securityQuestion != null
+            ? !securityQuestion.equals(that.securityQuestion) : that.securityQuestion != null) {
+            return false;
+        }
+        if (securityAnswer != null
+            ? !securityAnswer.equals(that.securityAnswer) : that.securityAnswer != null) {
+            return false;
+        }
 
         return true;
     }
@@ -177,6 +208,8 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (securityQuestion != null ? securityQuestion.hashCode() : 0);
+        result = 31 * result + (securityAnswer != null ? securityAnswer.hashCode() : 0);
         return result;
     }
 

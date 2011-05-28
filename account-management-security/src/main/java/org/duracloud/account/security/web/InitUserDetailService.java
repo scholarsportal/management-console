@@ -35,7 +35,9 @@ public class InitUserDetailService implements UserDetailsService {
                                                    init.getInitEncodedPassword(),
                                                    "Init",
                                                    "User",
-                                                   "none@none.org");
+                                                   "none@none.org",
+                                                   "question",
+                                                   "answer");
 
 
         Set<Role> roles = new HashSet<Role>();

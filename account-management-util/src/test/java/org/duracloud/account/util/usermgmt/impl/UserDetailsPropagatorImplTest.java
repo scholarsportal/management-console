@@ -192,12 +192,16 @@ public class UserDetailsPropagatorImplTest {
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "email";
+        String securityQuestion = "question";
+        String securityAnswer = "answer";
         DuracloudUser user = new DuracloudUser(userId,
                                                username,
                                                password,
                                                firstName,
                                                lastName,
-                                               email);
+                                               email,
+                                               securityQuestion,
+                                               securityAnswer);
 
         Set<AccountRights> rightsSet = new HashSet<AccountRights>();
         rightsSet.add(new AccountRights(-1, acctId, userId, roles));

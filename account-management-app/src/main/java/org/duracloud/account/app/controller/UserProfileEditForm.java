@@ -26,6 +26,12 @@ public class UserProfileEditForm {
     @Email(message="Email is invalid")
     private String email;
 
+	@NotBlank (message = "Security question is empty.")
+	private String securityQuestion;
+
+	@NotBlank (message = "Security answer is empty.")
+	private String securityAnswer;
+
     public String getFirstName() {
         return firstName;
     }
@@ -48,5 +54,21 @@ public class UserProfileEditForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
     }
 }

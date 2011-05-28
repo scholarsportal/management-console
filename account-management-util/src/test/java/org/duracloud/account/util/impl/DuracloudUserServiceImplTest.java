@@ -77,11 +77,15 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "email";
+        String securityQuestion = "question";
+        String securityAnswer = "answer";
         DuracloudUser user = userService.createNewUser(newName,
                                                        password,
                                                        firstName,
                                                        lastName,
-                                                       email);
+                                                       email,
+                                                       securityQuestion,
+                                                       securityAnswer);
         Assert.assertNotNull(user);
         Assert.assertEquals(newName, user.getUsername());
 
@@ -92,7 +96,9 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
                                       password,
                                       firstName,
                                       lastName,
-                                      email);
+                                      email,
+                                      securityQuestion,
+                                      securityAnswer);
             Assert.fail("exception expected");
         } catch (UserAlreadyExistsException e) {
             thrown = true;

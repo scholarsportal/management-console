@@ -34,6 +34,8 @@ public class DuracloudUserConverter extends BaseDomainConverter implements Domai
     protected static final String FIRSTNAME_ATT = "FIRSTNAME";
     protected static final String LASTNAME_ATT = "LASTNAME";
     protected static final String EMAIL_ATT = "EMAIL";
+    protected static final String SECURITY_QUESTION_ATT = "SECURITY_QUESTION";
+    protected static final String SECURITY_ANSWER_ATT = "SECURITY_ANSWER";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(DuracloudUser user) {
@@ -54,6 +56,12 @@ public class DuracloudUserConverter extends BaseDomainConverter implements Domai
                                           user.getLastName(),
                                           true));
         atts.add(new ReplaceableAttribute(EMAIL_ATT, user.getEmail(), true));
+        atts.add(new ReplaceableAttribute(SECURITY_QUESTION_ATT,
+                                          user.getSecurityQuestion(),
+                                          true));
+        atts.add(new ReplaceableAttribute(SECURITY_ANSWER_ATT,
+                                          user.getSecurityAnswer(),
+                                          true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -67,6 +75,8 @@ public class DuracloudUserConverter extends BaseDomainConverter implements Domai
         String firstname = null;
         String lastname = null;
         String email = null;
+        String secueityQuestion = null;
+        String secueityAnswer = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -89,6 +99,12 @@ public class DuracloudUserConverter extends BaseDomainConverter implements Domai
             } else if (EMAIL_ATT.equals(name)) {
                 email = value;
 
+            } else if (SECURITY_QUESTION_ATT.equals(name)) {
+                secueityQuestion = value;
+
+            } else if (SECURITY_ANSWER_ATT.equals(name)) {
+                secueityAnswer = value;
+
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -106,6 +122,8 @@ public class DuracloudUserConverter extends BaseDomainConverter implements Domai
                                  firstname,
                                  lastname,
                                  email,
+                                 secueityQuestion,
+                                 secueityAnswer,
                                  counter);
     }
 }

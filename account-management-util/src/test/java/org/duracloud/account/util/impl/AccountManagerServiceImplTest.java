@@ -81,7 +81,9 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
                                                "password",
                                                "Primo",
                                                "Ultimo",
-                                               "primo@ultimo.org");
+                                               "primo@ultimo.org",
+                                               "question",
+                                               "answer");
 
         int acctId = 0;
         String subdomain = "testdomain";

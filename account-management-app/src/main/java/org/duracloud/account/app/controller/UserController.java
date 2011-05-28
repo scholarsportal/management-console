@@ -202,6 +202,8 @@ public class UserController extends AbstractController {
         form.setFirstName(user.getFirstName());
         form.setLastName(user.getLastName());
         form.setEmail(user.getEmail());
+        form.setSecurityQuestion(user.getSecurityQuestion());
+        form.setSecurityAnswer(user.getSecurityAnswer());
         model.addAttribute(USER_PROFILE_FORM_KEY, form);
 
         model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
@@ -226,7 +228,9 @@ public class UserController extends AbstractController {
         this.userService.storeUserDetails(id,
                                           form.getFirstName(),
                                           form.getLastName(),
-                                          form.getEmail());
+                                          form.getEmail(),
+                                          form.getSecurityQuestion(),
+                                          form.getSecurityAnswer());
 
         return "redirect:" + PREFIX + "/users/byid/" + username;
     }
@@ -373,7 +377,9 @@ public class UserController extends AbstractController {
                     newUserForm.getPassword(),
                     newUserForm.getFirstName(),
                     newUserForm.getLastName(),
-                    newUserForm.getEmail());
+                    newUserForm.getEmail(),
+                    newUserForm.getSecurityQuestion(),
+                    newUserForm.getSecurityAnswer());
 
         reauthenticate(user.getUsername(),
             user.getPassword(),
@@ -410,13 +416,19 @@ public class UserController extends AbstractController {
         throws Exception {
         if (!result.hasErrors()) {
             try {
-                // FIXME: Needs to be a verification question before this call.
                 this.userService.forgotPassword(
-                    forgotPasswordForm.getUsername());
+                    forgotPasswordForm.getUsername(),
+                    forgotPasswordForm.getSecurityQuestion(),
+                    forgotPasswordForm.getSecurityAnswer());
             } catch (DBNotFoundException e) {
                 result.addError(new FieldError(FORGOT_PASSWORD_FORM_KEY,
                     "username",
                     "The username does not exist"));
+                return FORGOT_PASSWORD_VIEW;
+            } catch (InvalidPasswordException e) {
+                result.addError(new FieldError(FORGOT_PASSWORD_FORM_KEY,
+                    "securityQuestion",
+                    "The security question/answer is not correct"));
                 return FORGOT_PASSWORD_VIEW;
             } catch (UnsentEmailException ue) {
                 result.addError(new ObjectError(FORGOT_PASSWORD_FORM_KEY,

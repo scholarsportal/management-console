@@ -35,6 +35,12 @@ public class NewUserForm {
 	@Email(message = "Email is invalid.")
 	private String email;
 
+	@NotBlank (message = "Security question is empty.")
+	private String securityQuestion;
+
+	@NotBlank (message = "Security answer is empty.")
+	private String securityAnswer;
+
 	private String redemptionCode;
 	
 	public String getUsername() {
@@ -91,5 +97,21 @@ public class NewUserForm {
 
     public String getRedemptionCode() {
         return redemptionCode;
+    }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
     }
 }
