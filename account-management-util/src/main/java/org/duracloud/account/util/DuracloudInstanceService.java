@@ -63,6 +63,12 @@ public interface DuracloudInstanceService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void initialize();
 
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public void reInitializeUserRoles();
+
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public void reInitialize();
+
     /**
      * Pushes user role info to the running instance.
      * Note: This set of users will replace the existing configuration on the

@@ -42,6 +42,10 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String EDIT_PATH = "/edit";
     public static final String STATEMENT_PATH =  ACCOUNT_PATH + "/statement";
     public static final String INSTANCE_PATH = ACCOUNT_PATH + "/instance";
+    public static final String INSTANCE_REINIT_USERS_PATH =
+        INSTANCE_PATH + "/byid/{instanceId}/reinitusers";
+    public static final String INSTANCE_REINIT_PATH =
+        INSTANCE_PATH + "/byid/{instanceId}/reinit";
     public static final String INSTANCE_RESTART_PATH =
         INSTANCE_PATH + "/byid/{instanceId}/restart";
     public static final String INSTANCE_STOP_PATH =

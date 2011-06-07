@@ -157,6 +157,15 @@
                             t.form.submit();
                           }
                         }
+
+                        function AskAndSubmitInit(t)
+                        {
+                          var answer = confirm("Are you sure you want to re-init your instance?");
+                          if (answer)
+                          {
+                            t.form.submit();
+                          }
+                        }
                       </script>
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
                               method="post">
@@ -166,6 +175,18 @@
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>
                       </form></td>
+
+                      <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                          <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinit"
+                                  method="post">
+                            <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit</button>
+                          </form></td>
+                           <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
+                                  method="post">
+                            <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit Users</button>
+                          </form></td>
+                      </sec:authorize>
+
                       <c:if test="${actionStatus != null}">
                         <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
                       </c:if>

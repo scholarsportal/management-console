@@ -15,7 +15,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,6 +132,65 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
+    public void testReInitUsers() throws Exception {
+        boolean initUsers = true;
+        createReInitInstanceMocks(initUsers);
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.reInitializeUserRoles(TEST_ACCOUNT_ID,
+                                                TEST_INSTANCE_ID,
+                                                model);
+        verifyResult(model);
+    }
+
+    @Test
+    public void testReInitInstance() throws Exception {
+        boolean initUsers = false;
+        createReInitInstanceMocks(initUsers);
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.reInitialize(TEST_ACCOUNT_ID, TEST_INSTANCE_ID, model);
+        verifyResult(model);
+    }
+
+    private void createReInitInstanceMocks(boolean initUsers) throws Exception {
+        instanceManagerService = EasyMock.createMock(
+            "DuracloudInstanceManagerService",
+            DuracloudInstanceManagerService.class);
+
+        instanceService = EasyMock.createMock("DuracloudInstanceService",
+                                              DuracloudInstanceService.class);
+        Set<DuracloudInstanceService> instanceServices = new HashSet<DuracloudInstanceService>();
+        instanceServices.add(instanceService);
+
+        EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            .andReturn(instanceServices);
+
+        EasyMock.expect(instanceManagerService.getInstanceService(EasyMock.anyInt()))
+            .andReturn(instanceService);
+
+        if (initUsers) {
+            instanceService.reInitializeUserRoles();
+        } else {
+            instanceService.reInitialize();
+        }
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(instanceService.getStatus()).andReturn("status");
+
+        DuracloudInstance instance = new DuracloudInstance(0,
+                                                           0,
+                                                           0,
+                                                           "host",
+                                                           "providerInstanceId");
+        EasyMock.expect(instanceService.getInstanceInfo()).andReturn(instance);
+    }
+
+    @Test
     public void testStopInstance() throws Exception {
         initializeMockInstanceManagerService();
         initStop(TEST_ACCOUNT_ID);
@@ -223,10 +282,12 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     private void initializeMockInstanceManagerService() throws Exception {
-        instanceManagerService =
-            EasyMock.createMock(DuracloudInstanceManagerService.class);
+        instanceManagerService = EasyMock.createMock(
+            "DuracloudInstanceManagerService",
+            DuracloudInstanceManagerService.class);
 
-        instanceService = EasyMock.createMock(DuracloudInstanceService.class);
+        instanceService = EasyMock.createMock("DuracloudInstanceService",
+                                              DuracloudInstanceService.class);
         Set<DuracloudInstanceService> instanceServices =
             new HashSet<DuracloudInstanceService>();
         instanceServices.add(instanceService);

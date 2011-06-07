@@ -172,6 +172,16 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         doInitialize(true);
     }
 
+    @Override
+    public void reInitializeUserRoles() {
+        initializeUserRoles();
+    }
+
+    @Override
+    public void reInitialize() {
+        doInitialize(false);
+    }
+
     protected void doInitialize(boolean wait) {
         if(wait && timeoutMinutes > 0) {
             new ThreadedInitializer(timeoutMinutes).start();

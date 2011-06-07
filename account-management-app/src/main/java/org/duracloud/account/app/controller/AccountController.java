@@ -16,8 +16,6 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -140,6 +138,53 @@ public class AccountController extends AbstractAccountController {
         DuracloudInstanceService instanceService =
             instanceManagerService.getInstanceService(instanceId);
         instanceService.restart();
+    }
+
+    @RequestMapping(value = {INSTANCE_REINIT_USERS_PATH},
+                    method = RequestMethod.POST)
+    public String reInitializeUserRoles(@PathVariable int accountId,
+                                        @PathVariable int instanceId,
+                                        Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        log.info("ReInit UserRoles for acct: {}, instance: {}",
+                  accountId,
+                  instanceId);
+
+        DuracloudInstanceService instanceService = instanceManagerService.getInstanceService(
+            instanceId);
+        instanceService.reInitializeUserRoles();
+
+        String status = "Instance User Roles ReInitialized successfully.";
+        return reInitResult(accountId, model, status);
+    }
+
+    @RequestMapping(value = {INSTANCE_REINIT_PATH},
+                    method = RequestMethod.POST)
+    public String reInitialize(@PathVariable int accountId,
+                               @PathVariable int instanceId,
+                               Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        log.info("ReInit Instance for acct: {}, instance: {}",
+                  accountId,
+                  instanceId);
+
+        DuracloudInstanceService instanceService = instanceManagerService.getInstanceService(
+            instanceId);
+        instanceService.reInitialize();
+
+        String status = "Instance ReInitialized successfully.";
+        return reInitResult(accountId, model, status);
+    }
+
+    private String reInitResult(int accountId, Model model, String status)
+        throws AccountNotFoundException {
+        populateAccountInModel(accountId, model);
+        model.addAttribute(ACTION_STATUS, status);
+
+        String username = SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
     @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)

@@ -8,6 +8,7 @@ import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.appconfig.domain.DuradminConfig;
@@ -93,6 +94,86 @@ public class DuracloudInstanceServiceImplTest
         setUpInitializeMocks();
         replayMocks();
         service.initialize();
+    }
+
+    @Test
+    public void testReInitializeUserRoles() throws Exception {
+        setUpReInitializeUserRolesMocks();
+        replayMocks();
+        service.reInitializeUserRoles();
+    }
+
+    @Test
+    public void testReInitializeInstance() throws Exception {
+        setUpReInitializeMocks();
+        replayMocks();
+        service.reInitialize();
+    }
+
+    private void setUpReInitializeUserRolesMocks() throws Exception {
+        int times = 1;
+        setUpReInitializeCommonMocks(times);
+
+        doSetUpReInitializeUserRolesMocks();
+    }
+
+    private void doSetUpReInitializeUserRolesMocks()
+        throws DBNotFoundException {
+        EasyMock.expect(repoMgr.getRightsRepo()).andReturn(rightsRepo).times(1);
+        EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).times(1);
+
+        int userId = 5;
+        Set<AccountRights> accountRights = new HashSet<AccountRights>();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+        accountRights.add(new AccountRights(0, accountId, userId, roles));
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(accountRights);
+
+        DuracloudUser user = new DuracloudUser(userId,
+                                               "user",
+                                               "pass",
+                                               "first",
+                                               "last",
+                                               "email",
+                                               "question",
+                                               "answer");
+        user.setAccountRights(accountRights);
+        EasyMock.expect(userRepo.findById(userId)).andReturn(user);
+
+        instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
+                                          EasyMock.isA(Set.class),
+                                          EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall();
+    }
+
+    private void setUpReInitializeMocks() throws Exception {
+        int times = 2;
+        setUpReInitializeCommonMocks(times);
+        doSetUpReInitializeUserRolesMocks();
+
+        DuradminConfig duradminConfig = new DuradminConfig();
+        EasyMock.expect(instanceConfigUtil.getDuradminConfig()).andReturn(
+            duradminConfig);
+        EasyMock.expect(instanceConfigUtil.getDurastoreConfig())
+            .andReturn(new DurastoreConfig());
+        EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
+            .andReturn(new DuraserviceConfig());
+
+        instanceUpdater.initializeInstance(EasyMock.isA(String.class),
+                                           EasyMock.isA(DuradminConfig.class),
+                                           EasyMock.isA(DurastoreConfig.class),
+                                           EasyMock.isA(DuraserviceConfig.class),
+                                           EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall();
+    }
+
+    private void setUpReInitializeCommonMocks(int times) throws Exception {
+        // Set timeout to 0, to prevent waiting for instance availability
+        service.setInitializeTimeout(0);
+        setUpServerImageMocks();
+
+        EasyMock.expect(instance.getHostName()).andReturn("host").times(times);
     }
 
     @Test

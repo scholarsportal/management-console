@@ -116,6 +116,18 @@ public class DuracloudInstanceServiceSecuredImpl implements DuracloudInstanceSer
     }
 
     @Override
+    public void reInitializeUserRoles() {
+        throwIfAccessDenied();
+        instanceService.reInitializeUserRoles();
+    }
+
+    @Override
+    public void reInitialize() {
+        throwIfAccessDenied();
+        instanceService.reInitialize();
+    }
+
+    @Override
     public void setUserRoles(Set<DuracloudUser> users) {
         throwIfAccessDenied(users);
         instanceService.setUserRoles(users);
