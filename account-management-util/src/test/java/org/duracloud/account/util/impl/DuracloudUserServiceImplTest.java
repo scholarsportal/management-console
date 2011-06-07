@@ -14,6 +14,7 @@ import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
+import org.duracloud.notification.Emailer;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -121,7 +122,17 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         EasyMock.expect(idUtil.newUserId()).andReturn(userId).times(2);
 
+        Emailer emailer = EasyMock.createMock("Emailer",
+                                              Emailer.class);
+        emailer.send(EasyMock.isA(String.class),
+                     EasyMock.isA(String.class),
+                     EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
+
         replayMocks();
+        EasyMock.replay(emailer);        
     }
 
     @Test
@@ -339,6 +350,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         int expirationDays = 2;
         UserInvitation invitation = new UserInvitation(invitationId,
                                                        acctId,
+                                                       "test",
                                                        "my@email.com",
                                                        expirationDays,
                                                        redemptionCode);
@@ -368,7 +380,25 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         EasyMock.expectLastCall()
             .times(1);
 
+        DuracloudUser user = newDuracloudUser(userId, "test");        
+        EasyMock.expect(userRepo.findById(EasyMock.anyInt()))
+            .andReturn(user)
+            .anyTimes();
+        EasyMock.expect(userRepo.findByUsername(EasyMock.isA(String.class)))
+            .andReturn(user)
+            .anyTimes();
+
+        Emailer emailer = EasyMock.createMock("Emailer",
+                                              Emailer.class);
+        emailer.send(EasyMock.isA(String.class),
+                     EasyMock.isA(String.class),
+                     EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
+
         replayMocks();
+        EasyMock.replay(emailer);
     }
 
     @Test

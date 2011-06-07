@@ -175,7 +175,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public UserInvitation inviteUser(String emailAddress, Emailer emailer)
+    public UserInvitation inviteUser(String emailAddress, String adminUsername, Emailer emailer)
         throws DBConcurrentUpdateException {
 
         ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
@@ -188,6 +188,7 @@ public class AccountServiceImpl implements AccountService {
         int expirationDays = 14;
         UserInvitation userInvitation = new UserInvitation(id,
                                                            acctId,
+                                                           adminUsername,
                                                            emailAddress,
                                                            expirationDays,
                                                            redemptionCode);

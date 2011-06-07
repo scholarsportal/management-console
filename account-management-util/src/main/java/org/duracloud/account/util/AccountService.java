@@ -126,7 +126,7 @@ public interface AccountService {
      * @return UserInvitation
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public UserInvitation inviteUser(String emailAddress, Emailer emailer)
+    public UserInvitation inviteUser(String emailAddress, String adminUsername, Emailer emailer)
         throws DBConcurrentUpdateException;
 
     /**

@@ -18,6 +18,7 @@ public class UserInvitationTest {
 
     private final int id = 7;
     private final int acctId = 9;
+    private final String adminUsername = "test";
     private final String userEmail = "a@g.com";
     private final int expirationDays = 10;
     private final String redemptionCode = "a-redemption-code";
@@ -26,6 +27,7 @@ public class UserInvitationTest {
     public void setUp() throws Exception {
         invitation = new UserInvitation(id,
                                         acctId,
+                                        adminUsername,
                                         userEmail,
                                         expirationDays,
                                         redemptionCode);

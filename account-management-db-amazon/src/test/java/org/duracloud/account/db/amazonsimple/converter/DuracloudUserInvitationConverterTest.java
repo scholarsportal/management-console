@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.ACCOUNT_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.ADMIN_USERNAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.CREATIONDATE_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.EXPIRATION_DATE_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudUserInvitationConverter.REDEMPTION_CODE_ATT;
@@ -27,6 +28,7 @@ public class DuracloudUserInvitationConverterTest
 
     private static final int id = 0;
     private static final int accountId = 1;
+    private static final String adminUsername = "test";
     private static final String userEmail = "test@duraspace.org";
     private static final String redemptionCode =
         System.currentTimeMillis() + "";
@@ -45,7 +47,7 @@ public class DuracloudUserInvitationConverterTest
     protected UserInvitation createTestItem() {
         UserInvitation ui =
             new UserInvitation(
-                id, accountId, userEmail, creationDate,
+                id, accountId, adminUsername, userEmail, creationDate,
                 expirationDate, redemptionCode, counter);
 
         return ui;
@@ -58,6 +60,7 @@ public class DuracloudUserInvitationConverterTest
         
         List<Attribute> testAtts = new ArrayList<Attribute>();
         testAtts.add(new Attribute(ACCOUNT_ID_ATT, String.valueOf(accountId)));
+        testAtts.add(new Attribute(ADMIN_USERNAME_ATT, adminUsername));
         testAtts.add(new Attribute(USER_EMAIL_ATT, userEmail));
         testAtts.add(new Attribute(CREATIONDATE_ATT, c
             .asString(creationDate)));
@@ -72,11 +75,13 @@ public class DuracloudUserInvitationConverterTest
     protected void verifyItem(UserInvitation user) {
         Assert.assertNotNull(user);
         Assert.assertNotNull(user.getCounter());
+        Assert.assertNotNull(user.getAdminUsername());
         Assert.assertNotNull(user.getUserEmail());
         Assert.assertNotNull(user.getAccountId());
         Assert.assertNotNull(user.getCreationDate());
         Assert.assertNotNull(user.getExpirationDate());
         Assert.assertEquals(counter, user.getCounter());
+        Assert.assertEquals(adminUsername, user.getAdminUsername());
         Assert.assertEquals(userEmail, user.getUserEmail());
         Assert.assertEquals(accountId, user.getAccountId());
         Assert.assertEquals(redemptionCode, user.getRedemptionCode());

@@ -67,7 +67,7 @@ public class InitControllerTest {
         EasyMock.expectLastCall();
         EasyMock.replay(systemMonitor);
 
-        UserInvitation invitation = new UserInvitation(1, 2, "x", 3, "y");
+        UserInvitation invitation = new UserInvitation(1, 2, "t", "x", 3, "y");
         String url = invitation.getRedemptionURL();
         Assert.assertFalse(url.contains(host));
         Assert.assertFalse(url.contains(port));

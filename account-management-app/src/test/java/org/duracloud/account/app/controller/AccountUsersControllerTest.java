@@ -64,7 +64,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
         EasyMock.replay(emailer, notificationMgr);
 
-        EasyMock.expect(accountService.inviteUser(ui.getUserEmail(), emailer))
+        EasyMock.expect(accountService.inviteUser(ui.getUserEmail(), ui.getAdminUsername(), emailer))
             .andReturn(ui);
 
         EasyMock.expect(accountService.getPendingInvitations())
@@ -122,6 +122,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     private UserInvitation createUserInvitation() {
         return new UserInvitation(2,
             TEST_ACCOUNT_ID.intValue(),
+            "testuser",
             "test@duracloud.org",
             14,
             "xyz",

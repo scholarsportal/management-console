@@ -155,10 +155,10 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public UserInvitation inviteUser(String emailAddress, Emailer emailer)
+    public UserInvitation inviteUser(String emailAddress, String adminUsername, Emailer emailer)
         throws DBConcurrentUpdateException {
-        throwIfAccessDenied(emailAddress, emailer);
-        return accountService.inviteUser(emailAddress, emailer);
+        throwIfAccessDenied(emailAddress, adminUsername, emailer);
+        return accountService.inviteUser(emailAddress, adminUsername, emailer);
     }
 
     @Override

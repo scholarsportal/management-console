@@ -32,6 +32,7 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
     }
 
     public static final String ACCOUNT_ID_ATT = "ACCOUNT_ID";
+    protected static final String ADMIN_USERNAME_ATT = "ADMIN_USERNAME";
     protected static final String USER_EMAIL_ATT = "USER_EMAIL";
     protected static final String CREATIONDATE_ATT = "CREATION_DATE";
     protected static final String EXPIRATION_DATE_ATT = "EXPIRATION_DATE";
@@ -45,6 +46,8 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
         
         atts.add(new ReplaceableAttribute(
             ACCOUNT_ID_ATT, asString(userInvitation.getAccountId()), true));
+        atts.add(new ReplaceableAttribute(
+            ADMIN_USERNAME_ATT, userInvitation.getAdminUsername(), true));
         atts.add(new ReplaceableAttribute(
             USER_EMAIL_ATT, userInvitation.getUserEmail(), true));
         atts
@@ -65,6 +68,7 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
     public UserInvitation fromAttributes(Collection<Attribute> atts, int id) {
         int counter = -1;
         int accountId = -1;
+        String adminUsername = null;
         String userEmail = null;
         Date creationDate = null;
         Date expirationDate = null;
@@ -79,6 +83,9 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
             } else if (ACCOUNT_ID_ATT.equals(name)) {
                 accountId =
                     idFromString(value, "Account", "User Invitation", id);
+
+            } else if (ADMIN_USERNAME_ATT.equals(name)) {
+                adminUsername = value;
 
             } else if (USER_EMAIL_ATT.equals(name)) {
                 userEmail = value;
@@ -105,6 +112,7 @@ public class DuracloudUserInvitationConverter extends BaseDomainConverter
 
         return new UserInvitation(id,
                                   accountId,
+                                  adminUsername,
                                   userEmail,
                                   creationDate,
                                   expirationDate,

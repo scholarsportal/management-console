@@ -103,7 +103,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         
         throwIfUserExists(user);
         getUserRepo().save(user);
-        
+
+        try {
+            Emailer emailer = notificationMgr.getEmailer();
+
+            emailer.send("Duracloud Account Management - Create Profile",
+                         "Thank you for creating your profile with username "
+                         + username, user.getEmail());
+        } catch (Exception e) {
+            String msg =
+                "Error: Unable to send email to user: " + username;
+            log.error(msg);
+            throw new UnsentEmailException(msg, e);
+        }
         
         log.info("created new user [{}]", username);
         return user;
@@ -420,6 +432,23 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         // Delete the invitation
         invRepo.delete(invitation.getId());
+        
+        try {
+            DuracloudUser user = getUserRepo().findById(userId);
+
+            DuracloudUser adminUser = getUserRepo().findByUsername(invitation.getAdminUsername());
+            
+            Emailer emailer = notificationMgr.getEmailer();
+
+            emailer.send("Duracloud Account Management - Reedemed Invitation",
+                         "You can now assign user rights for user : "
+                         + user.getUsername(), adminUser.getEmail());
+        } catch (Exception e) {
+            String msg =
+                "Error: Unable to send email to user: " + invitation.getAdminUsername();
+            log.error(msg);
+            throw new UnsentEmailException(msg, e);
+        }
 
         //return accountId
         return invitation.getAccountId();

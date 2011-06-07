@@ -97,6 +97,7 @@ public class AccountUsersController extends AbstractAccountController {
 
             try {
                 UserInvitation ui = service.inviteUser(emailAddress,
+                                                       getUser().getUsername(),
                                                        notificationMgr.getEmailer());
                 log.debug(
                 "created user invitation on account {} for {} expiring on {}",
@@ -144,10 +145,12 @@ public class AccountUsersController extends AbstractAccountController {
         AccountService service = getAccountService(accountId);
 
         List<String> failedEmailAddresses =  new ArrayList<String>();
+        String adminUsername = getUser().getUsername();
 
         for (String emailAddress : emailAddresses) {
             try {
                 UserInvitation ui = service.inviteUser(emailAddress,
+                                                       adminUsername,
                                                        notificationMgr.getEmailer());
                 log.debug(
                 "created user invitation on account {} for {} expiring on {}",

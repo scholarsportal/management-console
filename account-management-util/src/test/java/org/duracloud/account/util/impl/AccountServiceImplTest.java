@@ -30,6 +30,7 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     private AccountInfo acctInfo;
 
     private final int acctId = 1;
+    private final String adminUsername = "username";
     private final String subdomain = "sub-domain";
     private Set<StorageProviderType> storageProviders;
 
@@ -167,7 +168,7 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private UserInvitation createUserInvite() {
-        return new UserInvitation(1, acctId, "test@duracloud.org", 1, "xyz");
+        return new UserInvitation(1, acctId, adminUsername, "test@duracloud.org", 1, "xyz");
    }
 
     @Test
@@ -189,7 +190,7 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
         EasyMock.replay(emailer);
         replayMocks();
 
-        UserInvitation ui = this.acctService.inviteUser(email, emailer);
+        UserInvitation ui = this.acctService.inviteUser(email, adminUsername, emailer);
         Assert.assertTrue(ui.getId() == 1);
         Assert.assertTrue(ui.getRedemptionCode().length() > 3);
 

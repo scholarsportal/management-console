@@ -11,22 +11,24 @@ import java.util.Date;
 public class UserInvitation extends BaseDomainData {
 
     private int accountId;
+    private String adminUsername;
     private String userEmail;
     private Date creationDate;
     private Date expirationDate;
     private String redemptionCode;
 
     public UserInvitation(
-        int id, int accountId, String userEmail, int expirationDays,
+        int id, int accountId, String adminUsername, String userEmail, int expirationDays,
         String redemptionCode) {
-        this(id, accountId, userEmail, expirationDays, redemptionCode, 0);
+        this(id, accountId, adminUsername, userEmail, expirationDays, redemptionCode, 0);
     }
 
     public UserInvitation(
-        int id, int accountId, String userEmail, int expirationDays,
+        int id, int accountId, String adminUsername, String userEmail, int expirationDays,
         String redemptionCode, int counter) {
         this.id = id;
         this.accountId = accountId;
+        this.adminUsername = adminUsername;
         this.userEmail = userEmail;
 
         this.creationDate = new Date();
@@ -40,10 +42,11 @@ public class UserInvitation extends BaseDomainData {
     }
 
     public UserInvitation(
-        int id, int accountId, String userEmail, Date creationDate,
+        int id, int accountId, String adminUsername, String userEmail, Date creationDate,
         Date expirationDate, String redemptionCode, int counter) {
         this.id = id;
         this.accountId = accountId;
+        this.adminUsername = adminUsername;
         this.userEmail = userEmail;
         this.creationDate = creationDate;
         this.expirationDate = expirationDate;
@@ -53,6 +56,10 @@ public class UserInvitation extends BaseDomainData {
 
     public int getAccountId() {
         return accountId;
+    }
+
+    public String getAdminUsername() {
+        return adminUsername;
     }
 
     public String getUserEmail() {
@@ -112,6 +119,9 @@ public class UserInvitation extends BaseDomainData {
         if (accountId != that.accountId) {
             return false;
         }
+        if (adminUsername != that.adminUsername) {
+            return false;
+        }
         if (creationDate != null ? !creationDate.equals(that.creationDate) :
             that.creationDate != null) {
             return false;
@@ -138,6 +148,7 @@ public class UserInvitation extends BaseDomainData {
     @Override
     public int hashCode() {
         int result = accountId;
+        result = 31 * result + (adminUsername != null ? adminUsername.hashCode() : 0);
         result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
         result =
             31 * result + (creationDate != null ? creationDate.hashCode() : 0);
@@ -151,7 +162,8 @@ public class UserInvitation extends BaseDomainData {
     @Override
     public String toString() {
         return "UserInvitation[id="
-            + id + ", accountId=" + accountId + ", userEmail=" + userEmail
+            + id + ", accountId=" + accountId + ", adminUsername=" + adminUsername
+            + ", userEmail=" + userEmail
             + ", creationDate=" + creationDate + ", expirationDate="
             + expirationDate + ", redemptionCode=" + redemptionCode
             + ", counter=" + counter + "]";

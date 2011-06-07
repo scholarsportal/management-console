@@ -384,27 +384,29 @@ public class AccountServiceSecuredImplTest {
     @Test
     public void testInviteUser() throws Exception {
         String emailAddr = "x@y.com";
+        String adminUsername = "test";
         Emailer emailer = EasyMock.createMock(Emailer.class);
 
-        EasyMock.expect(acctService.inviteUser(emailAddr, emailer)).andReturn(
+        EasyMock.expect(acctService.inviteUser(emailAddr, adminUsername, emailer)).andReturn(
             null);
 
         setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
         replayMocks();
 
-        acctServiceImpl.inviteUser(emailAddr, emailer);
+        acctServiceImpl.inviteUser(emailAddr, adminUsername, emailer);
     }
 
     @Test
     public void testInviteUserFail() throws Exception {
         String emailAddr = "x@y.com";
+        String adminUsername = "test";
         Emailer emailer = EasyMock.createMock(Emailer.class);
         setMockVoterExpectations(AccessDecisionVoter.ACCESS_DENIED);
         replayMocks();
 
         boolean thrown = false;
         try {
-            acctServiceImpl.inviteUser(emailAddr, emailer);
+            acctServiceImpl.inviteUser(emailAddr, adminUsername, emailer);
             Assert.fail("exception expected");
         } catch (AccessDeniedException e) {
             thrown = true;
