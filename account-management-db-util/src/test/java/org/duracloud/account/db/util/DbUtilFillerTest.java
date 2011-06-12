@@ -84,6 +84,8 @@ public class DbUtilFillerTest {
         Set<Integer> secStorageAcctIds = new HashSet<Integer>();
         secStorageAcctIds.add(secStorageAcctId);
         int paymentId = 30;
+        AccountInfo.PackageType packageType =
+            AccountInfo.PackageType.PROFESSIONAL;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.PENDING;
         String tbd = "TBD";
 
@@ -100,7 +102,7 @@ public class DbUtilFillerTest {
         AccountInfo account =
             new AccountInfo(acctId, subdomain, "acctName", "orgName", "dept",
                             computeAcctId, primStorageAcctId, secStorageAcctIds,
-                            null, paymentId, status);
+                            null, paymentId, packageType, status);
         EasyMock.expect(acctRepo.findBySubdomain(EasyMock.isA(String.class)))
             .andReturn(account)
             .times(1);

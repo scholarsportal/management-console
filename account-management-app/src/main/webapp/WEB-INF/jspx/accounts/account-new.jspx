@@ -121,6 +121,24 @@
                          path="subdomain" /> <strong> .duracloud.org</strong> (Subdomain must be 3-25 characters long)
                       </td>
                     </tr>
+
+                    <tr>
+                      <td align="right"
+                       class="label">
+                        <form:label
+                         cssErrorClass="error"
+                         path="packageType">Package Type:</form:label>
+                      </td>
+
+                      <td
+                       class="value required">
+                          <form:select
+                          id="packageType"
+                          cssErrorClass="error"
+                          path="packageType"
+                          items="${packageTypes}" />
+                      </td>
+                    </tr>
                   </table>
           <table width="100%" border="0" cellpadding="0" cellspacing="0">
             <tr>

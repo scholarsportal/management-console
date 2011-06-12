@@ -30,6 +30,9 @@ public class NewAccountForm {
 
     private List<StorageProviderType> storageProviders = new ArrayList<StorageProviderType>(0);
 
+    @NotBlank(message = "You must specify a package.")
+    private String packageType;
+
     public String getSubdomain() {
         return subdomain;
     }
@@ -69,5 +72,13 @@ public class NewAccountForm {
 
     public void setStorageProviders(List<StorageProviderType> storageProviders) {
         this.storageProviders = storageProviders;
+    }
+
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
     }
 }

@@ -15,16 +15,7 @@ import java.util.Set;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ACCT_NAME_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.COMPUTE_PROVIDER_ACCOUNT_ID_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.DEPARTMENT_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ORG_NAME_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.PAYMENT_INFO_ID_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SECONDARY_SERVICE_REPOSITORY_IDS_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.STATUS_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SUBDOMAIN_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.*;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
 /**
@@ -44,6 +35,8 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
+    private static AccountInfo.PackageType packageType =
+        AccountInfo.PackageType.PROFESSIONAL;
     private static AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
     private static final int counter = 4;
@@ -80,6 +73,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
+                               packageType,
                                status,
                                counter);
     }
@@ -98,11 +92,13 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         testAtts.add(new Attribute(PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT,
                                    acctCvtr.asString(primaryStorageProviderAccountId)));
         testAtts.add(new Attribute(SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
-                                   acctCvtr.idsAsString(secondaryStorageProviderAccountIds)));
+                                   acctCvtr.idsAsString(
+                                       secondaryStorageProviderAccountIds)));
         testAtts.add(new Attribute(SECONDARY_SERVICE_REPOSITORY_IDS_ATT,
                                    acctCvtr.idsAsString(secondaryServiceRepositoryIds)));
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
+        testAtts.add(new Attribute(PACKAGE_TYPE_ATT, packageType.name()));
         testAtts.add(new Attribute(STATUS_ATT, status.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
@@ -122,6 +118,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertNotNull(acct.getSecondaryStorageProviderAccountIds());
         assertNotNull(acct.getSecondaryServiceRepositoryIds());
         assertNotNull(acct.getPaymentInfoId());
+        assertNotNull(acct.getPackageType());
         assertNotNull(acct.getStatus());
 
         assertEquals(counter, acct.getCounter());
@@ -138,6 +135,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertEquals(secondaryServiceRepositoryIds,
                      acct.getSecondaryServiceRepositoryIds());
         assertEquals(paymentInfoId, acct.getPaymentInfoId());
+        assertEquals(packageType, acct.getPackageType());
         assertEquals(status, acct.getStatus());
     }
 

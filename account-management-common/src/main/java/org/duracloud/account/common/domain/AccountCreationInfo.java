@@ -48,18 +48,25 @@ public class AccountCreationInfo {
      */
     private Set<StorageProviderType> secondaryStorageProviderTypes;
 
+    /*
+     * The type of package chosen for this account.
+     */
+    private AccountInfo.PackageType packageType;
+
     public AccountCreationInfo(String subdomain,
                                String acctName,
                                String orgName,
                                String department,
                                StorageProviderType primaryStorageProviderType,
-                               Set<StorageProviderType> secondaryStorageProviderTypes) {
+                               Set<StorageProviderType> secondaryStorageProviderTypes,
+                               AccountInfo.PackageType packageType) {
         this.subdomain = subdomain;
         this.acctName = acctName;
         this.orgName = orgName;
         this.department = department;
         this.primaryStorageProviderType = primaryStorageProviderType;
         this.secondaryStorageProviderTypes = secondaryStorageProviderTypes;
+        this.packageType = packageType;
     }
 
     public String getSubdomain() {
@@ -84,6 +91,10 @@ public class AccountCreationInfo {
 
     public Set<StorageProviderType> getSecondaryStorageProviderTypes() {
         return secondaryStorageProviderTypes;
+    }
+
+    public AccountInfo.PackageType getPackageType() {
+        return packageType;
     }
 
 }

@@ -167,7 +167,8 @@ public class DuracloudServiceTestBase {
                                        "org-" + acctId,
                                        "dept-" + acctId,
                                        StorageProviderType.AMAZON_S3,
-                                       secStorProvTypes);
+                                       secStorProvTypes,
+                                       AccountInfo.PackageType.STARTER_ARCHIVING);
     }
 
     protected AccountInfo newAccountInfo(int acctId, String subdomain) {
@@ -188,6 +189,7 @@ public class DuracloudServiceTestBase {
                                secStorageProvAcctIds,
                                secServiceRepoIds,
                                paymentInfoId,
+                               AccountInfo.PackageType.PROFESSIONAL,
                                status);
     }
 

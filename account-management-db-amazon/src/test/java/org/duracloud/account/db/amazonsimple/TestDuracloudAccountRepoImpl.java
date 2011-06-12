@@ -39,6 +39,8 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
+    private static AccountInfo.PackageType packageType =
+        AccountInfo.PackageType.PROFESSIONAL;
     private static AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
 
@@ -162,6 +164,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
+                               packageType,
                                status);
     }
 

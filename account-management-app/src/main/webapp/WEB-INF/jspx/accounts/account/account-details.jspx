@@ -82,6 +82,12 @@
                 </tr>
 
                 <tr>
+                  <td align="right">Package</td>
+
+                  <td>${accountInfo.packageType}</td>
+                </tr>
+
+                <tr>
                   <td align="right">Status</td>
 
                   <td>${accountInfo.status}</td>

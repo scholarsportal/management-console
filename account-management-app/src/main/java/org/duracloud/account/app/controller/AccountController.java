@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -211,9 +213,20 @@ public class AccountController extends AbstractAccountController {
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
     public String openAddForm(Model model) throws DBNotFoundException {
         log.info("serving up new AccountForm");
-        model.addAttribute(NEW_ACCOUNT_FORM_KEY, new NewAccountForm());
+        NewAccountForm newAccountForm = new NewAccountForm();
+        newAccountForm.setPackageType(AccountInfo.PackageType.PROFESSIONAL.toString());
+        model.addAttribute(NEW_ACCOUNT_FORM_KEY, newAccountForm);
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
+    }
+
+    @ModelAttribute("packageTypes")
+    public List<String> getPackageTypes() {
+        List<String> packages = new ArrayList<String>();
+        for (AccountInfo.PackageType pType : AccountInfo.PackageType.values()) {
+            packages.add(pType.toString());
+        }
+        return packages;
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -234,7 +247,9 @@ public class AccountController extends AbstractAccountController {
                                             newAccountForm.getOrgName(),
                                             newAccountForm.getDepartment(),
                                             StorageProviderType.AMAZON_S3,
-                                            secondaryStorageProviderTypes);
+                                            secondaryStorageProviderTypes,
+                                            AccountInfo.PackageType.fromString(
+                                                newAccountForm.getPackageType()));
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);
