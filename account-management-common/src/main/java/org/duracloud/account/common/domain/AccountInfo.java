@@ -39,6 +39,11 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         public String toString() {
             return text;
         }
+
+        public String getText() {
+            return text;
+        }
+
     }
 
     /*

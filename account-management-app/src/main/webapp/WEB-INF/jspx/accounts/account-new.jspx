@@ -127,7 +127,7 @@
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="packageType">Package Type:</form:label>
+                         path="packageType">Service Plan:</form:label>
                       </td>
 
                       <td
@@ -136,7 +136,7 @@
                           id="packageType"
                           cssErrorClass="error"
                           path="packageType"
-                          items="${packageTypes}" />
+                          items="${packageTypes}" /> <a class="packageType" target="_blank" href="http://duracloud.org/pricing">Plan Descriptions</a>
                       </td>
                     </tr>
                   </table>

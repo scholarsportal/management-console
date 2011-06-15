@@ -82,9 +82,9 @@
                 </tr>
 
                 <tr>
-                  <td align="right">Package</td>
+                  <td align="right">Service Plan</td>
 
-                  <td>${accountInfo.packageType}</td>
+                  <td>${accountInfo.packageType.text}</td>
                 </tr>
 
                 <tr>

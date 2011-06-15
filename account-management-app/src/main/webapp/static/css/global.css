@@ -710,3 +710,8 @@ li.account:hover {
 	margin-top: 2px;
 	margin-left: 25px;
 }
+
+.packageType{
+    margin-left: 15px;
+    color:#666666 !important;
+}
