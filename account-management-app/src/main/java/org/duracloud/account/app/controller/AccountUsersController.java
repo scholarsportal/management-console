@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -306,19 +307,27 @@ public class AccountUsersController extends AbstractAccountController {
         List<AccountUser> accountUsers =
             buildUserList(accountInfo.getId(), users);
         Collections.sort(accountUsers);
-        addInvitationsToModel(pendingUserInvitations, model);
+        addInvitationsToModel(pendingUserInvitations, accountService, model);
         model.addAttribute(USERS_KEY, accountUsers);
     }
 
     /**
      * @param model
      * @param pendingUserInvitations
+     * @param accountService
      */
     private void addInvitationsToModel(Set<UserInvitation> pendingUserInvitations,
-                                       Model model) {
+                                       AccountService accountService,
+                                       Model model)
+        throws Exception {
         Set<PendingAccountUser> pendingUsers = new TreeSet<PendingAccountUser>();
         for (UserInvitation ui : pendingUserInvitations) {
-            pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
+            if(ui.getExpirationDate().before(new Date())) {
+                accountService.deleteUserInvitation(ui.getId());
+            }
+            else {
+                pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
+            }
         }
         model.addAttribute("pendingUserInvitations", pendingUsers);
     }
@@ -477,6 +486,10 @@ public class AccountUsersController extends AbstractAccountController {
 
         public String getEmail() {
             return this.invitation.getUserEmail();
+        }
+
+        public String getExpirationDate() {
+            return this.invitation.getExpirationDate().toString();
         }
 
         @Override

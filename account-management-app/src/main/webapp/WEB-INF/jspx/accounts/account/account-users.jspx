@@ -217,6 +217,8 @@
                 <tr>
                   <th align="left" valign="middle">Email</th>
 
+                  <th align="left" valign="middle">Expiration</th>
+
                   <th align="left" valign="middle">
                   </th>
                 </tr>
@@ -229,6 +231,8 @@
                  items="${pendingUserInvitations}">
                   <tr>
                     <td align="left" valign="middle">${up.email}</td>
+
+                    <td align="left" valign="middle">${up.expirationDate}</td>
 
                     <td align="left" valign="middle">
                       <ul
