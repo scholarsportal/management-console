@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.error.DBNotFoundException;
 
@@ -19,9 +20,12 @@ public interface DuracloudServiceRepositoryRepo  extends BaseRepo<ServiceReposit
      * given version.
      *
      * @param version of the service repository
-     * @return set of matching service repositories
+     * @param servicePlan of the service repository
+     * @return matching service repositories
      * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
      */
-    public Set<ServiceRepository> findByVersion(String version) throws DBNotFoundException;
-    
+    public ServiceRepository findByVersionAndPlan(String version,
+                                                  AccountInfo.PackageType servicePlan)
+        throws DBNotFoundException;
+
 }

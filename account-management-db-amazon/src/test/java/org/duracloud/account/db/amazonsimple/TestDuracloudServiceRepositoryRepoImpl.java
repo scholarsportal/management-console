@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -79,13 +80,16 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         String version1 = "1.0";
         String version2 = "2.0";
 
+        AccountInfo.PackageType servicePlan0 = AccountInfo.PackageType.PROFESSIONAL;
+        AccountInfo.PackageType servicePlan1 = AccountInfo.PackageType.STARTER_ARCHIVING;
+        AccountInfo.PackageType servicePlan2 = AccountInfo.PackageType.STARTER_MEDIA;
 
         ServiceRepository serviceRepo0 =
-            createServiceRepo(0, verifiedType,version1);
+            createServiceRepo(0, verifiedType, servicePlan0, version1);
         ServiceRepository serviceRepo1 =
-            createServiceRepo(1, verifiedType, version2);
+            createServiceRepo(1, verifiedType, servicePlan1, version2);
         ServiceRepository serviceRepo2 =
-            createServiceRepo(2, privateType, version2);
+            createServiceRepo(2, privateType, servicePlan2, version2);
 
         serviceRepositoryRepo.save(serviceRepo0);
         serviceRepositoryRepo.save(serviceRepo1);
@@ -106,8 +110,8 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         verifyFindById(serviceRepo1);
         verifyFindById(serviceRepo2);
 
-        verifyFindByVersion(version1, serviceRepo0);
-        verifyFindByVersion(version2, serviceRepo1, serviceRepo2);
+        verifyFindByVersionAndPlan(version1, servicePlan0, serviceRepo0);
+        verifyFindByVersionAndPlan(version2, servicePlan1, serviceRepo1);
 
         // test concurrency
         verifyCounter(serviceRepo0, 1);
@@ -135,8 +139,10 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     @Test
     public void testDelete() throws Exception {
-        ServiceRepository serviceRepo0 =
-            createServiceRepo(0, verifiedType, "0.0");
+        ServiceRepository serviceRepo0 = createServiceRepo(0,
+                                                           verifiedType,
+                                                           AccountInfo.PackageType.STARTER_MEDIA,
+                                                           "0.0");
         serviceRepositoryRepo.save(serviceRepo0);
         verifyRepoSize(serviceRepositoryRepo, 1);
 
@@ -147,9 +153,11 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
     private ServiceRepository createServiceRepo(int id,
                                                 ServiceRepository.
                                                     ServiceRepositoryType type,
+                                                AccountInfo.PackageType servicePlan,
                                                 String version) {
         return new ServiceRepository(id,
                                      type,
+                                     servicePlan,
                                      hostName,
                                      spaceId,
                                      version,
@@ -173,13 +181,15 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         }.call(counter);
     }
 
-    private void verifyFindByVersion(final String version,
-                                     final ServiceRepository... serviceRepos) {
-        new DBCallerVarArg<ServiceRepository>() {
-            protected Set<ServiceRepository> doCall() throws Exception {
-                return serviceRepositoryRepo.findByVersion(version);
+    private void verifyFindByVersionAndPlan(final String version,
+                                            final AccountInfo.PackageType servicePlan,
+                                            final ServiceRepository serviceRepo) {
+        new DBCaller<ServiceRepository>() {
+            protected ServiceRepository doCall() throws Exception {
+                return serviceRepositoryRepo.findByVersionAndPlan(version,
+                                                                  servicePlan);
             }
-        }.call(serviceRepos);
+        }.call(serviceRepo);
     }
 
 }

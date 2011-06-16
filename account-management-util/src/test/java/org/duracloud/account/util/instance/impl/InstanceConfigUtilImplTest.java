@@ -228,13 +228,20 @@ public class InstanceConfigUtilImplTest {
             .andReturn(serverImage)
             .times(1);
 
+        final int acctId = 3;
+        EasyMock.expect(instance.getAccountId()).andReturn(acctId);
+        EasyMock.expect(repoMgr.getAccountRepo()).andReturn(accountRepo);
+        EasyMock.expect(accountRepo.findById(acctId)).andReturn(account);
+        EasyMock.expect(account.getPackageType())
+            .andReturn(AccountInfo.PackageType.PROFESSIONAL);
+
         EasyMock.expect(repoMgr.getServiceRepositoryRepo())
             .andReturn(serviceRepositoryRepo)
             .times(1);
 
-        Set<ServiceRepository> serviceRepos = new HashSet<ServiceRepository>();
         ServiceRepository.ServiceRepositoryType serviceRepoType =
             ServiceRepository.ServiceRepositoryType.VERIFIED;
+        AccountInfo.PackageType servicePlan = AccountInfo.PackageType.PROFESSIONAL;
         int serviceRepoId = 1;
         String serviceRepoHost = "serviceRepoHost";
         String serviceRepoSpaceId = "serviceRepoSpaceId";
@@ -242,15 +249,15 @@ public class InstanceConfigUtilImplTest {
         String serviceRepoPassword = "serviceRepoPassword";
         ServiceRepository serviceRepo = new ServiceRepository(serviceRepoId,
                                                               serviceRepoType,
+                                                              servicePlan,
                                                               serviceRepoHost,
                                                               serviceRepoSpaceId,
                                                               version,
                                                               serviceRepoUsername,
                                                               serviceRepoPassword);
-        serviceRepos.add(serviceRepo);
-        EasyMock.expect(serviceRepositoryRepo.findByVersion(version))
-            .andReturn(serviceRepos)
-            .times(1);
+        EasyMock.expect(serviceRepositoryRepo.findByVersionAndPlan(version,
+                                                                   servicePlan))
+            .andReturn(serviceRepo);
 
         replayMocks();
 

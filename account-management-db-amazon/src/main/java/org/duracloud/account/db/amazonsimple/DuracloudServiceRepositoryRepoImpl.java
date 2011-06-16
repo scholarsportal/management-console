@@ -5,9 +5,7 @@ package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.PutAttributesRequest;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
@@ -16,10 +14,11 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SERVICE_PLAN_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.VERSION_ATT;
 
 /**
@@ -66,13 +65,15 @@ public class DuracloudServiceRepositoryRepoImpl
     }
 
     @Override
-    public Set<ServiceRepository> findByVersion(String version) throws DBNotFoundException {
-        List<Item> items = findItemsByAttribute(VERSION_ATT, version);
-        Set<ServiceRepository> set = new HashSet<ServiceRepository>();
-        for(Item item : items) {
-            set.add(converter.fromAttributes(item.getAttributes(),
-                                             idFromString(item.getName())));
-        }
-        return set;
+    public ServiceRepository findByVersionAndPlan(String version,
+                                                  AccountInfo.PackageType servicePlan)
+        throws DBNotFoundException {
+        Map<String, String> atts = new HashMap<String, String>();
+        atts.put(VERSION_ATT, version);
+        atts.put(SERVICE_PLAN_ATT, servicePlan.name());
+
+        Item item = findItemByAttributes(atts);
+        return converter.fromAttributes(item.getAttributes(),
+                                        idFromString(item.getName()));
     }
 }

@@ -5,6 +5,7 @@ package org.duracloud.account.db.amazonsimple.converter;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import junit.framework.Assert;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ServiceRepository;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.HOST_NAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.PASSWORD_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SERVICE_PLAN_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SERVICE_REPOSITORY_TYPE_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.SPACE_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudServiceRepositoryConverter.VERSION_ATT;
@@ -28,6 +30,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
     private static final int id = 0;
     private static final ServiceRepository.ServiceRepositoryType serviceRepositoryType =
         ServiceRepository.ServiceRepositoryType.VERIFIED;
+    private static final AccountInfo.PackageType servicePlan = AccountInfo.PackageType.STARTER_ARCHIVING;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
     private static final String version = "version";
@@ -44,6 +47,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
     protected ServiceRepository createTestItem() {
         return new ServiceRepository(id,
                                      serviceRepositoryType,
+                                     servicePlan, 
                                      hostName,
                                      spaceId,
                                      version,
@@ -60,6 +64,8 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
         List<Attribute> testAtts = new ArrayList<Attribute>();
         testAtts.add(new Attribute(SERVICE_REPOSITORY_TYPE_ATT,
                                    repoCvtr.asString(serviceRepositoryType)));
+        testAtts.add(new Attribute(SERVICE_PLAN_ATT, repoCvtr.asString(
+            servicePlan)));
         testAtts.add(new Attribute(HOST_NAME_ATT, hostName));
         testAtts.add(new Attribute(SPACE_ID_ATT, spaceId));
         testAtts.add(new Attribute(VERSION_ATT, version));
@@ -74,6 +80,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
         Assert.assertNotNull(serviceRepo);
 
         Assert.assertNotNull(serviceRepo.getServiceRepositoryType());
+        Assert.assertNotNull(serviceRepo.getServicePlan());
         Assert.assertNotNull(serviceRepo.getSpaceId());
         Assert.assertNotNull(serviceRepo.getVersion());
         Assert.assertNotNull(serviceRepo.getHostName());
@@ -83,6 +90,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
         Assert.assertEquals(counter, serviceRepo.getCounter());
         Assert.assertEquals(serviceRepositoryType,
                             serviceRepo.getServiceRepositoryType());
+        Assert.assertEquals(servicePlan, serviceRepo.getServicePlan());
         Assert.assertEquals(hostName, serviceRepo.getHostName());
         Assert.assertEquals(spaceId, serviceRepo.getSpaceId());
         Assert.assertEquals(version, serviceRepo.getVersion());

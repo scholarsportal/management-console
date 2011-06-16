@@ -6,6 +6,7 @@ package org.duracloud.account.db.amazonsimple.converter;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.util.SimpleDBUtils;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.util.FormatUtil;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String SPACE_ID_ATT = "SPACE_ID";
     public static final String VERSION_ATT = "VERSION";
+    public static final String SERVICE_PLAN_ATT = "SERVICE_PLAN";
     protected static final String USERNAME_ATT = "USERNAME";
     protected static final String PASSWORD_ATT = "PASSWORD";
 
@@ -44,6 +46,10 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         atts.add(new ReplaceableAttribute(
             SERVICE_REPOSITORY_TYPE_ATT,
             asString(serviceRepo.getServiceRepositoryType()),
+            true));
+        atts.add(new ReplaceableAttribute(
+            SERVICE_PLAN_ATT,
+            asString(serviceRepo.getServicePlan()),
             true));
         atts.add(new ReplaceableAttribute(
             HOST_NAME_ATT,
@@ -75,11 +81,16 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         return repoType.name();
     }
 
+    protected String asString(AccountInfo.PackageType servicePlan) {
+        return servicePlan.name();
+    }
+
     @Override
     public ServiceRepository fromAttributes(Collection<Attribute> atts, int id) {
         int counter = -1;
 
         ServiceRepository.ServiceRepositoryType serviceRepositoryType = null;
+        AccountInfo.PackageType servicePlan = null;
         String hostName = null;
         String spaceId = null;
         String version = null;
@@ -94,6 +105,9 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
 
             } else if (SERVICE_REPOSITORY_TYPE_ATT.equals(name)) {
                 serviceRepositoryType =  typeFromString(value);
+
+            } else if (SERVICE_PLAN_ATT.equals(name)) {
+                servicePlan = planFromString(value);
 
             } else if (HOST_NAME_ATT.equals(name)) {
                 hostName = value;
@@ -123,6 +137,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
 
         return new ServiceRepository(id,
                                      serviceRepositoryType,
+                                     servicePlan,
                                      hostName,
                                      spaceId,
                                      version,
@@ -133,6 +148,10 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
 
     protected ServiceRepository.ServiceRepositoryType typeFromString(String strType) {
         return ServiceRepository.ServiceRepositoryType.valueOf(strType.trim());
+    }
+
+    private AccountInfo.PackageType planFromString(String value) {
+        return AccountInfo.PackageType.valueOf(value.trim());
     }
 
 }

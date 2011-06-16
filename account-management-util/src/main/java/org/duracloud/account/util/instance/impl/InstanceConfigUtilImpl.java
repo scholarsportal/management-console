@@ -166,10 +166,11 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String serviceStoreUsername;
         String serviceStorePassword;
 
-        Set<ServiceRepository> serviceRepos;
+        AccountInfo.PackageType servicePlan = getAccount().getPackageType();
+        ServiceRepository serviceRepo;
         try {
-            serviceRepos =
-                repoMgr.getServiceRepositoryRepo().findByVersion(imageVersion);
+            serviceRepo = repoMgr.getServiceRepositoryRepo()
+                .findByVersionAndPlan(imageVersion, servicePlan);
         } catch(DBNotFoundException e) {
             String error = "No Service Repositories for version " +
                             imageVersion + " exist in the database.";
@@ -181,8 +182,6 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
             getAccount().getSecondaryServiceRepositoryIds();
         */
 
-        // The list should only be size == 1, so just use the first repo for now
-        ServiceRepository serviceRepo = serviceRepos.iterator().next();
         serviceStoreHost = serviceRepo.getHostName();
         serviceStoreSpaceId = serviceRepo.getSpaceId();
         serviceStoreUsername = serviceRepo.getUsername();
