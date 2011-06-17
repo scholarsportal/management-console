@@ -14,9 +14,8 @@
 
 <title>Duracloud : <tiles:insertAttribute name="title"
 	ignore="true" /></title>
-
 <link rel="stylesheet" type="text/css"
-	href="http://yui.yahooapis.com/2.8.2r1/build/grids/grids-min.css" />
+        href="${pageContext.request.contextPath}/static/css/yui-grids-2.8.2r1-min.css" />
 
 <link href="${pageContext.request.contextPath}/static/css/login.css"
 	rel="stylesheet" type="text/css" />
@@ -33,9 +32,8 @@
 <link rel="shortcut icon"
       href="${pageContext.request.contextPath}/static/img/favicon.ico" />
 
-<script src="http://code.jquery.com/jquery-1.4.3.js"
-	xml:space="preserve">
-</script>
+<script src="${pageContext.request.contextPath}/static/jquery/jquery.js"
+	type="text/javascript" />
 
 <script>
 	$(function(){
