@@ -6,6 +6,7 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceService;
@@ -214,19 +215,19 @@ public class AccountController extends AbstractAccountController {
     public String openAddForm(Model model) throws DBNotFoundException {
         log.info("serving up new AccountForm");
         NewAccountForm newAccountForm = new NewAccountForm();
-        newAccountForm.setPackageType(AccountInfo.PackageType.PROFESSIONAL.toString());
+        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL.toString());
         model.addAttribute(NEW_ACCOUNT_FORM_KEY, newAccountForm);
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
     }
 
-    @ModelAttribute("packageTypes")
-    public List<String> getPackageTypes() {
-        List<String> packages = new ArrayList<String>();
-        for (AccountInfo.PackageType pType : AccountInfo.PackageType.values()) {
-            packages.add(pType.toString());
+    @ModelAttribute("servicePlans")
+    public List<String> getServicePlans() {
+        List<String> plans = new ArrayList<String>();
+        for (ServicePlan pType : ServicePlan.values()) {
+            plans.add(pType.toString());
         }
-        return packages;
+        return plans;
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -248,8 +249,8 @@ public class AccountController extends AbstractAccountController {
                                             newAccountForm.getDepartment(),
                                             StorageProviderType.AMAZON_S3,
                                             secondaryStorageProviderTypes,
-                                            AccountInfo.PackageType.fromString(
-                                                newAccountForm.getPackageType()));
+                                            ServicePlan.fromString(
+                                                newAccountForm.getServicePlan()));
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);

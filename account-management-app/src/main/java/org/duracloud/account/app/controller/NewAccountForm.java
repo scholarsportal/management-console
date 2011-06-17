@@ -30,8 +30,8 @@ public class NewAccountForm {
 
     private List<StorageProviderType> storageProviders = new ArrayList<StorageProviderType>(0);
 
-    @NotBlank(message = "You must specify a package.")
-    private String packageType;
+    @NotBlank(message = "You must specify a service plan.")
+    private String servicePlan;
 
     public String getSubdomain() {
         return subdomain;
@@ -74,11 +74,11 @@ public class NewAccountForm {
         this.storageProviders = storageProviders;
     }
 
-    public String getPackageType() {
-        return packageType;
+    public String getServicePlan() {
+        return servicePlan;
     }
 
-    public void setPackageType(String packageType) {
-        this.packageType = packageType;
+    public void setServicePlan(String servicePlan) {
+        this.servicePlan = servicePlan;
     }
 }

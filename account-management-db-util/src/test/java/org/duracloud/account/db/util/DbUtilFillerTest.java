@@ -5,6 +5,7 @@ package org.duracloud.account.db.util;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
@@ -84,8 +85,7 @@ public class DbUtilFillerTest {
         Set<Integer> secStorageAcctIds = new HashSet<Integer>();
         secStorageAcctIds.add(secStorageAcctId);
         int paymentId = 30;
-        AccountInfo.PackageType packageType =
-            AccountInfo.PackageType.PROFESSIONAL;
+        ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.PENDING;
         String tbd = "TBD";
 
@@ -102,7 +102,7 @@ public class DbUtilFillerTest {
         AccountInfo account =
             new AccountInfo(acctId, subdomain, "acctName", "orgName", "dept",
                             computeAcctId, primStorageAcctId, secStorageAcctIds,
-                            null, paymentId, packageType, status);
+                            null, paymentId, servicePlan, status);
         EasyMock.expect(acctRepo.findBySubdomain(EasyMock.isA(String.class)))
             .andReturn(account)
             .times(1);

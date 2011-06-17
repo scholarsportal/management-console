@@ -84,7 +84,7 @@
                 <tr>
                   <td align="right">Service Plan</td>
 
-                  <td>${accountInfo.packageType.text}</td>
+                  <td>${accountInfo.servicePlan.text}</td>
                 </tr>
 
                 <tr>

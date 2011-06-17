@@ -6,7 +6,7 @@ package org.duracloud.account.db.amazonsimple.converter;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.util.SimpleDBUtils;
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.util.FormatUtil;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         return repoType.name();
     }
 
-    protected String asString(AccountInfo.PackageType servicePlan) {
+    protected String asString(ServicePlan servicePlan) {
         return servicePlan.name();
     }
 
@@ -90,7 +90,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         int counter = -1;
 
         ServiceRepository.ServiceRepositoryType serviceRepositoryType = null;
-        AccountInfo.PackageType servicePlan = null;
+        ServicePlan servicePlan = null;
         String hostName = null;
         String spaceId = null;
         String version = null;
@@ -150,8 +150,8 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         return ServiceRepository.ServiceRepositoryType.valueOf(strType.trim());
     }
 
-    private AccountInfo.PackageType planFromString(String value) {
-        return AccountInfo.PackageType.valueOf(value.trim());
+    private ServicePlan planFromString(String value) {
+        return ServicePlan.valueOf(value.trim());
     }
 
 }

@@ -14,38 +14,6 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         PENDING, ACTIVE;
     }
 
-    public enum PackageType {
-        STARTER_ARCHIVING("Starter Package: Archiving and Preservation"),
-        STARTER_MEDIA("Starter Package: Media Access"),
-        PROFESSIONAL("Professional Package");
-
-        private final String text;
-
-        private PackageType(String pt) {
-            text = pt;
-        }
-
-        public static PackageType fromString(String pt) {
-            for (PackageType pType : values()) {
-                if (pType.text.equalsIgnoreCase(pt)||
-                    pType.name().equalsIgnoreCase(pt)) {
-                    return pType;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-    }
-
     /*
      * The subdomain of duracloud.org which will be used to access the instance
      * associated with this account
@@ -98,7 +66,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
     /*
      * The package type for this account
      */
-    private PackageType packageType;
+    private ServicePlan servicePlan;
 
     private AccountStatus status;
 
@@ -112,7 +80,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
                        Set<Integer> secondaryStorageProviderAccountIds,
                        Set<Integer> secondaryServiceRepositoryIds,
                        int paymentInfoId,
-                       PackageType packageType,
+                       ServicePlan servicePlan,
                        AccountStatus status) {
 		this(id,
              subdomain,
@@ -124,7 +92,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
              secondaryStorageProviderAccountIds,
              secondaryServiceRepositoryIds,
              paymentInfoId,
-             packageType,
+             servicePlan,
              status,
              0);
 	}
@@ -139,7 +107,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
                        Set<Integer> secondaryStorageProviderAccountIds,
                        Set<Integer> secondaryServiceRepositoryIds,
                        int paymentInfoId,
-                       PackageType packageType,
+                       ServicePlan servicePlan,
                        AccountStatus status,
                        int counter) {
 		super();
@@ -153,7 +121,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         this.secondaryStorageProviderAccountIds = secondaryStorageProviderAccountIds;
         this.secondaryServiceRepositoryIds = secondaryServiceRepositoryIds;
         this.paymentInfoId = paymentInfoId;
-        this.packageType = packageType;
+        this.servicePlan = servicePlan;
         this.status = status;
         this.counter = counter;
 	}
@@ -206,8 +174,8 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         return paymentInfoId;
     }
 
-    public PackageType getPackageType() {
-        return packageType;
+    public ServicePlan getServicePlan() {
+        return servicePlan;
     }
 
     public AccountStatus getStatus() {
@@ -243,7 +211,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         if (paymentInfoId != that.paymentInfoId) {
             return false;
         }
-        if (packageType != that.packageType) {
+        if (servicePlan != that.servicePlan) {
             return false;
         }
         if (primaryStorageProviderAccountId !=
@@ -301,7 +269,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         result = 31 * result + (secondaryServiceRepositoryIds !=
             null ? secondaryServiceRepositoryIds.hashCode() : 0);
         result = 31 * result + paymentInfoId;
-        result = 31 * result + (packageType != null ? packageType.hashCode() : 0);
+        result = 31 * result + (servicePlan != null ? servicePlan.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }    

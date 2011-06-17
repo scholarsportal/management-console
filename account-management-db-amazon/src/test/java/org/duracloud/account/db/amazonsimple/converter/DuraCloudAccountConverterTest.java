@@ -5,6 +5,7 @@ package org.duracloud.account.db.amazonsimple.converter;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.junit.BeforeClass;
 
 import java.util.ArrayList;
@@ -35,8 +36,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static AccountInfo.PackageType packageType =
-        AccountInfo.PackageType.PROFESSIONAL;
+    private static ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
     private static AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
     private static final int counter = 4;
@@ -73,7 +73,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               packageType,
+                               servicePlan,
                                status,
                                counter);
     }
@@ -98,7 +98,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                    acctCvtr.idsAsString(secondaryServiceRepositoryIds)));
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
-        testAtts.add(new Attribute(PACKAGE_TYPE_ATT, packageType.name()));
+        testAtts.add(new Attribute(PACKAGE_TYPE_ATT, servicePlan.name()));
         testAtts.add(new Attribute(STATUS_ATT, status.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
@@ -118,7 +118,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertNotNull(acct.getSecondaryStorageProviderAccountIds());
         assertNotNull(acct.getSecondaryServiceRepositoryIds());
         assertNotNull(acct.getPaymentInfoId());
-        assertNotNull(acct.getPackageType());
+        assertNotNull(acct.getServicePlan());
         assertNotNull(acct.getStatus());
 
         assertEquals(counter, acct.getCounter());
@@ -135,7 +135,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertEquals(secondaryServiceRepositoryIds,
                      acct.getSecondaryServiceRepositoryIds());
         assertEquals(paymentInfoId, acct.getPaymentInfoId());
-        assertEquals(packageType, acct.getPackageType());
+        assertEquals(servicePlan, acct.getServicePlan());
         assertEquals(status, acct.getStatus());
     }
 

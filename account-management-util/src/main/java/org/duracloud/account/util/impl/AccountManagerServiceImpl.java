@@ -125,7 +125,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                 secondaryStorageProviderAccountIds,
                                 secondaryServiceRepositoryIds,
                                 paymentInfoId,
-                                accountCreationInfo.getPackageType(),
+                                accountCreationInfo.getServicePlan(),
                                 AccountInfo.AccountStatus.PENDING);
 
             getAccountRepo().save(newAccountInfo);

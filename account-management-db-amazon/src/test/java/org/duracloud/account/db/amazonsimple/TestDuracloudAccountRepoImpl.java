@@ -4,6 +4,7 @@
 package org.duracloud.account.db.amazonsimple;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.junit.After;
@@ -39,8 +40,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static AccountInfo.PackageType packageType =
-        AccountInfo.PackageType.PROFESSIONAL;
+    private static ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
     private static AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
 
@@ -164,7 +164,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               packageType,
+                               servicePlan,
                                status);
     }
 

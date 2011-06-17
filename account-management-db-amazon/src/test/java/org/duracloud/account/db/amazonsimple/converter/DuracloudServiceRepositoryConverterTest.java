@@ -5,7 +5,7 @@ package org.duracloud.account.db.amazonsimple.converter;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import junit.framework.Assert;
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
     private static final int id = 0;
     private static final ServiceRepository.ServiceRepositoryType serviceRepositoryType =
         ServiceRepository.ServiceRepositoryType.VERIFIED;
-    private static final AccountInfo.PackageType servicePlan = AccountInfo.PackageType.STARTER_ARCHIVING;
+    private static final ServicePlan servicePlan = ServicePlan.STARTER_ARCHIVING;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
     private static final String version = "version";

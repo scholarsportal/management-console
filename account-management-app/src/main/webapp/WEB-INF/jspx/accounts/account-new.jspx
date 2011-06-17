@@ -127,16 +127,16 @@
                        class="label">
                         <form:label
                          cssErrorClass="error"
-                         path="packageType">Service Plan:</form:label>
+                         path="servicePlan">Service Plan:</form:label>
                       </td>
 
                       <td
                        class="value required">
                           <form:select
-                          id="packageType"
+                          id="servicePlan"
                           cssErrorClass="error"
-                          path="packageType"
-                          items="${packageTypes}" /> <a class="packageType" target="_blank" href="http://duracloud.org/pricing">Plan Descriptions</a>
+                          path="servicePlan"
+                          items="${servicePlans}" /> <a class="servicePlan" target="_blank" href="http://duracloud.org/pricing">Plan Descriptions</a>
                       </td>
                     </tr>
                   </table>

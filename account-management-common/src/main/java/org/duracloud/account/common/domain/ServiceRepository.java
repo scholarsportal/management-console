@@ -30,7 +30,7 @@ public class ServiceRepository extends BaseDomainData {
      * The servicePlan of the repository.
      * This defines which services are available.
      */
-    private AccountInfo.PackageType servicePlan;
+    private ServicePlan servicePlan;
 
     /**
      * The name of the host from which a service repository is served
@@ -59,7 +59,7 @@ public class ServiceRepository extends BaseDomainData {
 
     public ServiceRepository (int id,
                               ServiceRepositoryType serviceRepositoryType,
-                              AccountInfo.PackageType servicePlan,
+                              ServicePlan servicePlan,
                               String hostName,
                               String spaceId,
                               String version,
@@ -78,7 +78,7 @@ public class ServiceRepository extends BaseDomainData {
 
     public ServiceRepository (int id,
                               ServiceRepositoryType serviceRepositoryType,
-                              AccountInfo.PackageType servicePlan,
+                              ServicePlan servicePlan,
                               String hostName,
                               String spaceId,
                               String version,
@@ -100,7 +100,7 @@ public class ServiceRepository extends BaseDomainData {
         return serviceRepositoryType;
     }
 
-    public AccountInfo.PackageType getServicePlan() {
+    public ServicePlan getServicePlan() {
         return servicePlan;
     }
 

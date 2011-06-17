@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -168,7 +169,7 @@ public class DuracloudServiceTestBase {
                                        "dept-" + acctId,
                                        StorageProviderType.AMAZON_S3,
                                        secStorProvTypes,
-                                       AccountInfo.PackageType.STARTER_ARCHIVING);
+                                       ServicePlan.STARTER_ARCHIVING);
     }
 
     protected AccountInfo newAccountInfo(int acctId, String subdomain) {
@@ -189,7 +190,7 @@ public class DuracloudServiceTestBase {
                                secStorageProvAcctIds,
                                secServiceRepoIds,
                                paymentInfoId,
-                               AccountInfo.PackageType.PROFESSIONAL,
+                               ServicePlan.PROFESSIONAL,
                                status);
     }
 

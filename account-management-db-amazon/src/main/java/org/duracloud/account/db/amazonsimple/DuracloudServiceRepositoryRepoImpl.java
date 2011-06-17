@@ -5,7 +5,7 @@ package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.Item;
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
@@ -66,7 +66,7 @@ public class DuracloudServiceRepositoryRepoImpl
 
     @Override
     public ServiceRepository findByVersionAndPlan(String version,
-                                                  AccountInfo.PackageType servicePlan)
+                                                  ServicePlan servicePlan)
         throws DBNotFoundException {
         Map<String, String> atts = new HashMap<String, String>();
         atts.put(VERSION_ATT, version);

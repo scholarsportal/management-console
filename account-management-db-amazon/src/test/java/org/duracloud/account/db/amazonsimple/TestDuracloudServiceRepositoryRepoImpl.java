@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -27,8 +26,6 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     private static final String DOMAIN = "TEST_DURACLOUD_SERVICE_REPOSITORIES";
 
-    private static final ServiceRepository.ServiceRepositoryType serviceRepositoryType =
-        ServiceRepository.ServiceRepositoryType.VERIFIED;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
     private static final String username = "username";
@@ -80,9 +77,9 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         String version1 = "1.0";
         String version2 = "2.0";
 
-        AccountInfo.PackageType servicePlan0 = AccountInfo.PackageType.PROFESSIONAL;
-        AccountInfo.PackageType servicePlan1 = AccountInfo.PackageType.STARTER_ARCHIVING;
-        AccountInfo.PackageType servicePlan2 = AccountInfo.PackageType.STARTER_MEDIA;
+        ServicePlan servicePlan0 = ServicePlan.PROFESSIONAL;
+        ServicePlan servicePlan1 = ServicePlan.STARTER_ARCHIVING;
+        ServicePlan servicePlan2 = ServicePlan.STARTER_MEDIA;
 
         ServiceRepository serviceRepo0 =
             createServiceRepo(0, verifiedType, servicePlan0, version1);
@@ -141,7 +138,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
     public void testDelete() throws Exception {
         ServiceRepository serviceRepo0 = createServiceRepo(0,
                                                            verifiedType,
-                                                           AccountInfo.PackageType.STARTER_MEDIA,
+                                                           ServicePlan.STARTER_MEDIA,
                                                            "0.0");
         serviceRepositoryRepo.save(serviceRepo0);
         verifyRepoSize(serviceRepositoryRepo, 1);
@@ -153,7 +150,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
     private ServiceRepository createServiceRepo(int id,
                                                 ServiceRepository.
                                                     ServiceRepositoryType type,
-                                                AccountInfo.PackageType servicePlan,
+                                                ServicePlan servicePlan,
                                                 String version) {
         return new ServiceRepository(id,
                                      type,
@@ -182,7 +179,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
     }
 
     private void verifyFindByVersionAndPlan(final String version,
-                                            final AccountInfo.PackageType servicePlan,
+                                            final ServicePlan servicePlan,
                                             final ServiceRepository serviceRepo) {
         new DBCaller<ServiceRepository>() {
             protected ServiceRepository doCall() throws Exception {

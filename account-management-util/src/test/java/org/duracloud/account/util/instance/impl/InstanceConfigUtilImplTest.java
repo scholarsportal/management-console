@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -232,8 +233,8 @@ public class InstanceConfigUtilImplTest {
         EasyMock.expect(instance.getAccountId()).andReturn(acctId);
         EasyMock.expect(repoMgr.getAccountRepo()).andReturn(accountRepo);
         EasyMock.expect(accountRepo.findById(acctId)).andReturn(account);
-        EasyMock.expect(account.getPackageType())
-            .andReturn(AccountInfo.PackageType.PROFESSIONAL);
+        EasyMock.expect(account.getServicePlan())
+            .andReturn(ServicePlan.PROFESSIONAL);
 
         EasyMock.expect(repoMgr.getServiceRepositoryRepo())
             .andReturn(serviceRepositoryRepo)
@@ -241,7 +242,7 @@ public class InstanceConfigUtilImplTest {
 
         ServiceRepository.ServiceRepositoryType serviceRepoType =
             ServiceRepository.ServiceRepositoryType.VERIFIED;
-        AccountInfo.PackageType servicePlan = AccountInfo.PackageType.PROFESSIONAL;
+        ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
         int serviceRepoId = 1;
         String serviceRepoHost = "serviceRepoHost";
         String serviceRepoSpaceId = "serviceRepoSpaceId";

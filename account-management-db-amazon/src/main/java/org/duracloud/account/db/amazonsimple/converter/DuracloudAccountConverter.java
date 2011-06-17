@@ -7,6 +7,7 @@ import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.util.SimpleDBUtils;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.util.FormatUtil;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                           asString(acct.getPaymentInfoId()),
                                           true));
         atts.add(new ReplaceableAttribute(PACKAGE_TYPE_ATT,
-                                          acct.getPackageType().name(),
+                                          acct.getServicePlan().name(),
                                           true));
         atts.add(new ReplaceableAttribute(STATUS_ATT,
                                           acct.getStatus().name(),
@@ -103,7 +104,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         Set<Integer> secondaryServiceRepositoryIds = null;
         AccountInfo.AccountStatus status = null;
         int paymentInfoId = -1;
-        AccountInfo.PackageType packageType = null;
+        ServicePlan servicePlan = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -148,7 +149,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                     idFromString(value, "Payment Info", "Account", id);
 
             } else if (PACKAGE_TYPE_ATT.equals(name)) {
-                packageType = AccountInfo.PackageType.valueOf(value);
+                servicePlan = ServicePlan.valueOf(value);
 
             } else if (STATUS_ATT.equals(name)) {
                 status = AccountInfo.AccountStatus.valueOf(value);
@@ -174,7 +175,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                secondaryStorageProviderAccountIds,
                                secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               packageType,
+                               servicePlan,
                                status,
                                counter);
     }

@@ -3,11 +3,9 @@
  */
 package org.duracloud.account.db;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.db.error.DBNotFoundException;
-
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -25,7 +23,7 @@ public interface DuracloudServiceRepositoryRepo  extends BaseRepo<ServiceReposit
      * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
      */
     public ServiceRepository findByVersionAndPlan(String version,
-                                                  AccountInfo.PackageType servicePlan)
+                                                  ServicePlan servicePlan)
         throws DBNotFoundException;
 
 }
