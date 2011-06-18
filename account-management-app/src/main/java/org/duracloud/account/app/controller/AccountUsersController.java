@@ -322,12 +322,7 @@ public class AccountUsersController extends AbstractAccountController {
         throws Exception {
         Set<PendingAccountUser> pendingUsers = new TreeSet<PendingAccountUser>();
         for (UserInvitation ui : pendingUserInvitations) {
-            if(ui.getExpirationDate().before(new Date())) {
-                accountService.deleteUserInvitation(ui.getId());
-            }
-            else {
-                pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
-            }
+            pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
         }
         model.addAttribute("pendingUserInvitations", pendingUsers);
     }

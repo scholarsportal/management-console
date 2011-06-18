@@ -25,8 +25,10 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -213,8 +215,22 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Set<UserInvitation> getPendingInvitations() {
-        return getUserInvitationRepo().findByAccountId(account.getId());
+    public Set<UserInvitation> getPendingInvitations()
+        throws DBConcurrentUpdateException {
+        Set<UserInvitation> invitations =
+            getUserInvitationRepo().findByAccountId(account.getId());
+
+        Set<UserInvitation> pendingInvitations = new TreeSet<UserInvitation>();
+
+        for (UserInvitation ui : invitations) {
+            if(ui.getExpirationDate().before(new Date())) {
+                getUserInvitationRepo().delete(ui.getId());
+            } else {
+                pendingInvitations.add(ui);
+            }
+        }
+
+        return pendingInvitations;
     }
 
     private DuracloudUserInvitationRepo getUserInvitationRepo() {

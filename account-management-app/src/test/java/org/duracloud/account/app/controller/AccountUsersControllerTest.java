@@ -142,17 +142,6 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
 
     }
 
-    @Test
-    public void testGetExpiredInvitation() throws Exception {
-        setupGetExpiredInvitation(TEST_ACCOUNT_ID);
-        replayMocks();
-
-        Model model = new ExtendedModelMap();
-        accountUsersController.get(TEST_ACCOUNT_ID, model);
-        verifyGet(model);
-
-    }
-
     private void verifyGet(Model model) {
         Assert.assertTrue(model.containsAttribute("account"));
         Assert.assertTrue(model.containsAttribute(AccountUsersController.USERS_KEY));
@@ -172,39 +161,6 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(accountService.getPendingInvitations())
             .andReturn(new HashSet<UserInvitation>())
             .times(1);
-
-        EasyMock.expect(accountService.getUsers())
-            .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() })))
-            .times(1);
-
-        EasyMock.expect(accountManagerService.getAccount(accountId))
-            .andReturn(accountService);
-        this.accountUsersController.setAccountManagerService(accountManagerService);
-
-        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
-            .andReturn(createUser())
-            .anyTimes();
-        accountUsersController.setUserService(userService);
-    }
-
-    private void setupGetExpiredInvitation(int accountId)
-        throws DBConcurrentUpdateException, AccountNotFoundException, DBNotFoundException {
-        this.accountManagerService =
-            EasyMock.createMock(AccountManagerService.class);
-        accountService = EasyMock.createMock(AccountService.class);
-        EasyMock.expect(accountService.retrieveAccountInfo())
-            .andReturn(createAccountInfo())
-            .times(1);
-
-        Set<UserInvitation> invitationSet = new HashSet<UserInvitation>();
-        UserInvitation invitation = new UserInvitation(1,1,"","",new Date(),new Date(1,1,1),"",0);
-        invitationSet.add(invitation);
-        EasyMock.expect(accountService.getPendingInvitations())
-            .andReturn(invitationSet)
-            .times(1);
-
-        accountService.deleteUserInvitation(1);
-        EasyMock.expectLastCall().times(1);
 
         EasyMock.expect(accountService.getUsers())
             .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() })))

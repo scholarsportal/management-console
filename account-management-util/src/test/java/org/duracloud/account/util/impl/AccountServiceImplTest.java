@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -161,14 +162,33 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     public void testGetPendingUserInvitations() throws Exception {
         Set<UserInvitation> userInvitations = new HashSet<UserInvitation>();
         userInvitations.add(createUserInvite());
-        EasyMock.expect(this.invitationRepo.findByAccountId(acctId)).andReturn(userInvitations);
+        EasyMock.expect(this.invitationRepo.findByAccountId(acctId)).andReturn(
+            userInvitations);
         replayMocks();
         Set<UserInvitation> invites = this.acctService.getPendingInvitations();
         Assert.assertTrue(invites.size() > 0);
     }
 
+    @Test
+    public void testGetExpiredPendingUserInvitations() throws Exception {
+        Set<UserInvitation> userInvitations = new HashSet<UserInvitation>();
+        userInvitations.add(createUserInvite());
+        userInvitations.add(new UserInvitation(2,acctId,"","",new Date(),new Date(1,1,1),"",0));
+
+        EasyMock.expect(this.invitationRepo.findByAccountId(acctId)).andReturn(
+            userInvitations);
+
+        this.invitationRepo.delete(2);
+        EasyMock.expectLastCall();
+
+        replayMocks();
+        
+        Set<UserInvitation> invites = this.acctService.getPendingInvitations();
+        Assert.assertTrue(invites.size() == 1);
+    }
+
     private UserInvitation createUserInvite() {
-        return new UserInvitation(1, acctId, adminUsername, "test@duracloud.org", 1, "xyz");
+        return new UserInvitation(1, acctId, adminUsername, "test@duracloud.org", 4, "xyz");
    }
 
     @Test
