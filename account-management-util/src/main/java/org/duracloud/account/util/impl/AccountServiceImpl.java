@@ -220,10 +220,11 @@ public class AccountServiceImpl implements AccountService {
         Set<UserInvitation> invitations =
             getUserInvitationRepo().findByAccountId(account.getId());
 
+        Date now = new Date();
         Set<UserInvitation> pendingInvitations = new TreeSet<UserInvitation>();
 
         for (UserInvitation ui : invitations) {
-            if(ui.getExpirationDate().before(new Date())) {
+            if(ui.getExpirationDate().before(now)) {
                 getUserInvitationRepo().delete(ui.getId());
             } else {
                 pendingInvitations.add(ui);
