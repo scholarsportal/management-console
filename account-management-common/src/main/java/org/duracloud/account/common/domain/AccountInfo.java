@@ -64,7 +64,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
     private int paymentInfoId;
 
     /*
-     * The package type for this account
+     * The service plan for this account
      */
     private ServicePlan servicePlan;
 

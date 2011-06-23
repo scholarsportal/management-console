@@ -98,7 +98,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                    acctCvtr.idsAsString(secondaryServiceRepositoryIds)));
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
-        testAtts.add(new Attribute(PACKAGE_TYPE_ATT, servicePlan.name()));
+        testAtts.add(new Attribute(SERVICE_PLAN_ATT, servicePlan.name()));
         testAtts.add(new Attribute(STATUS_ATT, status.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;

@@ -41,7 +41,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
     protected static final String SECONDARY_SERVICE_REPOSITORY_IDS_ATT =
         "SECONDARY_SERVICE_REPOSITORY_IDS";
     protected static final String PAYMENT_INFO_ID_ATT = "PAYMENT_INFO_ID";
-    protected static final String PACKAGE_TYPE_ATT = "PACKAGE_TYPE";
+    protected static final String SERVICE_PLAN_ATT = "SERVICE_PLAN";
     protected static final String STATUS_ATT = "STATUS";
 
     @Override
@@ -80,7 +80,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         atts.add(new ReplaceableAttribute(PAYMENT_INFO_ID_ATT,
                                           asString(acct.getPaymentInfoId()),
                                           true));
-        atts.add(new ReplaceableAttribute(PACKAGE_TYPE_ATT,
+        atts.add(new ReplaceableAttribute(SERVICE_PLAN_ATT,
                                           acct.getServicePlan().name(),
                                           true));
         atts.add(new ReplaceableAttribute(STATUS_ATT,
@@ -148,7 +148,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                 paymentInfoId =
                     idFromString(value, "Payment Info", "Account", id);
 
-            } else if (PACKAGE_TYPE_ATT.equals(name)) {
+            } else if (SERVICE_PLAN_ATT.equals(name)) {
                 servicePlan = ServicePlan.valueOf(value);
 
             } else if (STATUS_ATT.equals(name)) {
