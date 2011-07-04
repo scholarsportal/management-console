@@ -4,6 +4,8 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.util.DuracloudUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,9 +14,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.Set;
 
 /**
  * Base class for all controllers.
@@ -37,8 +41,8 @@ public abstract class AbstractController {
     protected void reauthenticate(
         DuracloudUser user, AuthenticationManager authenticationManager) {
         reauthenticate(user.getUsername(),
-            user.getPassword(),
-            authenticationManager);
+                       user.getPassword(),
+                       authenticationManager);
     }
 
     protected void reauthenticate(
@@ -57,6 +61,49 @@ public abstract class AbstractController {
 
     public void destroy() {
         log.info("destroying " + this.toString());
+    }
+
+    @ModelAttribute("ownerRole")
+    public Role getOwnerRole() {
+        return Role.ROLE_OWNER;
+    }
+
+    @ModelAttribute("adminRole")
+    public Role getAdminRole() {
+        return Role.ROLE_ADMIN;
+    }
+
+    @ModelAttribute("userRole")
+    public Role getUserRole() {
+        return Role.ROLE_USER;
+    }
+
+    protected void setUserRights(DuracloudUserService userService,
+                                 int accountId, int userId, Role role) {
+        Set<Role> roles = role.getRoleHierarchy();
+
+        userService.setUserRights(accountId,
+                                  userId,
+                                  roles.toArray(new Role[roles.size()]));
+    }
+
+    /**
+     * @param users
+     * @return
+     */
+    protected boolean accountHasMoreThanOneOwner(
+        Set<DuracloudUser> users, int accountId) {
+        int ownerCount = 0;
+        for (DuracloudUser u : users) {
+            if (u.isOwnerForAcct(accountId) && !u.isRootForAcct(accountId)) {
+                ownerCount++;
+                if (ownerCount > 1) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @ExceptionHandler(Exception.class)

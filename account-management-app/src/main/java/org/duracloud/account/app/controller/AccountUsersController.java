@@ -232,21 +232,6 @@ public class AccountUsersController extends AbstractAccountController {
         return ACCOUNT_USERS_EDIT_ID;
     }
 
-    @ModelAttribute("ownerRole")
-    public Role getOwnerRole() {
-        return Role.ROLE_OWNER;
-    }
-
-    @ModelAttribute("adminRole")
-    public Role getAdminRole() {
-        return Role.ROLE_ADMIN;
-    }
-
-    @ModelAttribute("userRole")
-    public Role getUserRole() {
-        return Role.ROLE_USER;
-    }
-
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
     public String editUser(@PathVariable int accountId, @PathVariable int userId,
                            @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
@@ -258,11 +243,11 @@ public class AccountUsersController extends AbstractAccountController {
         log.info("New role: {}", role);
 
         boolean exception = false;
-        Set<Role> roles = role.getRoleHierarchy();
         try {
-            userService.setUserRights(accountId,
-                                      userId,
-                                      roles.toArray(new Role[roles.size()]));
+            setUserRights(userService,
+                          accountId,
+                          userId,
+                          role);
         } catch(AccessDeniedException e) {
             result.addError(new ObjectError("role",
                                 "You are unauthorized to set the role for this user"));
@@ -363,25 +348,6 @@ public class AccountUsersController extends AbstractAccountController {
         }
 
         return list;
-    }
-
-    /**
-     * @param users
-     * @return
-     */
-    private boolean accountHasMoreThanOneOwner(
-        Set<DuracloudUser> users, int accountId) {
-        int ownerCount = 0;
-        for (DuracloudUser u : users) {
-            if (u.isOwnerForAcct(accountId) && !u.isRootForAcct(accountId)) {
-                ownerCount++;
-                if (ownerCount > 1) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /**

@@ -292,7 +292,15 @@ div.global-errors{
 	color:#000;
 }
 
+.outer .root-link
+{
+	margin-left: 8px;
+}
 
+.outer .root-link:hover
+{
+	color:#000;
+}
 
 .dc-properties{
 	border-top:2px solid #aaa;	

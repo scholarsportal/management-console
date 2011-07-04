@@ -118,6 +118,13 @@
 		<i class="pre "></i> My Profile </a></li>
 		<li style="margin-left: 8px">|</li>
 
+        <sec:authorize ifAnyGranted="ROLE_ROOT">
+		<li><a id="manage-user-link" accesskey="p" class="root-link"
+			href="${pageContext.request.contextPath}/users/manage">
+		<i class="pre "></i> Root Console </a></li>
+		<li style="margin-left: 8px">|</li>
+        </sec:authorize>
+
 		<li><a id="logout-link" accesskey="l"
 			href="${pageContext.request.contextPath}/j_spring_security_logout"
 			class="icon-link logout"><i class="pre logoff"></i>Logout</a></li>

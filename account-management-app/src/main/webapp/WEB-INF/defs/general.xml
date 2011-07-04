@@ -36,6 +36,7 @@
 
   <!-- root views -->
   <definition name="accounts-home" template="/WEB-INF/jspx/accounts/accounts-home.jspx" />
+  <definition name="manage-users" template="/WEB-INF/jspx/users/manage-users.jspx" />
 
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />

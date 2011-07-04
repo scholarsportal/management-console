@@ -63,6 +63,14 @@ public class DuracloudUser extends BaseDomainData implements UserDetails {
     }
 
     /**
+     * Get rights for all accounts to which a user has access
+     * @return accountRights
+     */
+    public Set<AccountRights> getAccountRights() {
+        return accountRights;
+    }
+
+    /**
      * Set rights for a single account to which a user has access
      * @param singleAccountRights
      */
