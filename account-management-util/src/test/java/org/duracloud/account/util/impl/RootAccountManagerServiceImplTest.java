@@ -4,7 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
-/import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.notification.Emailer;
