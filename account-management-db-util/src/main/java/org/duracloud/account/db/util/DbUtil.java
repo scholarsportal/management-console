@@ -53,8 +53,12 @@ public class DbUtil {
     private DuracloudRepoMgr repoMgr;
     private File workDir;
 
-    public DbUtil(File credentialFile, File workDir) {
-        this.repoMgr = getRepoManager(credentialFile);
+    public DbUtil(File configFile, File workDir) {
+        this(getAmaConfig(configFile), workDir);
+    }
+
+    public DbUtil(AmaConfig config, File workDir) {
+        this.repoMgr = getRepoManager(config);
         this.workDir = workDir;
     }
 
@@ -84,25 +88,29 @@ public class DbUtil {
         }
     }
 
-    private DuracloudRepoMgr getRepoManager(File credentialFile) {
-        DuracloudRepoMgr repoMgr = new AmazonSimpleDBRepoMgr(new IdUtilImpl());
-        FileInputStream credStream = null;
+    private static AmaConfig getAmaConfig(File configFile) {
+        FileInputStream configStream = null;
         AmaConfig config = null;
         try {
-            credStream = new FileInputStream(credentialFile);
-            config = AmaInitDocumentBinding.createAmaConfigFrom(credStream);
+            configStream = new FileInputStream(configFile);
+            config = AmaInitDocumentBinding.createAmaConfigFrom(configStream);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
 
         } finally {
-            IOUtils.closeQuietly(credStream);
+            IOUtils.closeQuietly(configStream);
         }
 
         if (null == config) {
             throw new RuntimeException("Error creating AmaConfig.");
         }
-        
+
+        return config;
+    }
+
+    private DuracloudRepoMgr getRepoManager(AmaConfig config) {
+        DuracloudRepoMgr repoMgr = new AmazonSimpleDBRepoMgr(new IdUtilImpl());
         repoMgr.initialize(config);
         return repoMgr;
     }
