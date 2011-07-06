@@ -16,8 +16,40 @@
      value="Account Management App: Manage Users" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+     name="header-extensions">
+        <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/jquery/jquery.js"></script>
+
+        <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/jquery/plugins/jquery.tablesorter/jquery.tablesorter.js"></script>
+
+        <script type="text/javascript" language="JavaScript">
+          $(document).ready(function() {
+            $("#sort").tablesorter({
+                headers: {
+                    4: {
+                        sorter: false
+                    },
+                    5: {
+                        sorter: false
+                    },
+                    6: {
+                        sorter: false
+                    },
+                    7: {
+                        sorter: false
+                    },
+                    8: {
+                        sorter: false
+                    },
+                    9: {
+                        sorter: false
+                    }
+                }
+            });
+         });
+        </script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
@@ -82,7 +114,8 @@
               </tr>
             </table>
            <div style="height:20px"></div>
-                <table class="datatablesimple">
+                <table id="sort" class="datatablesimple">
+                <thead>
                 <tr>
                   <th align="left">Username</th>
 
@@ -104,6 +137,8 @@
 
                   <th align="left"></th>
                 </tr>
+                </thead>
+                <tbody>
 
                 <c:forEach
                  var="u"
@@ -187,7 +222,7 @@
                 <c:forEach
                  var="a"
                  items="${u.accounts}">
-		          <tr>
+		          <tr class="expand-child">
                     <td align="left"></td>
 
                     <td align="left"></td>
@@ -283,6 +318,8 @@
                   </tr>
                 </c:forEach>
                 </c:forEach>
+                </tbody>
+
               </table>
             </div>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">

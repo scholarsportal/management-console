@@ -723,3 +723,25 @@ li.account:hover {
     margin-left: 15px;
     color:#666666 !important;
 }
+
+th.header {
+    background-image: url(../img/bg.gif);
+    cursor: pointer;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right: 20px;
+    margin-right: -1px;
+}
+th.headerSortUp {
+    background-image: url(../img/asc.gif);
+    background-color: #3399FF;
+    background-repeat: no-repeat;
+
+}
+th.headerSortDown {
+    background-image: url(../img/desc.gif);
+    background-color: #3399FF;
+    background-repeat: no-repeat;
+
+}
