@@ -63,7 +63,7 @@ public interface DuracloudUserService {
      *
      * @return true if an update was performed.
      */
-    @Secured({"role:ROLE_ADMIN, scope:ANY"})
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT_PEER_UPDATE"})
     public boolean setUserRights(int acctId, int userId, Role... roles);
 
     /**

@@ -124,6 +124,10 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         AccountRights rights = getUserRightsForAcct(userId, acctId);
         AccountRights other = getUserRightsForAcct(otherUserId, acctId);
 
+        if (null != rights && isRoot(rights)) {
+           return ACCESS_GRANTED;
+        }
+
         if (null == rights || null == other) {
             log.warn("No rights found for users {}, {} on acct {}",
                      new Object[]{userId, otherUserId, acctId});
@@ -142,6 +146,10 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
                                otherRoles});
 
         return existing && updates ? ACCESS_GRANTED : ACCESS_DENIED;
+    }
+
+    private boolean isRoot(AccountRights rights) {
+        return Role.ROLE_ROOT.equals(Role.highestRole(rights.getRoles()));
     }
 
     protected int voteRolesAreSufficientToUpdateOther(Set<Role> roles,
