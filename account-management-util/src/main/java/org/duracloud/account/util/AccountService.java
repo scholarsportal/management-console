@@ -48,6 +48,13 @@ public interface AccountService {
         throws DBConcurrentUpdateException;
 
     /**
+     * @param status
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public void storeAccountStatus(AccountInfo.AccountStatus status)
+        throws DBConcurrentUpdateException;
+
+    /**
      * @return
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})

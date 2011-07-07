@@ -99,6 +99,13 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
+    public void storeAccountStatus(AccountInfo.AccountStatus status)
+        throws DBConcurrentUpdateException {
+        throwIfAccessDenied(status);
+        accountService.storeAccountStatus(status);
+    }
+
+    @Override
     public PaymentInfo retrievePaymentInfo() {
         throwIfAccessDenied();
         return accountService.retrievePaymentInfo();

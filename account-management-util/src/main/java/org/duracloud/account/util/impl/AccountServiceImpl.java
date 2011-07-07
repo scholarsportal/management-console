@@ -156,6 +156,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void storeAccountStatus(AccountInfo.AccountStatus status)
+        throws DBConcurrentUpdateException {
+        account.setStatus(status);
+        repoMgr.getAccountRepo().save(account);
+    }
+
+    @Override
     public void storePaymentInfo(PaymentInfo paymentInfo) {
         // TODO Auto-generated method stub
     }

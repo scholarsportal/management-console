@@ -11,7 +11,7 @@ import java.util.Set;
 public class AccountInfo extends BaseDomainData implements Comparable<AccountInfo> {
 
     public enum AccountStatus {
-        PENDING, ACTIVE;
+        PENDING, ACTIVE, INACTIVE;
     }
 
     /*

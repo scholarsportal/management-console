@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceService;
@@ -88,7 +89,8 @@ public class AccountController extends AbstractAccountController {
             model.addAttribute(INSTANCE_STATUS_KEY,
                                instanceService.getStatus());
         } else {
-            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE) ||
+               accountInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE) ) {
                 Set<String> versions = instanceManagerService.getVersions();
                 model.addAttribute(DC_VERSIONS_KEY, versions);
                 model.addAttribute(NEW_INSTANCE_FORM,
@@ -267,6 +269,30 @@ public class AccountController extends AbstractAccountController {
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
 
+    }
+
+    @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
+    public String activate(@PathVariable int accountId,
+                           Model model)
+        throws AccountNotFoundException, DBConcurrentUpdateException {
+        AccountService accountService = accountManagerService.getAccount(accountId);
+        accountService.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
+    }
+
+    @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
+    public String deactivate(@PathVariable int accountId,
+                           Model model)
+        throws AccountNotFoundException, DBConcurrentUpdateException {
+        AccountService accountService = accountManagerService.getAccount(accountId);
+        accountService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
     public AuthenticationManager getAuthenticationManager() {

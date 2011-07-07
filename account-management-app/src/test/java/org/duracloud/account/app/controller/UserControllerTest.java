@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -134,7 +135,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
         Assert.assertTrue(map.containsKey("accounts"));
         obj = map.get("accounts");
         Assert.assertNotNull(obj);
-        Assert.assertTrue(obj instanceof Set);
+        Assert.assertTrue(obj instanceof List);
 
         EasyMock.verify(request, session, userService, accountManagerService);
     }

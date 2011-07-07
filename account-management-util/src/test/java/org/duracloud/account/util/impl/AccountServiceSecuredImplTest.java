@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.InvoicePaymentInfo;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.util.AccountService;
@@ -122,6 +123,19 @@ public class AccountServiceSecuredImplTest {
         replayMocks();
 
         acctServiceImpl.storeAccountInfo(acctName, orgName, dept);
+    }
+
+    @Test
+    public void testStoreAccountStatus() throws Exception {
+        AccountInfo.AccountStatus status = AccountInfo.AccountStatus.INACTIVE;
+
+        acctService.storeAccountStatus(status);
+        EasyMock.expectLastCall();
+
+        setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
+        replayMocks();
+
+        acctServiceImpl.storeAccountStatus(status);
     }
 
     @Test

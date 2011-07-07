@@ -33,9 +33,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * The default view for this application
@@ -295,18 +297,19 @@ public class UserController extends AbstractController {
         mav.addObject(NEW_INSTANCE_FORM,
                            new AccountInstanceForm());
 
-        Set<DuracloudAccount> duracloudAccounts =
-            new TreeSet<DuracloudAccount>();
+        List<DuracloudAccount> duracloudAccounts =
+            new ArrayList<DuracloudAccount>();
 
         Iterator<AccountInfo> iterator = accounts.iterator();
         while(iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
-            duracloudAccounts.add(loadAccountInstances(acctInfo, user, mav));
+            duracloudAccounts.add(loadAccountInstances(acctInfo, user));
         }
+        Collections.sort(duracloudAccounts);
         mav.addObject("accounts", duracloudAccounts);
     }
 
-    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, DuracloudUser user, ModelAndView model) {
+    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, DuracloudUser user) {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
@@ -322,7 +325,8 @@ public class UserController extends AbstractController {
             duracloudAccount.setInstanceVersion(
                 instanceService.getInstanceVersion());
         } else {
-            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE) ||
+               accountInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE)) {
                 Set<String> versions = instanceManagerService.getVersions();
                 duracloudAccount.setVersions(versions);
             }

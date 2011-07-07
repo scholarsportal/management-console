@@ -173,7 +173,14 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     public void testGetExpiredPendingUserInvitations() throws Exception {
         Set<UserInvitation> userInvitations = new HashSet<UserInvitation>();
         userInvitations.add(createUserInvite());
-        userInvitations.add(new UserInvitation(2,acctId,"","",new Date(),new Date(1,1,1),"",0));
+        userInvitations.add(new UserInvitation(2,
+                                               acctId,
+                                               "",
+                                               "",
+                                               new Date(),
+                                               new Date(1, 1, 1),
+                                               "",
+                                               0));
 
         EasyMock.expect(this.invitationRepo.findByAccountId(acctId)).andReturn(
             userInvitations);
@@ -220,6 +227,14 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
                           body.contains(ui.getRedemptionCode()));
 
         EasyMock.verify(emailer);
+    }
+
+    @Test
+    public void testStoreAccountStatus() throws Exception {
+        this.accountRepo.save(EasyMock.anyObject(AccountInfo.class));
+        EasyMock.expectLastCall();
+        replayMocks();
+        this.acctService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
     }
 
     
