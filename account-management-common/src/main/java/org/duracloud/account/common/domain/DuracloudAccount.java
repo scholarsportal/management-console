@@ -65,6 +65,6 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
 
     @Override
     public int compareTo(DuracloudAccount o) {
-        return this.accountInfo.getStatus().compareTo(o.accountInfo.getStatus());
+        return this.accountInfo.compareTo(o.accountInfo);
     }
 }

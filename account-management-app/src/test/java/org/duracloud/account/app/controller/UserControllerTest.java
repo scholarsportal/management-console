@@ -132,8 +132,18 @@ public class UserControllerTest  extends AmaControllerTestBase {
         Assert.assertNotNull(obj);
         Assert.assertTrue(obj instanceof DuracloudUser);
 
-        Assert.assertTrue(map.containsKey("accounts"));
-        obj = map.get("accounts");
+        Assert.assertTrue(map.containsKey("activeAccounts"));
+        obj = map.get("activeAccounts");
+        Assert.assertNotNull(obj);
+        Assert.assertTrue(obj instanceof List);
+
+        Assert.assertTrue(map.containsKey("pendingAccounts"));
+        obj = map.get("pendingAccounts");
+        Assert.assertNotNull(obj);
+        Assert.assertTrue(obj instanceof List);
+
+        Assert.assertTrue(map.containsKey("inactiveAccounts"));
+        obj = map.get("inactiveAccounts");
         Assert.assertNotNull(obj);
         Assert.assertTrue(obj instanceof List);
 

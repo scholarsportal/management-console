@@ -297,16 +297,32 @@ public class UserController extends AbstractController {
         mav.addObject(NEW_INSTANCE_FORM,
                            new AccountInstanceForm());
 
-        List<DuracloudAccount> duracloudAccounts =
+        List<DuracloudAccount> activeAccounts =
+            new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> inactiveAccounts =
+            new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> pendingAccounts =
             new ArrayList<DuracloudAccount>();
 
         Iterator<AccountInfo> iterator = accounts.iterator();
         while(iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
-            duracloudAccounts.add(loadAccountInstances(acctInfo, user));
+            DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo, user);
+            
+            if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+                activeAccounts.add(duracloudAccount);
+            } else if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE)) {
+                inactiveAccounts.add(duracloudAccount);
+            } else if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.PENDING)) {
+                pendingAccounts.add(duracloudAccount);
+            }
         }
-        Collections.sort(duracloudAccounts);
-        mav.addObject("accounts", duracloudAccounts);
+        Collections.sort(activeAccounts);
+        Collections.sort(inactiveAccounts);
+        Collections.sort(pendingAccounts);
+        mav.addObject("activeAccounts", activeAccounts);
+        mav.addObject("inactiveAccounts", inactiveAccounts);
+        mav.addObject("pendingAccounts", pendingAccounts);
     }
 
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, DuracloudUser user) {

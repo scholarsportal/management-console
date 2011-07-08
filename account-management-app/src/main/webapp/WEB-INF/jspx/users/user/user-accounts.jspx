@@ -46,7 +46,7 @@
              class="dc-subgroup-body">
             <table border="0" cellspacing="0" cellpadding="4">
               <tr>
-                <td class="accountlabel"><strong>Accounts</strong></td>
+                <td class="accountlabel"><strong> Active Accounts</strong></td>
                 <td align="right">
               <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                 <a
@@ -64,10 +64,10 @@
               
               <c:choose>
                 <c:when
-                 test="${not empty accounts}">
+                 test="${not empty activeAccounts}">
                     <c:forEach
                      var="a"
-                     items="${accounts}">
+                     items="${activeAccounts}">
                 <div class="account-record" style="min-height:100px !important">
                 <table width="100%">
                       <tr class="account">
@@ -81,26 +81,6 @@
 
                       <c:if test="${a.userRole == 'ROLE_ROOT'}">
                       <c:if test="${a.instanceStatus == null}">
-                        <c:if test="${a.accountInfo.status == 'INACTIVE'}">
-
-                          <script type="text/javascript" language="JavaScript">
-                            function AskAndActivate(t)
-                            {
-                              var answer = confirm("Are you sure you want to activate this account.");
-                              if (answer)
-                              {
-                                t.form.submit();
-                              }
-                            }
-                          </script>
-                            <td width="90" align="right" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
-                              method="post">
-                            <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
-                          </form>
-                            </td>
-                        </c:if>
-                        <c:if test="${a.accountInfo.status == 'ACTIVE'}">
 
                           <script type="text/javascript" language="JavaScript">
                             function AskAndDeactivate(t)
@@ -118,7 +98,6 @@
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndDeactivate(this); return false;">Deactivate Account</button>
                           </form>
                             </td>
-                        </c:if>
                       </c:if>
                       </c:if>
 
@@ -138,17 +117,10 @@
               <c:choose>
                 <c:when test="${a.instanceStatus == null}">
                   <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
-                    <c:if test="${a.userRole != 'ROLE_USER'}">
-                    <c:if test="${a.accountInfo.status == 'PENDING'}"><span class="instructions">
-                        This status of this account is currently PENDING. Once this account
-                            becomes active, it will be possible to start an instance.</span>
-                    </c:if>
-                    </c:if>
+
                   </div>
                     <c:if test="${a.userRole != 'ROLE_USER'}">
-                    <c:if test="${a.accountInfo.status != 'PENDING'}">
                       <div class="instance-panel inactive">
-                          <c:if test="${a.accountInfo.status == 'ACTIVE'}">
 
                       <form:form
                         id="instance-start-form"
@@ -164,15 +136,7 @@
                           </c:if>
                         <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
-                          </c:if>
-
-                        <c:if test="${a.accountInfo.status == 'INACTIVE'}">
-                            <span class="instructions">
-                            This status of this account is currently INACTIVE. Please contact DuraCloud to
-                            make your account ACTIVE.</span>
-                        </c:if>
                       </div>
-                    </c:if>
                     </c:if>
 
                 </c:when>
@@ -254,11 +218,8 @@
             </div>
           </div>
 
-</td>
-                      </tr>
-
-
-                    
+            </td>
+          </tr>
                     
                   </table>
                 </div>
@@ -266,11 +227,164 @@
                 </c:when>
 
                 <c:otherwise>
-                  <p class="lighttext"><strong>You currently do not have any DuraCloud accounts, you must be invited to an account.</strong></p>
+                  <p class="lighttext"><strong>You currently do not have any active DuraCloud accounts, you must be invited to an account.</strong></p>
                 </c:otherwise>
               </c:choose>
-  </div>
-</div>
+          </div>
+        </div>
+
+
+
+      <c:choose>
+        <c:when
+         test="${not empty pendingAccounts}">
+        <div
+           id="pending-list"
+           class="dc-subgroup">
+
+            <div
+             class="dc-subgroup-body">
+            <table border="0" cellspacing="0" cellpadding="4">
+              <tr>
+                <td class="accountlabel"><strong> Pending Accounts</strong></td>
+        </tr>
+        </table>
+        <br />
+
+                    <c:forEach
+                     var="a"
+                     items="${pendingAccounts}">
+                <div class="account-record" style="min-height:100px !important">
+                <table width="100%">
+                      <tr class="account">
+                        <td align="left" valign="middle">
+                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+
+                        </td>
+                        <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
+                        <c:if test="${a.userRole != 'ROLE_USER'}">
+                        <td width="90" align="right" valign="middle"><a class="button"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
+                             > <span
+                             class="pre plus"> </span> Account Information</a></td>
+                        <td width="90" align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
+                             class="button"> Manage Users and Roles</a></td>
+                        </c:if>
+                      </tr>
+                      <tr class="account">
+                        <td colspan="5" align="left" valign="middle">
+                        <div />
+                        <div />
+
+                            <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
+
+                              <c:if test="${a.userRole != 'ROLE_USER'}">
+                              <span class="instructions">
+                                  This status of this account is currently PENDING. Once this account
+                                      becomes active, it will be possible to start an instance.</span>
+                              </c:if>
+                            </div>
+
+                        </td>
+                      </tr>
+
+
+
+
+                  </table>
+                </div>
+                    </c:forEach>
+              </div>
+            </div>
+
+                </c:when>
+              </c:choose>
+
+              <c:choose>
+                <c:when
+                 test="${not empty inactiveAccounts}">
+        <div
+           id="inactive-list"
+           class="dc-subgroup">
+
+            <div
+             class="dc-subgroup-body">
+            <table border="0" cellspacing="0" cellpadding="4">
+              <tr>
+                <td class="accountlabel"><strong> Inactive Accounts</strong></td>
+        </tr>
+        </table>
+        <br />
+
+                    <c:forEach
+                     var="a"
+                     items="${inactiveAccounts}">
+                <div class="account-record" style="min-height:100px !important">
+                <table width="100%">
+                      <tr class="account">
+                        <td align="left" valign="middle">
+                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+
+                        </td>
+                        <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
+                        <c:if test="${a.userRole != 'ROLE_USER'}">
+                          <c:if test="${a.userRole == 'ROLE_ROOT'}">
+                          <script type="text/javascript" language="JavaScript">
+                            function AskAndActivate(t)
+                            {
+                              var answer = confirm("Are you sure you want to activate this account.");
+                              if (answer)
+                              {
+                                t.form.submit();
+                              }
+                            }
+                          </script>
+                            <td width="90" align="right" valign="middle">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
+                              method="post">
+                            <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
+                          </form>
+                            </td>
+                          </c:if>
+
+                        <td width="90" align="right" valign="middle"><a class="button"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
+                             > <span
+                             class="pre plus"> </span> Account Information</a></td>
+                        <td width="90" align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
+                             class="button"> Manage Users and Roles</a></td>
+                        </c:if>
+                      </tr>
+                      <tr class="account">
+                        <td colspan="5" align="left" valign="middle">
+                        <div />
+                        <div />
+
+
+                            <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
+                            </div>
+                            <c:if test="${a.userRole != 'ROLE_USER'}">
+                                <div class="instance-panel inactive">
+
+                                  <span class="instructions">
+                                      This status of this account is currently INACTIVE. Please contact DuraCloud to
+                                make your account ACTIVE.</span>
+                                </div>
+                            </c:if>
+
+                        </td>
+                      </tr>
+
+                  </table>
+                </div>
+                    </c:forEach>
+              </div>
+            </div>
+
+                </c:when>
+              </c:choose>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>
