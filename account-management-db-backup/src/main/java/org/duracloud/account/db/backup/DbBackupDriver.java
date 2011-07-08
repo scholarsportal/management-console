@@ -82,7 +82,10 @@ public class DbBackupDriver {
     private StoreUtil buildStoreUtil(Properties props) {
         String storeUsername = getProperty(props, AWS_USERNAME);
         String storePassword = getProperty(props, AWS_PASSWORD);
-        String bucketId = getProperty(props, STORE_BUCKET);
+        String storeBucket = getProperty(props, STORE_BUCKET);
+
+        String bucketId = "x." + storeUsername + "." + storeBucket;
+        bucketId = bucketId.toLowerCase();;
 
         return new StoreUtilS3Impl(storeUsername, storePassword, bucketId);
     }
