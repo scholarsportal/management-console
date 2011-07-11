@@ -161,7 +161,7 @@
   </profiles>
 
   <properties>
-    <duracloud.artifact.version>0.9.0</duracloud.artifact.version>
+    <duracloud.artifact.version>1.0.0-SNAPSHOT</duracloud.artifact.version>
     <org.springframework.version>3.0.4.RELEASE</org.springframework.version>
     <org.springframework.security.version>3.0.3.RELEASE</org.springframework.security.version>
     <tomcat.port.default>8080</tomcat.port.default>

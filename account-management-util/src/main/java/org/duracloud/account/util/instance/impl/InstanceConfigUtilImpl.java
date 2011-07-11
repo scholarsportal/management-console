@@ -23,6 +23,7 @@ import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.storage.domain.StorageAccount;
+import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -108,7 +109,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
             StorageProviderAccount provider =
                 storageProviderAcctRepo.findById(providerAccountId);
             StorageAccount storageAccount =
-                new StorageAccount(String.valueOf(providerAccountId),
+                new StorageAccountImpl(String.valueOf(providerAccountId),
                                    provider.getUsername(),
                                    provider.getPassword(),
                                    provider.getProviderType());
