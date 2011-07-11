@@ -15,9 +15,11 @@ import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
+import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
@@ -312,6 +314,34 @@ public class InstanceConfigUtilImplTest {
                      serviceCompute.getImageId());
         assertEquals(serviceRepoUsername, serviceCompute.getUsername());
         assertEquals(serviceRepoPassword, serviceCompute.getPassword());
+    }
+
+    @Test
+    public void testGetDurareportConfig() {
+        String hostName = "host";
+        EasyMock.expect(instance.getHostName())
+            .andReturn(hostName)
+            .times(2);
+
+        replayMocks();
+
+        DurareportConfig config = instanceConfigUtil.getDurareportConfig();
+        assertNotNull(config);
+
+        assertEquals(hostName, config.getDurastoreHost());
+        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
+                     config.getDurastorePort());
+        assertEquals(DurastoreConfig.QUALIFIER,
+                     config.getDurastoreContext());
+
+        assertEquals(hostName, config.getDuraserviceHost());
+        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
+                     config.getDuraservicePort());
+        assertEquals(DuraserviceConfig.QUALIFIER,
+                     config.getDuraserviceContext());
+
+        assertEquals(InstanceUtil.DURAREPORT_CONTEXT,
+                     config.getDurareportContext());
     }
 
 }

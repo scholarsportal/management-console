@@ -11,6 +11,7 @@ import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.slf4j.Logger;
@@ -36,17 +37,20 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
                                    DuradminConfig duradminConfig,
                                    DurastoreConfig durastoreConfig,
                                    DuraserviceConfig duraserviceConfig,
+                                   DurareportConfig durareportConfig,
                                    RestHttpHelper restHelper){
         if(StringUtils.isBlank(host) ||
            null == duradminConfig ||
            null == durastoreConfig ||
            null == duraserviceConfig  ||
+           null == durareportConfig  ||
            null == restHelper) {
             StringBuilder msg = new StringBuilder("Invalid arguments: ");
             msg.append(host + ", ");
             msg.append(duradminConfig + ", ");
             msg.append(durastoreConfig + ", ");
             msg.append(duraserviceConfig + ", ");
+            msg.append(durareportConfig + ", ");
             msg.append(restHelper);
 
             throw new DuracloudInstanceUpdateException(msg.toString());
@@ -61,6 +65,10 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         Application duraserviceApp = getDuraserviceApplication(host, restHelper);
         checkResponse("DuraService",
                       duraserviceApp.initialize(duraserviceConfig));
+
+        Application durareportApp = getDurareportApplication(host, restHelper);
+        checkResponse("DuraReport",
+                      durareportApp.initialize(durareportConfig));
     }
 
     @Override
@@ -90,6 +98,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         apps.add(getDuradminApplication(host, restHelper));
         apps.add(getDurastoreApplication(host, restHelper));
         apps.add(getDuraserviceApplication(host, restHelper));
+        apps.add(getDurareportApplication(host, restHelper));
         return apps;
     }
 
@@ -107,6 +116,12 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
                                                   RestHttpHelper restHelper) {
         return new Application(host, port, DURASERVICE_CONTEXT, restHelper);
     }
+
+    private Application getDurareportApplication(String host,
+                                                 RestHttpHelper restHelper) {
+        return new Application(host, port, DURAREPORT_CONTEXT, restHelper);
+    }
+
 
     private void checkResponse(String name,
                                RestHttpHelper.HttpResponse response) {

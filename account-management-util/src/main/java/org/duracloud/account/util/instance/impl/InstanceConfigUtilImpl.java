@@ -19,9 +19,11 @@ import org.duracloud.account.util.error.DuracloudServerImageNotAvailableExceptio
 import org.duracloud.account.util.error.DuracloudServiceRepositoryNotAvailableException;
 import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
+import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
@@ -207,6 +209,19 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         serviceCompute.setPassword(serviceStorePassword);
         config.setServiceCompute(serviceCompute);
 
+        return config;
+    }
+
+    public DurareportConfig getDurareportConfig() {
+        DurareportConfig config = new DurareportConfig();
+        config.setDurastoreHost(instance.getHostName());
+        config.setDurastorePort(DEFAULT_SSL_PORT);
+        config.setDurastoreContext(DurastoreConfig.QUALIFIER);
+        config.setDuraserviceHost(instance.getHostName());
+        config.setDuraservicePort(DEFAULT_SSL_PORT);
+        config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
+        
+        config.setDurareportContext(InstanceUtil.DURAREPORT_CONTEXT);
         return config;
     }
     

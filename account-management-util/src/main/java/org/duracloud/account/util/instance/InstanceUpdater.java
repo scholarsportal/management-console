@@ -6,6 +6,7 @@ package org.duracloud.account.util.instance;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 
@@ -27,12 +28,14 @@ public interface InstanceUpdater {
      * @param duradminConfig    config for DurAdmin
      * @param durastoreConfig   config for DuraStore
      * @param duraserviceConfig config for DuraService
+     * @param durareportConfig config for DuraReport
      * @param restHelper        connection utility
      */
     public void initializeInstance(String host,
                                    DuradminConfig duradminConfig,
                                    DurastoreConfig durastoreConfig,
                                    DuraserviceConfig duraserviceConfig,
+                                   DurareportConfig durareportConfig,
                                    RestHttpHelper restHelper);
 
     /**

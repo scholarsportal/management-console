@@ -14,6 +14,7 @@ import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.easymock.Capture;
@@ -159,11 +160,14 @@ public class DuracloudInstanceServiceImplTest
             .andReturn(new DurastoreConfig());
         EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
             .andReturn(new DuraserviceConfig());
+        EasyMock.expect(instanceConfigUtil.getDurareportConfig())
+            .andReturn(new DurareportConfig());
 
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
                                            EasyMock.isA(DuraserviceConfig.class),
+                                           EasyMock.isA(DurareportConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
     }
@@ -205,6 +209,9 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
             .andReturn(new DuraserviceConfig())
             .times(1);
+        EasyMock.expect(instanceConfigUtil.getDurareportConfig())
+            .andReturn(new DurareportConfig())
+            .times(1);
 
         EasyMock.expect(instance.getHostName())
             .andReturn("host")
@@ -214,6 +221,7 @@ public class DuracloudInstanceServiceImplTest
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
                                            EasyMock.isA(DuraserviceConfig.class),
+                                           EasyMock.isA(DurareportConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall()
             .times(1);

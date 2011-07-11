@@ -32,6 +32,7 @@ import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
@@ -206,6 +207,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
             instanceConfigUtil.getDurastoreConfig();
         DuraserviceConfig duraserviceConfig =
             instanceConfigUtil.getDuraserviceConfig();
+        DurareportConfig durareportConfig =
+            instanceConfigUtil.getDurareportConfig();
 
         RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
         String host = instance.getHostName();
@@ -214,6 +217,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
                                            duradminConfig,
                                            durastoreConfig,
                                            duraserviceConfig,
+                                           durareportConfig,
                                            restHelper);
     }
 

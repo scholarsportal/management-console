@@ -6,6 +6,7 @@ package org.duracloud.account.util.instance;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 
 /**
  * @author: Bill Branan
@@ -30,5 +31,11 @@ public interface InstanceConfigUtil {
      * @return the information needed to initialize DuraService
      */
     public DuraserviceConfig getDuraserviceConfig();
-    
+
+    /**
+     * Collects the DuraReport configuration for a DuraCloud instance
+     * @return the information needed to initialize DuraReport
+     */
+    public DurareportConfig getDurareportConfig();
+
 }
