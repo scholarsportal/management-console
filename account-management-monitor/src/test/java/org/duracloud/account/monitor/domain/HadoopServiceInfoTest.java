@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * @author Andrew Woods
@@ -46,13 +48,17 @@ public class HadoopServiceInfoTest {
 
     @Test
     public void testElapsedExceedsDays() {
+        Calendar beginning = juneTenth2011();
+        Calendar ending = (Calendar) beginning.clone();
+
         int daysAgo = 5;
-        Date date = getDateWithOffset(-daysAgo);
+        Date beginningTime = getDateWithOffset(beginning, -daysAgo);
+
         String flowState = HadoopUtil.STATE.RUNNING.name();
         HadoopServiceInfo info = new HadoopServiceInfo(NAME,
                                                        flowState,
-                                                       date,
-                                                       null);
+                                                       beginningTime,
+                                                       ending.getTime());
 
         for (int i = 0; i < daysAgo; ++i) {
             Assert.assertTrue("i=" + i, info.elapsedExceedsDays(i));
@@ -60,8 +66,7 @@ public class HadoopServiceInfoTest {
         Assert.assertFalse(info.elapsedExceedsDays(daysAgo));
     }
 
-    private Date getDateWithOffset(int offset) {
-        Calendar calendar = Calendar.getInstance();
+    private Date getDateWithOffset(Calendar calendar, int offset) {
         calendar.roll(Calendar.DATE, offset);
         calendar.roll(Calendar.HOUR, 1);
         return calendar.getTime();
@@ -130,7 +135,9 @@ public class HadoopServiceInfoTest {
     }
 
     private Calendar juneTenth2011() {
-        Calendar calendar = Calendar.getInstance();
+        TimeZone tz = TimeZone.getTimeZone("GMT-8");
+        Locale locale = Locale.US;
+        Calendar calendar = Calendar.getInstance(tz, locale);
         calendar.setTimeInMillis(1310579045000L); // start with a fixed time.
 
         calendar.roll(Calendar.SECOND, 10);
