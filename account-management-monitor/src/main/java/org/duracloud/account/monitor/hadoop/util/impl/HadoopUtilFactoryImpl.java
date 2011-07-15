@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor.util.impl;
+package org.duracloud.account.monitor.hadoop.util.impl;
 
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.monitor.error.UnsupportedStorageProviderException;
-import org.duracloud.account.monitor.util.HadoopUtil;
-import org.duracloud.account.monitor.util.HadoopUtilFactory;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtilFactory;
 import org.duracloud.storage.domain.StorageProviderType;
 
 import java.util.HashMap;

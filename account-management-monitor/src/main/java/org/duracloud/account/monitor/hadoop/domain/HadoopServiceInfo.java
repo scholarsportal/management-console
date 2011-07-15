@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor.domain;
+package org.duracloud.account.monitor.hadoop.domain;
 
-import org.duracloud.account.monitor.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
 import org.duracloud.common.util.DateUtil;
 
 import java.util.Date;

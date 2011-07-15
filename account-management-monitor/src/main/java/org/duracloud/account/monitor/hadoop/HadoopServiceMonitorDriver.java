@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor;
+package org.duracloud.account.monitor.hadoop;
 
 import org.apache.commons.io.IOUtils;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -11,9 +11,9 @@ import org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudStorageProviderAccountRepoImpl;
 import org.duracloud.account.db.backup.util.EmailUtil;
 import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
-import org.duracloud.account.monitor.domain.HadoopServiceReport;
-import org.duracloud.account.monitor.util.HadoopUtilFactory;
-import org.duracloud.account.monitor.util.impl.HadoopUtilFactoryImpl;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtilFactory;
+import org.duracloud.account.monitor.hadoop.util.impl.HadoopUtilFactoryImpl;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

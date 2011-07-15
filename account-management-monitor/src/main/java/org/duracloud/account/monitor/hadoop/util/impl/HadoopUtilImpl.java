@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor.util.impl;
+package org.duracloud.account.monitor.hadoop.util.impl;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce;
@@ -10,9 +10,9 @@ import com.amazonaws.services.elasticmapreduce.model.DescribeJobFlowsRequest;
 import com.amazonaws.services.elasticmapreduce.model.DescribeJobFlowsResult;
 import com.amazonaws.services.elasticmapreduce.model.JobFlowDetail;
 import com.amazonaws.services.elasticmapreduce.model.JobFlowExecutionStatusDetail;
-import org.duracloud.account.monitor.domain.HadoopServiceInfo;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
 import org.duracloud.account.monitor.error.HadoopNotActivatedException;
-import org.duracloud.account.monitor.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
 
 import java.util.Date;
 import java.util.HashSet;

@@ -8,12 +8,13 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.monitor.domain.HadoopServiceInfo;
-import org.duracloud.account.monitor.domain.HadoopServiceReport;
+import org.duracloud.account.monitor.hadoop.HadoopServiceMonitor;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
 import org.duracloud.account.monitor.error.HadoopNotActivatedException;
 import org.duracloud.account.monitor.error.UnsupportedStorageProviderException;
-import org.duracloud.account.monitor.util.HadoopUtil;
-import org.duracloud.account.monitor.util.HadoopUtilFactory;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtilFactory;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
@@ -28,7 +29,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.duracloud.account.monitor.util.HadoopUtil.STATE;
+import static org.duracloud.account.monitor.hadoop.util.HadoopUtil.STATE;
 
 /**
  * @author Andrew Woods

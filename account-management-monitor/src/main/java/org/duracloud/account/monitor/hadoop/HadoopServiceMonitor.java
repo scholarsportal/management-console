@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor;
+package org.duracloud.account.monitor.hadoop;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.monitor.domain.HadoopServiceInfo;
-import org.duracloud.account.monitor.domain.HadoopServiceReport;
 import org.duracloud.account.monitor.error.HadoopMonitorException;
 import org.duracloud.account.monitor.error.HadoopNotActivatedException;
 import org.duracloud.account.monitor.error.UnsupportedStorageProviderException;
-import org.duracloud.account.monitor.util.HadoopUtil;
-import org.duracloud.account.monitor.util.HadoopUtilFactory;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtilFactory;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ExceptionUtil;
 import org.slf4j.Logger;

@@ -24,7 +24,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.duracloud.account.monitor.HadoopServiceMonitorDriver
+              <mainClass>org.duracloud.account.monitor.hadoop.HadoopServiceMonitorDriver
               </mainClass>
             </manifest>
           </archive>

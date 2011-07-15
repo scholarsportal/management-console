@@ -3,7 +3,8 @@
  */
 package org.duracloud.account.monitor.domain;
 
-import org.duracloud.account.monitor.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

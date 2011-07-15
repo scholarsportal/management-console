@@ -4,7 +4,9 @@
 package org.duracloud.account.monitor.domain;
 
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.monitor.util.HadoopUtil;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
+import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
+import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static org.duracloud.account.monitor.util.HadoopUtil.STATE;
+import static org.duracloud.account.monitor.hadoop.util.HadoopUtil.STATE;
 
 /**
  * @author Andrew Woods
