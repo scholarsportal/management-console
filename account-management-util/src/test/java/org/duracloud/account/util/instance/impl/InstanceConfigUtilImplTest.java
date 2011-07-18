@@ -144,10 +144,9 @@ public class InstanceConfigUtilImplTest {
 
         String pUser = "primaryUsername";
         String pPass = "primaryPassword";
-        boolean rrs = false;
         StorageProviderType primaryType = StorageProviderType.AMAZON_S3;
         StorageProviderAccount primaryStorageProviderAccount =
-            new StorageProviderAccount(primaryProviderId, primaryType, pUser, pPass, rrs);
+            new StorageProviderAccount(primaryProviderId, primaryType, pUser, pPass, true);
         EasyMock.expect(storageProviderAcctRepo.findById(primaryProviderId))
             .andReturn(primaryStorageProviderAccount);
 
@@ -155,7 +154,7 @@ public class InstanceConfigUtilImplTest {
         String sPass = "secondaryPassword";
         StorageProviderType secondaryType = StorageProviderType.RACKSPACE;
         StorageProviderAccount secondaryStorageProviderAccount =
-            new StorageProviderAccount(secondaryProviderId, secondaryType, sUser, sPass, rrs);
+            new StorageProviderAccount(secondaryProviderId, secondaryType, sUser, sPass, false);
         EasyMock.expect(storageProviderAcctRepo.findById(secondaryProviderId))
             .andReturn(secondaryStorageProviderAccount);
 
@@ -180,11 +179,15 @@ public class InstanceConfigUtilImplTest {
                              storageAccount.getType());
                 assertEquals(pUser, storageAccount.getUsername());
                 assertEquals(pPass, storageAccount.getPassword());
+                assertEquals("rrs", storageAccount.getOptions().get(
+                    StorageAccount.OPTS.STORAGE_CLASS.name()));
             } else if(storageAccountId == secondaryProviderId) {
                 assertEquals(secondaryType,
                              storageAccount.getType());
                 assertEquals(sUser, storageAccount.getUsername());
                 assertEquals(sPass, storageAccount.getPassword());
+                assertEquals("standard", storageAccount.getOptions().get(
+                    StorageAccount.OPTS.STORAGE_CLASS.name()));
             } else {
                 fail("Unexpected storage account, has ID:" + storageAccountId);
             }

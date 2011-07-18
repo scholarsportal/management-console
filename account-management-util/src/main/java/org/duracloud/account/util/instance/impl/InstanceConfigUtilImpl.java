@@ -116,6 +116,14 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                                    provider.getPassword(),
                                    provider.getProviderType());
             storageAccount.setPrimary(primary);
+
+            String storageClass = "rrs";
+            if(!provider.isRrs())
+                storageClass = "standard";
+            
+            storageAccount.setOption(StorageAccount.OPTS.STORAGE_CLASS.name(),
+                                     storageClass);
+
             return storageAccount;
         } catch(DBNotFoundException e) {
             String error = "Storage Provider Account with ID: " +

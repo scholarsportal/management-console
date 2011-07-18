@@ -64,4 +64,24 @@ public class ProviderController extends AbstractAccountController {
         accountService.removeStorageProvider(providerId);
         return formatAccountRedirect(Integer.toString(accountId), "/providers");
     }
+
+    @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/enable", method = RequestMethod.POST)
+    public String enableProviderRrs(@PathVariable int accountId,
+					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+        log.info("enableProviderRrs account {}", accountId);
+
+        setProviderRrs(accountId, true);
+
+        return formatAccountRedirect(Integer.toString(accountId), "/providers");
+    }
+
+    @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/disable", method = RequestMethod.POST)
+    public String disableProviderRrs(@PathVariable int accountId,
+					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+        log.info("disableProviderRrs account {}", accountId);
+
+        setProviderRrs(accountId, false);
+
+        return formatAccountRedirect(Integer.toString(accountId), "/providers");
+    }
 }

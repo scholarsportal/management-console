@@ -7,6 +7,8 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
@@ -187,5 +189,20 @@ public abstract class AbstractAccountController extends AbstractController {
         Authentication authentication = securityContext.getAuthentication();
         String username = authentication.getName();
         return this.userService.loadDuracloudUserByUsername(username);
+    }
+
+    protected void setProviderRrs(int accountId, boolean rrs)
+        throws AccountNotFoundException, DBConcurrentUpdateException {
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+        accountService.setPrimaryStorageProviderRrs(rrs);
+
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if(instanceServices.size() > 0) {
+            DuracloudInstanceService instanceService =
+                instanceServices.iterator().next();
+            instanceService.reInitialize();
+        }
     }
 }

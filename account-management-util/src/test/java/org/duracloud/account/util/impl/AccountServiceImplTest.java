@@ -103,6 +103,28 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testSetPrimaryStorageProviderRrs() throws Exception {
+        EasyMock.expect(repoMgr.getStorageProviderAccountRepo())
+            .andReturn(storageProviderAcctRepo)
+            .times(1);
+
+        StorageProviderAccount storageAcct =
+            new StorageProviderAccount(1, StorageProviderType.AMAZON_S3,
+                                       "username", "password", false);
+        EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(storageAcct)
+            .times(1);
+
+        storageProviderAcctRepo.save(EasyMock.isA(StorageProviderAccount.class));
+        EasyMock.expectLastCall()
+            .times(1);
+
+        replayMocks();
+
+        acctService.setPrimaryStorageProviderRrs(true);
+    }
+
+    @Test
     public void testRemoveStorageProvider() throws Exception {
         accountRepo.save(EasyMock.isA(AccountInfo.class));
         EasyMock.expectLastCall()

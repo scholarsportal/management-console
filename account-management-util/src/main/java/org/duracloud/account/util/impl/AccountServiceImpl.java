@@ -102,6 +102,22 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void setPrimaryStorageProviderRrs(boolean rrs)
+        throws DBConcurrentUpdateException {
+        int primaryId = account.getPrimaryStorageProviderAccountId();
+        DuracloudStorageProviderAccountRepo repo =
+            repoMgr.getStorageProviderAccountRepo();
+        try {
+            StorageProviderAccount primary = repo.findById(primaryId);
+            primary.setRrs(rrs);
+            repo.save(primary);
+        } catch(DBNotFoundException e) {
+            throw new DuracloudProviderAccountNotAvailableException(
+                e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Set<StorageProviderAccount> getSecondaryStorageProviders() {
         DuracloudStorageProviderAccountRepo repo =
             repoMgr.getStorageProviderAccountRepo();

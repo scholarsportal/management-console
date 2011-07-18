@@ -143,6 +143,48 @@
                         <tr>
                           <td>${primaryProvider.providerType}</td>
                           <td>(Primary)</td>
+                          <td>
+                            <c:choose>
+                            <c:when test="${primaryProvider.rrs}">
+                              <script type="text/javascript" language="JavaScript">
+                                function AskAndDisable(t)
+                                {
+                                  var answer = confirm("Are you sure you want to disable Reduced Redundancy Storage? Changing this setting requires your instance to be reinitialized if it is running.");
+                                  if (answer)
+                                  {
+                                    t.form.submit();
+                                  }
+                                }
+                              </script>
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/disable"
+                                 method="post">
+                                  <button style="margin-right:8px !important"
+                                   type="submit" onclick="AskAndDisable(this); return false;">
+                                  Disable RRS</button>
+                                </form>
+                            </c:when>
+                            <c:otherwise>
+                              <script type="text/javascript" language="JavaScript">
+                                function AskAndEnable(t)
+                                {
+                                  var answer = confirm("Are you sure you want to enable Reduced Redundancy Storage? Changing this setting requires your instance to be reinitialized if it is running.");
+                                  if (answer)
+                                  {
+                                    t.form.submit();
+                                  }
+                                }
+                              </script>
+                                <form
+                                 action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/enable"
+                                 method="post">
+                                  <button style="margin-right:8px !important"
+                                   type="submit" onclick="AskAndEnable(this); return false;">
+                                  Enable RRS</button>
+                                </form>
+                            </c:otherwise>
+                            </c:choose>
+                          </td>
                         </tr>
                       <c:forEach
                            var="p"
@@ -151,6 +193,7 @@
                               <td>${p.providerType}</td>
 
                               <td>(Secondary)</td>
+                              <td></td>
                             </tr>
                     </c:forEach>
               </table></td>

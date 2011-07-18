@@ -343,6 +343,32 @@ public class AccountServiceSecuredImplTest {
     }
 
     @Test
+    public void testSetPrimaryStorageProviderRrs() throws Exception {
+        acctService.setPrimaryStorageProviderRrs(true);
+        EasyMock.expectLastCall();
+
+        setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
+        replayMocks();
+
+        acctServiceImpl.setPrimaryStorageProviderRrs(true);
+    }
+
+    @Test
+    public void testSetPrimaryStorageProviderRrsFail() throws Exception {
+        setMockVoterExpectations(AccessDecisionVoter.ACCESS_DENIED);
+        replayMocks();
+
+        boolean thrown = false;
+        try {
+            acctServiceImpl.setPrimaryStorageProviderRrs(true);
+            Assert.fail("exception expected");
+        } catch (AccessDeniedException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
+    }
+
+    @Test
     public void testRemoveStorageProvider() throws Exception {
         int id = 3;
         acctService.removeStorageProvider(id);

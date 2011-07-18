@@ -62,7 +62,7 @@ public class DuracloudProviderAccountUtil {
                                        type,
                                        StorageProviderAccount.PLACEHOLDER_VALUE,
                                        StorageProviderAccount.PLACEHOLDER_VALUE,
-                                       false);
+                                       true);
 
         DuracloudStorageProviderAccountRepo repo =
             repoMgr.getStorageProviderAccountRepo();

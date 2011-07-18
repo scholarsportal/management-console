@@ -107,6 +107,16 @@ public interface AccountService {
         throws DBConcurrentUpdateException;
 
     /**
+     * Sets the primary storage provider to RRS or not
+     *
+     * @param rrs
+     * @throws DBConcurrentUpdateException
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public void setPrimaryStorageProviderRrs(boolean rrs)
+        throws DBConcurrentUpdateException;
+
+    /**
      * Removes a storage provider from the list of secondary storage providers
      * for this account. The primary storage provider cannot be removed.
      *
