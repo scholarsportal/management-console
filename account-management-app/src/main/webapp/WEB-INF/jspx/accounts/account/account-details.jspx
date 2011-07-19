@@ -144,6 +144,7 @@
                           <td>${primaryProvider.providerType}</td>
                           <td>(Primary)</td>
                           <td>
+                            <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                             <c:choose>
                             <c:when test="${primaryProvider.rrs}">
                               <script type="text/javascript" language="JavaScript">
@@ -184,6 +185,7 @@
                                 </form>
                             </c:otherwise>
                             </c:choose>
+                            </sec:authorize>
                           </td>
                         </tr>
                       <c:forEach
