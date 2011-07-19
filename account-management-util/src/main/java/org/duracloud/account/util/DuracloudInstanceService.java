@@ -44,6 +44,12 @@ public interface DuracloudInstanceService {
     public String getStatus();
 
     /**
+     * Returns the state of initialization for the Duracloud instance.
+     */
+    @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
+    public boolean isInitialized();
+
+    /**
      * Stops the instance.
      * Stopped instances cannot be restarted (stop == terminate).
      */

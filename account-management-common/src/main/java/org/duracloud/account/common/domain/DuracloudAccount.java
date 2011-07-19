@@ -9,6 +9,8 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
 
     private String instanceStatus;
 
+    private boolean instanceInitialized;
+
     private String instanceVersion;
 
     private Set<String> versions;
@@ -45,6 +47,14 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
 
     public void setInstanceStatus(String instanceStatus) {
         this.instanceStatus = instanceStatus;
+    }
+
+    public boolean isInstanceInitialized() {
+        return instanceInitialized;
+    }
+
+    public void setInstanceInitialized(boolean instanceInitialized) {
+        this.instanceInitialized = instanceInitialized;
     }
 
     public String getInstanceVersion() {

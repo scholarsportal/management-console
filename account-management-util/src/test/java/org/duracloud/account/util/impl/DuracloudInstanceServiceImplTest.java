@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -63,6 +64,16 @@ public class DuracloudInstanceServiceImplTest
         String resultStatus = service.getStatus();
         assertNotNull(resultStatus);
         assertEquals(status, resultStatus);
+    }
+
+    @Test
+    public void testIsInitialized() throws Exception {
+        EasyMock.expect(instance.getHostName()).andReturn("host");
+
+        replayMocks();
+
+        boolean initialized = service.isInitialized();
+        assertFalse(initialized);
     }
 
     @Test

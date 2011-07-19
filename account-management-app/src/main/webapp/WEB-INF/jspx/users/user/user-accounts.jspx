@@ -154,11 +154,14 @@
                       </tr>
                     <tr>
                       <td align="left" valign="middle" class="instructions"><c:out value="${a.instance.hostName}" />
-                        <a class="button durabutton" style="margin-left:25px !important"
-                         id="account-${a.accountInfo.id}-duradmin-link"
-                         href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                         target="_blank">Launch DuraCloud<br />
-                        Administrator</a></td>
+                        <c:if test="${a.instanceInitialized}">
+                            <a class="button durabutton" style="margin-left:25px !important"
+                             id="account-${a.accountInfo.id}-duradmin-link"
+                             href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
+                             target="_blank">Launch DuraCloud<br />
+                            Administrator</a>
+                        </c:if>
+                      </td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
                       </td>
