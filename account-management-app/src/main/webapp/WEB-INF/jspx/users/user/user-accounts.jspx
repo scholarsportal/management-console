@@ -17,8 +17,44 @@
      value="Accounts" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+     name="header-extensions">
+      <script type="text/javascript" language="JavaScript">
+        $(document).ready(function(){
+            $(".start").click(function() {
+                var button = $(this);
+
+                if ($(button).attr('submitted')) {
+                    alert ("Your instance is already starting.");
+                    return false;
+                }
+                $(button).attr('submitted','true');
+
+                var id = $(button).attr("id");
+
+                var name = "#instance-start-form-" + id;
+                var form = $(name);
+
+                $.ajax({
+                  type: "POST",
+                  url: $(form).attr("action"),
+                  data: $(form).serialize(),
+                  success: function() {
+                    alert ("Your instance has been started.");
+
+                    window.location.reload(true);
+                  },
+                  error: function() {
+                    alert ("Error starting your instance.");
+                  }
+                });
+
+                alert ("Your instance is starting...");
+
+                return false;
+            });
+        });
+      </script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
@@ -123,7 +159,7 @@
                       <div class="instance-panel inactive">
 
                       <form:form
-                        id="instance-start-form"
+                        id="instance-start-form-${a.accountInfo.id}"
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
@@ -134,7 +170,7 @@
                           path="version"
                           items="${a.versions}" />
                           </c:if>
-                        <button style="margin-left:8px !important" type="submit">Start New Instance</button>
+                        <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                       </div>
                     </c:if>
