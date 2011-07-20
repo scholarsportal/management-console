@@ -666,12 +666,11 @@
         <version>1.3.0</version>
       </dependency>
 
-      <!--This is only needed until maven reverts its claim that version 1.8.0-SNAPSHOT is latest-->
-      <!--Revisit this when upgrading amazonaws jar (1.1.5)-->
+      <!-- Needed to indicate specific version to work with amazon-aws jar -->
       <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-core-asl</artifactId>
-        <version>1.5.0</version>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+          <version>4.1.1</version>
       </dependency>
 
     <!-- Spring framework -->

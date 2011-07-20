@@ -54,8 +54,9 @@ public class AmazonComputeProviderTest {
 
         Capture<AssociateAddressRequest> associateCapture =
             new Capture<AssociateAddressRequest>();
-        mockEC2Client.associateAddress(EasyMock.capture(associateCapture));
-        EasyMock.expectLastCall()
+        EasyMock.expect(
+            mockEC2Client.associateAddress(EasyMock.capture(associateCapture)))
+            .andReturn(null)
             .times(1);
 
         EasyMock.replay(mockEC2Client);
