@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * This interface defines the contract for a utility for querying the Hadoop
- * resources of a give storage account.
+ * resources of a given storage account.
  *
  * @author Andrew Woods
  *         Date: 7/11/11

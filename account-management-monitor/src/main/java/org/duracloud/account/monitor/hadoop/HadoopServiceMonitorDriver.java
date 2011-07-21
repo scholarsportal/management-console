@@ -9,23 +9,15 @@ import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
 import org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudStorageProviderAccountRepoImpl;
-import org.duracloud.account.db.backup.util.EmailUtil;
-import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
+import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
 import org.duracloud.account.monitor.hadoop.util.HadoopUtilFactory;
 import org.duracloud.account.monitor.hadoop.util.impl.HadoopUtilFactoryImpl;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -34,30 +26,21 @@ import java.util.Properties;
  * @author Andrew Woods
  *         Date: 7/13/11
  */
-public class HadoopServiceMonitorDriver {
+public class HadoopServiceMonitorDriver extends MonitorsDriver implements Runnable {
 
     private Logger log =
         LoggerFactory.getLogger(HadoopServiceMonitorDriver.class);
 
     private static final String PREFIX = "monitor.";
-    private static final String PREFIX_AWS = PREFIX + "aws.";
-
-    private static final String AWS_USERNAME = PREFIX_AWS + "username";
-    private static final String AWS_PASSWORD = PREFIX_AWS + "password";
-
-    private static final String PREFIX_EMAIL = PREFIX + "email.";
-    private static final String FROM_ADDRESS = PREFIX_EMAIL + "from";
-    private static final String TO_ADDRESS = PREFIX_EMAIL + "to.";
-
     private static final String THRESHOLD_DAYS = PREFIX + "threshold";
 
     private int thresholdDays;
-    private EmailUtil emailUtil;
     private HadoopServiceMonitor serviceMonitor;
 
     public HadoopServiceMonitorDriver(Properties props) {
+        super(props);
+
         this.thresholdDays = getThresholdDays(props);
-        this.emailUtil = buildEmailUtil(props);
 
         AmazonSimpleDBClientMgr dbClientMgr = buildDBClientMgr(props);
 
@@ -74,7 +57,8 @@ public class HadoopServiceMonitorDriver {
                                                        hadoopUtilFactory);
     }
 
-    public void monitor() {
+    @Override
+    public void run() {
         log.info("starting monitor");
         HadoopServiceReport report;
         try {
@@ -106,110 +90,8 @@ public class HadoopServiceMonitorDriver {
         }
     }
 
-    private void sendEmail(String subject, String body) {
-        log.info("Sending email. subject: {}, body {}", subject, body);
-        emailUtil.sendEmail(subject, body);
-    }
-
-    private EmailUtil buildEmailUtil(Properties props) {
-        String username = getProperty(props, AWS_USERNAME);
-        String password = getProperty(props, AWS_PASSWORD);
-        String fromAddress = getProperty(props, FROM_ADDRESS);
-        List<String> recipients = getEmailRecipients(props, TO_ADDRESS);
-
-        return new EmailUtilImpl(username, password, fromAddress, recipients);
-    }
-
-    private List<String> getEmailRecipients(Properties props, String prefix) {
-        List<String> recipients = new ArrayList<String>();
-        String recipient = getProperty(props, prefix + 0);
-        while (null != recipient) {
-            recipients.add(recipient);
-            try {
-                recipient = getProperty(props, prefix + recipients.size());
-
-            } catch (Exception e) {
-                recipient = null;
-            }
-        }
-        return recipients;
-    }
-
-    private AmazonSimpleDBClientMgr buildDBClientMgr(Properties props) {
-        String awsUsername = getProperty(props, AWS_USERNAME);
-        String awsPassword = getProperty(props, AWS_PASSWORD);
-
-        return new AmazonSimpleDBClientMgr(awsUsername, awsPassword);
-    }
-
     private int getThresholdDays(Properties props) {
         return Integer.parseInt(getProperty(props, THRESHOLD_DAYS));
     }
 
-    private String getProperty(Properties props, String key) {
-        String property = props.getProperty(key);
-        if (null == property) {
-            throw new DuraCloudRuntimeException("Property not found: " + key);
-        }
-        return property;
-    }
-
-    private static Properties parseProperties(InputStream stream)
-        throws IOException {
-        Properties props = new Properties();
-        props.load(stream);
-        return props;
-    }
-
-    /**
-     * Main
-     */
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println(usage("Invalid number of args: " + args.length));
-            System.exit(1);
-        }
-
-        File configFile = new File(args[0]);
-        if (!configFile.exists()) {
-            String msg = "File does not exist: " + configFile.getAbsolutePath();
-            System.err.println(usage(msg));
-            System.exit(1);
-        }
-
-        InputStream inputStream = null;
-        Properties props = null;
-        try {
-            inputStream = new FileInputStream(configFile);
-            props = parseProperties(inputStream);
-
-        } catch (IOException e) {
-            System.err.println("Error loading properties: " + e.getMessage());
-            System.exit(1);
-
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
-
-        HadoopServiceMonitorDriver driver =
-            new HadoopServiceMonitorDriver(props);
-        driver.monitor();
-    }
-
-    private static String usage(String msg) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("-----------------------------------------\n");
-        sb.append("Error: " + msg);
-        sb.append("\n\n");
-        sb.append("Usage: HadoopServiceMonitorDriver <properties-file>");
-        sb.append("\n\t");
-        sb.append("Where 'properties-file' contains the necessary ");
-        sb.append("initialization config.");
-        sb.append("\n\t");
-        sb.append("See the example in this jar's 'resources' directory.");
-        sb.append("\n");
-        sb.append("-----------------------------------------\n");
-
-        return sb.toString();
-    }
 }
