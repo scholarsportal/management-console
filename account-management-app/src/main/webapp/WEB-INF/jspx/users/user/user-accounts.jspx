@@ -39,10 +39,42 @@
                   }
                 });
 
-                $(button).replaceWith("    Instance is starting");
+                $(button).replaceWith("    Instance is starting...");
 
                 return false;
             });
+
+            $(".available").click(function() {
+                var button = $(this);
+                var id = $(button).attr("id");
+
+                var checking = "#checking-" + id;
+                var name = "#instance-available-" + id;
+                var form = $(name);
+
+                $.ajax({
+                  type: "POST",
+                  url: $(form).attr("action"),
+                  data: $(form).serialize(),
+                  success: function() {
+                    window.location.reload(true);
+                  },
+                  error: function() {
+                    alert ("The instance is still starting.");
+                    $(button).show();
+                    $(checking).hide();
+
+                  }
+                });
+
+                $(checking).show();
+                $(this).hide();
+
+                return false;
+            });
+
+            $('.available').click();
+
         });
       </script>
     </tiles:putAttribute>
@@ -171,6 +203,7 @@
                 <div class="instance-panel active"><table>
                     <tr>
                       <th align="left">Host Name</th>
+                      <th align="left"></th>
                       <th width="173" align="center">Version</th>
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
@@ -180,14 +213,28 @@
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle" class="instructions"><c:out value="${a.instance.hostName}" />
-                        <c:if test="${a.instanceInitialized}">
+                      <td align="left" valign="middle" class="instructions">
+                          <c:out value="${a.instance.hostName}" />
+                      </td>
+                      <td align="left" valign="middle" class="instructions">
+                        <c:choose>
+                          <c:when test="${a.instanceInitialized}">
                             <a class="button durabutton" style="margin-left:25px !important"
                              id="account-${a.accountInfo.id}-duradmin-link"
                              href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
                              target="_blank">Launch DuraCloud<br />
                             Administrator</a>
-                        </c:if>
+                          </c:when>
+                          <c:otherwise>
+                            <form:form
+                                id="instance-available-${a.accountInfo.id}"
+                                method="post"
+                                action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/available">
+                              <button id="${a.accountInfo.id}" class="available" style="margin-left:25px !important" type="submit">Check Availability</button>
+                            </form:form>
+			                <strong id="checking-${a.accountInfo.id}">Checking Availabilty...</strong>
+                          </c:otherwise>
+                        </c:choose>
                       </td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
