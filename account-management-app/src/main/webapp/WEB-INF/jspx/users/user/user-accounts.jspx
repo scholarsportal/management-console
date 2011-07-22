@@ -60,10 +60,8 @@
                     window.location.reload(true);
                   },
                   error: function() {
-                    alert ("The instance is still starting.");
                     $(button).show();
                     $(checking).hide();
-
                   }
                 });
 
@@ -219,18 +217,19 @@
                       <td align="left" valign="middle" class="instructions">
                         <c:choose>
                           <c:when test="${a.instanceInitialized}">
-                            <a class="button durabutton" style="margin-left:25px !important"
+                            <a class="button durabutton"
                              id="account-${a.accountInfo.id}-duradmin-link"
                              href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
                              target="_blank">Launch DuraCloud<br />
                             Administrator</a>
                           </c:when>
                           <c:otherwise>
+                            The instance is still starting.
                             <form:form
                                 id="instance-available-${a.accountInfo.id}"
                                 method="post"
                                 action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/available">
-                              <button id="${a.accountInfo.id}" class="available" style="margin-left:25px !important" type="submit">Check Availability</button>
+                              <button id="${a.accountInfo.id}" class="available" type="submit">Check Availability</button>
                             </form:form>
 			                <strong id="checking-${a.accountInfo.id}">Checking Availabilty...</strong>
                           </c:otherwise>
