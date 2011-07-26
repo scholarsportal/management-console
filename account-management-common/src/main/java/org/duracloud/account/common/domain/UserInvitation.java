@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * @author: Bill Branan Date: Dec 2, 2010
  */
-public class UserInvitation extends BaseDomainData {
+public class UserInvitation extends BaseDomainData implements Comparable<UserInvitation> {
 
     private int accountId;
     private String adminUsername;
@@ -82,24 +82,55 @@ public class UserInvitation extends BaseDomainData {
         return AmaEndpoint.getUrl() + "/users/redeem/" + getRedemptionCode();
     }
 
-
-
     public String getSubject() {
         return "DuraCloud Account Invitation";
     }
 
     public String getBody() {
         StringBuilder sb = new StringBuilder();
-        sb.append("You are being invited as a member of a DuraCloud account.");
+
+        sb.append("You have been invited to join a DuraCloud account and ");
+        sb.append("receive access to a DuraCloud instance. In order to join, ");
+        sb.append("please follow these instructions:");
         sb.append("\n");
-        sb.append("Please follow the link to join.");
+        sb.append("1. If you do not have a personal user profile with ");
+        sb.append("DuraCloud, please create one at: ");
+        sb.append("https://manage.duracloud.org/ama/users/new. ");
+        sb.append("If you already have a personal user profile with ");
+        sb.append("DuraCloud, you may skip this step.");
         sb.append("\n");
+        sb.append("2. Click on this link to log in to the DuraCloud ");
+        sb.append("Management Console: ");
         sb.append(getRedemptionURL());
         sb.append("\n");
+        sb.append("3. After logging in, you should see the details for the ");
+        sb.append("DuraCloud account that you now have access to.");
         sb.append("\n");
-        sb.append("DuraCloud Admin");
+        sb.append("\n");
+        sb.append("If you have any issues accepting the invitation or ");
+        sb.append("creating your personal user profile, please contact the ");
+        sb.append("DuraCloud team by emailing your issue to ");
+        sb.append("support@duracloud.org.");
+        sb.append("\n");
+        sb.append("\n");
+        sb.append("The DuraCloud team");
 
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(UserInvitation invitation) {
+        if(this.id == invitation.id) {
+            if(this.equals(invitation)) {
+               return 0;
+            } else {
+                return this.getUserEmail().compareTo(invitation.getUserEmail());
+            }
+        } else if(this.id > invitation.id) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     /*

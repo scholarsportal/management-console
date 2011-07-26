@@ -69,4 +69,29 @@ public class UserInvitationTest {
             pcol + "://" + host + ":" + port + "/" + ctxt + "/users/redeem/" +
                 redemptionCode, url);
     }
+
+    @Test
+    public void testGetData() {
+        String subject = invitation.getSubject();
+        Assert.assertNotNull(subject);
+
+        String body = invitation.getBody();
+        Assert.assertNotNull(body);
+    }
+
+    @Test
+    public void testCompareTo() {
+        Assert.assertEquals(0, invitation.compareTo(invitation));
+
+        UserInvitation lessInvitation =
+            new UserInvitation(2, acctId, adminUsername, userEmail,
+                               expirationDays, redemptionCode);
+        Assert.assertEquals(1, invitation.compareTo(lessInvitation));
+
+        UserInvitation greaterInvitation =
+            new UserInvitation(22, acctId, adminUsername, userEmail,
+                               expirationDays, redemptionCode);
+        Assert.assertEquals(-1, invitation.compareTo(greaterInvitation));
+    }
+
 }
