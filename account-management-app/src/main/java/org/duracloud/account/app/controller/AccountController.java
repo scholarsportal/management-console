@@ -117,39 +117,6 @@ public class AccountController extends AbstractAccountController {
         return "redirect:" + PREFIX + "/users/byid/" + username;
     }
 
-    @RequestMapping(value = { INSTANCE_AVAILABLE_PATH }, method = RequestMethod.POST)
-    public String instanceAvailable(@PathVariable int accountId,
-                                    Model model)
-        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if(instanceServices.size() > 0) {
-            DuracloudInstanceService instanceService =
-                instanceServices.iterator().next();
-
-            long start = System.currentTimeMillis();
-            while(!instanceService.isInitialized()) {
-                long now = System.currentTimeMillis();
-                if(now - start > 300000) {
-                    return null;
-                } else {
-                    sleep(10000);
-                }
-            }
-        }
-
-        String username =
-            SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
-    }
-
-    private void sleep(int milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch(InterruptedException e) {
-        }
-    }
-
     protected void startInstance(int accountId, String version) {
         DuracloudInstanceService instanceService =
             instanceManagerService.createInstance(accountId, version);

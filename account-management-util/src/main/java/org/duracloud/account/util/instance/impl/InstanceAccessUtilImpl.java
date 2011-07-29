@@ -3,10 +3,8 @@
  */
 package org.duracloud.account.util.instance.impl;
 
-import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.util.instance.InstanceAccessUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
-import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,27 +33,6 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
             } else {
                 sleep(SLEEP_TIME);
             }
-        }
-    }
-
-    @Override
-    public boolean instanceInitialized(String hostname) {
-        if(!instanceAvailable(hostname))
-            return false;
-
-        Credential credential = new InitUserCredential();
-        RestHttpHelper restHelper = new RestHttpHelper(credential);
-        
-        String durareportUrl =
-            PROTOCOL + hostname + "/" + DURAREPORT_CONTEXT + "/storagereport/info";
-
-        try {
-            if(!checkResponse(restHelper.get(durareportUrl))) {
-                return false;
-            }
-            return true;
-        } catch(Exception e) {
-            return false;
         }
     }
 

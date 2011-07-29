@@ -98,12 +98,6 @@ public class DuracloudInstanceServiceSecuredImpl implements DuracloudInstanceSer
     }
 
     @Override
-    public boolean isInitialized() {
-        throwIfAccessDenied();
-        return instanceService.isInitialized();
-    }
-
-    @Override
     public void stop() {
         throwIfAccessDenied();
         instanceService.stop();

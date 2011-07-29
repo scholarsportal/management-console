@@ -172,19 +172,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
-    public void testInstanceAvailable() throws Exception {
-        initializeMockInstanceAvailable();
-        replayMocks();
-        accountController.setInstanceManagerService(this.instanceManagerService);
-
-        Model model = new ExtendedModelMap();
-        accountController.instanceAvailable(TEST_ACCOUNT_ID,
-                                            model);
-
-        EasyMock.verify(instanceManagerService, instanceService);
-    }
-
-    @Test
     public void testReInitUsers() throws Exception {
         boolean initUsers = true;
         createReInitInstanceMocks(initUsers);
@@ -358,27 +345,6 @@ public class AccountControllerTest extends AmaControllerTestBase {
             new DuracloudInstance(0, 0, 0, "host", "providerInstanceId");
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
-            .times(1);
-    }
-
-    private void initializeMockInstanceAvailable() throws Exception {
-        instanceManagerService = EasyMock.createMock(
-            "DuracloudInstanceManagerService",
-            DuracloudInstanceManagerService.class);
-
-        instanceService = EasyMock.createMock("DuracloudInstanceService",
-                                              DuracloudInstanceService.class);
-        Set<DuracloudInstanceService> instanceServices =
-            new HashSet<DuracloudInstanceService>();
-        instanceServices.add(instanceService);
-
-        EasyMock.expect(
-            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
-            .andReturn(instanceServices)
-            .times(1);
-
-        EasyMock.expect(instanceService.isInitialized())
-            .andReturn(true)
             .times(1);
     }
 

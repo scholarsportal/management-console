@@ -26,15 +26,6 @@ public interface InstanceAccessUtil {
      * @param hostname of the instance to be checked
      * @return
      */
-    public boolean instanceAvailable(String hostname);
-
-    /**
-     * Checks to see if a DuraCloud instance at the given host name is
-     * available and initialized
-     *
-     * @param hostname of the instance to be checked
-     * @return
-     */
-    public boolean instanceInitialized(String hostname);
+    public boolean instanceAvailable(String hostname);    
 
 }

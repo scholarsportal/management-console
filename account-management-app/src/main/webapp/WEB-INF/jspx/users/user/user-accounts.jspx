@@ -17,65 +17,8 @@
      value="Accounts" />
 
     <tiles:putAttribute
-     name="header-extensions">
-      <script type="text/javascript" language="JavaScript">
-        $(document).ready(function(){
-            $(".start").click(function() {
-                var button = $(this);
-                var id = $(button).attr("id");
-
-                var name = "#instance-start-form-" + id;
-                var form = $(name);
-
-                $.ajax({
-                  type: "POST",
-                  url: $(form).attr("action"),
-                  data: $(form).serialize(),
-                  success: function() {
-                    window.location.reload(true);
-                  },
-                  error: function() {
-                    alert ("Error starting your instance.");
-                  }
-                });
-
-                $(button).replaceWith("    Instance is starting...");
-
-                return false;
-            });
-
-            $(".available").click(function() {
-                var button = $(this);
-                var id = $(button).attr("id");
-
-                var checking = "#checking-" + id;
-                var name = "#instance-available-" + id;
-                var form = $(name);
-
-                $.ajax({
-                  type: "POST",
-                  url: $(form).attr("action"),
-                  data: $(form).serialize(),
-                  success: function() {
-                    window.location.reload(true);
-                  },
-                  error: function() {
-                    $(button).show();
-                    $(checking).hide();
-                  }
-                });
-
-                $(checking).show();
-                $(this).hide();
-
-                return false;
-            });
-
-            $('.available').click();
-
-        });
-      </script>
-    </tiles:putAttribute>
+     name="header-extensions"
+     value="" />
 
     <tiles:putAttribute
      name="body">
@@ -180,7 +123,7 @@
                       <div class="instance-panel inactive">
 
                       <form:form
-                        id="instance-start-form-${a.accountInfo.id}"
+                        id="instance-start-form"
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
@@ -191,7 +134,7 @@
                           path="version"
                           items="${a.versions}" />
                           </c:if>
-                        <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
+                        <button style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                       </div>
                     </c:if>
@@ -201,7 +144,6 @@
                 <div class="instance-panel active"><table>
                     <tr>
                       <th align="left">Host Name</th>
-                      <th align="left"></th>
                       <th width="173" align="center">Version</th>
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
@@ -211,30 +153,12 @@
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle" class="instructions">
-                          <c:out value="${a.instance.hostName}" />
-                      </td>
-                      <td align="left" valign="middle" class="instructions">
-                        <c:choose>
-                          <c:when test="${a.instanceInitialized}">
-                            <a class="button durabutton"
-                             id="account-${a.accountInfo.id}-duradmin-link"
-                             href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                             target="_blank">Launch DuraCloud<br />
-                            Administrator</a>
-                          </c:when>
-                          <c:otherwise>
-                            The instance is still starting.
-                            <form:form
-                                id="instance-available-${a.accountInfo.id}"
-                                method="post"
-                                action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/available">
-                              <button id="${a.accountInfo.id}" class="available" type="submit">Check Availability</button>
-                            </form:form>
-			                <strong id="checking-${a.accountInfo.id}">Checking Availabilty...</strong>
-                          </c:otherwise>
-                        </c:choose>
-                      </td>
+                      <td align="left" valign="middle" class="instructions"><c:out value="${a.instance.hostName}" />
+                        <a class="button durabutton" style="margin-left:25px !important"
+                         id="account-${a.accountInfo.id}-duradmin-link"
+                         href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
+                         target="_blank">Launch DuraCloud<br />
+                        Administrator</a></td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
                       </td>
@@ -261,10 +185,10 @@
                           }
                         }
                       </script>
-                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
+                      <!--<td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Restart</button>
-                      </form></td>
+                      </form></td>-->
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>

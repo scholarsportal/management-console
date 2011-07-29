@@ -153,16 +153,6 @@ public class DuracloudInstanceServiceSecuredImplTest {
     }
 
     @Test
-    public void testIsInitialized() throws Exception {
-        EasyMock.expect(wrappedInstanceService.isInitialized()).andReturn(false);
-
-        setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
-        replayMocks();
-
-        instanceService.isInitialized();
-    }
-
-    @Test
     public void testGetStatusFail() throws Exception {
         setMockVoterExpectations(AccessDecisionVoter.ACCESS_DENIED);
         replayMocks();

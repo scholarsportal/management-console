@@ -338,7 +338,6 @@ public class UserController extends AbstractController {
                 instanceServices.iterator().next();
             duracloudAccount.setInstance(instanceService.getInstanceInfo());
             duracloudAccount.setInstanceStatus(instanceService.getStatus());
-            duracloudAccount.setInstanceInitialized(instanceService.isInitialized());
             duracloudAccount.setInstanceVersion(
                 instanceService.getInstanceVersion());
         } else {

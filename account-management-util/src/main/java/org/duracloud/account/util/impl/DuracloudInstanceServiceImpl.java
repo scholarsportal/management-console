@@ -140,12 +140,6 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
     }
 
     @Override
-    public boolean isInitialized() {
-        InstanceAccessUtil accessUtil = new InstanceAccessUtilImpl();
-        return accessUtil.instanceInitialized(instance.getHostName());
-    }
-
-    @Override
     public void stop() {
         // Terminate the instance
         computeProvider.stop(instance.getProviderInstanceId());
