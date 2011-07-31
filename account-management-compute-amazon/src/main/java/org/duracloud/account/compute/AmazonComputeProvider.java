@@ -5,6 +5,7 @@ package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.AssociateAddressRequest;
+import com.amazonaws.services.ec2.model.AssociateAddressResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
@@ -96,11 +97,36 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
             }
         }
 
-        AssociateAddressRequest associateRequest =
-            new AssociateAddressRequest(instanceId, elasticIp);
-        ec2Client.associateAddress(associateRequest);
+        associateAddress(elasticIp, instanceId);
 
         return instanceId;
+    }
+
+    private void associateAddress(String elasticIp, String instanceId) {
+        AssociateAddressRequest associateRequest = new AssociateAddressRequest(
+            instanceId,
+            elasticIp);
+
+        final int maxTries = 5;
+        int tries = 0;
+        Exception e = null;
+        AssociateAddressResult result = null;
+        while (tries++ < maxTries && null == result) {
+            try {
+                result = ec2Client.associateAddress(associateRequest);
+                
+            } catch (Exception ex) {
+                e = ex;
+                sleep(SLEEP_TIME * tries);
+            }
+        }
+
+        if (null == result && null != e) {
+            StringBuilder error = new StringBuilder();
+            error.append("Error associating ip address: " + associateRequest);
+            log.error(error.toString());
+            throw new InstanceStartupException(error.toString(), e);
+        }
     }
 
     private void startError(String instanceId) {

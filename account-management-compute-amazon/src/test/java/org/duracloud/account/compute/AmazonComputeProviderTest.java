@@ -4,16 +4,7 @@
 package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.AssociateAddressRequest;
-import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
-import com.amazonaws.services.ec2.model.DescribeInstancesResult;
-import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.InstanceState;
-import com.amazonaws.services.ec2.model.RebootInstancesRequest;
-import com.amazonaws.services.ec2.model.Reservation;
-import com.amazonaws.services.ec2.model.RunInstancesRequest;
-import com.amazonaws.services.ec2.model.RunInstancesResult;
-import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import com.amazonaws.services.ec2.model.*;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -30,6 +21,15 @@ public class AmazonComputeProviderTest {
 
     @Test
     public void testStart() throws Exception {
+        doTestStart(true);
+    }
+
+    @Test
+    public void testStartError() throws Exception {
+        doTestStart(false);
+    }
+
+    private void doTestStart(boolean valid) throws Exception {
         String instanceId = "my-instance-id";
         String imageId = "abcd-image-id";
         String securityGroup = "security-group";
@@ -54,10 +54,16 @@ public class AmazonComputeProviderTest {
 
         Capture<AssociateAddressRequest> associateCapture =
             new Capture<AssociateAddressRequest>();
+
+        if (!valid) {
+            EasyMock.expect(mockEC2Client.associateAddress(EasyMock.capture(
+                associateCapture)))
+                .andThrow(new RuntimeException("canned-error"));
+        }
+
         EasyMock.expect(
             mockEC2Client.associateAddress(EasyMock.capture(associateCapture)))
-            .andReturn(null)
-            .times(1);
+            .andReturn(new AssociateAddressResult());
 
         EasyMock.replay(mockEC2Client);
 
