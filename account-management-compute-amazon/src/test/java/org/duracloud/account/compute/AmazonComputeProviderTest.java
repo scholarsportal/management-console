@@ -134,6 +134,15 @@ public class AmazonComputeProviderTest {
 
     @Test
     public void testGetStatus() throws Exception {
+        doTestGetStatus(true);
+    }
+
+    @Test
+    public void testGetStatusError() throws Exception {
+        doTestGetStatus(false);
+    }
+
+    private void doTestGetStatus(boolean valid) {
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
 
@@ -143,6 +152,12 @@ public class AmazonComputeProviderTest {
                 new Reservation().withInstances(
                     new Instance().withState(
                         new InstanceState().withName(state))));
+
+        if (!valid) {
+            EasyMock.expect(mockEC2Client.describeInstances(EasyMock.isA(
+                DescribeInstancesRequest.class))).andThrow(new RuntimeException(
+                "canned-exception"));
+        }
 
         EasyMock.expect(
             mockEC2Client.describeInstances(EasyMock.isA(

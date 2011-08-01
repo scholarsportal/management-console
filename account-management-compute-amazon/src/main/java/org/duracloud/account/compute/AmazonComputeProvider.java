@@ -178,11 +178,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
     @Override
     public String getStatus(String providerInstanceId) {
-        List<String> instanceIds = getIdList(providerInstanceId);
-        DescribeInstancesRequest request = new DescribeInstancesRequest();
-        request.setInstanceIds(instanceIds);
-        DescribeInstancesResult result = ec2Client.describeInstances(request);
-
+        DescribeInstancesResult result = describeInstance(providerInstanceId);
         try {
             // Allowed Values: pending, running, shutting-down, terminated
             return result.getReservations().iterator().next().getInstances()
@@ -193,6 +189,35 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                       e);
             return "unknown";
         }
+    }
+
+    private DescribeInstancesResult describeInstance(String providerInstanceId) {
+        List<String> instanceIds = getIdList(providerInstanceId);
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        request.setInstanceIds(instanceIds);
+
+        final int maxTries = 5;
+        int tries = 0;
+        Exception e = null;
+        DescribeInstancesResult result = null;
+        while (tries++ < maxTries && null == result) {
+            try {
+                result = ec2Client.describeInstances(request);
+
+            } catch (Exception ex) {
+                e = ex;
+                sleep(SLEEP_TIME * tries);
+            }
+        }
+
+        if (null == result && null != e) {
+            StringBuilder error = new StringBuilder();
+            error.append("Error describing instance: " + providerInstanceId);
+            log.error(error.toString());
+            throw new InstanceStartupException(error.toString(), e);
+        }
+
+        return result;
     }
 
     private List<String> getIdList(String id) {
