@@ -25,14 +25,15 @@ import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
 import org.duracloud.account.util.instance.InstanceAccessUtil;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
+import org.duracloud.account.util.instance.InstanceInitListener;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
@@ -48,7 +49,8 @@ import java.util.Set;
  * @author: Bill Branan
  * Date: Feb 3, 2011
  */
-public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
+public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
+                                                     InstanceInitListener {
 
     private Logger log =
         LoggerFactory.getLogger(DuracloudInstanceServiceImpl.class);
@@ -153,18 +155,32 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
         doInitialize(true);
     }
 
+    public void handleInstanceInitException(Exception e) {
+        // Simply log exception for now. In the future, it may be useful to
+        // capture the error so that it can be presented further up the chain.
+        log.error("Exception encountered attempting to initialize instance: " +
+                  e.getMessage(), e);
+    }
+
     private class ThreadedInitializer extends Thread {
         private int timeoutMinutes;
+        private InstanceInitListener listener;
 
-        public ThreadedInitializer(int timeoutMinutes) {
+        public ThreadedInitializer(int timeoutMinutes,
+                                   InstanceInitListener listener) {
             this.timeoutMinutes = timeoutMinutes;
+            this.listener = listener;
         }
 
         public void run() {
-            InstanceAccessUtil accessUtil = new InstanceAccessUtilImpl();
-            accessUtil.waitInstanceAvailable(instance.getHostName(),
-                                             timeoutMinutes * 60000);
-            doInitialize(false);
+            try {
+                InstanceAccessUtil accessUtil = new InstanceAccessUtilImpl();
+                accessUtil.waitInstanceAvailable(instance.getHostName(),
+                                                 timeoutMinutes * 60000);
+                doInitialize(false);
+            } catch(Exception e) {
+                listener.handleInstanceInitException(e);
+            }
         }
     }
 
@@ -185,7 +201,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService {
 
     protected void doInitialize(boolean wait) {
         if(wait && timeoutMinutes > 0) {
-            new ThreadedInitializer(timeoutMinutes).start();
+            new ThreadedInitializer(timeoutMinutes, this).start();
         } else {
             initializeInstance();
             initializeUserRoles();
