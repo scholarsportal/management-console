@@ -131,8 +131,8 @@ public class HadoopServiceMonitor {
     private Set<HadoopServiceInfo> monitorServicesRunning(HadoopUtil hadoopUtil)
         throws HadoopMonitorException {
         Calendar twoMonthsAgo = Calendar.getInstance();
-        twoMonthsAgo.roll(Calendar.MONTH, -2);
-        twoMonthsAgo.roll(Calendar.DATE, 1);
+        twoMonthsAgo.add(Calendar.MONTH, -2);
+        twoMonthsAgo.add(Calendar.DATE, 1);
         return monitorServicesCreatedAfter(twoMonthsAgo.getTime(),
                                            HadoopUtil.STATE.RUNNING,
                                            hadoopUtil);

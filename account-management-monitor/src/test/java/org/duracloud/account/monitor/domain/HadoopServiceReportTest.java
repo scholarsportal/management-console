@@ -156,21 +156,17 @@ public class HadoopServiceReportTest {
                                     int numCompleted,
                                     HadoopServiceReport report) {
         AccountInfo acct = createAccount(id);
-        Collection<HadoopServiceInfo> services = createAllServices(id,
-                                                                   numRunning,
-                                                                   numCompleted);
-        report.addAcctServices(acct, services);
-        return acct;
-    }
 
-    private Collection<HadoopServiceInfo> createAllServices(int id,
-                                                            int numRunning,
-                                                            int numCompleted) {
-        Collection<HadoopServiceInfo> services =
-            new HashSet<HadoopServiceInfo>();
-        services.addAll(createServices(id, numRunning, STATE.RUNNING));
-        services.addAll(createServices(id, numCompleted, STATE.COMPLETED));
-        return services;
+        Collection<HadoopServiceInfo> servicesRunning = createServices(id,
+                                                                       numRunning,
+                                                                       STATE.RUNNING);
+        Collection<HadoopServiceInfo> servicesComplete = createServices(id,
+                                                                        numCompleted,
+                                                                        STATE.COMPLETED);
+
+        report.addAcctServices(acct, servicesRunning);
+        report.addAcctServices(acct, servicesComplete);
+        return acct;
     }
 
     private Collection<HadoopServiceInfo> createServices(int id,

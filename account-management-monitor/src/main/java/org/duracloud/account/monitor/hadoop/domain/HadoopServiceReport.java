@@ -47,9 +47,15 @@ public class HadoopServiceReport {
      */
     public void addAcctServices(AccountInfo acct,
                                 Collection<HadoopServiceInfo> services) {
-        if (null != acct && null != services) {
-            servicesByAcct.put(acct, services);
+        if (null == acct || null == services) {
+            return;
         }
+
+        Collection<HadoopServiceInfo> existing = servicesByAcct.get(acct);
+        if (null != existing) {
+            services.addAll(existing);
+        }
+        servicesByAcct.put(acct, services);
     }
 
     /**
