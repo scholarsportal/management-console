@@ -287,6 +287,8 @@ public class UserController extends AbstractController {
         editForm.setFirstName(user.getFirstName());
         editForm.setLastName(user.getLastName());
         editForm.setEmail(user.getEmail());
+        editForm.setSecurityQuestion(user.getSecurityQuestion());
+        editForm.setSecurityAnswer(user.getSecurityAnswer());
         model.addAttribute(USER_PROFILE_FORM_KEY, editForm);
         return USER_EDIT_VIEW;
 
