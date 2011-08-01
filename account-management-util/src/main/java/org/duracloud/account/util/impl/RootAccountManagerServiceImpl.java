@@ -17,9 +17,9 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.RootAccountManagerService;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.notification.Emailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +38,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private DuracloudRepoMgr repoMgr;
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
+    private Notifier notifier;
     
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
@@ -81,18 +82,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             log.debug("No account rights found for {}", user.getUsername());
         }
 
-        try {
-            Emailer emailer = notificationMgr.getEmailer();
-
-            emailer.send("Duracloud Account Management - Reset Password",
-                         "Please use the following password to login: "
-                         + generatedPassword, user.getEmail());
-        } catch (Exception e) {
-            String msg =
-                "Error: Unable to send email to user: " + user.getUsername();
-            log.error(msg);
-            throw new UnsentEmailException(msg, e);
-        }
+        getNotifier().sendNotificationPasswordReset(user, generatedPassword);
 	}
 
     private boolean isUserRoot(Set<AccountRights> rightsSet) {
@@ -180,6 +170,13 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private DuracloudRightsRepo getRightsRepo() {
         return repoMgr.getRightsRepo();
+    }
+
+    private Notifier getNotifier() {
+        if(null == notifier) {
+            notifier = new Notifier(notificationMgr.getEmailer());
+        }
+        return notifier;
     }
   
 }

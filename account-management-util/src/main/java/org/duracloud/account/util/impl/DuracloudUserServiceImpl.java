@@ -24,11 +24,11 @@ import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.notification.Emailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +50,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private DuracloudRepoMgr repoMgr;
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
+    private Notifier notifier;
     
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
@@ -104,19 +105,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         throwIfUserExists(user);
         getUserRepo().save(user);
 
-        try {
-            Emailer emailer = notificationMgr.getEmailer();
+        getNotifier().sendNotificationCreateNewUser(user);
 
-            emailer.send("Duracloud Account Management - Create Profile",
-                         "Thank you for creating your profile with username "
-                         + username, user.getEmail());
-        } catch (Exception e) {
-            String msg =
-                "Error: Unable to send email to user: " + username;
-            log.error(msg);
-            throw new UnsentEmailException(msg, e);
-        }
-        
         log.info("created new user [{}]", username);
         return user;
     }
@@ -363,18 +353,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                        true,
                        generatedPassword);
 
-        try {
-            Emailer emailer = notificationMgr.getEmailer();
-
-            emailer.send("Duracloud Account Management - Forgot Password",
-                         "Please use the following password to login: "
-                         + generatedPassword, user.getEmail());
-        } catch (Exception e) {
-            String msg =
-                "Error: Unable to send email to user: " + username;
-            log.error(msg);
-            throw new UnsentEmailException(msg, e);
-        }
+        getNotifier().sendNotificationPasswordReset(user, generatedPassword);
     }
 
     @Override
@@ -432,21 +411,17 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         // Delete the invitation
         invRepo.delete(invitation.getId());
-        
+
         try {
             DuracloudUser user = getUserRepo().findById(userId);
-
-            DuracloudUser adminUser = getUserRepo().findByUsername(invitation.getAdminUsername());
-            
-            Emailer emailer = notificationMgr.getEmailer();
-
-            emailer.send("Duracloud Account Management - Reedemed Invitation",
-                         "You can now assign user rights for user : "
-                         + user.getUsername(), adminUser.getEmail());
-        } catch (Exception e) {
-            String msg =
-                "Error: Unable to send email to user: " + invitation.getAdminUsername();
-            log.error(msg);
+            DuracloudUser adminUser =
+                getUserRepo().findByUsername(invitation.getAdminUsername());
+            getNotifier().
+                sendNotificationRedeemedInvitation(user, adminUser.getEmail());
+        } catch(DBNotFoundException e) {
+            String msg = "Exception encountered attempting to send admin user " +
+                invitation.getAdminUsername() + " notice that user with id " +
+                userId + " accepted their account invitation";
             throw new UnsentEmailException(msg, e);
         }
 
@@ -488,6 +463,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         user.setSecurityQuestion(securityQuestion);
         user.setSecurityAnswer(securityAnswer);
         getUserRepo().save(user);
+    }
+
+    private Notifier getNotifier() {
+        if(null == notifier) {
+            notifier = new Notifier(notificationMgr.getEmailer());
+        }
+        return notifier;
     }
 
 }
