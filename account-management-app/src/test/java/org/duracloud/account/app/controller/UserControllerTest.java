@@ -186,6 +186,14 @@ public class UserControllerTest  extends AmaControllerTestBase {
 
     @Test
     public void testUpdateUserErrors() throws Exception {
+        userService =
+            EasyMock.createMock(DuracloudUserService.class);
+        EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
+            .andReturn(createUser())
+            .anyTimes();
+        EasyMock.replay(userService);
+        userController.setUserService(userService);
+
         BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
 
         EasyMock.expect(bindingResult.hasErrors()).
@@ -196,7 +204,7 @@ public class UserControllerTest  extends AmaControllerTestBase {
         String view = userController.update(TEST_USERNAME,
                                             null,
                                             bindingResult,
-                                            null);
+                                            new ExtendedModelMap());
 
         Assert.assertNotNull(view);
         Assert.assertEquals(userController.USER_EDIT_VIEW, view);

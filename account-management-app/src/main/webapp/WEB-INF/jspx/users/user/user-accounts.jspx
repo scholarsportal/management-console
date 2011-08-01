@@ -365,14 +365,12 @@
 
                             <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
                             </div>
-                            <c:if test="${a.userRole != 'ROLE_USER'}">
-                                <div class="instance-panel inactive">
+                            <div class="instance-panel inactive">
 
-                                  <span class="instructions">
-                                      This status of this account is currently INACTIVE. Please contact DuraCloud to
-                                make your account ACTIVE.</span>
-                                </div>
-                            </c:if>
+                              <span class="instructions">
+                                  This status of this account is currently INACTIVE. Please contact <c:if test="${a.userRole != 'ROLE_USER'}">DuraCloud</c:if> <c:if test="${a.userRole == 'ROLE_USER'}">your administrator</c:if> to
+                            make your account ACTIVE.</span>
+                            </div>
 
                         </td>
                       </tr>

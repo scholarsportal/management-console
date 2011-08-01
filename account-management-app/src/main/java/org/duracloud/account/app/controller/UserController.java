@@ -222,6 +222,12 @@ public class UserController extends AbstractController {
 
         if (result.hasErrors()) {
             log.debug("profile form has errors for {}: returning...", username);
+            model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+
+            DuracloudUser user =
+                this.userService.loadDuracloudUserByUsername(username);
+            addUserToModel(user, model);
+
             return USER_EDIT_VIEW;
         }
 

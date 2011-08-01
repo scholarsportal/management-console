@@ -118,8 +118,9 @@
                      class="label">
                       <form:label
                        cssErrorClass="error"
+                       title="You will be asked to answer this question if you forget your password"
                        for="securityQuestion-text"
-                       path="securityQuestion">Question:</form:label>
+                       path="securityQuestion">Security Question:</form:label>
                     </td>
 
                     <td
@@ -136,8 +137,9 @@
                      class="label">
                       <form:label
                        cssErrorClass="error"
+                       title="The answer you will need to provide in order for your password to be reset"
                        for="securityAnswer-text"
-                       path="securityAnswer">Answer:</form:label>
+                       path="securityAnswer">Answer to Security Question:</form:label>
                     </td>
 
                     <td
