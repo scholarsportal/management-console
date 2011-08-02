@@ -55,7 +55,7 @@
 			$(document.body).append(input);
 
 			//listen to all links
-			$("a[href]").click(function(evt){
+			$("a[href]").not("[target]").click(function(evt){
 					if($("#"+changedFieldId).val() == "true"){
 						if(!confirm("You have changed a value on this page without saving.\n"+
 										" Are you sure you want to abandon your changes?")){
