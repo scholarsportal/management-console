@@ -10,10 +10,8 @@ public class ForgotPasswordForm {
 	@Length(min = 4, max = 20, message="Username must be between 4 and 20 characters in length.")
 	private String username;
 
-	@NotBlank (message = "Security question is empty.")
 	private String securityQuestion;
 
-	@NotBlank (message = "Security answer is empty.")
 	private String securityAnswer;
 	
 	public String getUsername() {

@@ -55,10 +55,12 @@ public class UserController extends AbstractController {
     public static final String USER_KEY = "user";
     public static final String NEW_USER_VIEW = "user-new";
     public static final String FORGOT_PASSWORD_VIEW = "forgot-password";
+
     public static final String NEW_USER_WELCOME = "user-welcome";
 
     public static final String USER_HOME = "user-home";
     public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
+
     public static final String USER_ACCOUNTS = "user-accounts";
 
     public static final String USER_MAPPING = "/byid/{username}";
@@ -67,13 +69,13 @@ public class UserController extends AbstractController {
 
     public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
 
-    public static final String USER_ACCOUNTS_MAPPING =
-        USER_MAPPING + "/accounts";
+    public static final String USER_ACCOUNTS_MAPPING = USER_MAPPING
+            + "/accounts";
 
     public static final String USER_EDIT_VIEW = "user-edit";
 
-    public static final String CHANGE_PASSWORD_MAPPING =
-        USER_MAPPING + "/change-password";
+    public static final String CHANGE_PASSWORD_MAPPING = USER_MAPPING
+            + "/change-password";
     public static final String CHANGE_PASSWORD_VIEW = "user-change-password";
     public static final String USER_PROFILE_FORM_KEY = "userProfileEditForm";
     public static final String CHANGE_PASSWORD_FORM_KEY = "changePasswordForm";
@@ -121,42 +123,42 @@ public class UserController extends AbstractController {
     public ModelAndView getForgotPasswordForm(HttpServletRequest request) {
         log.info("serving up ForgotPasswordForm");
         ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
-        return new ModelAndView(FORGOT_PASSWORD_VIEW, FORGOT_PASSWORD_FORM_KEY, forgotPasswordForm);
+        return new ModelAndView(FORGOT_PASSWORD_VIEW,
+                                FORGOT_PASSWORD_FORM_KEY,
+                                forgotPasswordForm);
     }
 
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
     public String profileRedirect() {
-        String username =
-            SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext()
+                                               .getAuthentication()
+                                               .getName();
         return "redirect:/users/byid/" + username;
 
     }
 
     @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getUser(
-        @PathVariable String username, HttpServletRequest request)
-        throws DBNotFoundException {
+    public ModelAndView getUser(@PathVariable String username,
+                                HttpServletRequest request) throws DBNotFoundException {
         log.debug("getting user {}", username);
         // if there's a redemption code in the session, it means that
         // the user logged in in order to redeem an invitation
         String redemptionCode = removeRedemptionCodeFromSession(request);
         if (redemptionCode != null) {
             log.debug("redemption code found in session: {}", redemptionCode);
-            DuracloudUser user =
-                this.userService.loadDuracloudUserByUsername(username);
+            DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
             int accountId;
             try {
-                accountId =
-                    this.userService.redeemAccountInvitation(user.getId(),
-                        redemptionCode);
+                accountId = this.userService.redeemAccountInvitation(user.getId(),
+                                                                     redemptionCode);
 
                 user = this.userService.loadDuracloudUserByUsername(username);
                 reauthenticate(user, this.authenticationManager);
 
             } catch (InvalidRedemptionCodeException e) {
                 log.error("redemption failed for {} on redemption {}",
-                    username,
-                    redemptionCode);
+                          username,
+                          redemptionCode);
                 addRedemptionFailedMessage();
             }
         }
@@ -168,8 +170,7 @@ public class UserController extends AbstractController {
      * 
      */
     private void addRedemptionFailedMessage() {
-        addErrorMessage(
-            "The redemption code you supplied is invalid. We are unable to add you to an account.");
+        addErrorMessage("The redemption code you supplied is invalid. We are unable to add you to an account.");
     }
 
     /**
@@ -177,8 +178,8 @@ public class UserController extends AbstractController {
      * @return
      */
     private String removeRedemptionCodeFromSession(HttpServletRequest request) {
-        String redemptionCode =
-            (String) request.getSession().getAttribute("redemptionCode");
+        String redemptionCode = (String) request.getSession()
+                                                .getAttribute("redemptionCode");
         if (redemptionCode != null) {
             request.getSession().removeAttribute("redemptionCode");
         }
@@ -186,8 +187,7 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { USER_ACCOUNTS_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getUserAccounts(@PathVariable String username)
-        throws DBNotFoundException {
+    public ModelAndView getUserAccounts(@PathVariable String username) throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
         ModelAndView mav = new ModelAndView(USER_ACCOUNTS);
         prepareModel(username, mav);
@@ -195,12 +195,10 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.GET)
-    public String edit(@PathVariable String username, Model model)
-        throws DBNotFoundException {
+    public String edit(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
         UserProfileEditForm form = new UserProfileEditForm();
-        DuracloudUser user =
-            this.userService.loadDuracloudUserByUsername(username);
+        DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
         form.setFirstName(user.getFirstName());
         form.setLastName(user.getLastName());
         form.setEmail(user.getEmail());
@@ -209,23 +207,23 @@ public class UserController extends AbstractController {
         model.addAttribute(USER_PROFILE_FORM_KEY, form);
 
         model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
-        
+
         addUserToModel(user, model);
         return USER_EDIT_VIEW;
     }
 
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
-    public String update(
-        @PathVariable String username,
-        @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
-        BindingResult result, Model model) throws Exception {
+    public String update(@PathVariable String username,
+                         @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
+                         BindingResult result,
+                         Model model) throws Exception {
 
         if (result.hasErrors()) {
             log.debug("profile form has errors for {}: returning...", username);
-            model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+            model.addAttribute(CHANGE_PASSWORD_FORM_KEY,
+                               new ChangePasswordForm());
 
-            DuracloudUser user =
-                this.userService.loadDuracloudUserByUsername(username);
+            DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
             addUserToModel(user, model);
 
             return USER_EDIT_VIEW;
@@ -244,8 +242,7 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.GET)
-    public String changePassword(@PathVariable String username, Model model)
-        throws DBNotFoundException {
+    public String changePassword(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("opening change password form  for {}", username);
         model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
         // add related model objects
@@ -255,13 +252,12 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
-    public String changePassword (
-        @PathVariable String username,
-        @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
-        BindingResult result, Model model) throws Exception {
+    public String changePassword(@PathVariable String username,
+                                 @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
+                                 BindingResult result,
+                                 Model model) throws Exception {
 
-        DuracloudUser user =
-            this.userService.loadDuracloudUserByUsername(username);
+        DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
 
         // check for errors
         if (!result.hasErrors()) {
@@ -269,13 +265,14 @@ public class UserController extends AbstractController {
             int id = user.getId();
             try {
                 this.userService.changePassword(id,
-                    form.getOldPassword(), false,
-                    form.getPassword());
+                                                form.getOldPassword(),
+                                                false,
+                                                form.getPassword());
                 return "redirect:" + PREFIX + "/users/byid/" + username;
             } catch (InvalidPasswordException e) {
                 result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
-                    "oldPassword",
-                    "The old password is not correct"));
+                                               "oldPassword",
+                                               "The old password is not correct"));
             }
         }
 
@@ -283,7 +280,7 @@ public class UserController extends AbstractController {
         addUserToModel(user, model);
 
         UserProfileEditForm editForm = new UserProfileEditForm();
-        
+
         editForm.setFirstName(user.getFirstName());
         editForm.setLastName(user.getLastName());
         editForm.setEmail(user.getEmail());
@@ -300,28 +297,26 @@ public class UserController extends AbstractController {
      */
     private void prepareModel(DuracloudUser user, ModelAndView mav) {
         mav.addObject(USER_KEY, user);
-        Set<AccountInfo> accounts =
-            this.accountManagerService.findAccountsByUserId(user.getId());
-        mav.addObject(NEW_INSTANCE_FORM,
-                           new AccountInstanceForm());
+        Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
+        mav.addObject(NEW_INSTANCE_FORM, new AccountInstanceForm());
 
-        List<DuracloudAccount> activeAccounts =
-            new ArrayList<DuracloudAccount>();
-        List<DuracloudAccount> inactiveAccounts =
-            new ArrayList<DuracloudAccount>();
-        List<DuracloudAccount> pendingAccounts =
-            new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> activeAccounts = new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> inactiveAccounts = new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> pendingAccounts = new ArrayList<DuracloudAccount>();
 
         Iterator<AccountInfo> iterator = accounts.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
-            DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo, user);
-            
-            if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+            DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo,
+                                                                     user);
+
+            if (acctInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
                 activeAccounts.add(duracloudAccount);
-            } else if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE)) {
+            } else if (acctInfo.getStatus()
+                               .equals(AccountInfo.AccountStatus.INACTIVE)) {
                 inactiveAccounts.add(duracloudAccount);
-            } else if(acctInfo.getStatus().equals(AccountInfo.AccountStatus.PENDING)) {
+            } else if (acctInfo.getStatus()
+                               .equals(AccountInfo.AccountStatus.PENDING)) {
                 pendingAccounts.add(duracloudAccount);
             }
         }
@@ -333,24 +328,25 @@ public class UserController extends AbstractController {
         mav.addObject("pendingAccounts", pendingAccounts);
     }
 
-    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo, DuracloudUser user) {
+    private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
+                                                  DuracloudUser user) {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
 
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountInfo.getId());
-        if(instanceServices.size() > 0) {
+        Set<DuracloudInstanceService> instanceServices = instanceManagerService.getInstanceServices(accountInfo.getId());
+        if (instanceServices.size() > 0) {
             // Handle only a single instance for the time being
-            DuracloudInstanceService instanceService =
-                instanceServices.iterator().next();
+            DuracloudInstanceService instanceService = instanceServices.iterator()
+                                                                       .next();
             duracloudAccount.setInstance(instanceService.getInstanceInfo());
             duracloudAccount.setInstanceStatus(instanceService.getStatus());
-            duracloudAccount.setInstanceVersion(
-                instanceService.getInstanceVersion());
+            duracloudAccount.setInstanceVersion(instanceService.getInstanceVersion());
         } else {
-            if(accountInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE) ||
-               accountInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE)) {
+            if (accountInfo.getStatus()
+                           .equals(AccountInfo.AccountStatus.ACTIVE)
+                    || accountInfo.getStatus()
+                                  .equals(AccountInfo.AccountStatus.INACTIVE)) {
                 Set<String> versions = instanceManagerService.getVersions();
                 duracloudAccount.setVersions(versions);
             }
@@ -363,10 +359,8 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { USER_WELCOME_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getUserWelcome(
-        @PathVariable String username,
-        @RequestParam(value = "accountId", required = false) Integer accountId)
-        throws DBNotFoundException {
+    public ModelAndView getUserWelcome(@PathVariable String username,
+                                       @RequestParam(value = "accountId", required = false) Integer accountId) throws DBNotFoundException {
 
         log.debug("opening welcome page for for {}: accountId={}",
                   username,
@@ -382,53 +376,48 @@ public class UserController extends AbstractController {
     /**
      * @param mav
      */
-    private void prepareModel(String username, ModelAndView mav)
-        throws DBNotFoundException {
-        DuracloudUser user =
-            this.userService.loadDuracloudUserByUsernameInternal(username);
+    private void prepareModel(String username, ModelAndView mav) throws DBNotFoundException {
+        DuracloudUser user = this.userService.loadDuracloudUserByUsernameInternal(username);
         prepareModel(user, mav);
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
-    public String add(
-        @ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
-        BindingResult result, Model model, HttpServletRequest request)
-        throws Exception {
+    public String add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
+                      BindingResult result,
+                      Model model,
+                      HttpServletRequest request) throws Exception {
         String name = null == newUserForm ? "null" : newUserForm.getUsername();
         log.debug("Add new user: {}", name);
         if (result.hasErrors()) {
             return NEW_USER_VIEW;
         }
 
-        DuracloudUser user =
-                this.userService.createNewUser(newUserForm.getUsername(),
-                    newUserForm.getPassword(),
-                    newUserForm.getFirstName(),
-                    newUserForm.getLastName(),
-                    newUserForm.getEmail(),
-                    newUserForm.getSecurityQuestion(),
-                    newUserForm.getSecurityAnswer());
+        DuracloudUser user = this.userService.createNewUser(newUserForm.getUsername(),
+                                                            newUserForm.getPassword(),
+                                                            newUserForm.getFirstName(),
+                                                            newUserForm.getLastName(),
+                                                            newUserForm.getEmail(),
+                                                            newUserForm.getSecurityQuestion(),
+                                                            newUserForm.getSecurityAnswer());
 
         reauthenticate(user.getUsername(),
-            user.getPassword(),
-            this.authenticationManager);
+                       user.getPassword(),
+                       this.authenticationManager);
 
         String redemptionCode = newUserForm.getRedemptionCode();
         int accountId = -1;
         if (!StringUtils.isEmpty(redemptionCode)) {
             try {
-                accountId =
-                    this.userService.redeemAccountInvitation(user.getId(),
-                        redemptionCode);
+                accountId = this.userService.redeemAccountInvitation(user.getId(),
+                                                                     redemptionCode);
 
             } catch (InvalidRedemptionCodeException ex) {
                 addRedemptionFailedMessage();
             }
         }
 
-        String redirect =
-            "redirect:"
-                + PREFIX + "/users/byid/" + newUserForm.getUsername();
+        String redirect = "redirect:" + PREFIX + "/users/byid/"
+                + newUserForm.getUsername();
 
         if (accountId > -1) {
             redirect += "?accountId=" + accountId;
@@ -438,35 +427,49 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)
-    public String forgotPassword(
-        @ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
-        BindingResult result, Model model, HttpServletRequest request)
-        throws Exception {
+    public String forgotPassword(@ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
+                                 BindingResult result,
+                                 Model model,
+                                 HttpServletRequest request) throws Exception {
+
+        model.addAttribute(FORGOT_PASSWORD_FORM_KEY, forgotPasswordForm);
+
         if (!result.hasErrors()) {
+
             try {
-                this.userService.forgotPassword(
-                    forgotPasswordForm.getUsername(),
-                    forgotPasswordForm.getSecurityQuestion(),
-                    forgotPasswordForm.getSecurityAnswer());
+
+                String username = forgotPasswordForm.getUsername();
+
+                if (StringUtils.isEmpty(forgotPasswordForm.getSecurityQuestion())) {
+                    DuracloudUser user = this.userService.loadDuracloudUserByUsernameInternal(username);
+                    forgotPasswordForm.setSecurityQuestion(user.getSecurityQuestion());
+                }
+
+                if (StringUtils.isEmpty(forgotPasswordForm.getSecurityAnswer())) {
+                    return FORGOT_PASSWORD_VIEW;
+                }
+
+                
+                this.userService.forgotPassword(username,
+                                                forgotPasswordForm.getSecurityQuestion(),
+                                                forgotPasswordForm.getSecurityAnswer());
             } catch (DBNotFoundException e) {
                 result.addError(new FieldError(FORGOT_PASSWORD_FORM_KEY,
-                    "username",
-                    "The username does not exist"));
+                                               "username",
+                                               "The username does not exist"));
                 return FORGOT_PASSWORD_VIEW;
             } catch (InvalidPasswordException e) {
                 result.addError(new FieldError(FORGOT_PASSWORD_FORM_KEY,
-                    "securityQuestion",
-                    "The security question/answer is not correct"));
+                                               "securityQuestion",
+                                               "The security answer is not correct"));
                 return FORGOT_PASSWORD_VIEW;
             } catch (UnsentEmailException ue) {
                 result.addError(new ObjectError(FORGOT_PASSWORD_FORM_KEY,
-                    "Unable to send email to the address associated with the username"));
+                                                "Unable to send email to the address associated with the username"));
                 return FORGOT_PASSWORD_VIEW;
             }
 
-            String redirect =
-                "redirect:"
-                    + PREFIX + "/login";
+            String redirect = "redirect:" + PREFIX + "/login";
 
             return redirect;
         }
@@ -483,9 +486,8 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { "/redeem/{redemptionCode}" }, method = RequestMethod.GET)
-    public ModelAndView redeemUser(
-        HttpServletRequest request, @PathVariable String redemptionCode)
-        throws DBNotFoundException {
+    public ModelAndView redeemUser(HttpServletRequest request,
+                                   @PathVariable String redemptionCode) throws DBNotFoundException {
         log.info("getting redeem invitation {}", redemptionCode);
 
         // force logout
@@ -503,13 +505,11 @@ public class UserController extends AbstractController {
         return authenticationManager;
     }
 
-    public void setAuthenticationManager(
-        AuthenticationManager authenticationManager) {
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
-    public void setAccountManagerService(
-        AccountManagerService accountManagerService) {
+    public void setAccountManagerService(AccountManagerService accountManagerService) {
         this.accountManagerService = accountManagerService;
     }
 
