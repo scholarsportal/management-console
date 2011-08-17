@@ -326,6 +326,8 @@ public class UserController extends AbstractController {
         mav.addObject("activeAccounts", activeAccounts);
         mav.addObject("inactiveAccounts", inactiveAccounts);
         mav.addObject("pendingAccounts", pendingAccounts);
+        
+        mav.addObject("latestVersion", instanceManagerService.getLatestVersion());
     }
 
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
@@ -515,5 +517,13 @@ public class UserController extends AbstractController {
 
     public AccountManagerService getAccountManagerService() {
         return accountManagerService;
+    }
+
+    public DuracloudInstanceManagerService getInstanceManagerService() {
+        return instanceManagerService;
+    }
+
+    public void setInstanceManagerService(DuracloudInstanceManagerService instanceManagerService) {
+        this.instanceManagerService = instanceManagerService;
     }
 }

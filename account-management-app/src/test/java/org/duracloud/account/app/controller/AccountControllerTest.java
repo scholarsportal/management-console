@@ -245,6 +245,27 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
+    public void testUpgradeInstance() throws Exception {
+        initializeMockInstanceManagerService();
+        initStop(TEST_ACCOUNT_ID);
+
+        String version = "1.0";
+        EasyMock.expect(instanceManagerService.getLatestVersion())
+            .andReturn(version);
+
+        initStart(TEST_ACCOUNT_ID, version);
+
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.upgradeInstance(TEST_ACCOUNT_ID,
+                                          TEST_INSTANCE_ID,
+                                          model);
+        verifyResult(model);
+    }
+
+    @Test
     public void testGetStatement() throws AccountNotFoundException {
         Model model = new ExtendedModelMap();
         accountController.getStatement(TEST_ACCOUNT_ID, model);

@@ -122,6 +122,24 @@ public class AccountController extends AbstractAccountController {
             instanceManagerService.createInstance(accountId, version);
     }
 
+    @RequestMapping(value = { INSTANCE_UPGRADE_PATH }, method = RequestMethod.POST)
+    public String upgradeInstance(@PathVariable int accountId,
+                                  @PathVariable int instanceId,
+                                  Model model)
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
+        stopInstance(instanceId);
+        startInstance(accountId, instanceManagerService.getLatestVersion());
+
+        populateAccountInModel(accountId, model);
+        model.addAttribute(ACTION_STATUS,
+                           "Instance UPGRADED successfully, it will be " +
+                           "available for use in 5 minutes.");
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+        return "redirect:" + PREFIX + "/users/byid/" + username;
+    }
+
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
     public String restartInstance(@PathVariable int accountId,
                                   @PathVariable int instanceId,

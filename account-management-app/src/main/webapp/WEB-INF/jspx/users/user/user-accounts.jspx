@@ -175,6 +175,14 @@
                             t.form.submit();
                           }
                         }
+                        function AskAndSubmitUpgrade(t)
+                        {
+                          var answer = confirm("Are you sure you want to upgrade your instance? This will stop your current instance which will stop the services you have running.");
+                          if (answer)
+                          {
+                            t.form.submit();
+                          }
+                        }
 
                         function AskAndSubmitInit(t)
                         {
@@ -189,6 +197,13 @@
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Restart</button>
                       </form></td>-->
+                      <c:if test="${a.instanceVersion != latestVersion}">
+
+                          <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
+                                  method="post">
+                            <button type="submit" onclick="AskAndSubmitUpgrade(this); return false;">Upgrade</button>
+                          </form></td>
+                      </c:if>
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>

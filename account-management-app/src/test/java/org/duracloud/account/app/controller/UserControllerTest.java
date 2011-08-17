@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
@@ -26,6 +27,7 @@ public class UserControllerTest extends AmaControllerTestBase {
     private UserController userController;
 
     private DuracloudUserService userService;
+    private DuracloudInstanceManagerService instanceManagerService;
 
     @Before
     public void before() throws Exception {
@@ -109,6 +111,12 @@ public class UserControllerTest extends AmaControllerTestBase {
         boolean internal = true;
         initializeMockUserServiceLoadUser(internal);
 
+        instanceManagerService =
+            EasyMock.createMock(DuracloudInstanceManagerService.class);
+        EasyMock.expect(instanceManagerService.getLatestVersion())
+            .andReturn(null);
+        userController.setInstanceManagerService(instanceManagerService);
+
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         HttpSession session = EasyMock.createMock(HttpSession.class);
 
@@ -117,7 +125,7 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .anyTimes();
         EasyMock.expect(request.getSession()).andReturn(session).anyTimes();
 
-        EasyMock.replay(request, session);
+        EasyMock.replay(request, session, instanceManagerService);
 
         ModelAndView mv = userController.getUser(TEST_USERNAME, request);
 
@@ -146,7 +154,8 @@ public class UserControllerTest extends AmaControllerTestBase {
         Assert.assertNotNull(obj);
         Assert.assertTrue(obj instanceof List);
 
-        EasyMock.verify(request, session, userService, accountManagerService);
+        EasyMock.verify(request, session, userService, accountManagerService,
+                        instanceManagerService);
     }
 
     @Test
