@@ -673,7 +673,6 @@ li.account:hover {
 	background-image: url(../img/acccount-record-back.png);
 	background-repeat: repeat-x;
 	background-position: center -5px;
-	min-height:200px;
 	background-color: #CCC;
 	-moz-border-radius:8px;	
 	-webkit-border-radius:8px;

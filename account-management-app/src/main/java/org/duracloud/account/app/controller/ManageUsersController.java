@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
@@ -41,12 +42,17 @@ public class ManageUsersController extends AbstractController {
 
     public static final String EDIT_ACCOUNT_USERS_FORM_KEY = "accountUsersEditForm";
     public static final String ADD_ACCOUNT_USER_FORM_KEY = "addAccountUserForm";
+    public static final String SETUP_ACCOUNT_FORM_KEY = "setupAccountForm";
 
     public static final String USERS_MANAGE = "/users/manage";
     public static final String REDIRECT_USERS_MANAGE = "redirect:" + USERS_MANAGE;
 
     public static final String USER_ADD_MAPPING =
         USERS_MANAGE + "/add";
+    public static final String ACCOUNT_SETUP_MAPPING =
+        USERS_MANAGE + "/accounts/byid/{accountId}/setup";
+    public static final String ACCOUNT_DELETE_MAPPING =
+        USERS_MANAGE + "/accounts/byid/{accountId}/delete";
     public static final String USER_DELETE_ACCOUNT_MAPPING =
         USERS_MANAGE + "/accounts/byid/{accountId}/users/byid/{userId}/delete";
     public static final String USER_EDIT_MAPPING =
@@ -191,7 +197,8 @@ public class ManageUsersController extends AbstractController {
         
         userService.revokeUserRights(accountId, userId);
 
-        return REDIRECT_USERS_MANAGE;    }
+        return REDIRECT_USERS_MANAGE;
+    }
 
     @RequestMapping(value = USER_DELETE_MAPPING, method = RequestMethod.POST)
     public String deleteUser(
@@ -202,7 +209,99 @@ public class ManageUsersController extends AbstractController {
         //delete user
         rootAccountManagerService.deleteUser(userId);
 
-        return REDIRECT_USERS_MANAGE;    }
+        return REDIRECT_USERS_MANAGE;
+    }
+
+    @RequestMapping(value = ACCOUNT_DELETE_MAPPING, method = RequestMethod.POST)
+    public String deleteAccount(
+        @PathVariable int accountId, Model model)
+        throws Exception {
+        log.info("delete account {}", accountId);
+
+        //delete account
+        rootAccountManagerService.deleteAccount(accountId);
+
+        return REDIRECT_USERS_MANAGE;
+    }
+
+    @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.GET)
+    public String getSetupAccount(
+        @PathVariable int accountId, Model model)
+        throws Exception {
+        log.info("setup account {}", accountId);
+
+        List<StorageProviderAccount> providers =
+            rootAccountManagerService.getSecondaryStorageProviders(accountId);
+
+        model.addAttribute(SETUP_ACCOUNT_FORM_KEY, new AccountSetupForm());
+
+        model.addAttribute("secProviders", providers);
+
+        return "account-setup";
+    }
+
+    @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.POST)
+    public String setupAccount(
+        @PathVariable int accountId,
+        @ModelAttribute(SETUP_ACCOUNT_FORM_KEY) @Valid AccountSetupForm accountSetupForm,
+					   BindingResult result, Model model)
+        throws Exception {
+        log.info("setup account {}", accountId);
+        if (result.hasErrors()) {
+            return "account-setup";
+        }
+
+        AccountInfo accountInfo = rootAccountManagerService.getAccount(accountId);
+
+        //setup account
+        rootAccountManagerService.setupStorageProvider(
+            accountInfo.getPrimaryStorageProviderAccountId(),
+            accountSetupForm.getPrimaryStorageUsername(),
+            accountSetupForm.getPrimaryStoragePassword());
+
+        if(accountSetupForm.getSecondaryUsername0() != null) {
+            //setup account
+            rootAccountManagerService.setupStorageProvider(
+                accountSetupForm.getSecondaryId0(),
+                accountSetupForm.getSecondaryUsername0(),
+                accountSetupForm.getSecondaryPassword0());
+        }
+
+        if(accountSetupForm.getSecondaryUsername1() != null) {
+            //setup account
+            rootAccountManagerService.setupStorageProvider(
+                accountSetupForm.getSecondaryId1(),
+                accountSetupForm.getSecondaryUsername1(),
+                accountSetupForm.getSecondaryPassword1());
+        }
+
+        if(accountSetupForm.getSecondaryUsername2() != null) {
+            //setup account
+            rootAccountManagerService.setupStorageProvider(
+                accountSetupForm.getSecondaryId2(),
+                accountSetupForm.getSecondaryUsername2(),
+                accountSetupForm.getSecondaryPassword2());
+        }
+
+        if(accountSetupForm.isComputeCredentialsSame()) {
+            accountSetupForm.setComputeUsername(
+                accountSetupForm.getPrimaryStorageUsername());
+            accountSetupForm.setComputePassword(
+                accountSetupForm.getPrimaryStoragePassword());
+        }
+
+        rootAccountManagerService.setupComputeProvider(
+            accountInfo.getComputeProviderAccountId(),
+            accountSetupForm.getComputeUsername(),
+            accountSetupForm.getComputePassword(),
+            accountSetupForm.getComputeElasticIP(),
+            accountSetupForm.getComputeKeypair(),
+            accountSetupForm.getComputeSecurityGroup());
+
+        rootAccountManagerService.activateAccount(accountId);
+
+        return REDIRECT_USERS_MANAGE;
+    }
 
     @RequestMapping(value = { RESET_USER_MAPPING }, method = RequestMethod.POST)
     public String resetUsersPassword(

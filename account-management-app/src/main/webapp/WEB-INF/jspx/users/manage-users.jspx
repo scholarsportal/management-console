@@ -47,6 +47,25 @@
                     }
                 }
             });
+            
+            $("#sort-accounts").tablesorter({
+                headers: {
+                    4: {
+                        sorter: false
+                    },
+                    5: {
+                        sorter: false
+                    },
+                    6: {
+                        sorter: false
+                    }
+                }
+            });
+
+            $('.datatablesimple').hide();
+            $('.hover').click(function() {
+                $(this).siblings('.datatablesimple').slideToggle('fast');
+            });
          });
         </script>
     </tiles:putAttribute>
@@ -58,13 +77,11 @@
 
         <tiles:putAttribute
          name="content">
-          <h1>Manage Users</h1>
-          <div
-           id="user-list"
-           class="account-record user-list">
-            <table border="0" cellspacing="0" cellpadding="0" width="100%">
-              <tr>
-                <td class="accountlabel"> Active Users</td>
+          <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr>
+              <td>
+                  <h1>Root Console</h1>
+              </td>
                 <td align="right">
 
                         <form:form
@@ -112,6 +129,14 @@
                         </form:form>
                 </td>
               </tr>
+            </table>
+          <div
+           id="user-list"
+           class="account-record user-list">
+            <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
+              <tr>
+                <td class="accountlabel"> Manage Users</td>
+            </tr>
             </table>
            <div style="height:20px"></div>
                 <table id="sort" class="datatablesimple">
@@ -322,6 +347,144 @@
 
               </table>
             </div>
+
+
+
+        <div
+           id="account-list"
+           class="account-record user-list">
+            <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
+              <tr>
+                <td class="accountlabel"> Manage Accounts</td>
+              </tr>
+            </table>
+           <div style="height:20px"></div>
+                <table id="sort-accounts" class="datatablesimple">
+                <thead>
+                <tr>
+                  <th align="left">Account Name</th>
+
+                  <th align="left">Subdomain</th>
+
+                  <th align="left">Status</th>
+
+                  <th align="left">Service Plan</th>
+
+                  <th align="left"></th>
+                  <th align="left"></th>
+                  <th align="left"></th>
+
+                </tr>
+                </thead>
+                <tbody>
+
+                <c:forEach
+                 var="a"
+                 items="${accounts}">
+                  <tr>
+                    <td align="left"><a href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details" style="color:#4c4c4c">${a.acctName}</a></td>
+
+                    <td align="left"><a href="http://${a.subdomain}.duracloud.org/duradmin" style="color:#4c4c4c" target="_blank">${a.subdomain}</a></td>
+
+                    <td align="left">${a.status}</td>
+
+                    <td align="left">${a.servicePlan.text}</td>
+                    <td align="left">
+
+                            <a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
+                             class="button"> Manage Users and Roles</a></td>
+
+                    <td align="center">
+
+                        <c:if test="${a.status == 'PENDING'}">
+                            <td width="90" align="right" valign="middle">
+                             <a
+                             href="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.id}/setup"
+                             class="button"> Setup Account</a>
+                            </td>
+                          </c:if>
+
+
+
+                        <c:if test="${a.status == 'INACTIVE'}">
+                          <script type="text/javascript" language="JavaScript">
+                            function AskAndActivate(t)
+                            {
+                              var answer = confirm("Are you sure you want to activate this account.");
+                              if (answer)
+                              {
+                                t.form.submit();
+                              }
+                            }
+                          </script>
+                            <td width="90" align="right" valign="middle">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/activate"
+                              method="post">
+                            <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
+                          </form>
+                            </td>
+                          </c:if>
+
+                        <c:if test="${a. status == 'ACTIVE'}">
+
+                          <script type="text/javascript" language="JavaScript">
+                            function AskAndDeactivate(t)
+                            {
+                              var answer = confirm("Are you sure you want to deactivate this account.");
+                              if (answer)
+                              {
+                                t.form.submit();
+                              }
+                            }
+                          </script>
+                            <td width="90" align="right" valign="middle">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/deactivate"
+                              method="post">
+                            <button style="padding-bottom: 5px" type="submit" onclick="AskAndDeactivate(this); return false;">Deactivate Account</button>
+                          </form>
+                            </td>
+                      </c:if>
+                    </td>
+
+                    <td align="left">
+                      <ul
+                       class="horizontal-list">
+                          <li>
+                              <script type="text/javascript" language="JavaScript">
+                                function AskAndRemove(t)
+                                {
+                                  var answer = confirm("Are you sure you want to remove this account from the DuraCloud system? This action cannot be undone.");
+                                  if (answer)
+                                  {
+                                    t.form.submit();
+                                  }
+                                }
+                              </script>
+                                <form
+                                 action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.id}/delete"
+                                 method="post">
+                                  <button style="margin-right:8px !important"
+                                   type="submit" onclick="AskAndRemove(this); return false;">
+                                  <i
+                                   class="pre trash">
+                                  </i>
+
+                                  Delete</button>
+                                </form>
+                          </li>
+                      </ul>
+                    </td>
+
+                  </tr>
+                </c:forEach>
+                </tbody>
+
+              </table>
+            </div>
+
+
+
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                <tr>
              <td align="right"><a

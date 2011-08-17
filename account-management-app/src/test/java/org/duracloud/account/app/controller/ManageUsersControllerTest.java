@@ -5,6 +5,7 @@ package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -102,8 +104,8 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
         EasyMock.replay(userService);
         Model model = new ExtendedModelMap();
         this.manageUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID,
-                                                          1,
-                                                          model);
+                                                         1,
+                                                         model);
         EasyMock.verify(userService);
     }
 
@@ -118,6 +120,89 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
 
         Model model = new ExtendedModelMap();
         this.manageUsersController.deleteUser(1, model);
+        EasyMock.verify(rootAccountManagerService);
+    }
+
+    @Test
+    public void testDeleteAccount() throws Exception {
+        rootAccountManagerService.deleteAccount(1);
+        EasyMock.expectLastCall();
+
+        this.manageUsersController.setRootAccountManagerService(
+            rootAccountManagerService);
+        EasyMock.replay(rootAccountManagerService);
+
+        Model model = new ExtendedModelMap();
+        this.manageUsersController.deleteAccount(1, model);
+        EasyMock.verify(rootAccountManagerService);
+    }
+
+    @Test
+    public void testGetSetupAccount() throws Exception {
+        ExtendedModelMap model = EasyMock.createMock("ExtendedModelMap",
+                                          ExtendedModelMap.class);
+
+        EasyMock.expect(model.addAttribute(EasyMock.isA(String.class),
+                           EasyMock.isA(AccountSetupForm.class)))
+            .andReturn(null);
+
+        EasyMock.expect(model.addAttribute(EasyMock.isA(String.class),
+                           EasyMock.isA(ArrayList.class)))
+            .andReturn(null);
+
+        EasyMock.expect(rootAccountManagerService.getSecondaryStorageProviders(1))
+            .andReturn(new ArrayList<StorageProviderAccount>());
+
+        this.manageUsersController.setRootAccountManagerService(
+            rootAccountManagerService);
+        EasyMock.replay(model, rootAccountManagerService);
+
+        this.manageUsersController.getSetupAccount(1, model);
+
+        EasyMock.verify(model, rootAccountManagerService);
+    }
+
+    @Test
+    public void testSetupAccount() throws Exception {
+        EasyMock.expect(rootAccountManagerService.getAccount(EasyMock.anyInt()))
+            .andReturn(createAccountInfo());
+
+        rootAccountManagerService.setupStorageProvider(EasyMock.anyInt(),
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class));
+        EasyMock.expectLastCall().anyTimes();
+
+        rootAccountManagerService.setupComputeProvider(EasyMock.anyInt(),
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        rootAccountManagerService.activateAccount(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        this.manageUsersController.setRootAccountManagerService(
+            rootAccountManagerService);
+        EasyMock.replay(rootAccountManagerService);
+
+        AccountSetupForm setupForm = new AccountSetupForm();
+        String test = "test";
+        setupForm.setPrimaryStorageUsername(test);
+        setupForm.setPrimaryStoragePassword(test);
+        setupForm.setComputeCredentialsSame(true);
+        setupForm.setComputeElasticIP(test);
+        setupForm.setComputeKeypair(test);
+        setupForm.setComputeSecurityGroup(test);
+
+        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
+
+        Model model = new ExtendedModelMap();
+        this.manageUsersController.setupAccount(1,
+                                                setupForm,
+                                                bindingResult,
+                                                model);
         EasyMock.verify(rootAccountManagerService);
     }
 

@@ -6,11 +6,14 @@ package org.duracloud.account.util.impl;
 import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -23,7 +26,9 @@ import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -112,6 +117,101 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	}
 
 	@Override
+	public void deleteAccount(int id) {
+        try {
+            Set<AccountRights> rights =
+                    getRightsRepo().findByAccountId(id);
+            for(AccountRights right : rights) {
+                getRightsRepo().delete(right.getId());
+                propagator.propagateRevocation(id, right.getUserId());
+            }
+        } catch (DBNotFoundException ex) {
+            log.warn("No AccountRights found for account[{}]: error message: {}",
+                     id,
+                     ex.getMessage());
+        }
+
+        getAccountRepo().delete(id);
+	}
+
+    @Override
+    public List<StorageProviderAccount> getSecondaryStorageProviders(int id) {
+        AccountInfo account = getAccount(id);
+
+        List<StorageProviderAccount> accounts =
+            new ArrayList<StorageProviderAccount>();
+
+        try {
+            for(int secId : account.getSecondaryStorageProviderAccountIds()) {
+                accounts.add(getStorageRepo().findById(secId));
+            }
+        } catch(DBNotFoundException e) {
+
+        }
+
+        return accounts;
+    }
+
+	@Override
+	public void setupStorageProvider(int id, String username, String password)
+        throws DBConcurrentUpdateException {
+        try {
+            StorageProviderAccount primaryStorageAcct =
+                getStorageRepo().findById(id);
+            primaryStorageAcct.setUsername(username);
+            primaryStorageAcct.setPassword(password);
+            getStorageRepo().save(primaryStorageAcct);
+        } catch (DBNotFoundException ex) {
+            log.warn(
+                "No StorageProviderAccount found for id[{}]: error message: {}",
+                id,
+                ex.getMessage());
+        }
+	}
+
+	@Override
+	public void setupComputeProvider(int id, String username, String password,
+                                     String elasticIp, String keypair, String securityGroup)
+        throws DBConcurrentUpdateException {
+        try {
+            ComputeProviderAccount computeStorageAcct =
+                repoMgr.getComputeProviderAccountRepo().findById(id);
+            computeStorageAcct.setUsername(username);
+            computeStorageAcct.setPassword(password);
+            computeStorageAcct.setElasticIp(elasticIp);
+            computeStorageAcct.setKeypair(keypair);
+            computeStorageAcct.setSecurityGroup(securityGroup);
+            repoMgr.getComputeProviderAccountRepo().save(computeStorageAcct);
+        } catch (DBNotFoundException ex) {
+            log.warn(
+                "No ComputeProviderAccount found for id[{}]: error message: {}",
+                id, ex.getMessage());
+        }
+	}
+
+	@Override
+	public AccountInfo getAccount(int id) {
+        try{
+            return getAccountRepo().findById(id);
+        }catch(DBNotFoundException ex){
+            log.error("account[{}] not found; skipping.", id, ex);
+        }
+        return null;
+	}
+
+	@Override
+	public void activateAccount(int id)
+        throws DBConcurrentUpdateException {
+        try{
+            AccountInfo accountInfo = getAccountRepo().findById(id);
+            accountInfo.setStatus(AccountInfo.AccountStatus.ACTIVE);
+            getAccountRepo().save(accountInfo);
+        }catch(DBNotFoundException ex){
+            log.error("account[{}] not found; skipping.", id, ex);
+        }
+	}
+
+	@Override
 	public Set<AccountInfo> listAllAccounts(String filter) {
 		Set<Integer> accountIds = getAccountRepo().getIds();
 		Set<AccountInfo> accountInfos = new HashSet<AccountInfo>();
@@ -170,6 +270,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private DuracloudRightsRepo getRightsRepo() {
         return repoMgr.getRightsRepo();
+    }
+
+    private DuracloudStorageProviderAccountRepo getStorageRepo() {
+        return repoMgr.getStorageProviderAccountRepo();
     }
 
     private Notifier getNotifier() {

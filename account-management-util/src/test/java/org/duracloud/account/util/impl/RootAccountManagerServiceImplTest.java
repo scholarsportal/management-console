@@ -5,9 +5,13 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.notification.Emailer;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -116,7 +120,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
         EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
             .andReturn(accountRights);
-        
+
         rightsRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall();
 
@@ -124,6 +128,146 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expectLastCall();
 
         userRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+        replayMocks();
+    }
+
+    @Test
+    public void testDeleteAccount() throws Exception {
+        setUpDeleteAccount();
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.deleteAccount(1);
+    }
+
+    private void setUpDeleteAccount() throws Exception {
+        Set<AccountRights> accountRights = new HashSet<AccountRights>();
+        accountRights.add(new AccountRights(1,1,1,null));
+
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(accountRights);
+
+        rightsRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        propagator.propagateRevocation(EasyMock.anyInt(), EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        accountRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+        replayMocks();
+    }
+
+    @Test
+    public void testGetSecondaryStorageProviders() throws Exception {
+        setUpGetSecondaryStorageProviders();
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.getSecondaryStorageProviders(1);
+    }
+
+    private void setUpGetSecondaryStorageProviders() throws Exception {
+        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
+            .andReturn(newAccountInfo(1));
+        EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(null)
+            .anyTimes();
+        replayMocks();
+    }
+
+    @Test
+    public void testSetupStorageProvider() throws Exception {
+        setUpStorageProvider();
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.setupStorageProvider(1, "test", "test");
+    }
+
+    private void setUpStorageProvider() throws Exception {
+        StorageProviderAccount provider = new StorageProviderAccount(1,
+                                                                     StorageProviderType.AMAZON_S3,
+                                                                     "test",
+                                                                     "test",
+                                                                     true);
+
+        EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(provider);
+
+        storageProviderAcctRepo.save(EasyMock.isA(StorageProviderAccount.class));
+        EasyMock.expectLastCall();
+        replayMocks();
+    }
+
+    @Test
+    public void testSetupComputeProvider() throws Exception {
+        setUpComputeProvider();
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.setupComputeProvider(1,
+                                         "test",
+                                         "test",
+                                         "test",
+                                         "test",
+                                         "test");
+    }
+
+    private void setUpComputeProvider() throws Exception {
+        ComputeProviderAccount provider = new ComputeProviderAccount(1,
+                                                                     ComputeProviderType.AMAZON_EC2,
+                                                                     "test",
+                                                                     "test",
+                                                                     "test",
+                                                                     "test",
+                                                                     "test");
+
+        EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(provider);
+
+        computeProviderAcctRepo.save(EasyMock.isA(ComputeProviderAccount.class));
+        EasyMock.expectLastCall();
+        replayMocks();
+    }
+
+    @Test
+    public void testGetAccount() throws Exception {
+        setUpGetAccount();
+
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.getAccount(1);
+    }
+
+    private void setUpGetAccount() throws Exception {
+        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
+            .andReturn(null);
+        replayMocks();
+    }
+
+    @Test
+    public void testActivateAccount() throws Exception {
+        setUpActivateAccount();
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator);
+
+        rootService.activateAccount(1);
+    }
+
+    private void setUpActivateAccount() throws Exception {
+        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
+            .andReturn(newAccountInfo(1));
+
+        accountRepo.save(EasyMock.isA(AccountInfo.class));
         EasyMock.expectLastCall();
         replayMocks();
     }
