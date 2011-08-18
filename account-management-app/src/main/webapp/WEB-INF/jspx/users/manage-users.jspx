@@ -112,7 +112,7 @@
                                     <c:forEach
                                      var="a"
                                      items="${accounts}">
-                                        <form:option value="${a.id}" label="${a.acctName} (${a.subdomain})"/>
+                                        <form:option value="${a.accountInfo.id}" label="${a.accountInfo.acctName} (${a.accountInfo.subdomain})"/>
                                     </c:forEach>
                                 </form:select>
                                 <form:select
@@ -382,32 +382,32 @@
                  var="a"
                  items="${accounts}">
                   <tr>
-                    <td align="left"><a href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details" style="color:#4c4c4c">${a.acctName}</a></td>
+                    <td align="left"><a href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details" style="color:#4c4c4c">${a.accountInfo.acctName}</a></td>
 
-                    <td align="left"><a href="http://${a.subdomain}.duracloud.org/duradmin" style="color:#4c4c4c" target="_blank">${a.subdomain}</a></td>
+                    <td align="left"><a href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin" style="color:#4c4c4c" target="_blank">${a.accountInfo.subdomain}</a></td>
 
-                    <td align="left">${a.status}</td>
+                    <td align="left">${a.accountInfo.status}</td>
 
-                    <td align="left">${a.servicePlan.text}</td>
+                    <td align="left">${a.accountInfo.servicePlan.text}</td>
                     <td align="left">
 
                             <a
-                             href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
 
                     <td align="center">
 
-                        <c:if test="${a.status == 'PENDING'}">
+                        <c:if test="${a.accountInfo.status == 'PENDING'}">
                             <td width="90" align="right" valign="middle">
                              <a
-                             href="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.id}/setup"
+                             href="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/setup"
                              class="button"> Setup Account</a>
                             </td>
-                          </c:if>
+                        </c:if>
 
 
 
-                        <c:if test="${a.status == 'INACTIVE'}">
+                        <c:if test="${a.accountInfo.status == 'INACTIVE'}">
                           <script type="text/javascript" language="JavaScript">
                             function AskAndActivate(t)
                             {
@@ -419,14 +419,15 @@
                             }
                           </script>
                             <td width="90" align="right" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/activate"
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
                           </form>
                             </td>
-                          </c:if>
+                        </c:if>
 
-                        <c:if test="${a. status == 'ACTIVE'}">
+                        <c:if test="${a.accountInfo.status == 'ACTIVE'}">
+                        <c:if test="${a.instanceStatus == null}">
 
                           <script type="text/javascript" language="JavaScript">
                             function AskAndDeactivate(t)
@@ -439,11 +440,12 @@
                             }
                           </script>
                             <td width="90" align="right" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.id}/deactivate"
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndDeactivate(this); return false;">Deactivate Account</button>
                           </form>
                             </td>
+                      </c:if>
                       </c:if>
                     </td>
 
@@ -451,6 +453,7 @@
                       <ul
                        class="horizontal-list">
                           <li>
+                              <c:if test="${a.instanceStatus == null}">
                               <script type="text/javascript" language="JavaScript">
                                 function AskAndRemove(t)
                                 {
@@ -462,7 +465,7 @@
                                 }
                               </script>
                                 <form
-                                 action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.id}/delete"
+                                 action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/delete"
                                  method="post">
                                   <button style="margin-right:8px !important"
                                    type="submit" onclick="AskAndRemove(this); return false;">
@@ -472,6 +475,7 @@
 
                                   Delete</button>
                                 </form>
+                              </c:if>
                           </li>
                       </ul>
                     </td>

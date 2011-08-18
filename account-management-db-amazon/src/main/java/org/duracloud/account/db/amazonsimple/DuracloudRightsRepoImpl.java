@@ -131,6 +131,18 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
         return rootAccountRights;
     }
 
+    /**
+     * Root users will not be added to the result set.
+     * @param accountId of account
+     * @return accountRights set
+     * @throws DBNotFoundException
+     */
+    @Override
+    public Set<AccountRights> findByAccountIdSkipRoot(int accountId)
+        throws DBNotFoundException {
+        return doFindByAccountId(accountId);
+    }
+
     private Set<AccountRights> doFindByAccountId(int accountId)
         throws DBNotFoundException {
         List<Item> items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(

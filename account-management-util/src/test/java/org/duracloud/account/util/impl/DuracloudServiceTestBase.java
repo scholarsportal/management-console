@@ -17,6 +17,7 @@ import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.util.AccountServiceFactory;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.util.ChecksumUtil;
@@ -47,6 +48,7 @@ public class DuracloudServiceTestBase {
     protected AccountServiceFactory accountServiceFactory;
     protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
     protected DuracloudComputeProviderAccountRepo computeProviderAcctRepo;
+    protected DuracloudInstanceManagerService instanceManagerService;
 
     protected IdUtil idUtil;
 
@@ -86,6 +88,8 @@ public class DuracloudServiceTestBase {
                                       DuracloudRepoMgr.class);
         notificationMgr = EasyMock.createMock("NotificationMgr",
                                       NotificationMgr.class);
+        instanceManagerService = EasyMock.createMock("DuracloudInstanceManagerService",
+                                      DuracloudInstanceManagerService.class);
 
         Set<Integer> userIds = createIds(NUM_USERS);
         Set<Integer> acctIds = createIds(NUM_ACCTS);
@@ -146,6 +150,7 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(accountServiceFactory);
         EasyMock.verify(propagator);
         EasyMock.verify(idUtil);
+        EasyMock.verify(instanceManagerService);
     }
 
     protected DuracloudUser newDuracloudUser(int userId, String username) {
@@ -220,5 +225,6 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(propagator);
         EasyMock.replay(idUtil);
         EasyMock.replay(repoMgr);
+        EasyMock.replay(instanceManagerService);
     }
 }

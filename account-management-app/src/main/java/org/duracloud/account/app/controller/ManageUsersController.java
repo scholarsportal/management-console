@@ -4,6 +4,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
@@ -11,6 +12,8 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.RootAccountManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +73,9 @@ public class ManageUsersController extends AbstractController {
 
     @Autowired(required = true)
     protected AccountManagerService accountManagerService;
+
+    @Autowired(required = true)
+    protected DuracloudInstanceManagerService instanceManagerService;
 
     public void setRootAccountManagerService(
         RootAccountManagerService rootAccountManagerService) {
@@ -138,7 +144,25 @@ public class ManageUsersController extends AbstractController {
         Collections.sort(u);
 
 		model.addAttribute("users", u);
-		model.addAttribute("accounts", rootAccountManagerService.listAllAccounts(null));
+
+        List<DuracloudAccount> accounts = new ArrayList<DuracloudAccount>();
+        for(AccountInfo accountInfo : rootAccountManagerService.listAllAccounts(null)) {
+            DuracloudAccount duracloudAccount = new DuracloudAccount();
+            duracloudAccount.setAccountInfo(accountInfo);
+
+            Set<DuracloudInstanceService> instanceServices =
+                instanceManagerService.getInstanceServices(accountInfo.getId());
+            if (instanceServices.size() > 0) {
+                // Handle only a single instance for the time being
+                DuracloudInstanceService instanceService = instanceServices.iterator()
+                                                                           .next();
+                duracloudAccount.setInstanceStatus(instanceService.getStatus());
+            }
+
+            accounts.add(duracloudAccount);
+        }
+		model.addAttribute("accounts", accounts);
+
         addUserToModel(model);
         model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
         model.addAttribute(ADD_ACCOUNT_USER_FORM_KEY, new AccountUserAddForm());

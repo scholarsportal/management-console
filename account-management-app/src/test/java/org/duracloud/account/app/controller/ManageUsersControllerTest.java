@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.StorageProviderAccount;
@@ -60,7 +61,7 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(rootAccountManagerService.listAllUsers(null))
             .andReturn(users);
         EasyMock.expect(rootAccountManagerService.listAllAccounts(null))
-            .andReturn(null);
+            .andReturn(new HashSet<AccountInfo>());
 
         EasyMock.expect(accountService.retrieveAccountInfo())
             .andReturn(createAccountInfo())

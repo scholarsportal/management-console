@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -17,6 +18,8 @@ import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.RootAccountManagerService;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
@@ -44,13 +47,16 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
     private Notifier notifier;
-    
+    private DuracloudInstanceManagerService instanceManagerService;
+
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
-                                    UserDetailsPropagator propagator) {
+                                    UserDetailsPropagator propagator,
+                                    DuracloudInstanceManagerService instanceManagerService) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
+        this.instanceManagerService = instanceManagerService;
     }
 
 	@Override
@@ -118,12 +124,32 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public void deleteAccount(int id) {
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(id);
+        if (instanceServices.size() > 0) {
+            log.error("Unable to delete account {} found an instance", id);
+            return;
+        }
+
+        AccountInfo account = getAccount(id);
+
+        // Delete the primary storage provider
+        getStorageRepo().delete(account.getPrimaryStorageProviderAccountId());
+
+        // Delete any secondary storage providers
+        for(int secId : account.getSecondaryStorageProviderAccountIds()) {
+            getStorageRepo().delete(secId);
+        }
+
+        // Delete the compute provider
+        repoMgr.getComputeProviderAccountRepo().delete(account.getComputeProviderAccountId());
+
+        // Delete the account rights
         try {
             Set<AccountRights> rights =
-                    getRightsRepo().findByAccountId(id);
+                    getRightsRepo().findByAccountIdSkipRoot(id);
             for(AccountRights right : rights) {
                 getRightsRepo().delete(right.getId());
-                propagator.propagateRevocation(id, right.getUserId());
             }
         } catch (DBNotFoundException ex) {
             log.warn("No AccountRights found for account[{}]: error message: {}",
@@ -131,6 +157,12 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                      ex.getMessage());
         }
 
+        // Delete any user invitations
+        for(UserInvitation invitation : repoMgr.getUserInvitationRepo().findByAccountId(id)) {
+            repoMgr.getUserInvitationRepo().delete(invitation.getId());
+        }
+
+        // Delete account
         getAccountRepo().delete(id);
 	}
 
@@ -156,11 +188,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	public void setupStorageProvider(int id, String username, String password)
         throws DBConcurrentUpdateException {
         try {
-            StorageProviderAccount primaryStorageAcct =
+            StorageProviderAccount storageProviderAccount =
                 getStorageRepo().findById(id);
-            primaryStorageAcct.setUsername(username);
-            primaryStorageAcct.setPassword(password);
-            getStorageRepo().save(primaryStorageAcct);
+            storageProviderAccount.setUsername(username);
+            storageProviderAccount.setPassword(password);
+            getStorageRepo().save(storageProviderAccount);
         } catch (DBNotFoundException ex) {
             log.warn(
                 "No StorageProviderAccount found for id[{}]: error message: {}",

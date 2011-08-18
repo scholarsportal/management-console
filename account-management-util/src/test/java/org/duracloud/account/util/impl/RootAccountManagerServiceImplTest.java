@@ -9,12 +9,15 @@ import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.easymock.classextension.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Before;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +29,17 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
     private RootAccountManagerServiceImpl rootService;
 
+    @Before
+    @Override
+    public void before() throws Exception {
+        super.before();
+
+        rootService = new RootAccountManagerServiceImpl(repoMgr,
+                                                        notificationMgr,
+                                                        propagator,
+                                                        instanceManagerService);
+    }
+
     @Test
     public void testAddDuracloudImage() {
         //TODO implement test;
@@ -35,9 +49,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testListAllAccounts() throws Exception {
         setUpListAllAccounts();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         String filter = null;
         Set<AccountInfo> accountInfos = rootService.listAllAccounts(filter);
@@ -56,9 +67,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testListAllAccountsWithFilter() throws Exception {
         setUpListAllAccounts();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         String filter = "org-1";
         Set<AccountInfo> acctInfos = rootService.listAllAccounts(filter);
@@ -69,9 +77,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testListAllUsersNoFilter() throws Exception {
         setUpListAllUsers();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         String filter = null;
         Set<DuracloudUser> users = rootService.listAllUsers(filter);
@@ -94,9 +99,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testListAllUsersFilter() throws Exception {
         setUpListAllUsers();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         String filter = "a-user-name-2";
         Set<DuracloudUser> users = rootService.listAllUsers(filter);
@@ -107,9 +109,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testDeleteUser() throws Exception {
         setUpDeleteUser();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.deleteUser(1);
     }
@@ -135,25 +134,37 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testDeleteAccount() throws Exception {
         setUpDeleteAccount();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.deleteAccount(1);
     }
 
     private void setUpDeleteAccount() throws Exception {
+        EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            .andReturn(new HashSet<DuracloudInstanceService>());
+
+        EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
+            .andReturn(newAccountInfo(1));
+
+        storageProviderAcctRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
+
+        computeProviderAcctRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
         Set<AccountRights> accountRights = new HashSet<AccountRights>();
         accountRights.add(new AccountRights(1,1,1,null));
 
-        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
+        EasyMock.expect(rightsRepo.findByAccountIdSkipRoot(EasyMock.anyInt()))
             .andReturn(accountRights);
 
         rightsRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall();
 
-        propagator.propagateRevocation(EasyMock.anyInt(), EasyMock.anyInt());
-        EasyMock.expectLastCall();
+        EasyMock.expect(invitationRepo.findByAccountId(EasyMock.anyInt()))
+            .andReturn(new HashSet<UserInvitation>());
+
+        invitationRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
 
         accountRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall();
@@ -163,9 +174,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testGetSecondaryStorageProviders() throws Exception {
         setUpGetSecondaryStorageProviders();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.getSecondaryStorageProviders(1);
     }
@@ -182,9 +190,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testSetupStorageProvider() throws Exception {
         setUpStorageProvider();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.setupStorageProvider(1, "test", "test");
     }
@@ -207,9 +212,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testSetupComputeProvider() throws Exception {
         setUpComputeProvider();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.setupComputeProvider(1,
                                          "test",
@@ -240,10 +242,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     public void testGetAccount() throws Exception {
         setUpGetAccount();
 
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
-
         rootService.getAccount(1);
     }
 
@@ -256,9 +254,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testActivateAccount() throws Exception {
         setUpActivateAccount();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.activateAccount(1);
     }
@@ -275,9 +270,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testResetUsersPassword() throws Exception {
         setUpResetUsersPassword();
-        rootService = new RootAccountManagerServiceImpl(repoMgr,
-                                                        notificationMgr,
-                                                        propagator);
 
         rootService.resetUsersPassword(1);
     }

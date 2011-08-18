@@ -113,6 +113,7 @@
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
+    <constructor-arg ref="instanceManagerService" />
   </bean>
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->
