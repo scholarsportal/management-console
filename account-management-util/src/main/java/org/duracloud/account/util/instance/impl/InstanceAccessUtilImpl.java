@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.instance.impl;
 
+import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceAccessUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.common.web.RestHttpHelper;
@@ -26,10 +27,10 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
         while(!instanceAvailable(hostname)) {
             long now = System.currentTimeMillis();
             if(now - start > timeout) {
-                log.warn("Instance at host " + hostname +
+                String error = "Instance at host " + hostname +
                    " was not available prior to wait timeout of " +
-                   timeout + " milliseconds. Returning anyway.");
-                return;
+                   timeout + " milliseconds.";
+                throw new DuracloudInstanceUpdateException(error);
             } else {
                 sleep(SLEEP_TIME);
             }
@@ -53,18 +54,19 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
             PROTOCOL + hostname + "/" + DURASTORE_CONTEXT + "/stores";
         String duraserviceUrl =
             PROTOCOL + hostname + "/" + DURASERVICE_CONTEXT + "/services";
+        String durareportUrl =
+            PROTOCOL + hostname + "/" + DURAREPORT_CONTEXT +
+                "/storagereport/info";
 
         try {
-            if(!checkResponse(restHelper.get(duradminUrl))) {
+            if(!checkResponse(restHelper.get(duradminUrl)) ||
+               !checkResponse(restHelper.get(durastoreUrl)) ||
+               !checkResponse(restHelper.get(duraserviceUrl)) ||
+               !checkResponse(restHelper.get(durareportUrl))) {
                 return false;
+            } else {
+                return true;
             }
-            if(!checkResponse(restHelper.get(durastoreUrl))) {
-                return false;
-            }
-            if(!checkResponse(restHelper.get(duraserviceUrl))) {
-                return false;
-            }
-            return true;
         } catch(Exception e) {
             return false;
         }

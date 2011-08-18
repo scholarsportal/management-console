@@ -55,6 +55,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private Logger log =
         LoggerFactory.getLogger(DuracloudInstanceServiceImpl.class);
 
+    private static final int MAX_INIT_RETRIES = 10;
+
     private int accountId;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
@@ -155,11 +157,11 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         doInitialize(true);
     }
 
-    public void handleInstanceInitException(Exception e) {
+    public void handleInstanceInitFailure() {
         // Simply log exception for now. In the future, it may be useful to
         // capture the error so that it can be presented further up the chain.
-        log.error("Exception encountered attempting to initialize instance: " +
-                  e.getMessage(), e);
+        log.error("Failure attempting to initialize instance " +
+                  instance.getId() + " for account " + accountId);
     }
 
     private class ThreadedInitializer extends Thread {
@@ -177,9 +179,34 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 InstanceAccessUtil accessUtil = new InstanceAccessUtilImpl();
                 accessUtil.waitInstanceAvailable(instance.getHostName(),
                                                  timeoutMinutes * 60000);
-                doInitialize(false);
             } catch(Exception e) {
-                listener.handleInstanceInitException(e);
+                logInitException(e);
+            }
+            retryInitialize();
+        }
+
+        public void retryInitialize() {
+            for(int i=0; i < MAX_INIT_RETRIES; i++) {
+                wait(i * 60000);
+                try {
+                    doInitialize(false);
+                    return;
+                } catch(DuracloudInstanceUpdateException ex) {
+                    logInitException(ex);
+                }
+            }
+            listener.handleInstanceInitFailure();
+        }
+
+        private void logInitException(Exception e) {
+            log.warn("Exception encountered attempting to initialize instance: " +
+                     e.getMessage(), e);
+        }
+
+        private void wait(int milliseconds) {
+            try {
+                sleep(milliseconds);
+            } catch(InterruptedException e) {
             }
         }
     }

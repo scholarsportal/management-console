@@ -13,6 +13,6 @@ package org.duracloud.account.util.instance;
  */
 public interface InstanceInitListener {
 
-    public void handleInstanceInitException(Exception e);
+    public void handleInstanceInitFailure();
 
 }
