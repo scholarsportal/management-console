@@ -108,6 +108,9 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
 
     private DuracloudInstanceService createInstance(int accountId,
                                                     ServerImage image) {
+        log.info("Creating new instance for account {} using image {} ",
+                 accountId,
+                 image.getDescription());
         try {
             DuracloudInstance instance = doCreateInstance(accountId, image);
             return initializeInstance(instance);

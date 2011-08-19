@@ -213,6 +213,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public void initialize() {
+        log.info("Initializing instance for account {} at host {}",
+                 accountId,
+                 instance.getHostName());
         doInitialize(true);
     }
 
@@ -223,6 +226,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public void reInitialize() {
+        log.info("Re-Initializing instance for account {} at host {}",
+                 accountId,
+                 instance.getHostName());
         doInitialize(false);
     }
 

@@ -23,6 +23,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
 
     @Override
     public void waitInstanceAvailable(String hostname, long timeout) {
+        log.debug("Waiting for instance at {} to become available", hostname);
         long start = System.currentTimeMillis();
         while(!instanceAvailable(hostname)) {
             long now = System.currentTimeMillis();
@@ -35,6 +36,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
                 sleep(SLEEP_TIME);
             }
         }
+        log.debug("Instance at {} is now available.", hostname);
     }
 
     private void sleep(int milliseconds) {

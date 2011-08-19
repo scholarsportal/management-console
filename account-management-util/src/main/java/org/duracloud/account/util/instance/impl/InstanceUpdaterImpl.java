@@ -39,6 +39,8 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
                                    DuraserviceConfig duraserviceConfig,
                                    DurareportConfig durareportConfig,
                                    RestHttpHelper restHelper){
+        log.info("Initializing DuraCloud applications at host {}", host);
+
         if(StringUtils.isBlank(host) ||
            null == duradminConfig ||
            null == durastoreConfig ||
@@ -75,7 +77,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
     public void updateUserDetails(String host,
                                   Set<SecurityUserBean> userBeans,
                                   RestHttpHelper restHelper) {
-        log.info("Updating user details: {}, beans {}", host, userBeans);
+        log.info("Updating user details at DuraCloud host {}", host);
 
         if (StringUtils.isBlank(host) || null == userBeans ||
             userBeans.size() == 0 || null == restHelper) {

@@ -149,7 +149,7 @@ public class DuracloudInstanceServiceImplTest
     }
 
     private void setUpReInitializeMocks() throws Exception {
-        int times = 2;
+        int times = 3;
         setUpReInitializeCommonMocks(times);
         doSetUpReInitializeUserRolesMocks();
 
@@ -215,7 +215,7 @@ public class DuracloudInstanceServiceImplTest
 
         EasyMock.expect(instance.getHostName())
             .andReturn("host")
-            .times(2);
+            .atLeastOnce();
 
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
