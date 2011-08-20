@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
@@ -16,6 +17,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
@@ -56,6 +58,10 @@ public class ManageUsersController extends AbstractController {
         USERS_MANAGE + "/accounts/byid/{accountId}/setup";
     public static final String ACCOUNT_DELETE_MAPPING =
         USERS_MANAGE + "/accounts/byid/{accountId}/delete";
+    public static final String ACCOUNT_ACTIVATE_MAPPING =
+        USERS_MANAGE + "/accounts/byid/{accountId}/activate";
+    public static final String ACCOUNT_DEACTIVATE_MAPPING =
+        USERS_MANAGE + "/accounts/byid/{accountId}/deactivate";
     public static final String USER_DELETE_ACCOUNT_MAPPING =
         USERS_MANAGE + "/accounts/byid/{accountId}/users/byid/{userId}/delete";
     public static final String USER_EDIT_MAPPING =
@@ -334,6 +340,26 @@ public class ManageUsersController extends AbstractController {
             rootAccountManagerService.resetUsersPassword(userId);
 
         return REDIRECT_USERS_MANAGE;            
+    }
+
+    @RequestMapping(value = { ACCOUNT_ACTIVATE_MAPPING }, method = RequestMethod.POST)
+    public String activate(@PathVariable int accountId,
+                           Model model)
+        throws AccountNotFoundException, DBConcurrentUpdateException {
+        AccountService accountService = accountManagerService.getAccount(accountId);
+        accountService.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
+
+        return REDIRECT_USERS_MANAGE;
+    }
+
+    @RequestMapping(value = { ACCOUNT_DEACTIVATE_MAPPING }, method = RequestMethod.POST)
+    public String deactivate(@PathVariable int accountId,
+                           Model model)
+        throws AccountNotFoundException, DBConcurrentUpdateException {
+        AccountService accountService = accountManagerService.getAccount(accountId);
+        accountService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
+
+        return REDIRECT_USERS_MANAGE;
     }
 
 

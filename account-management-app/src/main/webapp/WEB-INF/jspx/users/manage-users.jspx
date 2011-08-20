@@ -401,7 +401,7 @@
                             <td width="90" align="right" valign="middle">
                              <a
                              href="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/setup"
-                             class="button"> Setup Account</a>
+                             class="button"> Activate Account</a>
                             </td>
                         </c:if>
 
@@ -419,7 +419,7 @@
                             }
                           </script>
                             <td width="90" align="right" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
+                          <form action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
                           </form>
@@ -440,7 +440,7 @@
                             }
                           </script>
                             <td width="90" align="right" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
+                          <form action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
                             <button style="padding-bottom: 5px" type="submit" onclick="AskAndDeactivate(this); return false;">Deactivate Account</button>
                           </form>

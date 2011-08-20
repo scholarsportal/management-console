@@ -316,4 +316,44 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
         manageUsersController.setUserService(userService);
     }
 
+    @Test
+    public void testActivate() throws Exception {
+        this.accountManagerService =
+            EasyMock.createMock(AccountManagerService.class);
+        AccountService as = EasyMock.createMock(AccountService.class);
+
+        as.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
+        EasyMock.replay(accountManagerService, as);
+
+        manageUsersController.setAccountManagerService(accountManagerService);
+
+        Model model = new ExtendedModelMap();
+        manageUsersController.activate(TEST_ACCOUNT_ID, model);
+
+        EasyMock.verify();
+    }
+
+    @Test
+    public void testDeactivate() throws Exception {
+        this.accountManagerService =
+            EasyMock.createMock(AccountManagerService.class);
+        AccountService as = EasyMock.createMock(AccountService.class);
+
+        as.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
+        EasyMock.replay(accountManagerService, as);
+
+        manageUsersController.setAccountManagerService(accountManagerService);
+
+        Model model = new ExtendedModelMap();
+        manageUsersController.deactivate(TEST_ACCOUNT_ID, model);
+
+        EasyMock.verify();
+    }
+
 }
