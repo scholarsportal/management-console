@@ -40,6 +40,22 @@ public class AmazonComputeProviderTest {
         AmazonEC2Client mockEC2Client =
             EasyMock.createMock(AmazonEC2Client.class);
 
+        DescribeAddressesResult describeAddressesResult =
+            new DescribeAddressesResult().withAddresses(
+                new Address().withInstanceId(instanceId));
+
+        EasyMock.expect(mockEC2Client.describeAddresses(
+            EasyMock.isA(DescribeAddressesRequest.class)))
+            .andReturn(describeAddressesResult)
+            .times(1);
+
+        Capture<TerminateInstancesRequest> terminateCapture =
+            new Capture<TerminateInstancesRequest>();
+        EasyMock.expect(mockEC2Client.terminateInstances(
+            EasyMock.capture(terminateCapture)))
+            .andReturn(null)
+            .times(1);
+
         RunInstancesResult result =
             new RunInstancesResult().withReservation(
                 new Reservation().withInstances(
@@ -87,6 +103,11 @@ public class AmazonComputeProviderTest {
 
         AssociateAddressRequest associateRequest = associateCapture.getValue();
         assertEquals(elasticIp, associateRequest.getPublicIp());
+
+        TerminateInstancesRequest terminateRequest =
+            terminateCapture.getValue();
+        assertEquals(1, terminateRequest.getInstanceIds().size());
+        assertEquals(instanceId, terminateRequest.getInstanceIds().get(0));
     }
 
     @Test

@@ -4,8 +4,11 @@
 package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.AssociateAddressRequest;
 import com.amazonaws.services.ec2.model.AssociateAddressResult;
+import com.amazonaws.services.ec2.model.DescribeAddressesRequest;
+import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
@@ -73,6 +76,8 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                              String keyname,
                              String elasticIp,
                              boolean wait) {
+        stopExistingInstances(elasticIp);
+
         RunInstancesRequest request =
             new RunInstancesRequest(providerImageId, 1, 1);
 
@@ -102,10 +107,36 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         return instanceId;
     }
 
+    private void stopExistingInstances(String elasticIp) {
+        DescribeAddressesRequest describeAddressesRequest =
+            new DescribeAddressesRequest().withPublicIps(elasticIp);
+
+        try {
+            DescribeAddressesResult result =
+                ec2Client.describeAddresses(describeAddressesRequest);
+            if(null != result) {
+                List<Address> addresses = result.getAddresses();
+                for(Address address : addresses) {
+                    String instanceId = address.getInstanceId();
+                    log.warn("Shutting down instance with ID {} because it " +
+                             "was associated with elastic IP {}",
+                             instanceId,
+                             elasticIp);
+                    stop(instanceId);
+                }
+            }
+        } catch(Exception e) {
+            log.error("Error attempting to stop instance associated with " +
+                      "elastic IP {}: {}", elasticIp, e.getMessage());
+        }
+    }
+
     private void associateAddress(String elasticIp, String instanceId) {
-        AssociateAddressRequest associateRequest = new AssociateAddressRequest(
-            instanceId,
-            elasticIp);
+        log.debug("Associating elastic IP {} with instance {}",
+                  elasticIp,
+                  instanceId);
+        AssociateAddressRequest associateRequest =
+            new AssociateAddressRequest(instanceId, elasticIp);
 
         final int maxTries = 5;
         int tries = 0;

@@ -165,8 +165,8 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
 
     private DuracloudInstanceService initializeInstance(DuracloudInstance instance)
         throws DBNotFoundException {
-        DuracloudInstanceService instanceService = instanceServiceFactory.getInstance(
-            instance);
+        DuracloudInstanceService instanceService =
+            instanceServiceFactory.getInstance(instance);
 
         instanceService.initialize();
 
