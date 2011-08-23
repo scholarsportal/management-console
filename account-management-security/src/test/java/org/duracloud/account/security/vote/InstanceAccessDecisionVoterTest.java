@@ -231,7 +231,7 @@ public class InstanceAccessDecisionVoterTest {
             .andReturn(rights);
 
         int xFind = scope.equals(SecuredRule.Scope.SELF_ACCT_PEER_UPDATE) ? 2 : 1;
-        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
+        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyInt(),
                                                             EasyMock.anyInt()))
             .andReturn(userRight)
             .times(xFind);

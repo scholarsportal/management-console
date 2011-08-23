@@ -136,7 +136,7 @@ public class InstanceManagerAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyInt(),
+        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyInt(),
                                                             EasyMock.anyInt()))
             .andReturn(rights);
 
