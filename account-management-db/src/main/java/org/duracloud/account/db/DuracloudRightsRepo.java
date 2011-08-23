@@ -44,6 +44,18 @@ public interface DuracloudRightsRepo extends BaseRepo<AccountRights> {
                                                   int userId) throws DBNotFoundException;
 
     /**
+     * This method returns the set of rights for a given user in a given account.
+     * If the user is root then those rights will be returned no matter what.
+     *
+     * @param accountId of account
+     * @param userId of user
+     * @return rights
+     * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
+     */
+    public AccountRights findAccountRightsForUser(int accountId,
+                                                  int userId) throws DBNotFoundException;
+
+    /**
      * This method returns the set of rights for a given account not including
      * the root users
      *

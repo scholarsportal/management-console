@@ -254,6 +254,44 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
         }
     }
 
+    /**
+     * This method returns the accountRights for the arg accountId and userId.
+     * If no such item is found, and the arg userId belongs to the root user,
+     * then an accountRights for the root user is returned with the
+     * rights.acctId set to the arg accountId.
+     * If the user is root then those rights will be returned no matter what.
+     *
+     * @param accountId of account
+     * @param userId of user
+     * @return
+     * @throws DBNotFoundException
+     */
+    @Override
+    public AccountRights findAccountRightsForUser(int accountId,
+                                                  int userId) throws DBNotFoundException {
+        AccountRights accountRights = null;
+
+        List<Item> items =
+            findItemsByAttribute(USER_ID_ATT, String.valueOf(userId));
+
+        Set<AccountRights> rights = getAccountRightsFromItems(items);
+        for (AccountRights r : rights) {
+            // Is user root?
+            if (r.getRoles().contains(Role.ROLE_ROOT)) {
+                accountRights = new AccountRights(r.getId(),
+                                                  accountId,
+                                                  r.getUserId(),
+                                                  r.getRoles(),
+                                                  r.getCounter());
+                break;
+            } else if(r.getAccountId() == accountId) {
+                accountRights = r;
+            }
+        }
+
+        return accountRights;
+    }
+
     private Set<AccountRights> getAccountRightsFromItems(List<Item> items) {
         Set<AccountRights> set = new HashSet<AccountRights>();
         for(Item item : items) {

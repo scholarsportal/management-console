@@ -191,8 +191,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         AccountRights rights = null;
         try {
-            rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
-
+            rights = rightsRepo.findAccountRightsForUser(acctId, userId);
         } catch (DBNotFoundException e) {
             log.error("No rights for user:{}, acct:{}", userId, acctId);
         }
