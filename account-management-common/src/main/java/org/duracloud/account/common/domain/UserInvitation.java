@@ -92,7 +92,7 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         sb.append("You have been invited to join a DuraCloud account and ");
         sb.append("receive access to a DuraCloud instance. In order to join, ");
         sb.append("please follow these instructions:");
-        sb.append("\n");
+        sb.append("\n\n");
         sb.append("1. If you do not have a personal user profile with ");
         sb.append("DuraCloud, please create one at: ");
         sb.append("https://manage.duracloud.org/ama/users/new. ");
@@ -105,8 +105,15 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         sb.append("\n");
         sb.append("3. After logging in, you should see the details for the ");
         sb.append("DuraCloud account that you now have access to.");
-        sb.append("\n");
-        sb.append("\n");
+        sb.append("\n\n");
+        sb.append("Please note that the links above are not supported by ");
+        sb.append("Internet Explorer version 8 or prior. It is recommended ");
+        sb.append("that you use either Internet Explorer version 9 (or ");
+        sb.append("later) or another web browser to access DuraCloud. If ");
+        sb.append("this is not possible, please visit ");
+        sb.append("https://wiki.duraspace.org/x/zILDAQ to view alternate ");
+        sb.append("instructions for joining a DuraCloud account.");
+        sb.append("\n\n");
         sb.append("If you have any issues accepting the invitation or ");
         sb.append("creating your personal user profile, please contact the ");
         sb.append("DuraCloud team by emailing your issue to ");
