@@ -118,11 +118,13 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                 List<Address> addresses = result.getAddresses();
                 for(Address address : addresses) {
                     String instanceId = address.getInstanceId();
-                    log.warn("Shutting down instance with ID {} because it " +
-                             "was associated with elastic IP {}",
-                             instanceId,
-                             elasticIp);
-                    stop(instanceId);
+                    if(null != instanceId && !instanceId.isEmpty()) {
+                        log.warn("Shutting down instance with ID {} because " +
+                                 "it was associated with elastic IP {}",
+                                 instanceId,
+                                 elasticIp);
+                        stop(instanceId);
+                    }
                 }
             }
         } catch(Exception e) {
