@@ -109,10 +109,7 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         sb.append("Please note that the links above are not supported by ");
         sb.append("Internet Explorer version 8 or prior. It is recommended ");
         sb.append("that you use either Internet Explorer version 9 (or ");
-        sb.append("later) or another web browser to access DuraCloud. If ");
-        sb.append("this is not possible, please visit ");
-        sb.append("https://wiki.duraspace.org/x/zILDAQ to view alternate ");
-        sb.append("instructions for joining a DuraCloud account.");
+        sb.append("later) or another web browser to access DuraCloud.");
         sb.append("\n\n");
         sb.append("If you have any issues accepting the invitation or ");
         sb.append("creating your personal user profile, please contact the ");
