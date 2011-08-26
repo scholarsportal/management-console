@@ -145,6 +145,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public void stop() {
+        log.info("Stopping instance with provider ID {} at host {}",
+                 instance.getProviderInstanceId(), instance.getHostName());
+
         // Terminate the instance
         computeProvider.stop(instance.getProviderInstanceId());
         // Remove this instance from the DB
@@ -153,6 +156,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public void restart() {
+        log.info("Restarting instance with provider ID {} at host {}",
+                 instance.getProviderInstanceId(), instance.getHostName());
+
         computeProvider.restart(instance.getProviderInstanceId());
         doInitialize(true);
     }
@@ -214,8 +220,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     @Override
     public void initialize() {
         log.info("Initializing instance for account {} at host {}",
-                 accountId,
-                 instance.getHostName());
+                 accountId, instance.getHostName());
+
         doInitialize(true);
     }
 
@@ -227,8 +233,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     @Override
     public void reInitialize() {
         log.info("Re-Initializing instance for account {} at host {}",
-                 accountId,
-                 instance.getHostName());
+                 accountId, instance.getHostName());
+
         doInitialize(false);
     }
 
@@ -293,6 +299,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public void setUserRoles(Set<DuracloudUser> users) {
+        log.info("Initializing user roles for account {} at host {}",
+                 accountId, instance.getHostName());
+
         // validate args
         if (null == users || users.size() == 0) {
             String msg = "arg users is null for instance in acct: " + accountId;

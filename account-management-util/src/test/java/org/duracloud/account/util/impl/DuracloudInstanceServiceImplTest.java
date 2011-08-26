@@ -21,6 +21,7 @@ import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Before;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,16 @@ public class DuracloudInstanceServiceImplTest
     extends DuracloudInstanceServiceTestBase {
 
     private final int NUM_USERS = 5;
+
+    @Before
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+
+        EasyMock.expect(instance.getHostName())
+            .andReturn("hostname")
+            .anyTimes();
+    }
 
     @Test
     public void testGetInstanceInfo() throws Exception {
@@ -72,7 +83,7 @@ public class DuracloudInstanceServiceImplTest
             .times(1);
         EasyMock.expect(instance.getProviderInstanceId())
             .andReturn("provider-id")
-            .times(1);
+            .times(2);
 
         int instanceId = 42;
         EasyMock.expect(repoMgr.getInstanceRepo())
@@ -176,8 +187,6 @@ public class DuracloudInstanceServiceImplTest
         // Set timeout to 0, to prevent waiting for instance availability
         service.setInitializeTimeout(0);
         setUpServerImageMocks();
-
-        EasyMock.expect(instance.getHostName()).andReturn("host").times(times);
     }
 
     @Test
@@ -187,7 +196,7 @@ public class DuracloudInstanceServiceImplTest
             .times(1);
         EasyMock.expect(instance.getProviderInstanceId())
             .andReturn("id")
-            .times(1);
+            .times(2);
 
         setUpInitializeMocks();
         replayMocks();
@@ -212,10 +221,6 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instanceConfigUtil.getDurareportConfig())
             .andReturn(new DurareportConfig())
             .times(1);
-
-        EasyMock.expect(instance.getHostName())
-            .andReturn("host")
-            .atLeastOnce();
 
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
@@ -318,15 +323,9 @@ public class DuracloudInstanceServiceImplTest
     }
 
     private void setUpUserRoleMocks(Capture<Set<SecurityUserBean>> capturedUsers) {
-        instance = createInstanceExpectations();
         instanceUpdater = createInstanceUpdaterExpectations(capturedUsers);
 
         replayMocks();
-    }
-
-    private DuracloudInstance createInstanceExpectations() {
-        EasyMock.expect(instance.getHostName()).andReturn("hostname");
-        return instance;
     }
 
     private InstanceUpdater createInstanceUpdaterExpectations(Capture<Set<SecurityUserBean>> capturedUsers) {

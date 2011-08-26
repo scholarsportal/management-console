@@ -61,9 +61,9 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     public AccountService createAccount(AccountCreationInfo accountCreationInfo,
                                         DuracloudUser owner)
         throws SubdomainAlreadyExistsException {
-        log.debug("Creating account, acct:{}, owner:{}",
-                  accountCreationInfo.getSubdomain(),
-                  owner.getUsername());
+        log.info("Creating account with subdomain {} and owner {}",
+                 accountCreationInfo.getSubdomain(),
+                 owner.getUsername());
 
         AccountService acctService = doCreateAccount(accountCreationInfo, owner);
 
@@ -161,27 +161,16 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         }
 
         return new HashSet<AccountInfo>();
-
     }
 
-    /*
-     * FIXME: This action could be accomplished much more quickly by adding a db
-     * query specific to this need, rather than having to loop and check all
-     * accounts.
-     */
     @Override
     public boolean subdomainAvailable(String subdomain) {
-        for (int accountId : getAccountRepo().getIds()) {
-            try {
-                AccountInfo accountInfo = getAccountRepo().findById(accountId);
-                if (accountInfo.getSubdomain().equals(subdomain)) {
-                    return false;
-                }
-            } catch (DBNotFoundException e) {
-                e.printStackTrace();
-            }
+        try {
+            AccountInfo acct = getAccountRepo().findBySubdomain(subdomain);
+            return false;
+        } catch (DBNotFoundException e) {
+            return true;
         }
-        return true;
     }
 
     private DuracloudAccountRepo getAccountRepo() {

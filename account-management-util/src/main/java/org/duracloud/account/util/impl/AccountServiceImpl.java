@@ -63,16 +63,20 @@ public class AccountServiceImpl implements AccountService {
                 rightsRepo.findByAccountId(account.getId());
 
             for (AccountRights right : rights) {
-                DuracloudUser user = userRepo.findById(right.getUserId());
-                Set<AccountRights> userRights = new HashSet<AccountRights>();
-                userRights.add(right);
-                user.setAccountRights(userRights);
-                users.add(user);
+                try {
+                    DuracloudUser user = userRepo.findById(right.getUserId());
+                    Set<AccountRights> userRights = new HashSet<AccountRights>();
+                    userRights.add(right);
+                    user.setAccountRights(userRights);
+                    users.add(user);
+                } catch (DBNotFoundException ex) {
+                    log.warn("User with ID {} could not be found, skipping",
+                             right.getUserId());
+                }
             }
         } catch (DBNotFoundException ex) {
-            log.warn(
-                "No AccountRights found for account[{}]: error message: {}",
-                account.getId(), ex.getMessage());
+            log.warn("No account rights found for account with ID {}",
+                     account.getId());
         }
 
         return users;
@@ -104,6 +108,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void setPrimaryStorageProviderRrs(boolean rrs)
         throws DBConcurrentUpdateException {
+        log.info("Setting primary storage provider RRS to {} for account {}",
+                 rrs, account.getSubdomain());
+
         int primaryId = account.getPrimaryStorageProviderAccountId();
         DuracloudStorageProviderAccountRepo repo =
             repoMgr.getStorageProviderAccountRepo();
@@ -139,6 +146,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void addStorageProvider(StorageProviderType storageProviderType)
         throws DBConcurrentUpdateException {
+        log.info("Adding storage provider of type {} to account {}",
+                 storageProviderType, account.getSubdomain());
+
         int id = providerAccountUtil.
             createEmptyStorageProviderAccount(storageProviderType);
         account.getSecondaryStorageProviderAccountIds().add(id);
@@ -148,6 +158,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void removeStorageProvider(int storageProviderId)
         throws DBConcurrentUpdateException {
+        log.info("Removing storage provider with ID {} from account {}",
+                 storageProviderId, account.getSubdomain());
+
         if(account.getSecondaryStorageProviderAccountIds()
                   .remove(storageProviderId)) {
             repoMgr.getAccountRepo().save(account);
@@ -165,6 +178,11 @@ public class AccountServiceImpl implements AccountService {
                                  String orgName,
                                  String department)
         throws DBConcurrentUpdateException {
+        String[] logInfo =
+            {account.getSubdomain(), acctName, orgName, department};
+        log.info("Updating info for account {}. Account Name: {}, " +
+                 "Org Name: {}, Department: {}", logInfo);
+
         account.setAcctName(acctName);
         account.setOrgName(orgName);
         account.setDepartment(department);
@@ -174,6 +192,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void storeAccountStatus(AccountInfo.AccountStatus status)
         throws DBConcurrentUpdateException {
+        log.info("Updating account status to {} for account {}",
+                 status.name(), account.getSubdomain());
+
         account.setStatus(status);
         repoMgr.getAccountRepo().save(account);
     }
@@ -200,8 +221,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public UserInvitation inviteUser(String emailAddress, String adminUsername, Emailer emailer)
+    public UserInvitation inviteUser(String emailAddress,
+                                     String adminUsername,
+                                     Emailer emailer)
         throws DBConcurrentUpdateException {
+        log.info("Inviting user at address {} to account {}",
+                 emailAddress, account.getSubdomain());
 
         ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
 
@@ -266,6 +291,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteUserInvitation(int invitationId)
         throws DBConcurrentUpdateException {
+        log.info("Deleting user invitation with id {} from account {}",
+                 invitationId, account.getSubdomain());
+
         getUserInvitationRepo().delete(invitationId);
     }
 

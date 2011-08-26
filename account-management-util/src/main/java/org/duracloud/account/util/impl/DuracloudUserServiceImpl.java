@@ -107,7 +107,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         getNotifier().sendNotificationCreateNewUser(user);
 
-        log.info("created new user [{}]", username);
+        log.info("New user created with username {}", username);
         return user;
     }
 
@@ -126,10 +126,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             roleSet.add(role);
         }
 
+        log.info("Updating user rights for user {} on account {} to roles " +
+                 asString(roleSet), userId, acctId);
+
         boolean result = doSetUserRights(acctId, userId, roleSet);
         if(result) {
-            log.debug("Propagating user update for: " + acctId + ", " +
-                      userId + ", " + asString(roleSet));
             propagator.propagateRights(acctId, userId, roleSet);
         }
         return result;
@@ -153,7 +154,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             oldRoles = rights.getRoles();
 
         } catch (DBNotFoundException e) {
-            log.info("Will add new rights for " + userId + ", " + acctId);
+            log.info("New rights will be added for user {} on account {}",
+                     userId, acctId);
         }
 
         boolean updatedNeeded = !newRoles.equals(oldRoles);
@@ -267,9 +269,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public void revokeUserRights(int acctId, int userId) {
-        doRevokeUserRights(acctId, userId);
+        log.info("Revoking rights for user {} on account {}", userId, acctId);
 
-        log.debug("Propagating revocation for: " + acctId + ", " + userId);
+        doRevokeUserRights(acctId, userId);
         propagator.propagateRevocation(acctId, userId);
     }
 
@@ -292,6 +294,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                String newPassword)
         throws DBNotFoundException,InvalidPasswordException,DBConcurrentUpdateException {
         if(null != newPassword && !newPassword.equals(oldPassword)) {
+            log.info("Changing password for user with ID {}", userId);
+
             ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
 
             DuracloudUser user = getUserRepo().findById(userId);
@@ -305,7 +309,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             user.setPassword(util.generateChecksum(newPassword));
             getUserRepo().save(user);
 
-            log.debug("Propagating update for user: " + userId);
             try {
                 Set<AccountRights> rightsSet =
                     repoMgr.getRightsRepo().findByUserId(userId);
@@ -338,6 +341,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                String securityAnswer)
         throws DBNotFoundException, InvalidPasswordException,
                DBConcurrentUpdateException, UnsentEmailException {
+        log.info("Resolving forgotten password for user {}", username);
+
         DuracloudUser user = loadDuracloudUserByUsernameInternal(username);
 
         if(!user.getSecurityQuestion().equalsIgnoreCase(securityQuestion) ||
@@ -393,6 +398,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException {
+        log.info("Redeeming account invitation for user with ID {}", userId);
 
         DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
 
@@ -456,6 +462,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         int userId, String firstName, String lastName, String email,
         String securityQuestion, String securityAnswer)
         throws DBNotFoundException, DBConcurrentUpdateException {
+        log.info("Updating user details for user with ID {}", userId);
+
         DuracloudUser user = getUserRepo().findById(userId);
         user.setFirstName(firstName);
         user.setLastName(lastName);

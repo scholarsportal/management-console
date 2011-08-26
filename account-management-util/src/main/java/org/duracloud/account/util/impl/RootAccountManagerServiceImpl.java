@@ -60,8 +60,9 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     }
 
 	@Override
-	public void addDuracloudImage(String imageId, String version,
-			String description) {
+	public void addDuracloudImage(String imageId,
+                                  String version,
+			                      String description) {
 		throw new NotImplementedException("addDuracloudImage not implemented");
 	}
 
@@ -69,21 +70,25 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	public void resetUsersPassword(int userId)
         throws DBNotFoundException, DBConcurrentUpdateException,
                UnsentEmailException {
+        log.info("Resetting password for user with ID {}", userId);
+
         DuracloudUser user = getUserRepo().findById(userId);
 
         ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
-        String generatedPassword = Long.toString(Math.abs(new Random().nextLong()), 36);
+        String generatedPassword =
+            Long.toString(Math.abs(new Random().nextLong()), 36);
         user.setPassword(util.generateChecksum(generatedPassword));
 
         getUserRepo().save(user);
 
-        log.debug("Propagating update for user: " + userId);
         try {
             Set<AccountRights> rightsSet =
                 repoMgr.getRightsRepo().findByUserId(userId);
             // Propagate changes for each of the user's accounts
             if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
                 for(AccountRights rights : rightsSet) {
+                    log.debug("Propagating password update to account {}",
+                              rights.getAccountId());
                     propagator.propagatePasswordUpdate(rights.getAccountId(),
                                                        userId);
                 }
@@ -106,32 +111,41 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     }
 
 	@Override
-	public void deleteUser(int id) {
+	public void deleteUser(int userId) {
+        log.info("Deleting user with ID {}", userId);
+
         try{
-            Set<AccountRights> accountRights = getRightsRepo().findByUserId(id);
+            Set<AccountRights> accountRights =
+                getRightsRepo().findByUserId(userId);
             for(AccountRights accountRight : accountRights) {
                 getRightsRepo().delete(accountRight.getId());
 
-                log.debug("Propagating revocation for: " +
-                          accountRight.getAccountId() + ", " + id);
-                propagator.propagateRevocation(accountRight.getAccountId(), id);
+                log.debug("Propagating rights revocation for user {} " +
+                          "to account {}", userId, accountRight.getAccountId());
+
+                propagator.propagateRevocation(accountRight.getAccountId(),
+                                               userId);
             }
         }catch(DBNotFoundException ex){
-            log.error("account[{}] not found; skipping.", id, ex);
+            log.error("Unable to find account rights for user " +
+                      "with ID {} due to {}", userId, ex.getMessage());
         }
-        getUserRepo().delete(id);
+        getUserRepo().delete(userId);
 	}
 
 	@Override
-	public void deleteAccount(int id) {
+	public void deleteAccount(int accountId) {
+        log.info("Deleting account with ID {}", accountId);
+
         Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(id);
+            instanceManagerService.getInstanceServices(accountId);
         if (instanceServices.size() > 0) {
-            log.error("Unable to delete account {} found an instance", id);
+            log.error("Unable to delete account {} found an instance",
+                      accountId);
             return;
         }
 
-        AccountInfo account = getAccount(id);
+        AccountInfo account = getAccount(accountId);
 
         // Delete the primary storage provider
         getStorageRepo().delete(account.getPrimaryStorageProviderAccountId());
@@ -142,33 +156,34 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         }
 
         // Delete the compute provider
-        repoMgr.getComputeProviderAccountRepo().delete(account.getComputeProviderAccountId());
+        repoMgr.getComputeProviderAccountRepo()
+            .delete(account.getComputeProviderAccountId());
 
         // Delete the account rights
         try {
             Set<AccountRights> rights =
-                    getRightsRepo().findByAccountIdSkipRoot(id);
+                    getRightsRepo().findByAccountIdSkipRoot(accountId);
             for(AccountRights right : rights) {
                 getRightsRepo().delete(right.getId());
             }
         } catch (DBNotFoundException ex) {
-            log.warn("No AccountRights found for account[{}]: error message: {}",
-                     id,
-                     ex.getMessage());
+            log.warn("No rights found for account {}, " +
+                     "which is being deleted", accountId);
         }
 
         // Delete any user invitations
-        for(UserInvitation invitation : repoMgr.getUserInvitationRepo().findByAccountId(id)) {
+        for(UserInvitation invitation :
+            repoMgr.getUserInvitationRepo().findByAccountId(accountId)) {
             repoMgr.getUserInvitationRepo().delete(invitation.getId());
         }
 
         // Delete account
-        getAccountRepo().delete(id);
+        getAccountRepo().delete(accountId);
 	}
 
     @Override
-    public List<StorageProviderAccount> getSecondaryStorageProviders(int id) {
-        AccountInfo account = getAccount(id);
+    public List<StorageProviderAccount> getSecondaryStorageProviders(int accountId) {
+        AccountInfo account = getAccount(accountId);
 
         List<StorageProviderAccount> accounts =
             new ArrayList<StorageProviderAccount>();
@@ -178,36 +193,41 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                 accounts.add(getStorageRepo().findById(secId));
             }
         } catch(DBNotFoundException e) {
-
         }
 
         return accounts;
     }
 
 	@Override
-	public void setupStorageProvider(int id, String username, String password)
+	public void setupStorageProvider(int providerId,
+                                     String username,
+                                     String password)
         throws DBConcurrentUpdateException {
+        log.info("Setting up storage provider with ID {}", providerId);
         try {
             StorageProviderAccount storageProviderAccount =
-                getStorageRepo().findById(id);
+                getStorageRepo().findById(providerId);
             storageProviderAccount.setUsername(username);
             storageProviderAccount.setPassword(password);
             getStorageRepo().save(storageProviderAccount);
         } catch (DBNotFoundException ex) {
-            log.warn(
-                "No StorageProviderAccount found for id[{}]: error message: {}",
-                id,
-                ex.getMessage());
+            log.warn("No StorageProviderAccount found with ID {}, " +
+                     "could not set up storage provider", providerId);
         }
 	}
 
 	@Override
-	public void setupComputeProvider(int id, String username, String password,
-                                     String elasticIp, String keypair, String securityGroup)
+	public void setupComputeProvider(int providerId,
+                                     String username,
+                                     String password,
+                                     String elasticIp,
+                                     String keypair,
+                                     String securityGroup)
         throws DBConcurrentUpdateException {
+        log.info("Setting up compute provider with ID {}", providerId);
         try {
             ComputeProviderAccount computeStorageAcct =
-                repoMgr.getComputeProviderAccountRepo().findById(id);
+                repoMgr.getComputeProviderAccountRepo().findById(providerId);
             computeStorageAcct.setUsername(username);
             computeStorageAcct.setPassword(password);
             computeStorageAcct.setElasticIp(elasticIp);
@@ -215,9 +235,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             computeStorageAcct.setSecurityGroup(securityGroup);
             repoMgr.getComputeProviderAccountRepo().save(computeStorageAcct);
         } catch (DBNotFoundException ex) {
-            log.warn(
-                "No ComputeProviderAccount found for id[{}]: error message: {}",
-                id, ex.getMessage());
+            log.warn("No ComputeProviderAccount found with ID {}, " +
+                     "could not set up compute provider", providerId);
         }
 	}
 
@@ -226,20 +245,22 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         try{
             return getAccountRepo().findById(id);
         }catch(DBNotFoundException ex){
-            log.error("account[{}] not found; skipping.", id, ex);
+            log.error("No Account found with ID {}", id);
         }
         return null;
 	}
 
 	@Override
-	public void activateAccount(int id)
+	public void activateAccount(int accountId)
         throws DBConcurrentUpdateException {
+        log.info("Activating account with ID {}", accountId);
         try{
-            AccountInfo accountInfo = getAccountRepo().findById(id);
+            AccountInfo accountInfo = getAccountRepo().findById(accountId);
             accountInfo.setStatus(AccountInfo.AccountStatus.ACTIVE);
             getAccountRepo().save(accountInfo);
         }catch(DBNotFoundException ex){
-            log.error("account[{}] not found; skipping.", id, ex);
+            log.error("No Account found with ID {}, could not activate account",
+                      accountId);
         }
 	}
 
@@ -254,7 +275,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 					accountInfos.add(accountInfo);
 				}
 			}catch(DBNotFoundException ex){
-				log.error("account[{}] not found; skipping.", acctId, ex);
+				log.error("No Account found with ID {}, skipping", acctId);
 			}
 		}
 		return accountInfos;
@@ -269,7 +290,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             try{
 				user = getUserRepo().findById(id);
 			}catch(DBNotFoundException ex){
-				log.error("user[{}] not found; skipping.", id, ex);
+				log.error("No User found with ID {}", id);
                 continue;
 			}
 				
@@ -282,7 +303,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                     user.setAccountRights(
                         getRightsRepo().findByUserId(user.getId()));
                 }catch(DBNotFoundException ex){
-                    log.error("account[{}] not found; skipping.", id, ex);
+                    log.error("No AccountRights found for user with ID {}", id);
                 }
                 
                 users.add(user);
