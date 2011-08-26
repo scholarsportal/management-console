@@ -37,7 +37,7 @@ public class AnnotationParserImpl implements AnnotationParser {
     @Override
     public Map<String, Object[]> getMethodAnnotationsForClass(Class annotationClass,
                                                               Class targetClass) {
-        log.debug("Collecting annotations {} over {}",
+        log.trace("Collecting annotations {} over {}",
                   annotationClass.getName(),
                   targetClass.getName());
 

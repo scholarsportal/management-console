@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.security.web;
 
-import java.util.Collection;
-
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.Role;
 import org.slf4j.Logger;
@@ -13,6 +11,8 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 
 /**
  * 
@@ -28,20 +28,20 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 	}
 
 	public boolean supports(ConfigAttribute attribute) {
-		log.debug("supports attribute{}", attribute.getAttribute());
+		log.trace("supports attribute{}", attribute.getAttribute());
 		return true;
 	}
 
 	public boolean supports(Class<?> clazz) {
-		log.debug("supports {}", clazz.getName());
+		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
 	
 	public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
-		log.debug("voting on {} for {} using attributes {}", new Object[] {
-				authentication, object, attributes });
+		log.trace("voting on {} for {} using attributes {}",
+                  new Object[] {authentication, object, attributes });
 		for(ConfigAttribute ca : attributes){
-			log.debug("attribute: {}", ca.getAttribute());
+			log.trace("attribute: {}", ca.getAttribute());
 		}
 
 		if(isRoot(authentication)){

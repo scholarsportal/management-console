@@ -85,7 +85,7 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
     private int castVote(int decision, MethodInvocation invocation) {
         String methodName = invocation.getMethod().getName();
         String className = invocation.getThis().getClass().getSimpleName();
-        log.debug("{}.{}() = {}", new Object[]{className, methodName, asString(
+        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
             decision)});
         return decision;
     }

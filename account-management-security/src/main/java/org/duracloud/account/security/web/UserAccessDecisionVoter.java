@@ -48,7 +48,7 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
             }
             DuracloudUser user = getUser(authentication);
             String username = (String) rmi.getArguments()[0];
-            log.debug("intercepted ({})", username);
+            log.trace("intercepted ({})", username);
             if (username.equals(user.getUsername())) {
                 return ACCESS_GRANTED;
             } else {
@@ -72,7 +72,7 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
             boolean isOwner = user.isOwnerForAcct(accountId);
             boolean isAdmin = user.isAdminForAcct(accountId);
 
-            log.debug("intercepted {} calling {}(acountId={},userId={})",
+            log.trace("intercepted {} calling {}(acountId={},userId={})",
                 new Object[] { user.getUsername(), method, accountId, userId });
 
             if (!isRoot && !isOwner && !isAdmin) {
@@ -120,17 +120,17 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
     }
 
     private Integer getAccountId(Object[] methodArgs) {
-        log.debug("Returning 'accountId' at index: " + ACCT_ID_INDEX);
+        log.trace("Returning 'accountId' at index: {}", ACCT_ID_INDEX);
         return (Integer) methodArgs[ACCT_ID_INDEX];
     }
 
     private Integer getUserId(Object[] methodArgs) {
-        log.debug("Returning 'userId' at index: " + USER_ID_INDEX);
+        log.trace("Returning 'userId' at index: {}", USER_ID_INDEX);
         return (Integer) methodArgs[USER_ID_INDEX];
     }
 
     private Set<Role> getRoles(Object[] methodArgs) {
-        log.debug("Returning 'roles' at index: " + ROLES_ID_INDEX);
+        log.trace("Returning 'roles' at index: {}", ROLES_ID_INDEX);
         Set<Role> roles = new HashSet<Role>();
 
         if (methodArgs.length > ROLES_ID_INDEX) {

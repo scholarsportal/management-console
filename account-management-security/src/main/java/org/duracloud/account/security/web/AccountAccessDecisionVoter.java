@@ -27,14 +27,14 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 
 	@Override
 	public boolean supports(ConfigAttribute attribute) {
-		log.debug("supports attribute{}", attribute.getAttribute());
+		log.trace("supports attribute{}", attribute.getAttribute());
 		
 		return true;
 	}
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		log.debug("supports {}", clazz.getName());
+		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
 
@@ -46,7 +46,7 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 		if(rmi.getMethod().getName().equals("getAccount")){
 			Integer accountId = (Integer)rmi.getArguments()[0];
 
-			log.debug("intercepted getAccount({})", accountId);
+			log.trace("intercepted getAccount({})", accountId);
 
             DuracloudUser user = (DuracloudUser)authentication.getPrincipal();
             Set<Role> roles = user.getRolesByAcct(accountId);
@@ -56,7 +56,7 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
                 decision = ACCESS_DENIED;
             }
 		}
-        log.debug("decision: " + decisionToString(decision));
+        log.trace("decision: {}", decisionToString(decision));
         return decision;
     }
 	

@@ -46,13 +46,13 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
 
     @Override
     public boolean supports(ConfigAttribute attribute) {
-        log.debug("supports attribute{}", attribute.getAttribute());
+        log.trace("supports attribute{}", attribute.getAttribute());
         return true;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        log.debug("supports {}", clazz.getName());
+        log.trace("supports {}", clazz.getName());
         return MethodInvocation.class.isAssignableFrom(clazz);
     }
 
@@ -93,7 +93,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
     protected int voteUserHasRoleOnAccount(DuracloudUser user,
                                            String role,
                                            int acctId) {
-        log.debug("Does user {} have role {} on acct {}?",
+        log.trace("Does user {} have role {} on acct {}?",
                   new Object[]{user.getId(), role, acctId});
 
         AccountRights rights = getUserRightsForAcct(user.getId(), acctId);
@@ -102,7 +102,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         }
 
         Set<Role> acctRoles = rights.getRoles();
-        log.debug("Roles found: {}", acctRoles);
+        log.trace("Roles found: {}", acctRoles);
 
         if (acctRoles != null && acctRoles.size() > 0) {
             for (Role acctRole : acctRoles) {
@@ -118,7 +118,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
                                                            int acctId,
                                                            int otherUserId,
                                                            Set<Role> otherRoles) {
-        log.debug("Voting if user {} has roles on acct {} to manage {}.",
+        log.trace("Voting if user {} has roles on acct {} to manage {}.",
                   new Object[]{userId, acctId, otherUserId});
 
         AccountRights rights = getUserRightsForAcct(userId, acctId);
@@ -140,7 +140,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         boolean updates = hasVote(voteRolesAreSufficientToUpdateOther(rights.getRoles(),
                                                                       otherRoles));
 
-        log.debug("Are {} sufficient to update both {} and {}?",
+        log.trace("Are {} sufficient to update both {} and {}?",
                   new Object[]{rights.getRoles(),
                                other.getRoles(),
                                otherRoles});
@@ -166,7 +166,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
         }
 
         boolean userHasRole = roles.contains(otherHighestRole);
-        log.debug("Roles {} has permission to manage other {}",
+        log.trace("Roles {} has permission to manage other {}",
                   roles,
                   otherHighestRole);
 
@@ -222,7 +222,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
     protected DuracloudUser getCurrentUser(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof String) {
-            log.debug("Unknown user {}", principal);
+            log.trace("Unknown user {}", principal);
             return new DuracloudUser(-1,
                                      (String) principal,
                                      null,

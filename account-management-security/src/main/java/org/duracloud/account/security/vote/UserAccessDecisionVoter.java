@@ -135,7 +135,7 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     private int voteUserHasRoleOnAcctToManageOther(int userId,
                                                    int acctId,
                                                    int otherUserId) {
-        log.debug("Voting if user {} has roles on acct {} to manage {}.",
+        log.trace("Voting if user {} has roles on acct {} to manage {}.",
                   new Object[]{userId, acctId, otherUserId});
 
         AccountRights rights = getUserRightsForAcct(userId, acctId);
@@ -227,7 +227,7 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     private int castVote(int decision, MethodInvocation invocation) {
         String methodName = invocation.getMethod().getName();
         String className = invocation.getThis().getClass().getSimpleName();
-        log.debug("{}.{}() = {}", new Object[]{className, methodName, asString(
+        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
             decision)});
         return decision;
     }
