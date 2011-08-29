@@ -18,7 +18,8 @@ public enum ServicePlan {
 
     STARTER_ARCHIVING("Starter Package: Archiving and Preservation"),
     STARTER_MEDIA("Starter Package: Media Access"),
-    PROFESSIONAL("Professional Package");
+    PROFESSIONAL("Professional Package"),
+    TRIAL("Trial Package");
 
     private final String text;
 
