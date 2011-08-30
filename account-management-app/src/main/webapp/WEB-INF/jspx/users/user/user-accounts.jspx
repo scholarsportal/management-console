@@ -143,7 +143,7 @@
                 <c:otherwise>
                 <div class="instance-panel active"><table>
                     <tr>
-                      <th align="left">Host Name</th>
+                      <th align="left" colspan="2">Host Name</th>
                       <th width="173" align="center">Version</th>
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left"></th>
@@ -153,12 +153,18 @@
                       </c:if>
                       </tr>
                     <tr>
-                      <td align="left" valign="middle" class="instructions"><c:out value="${a.instance.hostName}" />
-                        <a class="button durabutton" style="margin-left:25px !important"
-                         id="account-${a.accountInfo.id}-duradmin-link"
-                         href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                         target="_blank">Launch DuraCloud<br />
-                        Administrator</a></td>
+                      <td align="left" valign="middle" class="instructions">
+                      	<c:out value="${a.instance.hostName}" />
+                      </td>
+                      <td align="left" valign="middle"> 
+                        <form action="https://${a.accountInfo.subdomain}.duracloud.org/duradmin/j_spring_security_check" target="_blank" method="post">
+                          <input type="hidden" value="${user.username}" name="j_username"/>
+                          <input type="hidden" value="${user.password}" name="j_password"/>    
+                          <button type="submit" class="button durabutton">
+                            Launch Duracloud
+                          </button>
+                        </form>
+                     </td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
                       </td>
