@@ -17,8 +17,10 @@
      value="Accounts" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+     name="header-extensions">
+        <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/js/user-accounts.js"></script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
@@ -81,17 +83,6 @@
 
                       <c:if test="${a.userRole == 'ROLE_ROOT'}">
                       <c:if test="${a.instanceStatus == null}">
-
-                          <script type="text/javascript" language="JavaScript">
-                            function AskAndDeactivate(t)
-                            {
-                              var answer = confirm("Are you sure you want to deactivate this account.");
-                              if (answer)
-                              {
-                                t.form.submit();
-                              }
-                            }
-                          </script>
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
@@ -123,7 +114,7 @@
                       <div class="instance-panel inactive">
 
                       <form:form
-                        id="instance-start-form"
+                        id="instance-start-form-${a.accountInfo.id}"
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
@@ -134,7 +125,7 @@
                           path="version"
                           items="${a.versions}" />
                           </c:if>
-                        <button style="margin-left:8px !important" type="submit">Start New Instance</button>
+                        <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                       </div>
                     </c:if>
@@ -156,14 +147,29 @@
                       <td align="left" valign="middle" class="instructions">
                       	<c:out value="${a.instance.hostName}" />
                       </td>
-                      <td align="left" valign="middle"> 
-                        <form action="https://${a.accountInfo.subdomain}.duracloud.org/duradmin/j_spring_security_check" target="_blank" method="post">
-                          <input type="hidden" value="${user.username}" name="j_username"/>
-                          <input type="hidden" value="${user.password}" name="j_password"/>    
-                          <button type="submit" class="button durabutton">
-                            Launch Duracloud
-                          </button>
-                        </form>
+                      <td align="left" valign="middle" class="instructions">
+                        <c:choose>
+                          <c:when test="${a.instance.initialized}">
+                            <form action="https://${a.accountInfo.subdomain}.duracloud.org/duradmin/j_spring_security_check" target="_blank" method="post">
+                              <input type="hidden" value="${user.username}" name="j_username"/>
+                              <input type="hidden" value="${user.password}" name="j_password"/>
+                              <button id="duradmin-link-${a.accountInfo.id}" type="submit" class="button durabutton">
+                                Launch DuraCloud<br />
+				                Administrator
+                              </button>
+                            </form>
+                          </c:when>
+                          <c:otherwise>
+                            Instance setup is in process.
+                            <form:form
+                                id="instance-available-${a.accountInfo.id}"
+                                method="post"
+                                action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/available">
+                              <button id="${a.accountInfo.id}" class="available" type="submit">Check Availability</button>
+                            </form:form>
+			                <strong id="checking-${a.accountInfo.id}">Waiting for instance to become available...</strong>
+                          </c:otherwise>
+                        </c:choose>
                      </td>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
@@ -172,33 +178,6 @@
                         <c:out value="${a.instanceStatus}" />
                       </td>
                       <c:if test="${a.userRole != 'ROLE_USER'}">
-                      <script type="text/javascript" language="JavaScript">
-                        function AskAndSubmit(t)
-                        {
-                          var answer = confirm("Are you sure you want to stop your instance? Stopping an instance will stop the services you have running.");
-                          if (answer)
-                          {
-                            t.form.submit();
-                          }
-                        }
-                        function AskAndSubmitUpgrade(t)
-                        {
-                          var answer = confirm("Are you sure you want to upgrade your instance? This will stop your current instance which will stop the services you have running.");
-                          if (answer)
-                          {
-                            t.form.submit();
-                          }
-                        }
-
-                        function AskAndSubmitInit(t)
-                        {
-                          var answer = confirm("Are you sure you want to re-init your instance?");
-                          if (answer)
-                          {
-                            t.form.submit();
-                          }
-                        }
-                      </script>
                       <!--<td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
                               method="post">
                         <button type="submit" onclick="AskAndSubmit(this); return false;">Restart</button>
@@ -206,8 +185,9 @@
                       <c:if test="${a.instanceVersion != latestVersion}">
 
                           <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
+                                                                 id="instance-upgrade-form-${a.accountInfo.id}"
                                   method="post">
-                            <button type="submit" onclick="AskAndSubmitUpgrade(this); return false;">Upgrade</button>
+                            <button id="${a.accountInfo.id}" type="submit" class="upgrade" onclick="AskAndSubmitUpgrade(this); return false;">Upgrade</button>
                           </form></td>
                       </c:if>
                       <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
@@ -351,16 +331,6 @@
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
                         <c:if test="${a.userRole != 'ROLE_USER'}">
                           <c:if test="${a.userRole == 'ROLE_ROOT'}">
-                          <script type="text/javascript" language="JavaScript">
-                            function AskAndActivate(t)
-                            {
-                              var answer = confirm("Are you sure you want to activate this account.");
-                              if (answer)
-                              {
-                                t.form.submit();
-                              }
-                            }
-                          </script>
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">

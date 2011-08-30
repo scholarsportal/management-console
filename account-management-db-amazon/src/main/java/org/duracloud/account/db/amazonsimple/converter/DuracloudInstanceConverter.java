@@ -33,6 +33,8 @@ public class DuracloudInstanceConverter
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String PROVIDER_INSTANCE_ID_ATT =
         "PROVIDER_INSTANCE_ID";
+    protected static final String INSTANCE_INITIALIZED_ATT =
+        "INSTANCE_INITIALIZED";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(DuracloudInstance instance) {
@@ -55,6 +57,10 @@ public class DuracloudInstanceConverter
             PROVIDER_INSTANCE_ID_ATT,
             instance.getProviderInstanceId(),
             true));
+        atts.add(new ReplaceableAttribute(
+            INSTANCE_INITIALIZED_ATT,
+            String.valueOf(instance.isInitialized()),
+            true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -67,6 +73,7 @@ public class DuracloudInstanceConverter
         int accountId = -1;
         String hostName = null;
         String providerInstanceId = null;
+        boolean initialized = false;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -86,6 +93,9 @@ public class DuracloudInstanceConverter
             } else if (PROVIDER_INSTANCE_ID_ATT.equals(name)) {
                 providerInstanceId = value;
 
+            } else if (INSTANCE_INITIALIZED_ATT.equals(name)) {
+                initialized = Boolean.valueOf(value);
+                
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -102,6 +112,7 @@ public class DuracloudInstanceConverter
                                      accountId,
                                      hostName,
                                      providerInstanceId,
+                                     initialized,
                                      counter);
     }
 

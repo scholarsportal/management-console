@@ -136,7 +136,8 @@ public class TestDuracloudInstanceRepoImpl extends BaseTestDuracloudRepoImpl {
                                      imageId,
                                      accountId,
                                      hostName,
-                                     providerInstanceId);
+                                     providerInstanceId,
+                                     false);
     }
 
     private void verifyInstance(final DuracloudInstance inst) {

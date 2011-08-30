@@ -152,7 +152,8 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                                            image.getId(),
                                                            accountId,
                                                            hostName,
-                                                           providerInstanceId);
+                                                           providerInstanceId,
+                                                           false);
         try {
             repoMgr.getInstanceRepo().save(instance);
         } catch(DBConcurrentUpdateException e) {

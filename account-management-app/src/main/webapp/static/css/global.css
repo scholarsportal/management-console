@@ -630,29 +630,35 @@ li.account:hover {
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
 	background-position: center left;
-	height:25px;
+	height:36px;
+	width:200px;
 	
 	margin-left: 25px;
-	text-align: left;
+	text-align: middle;
 	color: #333;
 	vertical-align: middle;
 	font-weight: bold;
 	font-size: 11px;
-	padding-left: 80px;
+    padding-left: 80px;
+    padding-top:5px;
+    padding-bottom:5px;
 	}	
 	.button.durabutton:hover{
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
 	background-position: center left;
-	height:25px;
+	height:36px;
+	width:200px;
 	
 	margin-left: 25px;
-	text-align: left;
+	text-align: middle;
 	color: #09F;
 	vertical-align: middle;
 	font-weight: bold;
 	font-size: 11px;
 	padding-left: 80px;
+    padding-top:5px;
+    padding-bottom:5px;
 	border-color:#09F;
 	}
 

@@ -14,6 +14,7 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.HOST_NAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.IMAGE_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.INSTANCE_INITIALIZED_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudInstanceConverter.PROVIDER_INSTANCE_ID_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
@@ -28,6 +29,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
     private static final int accountId = 12;
     private static final String hostName = "host";
     private static final String providerInstanceId = "ABCD";
+    private static final boolean initialized = false;
     private static final int counter = 4;
 
     @Override
@@ -42,6 +44,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
                                      accountId,
                                      hostName,
                                      providerInstanceId,
+                                     initialized,
                                      counter);
     }
 
@@ -54,6 +57,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         testAtts.add(new Attribute(ACCOUNT_ID_ATT, insCvtr.asString(accountId)));
         testAtts.add(new Attribute(HOST_NAME_ATT, hostName));
         testAtts.add(new Attribute(PROVIDER_INSTANCE_ID_ATT, providerInstanceId));
+        testAtts.add(new Attribute(INSTANCE_INITIALIZED_ATT, String.valueOf(initialized)));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -67,6 +71,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         Assert.assertNotNull(instance.getAccountId());
         Assert.assertNotNull(instance.getHostName());
         Assert.assertNotNull(instance.getProviderInstanceId());
+        Assert.assertNotNull(instance.isInitialized());
 
         Assert.assertEquals(counter, instance.getCounter());
         Assert.assertEquals(imageId, instance.getImageId());
@@ -74,6 +79,7 @@ public class DuracloudInstanceConverterTest extends DomainConverterTest<Duraclou
         Assert.assertEquals(hostName, instance.getHostName());
         Assert.assertEquals(providerInstanceId,
                             instance.getProviderInstanceId());
+        Assert.assertEquals(initialized, instance.isInitialized());
     }
 
 }

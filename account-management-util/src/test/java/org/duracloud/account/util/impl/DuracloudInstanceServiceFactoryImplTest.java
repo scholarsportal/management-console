@@ -93,7 +93,8 @@ public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceSe
                                      imageId,
                                      accountId,
                                      hostName,
-                                     providerInstanceId);
+                                     providerInstanceId,
+                                     false);
     }
 
 }

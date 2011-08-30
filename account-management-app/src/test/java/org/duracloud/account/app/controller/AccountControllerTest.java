@@ -172,6 +172,19 @@ public class AccountControllerTest extends AmaControllerTestBase {
     }
 
     @Test
+    public void testInstanceAvailable() throws Exception {
+        initializeMockInstanceAvailable();
+        replayMocks();
+        accountController.setInstanceManagerService(this.instanceManagerService);
+
+        Model model = new ExtendedModelMap();
+        accountController.instanceAvailable(TEST_ACCOUNT_ID,
+                                            model);
+
+        EasyMock.verify(instanceManagerService, instanceService);
+    }
+
+    @Test
     public void testReInitUsers() throws Exception {
         boolean initUsers = true;
         createReInitInstanceMocks(initUsers);
@@ -226,7 +239,8 @@ public class AccountControllerTest extends AmaControllerTestBase {
                                                            0,
                                                            0,
                                                            "host",
-                                                           "providerInstanceId");
+                                                           "providerInstanceId",
+                                                           false);
         EasyMock.expect(instanceService.getInstanceInfo()).andReturn(instance);
     }
 
@@ -363,9 +377,31 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .times(1);
 
         DuracloudInstance instance =
-            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId");
+            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId", false);
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
+            .times(1);
+    }
+
+    private void initializeMockInstanceAvailable() throws Exception {
+        instanceManagerService = EasyMock.createMock(
+            "DuracloudInstanceManagerService",
+            DuracloudInstanceManagerService.class);
+
+        instanceService = EasyMock.createMock("DuracloudInstanceService",
+                                              DuracloudInstanceService.class);
+        DuracloudInstance instance =
+            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId", true);
+        EasyMock.expect(instanceService.getInstanceInfo())
+            .andReturn(instance)
+            .times(1);
+        Set<DuracloudInstanceService> instanceServices =
+            new HashSet<DuracloudInstanceService>();
+        instanceServices.add(instanceService);
+
+        EasyMock.expect(
+            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            .andReturn(instanceServices)
             .times(1);
     }
 

@@ -181,6 +181,18 @@ public class DuracloudInstanceServiceImplTest
                                            EasyMock.isA(DurareportConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
+
+        EasyMock.expect(instance.getId()).andReturn(1);
+
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
+            .anyTimes();
+
+        EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
+            .andReturn(new DuracloudInstance(1,1,1,"host","provider",false));
+
+        instanceRepo.save(EasyMock.isA(DuracloudInstance.class));
+        EasyMock.expectLastCall();
     }
 
     private void setUpReInitializeCommonMocks(int times) throws Exception {
@@ -222,6 +234,8 @@ public class DuracloudInstanceServiceImplTest
             .andReturn(new DurareportConfig())
             .times(1);
 
+        EasyMock.expect(instance.getId()).andReturn(1);
+
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
@@ -236,6 +250,15 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(repoMgr.getUserRepo())
             .andReturn(userRepo)
             .times(1);
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
+            .anyTimes();
+
+        EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
+            .andReturn(new DuracloudInstance(1,1,1,"host","provider",false));
+
+        instanceRepo.save(EasyMock.isA(DuracloudInstance.class));
+        EasyMock.expectLastCall();
 
         int userId = 5;
         Set<AccountRights> accountRights = new HashSet<AccountRights>();

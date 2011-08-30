@@ -166,8 +166,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     public void handleInstanceInitFailure() {
         // Simply log exception for now. In the future, it may be useful to
         // capture the error so that it can be presented further up the chain.
-        log.error("Failure attempting to initialize instance " +
-                  instance.getId() + " for account " + accountId);
+        log.error(
+            "Failure attempting to initialize instance " + instance.getId() +
+                " for account " + accountId);
     }
 
     private class ThreadedInitializer extends Thread {
@@ -244,6 +245,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         } else {
             initializeInstance();
             initializeUserRoles();
+            updateInstance();
         }
     }
 
@@ -352,6 +354,18 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         String host = instance.getHostName();
 
         instanceUpdater.updateUserDetails(host, userBeans, restHelper);
+    }
+
+    private void updateInstance() {
+        try {
+            DuracloudInstance update =
+                repoMgr.getInstanceRepo().findById(instance.getId());
+            update.setInitialized(true);
+
+            repoMgr.getInstanceRepo().save(update);
+        } catch(Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
     private Credential getRootCredential() {
