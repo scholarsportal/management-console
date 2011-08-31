@@ -6,6 +6,7 @@ package org.duracloud.account.util.impl;
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccessDeniedException;
 import org.duracloud.account.util.security.AnnotationParser;
@@ -92,7 +93,7 @@ public class DuracloudInstanceServiceSecuredImpl implements DuracloudInstanceSer
     }
 
     @Override
-    public String getStatus() {
+    public String getStatus() throws DuracloudInstanceNotAvailableException {
         throwIfAccessDenied();
         return instanceService.getStatus();
     }

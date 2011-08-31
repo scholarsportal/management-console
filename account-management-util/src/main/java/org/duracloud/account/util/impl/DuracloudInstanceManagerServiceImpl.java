@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerImageRepo;
@@ -18,7 +19,6 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.error.DuracloudInstanceCreationException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,14 +178,26 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     @Override
     public DuracloudInstanceService getInstanceService(int instanceId)
         throws DuracloudInstanceNotAvailableException {
+        DuracloudInstanceService instanceService = null;
         DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
         try {
             DuracloudInstance instance = instanceRepo.findById(instanceId);
-            return instanceServiceFactory.getInstance(instance);
+            instanceService = instanceServiceFactory.getInstance(instance);
 
         } catch(DBNotFoundException e) {
             throw new DuracloudInstanceNotAvailableException(e.getMessage(), e);
         }
+
+        // Ensure that the instance exists. This throws if not.
+        try {
+            instanceService.getStatus();
+
+        } catch (DuracloudInstanceNotAvailableException e) {
+            log.warn("Instance {} does not exist, deleting.", instanceId);
+            instanceRepo.delete(instanceId);
+            throw e;
+        }
+        return instanceService;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -139,7 +140,8 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUser(@PathVariable String username,
-                                HttpServletRequest request) throws DBNotFoundException {
+                                HttpServletRequest request)
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
         log.debug("getting user {}", username);
         // if there's a redemption code in the session, it means that
         // the user logged in in order to redeem an invitation
@@ -187,7 +189,8 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { USER_ACCOUNTS_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getUserAccounts(@PathVariable String username) throws DBNotFoundException {
+    public ModelAndView getUserAccounts(@PathVariable String username)
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
         log.debug("getting user accounts for {}", username);
         ModelAndView mav = new ModelAndView(USER_ACCOUNTS);
         prepareModel(username, mav);
@@ -295,7 +298,8 @@ public class UserController extends AbstractController {
      * @param user
      * @param mav
      */
-    private void prepareModel(DuracloudUser user, ModelAndView mav) {
+    private void prepareModel(DuracloudUser user, ModelAndView mav)
+        throws DuracloudInstanceNotAvailableException {
         mav.addObject(USER_KEY, user);
         Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
         mav.addObject(NEW_INSTANCE_FORM, new AccountInstanceForm());
@@ -331,7 +335,8 @@ public class UserController extends AbstractController {
     }
 
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
-                                                  DuracloudUser user) {
+                                                  DuracloudUser user)
+        throws DuracloudInstanceNotAvailableException {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
@@ -362,7 +367,8 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = { USER_WELCOME_MAPPING }, method = RequestMethod.GET)
     public ModelAndView getUserWelcome(@PathVariable String username,
-                                       @RequestParam(value = "accountId", required = false) Integer accountId) throws DBNotFoundException {
+                                       @RequestParam(value = "accountId", required = false) Integer accountId)
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
 
         log.debug("opening welcome page for for {}: accountId={}",
                   username,
@@ -378,7 +384,8 @@ public class UserController extends AbstractController {
     /**
      * @param mav
      */
-    private void prepareModel(String username, ModelAndView mav) throws DBNotFoundException {
+    private void prepareModel(String username, ModelAndView mav)
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
         DuracloudUser user = this.userService.loadDuracloudUserByUsernameInternal(username);
         prepareModel(user, mav);
     }

@@ -13,6 +13,7 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -139,7 +140,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     }
 
     @Override
-    public String getStatus() {
+    public String getStatus() throws DuracloudInstanceNotAvailableException {
         return computeProvider.getStatus(instance.getProviderInstanceId());
     }
 

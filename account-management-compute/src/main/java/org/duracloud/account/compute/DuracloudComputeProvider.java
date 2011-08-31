@@ -3,6 +3,8 @@
  */
 package org.duracloud.account.compute;
 
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
+
 /**
  * @author Bill Branan
  *         Date: Feb 7, 2011
@@ -46,6 +48,7 @@ public interface DuracloudComputeProvider{
      * @param providerInstanceId the ID of the instance as known by the provider
      * @return the current status of the instance
      */
-    public String getStatus(String providerInstanceId);
+    public String getStatus(String providerInstanceId)
+        throws DuracloudInstanceNotAvailableException;
 
 }

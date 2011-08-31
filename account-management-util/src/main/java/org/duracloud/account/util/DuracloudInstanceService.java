@@ -5,6 +5,7 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.springframework.security.access.annotation.Secured;
 
 import java.util.Set;
@@ -41,7 +42,7 @@ public interface DuracloudInstanceService {
      * Returns the state of the Duracloud instance.
      */
     @Secured({"role:ROLE_USER, scope:SELF_ACCT"})
-    public String getStatus();
+    public String getStatus() throws DuracloudInstanceNotAvailableException;
 
     /**
      * Stops the instance.

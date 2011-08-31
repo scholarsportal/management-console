@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.util;
 
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.springframework.security.access.annotation.Secured;
 
 import java.util.Set;

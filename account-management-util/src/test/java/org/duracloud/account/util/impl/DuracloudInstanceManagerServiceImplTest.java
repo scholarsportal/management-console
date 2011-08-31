@@ -5,9 +5,9 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -180,6 +180,7 @@ public class DuracloudInstanceManagerServiceImplTest
 
         int instanceId = 2;
         int invalidInstanceId = -2;
+        String providerId = "i-123";
 
         EasyMock.expect(instanceServiceFactory.getInstance(instance))
             .andReturn(service);
@@ -193,14 +194,16 @@ public class DuracloudInstanceManagerServiceImplTest
             .andReturn(instance)
             .times(1);
 
+        EasyMock.expect(instance.getProviderInstanceId()).andReturn(providerId);
+        EasyMock.expect(computeProvider.getStatus(providerId)).andReturn(
+            "runnning");
+
         // An invalid instance ID throws
         EasyMock.expect(instanceRepo.findById(invalidInstanceId))
             .andThrow(new DBNotFoundException("Not Found"))
             .times(1);
 
         replayMocks();
-
-
 
         DuracloudInstanceService instanceService =
             managerService.getInstanceService(instanceId);
@@ -216,11 +219,42 @@ public class DuracloudInstanceManagerServiceImplTest
     }
 
     @Test
+    public void testGetInstanceServiceError() throws Exception {
+        setUpInitComputeProvider();
+
+        int instanceId = 2;
+        String providerId = "i-123";
+
+        EasyMock.expect(instanceServiceFactory.getInstance(instance)).andReturn(
+            service);
+
+        EasyMock.expect(repoMgr.getInstanceRepo()).andReturn(instanceRepo);
+        EasyMock.expect(instanceRepo.findById(instanceId)).andReturn(instance);
+        EasyMock.expect(instance.getProviderInstanceId()).andReturn(providerId);
+        EasyMock.expect(computeProvider.getStatus(providerId))
+            .andThrow(new DuracloudInstanceNotAvailableException(
+                "canned-exception"));
+
+        instanceRepo.delete(instanceId);
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        try {
+            managerService.getInstanceService(instanceId);
+            fail("Exception expected");
+        } catch (DuracloudInstanceNotAvailableException expected) {
+            assertNotNull(expected);
+        }
+    }
+
+    @Test
     public void testGetInstanceServices() throws Exception {
         setUpInitComputeProvider();
 
         int acctId = 1;
         int instanceId = 2;
+        String providerId = "i-876";
         
         setUpGetInstanceIds(acctId, instanceId, 1);
 
@@ -233,6 +267,10 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
             .andReturn(instance)
             .times(1);
+
+        EasyMock.expect(instance.getProviderInstanceId()).andReturn(providerId);
+        EasyMock.expect(computeProvider.getStatus(providerId)).andReturn(
+            "runnning");
 
         replayMocks();
 

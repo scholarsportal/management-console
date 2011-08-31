@@ -17,6 +17,7 @@ import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.compute.error.InstanceStartupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,11 +99,15 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         if(wait) {
             // Two step verification, to ensure that the
             // instance is known to be running.
-            if(waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
-                if(!waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
+            try {
+                if(waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
+                    if(!waitInstanceRunning(instanceId, STARTUP_WAIT_TIME)) {
+                        startError(instanceId);
+                    }
+                } else {
                     startError(instanceId);
                 }
-            } else {
+            } catch (DuracloudInstanceNotAvailableException e) {
                 startError(instanceId);
             }
         }
@@ -195,7 +200,8 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         throw new InstanceStartupException(err);
     }
 
-    public boolean waitInstanceRunning(String instanceId, long timeout) {
+    public boolean waitInstanceRunning(String instanceId, long timeout)
+        throws DuracloudInstanceNotAvailableException {
         long start = System.currentTimeMillis();
         while(!InstanceState.RUNNING.getValue().equals(getStatus(instanceId))) {
             long now = System.currentTimeMillis();
@@ -235,7 +241,8 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     }
 
     @Override
-    public String getStatus(String providerInstanceId) {
+    public String getStatus(String providerInstanceId)
+        throws DuracloudInstanceNotAvailableException {
         DescribeInstancesResult result = describeInstance(providerInstanceId);
         try {
             // Allowed Values: pending, running, shutting-down, terminated
@@ -249,7 +256,8 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         }
     }
 
-    private DescribeInstancesResult describeInstance(String providerInstanceId) {
+    private DescribeInstancesResult describeInstance(String providerInstanceId)
+        throws DuracloudInstanceNotAvailableException {
         List<String> instanceIds = getIdList(providerInstanceId);
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         request.setInstanceIds(instanceIds);
@@ -272,7 +280,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
             StringBuilder error = new StringBuilder();
             error.append("Error describing instance: " + providerInstanceId);
             log.error(error.toString());
-            throw new InstanceStartupException(error.toString(), e);
+            throw new DuracloudInstanceNotAvailableException(error.toString(), e);
         }
 
         return result;

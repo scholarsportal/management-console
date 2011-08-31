@@ -7,12 +7,12 @@ import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,19 +65,20 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = { INSTANCE_PATH }, method = RequestMethod.GET)
     public String getInstance(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException, DBNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException, DuracloudInstanceNotAvailableException {
         populateAccountInModel(accountId, model);
         addUserToModel(model);
         return "account-instance";
     }
 
     private void populateAccountInModel(int accountId, Model model)
-        throws AccountNotFoundException {
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         AccountInfo acctInfo = loadAccountInfo(accountId, model);
         loadAccountInstances(acctInfo, model);
     }
 
-    private void loadAccountInstances(AccountInfo accountInfo, Model model) {
+    private void loadAccountInstances(AccountInfo accountInfo, Model model)
+        throws DuracloudInstanceNotAvailableException {
         Set<DuracloudInstanceService> instanceServices =
             instanceManagerService.getInstanceServices(accountInfo.getId());
         if(instanceServices.size() > 0) {
@@ -237,7 +238,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     private String reInitResult(int accountId, Model model, String status)
-        throws AccountNotFoundException {
+        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS, status);
 
