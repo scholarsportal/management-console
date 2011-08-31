@@ -626,15 +626,14 @@ li.account:hover {
 }
 
 
-.button.durabutton{
+.button.durabutton {
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
 	background-position: center left;
-	height:36px;
-	width:200px;
-	
+	height:32px;
+	width:210px;
 	margin-left: 25px;
-	text-align: middle;
+	text-align: center;
 	color: #333;
 	vertical-align: middle;
 	font-weight: bold;
@@ -642,25 +641,20 @@ li.account:hover {
     padding-left: 80px;
     padding-top:5px;
     padding-bottom:5px;
-	}	
-	.button.durabutton:hover{
+}
+
+.button.durabutton:hover {
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
 	background-position: center left;
-	height:36px;
-	width:200px;
-	
-	margin-left: 25px;
-	text-align: middle;
 	color: #09F;
-	vertical-align: middle;
-	font-weight: bold;
-	font-size: 11px;
-	padding-left: 80px;
-    padding-top:5px;
-    padding-bottom:5px;
 	border-color:#09F;
-	}
+}
+
+.button.durabutton span {
+    position: relative;
+    top: -4px;
+}
 
 .account-record {
 	border-top-width: 1px;

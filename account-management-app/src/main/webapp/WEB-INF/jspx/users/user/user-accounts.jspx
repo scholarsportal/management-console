@@ -154,8 +154,7 @@
                               <input type="hidden" value="${user.username}" name="j_username"/>
                               <input type="hidden" value="${user.password}" name="j_password"/>
                               <button id="duradmin-link-${a.accountInfo.id}" type="submit" class="button durabutton">
-                                Launch DuraCloud<br />
-				                Administrator
+                                <span>Launch DuraCloud<br />Administrator</span>
                               </button>
                             </form>
                           </c:when>
