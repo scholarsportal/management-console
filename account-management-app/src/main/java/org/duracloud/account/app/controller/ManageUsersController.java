@@ -325,7 +325,6 @@ public class ManageUsersController extends AbstractController {
                    accountSetupForm.getSecondaryPassword2().equals("")) {
                     result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
                         "secondaryPassword2",
-                        "secondaryPassword2",
                         "Secondary Storage account's password is required"));
                     hasErrors = true;
                 }
