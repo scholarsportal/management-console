@@ -23,8 +23,10 @@ public class AccountSetupForm {
 
     private boolean computeCredentialsSame;
 
+    @NotBlank(message="Compute account's username is required")
     private String computeUsername;
 
+    @NotBlank(message="Compute account's password is required")
     private String computePassword;
 
     @NotBlank(message="Compute provider Elastic IP is required")

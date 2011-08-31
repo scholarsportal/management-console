@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -277,7 +278,66 @@ public class ManageUsersController extends AbstractController {
 					   BindingResult result, Model model)
         throws Exception {
         log.info("setup account {}", accountId);
-        if (result.hasErrors()) {
+        boolean hasErrors = result.hasErrors();
+
+        if(!hasErrors) {
+            if(accountSetupForm.getSecondaryId0() > 0) {
+                if(accountSetupForm.getSecondaryUsername0() == null ||
+                   accountSetupForm.getSecondaryUsername0().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryUsername0",
+                        "Secondary Storage account's username is required"));
+                    hasErrors = true;
+                }
+                if(accountSetupForm.getSecondaryPassword0() == null ||
+                   accountSetupForm.getSecondaryPassword0().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryPassword0",
+                        "Secondary Storage account's password is required"));
+                    hasErrors = true;
+                }
+            }
+            if(accountSetupForm.getSecondaryId1() > 0) {
+                if(accountSetupForm.getSecondaryUsername1() == null ||
+                   accountSetupForm.getSecondaryUsername1().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryUsername1",
+                        "Secondary Storage account's username is required"));
+                    hasErrors = true;
+                }
+                if(accountSetupForm.getSecondaryPassword1() == null ||
+                   accountSetupForm.getSecondaryPassword1().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryPassword1",
+                        "Secondary Storage account's password is required"));
+                    hasErrors = true;
+                }
+            }
+            if(accountSetupForm.getSecondaryId2() > 0) {
+                if(accountSetupForm.getSecondaryUsername2() == null ||
+                   accountSetupForm.getSecondaryUsername2().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryUsername2",
+                        "Secondary Storage account's username is required"));
+                    hasErrors = true;
+                }
+                if(accountSetupForm.getSecondaryPassword2() == null ||
+                   accountSetupForm.getSecondaryPassword2().equals("")) {
+                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
+                        "secondaryPassword2",
+                        "secondaryPassword2",
+                        "Secondary Storage account's password is required"));
+                    hasErrors = true;
+                }
+            }
+        }
+
+        if (hasErrors) {
+            List<StorageProviderAccount> providers =
+                rootAccountManagerService.getSecondaryStorageProviders(accountId);
+
+            model.addAttribute("secProviders", providers);
+
             return "account-setup";
         }
 
