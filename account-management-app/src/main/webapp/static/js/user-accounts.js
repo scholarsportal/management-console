@@ -24,33 +24,6 @@ $(document).ready(function(){
         return false;
     });
 
-    $(".upgrade").click(function() {
-        var button = $(this);
-        var id = $(button).attr("id");
-
-        var name = "#instance-upgrade-form-" + id;
-        var form = $(name);
-
-        $.ajax({
-          type: "POST",
-          url: $(form).attr("action"),
-          data: $(form).serialize(),
-          success: function() {
-            window.location.reload(true);
-          },
-          error: function() {
-            alert ("Error upgrading your instance.");
-          }
-        });
-
-        $(button).replaceWith("");
-
-        var replace = "#duradmin-link-" + id;
-        $(replace).replaceWith("Upgrading Instance...");
-
-        return false;
-    });
-
     $(".available").click(function() {
         var button = $(this);
         var id = $(button).attr("id");
@@ -102,9 +75,33 @@ function AskAndSubmit(t)
 function AskAndSubmitUpgrade(t)
 {
   var answer = confirm("Are you sure you want to upgrade your instance? This will stop your current instance which will stop the services you have running.");
+
   if (answer)
   {
-    t.form.submit();
+    var button = $(t);
+    var id = $(button).attr("id");
+
+    var name = "#instance-upgrade-form-" + id;
+    var form = $(name);
+
+    $.ajax({
+      type: "POST",
+      url: $(form).attr("action"),
+      data: $(form).serialize(),
+      success: function() {
+        window.location.reload(true);
+      },
+      error: function() {
+        alert ("Error upgrading your instance.");
+      }
+    });
+
+    $(button).replaceWith("");
+
+    var replace = "#duradmin-link-" + id;
+    $(replace).replaceWith("Upgrading Instance...");
+
+    return false;
   }
 }
 
