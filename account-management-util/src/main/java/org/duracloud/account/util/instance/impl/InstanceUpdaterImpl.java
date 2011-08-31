@@ -79,8 +79,9 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
                                   RestHttpHelper restHelper) {
         log.info("Updating user details at DuraCloud host {}", host);
 
-        if (StringUtils.isBlank(host) || null == userBeans ||
-            userBeans.size() == 0 || null == restHelper) {
+        if (StringUtils.isBlank(host) ||
+            null == userBeans ||
+            null == restHelper) {
             StringBuilder msg = new StringBuilder("Invalid arguments: ");
             msg.append(host + ", ");
             msg.append(userBeans + ", ");
