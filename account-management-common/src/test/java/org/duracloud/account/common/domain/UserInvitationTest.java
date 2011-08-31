@@ -94,4 +94,25 @@ public class UserInvitationTest {
         Assert.assertEquals(-1, invitation.compareTo(greaterInvitation));
     }
 
+    @Test
+    public void testGetBody() {
+        String newHost = "junkhost";
+        String newPort = "443";
+        String newCtxt = "abc";
+        AmaEndpoint.initialize(newHost, newPort, newCtxt);
+
+        String body = invitation.getBody();
+        Assert.assertNotNull(body);
+
+        Assert.assertTrue(!body.contains("manage.duracloud.org"));
+
+        int firstIndex = body.indexOf(newHost);
+        int secondIndex = body.indexOf(newHost, firstIndex + 1);
+        int thirdIndex = body.indexOf(newHost, secondIndex + 1);
+
+        Assert.assertTrue(body, firstIndex > -1);
+        Assert.assertTrue(body, secondIndex > -1);
+        Assert.assertTrue(body, thirdIndex == -1);
+    }
+
 }

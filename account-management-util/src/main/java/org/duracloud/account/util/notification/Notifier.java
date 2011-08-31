@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.util.notification;
 
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.notification.Emailer;
@@ -49,7 +50,9 @@ public class Notifier {
         message.append(".\n\nTo access and/or change your profile ");
         message.append("information (including your password) or view ");
         message.append("any associated DuraCloud accounts, please ");
-        message.append("visit: https://manage.duracloud.org.\n\n");
+        message.append("visit: ");
+        message.append(AmaEndpoint.getUrl());
+        message.append("\n\n");
         message.append("The DuraCloud team");
         return message.toString();
     }
@@ -62,7 +65,8 @@ public class Notifier {
         message.append("account invitation: ");
         message.append(user.getUsername());
         message.append(". To edit the permissions of this user, please visit ");
-        message.append("https://manage.duracloud.org.\n\n");
+        message.append(AmaEndpoint.getUrl());
+        message.append("\n\n");
         message.append("The DuraCloud team");
         sendEmail(subject, message.toString(), adminEmail);
     }

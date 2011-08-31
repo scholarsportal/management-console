@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.util.notification;
 
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.notification.Emailer;
 import org.easymock.Capture;
@@ -29,10 +30,12 @@ public class NotifierTest {
     private DuracloudUser user;
     private static final String username = "username";
     private static final String email = "email@address.comn";
+    private static final String host = "junkhost";
     private Capture<String> message;
 
     @Before
     public void setup() {
+        AmaEndpoint.initialize(host, "443", "abc");
         mockEmailer = EasyMock.createMock(Emailer.class);
         notifier = new Notifier(mockEmailer);
         message = new Capture<String>();
@@ -68,6 +71,8 @@ public class NotifierTest {
         String msg = message.getValue();
         assertNotNull(msg);
         assertTrue("Message should contain username", msg.contains(username));
+        assertTrue(host + " :: " + msg, msg.contains(host));
+        assertTrue(msg, !msg.contains("manage.duracloud.org"));
     }
 
     @Test
@@ -85,6 +90,8 @@ public class NotifierTest {
         assertNotNull(msg);
         assertTrue("Message should contain new password",
                    msg.contains(newPassword));
+        assertTrue(host + " :: " + msg, msg.contains(host));
+        assertTrue(msg, !msg.contains("manage.duracloud.org"));
     }
 
     @Test
@@ -101,6 +108,8 @@ public class NotifierTest {
         String msg = message.getValue();
         assertNotNull(msg);
         assertTrue("Message should contain username", msg.contains(username));
+        assertTrue(host + " :: " + msg, msg.contains(host));
+        assertTrue(msg, !msg.contains("manage.duracloud.org"));
     }
 
 }

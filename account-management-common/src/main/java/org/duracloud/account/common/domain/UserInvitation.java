@@ -82,6 +82,10 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         return AmaEndpoint.getUrl() + "/users/redeem/" + getRedemptionCode();
     }
 
+    private String getNewProfileURL() {
+        return AmaEndpoint.getUrl() + "/users/new";
+    }
+
     public String getSubject() {
         return "DuraCloud Account Invitation";
     }
@@ -95,7 +99,8 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         sb.append("\n\n");
         sb.append("1. If you do not have a personal user profile with ");
         sb.append("DuraCloud, please create one at: ");
-        sb.append("https://manage.duracloud.org/ama/users/new. ");
+        sb.append(getNewProfileURL());
+        sb.append(" ");
         sb.append("If you already have a personal user profile with ");
         sb.append("DuraCloud, you may skip this step.");
         sb.append("\n");
