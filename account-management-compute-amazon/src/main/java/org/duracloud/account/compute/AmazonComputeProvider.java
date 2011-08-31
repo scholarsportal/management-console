@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.compute;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.AssociateAddressRequest;
@@ -11,6 +12,7 @@ import com.amazonaws.services.ec2.model.DescribeAddressesRequest;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -78,15 +80,18 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                              boolean wait) {
         stopExistingInstances(elasticIp);
 
-        RunInstancesRequest request =
-            new RunInstancesRequest(providerImageId, 1, 1);
+        // FIXME: Availability Zone is temporarily hard coded (DURACLOUDPRIV-98)
+        String zone = "us-east-1d";
 
-        Set<String> securityGroups = new HashSet<String>();
-        securityGroups.add(securityGroup);
-        request.setSecurityGroups(securityGroups);
-        request.setKeyName(keyname);
-
-        RunInstancesResult result = ec2Client.runInstances(request);
+        RunInstancesResult result;
+        try {
+            result = doRun(providerImageId, securityGroup, keyname, zone, true);
+        } catch(AmazonServiceException e) {
+            log.warn("Error attempting to start instance: {}. " +
+                     "Attempting again with no zone setting.", e.getMessage());
+            // Try again with no set zone.
+            result = doRun(providerImageId, securityGroup, keyname, null, false);
+        }
         String instanceId = result.getReservation().getInstances()
                                   .iterator().next().getInstanceId();
 
@@ -104,7 +109,27 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
         associateAddress(elasticIp, instanceId);
 
+        log.info("Instance started successfully and IP {} attached", elasticIp);
         return instanceId;
+    }
+
+    private RunInstancesResult doRun(String providerImageId,
+                                     String securityGroup,
+                                     String keyname,
+                                     String availabilityZone,
+                                     boolean includeZone) {
+        RunInstancesRequest request =
+            new RunInstancesRequest(providerImageId, 1, 1);
+
+        Set<String> securityGroups = new HashSet<String>();
+        securityGroups.add(securityGroup);
+        request.setSecurityGroups(securityGroups);
+        request.setKeyName(keyname);
+
+        if(includeZone) {
+            request.setPlacement(new Placement(availabilityZone));
+        }
+        return ec2Client.runInstances(request);
     }
 
     private void stopExistingInstances(String elasticIp) {
