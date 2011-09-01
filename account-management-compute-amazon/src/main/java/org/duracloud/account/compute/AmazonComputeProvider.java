@@ -19,6 +19,7 @@ import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.compute.error.InstanceStartupException;
+import org.duracloud.account.common.domain.DuracloudInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         PENDING("pending"),
         RUNNING("running"),
         SHUTTING_DOWN("shutting-down"),
-        TERMINATED("terminated");
+        TERMINATED("terminated"),
+        STARTING("starting");
 
         private String value;
 
@@ -243,6 +245,10 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     @Override
     public String getStatus(String providerInstanceId)
         throws DuracloudInstanceNotAvailableException {
+        if(providerInstanceId.equals(DuracloudInstance.PLACEHOLDER_PROVIDER_ID)) {
+            return InstanceState.STARTING.getValue();
+        }
+        
         DescribeInstancesResult result = describeInstance(providerInstanceId);
         try {
             // Allowed Values: pending, running, shutting-down, terminated

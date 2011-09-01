@@ -8,6 +8,7 @@ package org.duracloud.account.common.domain;
  *         Date: Dec 17, 2010
  */
 public class DuracloudInstance extends BaseDomainData {
+    public static String PLACEHOLDER_PROVIDER_ID = "TBD";
 
     /**
      * The ID of the Image on which this instance is based.
@@ -81,6 +82,10 @@ public class DuracloudInstance extends BaseDomainData {
 
     public String getProviderInstanceId() {
         return providerInstanceId;
+    }
+
+    public void setProviderInstanceId(String providerInstanceId) {
+        this.providerInstanceId = providerInstanceId;
     }
 
     public boolean isInitialized() {

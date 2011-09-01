@@ -161,10 +161,16 @@ public class DuracloudInstanceManagerServiceImplTest
             .times(1);
         EasyMock.expect(repoMgr.getInstanceRepo())
             .andReturn(instanceRepo)
+            .times(3);
+        EasyMock.expect(instanceRepo.findById(instanceId))
+            .andReturn(instance)
             .times(1);
+        instance.setProviderInstanceId(providerInstanceId);
+        EasyMock.expectLastCall();
+        
         instanceRepo.save(EasyMock.isA(DuracloudInstance.class));
         EasyMock.expectLastCall()
-            .times(1);
+            .times(2);
 
         setUpInitComputeProvider();
         replayMocks();

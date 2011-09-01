@@ -21,6 +21,12 @@
       <artifactId>common</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>account-management-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
         
     <dependency>
       <groupId>org.duracloud</groupId>

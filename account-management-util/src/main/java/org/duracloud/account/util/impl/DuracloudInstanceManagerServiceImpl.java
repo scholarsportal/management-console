@@ -128,6 +128,22 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         // Get Account information
         AccountInfo account = repoMgr.getAccountRepo().findById(accountId);
 
+        // Create entry for new instance in DB
+        String hostName = account.getSubdomain() + HOST_SUFFIX;
+        int instanceId = repoMgr.getIdUtil().newInstanceId();
+        DuracloudInstance instance = new DuracloudInstance(instanceId,
+                                                           image.getId(),
+                                                           accountId,
+                                                           hostName,
+                                                           DuracloudInstance.PLACEHOLDER_PROVIDER_ID,
+                                                           false);
+        try {
+            repoMgr.getInstanceRepo().save(instance);
+        } catch(DBConcurrentUpdateException e) {
+            log.error("Error encountered attempting to save new Instance: " +
+                      e.getMessage());
+        }
+
         // Get info about compute provider account associated with this account
         int cpAccountId = account.getComputeProviderAccountId();
         ComputeProviderAccount computeProviderAcct =
@@ -145,15 +161,9 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                   computeProviderAcct.getKeypair(),
                                   computeProviderAcct.getElasticIp());
 
-        // Create entry for new instance in DB
-        String hostName = account.getSubdomain() + HOST_SUFFIX;
-        int instanceId = repoMgr.getIdUtil().newInstanceId();
-        DuracloudInstance instance = new DuracloudInstance(instanceId,
-                                                           image.getId(),
-                                                           accountId,
-                                                           hostName,
-                                                           providerInstanceId,
-                                                           false);
+        instance = repoMgr.getInstanceRepo().findById(instanceId);
+        instance.setProviderInstanceId(providerInstanceId);
+        
         try {
             repoMgr.getInstanceRepo().save(instance);
         } catch(DBConcurrentUpdateException e) {
