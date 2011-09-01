@@ -62,7 +62,6 @@
                 }
             });
 
-            $('.datatablesimple').hide();
             $('.hover').click(function() {
                 $(this).siblings('.datatablesimple').slideToggle('fast');
             });
