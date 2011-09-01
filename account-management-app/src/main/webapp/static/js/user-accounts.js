@@ -13,9 +13,6 @@ $(document).ready(function(){
           data: $(form).serialize(),
           success: function() {
             window.location.reload(true);
-          },
-          error: function() {
-            alert ("Error starting your instance.");
           }
         });
 
