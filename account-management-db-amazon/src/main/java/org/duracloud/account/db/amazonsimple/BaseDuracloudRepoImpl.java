@@ -4,10 +4,19 @@
 package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-import com.amazonaws.services.simpledb.model.*;
+import com.amazonaws.services.simpledb.model.CreateDomainRequest;
+import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
+import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
+import com.amazonaws.services.simpledb.model.Item;
+import com.amazonaws.services.simpledb.model.ListDomainsRequest;
+import com.amazonaws.services.simpledb.model.ListDomainsResult;
+import com.amazonaws.services.simpledb.model.PutAttributesRequest;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.model.SelectRequest;
+import com.amazonaws.services.simpledb.model.SelectResult;
+import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.duracloud.account.common.domain.BaseDomainData;
 import org.duracloud.account.common.domain.Identifiable;
-import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBException;
@@ -32,6 +41,7 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 public abstract class BaseDuracloudRepoImpl {
 
     protected Logger log = LoggerFactory.getLogger(BaseDuracloudRepoImpl.class);
+    public static final int MAX_RESULTS = 2500;
 
     protected AmazonSimpleDBCaller caller;
     protected AmazonSimpleDB db;
@@ -87,19 +97,7 @@ public abstract class BaseDuracloudRepoImpl {
     public Item findItemById(int id) throws DBNotFoundException {
         String query =
             "select * from " + domain + " where itemName() = '" + id + "'";
-        SelectRequest request = newSelectRequest(query);
-
-        SelectResult result = caller.select(db, request);
-        if (null == result) {
-            throw new DBException(
-                getErrorMsg("Null result", "id=" + String.valueOf(id)));
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(
-                getErrorMsg("No items found", "id=" + String.valueOf(id)));
-        }
+        List<Item> items = doSelect(query);
 
         if (items.size() != 1) {
             throw new DBException(
@@ -115,21 +113,7 @@ public abstract class BaseDuracloudRepoImpl {
         String query =
             "select * from " + domain + " where " + attName + " = '" +
                 attValue + "'";
-        SelectRequest request = newSelectRequest(query);
-
-        SelectResult result = caller.select(db, request);
-        if (null == result) {
-            throw new DBException(
-                getErrorMsg("Null result", attName+"="+attValue));
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(
-                getErrorMsg("No items found", attName+"="+attValue));
-        }
-
-        return items;
+        return doSelect(query);
     }
 
     /**
@@ -156,19 +140,8 @@ public abstract class BaseDuracloudRepoImpl {
             }
         }
 
-        SelectRequest request = newSelectRequest(selectStatement);
-
-        SelectResult result = caller.select(db, request);
-        if (null == result) {
-            throw new DBException(getErrorMsg("Null result", selectStatement));
-        }
-
-        List<Item> items = result.getItems();
-        if (null == items || items.size() == 0) {
-            throw new DBNotFoundException(
-                getErrorMsg("No items found", selectStatement));
-        }
-
+        List<Item> items = doSelect(selectStatement);
+        
         if (items.size() != 1) {
             throw new DBException(
                 getErrorMsg("Unexpected item count: " + items.size(), 
@@ -182,15 +155,6 @@ public abstract class BaseDuracloudRepoImpl {
         DeleteAttributesRequest request =
             new DeleteAttributesRequest(domain, String.valueOf(id));
         caller.deleteAttributes(db, request);
-    }
-
-    private String getErrorMsg(String text, String id) {
-        StringBuilder msg = new StringBuilder(text);
-        msg.append(" in domain: ");
-        msg.append(domain);
-        msg.append(" [for]: ");
-        msg.append(id);
-        return msg.toString();
     }
 
     protected void doSave(BaseDomainData item, DomainConverter converter)
@@ -221,22 +185,23 @@ public abstract class BaseDuracloudRepoImpl {
 
     public Set<Integer> getItemIds() {
         String query = "select itemName() from " + domain;
-        SelectRequest request = newSelectRequest(query);
-        SelectResult result = caller.select(db, request);
+
+        List<Item> items;
+        try {
+            items = doSelect(query);
+        } catch(DBNotFoundException e) {
+            log.debug(e.getMessage());
+            items = new ArrayList<Item>();
+        }
 
         Set<Integer> ids = new HashSet<Integer>();
-        if (null != result) {
-            List<Item> items = result.getItems();
-            if (null != items) {   
-                for (Item item : items) {
-                    String itemName = item.getName();
-                    try {
-                        ids.add(Integer.valueOf(itemName));
-                    } catch(NumberFormatException e) {
-                        log.error("Item name " + itemName + " in domain " +
-                                  domain + " is not an integer!");
-                    }
-                }
+        for (Item item : items) {
+            String itemName = item.getName();
+            try {
+                ids.add(Integer.valueOf(itemName));
+            } catch(NumberFormatException e) {
+                log.error("Item name " + itemName + " in domain " +
+                          domain + " is not an integer!");
             }
         }
         return ids;
@@ -275,24 +240,56 @@ public abstract class BaseDuracloudRepoImpl {
      */
     protected List<Item> findAllItems() throws DBNotFoundException {
         String query = "select * from " + domain;
-        SelectRequest request = newSelectRequest(query);
+        return doSelect(query);
+    }
+
+    private List<Item> doSelect(String query)
+        throws DBException, DBNotFoundException {
+        query += (" limit " + MAX_RESULTS);
+
+        List<Item> totalItems = new ArrayList<Item>();
+
+        String token = null;
+        do {
+            token = sendSelectRequest(query, token, totalItems);
+        } while(null != token);
+
+        if (totalItems.size() == 0) {
+            throw new DBNotFoundException(getErrorMsg("No items found", query));
+        }
+
+        return totalItems;
+    }
+
+    private String sendSelectRequest(String query,
+                                     String token,
+                                     List<Item> totalItems) {
+        SelectRequest request =
+            new SelectRequest(query).withConsistentRead(true);
+        if(null != token) {
+            request.setNextToken(token);
+        }
 
         SelectResult result = caller.select(db, request);
         if (null == result) {
-            throw new DBException("Null result: " + domain);
+            throw new DBException(getErrorMsg("Null result", query));
         }
 
         List<Item> items = result.getItems();
-        if (null == items || items.size() == 0) {
-            throw new DBNotFoundException("No items found in: " + domain);
+        if(null != items) {
+            totalItems.addAll(items);
         }
 
-        return items;
+        return result.getNextToken();
     }
 
-    private SelectRequest newSelectRequest(String query) {
-        boolean consistent = true;
-        return new SelectRequest(query, consistent);
+    private String getErrorMsg(String err, String query) {
+        StringBuilder msg = new StringBuilder(err);
+        msg.append(" in domain: ");
+        msg.append(domain);
+        msg.append(" for query: ");
+        msg.append(query);
+        return msg.toString();
     }
 
 }
