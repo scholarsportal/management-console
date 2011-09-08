@@ -41,7 +41,7 @@ import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 public abstract class BaseDuracloudRepoImpl {
 
     protected Logger log = LoggerFactory.getLogger(BaseDuracloudRepoImpl.class);
-    public static final int MAX_RESULTS = 2500;
+    private static final int MAX_RESULTS = 2500;
 
     protected AmazonSimpleDBCaller caller;
     protected AmazonSimpleDB db;

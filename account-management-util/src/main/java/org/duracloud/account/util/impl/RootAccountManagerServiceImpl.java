@@ -303,7 +303,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                     user.setAccountRights(
                         getRightsRepo().findByUserId(user.getId()));
                 }catch(DBNotFoundException ex){
-                    log.error("No AccountRights found for user with ID {}", id);
+                    log.info("No AccountRights found for user with ID {}", id);
                 }
                 
                 users.add(user);
