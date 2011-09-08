@@ -4,7 +4,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>duracloud-priv</artifactId>
   <packaging>pom</packaging>
-  <version>0.3.1</version>
+  <version>0.4.0-SNAPSHOT</version>
   <name>DuraCloud Internal</name>
   <url>http://duracloud.org</url>
 
@@ -283,8 +283,8 @@
 
 
   <scm>
-    <connection>scm:svn:https://svn.duraspace.org/duracloud-priv/tags/duracloud-priv-0.3.1</connection>
-    <developerConnection>scm:svn:https://svn.duraspace.org/duracloud-priv/tags/duracloud-priv-0.3.1</developerConnection>
+    <connection>scm:svn:https://svn.duraspace.org/duracloud-priv/trunk</connection>
+    <developerConnection>scm:svn:https://svn.duraspace.org/duracloud-priv/trunk</developerConnection>
   </scm>
 
   <build>
