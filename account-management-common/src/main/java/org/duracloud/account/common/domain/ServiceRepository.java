@@ -43,6 +43,11 @@ public class ServiceRepository extends BaseDomainData {
     private String spaceId;
 
     /**
+     * The ID of the service-xml defining services available in this plan
+     */
+    private String serviceXmlId;
+
+    /**
      * The version of the DuraCloud services available is the repository
      */
     private String version;
@@ -62,6 +67,7 @@ public class ServiceRepository extends BaseDomainData {
                               ServicePlan servicePlan,
                               String hostName,
                               String spaceId,
+                              String serviceXmlId,
                               String version,
                               String username,
                               String password) {
@@ -70,6 +76,7 @@ public class ServiceRepository extends BaseDomainData {
              servicePlan,
              hostName,
              spaceId,
+             serviceXmlId,
              version,
              username,
              password,
@@ -81,6 +88,7 @@ public class ServiceRepository extends BaseDomainData {
                               ServicePlan servicePlan,
                               String hostName,
                               String spaceId,
+                              String serviceXmlId,
                               String version,
                               String username,
                               String password,
@@ -90,6 +98,7 @@ public class ServiceRepository extends BaseDomainData {
         this.servicePlan = servicePlan;
         this.hostName = hostName;
         this.spaceId = spaceId;
+        this.serviceXmlId = serviceXmlId;
         this.version = version;
         this.username = username;
         this.password = password;
@@ -110,6 +119,10 @@ public class ServiceRepository extends BaseDomainData {
 
     public String getSpaceId() {
         return spaceId;
+    }
+
+    public String getServiceXmlId() {
+        return serviceXmlId;
     }
 
     public String getVersion() {
@@ -149,6 +162,10 @@ public class ServiceRepository extends BaseDomainData {
         if (serviceRepositoryType != that.serviceRepositoryType) {
             return false;
         }
+        if (serviceXmlId != null ? !serviceXmlId.equals(that.serviceXmlId) :
+            that.serviceXmlId != null) {
+            return false;
+        }
         if (spaceId != null ? !spaceId.equals(that.spaceId) :
             that.spaceId != null) {
             return false;
@@ -173,6 +190,8 @@ public class ServiceRepository extends BaseDomainData {
             31 * result + (servicePlan != null ? servicePlan.hashCode() : 0);
         result = 31 * result + (hostName != null ? hostName.hashCode() : 0);
         result = 31 * result + (spaceId != null ? spaceId.hashCode() : 0);
+        result =
+            31 * result + (serviceXmlId != null ? serviceXmlId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);

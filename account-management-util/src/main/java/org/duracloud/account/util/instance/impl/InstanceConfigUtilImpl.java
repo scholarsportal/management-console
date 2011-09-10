@@ -175,6 +175,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         // Just use the first item on the service-repos list for now
         String serviceStoreHost;
         String serviceStoreSpaceId;
+        String serviceStoreServiceXmlId;
         String serviceStoreUsername;
         String serviceStorePassword;
 
@@ -196,6 +197,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
         serviceStoreHost = serviceRepo.getHostName();
         serviceStoreSpaceId = serviceRepo.getSpaceId();
+        serviceStoreServiceXmlId = serviceRepo.getServiceXmlId();
         serviceStoreUsername = serviceRepo.getUsername();
         serviceStorePassword = serviceRepo.getPassword();
 
@@ -205,17 +207,11 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         serviceStore.setHost(serviceStoreHost);
         serviceStore.setPort(DEFAULT_SSL_PORT);
         serviceStore.setContext(DEFAULT_DURASTORE_CONTEXT);
+        serviceStore.setUsername(serviceStoreUsername);
+        serviceStore.setPassword(serviceStorePassword);
         serviceStore.setSpaceId(serviceStoreSpaceId);
+        serviceStore.setServiceXmlId(serviceStoreServiceXmlId);
         config.setServiceStore(serviceStore);
-
-        // Service Compute
-        DuraserviceConfig.ServiceCompute serviceCompute
-            = new DuraserviceConfig.ServiceCompute();
-        serviceCompute.setType(DEFAULT_SERVICE_COMPUTE_TYPE);
-        serviceCompute.setImageId(DEFAULT_SERVICE_COMPUTE_IMAGE_ID);
-        serviceCompute.setUsername(serviceStoreUsername);
-        serviceCompute.setPassword(serviceStorePassword);
-        config.setServiceCompute(serviceCompute);
 
         return config;
     }

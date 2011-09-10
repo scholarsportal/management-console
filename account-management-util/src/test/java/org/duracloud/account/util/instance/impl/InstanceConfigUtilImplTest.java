@@ -251,6 +251,7 @@ public class InstanceConfigUtilImplTest {
         int serviceRepoId = 1;
         String serviceRepoHost = "serviceRepoHost";
         String serviceRepoSpaceId = "serviceRepoSpaceId";
+        String serviceRepoServiceXmlId = "serviceRepoServiceXmlId";
         String serviceRepoUsername = "serviceRepoUsername";
         String serviceRepoPassword = "serviceRepoPassword";
         ServiceRepository serviceRepo = new ServiceRepository(serviceRepoId,
@@ -258,6 +259,7 @@ public class InstanceConfigUtilImplTest {
                                                               servicePlan,
                                                               serviceRepoHost,
                                                               serviceRepoSpaceId,
+                                                              serviceRepoServiceXmlId,
                                                               version,
                                                               serviceRepoUsername,
                                                               serviceRepoPassword);
@@ -304,19 +306,10 @@ public class InstanceConfigUtilImplTest {
                      serviceStore.getPort());
         assertEquals(InstanceConfigUtilImpl.DEFAULT_DURASTORE_CONTEXT,
                      serviceStore.getContext());
+        assertEquals(serviceRepoUsername, serviceStore.getUsername());
+        assertEquals(serviceRepoPassword, serviceStore.getPassword());
         assertEquals(serviceRepoSpaceId, serviceStore.getSpaceId());
-
-        // Service Compute
-        DuraserviceConfig.ServiceCompute serviceCompute =
-            config.getServiceCompute();
-        assertNotNull(serviceCompute);
-
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICE_COMPUTE_TYPE,
-                     serviceCompute.getType());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICE_COMPUTE_IMAGE_ID,
-                     serviceCompute.getImageId());
-        assertEquals(serviceRepoUsername, serviceCompute.getUsername());
-        assertEquals(serviceRepoPassword, serviceCompute.getPassword());
+        assertEquals(serviceRepoServiceXmlId, serviceStore.getServiceXmlId());
     }
 
     @Test

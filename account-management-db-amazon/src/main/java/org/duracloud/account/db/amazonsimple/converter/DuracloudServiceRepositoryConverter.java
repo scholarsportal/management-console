@@ -32,6 +32,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         "SERVICE_REPOSITORY_TYPE";
     protected static final String HOST_NAME_ATT = "HOST_NAME";
     protected static final String SPACE_ID_ATT = "SPACE_ID";
+    protected static final String SERVICE_XML_ID_ATT = "SERVICE_XML_ID";
     public static final String VERSION_ATT = "VERSION";
     public static final String SERVICE_PLAN_ATT = "SERVICE_PLAN";
     protected static final String USERNAME_ATT = "USERNAME";
@@ -58,6 +59,10 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         atts.add(new ReplaceableAttribute(
             SPACE_ID_ATT,
             serviceRepo.getSpaceId(),
+            true));
+        atts.add(new ReplaceableAttribute(
+            SERVICE_XML_ID_ATT,
+            serviceRepo.getServiceXmlId(),
             true));
         atts.add(new ReplaceableAttribute(
             VERSION_ATT,
@@ -93,6 +98,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
         ServicePlan servicePlan = null;
         String hostName = null;
         String spaceId = null;
+        String serviceXmlId = null;
         String version = null;
         String username = null;
         String password = null;
@@ -114,6 +120,9 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
 
             } else if (SPACE_ID_ATT.equals(name)) {
                 spaceId = value;
+
+            } else if (SERVICE_XML_ID_ATT.equals(name)) {
+                serviceXmlId = value;
 
             } else if (VERSION_ATT.equals(name)) {
                 version = value;
@@ -140,6 +149,7 @@ public class DuracloudServiceRepositoryConverter extends BaseDomainConverter
                                      servicePlan,
                                      hostName,
                                      spaceId,
+                                     serviceXmlId,
                                      version,
                                      username,
                                      password,

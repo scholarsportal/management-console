@@ -28,6 +28,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
+    private static final String serviceXmlId = "serviceXmlId";
     private static final String username = "username";
     private static final String password = "password";
 
@@ -157,6 +158,7 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
                                      servicePlan,
                                      hostName,
                                      spaceId,
+                                     serviceXmlId,
                                      version,
                                      username,
                                      password);
