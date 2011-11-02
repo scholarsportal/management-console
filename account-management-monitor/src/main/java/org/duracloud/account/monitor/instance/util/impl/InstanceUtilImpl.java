@@ -34,11 +34,7 @@ public class InstanceUtilImpl implements InstanceUtil {
     private static final String CTXT_REPORT = "durareport";
     private static final String CTXT_ADMIN = "duradmin";
 
-    private static final String PATH_STORE = "/stores";
-    private static final String PATH_SERVICE = "/services";
-    private static final String PATH_REPORT = "/info";
-    private static final String PATH_ADMIN = "/";
-
+    private static final String PATH_INIT = "/init";
 
     public InstanceUtilImpl(String subdomain) {
         this(subdomain, null);
@@ -61,10 +57,10 @@ public class InstanceUtilImpl implements InstanceUtil {
     public InstanceInfo pingWebApps() {
         InstanceInfo info = new InstanceInfo(subdomain);
 
-        pingWebApp(durastore, PATH_STORE, 401, info);
-        pingWebApp(duraservice, PATH_SERVICE, 401, info);
-        pingWebApp(durareport, PATH_REPORT, 401, info);
-        pingWebApp(duradmin, PATH_ADMIN, 200, info);
+        pingWebApp(durastore, PATH_INIT, 200, info);
+        pingWebApp(duraservice, PATH_INIT, 200, info);
+        pingWebApp(durareport, PATH_INIT, 200, info);
+        pingWebApp(duradmin, PATH_INIT, 200, info);
 
         return info;
     }

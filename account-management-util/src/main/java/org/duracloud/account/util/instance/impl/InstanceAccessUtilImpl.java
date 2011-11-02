@@ -19,6 +19,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
     private Logger log = LoggerFactory.getLogger(InstanceAccessUtilImpl.class);
 
     private static final String PROTOCOL = "https://";
+    private static final String INIT_PATH = "/init";
     private static final int SLEEP_TIME = 10000;
 
     @Override
@@ -51,14 +52,13 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
         RestHttpHelper restHelper = new RestHttpHelper();
 
         String duradminUrl =
-            PROTOCOL + hostname + "/" + DURADMIN_CONTEXT;
+            PROTOCOL + hostname + "/" + DURADMIN_CONTEXT + INIT_PATH;
         String durastoreUrl =
-            PROTOCOL + hostname + "/" + DURASTORE_CONTEXT + "/stores";
+            PROTOCOL + hostname + "/" + DURASTORE_CONTEXT + INIT_PATH;
         String duraserviceUrl =
-            PROTOCOL + hostname + "/" + DURASERVICE_CONTEXT + "/services";
+            PROTOCOL + hostname + "/" + DURASERVICE_CONTEXT + INIT_PATH;
         String durareportUrl =
-            PROTOCOL + hostname + "/" + DURAREPORT_CONTEXT +
-                "/storagereport/info";
+            PROTOCOL + hostname + "/" + DURAREPORT_CONTEXT + INIT_PATH;
 
         try {
             if(!checkResponse(restHelper.get(duradminUrl)) ||
@@ -76,7 +76,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
 
     private boolean checkResponse(RestHttpHelper.HttpResponse response) {
         int statusCode = response.getStatusCode();
-        if(statusCode == 200 || statusCode == 401) {
+        if(statusCode == 200 || statusCode == 503) {
             return true;
         } else {
             return false;

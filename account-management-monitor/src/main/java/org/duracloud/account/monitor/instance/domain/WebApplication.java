@@ -66,6 +66,13 @@ public class WebApplication extends Application {
             error.append(url);
             log.error(error.toString());
             throw new UnexpectedResponseException(statusCode, responseCode);
+        } else {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Performed ping of url: ");
+            msg.append(url);
+            msg.append(" and received expected status code: ");
+            msg.append(response.getStatusCode());
+            log.debug(msg.toString());
         }
     }
 

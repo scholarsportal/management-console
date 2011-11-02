@@ -69,12 +69,12 @@ public class InstanceUtilImplTest {
     }
 
     private enum PING {
-        STORE(401, 500, "https://subdomain.duracloud.org:443/durastore/stores"),
-        SERVICE(401,
-                500,
-                "https://subdomain.duracloud.org:443/duraservice/services"),
-        REPORT(401, 500, "https://subdomain.duracloud.org:443/durareport/info"),
-        ADMIN(200, 500, "https://subdomain.duracloud.org:443/duradmin/");
+        STORE(200, 503, "https://subdomain.duracloud.org:443/durastore/init"),
+        SERVICE(200,
+                503,
+                "https://subdomain.duracloud.org:443/duraservice/init"),
+        REPORT(200, 503, "https://subdomain.duracloud.org:443/durareport/init"),
+        ADMIN(200, 503, "https://subdomain.duracloud.org:443/duradmin/init");
 
         private int success;
         private int failure;
