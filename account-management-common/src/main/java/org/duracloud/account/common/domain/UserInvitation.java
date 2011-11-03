@@ -206,6 +206,18 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
         if (accountId != that.accountId) {
             return false;
         }
+        if (accountName != that.accountName) {
+            return false;
+        }
+        if (accountOrg != that.accountOrg) {
+            return false;
+        }
+        if (accountDep != that.accountDep) {
+            return false;
+        }
+        if (accountSubdomain != that.accountSubdomain) {
+            return false;
+        }
         if (adminUsername != null ? !adminUsername.equals(that.adminUsername) :
             that.adminUsername != null) {
             return false;
