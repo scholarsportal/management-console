@@ -11,6 +11,10 @@ import java.util.Date;
 public class UserInvitation extends BaseDomainData implements Comparable<UserInvitation> {
 
     private int accountId;
+    private String accountName;
+    private String accountOrg;
+    private String accountDep;
+    private String accountSubdomain;
     private String adminUsername;
     private String userEmail;
     private Date creationDate;
@@ -24,10 +28,29 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
     }
 
     public UserInvitation(
+        int id, int accountId, String accountName, String accountOrg, String accountDep,
+        String accountSubdomain, String adminUsername, String userEmail, int expirationDays,
+        String redemptionCode) {
+        this(id, accountId, accountName, accountOrg, accountDep, accountSubdomain,
+             adminUsername, userEmail, expirationDays, redemptionCode, 0);
+    }
+
+    public UserInvitation(
         int id, int accountId, String adminUsername, String userEmail, int expirationDays,
         String redemptionCode, int counter) {
+        this(id, accountId, null, null, null, null, adminUsername, userEmail, expirationDays, redemptionCode, counter);
+    }
+
+    public UserInvitation(
+        int id, int accountId, String accountName, String accountOrg, String accountDep,
+        String accountSubdomain, String adminUsername, String userEmail,
+        int expirationDays, String redemptionCode, int counter) {
         this.id = id;
         this.accountId = accountId;
+        this.accountName = accountName;
+        this.accountOrg = accountOrg;
+        this.accountDep = accountDep;
+        this.accountSubdomain = accountSubdomain;
         this.adminUsername = adminUsername;
         this.userEmail = userEmail;
 
@@ -56,6 +79,22 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
 
     public int getAccountId() {
         return accountId;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public String getAccountOrg() {
+        return accountOrg;
+    }
+
+    public String getAccountDep() {
+        return accountDep;
+    }
+
+    public String getAccountSubdomain() {
+        return accountSubdomain;
     }
 
     public String getAdminUsername() {
@@ -93,9 +132,17 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
     public String getBody() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("You have been invited to join a DuraCloud account and ");
-        sb.append("receive access to a DuraCloud instance. In order to join, ");
-        sb.append("please follow these instructions:");
+        sb.append("You have been invited to join the DuraCloud account which is managed by ");
+        sb.append(getAccountOrg());
+        if(getAccountDep() != null && !getAccountDep().equals("")) {
+            sb.append(", ");
+            sb.append(getAccountDep());
+        }
+        sb.append(". After accepting this invitation, you will be given access to the ");
+        sb.append(getAccountName());
+        sb.append(" account and will be able to log in to https://");
+        sb.append(getAccountSubdomain());
+        sb.append(".duracloud.org. In order to join, please follow these instructions:");
         sb.append("\n\n");
         sb.append("1. If you do not have a personal user profile with ");
         sb.append("DuraCloud, please create one at: ");
@@ -189,6 +236,10 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
     @Override
     public int hashCode() {
         int result = accountId;
+        result = 31 * result + (accountName != null ? accountName.hashCode() : 0);
+        result = 31 * result + (accountOrg != null ? accountOrg.hashCode() : 0);
+        result = 31 * result + (accountDep != null ? accountDep.hashCode() : 0);
+        result = 31 * result + (accountSubdomain != null ? accountSubdomain.hashCode() : 0);
         result = 31 * result + (adminUsername != null ? adminUsername.hashCode() : 0);
         result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
         result =
@@ -203,7 +254,9 @@ public class UserInvitation extends BaseDomainData implements Comparable<UserInv
     @Override
     public String toString() {
         return "UserInvitation[id="
-            + id + ", accountId=" + accountId + ", adminUsername=" + adminUsername
+            + id + ", accountId=" + accountId + ", accountName=" + accountName
+            + ", accountOrg=" + accountOrg + ", accountDep=" + accountDep
+            + ", accountSubdomain=" + accountSubdomain + ", adminUsername=" + adminUsername
             + ", userEmail=" + userEmail
             + ", creationDate=" + creationDate + ", expirationDate="
             + expirationDate + ", redemptionCode=" + redemptionCode

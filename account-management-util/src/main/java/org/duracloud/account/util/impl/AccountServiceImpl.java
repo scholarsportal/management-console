@@ -238,6 +238,10 @@ public class AccountServiceImpl implements AccountService {
         int expirationDays = 14;
         UserInvitation userInvitation = new UserInvitation(id,
                                                            acctId,
+                                                           account.getAcctName(),
+                                                           account.getOrgName(),
+                                                           account.getDepartment(),
+                                                           account.getSubdomain(),
                                                            adminUsername,
                                                            emailAddress,
                                                            expirationDays,
