@@ -149,7 +149,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         return getStatusFromComputeProvider();
     }
 
-    private String getStatusFromComputeProvider(){
+    private String getStatusFromComputeProvider() throws DuracloudInstanceNotAvailableException{
         return computeProvider.getStatus(instance.getProviderInstanceId());
     }
     
