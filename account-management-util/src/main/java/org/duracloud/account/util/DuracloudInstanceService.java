@@ -45,6 +45,12 @@ public interface DuracloudInstanceService {
     public String getStatus() throws DuracloudInstanceNotAvailableException;
 
     /**
+     * Returns the state of the Duracloud with relaxed security.
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public String getStatusInternal() throws DuracloudInstanceNotAvailableException;
+
+    /**
      * Stops the instance.
      * Stopped instances cannot be restarted (stop == terminate).
      */

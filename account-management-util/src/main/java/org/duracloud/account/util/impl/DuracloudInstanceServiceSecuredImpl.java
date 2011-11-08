@@ -99,6 +99,12 @@ public class DuracloudInstanceServiceSecuredImpl implements DuracloudInstanceSer
     }
 
     @Override
+    public String getStatusInternal() throws DuracloudInstanceNotAvailableException {
+        return instanceService.getStatusInternal();
+    }
+
+    
+    @Override
     public void stop() {
         throwIfAccessDenied();
         instanceService.stop();

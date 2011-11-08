@@ -141,9 +141,18 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     @Override
     public String getStatus() throws DuracloudInstanceNotAvailableException {
-        return computeProvider.getStatus(instance.getProviderInstanceId());
+        return getStatusFromComputeProvider();
     }
 
+    @Override
+    public String getStatusInternal() throws DuracloudInstanceNotAvailableException {
+        return getStatusFromComputeProvider();
+    }
+
+    private String getStatusFromComputeProvider(){
+        return computeProvider.getStatus(instance.getProviderInstanceId());
+    }
+    
     @Override
     public void stop() {
         log.info("Stopping instance with provider ID {} at host {}",

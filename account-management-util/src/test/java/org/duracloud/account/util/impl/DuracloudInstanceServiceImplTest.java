@@ -75,6 +75,23 @@ public class DuracloudInstanceServiceImplTest
         assertNotNull(resultStatus);
         assertEquals(status, resultStatus);
     }
+    
+    @Test
+    public void testGetStatusInternal() throws Exception {
+        String status = "status";
+        EasyMock.expect(computeProvider.getStatus(EasyMock.isA(String.class)))
+            .andReturn(status)
+            .times(1);
+        EasyMock.expect(instance.getProviderInstanceId())
+            .andReturn("id")
+            .times(1);
+
+        replayMocks();
+
+        String resultStatus = service.getStatusInternal();
+        assertNotNull(resultStatus);
+        assertEquals(status, resultStatus);
+    }
 
     @Test
     public void testStop() throws Exception {

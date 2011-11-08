@@ -200,7 +200,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
 
         // Ensure that the instance exists. This throws if not.
         try {
-            instanceService.getStatus();
+            instanceService.getStatusInternal();
 
         } catch (DuracloudInstanceNotAvailableException e) {
             log.warn("Instance {} does not exist, deleting.", instanceId);
