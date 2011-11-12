@@ -6,6 +6,7 @@ package org.duracloud.account.util;
 import java.util.Set;
 
 import org.duracloud.account.common.domain.DuracloudGroup;
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
@@ -42,7 +43,8 @@ public interface DuracloudGroupService {
      * @return the newly created group
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public DuracloudGroup createGroup(String name) throws DuracloudGroupAlreadyExistsException, DBConcurrentUpdateException;
+    public DuracloudGroup createGroup(String name) 
+        throws DuracloudGroupAlreadyExistsException, DBConcurrentUpdateException;
 
     /**
      * Deletes a group.  If the named group does not exist, nothing happens.
@@ -52,13 +54,14 @@ public interface DuracloudGroupService {
     public void deleteGroup(String name) throws DBConcurrentUpdateException;
 
     /**
-     * This method replaces the userIds (if any) associated with the specified group.
-     * @param id of group to be updated
-     * @param userIds to associate with group
+     * This method replaces the users (if any) associated with the specified group.
+     * @param name of group to be updated
+     * @param users to associate with group
      * @throws DuracloudGroupNotFoundException
      * @throws DBConcurrentUpdateException
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public void updateGroupUsers(int groupId, Set<Integer> userIds) throws DuracloudGroupNotFoundException, DBConcurrentUpdateException;
+    public void updateGroupUsers(String name, Set<DuracloudUser> users) 
+        throws DuracloudGroupNotFoundException, DBConcurrentUpdateException;
 
 }
