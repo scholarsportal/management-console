@@ -30,6 +30,7 @@ public class DuracloudGroup extends BaseDomainData implements Comparable<Duraclo
             this.users = new HashSet<DuracloudUser>();
         }
         
+        this.users.clear();
         this.users.addAll(groupUsers);
     }
 

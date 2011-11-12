@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+* Copyright (c) 2009-2011 DuraSpace. All rights reserved.
 */
 
 package org.duracloud.account.util.impl;
