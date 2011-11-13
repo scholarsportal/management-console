@@ -16,9 +16,9 @@ import java.util.List;
  */
 public interface DomainConverter<T extends Identifiable> {
 
-    List<ReplaceableAttribute> toAttributesAndIncrement(T item);
+    public List<ReplaceableAttribute> toAttributesAndIncrement(T item);
 
-    T fromAttributes(Collection<Attribute> atts, int id);
+    public T fromAttributes(Collection<Attribute> atts, int id);
 
-    void setDomain(String domain);
+    public void setDomain(String domain);
 }

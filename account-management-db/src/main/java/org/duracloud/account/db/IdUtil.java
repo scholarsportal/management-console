@@ -10,6 +10,7 @@ package org.duracloud.account.db;
 public interface IdUtil {
 
     public void initialize(DuracloudUserRepo userRepo,
+                           DuracloudGroupRepo groupRepo,
                            DuracloudAccountRepo accountRepo,
                            DuracloudRightsRepo rightsRepo,
                            DuracloudUserInvitationRepo userInvitationRepo,
@@ -19,21 +20,23 @@ public interface IdUtil {
                            DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo);
 
-    int newAccountId();
+    public int newAccountId();
 
-    int newUserId();
+    public int newUserId();
 
-    int newRightsId();
+    public int newGroupId();
 
-    int newUserInvitationId();
+    public int newRightsId();
 
-    int newInstanceId();
+    public int newUserInvitationId();
 
-    int newServerImageId();
+    public int newInstanceId();
 
-    int newComputeProviderAccountId();
+    public int newServerImageId();
 
-    int newStorageProviderAccountId();
+    public int newComputeProviderAccountId();
 
-    int newServiceRepositoryId();
+    public int newStorageProviderAccountId();
+
+    public int newServiceRepositoryId();
 }

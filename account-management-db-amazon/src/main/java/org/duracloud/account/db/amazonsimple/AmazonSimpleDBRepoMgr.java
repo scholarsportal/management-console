@@ -6,6 +6,7 @@ package org.duracloud.account.db.amazonsimple;
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
+import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -34,6 +35,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
         LoggerFactory.getLogger(AmazonSimpleDBRepoMgr.class);
 
     private DuracloudUserRepo userRepo;
+    private DuracloudGroupRepo groupRepo;
     private DuracloudAccountRepo accountRepo;
     private DuracloudRightsRepo rightsRepo;
     private DuracloudUserInvitationRepo userInvitationRepo;
@@ -80,6 +82,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
                 DOMAIN_PREFIX + "_SERVICE_REPOSITORY_DOMAIN";
 
             userRepo = new DuracloudUserRepoImpl(dbClientMgr, userTable);
+            groupRepo = new DuracloudGroupRepoImpl(dbClientMgr, userTable);
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr, acctTable);
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr, rightsTable);
             userInvitationRepo =
@@ -102,6 +105,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
 
         } else {
             userRepo = new DuracloudUserRepoImpl(dbClientMgr);
+            groupRepo = new DuracloudGroupRepoImpl(dbClientMgr);
             accountRepo = new DuracloudAccountRepoImpl(dbClientMgr);
             rightsRepo = new DuracloudRightsRepoImpl(dbClientMgr);
             userInvitationRepo =
@@ -117,6 +121,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
         }
 
         idUtil.initialize(userRepo,
+                          groupRepo,
                           accountRepo,
                           rightsRepo,
                           userInvitationRepo,
@@ -131,6 +136,12 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     public DuracloudUserRepo getUserRepo() {
         checkInitialized(this.userRepo, "DuracloudUserRepo");
         return this.userRepo;
+    }
+
+    @Override
+    public DuracloudGroupRepo getGroupRepo() {
+        checkInitialized(this.groupRepo, "DuracloudGroupRepo");
+        return this.groupRepo;
     }
 
     @Override
@@ -195,6 +206,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     public Set<BaseRepo> getAllRepos() {
         Set<BaseRepo> repos = new HashSet<BaseRepo>();
         repos.add(getUserRepo());
+        repos.add(getGroupRepo());
         repos.add(getAccountRepo());
         repos.add(getRightsRepo());
         repos.add(getUserInvitationRepo());

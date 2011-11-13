@@ -18,6 +18,8 @@ public interface DuracloudRepoMgr extends Initable {
 
     public DuracloudUserRepo getUserRepo();
 
+    public DuracloudGroupRepo getGroupRepo();
+
     public DuracloudAccountRepo getAccountRepo();
 
     public DuracloudRightsRepo getRightsRepo();

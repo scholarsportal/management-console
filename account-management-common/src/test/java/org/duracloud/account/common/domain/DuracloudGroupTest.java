@@ -3,10 +3,9 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +18,13 @@ public class DuracloudGroupTest {
 
     private DuracloudUser user;
     private DuracloudGroup group;
-    
-    private String testUsername;
+
+    private static final String testGroupname = DuracloudGroup.PREFIX + "test";
 
     @Before
     public void setUp() throws Exception {
-        
         user = new DuracloudUser(0,
-                                 testUsername = "test",
+                                 testGroupname,
                                  "password",
                                  "first",
                                  "last",
@@ -34,10 +32,6 @@ public class DuracloudGroupTest {
                                  "question",
                                  "answer",
                                  0);
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test
@@ -49,51 +43,50 @@ public class DuracloudGroupTest {
             Assert.assertTrue(true);
         }
     }
- 
+
     @Test
-    public void testConsructor(){
-        group = new DuracloudGroup("test");
-        Assert.assertEquals("test", group.getName());
-    }
-    
-    @Test
-    public void testSetDuracloudUser(){
-        group = new DuracloudGroup("test");
-        List<DuracloudUser> users = new LinkedList<DuracloudUser>();
-        users.add(user);
-        group.setUsers(users);
-        
-        Assert.assertEquals(1, group.getUsers().size());
+    public void testConstructor() {
+        group = new DuracloudGroup(testGroupname);
+        Assert.assertEquals(testGroupname, group.getName());
     }
 
     @Test
-    public void testAddUser(){
-        group = new DuracloudGroup("test");
+    public void testSetDuracloudUser(){
+        group = new DuracloudGroup(testGroupname);
+        Set<Integer> userIds = new HashSet<Integer>();
+        userIds.add(user.getId());
+        group.setUserIds(userIds);
         
-        group.addUser(user);
-        
-        Assert.assertEquals(1, group.getUsers().size());
+        Assert.assertEquals(1, group.getUserIds().size());
+    }
+
+    @Test
+    public void testAddUserId(){
+        group = new DuracloudGroup(testGroupname);
+        group.addUserId(user.getId());
+        Assert.assertEquals(1, group.getUserIds().size());
     }
 
     @Test
     public void testRemoveUser(){
         testSetDuracloudUser();
-        DuracloudUser removedUser = group.removeUser(testUsername);
-        Assert.assertNotNull(removedUser);
-        Assert.assertEquals(testUsername, removedUser.getUsername());
-        Assert.assertEquals(0, group.getUsers().size());
-        
+        boolean removed = group.removeUserId(user.getId());
+        Assert.assertTrue(removed);
+
+        removed = group.removeUserId(user.getId());
+        Assert.assertTrue(!removed);
+
+        Assert.assertEquals(0, group.getUserIds().size());
     }
 
     @Test
     public void testEquals(){
-        DuracloudGroup group1 = new DuracloudGroup("test");
-        DuracloudGroup group2 = new DuracloudGroup("test");
-        DuracloudGroup group3 = new DuracloudGroup("test1");
+        DuracloudGroup group1 = new DuracloudGroup(testGroupname);
+        DuracloudGroup group2 = new DuracloudGroup(testGroupname);
+        DuracloudGroup group3 = new DuracloudGroup(testGroupname + 1);
 
         Assert.assertTrue(group1.equals(group2));
         Assert.assertFalse(group2.equals(group3));
-        
     }
     
 }

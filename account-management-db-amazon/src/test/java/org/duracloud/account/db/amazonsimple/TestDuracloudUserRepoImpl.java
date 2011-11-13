@@ -78,16 +78,16 @@ public class TestDuracloudUserRepoImpl extends BaseTestDuracloudRepoImpl {
         userRepo.save(user1);
         userRepo.save(user2);
 
-        List<String> expectedIds = new ArrayList<String>();
-        expectedIds.add(user0.getUsername());
-        expectedIds.add(user1.getUsername());
-        expectedIds.add(user2.getUsername());
+        List<String> expectedNames = new ArrayList<String>();
+        expectedNames.add(user0.getUsername());
+        expectedNames.add(user1.getUsername());
+        expectedNames.add(user2.getUsername());
 
         new DBCaller<Integer>() {
             protected Integer doCall() throws Exception {
                 return userRepo.getIds().size();
             }
-        }.call(expectedIds.size());
+        }.call(expectedNames.size());
 
         verifyUser(user0);
         verifyUser(user1);

@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,41 +13,93 @@ import org.apache.commons.lang.StringUtils;
  *         Date: Nov 11, 2011
  */
 public class DuracloudGroup extends BaseDomainData implements Comparable<DuracloudGroup> {
+
+    public static final String PREFIX = "group.";
+
+    /**
+     * Group names must begin with PREFIX.
+     */
     private String name;
-    private Set<DuracloudUser> users;
+    private Set<Integer> userIds;
 
     public DuracloudGroup(String name) {
-        if(StringUtils.isBlank(name)){
-            throw new IllegalArgumentException("name parameter must not be blank");
-        }
-        this.name = name;
+        this(-1, name, null, -1);
     }
 
-    public void setUsers(Collection<DuracloudUser> groupUsers) {
-        if(this.users == null){
-            this.users = new HashSet<DuracloudUser>();
+    public DuracloudGroup(int id, String name, Set<Integer> userIds) {
+        this(id, name, userIds, 0);
+    }
+
+    public DuracloudGroup(int id,
+                          String name,
+                          Set<Integer> userIds,
+                          int counter) {
+        if (StringUtils.isBlank(name) || !name.startsWith(PREFIX)) {
+            throw new IllegalArgumentException(
+                "Name arg must begin with " + PREFIX + ", " + name);
         }
-        
-        this.users.clear();
-        this.users.addAll(groupUsers);
+
+        this.id = id;
+        this.name = name;
+        this.userIds = userIds;
+        this.counter = counter;
     }
 
     public String getName() {
         return this.name;
     }
 
+    /**
+     * This method returns the ids of the users belonging to this group.
+     *
+     * @return ids of users of this group or an empty set
+     */
+    public Set<Integer> getUserIds() {
+        if (null == userIds) {
+            userIds = new HashSet<Integer>();
+        }
+        return userIds;
+    }
+
+    public void setUserIds(Set<Integer> userIds) {
+        this.userIds = userIds;
+    }
+
+    public void addUserId(Integer userId) {
+        getUserIds().add(userId);
+    }
+
+    public boolean removeUserId(Integer userId) {
+        return getUserIds().remove(userId);
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof DuracloudGroup) {
-            return this.name.equals(((DuracloudGroup) obj).name);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DuracloudGroup)) {
+            return false;
         }
 
-        return false;
+        DuracloudGroup that = (DuracloudGroup) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (userIds != null ? !userIds.equals(that.userIds) :
+            that.userIds != null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return this.name.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (userIds != null ? userIds.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -57,34 +107,4 @@ public class DuracloudGroup extends BaseDomainData implements Comparable<Duraclo
         return o.name.compareTo(this.name);
     }
 
-    public Set<DuracloudUser> getUsers() {
-        if (this.users == null) {
-            return null;
-        }
-
-        return Collections.unmodifiableSet(this.users);
-    }
-
-    public void addUser(DuracloudUser user) {
-        if (this.users == null) {
-            this.users = new HashSet<DuracloudUser>();
-        }
-        this.users.add(user);
-    }
-
-    public DuracloudUser removeUser(String username) {
-        if (this.users == null) {
-            return null;
-        }
-
-        for (DuracloudUser user : this.users) {
-            if (user.getUsername().equals(username)) {
-                if(this.users.remove(user)){
-                    return user;
-                }
-            }
-        }
-        
-        return null;
-    }
 }

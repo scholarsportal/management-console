@@ -5,6 +5,7 @@ package org.duracloud.account.db.impl;
 
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
+import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -26,6 +27,7 @@ public class IdUtilImpl implements IdUtil {
 
     private int accountId = -1;
     private int userId = -1;
+    private int groupId = -1;
     private int rightsId = -1;
     private int userInvitationId = -1;
     private int instanceId = -1;
@@ -35,6 +37,7 @@ public class IdUtilImpl implements IdUtil {
     private int serviceRepositoryId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
+                           DuracloudGroupRepo groupRepo,
                            DuracloudAccountRepo accountRepo,
                            DuracloudRightsRepo rightsRepo,
                            DuracloudUserInvitationRepo userInvitationRepo,
@@ -45,6 +48,7 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
+        this.groupId = max(groupRepo.getIds());
         this.rightsId = max(rightsRepo.getIds());
         this.userInvitationId = max(userInvitationRepo.getIds());
         this.instanceId = max(instanceRepo.getIds());
@@ -77,6 +81,12 @@ public class IdUtilImpl implements IdUtil {
     public synchronized int newUserId() {
         checkInitialized();
         return ++userId;
+    }
+
+    @Override
+    public synchronized int newGroupId() {
+        checkInitialized();
+        return ++groupId;
     }
 
     @Override

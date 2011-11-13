@@ -36,6 +36,13 @@ public class AmazonSimpleDBRepoMgrTest {
         }
 
         try {
+            repoMgr.getGroupRepo();
+            Assert.fail("exception expected");
+        } catch (DBUninitializedException e) {
+            numExceptions++;
+        }
+
+        try {
             repoMgr.getAccountRepo();
             Assert.fail("exception expected");
         } catch (DBUninitializedException e) {
@@ -99,7 +106,7 @@ public class AmazonSimpleDBRepoMgrTest {
             numExceptions++;
         }
 
-        Assert.assertEquals(10, numExceptions);
+        Assert.assertEquals(11, numExceptions);
     }
 
 }

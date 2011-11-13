@@ -41,7 +41,8 @@ public class BaseTestDuracloudRepoImpl {
 
     protected static abstract class DBCaller<T> {
 
-        public void call(T expected) {
+        public Object call(T expected) {
+            Object result = null;
             boolean callComplete = false;
             int maxTries = 20;
             int tries = 0;
@@ -53,7 +54,8 @@ public class BaseTestDuracloudRepoImpl {
                     // do nothing
                 }
                 try {
-                    callComplete = expected.equals(doCall());
+                    result = doCall();
+                    callComplete = expected.equals(result);
 
                 } catch (DBException dbe) {
                     callComplete = true;
@@ -66,6 +68,8 @@ public class BaseTestDuracloudRepoImpl {
             Assert.assertTrue(
                 expected + " not found after " + tries + " tries.",
                 callComplete);
+
+            return result;
         }
 
         protected abstract T doCall() throws Exception;

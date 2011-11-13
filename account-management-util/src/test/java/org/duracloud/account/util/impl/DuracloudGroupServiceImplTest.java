@@ -1,106 +1,170 @@
 /*
  * Copyright (c) 2009-2011 DuraSpace. All rights reserved.
  */
-
 package org.duracloud.account.util.impl;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
-import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
-import org.junit.After;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * 
- * @author Daniel Bernstein Date: Nov 11, 2011
- * 
- */
-public class DuracloudGroupServiceImplTest {
+import java.util.HashSet;
+import java.util.Set;
 
-    private DuracloudGroupServiceImpl service;
-    private String defaultGroupName = "group1";
+/**
+ * @author Andrew Woods
+ *         Date: 11/12/11
+ */
+public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
+
+    private DuracloudGroupServiceImpl groupService;
+
+    private Set<DuracloudGroup> groups;
 
     @Before
     public void setUp() throws Exception {
-        service = new DuracloudGroupServiceImpl();
-        service.createGroup(defaultGroupName);
+        super.before();
+
+        groupService = new DuracloudGroupServiceImpl(repoMgr);
+        groups = new HashSet<DuracloudGroup>();
+        for (int i = 0; i < NUM_GROUPS; ++i) {
+            groups.add(createGroup(i));
+        }
     }
 
-    @After
-    public void tearDown() throws Exception {
+    private DuracloudGroup createGroup(int i) {
+        return new DuracloudGroup(i, DuracloudGroup.PREFIX + i, null);
     }
 
     @Test
-    public void testGetGroups() {
-        Assert.assertEquals(1, service.getGroups().size());
+    public void testGetGroups() throws Exception {
+        createGetGroupsMocks();
+
+        Set<DuracloudGroup> groupsFound = groupService.getGroups();
+        Assert.assertNotNull(groupsFound);
+        Assert.assertEquals(groups, groupsFound);
+    }
+
+    private void createGetGroupsMocks() throws DBNotFoundException {
+        EasyMock.expect(groupRepo.findAllGroups()).andReturn(groups);
+        replayMocks();
     }
 
     @Test
     public void testGetGroup() throws Exception {
-        Assert.assertNotNull(service.getGroup(defaultGroupName));
+        DuracloudGroup groupExpected = createGetGroupMocks();
+
+        DuracloudGroup groupFound =
+            groupService.getGroup(groupExpected.getName());
+        Assert.assertNotNull(groupFound);
+        Assert.assertEquals(groupExpected, groupFound);
     }
 
-    @Test
-    public void testGetGroupNotFound() {
-        try {
-            Assert.assertNotNull(service.getGroup("test"));
-            Assert.assertTrue(false);
-        } catch (DuracloudGroupNotFoundException e) {
-            Assert.assertTrue(true);
-        }
+    private DuracloudGroup createGetGroupMocks() throws DBNotFoundException {
+        DuracloudGroup group = createGroup(0);
+        EasyMock.expect(groupRepo.findByGroupname(group.getName())).andReturn(
+            group);
+        replayMocks();
+
+        return group;
     }
 
     @Test
     public void testCreateGroup() throws Exception {
-        DuracloudGroup group = service.createGroup("group");
-        Assert.assertEquals("group", group.getName());
+        boolean exists = false;
+        DuracloudGroup groupExpected = createCreateGroupMocks(exists);
+
+        DuracloudGroup group =
+            groupService.createGroup(groupExpected.getName());
+        Assert.assertNotNull(group);
+        Assert.assertEquals(groupExpected.getName(), group.getName());
     }
 
     @Test
-    public void testCreateGroupAlreadyExists()
-        throws DBConcurrentUpdateException {
+    public void testCreateGroupExists() throws Exception {
+        boolean exists = true;
+        DuracloudGroup groupExpected = createCreateGroupMocks(exists);
+
         try {
-            Assert.assertNotNull(service.createGroup(defaultGroupName));
-            Assert.assertTrue(false);
+            groupService.createGroup(groupExpected.getName());
+            Assert.fail("exception expected");
+
         } catch (DuracloudGroupAlreadyExistsException e) {
-            Assert.assertTrue(true);
+            Assert.assertNotNull(e.getMessage());
+            Assert.assertTrue(e.getMessage().contains(groupExpected.getName()));
         }
     }
 
+    private DuracloudGroup createCreateGroupMocks(boolean exists)
+        throws DBNotFoundException, DBConcurrentUpdateException {
+        DuracloudGroup group = createGroup(0);
+        if (exists) {
+            EasyMock.expect(groupRepo.findByGroupname(group.getName()))
+                    .andReturn(group);
+
+        } else {
+            EasyMock.expect(groupRepo.findByGroupname(group.getName()))
+                    .andThrow(new DBNotFoundException("canned exception"));
+            groupRepo.save(EasyMock.<DuracloudGroup>anyObject());
+            EasyMock.expectLastCall();
+        }
+
+        replayMocks();
+        return group;
+    }
+
     @Test
-    public void testDeleteGroup() throws DBConcurrentUpdateException {
-        Assert.assertEquals(1, service.getGroups().size());
-        service.deleteGroup(defaultGroupName);
-        Assert.assertEquals(0, service.getGroups().size());
+    public void testDeleteGroupNull() throws Exception {
+        replayMocks();
+        groupService.deleteGroup(null);
+    }
+
+    @Test
+    public void testDeleteGroup() throws Exception {
+        int groupId = 0;
+        DuracloudGroup group = createDeleteGroupMocks(groupId);
+
+        groupService.deleteGroup(group);
+    }
+
+    private DuracloudGroup createDeleteGroupMocks(int groupId) {
+        groupRepo.delete(groupId);
+        EasyMock.expectLastCall();
+
+        replayMocks();
+        return createGroup(0);
     }
 
     @Test
     public void testUpdateGroupUsers() throws Exception {
-        DuracloudGroup g = service.getGroup(defaultGroupName);
-        Assert.assertNull(g.getUsers());
-        DuracloudUser user =
-            new DuracloudUser(0,
-                              "username",
-                              "password",
-                              "first",
-                              "last",
-                              "email",
-                              "question",
-                              "answer");
-
-        Set<DuracloudUser>  users = new HashSet<DuracloudUser>();
+        int userId = 5;
+        DuracloudUser user = newDuracloudUser(userId, "username");
+        Set<DuracloudUser> users = new HashSet<DuracloudUser>();
         users.add(user);
-        service.updateGroupUsers(defaultGroupName, users);
-        Assert.assertEquals(1,service.getGroup(defaultGroupName).getUsers().size());
-        service.updateGroupUsers(defaultGroupName, new HashSet<DuracloudUser>());
-        Assert.assertEquals(0,service.getGroup(defaultGroupName).getUsers().size());
+
+        DuracloudGroup group = createUpdateGroupUsersMocks();
+        Assert.assertEquals(0, group.getUserIds().size());
+
+        groupService.updateGroupUsers(group, users);
+        Set<Integer> userIds = group.getUserIds();
+        Assert.assertNotNull(userIds);
+        Assert.assertEquals(1, userIds.size());
+        Assert.assertEquals(userId, userIds.iterator().next().intValue());
     }
 
+    private DuracloudGroup createUpdateGroupUsersMocks()
+        throws DBConcurrentUpdateException {
+        int groupId = 0;
+        DuracloudGroup group = createGroup(groupId);
+
+        groupRepo.save(group);
+        EasyMock.expectLastCall();
+        replayMocks();
+        return group;
+    }
 }
