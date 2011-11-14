@@ -129,6 +129,10 @@ public interface DuracloudUserService {
     public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
         throws DBNotFoundException;
 
+    @Secured({ "role:ROLE_USER, scope:SELF_ID" })
+    public DuracloudUser loadDuracloudUserById(Integer userId)
+        throws DBNotFoundException;
+
     /**
      * This method redeems an invitation to add this user to a DuraCloud
      * account.
@@ -162,5 +166,4 @@ public interface DuracloudUserService {
                                  String securityQuestion,
                                  String securityAnswer)
         throws DBNotFoundException, DBConcurrentUpdateException;
-
 }

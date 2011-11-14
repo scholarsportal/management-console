@@ -384,16 +384,26 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
         throws DBNotFoundException {
         DuracloudUser user = getUserRepo().findByUsername(username);
+        loadRights(user);
+        return user;
+    }
 
+    private void loadRights(DuracloudUser user) {
         try {
             user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
         } catch (DBNotFoundException e) {
             // Not all users are associated with an account.
             log.debug("No account rights found for {}", user.getUsername());
         }
-
-        return user;
     }
+    
+
+    @Override
+    public DuracloudUser loadDuracloudUserById(Integer userId) throws DBNotFoundException {
+        DuracloudUser user = getUserRepo().findById(userId);
+        loadRights(user);
+        return user;
+    }    
 
     @Override
     public int redeemAccountInvitation(int userId, String redemptionCode)

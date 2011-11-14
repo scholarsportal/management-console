@@ -585,6 +585,8 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
             Assert.assertEquals(exception, e);
         }
     }
+    
+
 
     private void setUpLoadDuracloudUserByUsername(String username,
                                                   Exception exception)
@@ -606,6 +608,48 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         replayMocks();
     }
+
+    @Test
+    public void testLoadDuracloudUserById() throws Exception {
+        setUpLoadDuracloudUserById(userId, null);
+        DuracloudUser user = userService.loadDuracloudUserById(userId);
+        Assert.assertNotNull(user);
+        Assert.assertEquals(userId, user.getId());
+    }
+
+    @Test
+    public void testLoadDuracloudUserByIdException() throws Exception {
+        Exception ex = new DBNotFoundException("test");
+        setUpLoadDuracloudUserById(userId, ex);
+        try {
+            userService.loadDuracloudUserById(userId);
+            Assert.fail("exception expected");
+        } catch (DBNotFoundException e) {
+            Assert.assertEquals(ex, e);
+        }
+    }
+
+    private void setUpLoadDuracloudUserById(int userId,
+                                                  Exception exception)
+        throws Exception {
+        DuracloudUser user = newDuracloudUser(userId, "test");
+
+        if (null == exception) {
+            EasyMock.expect(userRepo.findById(userId))
+                .andReturn(user)
+                .anyTimes();
+
+            EasyMock.expect(rightsRepo.findByUserId(userId))
+                .andReturn(getRightsSet(Role.ROLE_USER))
+                .anyTimes();            
+        } else {
+            EasyMock.expect(userRepo.findById(userId))
+                .andThrow(exception);
+        }
+
+        replayMocks();
+    }
+
 
     private Set<AccountRights> getRightsSet(Role role) {
         Set<AccountRights> rights = new HashSet<AccountRights>();
