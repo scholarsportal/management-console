@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DuracloudGroup extends BaseDomainData implements Comparable<DuracloudGroup> {
 
-    public static final String PREFIX = "group.";
+    public static final String PREFIX = "group-";
 
     /**
      * Group names must begin with PREFIX.
