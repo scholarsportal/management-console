@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: ${account.accountInfo.id} :: Groups :: ${userGroup.name}" />
+
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
+
+    <tiles:putAttribute
+     name="body">
+      <tiles:insertDefinition
+       name="user-base">
+
+        <tiles:putAttribute
+         name="content">
+          <tiles:insertDefinition name="groups-base">
+              <tiles:putAttribute name="detail">
+                <div>
+                  <h1>${userGroup.name} <a href="${userGroup.name}/edit">Edit</a></h1>
+                </div>
+                <c:choose>
+                <c:when test="${not empty userGroup.users}">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>
+                        Full Name
+                      </th>
+                      <th>
+                        Username
+                      </th>
+                      <th>
+                        Email
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <c:forEach items="${userGroup.users}" var="u">
+                  <tr>
+                    <td>
+                      ${u.firstName} ${u.lastName}                    
+                    </td>
+
+                    <td>
+                      ${u.username}                      
+                    </td>
+                    <td>
+                      ${u.email}                      
+                    </td>
+                  
+                  </tr>
+                  </c:forEach>
+                  </tbody>
+                  </table>
+                  </c:when>
+                  <c:otherwise>
+                  <p>No users are currently associated with this group.</p>
+                  </c:otherwise>
+                  </c:choose>
+                  
+              </tiles:putAttribute>         
+          </tiles:insertDefinition>
+        </tiles:putAttribute>
+      </tiles:insertDefinition>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

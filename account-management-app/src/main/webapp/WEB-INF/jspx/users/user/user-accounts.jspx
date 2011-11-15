@@ -99,6 +99,10 @@
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
+                        <td width="90" align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/groups"
+                             class="button"> Manage Groups</a></td>
+
                         </c:if>
                       </tr>
                       <tr class="account">

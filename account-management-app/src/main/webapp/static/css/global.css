@@ -744,3 +744,11 @@ th.headerSortDown {
     background-repeat: no-repeat;
 
 }
+
+.shuttle td {
+	vertical-align: middle;
+}
+
+.shuttle button[name='action'] {
+	min-width:100px;
+}

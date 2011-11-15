@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+  <jsp:directive.page
+   contentType="application/xhtml+xml;charset=UTF-8" />
+
+  <tiles:insertDefinition
+   name="app-base">
+    <tiles:putAttribute
+     name="title"
+     value="Account Management App: ${account.accountInfo.id} :: Groups :: ${group.name}" />
+
+    <tiles:putAttribute
+     name="header-extensions"
+     value="" />
+
+    <tiles:putAttribute
+     name="body">
+      <tiles:insertDefinition
+       name="user-base">
+
+        <tiles:putAttribute
+         name="content">
+          <tiles:insertDefinition name="groups-base">
+              <tiles:putAttribute name="detail">
+                  <h1>${group.name} [Editing]</h1>
+                <form:form modelAttribute="groupForm" method="post">
+                <table class="shuttle">
+                  <tr>
+                    <td>
+                      <form:select  size="10" style="width:200px;" path="availableUsernames">
+                        <c:forEach items="${availableUsers}" var="u" >
+                          <form:option value="${u.username}">${u.firstName} ${u.lastName} (${u.email})</form:option>
+                        </c:forEach>
+                      </form:select>
+                    </td>
+                    <td>
+                        <button name="action" type="submit" value="ADD">Add </button>
+                        <br/>
+                        <button name="action" type="submit" value="REMOVE"> Remove</button>
+                    </td>
+                    <td>
+                      <form:select size="10"  style="width:200px;" path="groupUsernames">
+                        <c:if test="${not empty groupUsers}">
+                        <c:forEach items="${groupUsers}" var="u" >
+                          <form:option value="${u.username}">${u.firstName} ${u.lastName} (${u.email})</form:option>
+                        </c:forEach>
+                        </c:if>
+                      </form:select>
+                    </td>
+                  </tr>
+                </table>
+                  <button name="action" type="submit" value="SAVE">Save</button>               
+                </form:form>
+                                
+              </tiles:putAttribute>         
+          </tiles:insertDefinition>
+        </tiles:putAttribute>
+      </tiles:insertDefinition>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

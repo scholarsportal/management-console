@@ -29,6 +29,10 @@
     <put-attribute name="content" value="content" />
   </definition>
 
+  <definition name="groups-base" template="/WEB-INF/jspx/layout/groups-base.jspx">
+    <put-attribute name="content" value="detail" />
+  </definition>
+
   <!-- global views -->
   <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx" />
   <definition name="login" template="/WEB-INF/jspx/login.jspx" />
@@ -63,5 +67,8 @@
   <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
   <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx" />
   <definition name="account-users-edit" template="/WEB-INF/jspx/accounts/account/account-users-edit.jspx" />
+  <definition name="account-groups" template="/WEB-INF/jspx/accounts/account/account-groups.jspx" />
+  <definition name="account-group" template="/WEB-INF/jspx/accounts/account/account-group.jspx" />
+  <definition name="account-group-edit" template="/WEB-INF/jspx/accounts/account/account-group-edit.jspx" />
 
 </tiles-definitions>

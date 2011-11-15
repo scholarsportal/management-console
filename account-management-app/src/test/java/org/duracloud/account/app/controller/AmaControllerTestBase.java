@@ -83,4 +83,8 @@ public class AmaControllerTestBase {
         user.setAccountRights(rights);
         return user;
     }
+
+    public void after() throws Exception {
+        
+    }
 }

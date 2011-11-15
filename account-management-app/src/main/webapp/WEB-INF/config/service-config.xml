@@ -48,6 +48,15 @@
     <constructor-arg ref="userDetailsPropagator" />
   </bean>
 
+  <bean id="duracloudGroupService"
+        class="org.duracloud.account.util.impl.DuracloudGroupServiceImpl"
+        primary="true"
+        scope="singleton"
+        name="duracloudGroupService">
+    <constructor-arg ref="repoMgr"/>
+  </bean>
+
+
   <bean id="accountManagerService"
         class="org.duracloud.account.util.impl.AccountManagerServiceImpl"
         scope="singleton">
