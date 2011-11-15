@@ -78,14 +78,14 @@ public class AccountGroupsController extends AbstractAccountController {
         if(action == Action.ADD){
             String name = form.getGroupName();
             if(!StringUtils.isBlank(name)){
-                this.duracloudGroupService.createGroup(name);
+                this.duracloudGroupService.createGroup(DuracloudGroup.PREFIX+name);
                 return formatGroupRedirect(accountId, name, "/edit");
             }
         }else {
             String[] groups = form.getGroupNames();
             if(groups != null){
                 for (String name : groups) {
-                    removeGroup(as, this.duracloudGroupService.getGroup(name));
+                    removeGroup(as, this.duracloudGroupService.getGroup(DuracloudGroup.PREFIX+name));
                 }
             }
         }
@@ -425,13 +425,14 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private DuracloudGroup getGroup(String groupName,
-                                    List<DuracloudGroup> groups) {
+                                    List<DuracloudGroup> groups) throws DuracloudGroupNotFoundException {
         for (DuracloudGroup g : groups) {
-            if (g.getName().equals(groupName)) {
+            if (g.getName().equals(DuracloudGroup.PREFIX+groupName)) {
                 return g;
             }
         }
-        return null;
+        
+        throw new DuracloudGroupNotFoundException("no group named '"+groupName+"' found in group set.");
     }
 
     private void addGroupsToModel(Model model, List<DuracloudGroup> groups) {

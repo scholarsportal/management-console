@@ -39,7 +39,7 @@ import org.springframework.ui.Model;
  */
 public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
-    private static final String TEST_GROUP_NAME = "group.test";
+    private static final String TEST_GROUP_NAME = "test";
     private AccountGroupsController accountGroupsController;
     private AccountService accountService;
     private DuracloudUserService userService;
@@ -110,7 +110,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     }
 
     private Set<DuracloudGroup> createGroups() {
-        DuracloudGroup group = new DuracloudGroup(TEST_GROUP_NAME);
+        DuracloudGroup group = new DuracloudGroup(DuracloudGroup.PREFIX+TEST_GROUP_NAME);
         group.addUserId(createUser().getId());
         Set<DuracloudGroup> set = new HashSet<DuracloudGroup>();
         set.add(group);
@@ -142,9 +142,9 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     @Test
     public void testGetGroupsAddGroup() throws Exception {
 
-        String groupName = "group.group2";
-        EasyMock.expect(groupService.createGroup(groupName))
-                .andReturn(new DuracloudGroup(groupName))
+        String groupName = "group2";
+        EasyMock.expect(groupService.createGroup(DuracloudGroup.PREFIX+groupName))
+                .andReturn(new DuracloudGroup(DuracloudGroup.PREFIX+groupName))
                 .times(1);
 
         replay();
@@ -169,7 +169,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replay();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.REMOVE);
-        form.setGroupNames(new String[] { group.getName() });
+        form.setGroupNames(new String[] { TEST_GROUP_NAME });
 
         String view =
             this.accountGroupsController.modifyGroups(accountId, form, model);
