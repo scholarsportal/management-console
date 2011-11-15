@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
@@ -52,6 +53,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String rootName = ServerImage.DC_ROOT_USERNAME;
         String initName = new InitUserCredential().getUsername();
         Assert.assertFalse(userService.isUsernameAvailable(existingName));
+        Assert.assertFalse(userService.isUsernameAvailable(DuracloudGroup.PREFIX+"test"));
         Assert.assertFalse(userService.isUsernameAvailable("root"));
         Assert.assertFalse(userService.isUsernameAvailable("RooT"));
         Assert.assertFalse(userService.isUsernameAvailable(rootName));

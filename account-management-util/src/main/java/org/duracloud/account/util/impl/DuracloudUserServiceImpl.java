@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
@@ -75,6 +76,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     private boolean isReservedName(String username) {
+        if(username.startsWith(DuracloudGroup.PREFIX)){
+            return true;
+        }
+        
         Credential init = new InitUserCredential();
         return ServerImage.DC_ROOT_USERNAME.equalsIgnoreCase(username) ||
             init.getUsername().equalsIgnoreCase(username);
