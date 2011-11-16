@@ -30,7 +30,7 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
         log = LoggerFactory.getLogger(DuracloudGroupConverter.class);
     }
 
-    public static final String GROUPNAME_ATT = "USERNAME";
+    public static final String GROUPNAME_ATT = "GROUPNAME";
     protected static final String USERS_ATT = "USERS";
 
     @Override

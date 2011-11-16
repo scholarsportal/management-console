@@ -22,8 +22,8 @@ public class DuracloudGroup extends BaseDomainData implements Comparable<Duraclo
     private String name;
     private Set<Integer> userIds;
 
-    public DuracloudGroup(String name) {
-        this(-1, name, null, -1);
+    public DuracloudGroup(int id, String name) {
+        this(id, name, null, 0);
     }
 
     public DuracloudGroup(int id, String name, Set<Integer> userIds) {

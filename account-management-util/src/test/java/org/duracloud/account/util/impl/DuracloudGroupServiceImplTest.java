@@ -108,6 +108,7 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
                     .andReturn(group);
 
         } else {
+            EasyMock.expect(idUtil.newGroupId()).andReturn(3);
             EasyMock.expect(groupRepo.findByGroupname(group.getName()))
                     .andThrow(new DBNotFoundException("canned exception"));
             groupRepo.save(EasyMock.<DuracloudGroup>anyObject());

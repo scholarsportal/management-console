@@ -20,6 +20,7 @@ public class DuracloudGroupTest {
     private DuracloudGroup group;
 
     private static final String testGroupname = DuracloudGroup.PREFIX + "test";
+    private static final int groupId = 5;
 
     @Before
     public void setUp() throws Exception {
@@ -37,7 +38,7 @@ public class DuracloudGroupTest {
     @Test
     public void testNullConstructor() {
         try{
-            group = new DuracloudGroup(null);
+            group = new DuracloudGroup(groupId, null);
             Assert.assertTrue(false);
         }catch(IllegalArgumentException ex){
             Assert.assertTrue(true);
@@ -46,13 +47,13 @@ public class DuracloudGroupTest {
 
     @Test
     public void testConstructor() {
-        group = new DuracloudGroup(testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname);
         Assert.assertEquals(testGroupname, group.getName());
     }
 
     @Test
     public void testSetDuracloudUser(){
-        group = new DuracloudGroup(testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname);
         Set<Integer> userIds = new HashSet<Integer>();
         userIds.add(user.getId());
         group.setUserIds(userIds);
@@ -62,7 +63,7 @@ public class DuracloudGroupTest {
 
     @Test
     public void testAddUserId(){
-        group = new DuracloudGroup(testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname);
         group.addUserId(user.getId());
         Assert.assertEquals(1, group.getUserIds().size());
     }
@@ -81,9 +82,10 @@ public class DuracloudGroupTest {
 
     @Test
     public void testEquals(){
-        DuracloudGroup group1 = new DuracloudGroup(testGroupname);
-        DuracloudGroup group2 = new DuracloudGroup(testGroupname);
-        DuracloudGroup group3 = new DuracloudGroup(testGroupname + 1);
+        int id = groupId;
+        DuracloudGroup group1 = new DuracloudGroup(id++, testGroupname);
+        DuracloudGroup group2 = new DuracloudGroup(id++, testGroupname);
+        DuracloudGroup group3 = new DuracloudGroup(id++, testGroupname + 1);
 
         Assert.assertTrue(group1.equals(group2));
         Assert.assertFalse(group2.equals(group3));

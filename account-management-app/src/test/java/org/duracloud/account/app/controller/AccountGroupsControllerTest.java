@@ -110,7 +110,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     }
 
     private Set<DuracloudGroup> createGroups() {
-        DuracloudGroup group = new DuracloudGroup(DuracloudGroup.PREFIX+TEST_GROUP_NAME);
+        int groupId = 2;
+        DuracloudGroup group = new DuracloudGroup(groupId,
+                                                  DuracloudGroup.PREFIX +
+                                                      TEST_GROUP_NAME);
         group.addUserId(createUser().getId());
         Set<DuracloudGroup> set = new HashSet<DuracloudGroup>();
         set.add(group);
@@ -141,10 +144,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetGroupsAddGroup() throws Exception {
-
+        int groupId = 3;
         String groupName = "group2";
         EasyMock.expect(groupService.createGroup(DuracloudGroup.PREFIX+groupName))
-                .andReturn(new DuracloudGroup(DuracloudGroup.PREFIX+groupName))
+                .andReturn(new DuracloudGroup(groupId, DuracloudGroup.PREFIX+groupName))
                 .times(1);
 
         replay();

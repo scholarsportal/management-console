@@ -12,6 +12,7 @@ import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudGroupService;
@@ -69,7 +70,8 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             throw new DuracloudGroupAlreadyExistsException(name);
         }
 
-        DuracloudGroup group = new DuracloudGroup(name);
+        int newGroupId = getIdUtil().newGroupId();
+        DuracloudGroup group = new DuracloudGroup(newGroupId, name);
         getGroupRepo().save(group);
 
         return group;
@@ -110,6 +112,10 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
 
     private DuracloudGroupRepo getGroupRepo() {
         return repoMgr.getGroupRepo();
+    }
+
+    private IdUtil getIdUtil() {
+        return repoMgr.getIdUtil();
     }
 
 }

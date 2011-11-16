@@ -11,6 +11,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.BaseDomainData;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -242,6 +243,7 @@ public class DbUtil {
         XStream xstream = new XStream(new DomDriver());
         xstream.setMode(XStream.NO_REFERENCES);        
         xstream.alias(DuracloudUser.class.getSimpleName(), DuracloudUser.class);
+        xstream.alias(DuracloudGroup.class.getSimpleName(), DuracloudGroup.class);
         xstream.alias(AccountInfo.class.getSimpleName(), AccountInfo.class);
         xstream.alias(AccountRights.class.getSimpleName(), AccountRights.class);
         xstream.alias(UserInvitation.class.getSimpleName(), UserInvitation.class);
