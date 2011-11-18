@@ -4,6 +4,7 @@
   xmlns:tiles="http://tiles.apache.org/tags-tiles"
   xmlns:sec="http://www.springframework.org/security/tags"
   xmlns:form="http://www.springframework.org/tags/form"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
 
@@ -34,7 +35,7 @@
             <ul>
               <c:forEach items="${groups}" var="ug">
                 <li><form:checkbox path="groupNames"
-                    value="${ug.name}" /> <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.name}">${ug.name}</a></li>
+                    value="${ug.displayName}" /> <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">${ug.displayName}</a></li>
               </c:forEach>
             </ul>
           </div>

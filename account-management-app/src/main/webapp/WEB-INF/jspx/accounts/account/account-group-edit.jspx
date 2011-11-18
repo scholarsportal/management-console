@@ -15,7 +15,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${account.accountInfo.id} :: Groups :: ${group.name}" />
+     value="Account Management App: ${account.accountInfo.id} :: Groups :: ${group.displayName}" />
 
     <tiles:putAttribute
      name="header-extensions"
@@ -30,7 +30,7 @@
          name="content">
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
-                  <h1>${group.name} [Editing]</h1>
+                  <h1>${group.displayName} [Editing]</h1>
                 <form:form modelAttribute="groupForm" method="post">
                 <table class="shuttle">
                   <tr>

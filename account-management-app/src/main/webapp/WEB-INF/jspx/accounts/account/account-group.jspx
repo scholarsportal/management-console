@@ -29,10 +29,10 @@
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
                 <div>
-                  <h1>${userGroup.name} <a href="${userGroup.name}/edit">Edit</a></h1>
+                  <h1>${group.displayName} <a href="${group.displayName}/edit">Edit</a></h1>
                 </div>
                 <c:choose>
-                <c:when test="${not empty userGroup.users}">
+                <c:when test="${not empty groupUsers}">
                 <table>
                   <thead>
                     <tr>
@@ -48,7 +48,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                  <c:forEach items="${userGroup.users}" var="u">
+                  <c:forEach items="${groupUsers}" var="u">
                   <tr>
                     <td>
                       ${u.firstName} ${u.lastName}                    

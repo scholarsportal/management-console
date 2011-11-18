@@ -49,6 +49,10 @@ public class DuracloudGroup extends BaseDomainData implements Comparable<Duraclo
         return this.name;
     }
 
+    public String getDisplayName() {
+        return this.name.replaceFirst(PREFIX, "");
+    }
+
     /**
      * This method returns the ids of the users belonging to this group.
      *
