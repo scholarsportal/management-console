@@ -326,6 +326,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         for (DuracloudUser user : users) {
             String username = user.getUsername();
             String password = user.getPassword();
+            String email = user.getEmail();
             Set<Role> roles = user.getRolesByAcct(accountId);
 
             if (StringUtils.isBlank(username) ||
@@ -351,7 +352,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             }
 
             if(!root) { // Do not include root users in user list for instance
-                userBeans.add(new SecurityUserBean(username, password, grants));
+                SecurityUserBean bean =
+                    new SecurityUserBean(username, password, grants);
+                bean.setEmail(email);
+                userBeans.add(bean);
             }
         }
 

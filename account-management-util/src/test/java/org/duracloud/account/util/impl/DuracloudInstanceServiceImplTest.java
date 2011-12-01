@@ -12,23 +12,23 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -357,8 +357,9 @@ public class DuracloudInstanceServiceImplTest
         service.setUserRoles(users);
 
         Set<SecurityUserBean> beans = capture.getValue();
-        Assert.assertNotNull(beans);
+        assertNotNull(beans);
 
+        verifyData(users, beans);
         verifyRoles(users, beans);
     }
 
@@ -397,25 +398,48 @@ public class DuracloudInstanceServiceImplTest
         return users;
     }
 
+    private void verifyData(Set<DuracloudUser> users,
+                            Set<SecurityUserBean> beans) {
+        assertNotNull(users);
+        assertNotNull(beans);
+
+        for (DuracloudUser user: users)
+        {
+            try {
+                // Ensure bean with username exists
+                String username = user.getUsername();
+                SecurityUserBean bean = getBeanWithName(username, beans);
+
+                // Ensure data matches
+                assertEquals(username,  bean.getUsername());
+                assertEquals(user.getPassword(), bean.getPassword());
+                assertEquals(user.getEmail(), bean.getEmail());
+            } catch(RuntimeException e) {
+                // Bean list should not include root users
+                checkForRoot(user.getRolesByAcct(accountId), e);
+            }
+        }
+    }
+
     private void verifyRoles(Set<DuracloudUser> users,
                              Set<SecurityUserBean> beans) {
         // Root user should be missing from list
-        Assert.assertEquals(users.size()-1, beans.size());
+        assertEquals(users.size() - 1, beans.size());
 
         for (DuracloudUser user: users)
         {
             Set<Role> roles = user.getRolesByAcct(accountId);
-            Assert.assertNotNull(roles);
-            Assert.assertTrue(roles.size() > 0);
+            assertNotNull(roles);
+            assertTrue(roles.size() > 0);
 
             String username = user.getUsername();
             try {
                 SecurityUserBean bean = getBeanWithName(username, beans);
                 int numFound = 0;
                 List<String> auths = bean.getGrantedAuthorities();
-                Assert.assertNotNull(username, auths);
+                assertNotNull(username, auths);
 
-                Assert.assertEquals(roles.size(), auths.size());
+                assertEquals(roles.size(), auths.size());
                 for (Role role : roles) {
                     for (String auth : auths) {
                         if (auth.equals(role.name())) {
@@ -423,18 +447,22 @@ public class DuracloudInstanceServiceImplTest
                         }
                     }
                 }
-                Assert.assertEquals("username", roles.size(), numFound);
+                assertEquals("username", roles.size(), numFound);
             } catch (RuntimeException e) {
-                boolean isRoot = false;
-                for(Role role : roles) {
-                    if(role.equals(Role.ROLE_ROOT)) {
-                        isRoot = true;
-                    }
-                }
-                if(!isRoot) {
-                    fail(e.getMessage());
-                }
+                checkForRoot(roles, e);
             }
+        }
+    }
+
+    private void checkForRoot(Set<Role> roles, RuntimeException e) {
+        boolean isRoot = false;
+        for(Role role : roles) {
+            if(role.equals(Role.ROLE_ROOT)) {
+                isRoot = true;
+            }
+        }
+        if(!isRoot) {
+            fail(e.getMessage());
         }
     }
 
@@ -460,12 +488,12 @@ public class DuracloudInstanceServiceImplTest
         boolean thrown = false;
         try {
             service.setUserRoles(users);
-            Assert.fail("exception expected");
+            fail("exception expected");
 
         } catch (DuracloudInstanceUpdateException e) {
             thrown = true;
         }
-        Assert.assertTrue(thrown);
+        assertTrue(thrown);
     }
 
 }
