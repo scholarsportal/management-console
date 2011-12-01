@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -148,6 +149,10 @@ public class DuracloudInstanceServiceImplTest
 
     private void doSetUpReInitializeUserRolesMocks()
         throws DBNotFoundException {
+        EasyMock.expect(groupRepo.findAllGroups())
+            .andReturn(null)
+            .times(1);
+        EasyMock.expect(repoMgr.getGroupRepo()).andReturn(groupRepo).times(1);
         EasyMock.expect(repoMgr.getRightsRepo()).andReturn(rightsRepo).times(1);
         EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).times(1);
 
@@ -261,6 +266,13 @@ public class DuracloudInstanceServiceImplTest
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall()
             .times(1);
+
+        EasyMock.expect(groupRepo.findAllGroups())
+            .andReturn(null)
+            .times(1);
+        EasyMock.expect(repoMgr.getGroupRepo())
+            .andReturn(groupRepo)
+            .times(1);
         EasyMock.expect(repoMgr.getRightsRepo())
             .andReturn(rightsRepo)
             .times(1);
@@ -349,6 +361,16 @@ public class DuracloudInstanceServiceImplTest
     public void testSetUserRoles() throws Exception {
         setUpServerImageMocks();
 
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        DuracloudGroup group = new DuracloudGroup(1, "group-test");
+        group.addUserId(1);
+        groups.add(group);
+
+        EasyMock.expect(groupRepo.findAllGroups())
+            .andReturn(groups)
+            .times(1);
+        EasyMock.expect(repoMgr.getGroupRepo()).andReturn(groupRepo).times(1);
+        
         Capture<Set<SecurityUserBean>> capture = new Capture<Set<SecurityUserBean>>();
         setUpUserRoleMocks(capture);
         Set<DuracloudUser> users = createUsers();

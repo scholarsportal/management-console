@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -321,6 +322,14 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             throw new DuracloudInstanceUpdateException(msg);
         }
 
+        Set<DuracloudGroup> groups = null;
+        try {
+            groups =
+                repoMgr.getGroupRepo().findAllGroups();
+        } catch (DBNotFoundException e) {
+            log.warn("No groups found.");
+        }
+
         // collect user roles for this account
         Set<SecurityUserBean> userBeans = new HashSet<SecurityUserBean>();
         for (DuracloudUser user : users) {
@@ -355,6 +364,16 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 SecurityUserBean bean =
                     new SecurityUserBean(username, password, grants);
                 bean.setEmail(email);
+
+                if(groups != null) {
+                    for (DuracloudGroup group : groups) {
+                        Set<Integer> userIds = group.getUserIds();
+                        if(userIds.contains(user.getId())) {
+                            bean.addGroup(group.getName());
+                        }
+                    }
+                }
+
                 userBeans.add(bean);
             }
         }

@@ -11,15 +11,7 @@ import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
-import org.duracloud.account.db.DuracloudUserRepo;
-import org.duracloud.account.db.IdUtil;
+import org.duracloud.account.db.*;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
@@ -52,6 +44,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudInstanceRepo instanceRepo;
     protected InstanceUpdater instanceUpdater;
     protected DuracloudRightsRepo rightsRepo;
+    protected DuracloudGroupRepo groupRepo;
     protected DuracloudUserRepo userRepo;
     protected InstanceConfigUtil instanceConfigUtil;
     protected DuracloudAccountRepo accountRepo;
@@ -90,6 +83,8 @@ public class DuracloudInstanceServiceTestBase {
                                               InstanceUpdaterImpl.class);
         rightsRepo = EasyMock.createMock("DuracloudRightsRepo",
                                          DuracloudRightsRepo.class);
+        groupRepo = EasyMock.createMock("DuracloudGroupRepo",
+                                         DuracloudGroupRepo.class);
         userRepo = EasyMock.createMock("DuracloudUserRepo",
                                        DuracloudUserRepo.class);
         instanceConfigUtil = EasyMock.createMock("InstanceConfigUtil",
@@ -124,6 +119,7 @@ public class DuracloudInstanceServiceTestBase {
                         instanceRepo,
                         instanceUpdater,
                         rightsRepo,
+                        groupRepo,
                         userRepo,
                         instanceConfigUtil,
                         accountRepo,
@@ -147,6 +143,7 @@ public class DuracloudInstanceServiceTestBase {
                         instanceRepo,
                         instanceUpdater,
                         rightsRepo,
+                        groupRepo,
                         userRepo,
                         instanceConfigUtil,
                         accountRepo,
