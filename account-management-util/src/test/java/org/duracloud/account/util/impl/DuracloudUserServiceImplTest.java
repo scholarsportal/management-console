@@ -612,9 +612,9 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testLoadDuracloudUserById() throws Exception {
+    public void testLoadDuracloudUserByIdInternal() throws Exception {
         setUpLoadDuracloudUserById(userId, null);
-        DuracloudUser user = userService.loadDuracloudUserById(userId);
+        DuracloudUser user = userService.loadDuracloudUserByIdInternal(userId);
         Assert.assertNotNull(user);
         Assert.assertEquals(userId, user.getId());
     }
@@ -624,7 +624,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         Exception ex = new DBNotFoundException("test");
         setUpLoadDuracloudUserById(userId, ex);
         try {
-            userService.loadDuracloudUserById(userId);
+            userService.loadDuracloudUserByIdInternal(userId);
             Assert.fail("exception expected");
         } catch (DBNotFoundException e) {
             Assert.assertEquals(ex, e);

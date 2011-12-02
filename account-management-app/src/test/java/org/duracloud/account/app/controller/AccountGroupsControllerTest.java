@@ -103,7 +103,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
                 .andReturn(user)
                 .anyTimes();
 
-        EasyMock.expect(userService.loadDuracloudUserById(user.getId()))
+        EasyMock.expect(userService.loadDuracloudUserByIdInternal(user.getId()))
                 .andReturn(user)
                 .anyTimes();
 

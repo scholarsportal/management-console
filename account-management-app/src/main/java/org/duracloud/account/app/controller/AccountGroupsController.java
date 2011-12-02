@@ -155,7 +155,7 @@ public class AccountGroupsController extends AbstractAccountController {
 
             if (userIds != null) {
                 for (Integer id : userIds) {
-                    users.add(this.userService.loadDuracloudUserById(id));
+                    users.add(this.userService.loadDuracloudUserByIdInternal(id));
                 }
             }
             return users;

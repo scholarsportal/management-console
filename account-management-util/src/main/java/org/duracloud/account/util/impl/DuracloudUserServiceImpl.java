@@ -404,7 +404,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     
 
     @Override
-    public DuracloudUser loadDuracloudUserById(Integer userId) throws DBNotFoundException {
+    public DuracloudUser loadDuracloudUserByIdInternal(Integer userId) throws DBNotFoundException {
         DuracloudUser user = getUserRepo().findById(userId);
         loadRights(user);
         return user;

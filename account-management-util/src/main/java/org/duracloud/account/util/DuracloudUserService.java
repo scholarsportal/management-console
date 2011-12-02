@@ -130,7 +130,7 @@ public interface DuracloudUserService {
         throws DBNotFoundException;
 
     @Secured({ "role:ROLE_USER, scope:ANY" })
-    public DuracloudUser loadDuracloudUserById(Integer userId)
+    public DuracloudUser loadDuracloudUserByIdInternal(Integer userId)
         throws DBNotFoundException;
 
     /**
