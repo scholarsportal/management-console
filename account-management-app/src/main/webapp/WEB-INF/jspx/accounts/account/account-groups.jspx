@@ -28,7 +28,14 @@
          name="content">
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
-                No group selected.
+                <c:choose>
+                  <c:when test="${not empty groups}">
+                    To view a group, click on a group name listed to the left.
+                  </c:when>
+                  <c:otherwise>
+                    To create a group, enter a name in the field to the left and click the 'Add New Group' button.                  
+                  </c:otherwise>
+                </c:choose>
               </tiles:putAttribute>         
           </tiles:insertDefinition>
         </tiles:putAttribute>

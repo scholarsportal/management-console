@@ -11,15 +11,20 @@
 
   <h1>Manage Account Groups</h1>
 
-  <div class="dc-subgroup">
+  <div class="dc-subgroup account-groups">
   <table>
     <tr>
-      <td><form:form modelAttribute="groupsForm" action="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups" method="post">
-          <div>
-            Groups
-            <form:input path="groupName" style="margin-right:10px"/>
-            <button type="submit" name="action" value="ADD"><i class="pre plus"></i>Add</button>
-            <button type="submit" name="action" value="REMOVE"><i class="pre trash"></i>Remove</button>
+      <td style="width:50%">
+        <form:form modelAttribute="groupsForm" action="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups" method="post">
+          <div >
+          
+          <div style="padding:5px">
+            <span style="white-space: nowrap;">
+            <form:input path="groupName" style="width:200px; margin-right:10px" placeholder="Enter a new group name here"/>
+            <button type="submit" name="action" value="ADD"><i class="pre plus"></i>Add New Group</button>
+            <button type="submit" name="action" value="REMOVE"><i class="pre trash"></i>Remove Selected</button>
+            </span>
+            
           </div>
           <div>
             <c:choose>
@@ -27,22 +32,30 @@
               
               </c:when>
               <c:otherwise>
-              <p>
-                No groups defined yet.
-              </p>
               </c:otherwise>
             </c:choose>
-            <ul>
+            <ul class="datatablesimple">
               <c:forEach items="${groups}" var="ug">
-                <li><form:checkbox path="groupNames"
-                    value="${ug.displayName}" /> <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">${ug.displayName}</a></li>
+                <li class="${not empty group and group.displayName eq ug.displayName ? 'selected' :''}">
+                <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">
+                  <form:checkbox path="groupNames"
+                    value="${ug.displayName}" /> ${ug.displayName}</a></li>
               </c:forEach>
             </ul>
           </div>
-        </form:form></td>
-      <td><tiles:insertAttribute name="detail" ignore="false" /></td>
+        </div>
+          
+        </form:form>
+        
+        </td>
+      <td class="detail rounded-corners"><div><tiles:insertAttribute name="detail" ignore="false" /></div></td>
     </tr>
   </table>
   </div>
-  
+  <div align="right">
+        <a class="button featured"
+                  id="cancel-button"
+                  href="${pageContext.request.contextPath}/users/byid/${user.username}">
+                 Back</a>
+  </div>
   </jsp:root>

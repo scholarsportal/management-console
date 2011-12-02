@@ -30,7 +30,7 @@
          name="content">
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
-                  <h1>${group.displayName} [Editing]</h1>
+                  <h1>${group.displayName}</h1>
                 <form:form modelAttribute="groupForm" method="post">
                 <table class="shuttle">
                   <tr>
@@ -56,8 +56,13 @@
                       </form:select>
                     </td>
                   </tr>
+                  <tr>
+                    <td colspan="2">
+                      <button name="action" type="submit" value="SAVE">Save</button>               
+                      <a class="button" href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${group.displayName}">Cancel</a>
+                    </td>
+                  </tr>
                 </table>
-                  <button name="action" type="submit" value="SAVE">Save</button>               
                 </form:form>
                                 
               </tiles:putAttribute>         

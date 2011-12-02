@@ -29,7 +29,7 @@
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
                 <div>
-                  <h1>${group.displayName} <a href="${group.displayName}/edit">Edit</a></h1>
+                  <h1>${group.displayName} <a class="button" href="${group.displayName}/edit">Edit</a></h1>
                 </div>
                 <c:choose>
                 <c:when test="${not empty groupUsers}">

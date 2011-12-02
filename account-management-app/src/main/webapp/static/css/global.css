@@ -473,7 +473,7 @@ ing-right:10px;
 	margin-bottom: 20px;
 	padding-top: 0px;
 	padding-right: 0px;
-	padding-bottom: 5px;
+	/*padding-bottom: 5px;*/
 	padding-left: 0px;
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
@@ -683,12 +683,21 @@ li.account:hover {
     padding-bottom:20px;
 }
 
-.datatablesimple {
+.datatablesimple  {
 	color: #515151;
 	margin-left: 25px;
 	width: 95%;
 }
-.datatablesimple tr {
+
+ul.datatablesimple  {
+	margin-left: 0;
+	padding:0;
+	margin: 5px 0px;
+	width:100%;
+	background-color: #AAA;
+}
+
+.datatablesimple tr, .datatablesimple li {
 	margin-left: 25px;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
@@ -697,6 +706,48 @@ li.account:hover {
 }
 
 
+.datatablesimple li{
+	margin:0px;
+}
+
+.datatablesimple li:hover{
+	background-color: #CCCCCC;
+}
+
+
+.datatablesimple li a {
+	display: block;
+	padding: 5px 0px 5px 0px;
+	width:100%;
+	
+}
+
+.selected,.detail  {
+	background-color: #DDDDDD;
+}
+
+.account-groups td {
+	padding:0;
+}
+
+
+td.detail {
+	padding:10px;
+}
+
+.detail td {
+	padding:5px;
+}
+.detail > div {
+	min-height:200px;
+}
+
+.rounded-corners {
+     -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+}
 .accountlabel
 {
 	font-size:16px;
