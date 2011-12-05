@@ -36,7 +36,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
     private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
+    private static ServicePlan servicePlan = ServicePlan.ALL;
     private static AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
     private static final int counter = 4;

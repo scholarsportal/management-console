@@ -149,7 +149,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                     idFromString(value, "Payment Info", "Account", id);
 
             } else if (SERVICE_PLAN_ATT.equals(name)) {
-                servicePlan = ServicePlan.valueOf(value);
+                servicePlan = ServicePlan.fromString(value);
 
             } else if (STATUS_ATT.equals(name)) {
                 status = AccountInfo.AccountStatus.valueOf(value);
