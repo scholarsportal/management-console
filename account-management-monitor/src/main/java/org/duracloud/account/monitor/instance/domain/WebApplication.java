@@ -49,7 +49,7 @@ public class WebApplication extends Application {
             error.append("Error in Webapplication, with ");
             error.append("restHttpHelper.get(");
             error.append(url);
-            error.append(")");
+            error.append("): " + e.getMessage());
             log.error(error.toString());
             throw new DuraCloudRuntimeException(error.toString());
         }
