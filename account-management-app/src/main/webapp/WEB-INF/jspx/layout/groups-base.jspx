@@ -34,12 +34,25 @@
               <c:otherwise>
               </c:otherwise>
             </c:choose>
-            <ul class="datatablesimple">
+            <script type="text/javascript">
+            var cancelBubble = function(e){ e.stopPropagation()};
+            </script>
+            <ul class="groups-list">
               <c:forEach items="${groups}" var="ug">
                 <li class="${not empty group and group.displayName eq ug.displayName ? 'selected' :''}">
-                <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">
-                  <form:checkbox path="groupNames"
-                    value="${ug.displayName}" /> ${ug.displayName}</a></li>
+                  <table>
+                    <tr>
+                      <td width="20px">
+                        <form:checkbox path="groupNames" value="${ug.displayName}" />
+                      </td>
+                      <td>
+                        <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">  
+                          ${ug.displayName}
+                        </a>                      
+                      </td>
+                      </tr>
+                    </table>
+                </li>
               </c:forEach>
             </ul>
           </div>

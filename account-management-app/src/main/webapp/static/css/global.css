@@ -146,17 +146,9 @@ li a:hover{
 	
 }
 
-
-
-
-	
-
 .float-l {float:left; margin-left:0; }
 .float-r {float:right; margin-right:0; }
 .content-centered { text-align:center !important; }
-
-
-
 
 
 /*YUI CSS**********************/
@@ -279,7 +271,6 @@ div.global-errors{
 	float:right;
 }
 
-
 .outer,
 .outer a
 {
@@ -309,8 +300,6 @@ div.global-errors{
 #dc-logo-panel
 {
 	padding-left:10px;
-
-	
 }
 
 #dc-logo,
@@ -343,8 +332,6 @@ div.global-errors{
 {
 		width:531px;
 		background-image: url(../img/logo_top_mc_lg.png);
-	
-	
 }
 
 #dc-app-title
@@ -473,7 +460,6 @@ ing-right:10px;
 	margin-bottom: 20px;
 	padding-top: 0px;
 	padding-right: 0px;
-	/*padding-bottom: 5px;*/
 	padding-left: 0px;
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
@@ -524,10 +510,6 @@ ing-right:10px;
 .dc-subgroup table  {
 	width:100%;
 }
-.dc-subgroup table > tr {
-
-}
-
 
 .dc-subgroup-body{
 	padding:10px;	
@@ -540,7 +522,6 @@ li.account {
 	padding:5px;
 }
 
-
 li.account span:last-child{
 	margin-left:100px;
 }
@@ -549,7 +530,6 @@ li.account:hover {
 	background-color: #ddd;	
 	cursor: pointer;	
 }	
-
 
 .dc-subgroup li {
 	border-bottom: 1px solid #aaa;
@@ -625,7 +605,6 @@ li.account:hover {
 	color: #6C6C6C !important;
 }
 
-
 .button.durabutton {
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
@@ -689,7 +668,24 @@ li.account:hover {
 	width: 95%;
 }
 
-ul.datatablesimple  {
+
+.datatablesimple tr {
+	margin-left: 25px;
+	font-size:11px !important;
+}
+
+
+.datatablesimple tr, .groups-list li {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #515151;
+}
+
+.groups-list li:hover{
+	background-color: #CCCCCC;
+}
+
+ul.groups-list  {
 	margin-left: 0;
 	padding:0;
 	margin: 5px 0px;
@@ -697,29 +693,10 @@ ul.datatablesimple  {
 	background-color: #AAA;
 }
 
-.datatablesimple tr, .datatablesimple li {
-	margin-left: 25px;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-bottom-color: #515151;
-	font-size:11px !important;
-}
-
-
-.datatablesimple li{
-	margin:0px;
-}
-
-.datatablesimple li:hover{
-	background-color: #CCCCCC;
-}
-
-
-.datatablesimple li a {
+.groups-list li a {
 	display: block;
 	padding: 5px 0px 5px 0px;
 	width:100%;
-	
 }
 
 .selected,.detail  {
@@ -793,7 +770,6 @@ th.headerSortDown {
     background-image: url(../img/desc.gif);
     background-color: #3399FF;
     background-repeat: no-repeat;
-
 }
 
 .shuttle td {

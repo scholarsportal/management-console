@@ -60,9 +60,9 @@
 
                 Add DuraCloud Account</a><br />
               </sec:authorize></td>
-  </tr>
-</table>
-<br />
+        </tr>
+      </table>
+      <br />
               
               <c:choose>
                 <c:when
@@ -106,7 +106,7 @@
                         </c:if>
                       </tr>
                       <tr class="account">
-                        <td colspan="5" align="left" valign="middle">
+                        <td colspan="6" align="left" valign="middle">
                         <div >
                         <div >
               <c:choose>
@@ -277,7 +277,7 @@
                         </c:if>
                       </tr>
                       <tr class="account">
-                        <td colspan="5" align="left" valign="middle">
+                        <td colspan="6" align="left" valign="middle">
                         <div />
                         <div />
 
