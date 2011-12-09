@@ -32,6 +32,7 @@ import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
+import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -68,13 +69,22 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private InstanceConfigUtil instanceConfigUtil;
     private Credential rootCredential;
     private int timeoutMinutes = 20;
+    private NotificationMgrConfig notMgrConfig;
 
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
                                         DuracloudRepoMgr repoMgr,
-                                        ComputeProviderUtil computeProviderUtil)
+                                        ComputeProviderUtil computeProviderUtil,
+                                        NotificationMgrConfig notMgrConfig)
         throws DBNotFoundException {
-        this(accountId, instance, repoMgr, computeProviderUtil, null, null, null);
+        this(accountId,
+             instance,
+             repoMgr,
+             computeProviderUtil,
+             null,
+             null,
+             null,
+             notMgrConfig);
     }
 
     protected DuracloudInstanceServiceImpl(int accountId,
@@ -83,7 +93,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
                                            InstanceUpdater instanceUpdater,
-                                           InstanceConfigUtil instanceConfigUtil)
+                                           InstanceConfigUtil instanceConfigUtil,
+                                           NotificationMgrConfig notMgrConfig)
         throws DBNotFoundException {
 
         this.accountId = accountId;
@@ -93,6 +104,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.computeProvider = computeProvider;
         this.instanceUpdater = instanceUpdater;
         this.instanceConfigUtil = instanceConfigUtil;
+        this.notMgrConfig = notMgrConfig;
 
         if (null == computeProvider) {
             initializeComputeProvider();
@@ -104,7 +116,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         if (null == instanceConfigUtil) {
             this.instanceConfigUtil =
-                new InstanceConfigUtilImpl(instance, repoMgr);
+                new InstanceConfigUtilImpl(instance, repoMgr, notMgrConfig);
         }
     }
 

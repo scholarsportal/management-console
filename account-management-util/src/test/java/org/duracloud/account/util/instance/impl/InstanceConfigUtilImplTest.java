@@ -16,10 +16,12 @@ import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.util.instance.InstanceUtil;
+import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
+import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
@@ -50,6 +52,9 @@ public class InstanceConfigUtilImplTest {
     protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
     protected DuracloudServerImageRepo serverImageRepo;
     protected DuracloudServiceRepositoryRepo serviceRepositoryRepo;
+    private String notificationUsername = "notUser";
+    private String notificationPassword = "notPass";
+    private String notificationFromAddress = "notAddress";
 
     @Before
     public void setup() throws Exception {
@@ -73,7 +78,13 @@ public class InstanceConfigUtilImplTest {
             EasyMock.createMock("DuracloudServiceRepositoryRepo",
                                 DuracloudServiceRepositoryRepo.class);
 
-        instanceConfigUtil = new InstanceConfigUtilImpl(instance, repoMgr);
+        NotificationMgrConfig notConfig =
+            new NotificationMgrConfig(notificationFromAddress,
+                                      notificationUsername,
+                                      notificationPassword);
+
+        instanceConfigUtil =
+            new InstanceConfigUtilImpl(instance, repoMgr, notConfig);
     }
 
     protected void replayMocks() {
@@ -338,6 +349,18 @@ public class InstanceConfigUtilImplTest {
 
         assertEquals(InstanceUtil.DURAREPORT_CONTEXT,
                      config.getDurareportContext());
+
+        Collection<NotificationConfig> notConfigs =
+            config.getNotificationConfigs();
+        assertNotNull(notConfigs);
+        assertEquals(1, notConfigs.size());
+
+        NotificationConfig notConfig = notConfigs.iterator().next();
+        assertNotNull(notConfig);
+        assertEquals("EMAIL", notConfig.getType());
+        assertEquals(notificationUsername, notConfig.getUsername());
+        assertEquals(notificationPassword, notConfig.getPassword());
+        assertEquals(notificationFromAddress, notConfig.getOriginator());
     }
 
 }

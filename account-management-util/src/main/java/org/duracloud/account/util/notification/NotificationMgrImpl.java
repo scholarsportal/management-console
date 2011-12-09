@@ -10,8 +10,6 @@ import org.duracloud.notification.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-
 /**
  * @author Andrew Woods
  *         Date: 3/17/11
@@ -23,6 +21,7 @@ public class NotificationMgrImpl implements NotificationMgr {
     private NotificationFactory factory;
     private String fromAddress;
     private boolean isInitialized;
+    private NotificationMgrConfig mgrConfig;
 
     public NotificationMgrImpl(NotificationFactory factory,
                                String fromAddress) {
@@ -33,7 +32,11 @@ public class NotificationMgrImpl implements NotificationMgr {
 
     @Override
     public void initialize(AmaConfig config) {
-        factory.initialize(config.getUsername(), config.getPassword());
+        String username = config.getUsername();
+        String password = config.getPassword();
+
+        mgrConfig = new NotificationMgrConfig(fromAddress, username, password);
+        factory.initialize(username, password);
         isInitialized = true;
     }
 
@@ -48,4 +51,8 @@ public class NotificationMgrImpl implements NotificationMgr {
         return factory.getEmailer(fromAddress);
     }
 
+    @Override
+    public NotificationMgrConfig getConfig() {
+        return mgrConfig;
+    }
 }

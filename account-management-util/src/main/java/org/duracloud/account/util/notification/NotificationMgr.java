@@ -28,4 +28,11 @@ public interface NotificationMgr extends Initable {
      * @return emailer
      */
     public Emailer getEmailer();
+
+    /**
+     * Retrieves the configuration of the NotificationMgr
+     * @return config
+     */
+    public NotificationMgrConfig getConfig();
+
 }

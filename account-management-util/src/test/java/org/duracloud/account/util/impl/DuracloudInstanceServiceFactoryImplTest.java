@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.security.AnnotationParser;
 import org.duracloud.account.util.security.SecurityContextUtil;
 import org.easymock.EasyMock;
@@ -26,7 +27,7 @@ public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceSe
     private AccessDecisionVoter voter;
     private SecurityContextUtil securityContext;
     private AnnotationParser annotationParser;
-
+    private NotificationMgr notificationMgr;
 
     @Before
     public void setUp() throws Exception {
@@ -38,6 +39,8 @@ public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceSe
                                               SecurityContextUtil.class);
         annotationParser = EasyMock.createMock("AnnotationParser",
                                                AnnotationParser.class);
+        notificationMgr = EasyMock.createMock("NotificationMgr",
+                                              NotificationMgr.class);
 
         // set up securityContext
         EasyMock.expect(securityContext.getAuthentication()).andReturn(null);
@@ -51,7 +54,8 @@ public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceSe
                                                           voter,
                                                           securityContext,
                                                           computeProviderUtil,
-                                                          annotationParser);
+                                                          annotationParser,
+                                                          notificationMgr);
     }
 
     @After
@@ -60,19 +64,26 @@ public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceSe
                         voter,
                         securityContext,
                         computeProviderUtil,
-                        annotationParser);
+                        annotationParser,
+                        notificationMgr);
     }
 
     @Override
     public void replayMocks() {
         super.replayMocks();
-        EasyMock.replay(voter, securityContext, annotationParser);
+        EasyMock.replay(voter,
+                        securityContext,
+                        annotationParser,
+                        notificationMgr);
     }
 
     @Test
     public void testGetInstance() throws Exception {
         int acctId = 3;
         DuracloudInstance instance = createInstance(acctId);
+
+        EasyMock.expect(notificationMgr.getConfig()).andReturn(null).once();
+
         replayMocks();
 
         // the call under test

@@ -105,6 +105,7 @@
     <constructor-arg ref="securityContextUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="annotationParser"/>
+    <constructor-arg ref="notificationMgr"/>
   </bean>
 
   <bean id="instanceManagerService"

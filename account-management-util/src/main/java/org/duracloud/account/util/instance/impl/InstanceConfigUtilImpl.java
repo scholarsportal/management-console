@@ -20,14 +20,18 @@ import org.duracloud.account.util.error.DuracloudServiceRepositoryNotAvailableEx
 import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
+import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
+import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
+import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,14 +48,18 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
     protected static final String DEFAULT_MSG_BROKER_PORT = "61617";
     protected static final String DEFAULT_SERVICE_COMPUTE_TYPE = "AMAZON_EC2";
     protected static final String DEFAULT_SERVICE_COMPUTE_IMAGE_ID = "unknown";
+    protected static final String NOTIFICATION_TYPE = "EMAIL";
 
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
+    private NotificationMgrConfig notMgrConfig;
 
     public InstanceConfigUtilImpl(DuracloudInstance instance,
-                                  DuracloudRepoMgr repoMgr) {
+                                  DuracloudRepoMgr repoMgr,
+                                  NotificationMgrConfig notMgrConfig) {
         this.instance = instance;
         this.repoMgr = repoMgr;
+        this.notMgrConfig = notMgrConfig;
     }
 
     public DuradminConfig getDuradminConfig() {
@@ -224,7 +232,18 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDuraserviceHost(instance.getHostName());
         config.setDuraservicePort(DEFAULT_SSL_PORT);
         config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
-        
+
+        NotificationConfig notificationConfig = new NotificationConfig();
+        notificationConfig.setType(NOTIFICATION_TYPE);
+        notificationConfig.setUsername(notMgrConfig.getUsername());
+        notificationConfig.setPassword(notMgrConfig.getPassword());
+        notificationConfig.setOriginator(notMgrConfig.getFromAddress());
+
+        Map<String, NotificationConfig> notificationConfigMap =
+            new HashMap<String, NotificationConfig>();
+        notificationConfigMap.put("0", notificationConfig);
+        config.setNotificationConfigs(notificationConfigMap);
+
         config.setDurareportContext(InstanceUtil.DURAREPORT_CONTEXT);
         return config;
     }

@@ -9,6 +9,7 @@ import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
+import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.security.AnnotationParser;
 import org.duracloud.account.util.security.SecurityContextUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
@@ -32,17 +33,20 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private SecurityContextUtil securityContext;
     private ComputeProviderUtil computeUtil;
     private AnnotationParser annotationParser;
+    private NotificationMgr notificationMgr;
 
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
                                                ComputeProviderUtil computeUtil,
-                                               AnnotationParser annotationParser) {
+                                               AnnotationParser annotationParser,
+                                               NotificationMgr notificationMgr) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
         this.computeUtil = computeUtil;
         this.annotationParser = annotationParser;
+        this.notificationMgr = notificationMgr;
     }
 
     @Override
@@ -52,7 +56,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             instance.getAccountId(),
             instance,
             repoMgr,
-            computeUtil);
+            computeUtil,
+            notificationMgr.getConfig());
 
         Authentication authentication = getAuthentication();
         return new DuracloudInstanceServiceSecuredImpl(instanceService,

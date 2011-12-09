@@ -345,7 +345,8 @@ public class DuracloudInstanceServiceImplTest
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
-                                                   computeProviderUtil);
+                                                   computeProviderUtil,
+                                                   notConfig);
     }
 
     @Test
