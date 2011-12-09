@@ -214,6 +214,8 @@ public class DbUtil {
             repo = repoMgr.getStorageProviderAccountRepo();
         } else if(item instanceof ServiceRepository) {
             repo = repoMgr.getServiceRepositoryRepo();
+        } else if(item instanceof DuracloudGroup) {
+            repo = repoMgr.getGroupRepo();
         } else {
             throw new RuntimeException("Item is not a known type: " +
                                        item.getClass().getName());
