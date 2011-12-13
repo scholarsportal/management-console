@@ -30,10 +30,12 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     private Logger log =
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
+    
     private DuracloudRepoMgr repoMgr;
 
     public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
         this.repoMgr = duracloudRepoMgr;
+        
     }
 
     @Override
@@ -41,19 +43,21 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         Set<DuracloudGroup> groups;
         try {
             groups = getGroupRepo().findAllGroups();
-
+            
         } catch (DBNotFoundException e) {
             log.warn("No groups found.");
             groups = new HashSet<DuracloudGroup>();
         }
-
+        
         return Collections.unmodifiableSet(groups);
     }
 
     @Override
     public DuracloudGroup getGroup(String name)
         throws DuracloudGroupNotFoundException {
+
         try {
+
             return getGroupRepo().findByGroupname(name);
 
         } catch (DBNotFoundException e) {
@@ -78,6 +82,10 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     private boolean groupExists(String name) {
+        if(DuracloudGroup.PUBLIC_GROUP_NAME.equals(name)){
+            return true;
+        }
+
         try {
             getGroup(name);
             return true;
@@ -94,13 +102,14 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             log.warn("Arg group is null.");
             return;
         }
-        
+ 
         getGroupRepo().delete(group.getId());
     }
 
     @Override
     public void updateGroupUsers(DuracloudGroup group, Set<DuracloudUser> users)
         throws DuracloudGroupNotFoundException, DBConcurrentUpdateException {
+        
         Set<Integer> userIds = new HashSet<Integer>();
         for (DuracloudUser user : users) {
             userIds.add(user.getId());
@@ -117,5 +126,4 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     private IdUtil getIdUtil() {
         return repoMgr.getIdUtil();
     }
-
 }

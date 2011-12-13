@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -83,6 +84,17 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
             groupService.createGroup(groupExpected.getName());
         Assert.assertNotNull(group);
         Assert.assertEquals(groupExpected.getName(), group.getName());
+    }
+
+    @Test
+    public void testCreatePublicGroupExists() throws Exception {
+        replayMocks();
+        try{
+            groupService.createGroup(DuracloudGroup.PUBLIC_GROUP_NAME);
+            Assert.assertTrue(false);
+        }catch(DuracloudGroupAlreadyExistsException ex){
+            Assert.assertTrue(true);
+        }
     }
 
     @Test
