@@ -89,8 +89,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                 for(AccountRights rights : rightsSet) {
                     log.debug("Propagating password update to account {}",
                               rights.getAccountId());
-                    propagator.propagatePasswordUpdate(rights.getAccountId(),
-                                                       userId);
+                    propagator.propagateUserUpdate(rights.getAccountId(),
+                                                   userId);
                 }
             }
         } catch (DBNotFoundException e) {

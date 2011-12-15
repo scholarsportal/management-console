@@ -36,11 +36,12 @@ public interface UserDetailsPropagator {
     public void propagateRevocation(int acctId, int userId);
 
     /**
-     * This method propagates the update of a user's password down to the
+     * This method propagates the update of a user's details down to the
      * underlying DuraCloud webapps for the given account.
      *
      * @param acctId of DuraCloud acct to update
      * @param userId of the user who has changed their password
      */
-    public void propagatePasswordUpdate(int acctId, int userId);
+    public void propagateUserUpdate(int acctId, int userId);
+
 }

@@ -522,7 +522,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         }
 
         if(expectPropagate) {
-            propagator.propagatePasswordUpdate(acctId, userId);
+            propagator.propagateUserUpdate(acctId, userId);
             EasyMock.expectLastCall()
                 .times(1);
         }
@@ -587,8 +587,6 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
             Assert.assertEquals(exception, e);
         }
     }
-    
-
 
     private void setUpLoadDuracloudUserByUsername(String username,
                                                   Exception exception)
@@ -658,6 +656,47 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         rights.add(
             new AccountRights(0, acctId, userId, role.getRoleHierarchy()));
         return rights;
+    }
+
+    @Test
+    public void testStoreUserDetails() throws Exception {
+        String username = "username";
+        String password = "password";
+        String firstName = "first";
+        String lastName = "last";
+        String email = "email@email.com";
+        String securityQuestion = "Why?";
+        String securityAnswer = "Because";
+
+        String newEmail = "newemail@email.com";
+
+        DuracloudUser user =
+            new DuracloudUser(userId, username, password, firstName, lastName,
+                              email, securityQuestion, securityAnswer);
+
+        EasyMock.expect(userRepo.findById(userId))
+                .andReturn(user)
+                .once();
+
+        Set<AccountRights> acctRights = new HashSet<AccountRights>();
+        acctRights.add(new AccountRights(0, acctId, userId, new HashSet<Role>()));
+        EasyMock.expect(rightsRepo.findByUserId(userId))
+                .andReturn(acctRights)
+                .once();
+
+        propagator.propagateUserUpdate(acctId, userId);
+        EasyMock.expectLastCall().once();
+
+        Capture<DuracloudUser> userCapture = new Capture<DuracloudUser>();
+        userRepo.save(EasyMock.capture(userCapture));
+
+        replayMocks();
+
+        userService.storeUserDetails(userId, firstName, lastName, newEmail,
+                                     securityQuestion, securityAnswer);
+
+        DuracloudUser updatedUser = userCapture.getValue();
+        Assert.assertEquals(newEmail, updatedUser.getEmail());
     }
 
 }

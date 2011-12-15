@@ -61,7 +61,7 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     }
 
     @Override
-    public void propagatePasswordUpdate(int acctId, int userId) {
+    public void propagateUserUpdate(int acctId, int userId) {
         Set<DuracloudUser> users = findUsers(acctId);
         doPropagate(acctId, users);
         checkForErrors(acctId, userId);

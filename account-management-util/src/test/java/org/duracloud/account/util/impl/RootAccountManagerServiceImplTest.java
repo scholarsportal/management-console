@@ -290,7 +290,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
             .andReturn(rights);
 
-        propagator.propagatePasswordUpdate(EasyMock.anyInt(), EasyMock.anyInt());
+        propagator.propagateUserUpdate(EasyMock.anyInt(), EasyMock.anyInt());
         EasyMock.expectLastCall();
 
         Emailer emailer = EasyMock.createMock("Emailer",

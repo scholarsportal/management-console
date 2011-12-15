@@ -314,20 +314,24 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             user.setPassword(util.generateChecksum(newPassword));
             getUserRepo().save(user);
 
-            try {
-                Set<AccountRights> rightsSet =
-                    repoMgr.getRightsRepo().findByUserId(userId);
-                // Propagate changes for each of the user's accounts
-                if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
-                    for(AccountRights rights : rightsSet) {
-                        propagator.propagatePasswordUpdate(rights.getAccountId(),
-                                                           userId);
-                    }
+            propagateUserUpdate(userId, user.getUsername());
+        }
+    }
+
+    private void propagateUserUpdate(int userId, String username) {
+        try {
+            Set<AccountRights> rightsSet =
+                repoMgr.getRightsRepo().findByUserId(userId);
+            // Propagate changes for each of the user's accounts
+            if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
+                for(AccountRights rights : rightsSet) {
+                    propagator.propagateUserUpdate(rights.getAccountId(),
+                                                   userId);
                 }
-            } catch (DBNotFoundException e) {
-                // Not all users are associated with an account.
-                log.debug("No account rights found for {}", user.getUsername());
             }
+        } catch (DBNotFoundException e) {
+            // Not all users are associated with an account.
+            log.debug("No account rights found for {}", username);
         }
     }
 
@@ -480,12 +484,18 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         log.info("Updating user details for user with ID {}", userId);
 
         DuracloudUser user = getUserRepo().findById(userId);
+        boolean emailUpdate = !user.getEmail().equals(email);
+
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setSecurityQuestion(securityQuestion);
         user.setSecurityAnswer(securityAnswer);
         getUserRepo().save(user);
+
+        if(emailUpdate) {
+            propagateUserUpdate(userId, user.getUsername());
+        }
     }
 
     private Notifier getNotifier() {
