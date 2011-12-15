@@ -10,6 +10,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
+import org.duracloud.account.util.error.InvalidGroupNameException;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -43,8 +44,9 @@ public interface DuracloudGroupService {
      * @return the newly created group
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public DuracloudGroup createGroup(String name) 
-        throws DuracloudGroupAlreadyExistsException, DBConcurrentUpdateException;
+    public DuracloudGroup createGroup(String name)
+        throws DuracloudGroupAlreadyExistsException, InvalidGroupNameException,
+               DBConcurrentUpdateException;
 
     /**
      * Deletes a group.  If the group does not exist, nothing happens.

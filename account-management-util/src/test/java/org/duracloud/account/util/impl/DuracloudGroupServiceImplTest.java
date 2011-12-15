@@ -3,19 +3,19 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
+import org.duracloud.account.util.error.InvalidGroupNameException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -39,7 +39,14 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
     }
 
     private DuracloudGroup createGroup(int i) {
-        return new DuracloudGroup(i, DuracloudGroup.PREFIX + i, null);
+        return createGroup(i, null);
+    }
+
+    private DuracloudGroup createGroup(int i, String name) {
+        if (null == name) {
+            name = DuracloudGroup.PREFIX + i;
+        }
+        return new DuracloudGroup(i, name, null);
     }
 
     @Test
@@ -87,14 +94,41 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testCreatePublicGroupExists() throws Exception {
+    public void testCreateInvalidGroupName() throws Exception {
         replayMocks();
-        try{
-            groupService.createGroup(DuracloudGroup.PUBLIC_GROUP_NAME);
+
+        testInvalidGroupName(DuracloudGroup.PUBLIC_GROUP_NAME);
+        testInvalidGroupName(DuracloudGroup.PUBLIC_GROUP_NAME.toUpperCase());
+        testInvalidGroupName(DuracloudGroup.PREFIX + "_mygroup1");
+        testInvalidGroupName(DuracloudGroup.PREFIX + "mygroup1_");
+        testInvalidGroupName(DuracloudGroup.PREFIX + "$mygroup");
+        testInvalidGroupName(DuracloudGroup.PREFIX + "Mygroup");
+        testInvalidGroupName(DuracloudGroup.PREFIX + "mygroUp");
+        testInvalidGroupName("mygroup");
+    }
+
+    @Test
+    public void testGroupNameValid() {
+        replayMocks();
+
+        testValidGroupName(DuracloudGroup.PREFIX + "mygroup");
+        testValidGroupName(DuracloudGroup.PREFIX + "my.group");
+        testValidGroupName(DuracloudGroup.PREFIX + "my-group");
+        testValidGroupName(DuracloudGroup.PREFIX + "my@group");
+        testValidGroupName(DuracloudGroup.PREFIX + "my_group");
+    }
+
+    private void testInvalidGroupName(String groupName) throws Exception {
+        try {
+            groupService.createGroup(groupName);
             Assert.assertTrue(false);
-        }catch(DuracloudGroupAlreadyExistsException ex){
+        } catch (InvalidGroupNameException ex) {
             Assert.assertTrue(true);
         }
+    }
+
+    private void testValidGroupName(String groupName) {
+        Assert.assertTrue(groupService.isGroupNameValid(groupName));
     }
 
     @Test
@@ -114,7 +148,14 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
 
     private DuracloudGroup createCreateGroupMocks(boolean exists)
         throws DBNotFoundException, DBConcurrentUpdateException {
-        DuracloudGroup group = createGroup(0);
+        return createCreateGroupMocks(exists, 0, null);
+    }
+
+    private DuracloudGroup createCreateGroupMocks(boolean exists,
+                                                  int id,
+                                                  String name)
+        throws DBNotFoundException, DBConcurrentUpdateException {
+        DuracloudGroup group = createGroup(id, name);
         if (exists) {
             EasyMock.expect(groupRepo.findByGroupname(group.getName()))
                     .andReturn(group);

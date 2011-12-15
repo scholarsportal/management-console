@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 /**
  * 
@@ -46,6 +47,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     private DuracloudGroupService groupService;
     private Integer accountId = AmaControllerTestBase.TEST_ACCOUNT_ID;
     private Model model = new ExtendedModelMap();
+    private BindingResult result;
 
     @Before
     public void before() throws Exception {
@@ -67,7 +69,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         accountGroupsController.setAccountManagerService(accountManagerService);
         accountGroupsController.setUserService(userService);
         accountGroupsController.setDuracloudGroupService(groupService);
-
+        result = null;
         setupMocks(accountId);
 
     }
@@ -78,7 +80,9 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         EasyMock.verify(accountService);
         EasyMock.verify(userService);
         EasyMock.verify(groupService);
-
+        if(result != null){
+            EasyMock.verify(result);
+        }
     }
 
     private void setupMocks(int accountId)
@@ -154,9 +158,15 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         GroupsForm form = new GroupsForm();
         form.setAction(Action.ADD);
         form.setGroupName(groupName);
+        
+        result =  EasyMock.createMock("BindingResult", BindingResult.class);
+        EasyMock.expect(result.hasFieldErrors()).andReturn(false);
+        EasyMock.replay(result);
 
-        String view =
-            this.accountGroupsController.modifyGroups(accountId, form, model);
+        String view = this.accountGroupsController.modifyGroups(accountId,
+                                                                model,
+                                                                form,
+                                                                result);
         Assert.assertTrue(view.contains(groupName));
     }
 
@@ -174,8 +184,13 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         form.setAction(Action.REMOVE);
         form.setGroupNames(new String[] { TEST_GROUP_NAME });
 
-        String view =
-            this.accountGroupsController.modifyGroups(accountId, form, model);
+        result =  EasyMock.createMock("BindingResult", BindingResult.class);
+        EasyMock.replay(result);
+
+        String view = this.accountGroupsController.modifyGroups(accountId,
+                                                                model,
+                                                                form,
+                                                                result);
         Assert.assertEquals(AccountGroupsController.GROUPS_VIEW_ID, view);
     }
 

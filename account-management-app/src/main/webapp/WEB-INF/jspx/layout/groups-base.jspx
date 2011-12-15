@@ -15,13 +15,24 @@
   <table>
     <tr>
       <td style="width:50%">
+        <jsp:include
+               page="/WEB-INF/jspx/includes/global-errors.jspx">
+                <jsp:param
+                 name="formName"
+                 value="groupsForm" />
+        </jsp:include>
+      
         <form:form modelAttribute="groupsForm" action="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups" method="post">
           <div >
           
           <div style="padding:5px">
-            <span style="white-space: nowrap;">
-            <form:input path="groupName" style="width:200px; margin-right:10px" placeholder="Enter a new group name here"/>
-            <button type="submit" name="action" value="ADD"><i class="pre plus"></i>Add New Group</button>
+            <span style="white-space: nowrap;"> 
+            <form:input
+                    cssErrorClass="error"
+                    path="groupName"
+                    style="width:200px; margin-right:10px"
+                    placeholder="Enter a new group name here" />
+                  <button type="submit" name="action" value="ADD"><i class="pre plus"></i>Add New Group</button>
             <button type="submit" name="action" value="REMOVE"><i class="pre trash"></i>Remove Selected</button>
             </span>
             

@@ -18,6 +18,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
+import org.duracloud.account.util.error.InvalidGroupNameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,10 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     private Logger log =
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
-    
     private DuracloudRepoMgr repoMgr;
 
     public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
         this.repoMgr = duracloudRepoMgr;
-        
     }
 
     @Override
@@ -43,33 +42,33 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         Set<DuracloudGroup> groups;
         try {
             groups = getGroupRepo().findAllGroups();
-            
+
         } catch (DBNotFoundException e) {
             log.warn("No groups found.");
             groups = new HashSet<DuracloudGroup>();
         }
-        
         return Collections.unmodifiableSet(groups);
     }
 
     @Override
     public DuracloudGroup getGroup(String name)
         throws DuracloudGroupNotFoundException {
-
         try {
-
             return getGroupRepo().findByGroupname(name);
 
         } catch (DBNotFoundException e) {
-            log.error("Unable to find group: {}, exception: {}", name, e);
+            throw new DuracloudGroupNotFoundException(name + " not found");
         }
-
-        throw new DuracloudGroupNotFoundException(name + " not found");
     }
 
     @Override
     public DuracloudGroup createGroup(String name)
-        throws DuracloudGroupAlreadyExistsException, DBConcurrentUpdateException {
+        throws DuracloudGroupAlreadyExistsException, InvalidGroupNameException,
+               DBConcurrentUpdateException {
+        if (!isGroupNameValid(name)) {
+            throw new InvalidGroupNameException(name);
+        }
+
         if (groupExists(name)) {
             throw new DuracloudGroupAlreadyExistsException(name);
         }
@@ -81,11 +80,27 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         return group;
     }
 
-    private boolean groupExists(String name) {
-        if(DuracloudGroup.PUBLIC_GROUP_NAME.equals(name)){
-            return true;
+    /**
+     * This method is 'protected' for testing purposes only.
+     */
+    protected final boolean isGroupNameValid(String name) {
+        if (name == null) {
+            return false;
         }
 
+        if (!name.startsWith(DuracloudGroup.PREFIX)) {
+            return false;
+        }
+
+        if (DuracloudGroup.PUBLIC_GROUP_NAME.equalsIgnoreCase(name)) {
+            return false;
+        }
+
+        return name.substring(DuracloudGroup.PREFIX.length()).matches(
+            "\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
+    }
+
+    private boolean groupExists(String name) {
         try {
             getGroup(name);
             return true;
@@ -102,14 +117,12 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             log.warn("Arg group is null.");
             return;
         }
- 
         getGroupRepo().delete(group.getId());
     }
 
     @Override
     public void updateGroupUsers(DuracloudGroup group, Set<DuracloudUser> users)
         throws DuracloudGroupNotFoundException, DBConcurrentUpdateException {
-        
         Set<Integer> userIds = new HashSet<Integer>();
         for (DuracloudUser user : users) {
             userIds.add(user.getId());
