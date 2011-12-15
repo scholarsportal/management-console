@@ -149,10 +149,11 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     @Test
     public void testGetGroupsAddGroup() throws Exception {
         int groupId = 3;
-        String groupName = "group2";
-        EasyMock.expect(groupService.createGroup(DuracloudGroup.PREFIX+groupName))
-                .andReturn(new DuracloudGroup(groupId, DuracloudGroup.PREFIX+groupName))
-                .times(1);
+        String groupName = DuracloudGroup.PREFIX + "group2";
+
+        DuracloudGroup group = new DuracloudGroup(groupId, groupName);
+        EasyMock.expect(groupService.createGroup(
+            DuracloudGroup.PREFIX + groupName, accountId)).andReturn(group);
 
         replay();
         GroupsForm form = new GroupsForm();
@@ -174,7 +175,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     public void testGetGroupsRemoveGroups() throws Exception {
         expectGroupGroups(1);
         DuracloudGroup group = createGroups().iterator().next();
-        groupService.deleteGroup(group);
+        groupService.deleteGroup(group, accountId);
         EasyMock.expectLastCall().once();
         EasyMock.expect(groupService.getGroup(group.getName()))
                 .andReturn(group)
@@ -266,8 +267,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
                              (Collection<DuracloudUser>) EasyMock.anyObject());
         EasyMock.expectLastCall().once();
 
-        this.groupService.updateGroupUsers(EasyMock.anyObject(DuracloudGroup.class),
-                                           (Set<DuracloudUser>) EasyMock.anyObject());
+        this.groupService
+            .updateGroupUsers(EasyMock.anyObject(DuracloudGroup.class),
+                              (Set<DuracloudUser>) EasyMock.anyObject(),
+                              EasyMock.anyInt());
         EasyMock.expectLastCall().once();
 
         EasyMock.replay(request, session);

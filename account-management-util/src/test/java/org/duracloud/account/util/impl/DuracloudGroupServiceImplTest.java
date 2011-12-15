@@ -26,12 +26,13 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
     private DuracloudGroupServiceImpl groupService;
 
     private Set<DuracloudGroup> groups;
+    private static final int acctId = 7;
 
     @Before
     public void setUp() throws Exception {
         super.before();
 
-        groupService = new DuracloudGroupServiceImpl(repoMgr);
+        groupService = new DuracloudGroupServiceImpl(repoMgr, propagator);
         groups = new HashSet<DuracloudGroup>();
         for (int i = 0; i < NUM_GROUPS; ++i) {
             groups.add(createGroup(i));
@@ -86,9 +87,10 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
     public void testCreateGroup() throws Exception {
         boolean exists = false;
         DuracloudGroup groupExpected = createCreateGroupMocks(exists);
+        replayMocks();
 
         DuracloudGroup group =
-            groupService.createGroup(groupExpected.getName());
+            groupService.createGroup(groupExpected.getName(), acctId);
         Assert.assertNotNull(group);
         Assert.assertEquals(groupExpected.getName(), group.getName());
     }
@@ -120,7 +122,7 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
 
     private void testInvalidGroupName(String groupName) throws Exception {
         try {
-            groupService.createGroup(groupName);
+            groupService.createGroup(groupName, acctId);
             Assert.assertTrue(false);
         } catch (InvalidGroupNameException ex) {
             Assert.assertTrue(true);
@@ -135,9 +137,10 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
     public void testCreateGroupExists() throws Exception {
         boolean exists = true;
         DuracloudGroup groupExpected = createCreateGroupMocks(exists);
+        replayMocks();
 
         try {
-            groupService.createGroup(groupExpected.getName());
+            groupService.createGroup(groupExpected.getName(), acctId);
             Assert.fail("exception expected");
 
         } catch (DuracloudGroupAlreadyExistsException e) {
@@ -161,21 +164,19 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
                     .andReturn(group);
 
         } else {
-            EasyMock.expect(idUtil.newGroupId()).andReturn(3);
+            EasyMock.expect(idUtil.newGroupId()).andReturn(id);
             EasyMock.expect(groupRepo.findByGroupname(group.getName()))
                     .andThrow(new DBNotFoundException("canned exception"));
             groupRepo.save(EasyMock.<DuracloudGroup>anyObject());
             EasyMock.expectLastCall();
         }
-
-        replayMocks();
         return group;
     }
 
     @Test
     public void testDeleteGroupNull() throws Exception {
         replayMocks();
-        groupService.deleteGroup(null);
+        groupService.deleteGroup(null, acctId);
     }
 
     @Test
@@ -183,11 +184,13 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
         int groupId = 0;
         DuracloudGroup group = createDeleteGroupMocks(groupId);
 
-        groupService.deleteGroup(group);
+        groupService.deleteGroup(group, acctId);
     }
 
     private DuracloudGroup createDeleteGroupMocks(int groupId) {
         groupRepo.delete(groupId);
+        EasyMock.expectLastCall();
+        propagator.propagateGroupUpdate(acctId, groupId);
         EasyMock.expectLastCall();
 
         replayMocks();
@@ -204,7 +207,7 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
         DuracloudGroup group = createUpdateGroupUsersMocks();
         Assert.assertEquals(0, group.getUserIds().size());
 
-        groupService.updateGroupUsers(group, users);
+        groupService.updateGroupUsers(group, users, acctId);
         Set<Integer> userIds = group.getUserIds();
         Assert.assertNotNull(userIds);
         Assert.assertEquals(1, userIds.size());
@@ -218,6 +221,10 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
 
         groupRepo.save(group);
         EasyMock.expectLastCall();
+
+        propagator.propagateGroupUpdate(acctId, groupId);
+        EasyMock.expectLastCall();
+        
         replayMocks();
         return group;
     }

@@ -19,6 +19,7 @@ import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.util.error.InvalidGroupNameException;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,12 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
         LoggerFactory.getLogger(DuracloudGroupServiceImpl.class);
 
     private DuracloudRepoMgr repoMgr;
+    private UserDetailsPropagator propagator;
 
-    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr) {
+    public DuracloudGroupServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
+                                     UserDetailsPropagator propagator) {
         this.repoMgr = duracloudRepoMgr;
+        this.propagator = propagator;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     @Override
-    public DuracloudGroup createGroup(String name)
+    public DuracloudGroup createGroup(String name, int acctId)
         throws DuracloudGroupAlreadyExistsException, InvalidGroupNameException,
                DBConcurrentUpdateException {
         if (!isGroupNameValid(name)) {
@@ -111,17 +115,20 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     @Override
-    public void deleteGroup(DuracloudGroup group)
+    public void deleteGroup(DuracloudGroup group, int acctId)
         throws DBConcurrentUpdateException {
         if (null == group) {
             log.warn("Arg group is null.");
             return;
         }
         getGroupRepo().delete(group.getId());
+        propagateUpdate(acctId, group);
     }
 
     @Override
-    public void updateGroupUsers(DuracloudGroup group, Set<DuracloudUser> users)
+    public void updateGroupUsers(DuracloudGroup group,
+                                 Set<DuracloudUser> users,
+                                 int acctId)
         throws DuracloudGroupNotFoundException, DBConcurrentUpdateException {
         Set<Integer> userIds = new HashSet<Integer>();
         for (DuracloudUser user : users) {
@@ -130,6 +137,11 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
 
         group.setUserIds(userIds);
         getGroupRepo().save(group);
+        propagateUpdate(acctId, group);
+    }
+
+    private void propagateUpdate(int acctId, DuracloudGroup group) {
+        propagator.propagateGroupUpdate(acctId, group.getId());
     }
 
     private DuracloudGroupRepo getGroupRepo() {

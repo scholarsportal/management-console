@@ -54,6 +54,7 @@
         scope="singleton"
         name="duracloudGroupService">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="userDetailsPropagator"/>
   </bean>
 
 

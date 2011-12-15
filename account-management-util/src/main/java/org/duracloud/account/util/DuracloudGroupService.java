@@ -41,29 +41,35 @@ public interface DuracloudGroupService {
     /**
      * 
      * @param name of the new group
+     * @param acctId associated with group
      * @return the newly created group
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public DuracloudGroup createGroup(String name)
+    public DuracloudGroup createGroup(String name, int acctId)
         throws DuracloudGroupAlreadyExistsException, InvalidGroupNameException,
                DBConcurrentUpdateException;
 
     /**
      * Deletes a group.  If the group does not exist, nothing happens.
      * @param group to delete
+     * @param acctId associated with group
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public void deleteGroup(DuracloudGroup group) throws DBConcurrentUpdateException;
+    public void deleteGroup(DuracloudGroup group, int acctId)
+        throws DBConcurrentUpdateException;
 
     /**
      * This method replaces the users (if any) associated with the specified group.
      * @param group to be updated
      * @param users to associate with group
+     * @param acctId associated with group
      * @throws DuracloudGroupNotFoundException
      * @throws DBConcurrentUpdateException
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public void updateGroupUsers(DuracloudGroup group, Set<DuracloudUser> users)
-        throws DuracloudGroupNotFoundException, DBConcurrentUpdateException;
+    public void updateGroupUsers(DuracloudGroup group,
+                                 Set<DuracloudUser> users,
+                                 int acctId)
+    throws DuracloudGroupNotFoundException, DBConcurrentUpdateException;
 
 }

@@ -44,4 +44,14 @@ public interface UserDetailsPropagator {
      */
     public void propagateUserUpdate(int acctId, int userId);
 
+
+    /**
+     * This method propagates the update of a group down to the
+     * underlying DuraCloud webapps for the given account.
+     *
+     * @param acctId of DuraCloud acct to update
+     * @param groupId of the group that has changed
+     */
+    public void propagateGroupUpdate(int acctId, int groupId);
+
 }

@@ -57,21 +57,33 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         }
 
         doPropagate(acctId, newUsers);
-        checkForErrors(acctId, userId);
+        checkForErrors(acctId, userId, "userId");
     }
 
     @Override
     public void propagateUserUpdate(int acctId, int userId) {
         Set<DuracloudUser> users = findUsers(acctId);
         doPropagate(acctId, users);
-        checkForErrors(acctId, userId);
+        checkForErrors(acctId, userId, "userId");
     }
 
-    private void checkForErrors(int acctId, int userId) {
+    @Override
+    public void propagateGroupUpdate(int acctId, int groupId) {
+        Set<DuracloudUser> users = findUsers(acctId);
+        doPropagate(acctId, users);
+        checkForErrors(acctId, groupId, "groupId");
+    }
+
+    private void checkForErrors(int acctId, int id, String idName) {
         if (null != error) {
-            throw new DuraCloudRuntimeException(
-                "Failed to propagate: acctId" + acctId + ", userId" + userId,
-                error);
+            StringBuilder msg = new StringBuilder("Failed to propagate, ");
+            msg.append("acctId: ");
+            msg.append(acctId);
+            msg.append(", ");
+            msg.append(idName);
+            msg.append(": ");
+            msg.append(id);
+            throw new DuraCloudRuntimeException(msg.toString(), error);
         }
     }
 

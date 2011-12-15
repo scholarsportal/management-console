@@ -25,6 +25,7 @@ import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.util.error.InvalidGroupNameException;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -97,7 +98,7 @@ public class AccountGroupsController extends AbstractAccountController {
             String name = form.getGroupName();
             String groupName = DuracloudGroup.PREFIX + name;
             try {
-                duracloudGroupService.createGroup(groupName);
+                duracloudGroupService.createGroup(groupName, accountId);
 
             } catch (InvalidGroupNameException e) {
                 if (groupName.equalsIgnoreCase(DuracloudGroup.PUBLIC_GROUP_NAME)) {
@@ -124,7 +125,9 @@ public class AccountGroupsController extends AbstractAccountController {
             String[] groups = form.getGroupNames();
             if(groups != null){
                 for (String name : groups) {
-                    removeGroup(as, this.duracloudGroupService.getGroup(DuracloudGroup.PREFIX+name));
+                    DuracloudGroup group = duracloudGroupService.getGroup(
+                        DuracloudGroup.PREFIX + name);
+                    removeGroup(group, accountId);
                 }
             }
         }
@@ -225,7 +228,8 @@ public class AccountGroupsController extends AbstractAccountController {
 
         // handle save case
         if (action == GroupForm.Action.SAVE) {
-            save(as, group, new HashSet<DuracloudUser>(groupUsers), form);
+            Set<DuracloudUser> users = new HashSet<DuracloudUser>(groupUsers);
+            save(group, users, accountId, form);
             session.removeAttribute(GROUP_USERS_KEY);
             
             return formatGroupRedirect(accountId, groupName, null);
@@ -324,20 +328,19 @@ public class AccountGroupsController extends AbstractAccountController {
         return groupUsers;
     }
 
-    private void save(AccountService as,
-                      DuracloudGroup group,
+    private void save(DuracloudGroup group,
                       Set<DuracloudUser> groupUsers,
+                      int accountId,
                       GroupForm form)
         throws DuracloudGroupNotFoundException,
             DBConcurrentUpdateException {
-        duracloudGroupService.updateGroupUsers(group,
-                                               groupUsers);
+        duracloudGroupService.updateGroupUsers(group, groupUsers, accountId);
         form.reset();
     }
 
-    private void removeGroup(AccountService as, DuracloudGroup group)
+    private void removeGroup(DuracloudGroup group, int accountId)
         throws DBConcurrentUpdateException {
-        this.duracloudGroupService.deleteGroup(group);
+        this.duracloudGroupService.deleteGroup(group, accountId);
     }
 
     private AccountService getAccountService(int accountId) throws Exception {

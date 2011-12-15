@@ -39,6 +39,7 @@ public class UserDetailsPropagatorImplTest {
 
     private int acctId = 2;
     private int userId = 3;
+    private int groupId = 7;
     private Set<Role> roles;
     private Set<Role> newRoles;
 
@@ -85,6 +86,41 @@ public class UserDetailsPropagatorImplTest {
         for (DuracloudInstanceService service : instanceServices) {
             EasyMock.verify(service);
         }
+    }
+
+    @Test
+    public void testPropagateGroupUpdates() throws Exception {
+        createAccountManagerExpectation();
+        createInstanceServiceExpectation();
+        replayMocks();
+
+        propagator = new UserDetailsPropagatorImpl(instanceManagerService,
+                                                   accountServiceFactory);
+        propagator.propagateGroupUpdate(acctId, groupId);
+    }
+
+    private void createInstanceServiceExpectation()
+        throws Exception {
+        instanceManagerService = EasyMock.createMock(
+            "DuracloudInstanceManagerService",
+            DuracloudInstanceManagerService.class);
+
+        for (int i = 0; i < NUM_INSTANCES; ++i) {
+            DuracloudInstanceService instance = EasyMock.createMock(
+                "DuracloudInstanceService",
+                DuracloudInstanceService.class);
+
+            DuracloudInstance info = EasyMock.createMock("DuracloudInstance",
+                                                         DuracloudInstance.class);
+            EasyMock.expect(info.getHostName()).andReturn("hostname.org");
+            EasyMock.expect(instance.getInstanceInfo()).andReturn(info);
+
+            instance.setUserRoles(EasyMock.isA(Set.class));
+            instanceServices.add(instance);
+        }
+
+        EasyMock.expect(instanceManagerService.getInstanceServices(acctId))
+                .andReturn(instanceServices);
     }
 
     @Test
