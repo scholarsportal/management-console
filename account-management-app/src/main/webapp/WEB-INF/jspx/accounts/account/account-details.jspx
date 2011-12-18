@@ -40,8 +40,9 @@
               <table width="100%">
                 <tr>
                   <td><strong class="accountlabel">Account Identification</strong></td>
+                  <sec:authorize access="hasAnyRole('ROLE_OWNER')">
                   <td align="right"><span>
-              <ul
+                  <ul
                    class="horizontal-list">
                     <li>
                       <a
@@ -55,7 +56,8 @@
                       Edit</a>
                     </li>
                   </ul>
-                </span></td>
+                  </span></td>
+                  </sec:authorize>
                 </tr>
               </table><div style="height:20px"></div><table class="datatablesimple">
                 <tr>
