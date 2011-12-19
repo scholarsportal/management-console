@@ -133,11 +133,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         log.info("New user created with username {}", username);
         
-        try{
-            getNotifier().sendNotificationCreateNewUser(user);
-        }catch(UnsentEmailException ex){
-            log.error("Failed to send email to user {}", username, ex);
-        }
+        getNotifier().sendNotificationCreateNewUser(user);
 
         return user;
     }
