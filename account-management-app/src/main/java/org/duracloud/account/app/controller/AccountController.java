@@ -115,7 +115,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     @RequestMapping(value = { INSTANCE_AVAILABLE_PATH }, method = RequestMethod.POST)
@@ -145,7 +145,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     private void sleep(int milliseconds) {
@@ -175,7 +175,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
@@ -191,7 +191,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     protected void restartInstance(int instanceId)
@@ -245,7 +245,7 @@ public class AccountController extends AbstractAccountController {
         String username = SecurityContextHolder.getContext()
             .getAuthentication()
             .getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)
@@ -259,7 +259,8 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
+
     }
 
     protected void stopInstance(int instanceId)
@@ -336,7 +337,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
@@ -348,7 +349,11 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
+    }
+    
+    private String formatUserRedirect(String username){
+        return UserController.formatUserRedirect(username);
     }
 
     public AuthenticationManager getAuthenticationManager() {

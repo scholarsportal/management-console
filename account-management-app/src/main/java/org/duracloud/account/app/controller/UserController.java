@@ -47,25 +47,27 @@ import java.util.Set;
  */
 @Controller
 @Lazy
-@RequestMapping("/users")
+@RequestMapping(UserController.USERS_MAPPING)
 public class UserController extends AbstractController {
 
-    /**
-     * 
-     */
     public static final String USER_KEY = "user";
+
     public static final String NEW_USER_VIEW = "user-new";
+    
     public static final String FORGOT_PASSWORD_VIEW = "forgot-password";
 
     public static final String NEW_USER_WELCOME = "user-welcome";
 
     public static final String USER_HOME = "user-home";
+    
+    public static final String USERS_MAPPING = "/users";
+    
     public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
 
     public static final String USER_ACCOUNTS = "user-accounts";
 
-    public static final String USER_MAPPING = "/byid/{username}";
-
+    public static final String USER_MAPPING = "/byid/{username:[a-z0-9.\\-_@]*}";
+    
     public static final String USER_WELCOME_MAPPING = USER_MAPPING + "/welcome";
 
     public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
@@ -134,7 +136,7 @@ public class UserController extends AbstractController {
         String username = SecurityContextHolder.getContext()
                                                .getAuthentication()
                                                .getName();
-        return "redirect:/users/byid/" + username;
+        return formatUserRedirect(username);
 
     }
 
@@ -241,7 +243,7 @@ public class UserController extends AbstractController {
                                           form.getSecurityQuestion(),
                                           form.getSecurityAnswer());
 
-        return "redirect:" + PREFIX + "/users/byid/" + username;
+        return formatUserRedirect(username);
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.GET)
@@ -271,7 +273,7 @@ public class UserController extends AbstractController {
                                                 form.getOldPassword(),
                                                 false,
                                                 form.getPassword());
-                return "redirect:" + PREFIX + "/users/byid/" + username;
+                return formatUserRedirect(username);
             } catch (InvalidPasswordException e) {
                 result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
                                                "oldPassword",
@@ -425,13 +427,18 @@ public class UserController extends AbstractController {
             }
         }
 
-        String redirect = "redirect:" + PREFIX + "/users/byid/"
-                + newUserForm.getUsername();
+        String redirect = formatUserRedirect(newUserForm.getUsername());
 
         if (accountId > -1) {
             redirect += "?accountId=" + accountId;
         }
 
+        return redirect;
+    }
+
+    protected static String formatUserRedirect(String username) {
+        String redirect =  "redirect:" + USERS_MAPPING + USER_MAPPING;
+        redirect = redirect.replaceAll("\\{username.*\\}", username);
         return redirect;
     }
 
@@ -478,7 +485,7 @@ public class UserController extends AbstractController {
                 return FORGOT_PASSWORD_VIEW;
             }
 
-            String redirect = "redirect:" + PREFIX + "/login";
+            String redirect = "redirect:/login";
 
             return redirect;
         }

@@ -58,7 +58,7 @@ public class AccountGroupsController extends AbstractAccountController {
     protected static String GROUP_KEY = "group";
 
     protected static final String GROUPS_PATH = ACCOUNT_PATH + "/groups";
-    protected static final String GROUP_PATH = GROUPS_PATH + "/{groupName}";
+    protected static final String GROUP_PATH = GROUPS_PATH + "/{groupName:[a-z0-9._\\-@]+}";
     protected static final String GROUP_EDIT_PATH = GROUP_PATH + "/edit";
 
     private static final String GROUP_NAME_RESERVED_ERROR_CODE =
@@ -281,11 +281,11 @@ public class AccountGroupsController extends AbstractAccountController {
 
     
     private String formatGroupRedirect(int accountId, String groupName, String suffix) {
-        return "redirect:"
-            + ACCOUNTS_PATH
-            + GROUP_PATH.replace("{accountId}", String.valueOf(accountId))
-                        .replace("{groupName}", String.valueOf(groupName))
-            + (suffix != null ? suffix : "");
+        String redirect =  "redirect:" + ACCOUNTS_PATH + GROUP_PATH;
+        redirect = redirect.replace("{accountId}", String.valueOf(accountId));
+        redirect = redirect.replaceAll("\\{groupName.*\\}", String.valueOf(groupName));
+        redirect += (suffix != null ? suffix : "");
+        return redirect;
     }
 
     private void addAvailableUsersToModel(Collection<DuracloudUser> allUsers,

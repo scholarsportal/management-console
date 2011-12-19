@@ -30,8 +30,6 @@ public abstract class AbstractController {
 
     protected Logger log = LoggerFactory.getLogger(AbstractController.class);
 
-    protected static final String PREFIX = "";
-
     public static final String NEW_MAPPING = "/new";
     public static final String EDIT_MAPPING = "/edit";
 

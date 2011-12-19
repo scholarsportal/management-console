@@ -132,8 +132,10 @@ public abstract class AbstractAccountController extends AbstractController {
     protected String formatAccountRedirect(String accountId, String suffix) {
         return "redirect:"
             + MessageFormat.format(
-                "{0}{1}{2}{3}", PREFIX, ACCOUNTS_PATH, ACCOUNT_PATH.replace(
-                    "{accountId}", accountId), suffix);
+                "{0}{1}{2}", 
+                ACCOUNTS_PATH, 
+                ACCOUNT_PATH.replace("{accountId}",accountId), 
+                suffix);
     }
         	
 	protected void loadBillingInfo(int accountId, Model model) {
