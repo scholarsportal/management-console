@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.annotation.UniqueUsernameConstraint;
+import org.duracloud.account.annotation.UsernameConstraint;
 import org.duracloud.common.annotation.FieldMatch;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @FieldMatch(first="password", second="passwordConfirm", message="Password confirmation does not match.")
 public class NewUserForm {
 	@Length(min = 4, max = 20, message="Username must be between 4 and 20 characters in length.")
-	@UniqueUsernameConstraint(message="Username is not available; please choose another.")
+	@UsernameConstraint
 	private String username;
 
 	@NotEmpty(message = "Password must be specified.")

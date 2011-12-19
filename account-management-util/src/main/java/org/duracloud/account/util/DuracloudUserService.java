@@ -10,6 +10,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.error.InvalidUsernameException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.springframework.security.access.annotation.Secured;
 
@@ -22,14 +23,16 @@ import org.springframework.security.access.annotation.Secured;
 public interface DuracloudUserService {
 
     /**
-     * This method returns true if no other user has created a profile with the
-     * arg username.
+     * This method throws an exception is the username is non-unique or 
+     * it is not a valid username.
      *
      * @param username sought
      * @return true if not already used
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
-    public boolean isUsernameAvailable(String username);
+    public void checkUsername(String username)
+        throws InvalidUsernameException,
+            UserAlreadyExistsException;
 
     /**
      * This method creates and persists a new user.
@@ -44,6 +47,7 @@ public interface DuracloudUserService {
      * @return DuracloudUser
      * @throws DBConcurrentUpdateException
      * @throws UserAlreadyExistsException
+     * @throws InvalidUsernameException 
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public DuracloudUser createNewUser(String username,
@@ -53,7 +57,9 @@ public interface DuracloudUserService {
                                        String email,
                                        String securityQuestion,
                                        String securityAnswer)
-        throws DBConcurrentUpdateException, UserAlreadyExistsException;
+        throws DBConcurrentUpdateException,
+            UserAlreadyExistsException,
+            InvalidUsernameException;
 
     /**
      * This method sets the roles of a user in an account.

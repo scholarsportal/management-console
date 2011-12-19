@@ -3,6 +3,10 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -23,6 +27,7 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.util.error.InvalidUsernameException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
@@ -35,10 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -62,17 +63,33 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public boolean isUsernameAvailable(String username) {
+    public void checkUsername(String username)
+        throws InvalidUsernameException,
+            UserAlreadyExistsException {
+
+        if (!isValidUsername(username)) {
+            throw new InvalidUsernameException(username);
+        }
+
         if (isReservedName(username)) {
-            return false;
+            throw new UserAlreadyExistsException(username);
         }
 
         try {
             getUserRepo().findByUsername(username);
-            return false;
+            throw new UserAlreadyExistsException(username);
         } catch (DBNotFoundException e) {
-            return true;
+            //do nothing - all's well
         }
+    }
+
+    private boolean isValidUsername(String username) {
+        if(username == null){
+            return false;
+        }
+        
+        return username.matches("\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
+        
     }
 
     private boolean isReservedName(String username) {
@@ -93,10 +110,14 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String email,
                                        String securityQuestion,
                                        String securityAnswer)
-        throws DBConcurrentUpdateException, UserAlreadyExistsException {
-        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+        throws DBConcurrentUpdateException, UserAlreadyExistsException, InvalidUsernameException {
 
+
+        checkUsername(username);
+        
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
         int newUserId = getIdUtil().newUserId();
+        
         DuracloudUser user = new DuracloudUser(newUserId,
                                                username,
                                                util.generateChecksum(password),
@@ -107,22 +128,20 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                                securityAnswer
                                                );
         
-        throwIfUserExists(user);
+
         getUserRepo().save(user);
 
-        getNotifier().sendNotificationCreateNewUser(user);
-
         log.info("New user created with username {}", username);
+        
+        try{
+            getNotifier().sendNotificationCreateNewUser(user);
+        }catch(UnsentEmailException ex){
+            log.error("Failed to send email to user {}", username, ex);
+        }
+
         return user;
     }
 
-    private void throwIfUserExists(DuracloudUser user)
-        throws UserAlreadyExistsException {
-
-        if (!isUsernameAvailable(user.getUsername())) {
-            throw new UserAlreadyExistsException(user.getUsername());
-        }
-    }
 
     @Override
     public boolean setUserRights(int acctId, int userId, Role... roles) {

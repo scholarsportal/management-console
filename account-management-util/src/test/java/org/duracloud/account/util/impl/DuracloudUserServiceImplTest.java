@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -15,6 +20,7 @@ import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
+import org.duracloud.common.error.DuraCloudCheckedException;
 import org.duracloud.notification.Emailer;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -22,11 +28,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -47,27 +48,45 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     @Test
     public void testIsUsernameAvailable() throws Exception {
         String existingName = "name-existing";
-        String newName = "name-new";
-        setUpIsUsernameAvailable(existingName, newName);
+        String newName = "user@user-name.com";
 
-        String rootName = ServerImage.DC_ROOT_USERNAME;
-        String initName = new InitUserCredential().getUsername();
-        Assert.assertFalse(userService.isUsernameAvailable(existingName));
-        Assert.assertFalse(userService.isUsernameAvailable(DuracloudGroup.PREFIX+"test"));
-        Assert.assertFalse(userService.isUsernameAvailable("root"));
-        Assert.assertFalse(userService.isUsernameAvailable("RooT"));
-        Assert.assertFalse(userService.isUsernameAvailable(rootName));
-        Assert.assertFalse(userService.isUsernameAvailable(initName));
-        Assert.assertTrue(userService.isUsernameAvailable(newName));
-    }
-
-    private void setUpIsUsernameAvailable(String existingName, String newName)
-        throws Exception {
         EasyMock.expect(userRepo.findByUsername(existingName)).andReturn(null);
         EasyMock.expect(userRepo.findByUsername(newName))
             .andThrow(new DBNotFoundException("canned-exception"));
 
+        
         replayMocks();
+        String rootName = ServerImage.DC_ROOT_USERNAME;
+
+        String initName = new InitUserCredential().getUsername();
+        checkUsername(false,existingName);
+        checkUsername(false,DuracloudGroup.PREFIX+"test");
+        checkUsername(false,"root");
+        checkUsername(false,"RooT");
+        checkUsername(false,rootName);
+        checkUsername(false,initName);
+        checkUsername(false,"user-");
+        checkUsername(false,"user@");
+        checkUsername(false,"user.");
+        checkUsername(false,"user_");
+        checkUsername(false,"-user");
+        checkUsername(false,"@user");
+        checkUsername(false,".user");
+        checkUsername(false,"_user");
+        checkUsername(false,"USER");
+
+        checkUsername(true,newName);
+
+    }
+
+
+    private void checkUsername(boolean ok, String newName) {
+        try{
+            this.userService.checkUsername(newName);
+            Assert.assertTrue(ok);
+        }catch(DuraCloudCheckedException ex){
+            Assert.assertTrue(!ok);
+        }
     }
 
     @Test
@@ -122,7 +141,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         userRepo.save(EasyMock.isA(DuracloudUser.class));
         EasyMock.expectLastCall();
 
-        EasyMock.expect(idUtil.newUserId()).andReturn(userId).times(2);
+        EasyMock.expect(idUtil.newUserId()).andReturn(userId).times(1);
 
         Emailer emailer = EasyMock.createMock("Emailer",
                                               Emailer.class);

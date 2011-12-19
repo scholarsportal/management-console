@@ -17,8 +17,8 @@ import javax.validation.Payload;
  */
 @Target({ElementType.METHOD, ElementType.FIELD}) 
 @Retention(RetentionPolicy.RUNTIME) 
-@Constraint(validatedBy=UniqueUsernameValidator.class)
-public @interface UniqueUsernameConstraint {
+@Constraint(validatedBy=UsernameValidator.class)
+public @interface UsernameConstraint {
 	 	String message() default "The username is not available. Please choose another.";
 
 		Class<?>[] groups() default {};
