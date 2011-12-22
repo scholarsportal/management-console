@@ -189,4 +189,11 @@ public class AccountServiceSecuredImpl implements AccountService {
         throwIfAccessDenied(invitationId);
         accountService.deleteUserInvitation(invitationId);
     }
+
+    @Override
+    public void cancelAccount(String username, Emailer emailer)
+        throws DBConcurrentUpdateException {
+        throwIfAccessDenied();
+        accountService.cancelAccount(username, emailer);
+    }
 }

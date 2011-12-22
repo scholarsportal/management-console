@@ -169,6 +169,24 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testCancelAccount() throws Exception {
+        this.accountRepo.save(EasyMock.anyObject(AccountInfo.class));
+        EasyMock.expectLastCall();
+
+        Emailer emailer = EasyMock.createMock("Emailer", Emailer.class);
+
+        emailer.send(EasyMock.isA(String.class),
+                     EasyMock.isA(String.class),
+                     EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.replay(emailer);
+        replayMocks();
+        this.acctService.cancelAccount("test", emailer);
+
+    }
+
+    @Test
     public void testGetPendingUserInvitations() throws Exception {
         Set<UserInvitation> userInvitations = new HashSet<UserInvitation>();
         userInvitations.add(createUserInvite());

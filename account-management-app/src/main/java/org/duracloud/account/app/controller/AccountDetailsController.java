@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.validation.Valid;
@@ -37,7 +38,10 @@ public class AccountDetailsController extends AbstractAccountController {
         loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
         loadProviderInfo(accountId, model);
-        addUserToModel(model);
+
+        DuracloudUser user = getUser();
+        model.addAttribute(UserController.USER_KEY, user);
+        model.addAttribute("userRole", user.getRoleByAcct(accountId));
         return ACCOUNT_DETAILS_VIEW_ID;
     }
 

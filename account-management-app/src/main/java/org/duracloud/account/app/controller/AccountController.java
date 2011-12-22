@@ -14,6 +14,7 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
+import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -48,6 +49,9 @@ public class AccountController extends AbstractAccountController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private NotificationMgr notificationMgr;
 
     @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
     public String getHome(@PathVariable int accountId, Model model)
@@ -332,7 +336,8 @@ public class AccountController extends AbstractAccountController {
     public String activate(@PathVariable int accountId,
                            Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException {
-        AccountService accountService = accountManagerService.getAccount(accountId);
+        AccountService accountService = accountManagerService.getAccount(
+            accountId);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
 
         String username =
@@ -354,6 +359,28 @@ public class AccountController extends AbstractAccountController {
     
     private String formatUserRedirect(String username){
         return UserController.formatUserRedirect(username);
+    }
+
+    @RequestMapping(value = { ACCOUNT_PATH + "/cancel" }, method = RequestMethod.POST)
+    public String cancel(@PathVariable int accountId,
+                         Model model)
+        throws AccountNotFoundException, DBConcurrentUpdateException, DuracloudInstanceNotAvailableException {
+
+        //Verify there is not an instance running
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if(instanceServices.size() > 0) {
+            throw new DuracloudInstanceNotAvailableException("An instance can not be running when trying to cancel an account.");
+        }
+
+        String username =
+            SecurityContextHolder.getContext().getAuthentication().getName();
+
+        //Cancel the account
+        AccountService accountService = accountManagerService.getAccount(accountId);
+        accountService.cancelAccount(username, notificationMgr.getEmailer());
+
+        return formatUserRedirect(username);
     }
 
     public AuthenticationManager getAuthenticationManager() {

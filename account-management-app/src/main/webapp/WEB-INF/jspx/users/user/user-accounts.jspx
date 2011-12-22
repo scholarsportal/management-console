@@ -377,6 +377,81 @@
 
                 </c:when>
               </c:choose>
+
+       <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+              <c:choose>
+                <c:when
+                 test="${not empty cancelledAccounts}">
+        <div
+           id="cancelled-list"
+           class="dc-subgroup">
+
+            <div
+             class="dc-subgroup-body">
+            <table border="0" cellspacing="0" cellpadding="4">
+              <tr>
+                <td class="accountlabel"><strong> Cancelled Accounts</strong></td>
+        </tr>
+        </table>
+        <br />
+
+                    <c:forEach
+                     var="a"
+                     items="${cancelledAccounts}">
+                <div class="account-record" style="min-height:100px !important">
+                <table width="100%">
+                      <tr class="account">
+                        <td align="left" valign="middle">
+                          <strong class="accountlabel">${a.accountInfo.acctName}</strong>
+
+                        </td>
+                        <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
+                        <c:if test="${a.userRole != 'ROLE_USER'}">
+                          <c:if test="${a.userRole == 'ROLE_ROOT'}">
+                            <td width="90" align="right" valign="middle">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/activate"
+                              method="post">
+                            <button style="padding-bottom: 5px" type="submit" onclick="AskAndActivate(this); return false;">Activate Account</button>
+                          </form>
+                            </td>
+                          </c:if>
+
+                        <td width="90" align="right" valign="middle"><a class="button"
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
+                             > <span
+                             class="pre plus"> </span> Account Information</a></td>
+                        <td width="90" align="right" valign="middle"><a
+                             href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
+                             class="button"> Manage Users and Roles</a></td>
+                        </c:if>
+                      </tr>
+                      <tr class="account">
+                        <td colspan="5" align="left" valign="middle">
+                        <div />
+                        <div />
+
+
+                            <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
+                            </div>
+                            <div class="instance-panel inactive">
+
+                              <span class="instructions">
+                                  This status of this account is currently CANCELLED. Please contact <c:if test="${a.userRole != 'ROLE_USER'}">DuraCloud</c:if> <c:if test="${a.userRole == 'ROLE_USER'}">your administrator</c:if> to
+                            make your account ACTIVE.</span>
+                            </div>
+
+                        </td>
+                      </tr>
+
+                  </table>
+                </div>
+                    </c:forEach>
+              </div>
+            </div>
+
+                </c:when>
+              </c:choose>
+        </sec:authorize>
         </tiles:putAttribute>
       </tiles:insertDefinition>
     </tiles:putAttribute>

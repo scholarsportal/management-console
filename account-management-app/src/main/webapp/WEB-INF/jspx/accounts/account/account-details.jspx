@@ -17,8 +17,10 @@
      value="${accountInfo.orgName} :: Account Details" />
 
     <tiles:putAttribute
-     name="header-extensions"
-     value="" />
+     name="header-extensions">
+        <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/js/account-details.js"></script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
@@ -40,10 +42,19 @@
               <table width="100%">
                 <tr>
                   <td><strong class="accountlabel">Account Identification</strong></td>
-                  <sec:authorize access="hasAnyRole('ROLE_OWNER')">
+
+                  <c:if test="${userRole == 'ROLE_OWNER'}">
                   <td align="right"><span>
                   <ul
                    class="horizontal-list">
+                    <c:if test="${accountInfo.status != 'CANCELLED'}">
+                    <li>
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/cancel"
+                          method="post">
+                        <button style="padding-bottom: 5px" type="submit" onclick="AskAndCancel(this); return false;">Cancel Account</button>
+                        </form>
+                    </li>
+                    </c:if>
                     <li>
                       <a
                        id="account-edit-link"
@@ -57,7 +68,7 @@
                     </li>
                   </ul>
                   </span></td>
-                  </sec:authorize>
+                  </c:if>
                 </tr>
               </table><div style="height:20px"></div><table class="datatablesimple">
                 <tr>
@@ -149,16 +160,6 @@
                             <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                             <c:choose>
                             <c:when test="${primaryProvider.rrs}">
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndDisable(t)
-                                {
-                                  var answer = confirm("Are you sure you want to disable Reduced Redundancy Storage? Changing this setting requires your instance to be reinitialized if it is running.");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/disable"
                                  method="post">
@@ -168,16 +169,6 @@
                                 </form>
                             </c:when>
                             <c:otherwise>
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndEnable(t)
-                                {
-                                  var answer = confirm("Are you sure you want to enable Reduced Redundancy Storage? Changing this setting requires your instance to be reinitialized if it is running.");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/rrs/enable"
                                  method="post">

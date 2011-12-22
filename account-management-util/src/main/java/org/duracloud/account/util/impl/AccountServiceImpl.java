@@ -301,4 +301,22 @@ public class AccountServiceImpl implements AccountService {
         getUserInvitationRepo().delete(invitationId);
     }
 
+    @Override
+    public void cancelAccount(String username, Emailer emailer)
+        throws DBConcurrentUpdateException {
+        log.info("Cancelling account with id {} and subdomain {}",
+                 account.getId(), account.getSubdomain());
+
+        //Send email requesting cancellation
+        String subject = "Cancel Account Request";
+        String body = "A request has been made by " + username +
+            " to cancel account " + account.getAcctName()+ " with subdomain " +
+            account.getSubdomain();
+        
+
+        emailer.send(subject, body, "admin@duracloud.org");
+
+        //Set the account to cancelled
+        storeAccountStatus(AccountInfo.AccountStatus.CANCELLED);
+    }
 }

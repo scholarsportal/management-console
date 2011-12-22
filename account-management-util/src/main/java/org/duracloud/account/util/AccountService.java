@@ -163,4 +163,14 @@ public interface AccountService {
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void deleteUserInvitation(int invitationId) throws DBConcurrentUpdateException;
+
+    /**
+     * Cancels the account.
+     * @param username
+     * @param emailer
+     * @throws DBConcurrentUpdateException
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public void cancelAccount(String username, Emailer emailer)
+        throws DBConcurrentUpdateException;
 }
