@@ -55,6 +55,7 @@ public class InstanceConfigUtilImplTest {
     private String notificationUsername = "notUser";
     private String notificationPassword = "notPass";
     private String notificationFromAddress = "notAddress";
+    private Collection<String> notificationAdminAddresses;
 
     @Before
     public void setup() throws Exception {
@@ -81,7 +82,8 @@ public class InstanceConfigUtilImplTest {
         NotificationMgrConfig notConfig =
             new NotificationMgrConfig(notificationFromAddress,
                                       notificationUsername,
-                                      notificationPassword);
+                                      notificationPassword,
+                                      notificationAdminAddresses);
 
         instanceConfigUtil =
             new InstanceConfigUtilImpl(instance, repoMgr, notConfig);

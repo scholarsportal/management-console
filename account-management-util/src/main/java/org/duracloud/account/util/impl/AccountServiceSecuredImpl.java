@@ -24,6 +24,7 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -191,9 +192,10 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public void cancelAccount(String username, Emailer emailer)
+    public void cancelAccount(String username, Emailer emailer,
+                              Collection<String> adminAddresses)
         throws DBConcurrentUpdateException {
         throwIfAccessDenied();
-        accountService.cancelAccount(username, emailer);
+        accountService.cancelAccount(username, emailer, adminAddresses);
     }
 }

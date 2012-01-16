@@ -19,7 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -173,6 +175,9 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
         this.accountRepo.save(EasyMock.anyObject(AccountInfo.class));
         EasyMock.expectLastCall();
 
+        Map<String, String> adminAddresses = new HashMap<String, String>();
+        adminAddresses.put("ama.admin.0", "admin@duracloud.org");
+
         Emailer emailer = EasyMock.createMock("Emailer", Emailer.class);
 
         emailer.send(EasyMock.isA(String.class),
@@ -182,7 +187,7 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
 
         EasyMock.replay(emailer);
         replayMocks();
-        this.acctService.cancelAccount("test", emailer);
+        this.acctService.cancelAccount("test", emailer, adminAddresses.values());
 
     }
 

@@ -25,6 +25,7 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -302,7 +303,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void cancelAccount(String username, Emailer emailer)
+    public void cancelAccount(String username, Emailer emailer,
+                              Collection<String> adminAddresses)
         throws DBConcurrentUpdateException {
         log.info("Cancelling account with id {} and subdomain {}",
                  account.getId(), account.getSubdomain());
@@ -312,9 +314,10 @@ public class AccountServiceImpl implements AccountService {
         String body = "A request has been made by " + username +
             " to cancel account " + account.getAcctName()+ " with subdomain " +
             account.getSubdomain();
-        
 
-        emailer.send(subject, body, "admin@duracloud.org");
+        for(String admin : adminAddresses) {
+            emailer.send(subject, body, admin);
+        }
 
         //Set the account to cancelled
         storeAccountStatus(AccountInfo.AccountStatus.CANCELLED);

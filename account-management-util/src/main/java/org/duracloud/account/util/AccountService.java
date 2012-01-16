@@ -13,6 +13,7 @@ import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.security.access.annotation.Secured;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -171,6 +172,6 @@ public interface AccountService {
      * @throws DBConcurrentUpdateException
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void cancelAccount(String username, Emailer emailer)
+    public void cancelAccount(String username, Emailer emailer, Collection<String> adminAddresses)
         throws DBConcurrentUpdateException;
 }

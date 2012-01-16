@@ -21,6 +21,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -101,9 +102,11 @@ public class DuracloudInstanceServiceTestBase {
         String notificationUsername = "notUser";
         String notificationPassword = "notPass";
         String notificationFromAddress = "notAddress";
+        Collection<String> notificationAdminAddresses = null;
         notConfig = new NotificationMgrConfig(notificationFromAddress,
                                               notificationUsername,
-                                              notificationPassword);
+                                              notificationPassword,
+                                              notificationAdminAddresses);
 
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,

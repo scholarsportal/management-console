@@ -10,6 +10,8 @@ import org.duracloud.notification.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+
 /**
  * @author Andrew Woods
  *         Date: 3/17/11
@@ -34,8 +36,9 @@ public class NotificationMgrImpl implements NotificationMgr {
     public void initialize(AmaConfig config) {
         String username = config.getUsername();
         String password = config.getPassword();
+        Collection<String> adminAddresses = config.getAdminAddresses();
 
-        mgrConfig = new NotificationMgrConfig(fromAddress, username, password);
+        mgrConfig = new NotificationMgrConfig(fromAddress, username, password, adminAddresses);
         factory.initialize(username, password);
         isInitialized = true;
     }
