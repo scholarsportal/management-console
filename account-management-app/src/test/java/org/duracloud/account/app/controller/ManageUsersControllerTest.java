@@ -6,6 +6,8 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -62,6 +64,10 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
             .andReturn(users);
         EasyMock.expect(rootAccountManagerService.listAllAccounts(null))
             .andReturn(new HashSet<AccountInfo>());
+        EasyMock.expect(rootAccountManagerService.listAllServerImages(null))
+            .andReturn(new HashSet<ServerImage>());
+        EasyMock.expect(rootAccountManagerService.listAllServiceRepositories(null))
+            .andReturn(new HashSet<ServiceRepository>());
 
         EasyMock.expect(accountService.retrieveAccountInfo())
             .andReturn(createAccountInfo())

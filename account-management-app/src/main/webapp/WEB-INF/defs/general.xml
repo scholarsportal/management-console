@@ -42,6 +42,10 @@
   <definition name="accounts-home" template="/WEB-INF/jspx/accounts/accounts-home.jspx" />
   <definition name="manage-users" template="/WEB-INF/jspx/users/manage-users.jspx" />
   <definition name="account-setup" template="/WEB-INF/jspx/accounts/account/account-setup.jspx" />
+  <definition name="serverImage-new" template="/WEB-INF/jspx/accounts/serverImage/serverImage-new.jspx" />
+  <definition name="serverImage-edit" template="/WEB-INF/jspx/accounts/serverImage/serverImage-edit.jspx" />
+  <definition name="serviceRepo-new" template="/WEB-INF/jspx/accounts/serviceRepo/serviceRepo-new.jspx" />
+  <definition name="serviceRepo-edit" template="/WEB-INF/jspx/accounts/serviceRepo/serviceRepo-edit.jspx" />
 
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />

@@ -3,13 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.common.domain.*;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -104,6 +98,190 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         Set<DuracloudUser> users = rootService.listAllUsers(filter);
         Assert.assertNotNull(users);
         Assert.assertEquals(1, users.size());
+    }
+
+    @Test
+    public void testListAllServerImages() throws Exception {
+        int id = 1;
+        ServerImage serverImage = new ServerImage(id,
+                                                  1,
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  true);
+
+        Set<Integer> ids = new HashSet<Integer>();
+        ids.add(id);
+
+        EasyMock.expect(serverImageRepo.getIds()).andReturn(ids);
+        EasyMock.expect(serverImageRepo.findById(id)).andReturn(serverImage);
+
+        replayMocks();
+
+        String filter = null;
+        Set<ServerImage> serverImages = rootService.listAllServerImages(filter);
+        Assert.assertNotNull(serverImages);
+        Assert.assertEquals(1, serverImages.size());
+    }
+
+    @Test
+    public void testListAllServiceRepositories() throws Exception {
+        int id = 1;
+        ServiceRepository serviceRepository = new ServiceRepository(id,
+                                                  ServiceRepository.ServiceRepositoryType.PRIVATE,
+                                                  ServicePlan.TRIAL,
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "");
+
+        Set<Integer> ids = new HashSet<Integer>();
+        ids.add(id);
+
+        EasyMock.expect(serviceRepositoryRepo.getIds()).andReturn(ids);
+        EasyMock.expect(serviceRepositoryRepo.findById(id)).andReturn(serviceRepository);
+
+        replayMocks();
+
+        String filter = null;
+        Set<ServiceRepository> serviceRepositories = rootService.listAllServiceRepositories(filter);
+        Assert.assertNotNull(serviceRepositories);
+        Assert.assertEquals(1, serviceRepositories.size());
+    }
+
+    @Test
+    public void testCreateServerImage() throws Exception {
+        EasyMock.expect(idUtil.newServerImageId())
+            .andReturn(1);
+        serverImageRepo.save(EasyMock.isA(ServerImage.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.createServerImage(1,
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    false);
+    }
+
+    @Test
+    public void testEditServerImage() throws Exception {
+        ServerImage serverImage = new ServerImage(1,
+                                                  1,
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  false);
+        EasyMock.expect(serverImageRepo.findById(EasyMock.anyInt()))
+            .andReturn(serverImage);
+
+        serverImageRepo.save(EasyMock.isA(ServerImage.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.editServerImage(1,
+                                    1,
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    false);
+    }
+
+    @Test
+    public void testGetServerImage() throws Exception {
+        EasyMock.expect(serverImageRepo.findById(EasyMock.anyInt()))
+            .andReturn(null);
+
+        replayMocks();
+        
+        rootService.getServerImage(1);
+    }
+
+    @Test
+    public void testDeleteServerImage() throws Exception {
+        serverImageRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        replayMocks();
+        
+        rootService.deleteServerImage(1);
+    }
+
+    @Test
+    public void testCreateServiceRepository() throws Exception {
+        EasyMock.expect(idUtil.newServiceRepositoryId())
+            .andReturn(1);
+        serviceRepositoryRepo.save(EasyMock.isA(ServiceRepository.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.createServiceRepository(ServiceRepository.ServiceRepositoryType.PRIVATE,
+                                            ServicePlan.TRIAL,
+                                            "",
+                                            "",
+                                            "",
+                                            "",
+                                            "",
+                                            "");
+    }
+
+    @Test
+    public void testEditServiceRepository() throws Exception {
+        ServiceRepository serviceRepository = new ServiceRepository(1,
+                                                  ServiceRepository.ServiceRepositoryType.PRIVATE,
+                                                  ServicePlan.TRIAL,
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "");
+        EasyMock.expect(serviceRepositoryRepo.findById(EasyMock.anyInt()))
+            .andReturn(serviceRepository);
+
+        serviceRepositoryRepo.save(EasyMock.isA(ServiceRepository.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.editServiceRepository(1,
+                                          ServiceRepository.ServiceRepositoryType.PRIVATE,
+                                          ServicePlan.TRIAL,
+                                          "",
+                                          "",
+                                          "",
+                                          "",
+                                          "",
+                                          "");
+    }
+
+    @Test
+    public void testGetServiceRepository() throws Exception {
+        EasyMock.expect(serviceRepositoryRepo.findById(EasyMock.anyInt()))
+            .andReturn(null);
+
+        replayMocks();
+
+        rootService.getServiceRepository(1);
+    }
+
+    @Test
+    public void testDeleteServiceRepository() throws Exception {
+        serviceRepositoryRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.deleteServiceRepository(1);
     }
 
     @Test

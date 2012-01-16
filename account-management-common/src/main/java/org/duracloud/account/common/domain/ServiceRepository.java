@@ -137,6 +137,38 @@ public class ServiceRepository extends BaseDomainData {
         return password;
     }
 
+    public void setServiceRepositoryType(ServiceRepositoryType serviceRepositoryType) {
+        this.serviceRepositoryType = serviceRepositoryType;
+    }
+
+    public void setServicePlan(ServicePlan servicePlan) {
+        this.servicePlan = servicePlan;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public void setSpaceId(String spaceId) {
+        this.spaceId = spaceId;
+    }
+
+    public void setServiceXmlId(String serviceXmlId) {
+        this.serviceXmlId = serviceXmlId;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

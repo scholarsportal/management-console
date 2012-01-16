@@ -5,6 +5,10 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.ServiceRepository;
+import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -32,6 +36,18 @@ public interface RootAccountManagerService {
      * @return
      */
     public Set<DuracloudUser> listAllUsers(String filter);
+
+    /**
+     * @param filter optional filter on provider image id
+     * @return
+     */
+    public Set<ServerImage> listAllServerImages(String filter);
+
+    /**
+     * @param filter optional filter on host name
+     * @return
+     */
+    public Set<ServiceRepository> listAllServiceRepositories(String filter);
 
     /**
      * 
@@ -63,6 +79,112 @@ public interface RootAccountManagerService {
      * @param id
      */
     public AccountInfo getAccount(int id);
+
+    /**
+     * Creates a service image in the system
+     *
+     * @param providerAccountId
+     * @param providerImageId
+     * @param version
+     * @param description
+     * @param password
+     * @param latest
+     */
+    public void createServerImage(int providerAccountId,
+                                  String providerImageId,
+                                  String version,
+                                  String description,
+                                  String password,
+                                  boolean latest);
+    /**
+     * Edits a service image in the system
+     *
+     * @param id
+     * @param providerAccountId
+     * @param providerImageId
+     * @param version
+     * @param description
+     * @param password
+     * @param latest
+     */
+    public void editServerImage(int id,
+                                int providerAccountId,
+                                String providerImageId,
+                                String version,
+                                String description,
+                                String password,
+                                boolean latest);
+
+    /**
+     * Gets a server image from the system
+     *
+     * @param id
+     */
+    public ServerImage getServerImage(int id);
+
+    /**
+     * Deletes a server image from the system
+     *
+     * @param id
+     */
+    public void deleteServerImage(int id);
+
+    /**
+     * Creates a service repo in the system
+     *
+     * @param serviceRepositoryType
+     * @param servicePlan
+     * @param hostName
+     * @param spaceId
+     * @param serviceXmlId
+     * @param version
+     * @param username
+     * @param password
+     */
+    public void createServiceRepository(ServiceRepositoryType serviceRepositoryType,
+                                        ServicePlan servicePlan,
+                                        String hostName,
+                                        String spaceId,
+                                        String serviceXmlId,
+                                        String version,
+                                        String username,
+                                        String password);
+    /**
+     * Updates a service repo in the system
+     *
+     * @param id
+     * @param serviceRepositoryType
+     * @param servicePlan
+     * @param hostName
+     * @param spaceId
+     * @param serviceXmlId
+     * @param version
+     * @param username
+     * @param password
+     */
+    public void editServiceRepository(int id,
+                                      ServiceRepositoryType serviceRepositoryType,
+                                      ServicePlan servicePlan,
+                                      String hostName,
+                                      String spaceId,
+                                      String serviceXmlId,
+                                      String version,
+                                      String username,
+                                      String password);
+
+    /**
+     * Gets a service repo from the system
+     *
+     * @param id
+     */
+    public ServiceRepository getServiceRepository(int id);
+
+    /**
+     * Deletes a service repo from the system
+     *
+     * @param id
+     */
+    public void deleteServiceRepository(int id);
 
     /**
      * Gets secondary storage providers for an account from the system

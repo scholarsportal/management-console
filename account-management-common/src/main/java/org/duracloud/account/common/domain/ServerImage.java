@@ -82,24 +82,48 @@ public class ServerImage extends BaseDomainData {
         return providerAccountId;
     }
 
+    public void setProviderAccountId(int providerAccountId) {
+        this.providerAccountId = providerAccountId;
+    }
+
     public String getProviderImageId() {
         return providerImageId;
+    }
+
+    public void setProviderImageId(String providerImageId) {
+        this.providerImageId = providerImageId;
     }
 
     public String getVersion() {
         return version;
     }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getDcRootPassword() {
         return dcRootPassword;
     }
 
+    public void setDcRootPassword(String dcRootPassword) {
+        this.dcRootPassword = dcRootPassword;
+    }
+
     public boolean isLatest() {
         return latest;
+    }
+
+    public void setLatest(boolean latest) {
+        this.latest = latest;
     }
 
     /*

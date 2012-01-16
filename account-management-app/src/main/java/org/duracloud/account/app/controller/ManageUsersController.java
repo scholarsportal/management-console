@@ -169,6 +169,9 @@ public class ManageUsersController extends AbstractController {
             accounts.add(duracloudAccount);
         }
 		model.addAttribute("accounts", accounts);
+        
+		model.addAttribute("serverImages", rootAccountManagerService.listAllServerImages(null));
+		model.addAttribute("serviceRepos", rootAccountManagerService.listAllServiceRepositories(null));
 
         addUserToModel(model);
         model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());

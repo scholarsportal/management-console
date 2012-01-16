@@ -4,18 +4,15 @@
 package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.common.domain.*;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -26,6 +23,8 @@ import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.util.ChecksumUtil;
+import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,6 +312,221 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	}
 
+	@Override
+	public Set<ServerImage> listAllServerImages(String filter) {
+		Set<Integer> imageIds = getServerImageRepo().getIds();
+		Set<ServerImage> images = new HashSet<ServerImage>();
+        ServerImage image = null;
+		for(int id : imageIds){
+            try{
+				image = getServerImageRepo().findById(id);
+			}catch(DBNotFoundException ex){
+				log.error("No Server Image found with ID {}", id);
+                continue;
+			}
+
+            if(filter == null ||
+                (image.getProviderImageId().startsWith(filter))
+            ){
+
+                images.add(image);
+            }
+		}
+		return images;
+	}
+
+	@Override
+	public Set<ServiceRepository> listAllServiceRepositories(String filter) {
+		Set<Integer> repoIds = getServiceRepositoryRepo().getIds();
+		Set<ServiceRepository> repositories = new HashSet<ServiceRepository>();
+        ServiceRepository repository = null;
+		for(int id : repoIds){
+            try{
+				repository = getServiceRepositoryRepo().findById(id);
+			}catch(DBNotFoundException ex){
+				log.error("No Service Repository found with ID {}", id);
+                continue;
+			}
+
+            if(filter == null ||
+                (repository.getHostName().startsWith(filter))
+            ){
+
+                repositories.add(repository);
+            }
+		}
+		return repositories;
+
+	}
+
+	@Override
+	public void createServerImage(int providerAccountId,
+                                  String providerImageId,
+                                  String version,
+                                  String description,
+                                  String password,
+                                  boolean latest) {
+        try{
+            if(latest) {
+                //Remove current latest
+                ServerImage latestImage = getServerImageRepo().findLatest();
+                latestImage.setLatest(!latest);
+                getServerImageRepo().save(latestImage);
+            }
+
+            int id = getIdUtil().newServerImageId();
+
+            ServerImage serverImage =
+                new ServerImage(id,
+                                providerAccountId,
+                                providerImageId,
+                                version,
+                                description,
+                                password,
+                                latest);
+
+            getServerImageRepo().save(serverImage);
+        }catch(DBConcurrentUpdateException ex){
+            log.error("Error creating Server Image");
+        }
+	}
+
+	@Override
+	public void editServerImage(int id,
+                                int providerAccountId,
+                                String providerImageId,
+                                String version,
+                                String description,
+                                String password,
+                                boolean latest) {
+        try{
+            if(latest) {
+                //Remove current latest
+                ServerImage latestImage = getServerImageRepo().findLatest();
+                if(latestImage.getId() != id) {
+                    latestImage.setLatest(!latest);
+                    getServerImageRepo().save(latestImage);
+                }
+            }
+
+            ServerImage serverImage = getServerImageRepo().findById(id);
+
+            serverImage.setProviderAccountId(providerAccountId);
+            serverImage.setProviderImageId(providerImageId);
+            serverImage.setVersion(version);
+            serverImage.setDescription(description);
+            serverImage.setDcRootPassword(password);
+            serverImage.setLatest(latest);
+            
+            getServerImageRepo().save(serverImage);
+        }catch(DBConcurrentUpdateException ex){
+            log.error("Error creating Server Image");
+        }catch(DBNotFoundException ex){
+            log.error("No Server Image found with ID {}", id);
+        }
+	}
+
+	@Override
+	public ServerImage getServerImage(int id) {
+        try{
+            return getServerImageRepo().findById(id);
+        }catch(DBNotFoundException ex){
+            log.error("No Server Image found with ID {}", id);
+        }
+        return null;
+	}
+
+	@Override
+	public void deleteServerImage(int id) {
+        log.info("Deleting server image with ID {}", id);
+
+        getServerImageRepo().delete(id);
+	}
+
+	@Override
+	public void createServiceRepository(ServiceRepositoryType serviceRepositoryType,
+                                        ServicePlan servicePlan,
+                                        String hostName,
+                                        String spaceId,
+                                        String serviceXmlId,
+                                        String version,
+                                        String username,
+                                        String password) {
+        try{
+            int id = getIdUtil().newServiceRepositoryId();
+
+            ServiceRepository serviceRepo =
+                new ServiceRepository(id,
+                                      serviceRepositoryType,
+                                      servicePlan,
+                                      hostName,
+                                      spaceId,
+                                      serviceXmlId,
+                                      version,
+                                      username,
+                                      password);
+
+            getServiceRepositoryRepo().save(serviceRepo);
+        }catch(DBConcurrentUpdateException ex){
+            log.error("Error creating Service Repo");
+        }
+	}
+
+	@Override
+	public void editServiceRepository(int id,
+                                      ServiceRepositoryType serviceRepositoryType,
+                                      ServicePlan servicePlan,
+                                      String hostName,
+                                      String spaceId,
+                                      String serviceXmlId,
+                                      String version,
+                                      String username,
+                                      String password) {
+        try{
+            ServiceRepository serviceRepo = getServiceRepositoryRepo().findById(id);
+
+            serviceRepo.setServiceRepositoryType(serviceRepositoryType);
+            serviceRepo.setServicePlan(servicePlan);
+            serviceRepo.setHostName(hostName);
+            serviceRepo.setSpaceId(spaceId);
+            serviceRepo.setServiceXmlId(serviceXmlId);
+            serviceRepo.setVersion(version);
+            serviceRepo.setUsername(username);
+            serviceRepo.setPassword(password);
+
+            getServiceRepositoryRepo().save(serviceRepo);
+        }catch(DBNotFoundException ex){
+            log.error("No Service Repo found with ID {}", id);
+        }catch(DBConcurrentUpdateException ex){
+            log.error("Error updating Service Repo");
+        }
+	}
+
+	@Override
+	public ServiceRepository getServiceRepository(int id) {
+        try{
+            return getServiceRepositoryRepo().findById(id);
+        }catch(DBNotFoundException ex){
+            log.error("No Service Repo found with ID {}", id);
+        }
+        return null;
+	}
+
+	@Override
+	public void deleteServiceRepository(int id) {
+        log.info("Deleting service repo with ID {}", id);
+
+        getServiceRepositoryRepo().delete(id);
+	}
+
+    private DuracloudServerImageRepo getServerImageRepo() {
+        return repoMgr.getServerImageRepo();
+    }
+
+    private DuracloudServiceRepositoryRepo getServiceRepositoryRepo() {
+        return repoMgr.getServiceRepositoryRepo();
+    }
+
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();
     }
@@ -327,6 +541,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private DuracloudStorageProviderAccountRepo getStorageRepo() {
         return repoMgr.getStorageProviderAccountRepo();
+    }
+
+    private IdUtil getIdUtil() {
+        return repoMgr.getIdUtil();
     }
 
     private Notifier getNotifier() {

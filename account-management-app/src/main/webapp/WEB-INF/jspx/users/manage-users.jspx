@@ -23,50 +23,8 @@
         <script type="text/javascript"
              src="${pageContext.request.contextPath}/static/jquery/plugins/jquery.tablesorter/jquery.tablesorter.js"></script>
 
-        <script type="text/javascript" language="JavaScript">
-          $(document).ready(function() {
-            $("#sort").tablesorter({
-                headers: {
-                    4: {
-                        sorter: false
-                    },
-                    5: {
-                        sorter: false
-                    },
-                    6: {
-                        sorter: false
-                    },
-                    7: {
-                        sorter: false
-                    },
-                    8: {
-                        sorter: false
-                    },
-                    9: {
-                        sorter: false
-                    }
-                }
-            });
-            
-            $("#sort-accounts").tablesorter({
-                headers: {
-                    4: {
-                        sorter: false
-                    },
-                    5: {
-                        sorter: false
-                    },
-                    6: {
-                        sorter: false
-                    }
-                }
-            });
-
-            $('.hover').click(function() {
-                $(this).siblings('.datatablesimple').slideToggle('fast');
-            });
-         });
-        </script>
+        <script type="text/javascript"
+             src="${pageContext.request.contextPath}/static/js/manage-users.js"></script>
     </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -81,6 +39,14 @@
               <td>
                   <h1>Root Console</h1>
               </td>
+              </tr>
+            </table>
+          <div
+           id="user-list"
+           class="account-record user-list">
+            <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
+              <tr>
+                <td class="accountlabel"> Manage Users</td>
                 <td align="right">
 
                         <form:form
@@ -127,14 +93,6 @@
                           Add User to Account</button>
                         </form:form>
                 </td>
-              </tr>
-            </table>
-          <div
-           id="user-list"
-           class="account-record user-list">
-            <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
-              <tr>
-                <td class="accountlabel"> Manage Users</td>
             </tr>
             </table>
            <div style="height:20px"></div>
@@ -180,16 +138,6 @@
                       <ul
                        class="horizontal-list">
                           <li>
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndReset(t)
-                                {
-                                  var answer = confirm("Are you sure you want to reset this user's password?");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/users/manage/byid/${u.id}/reset"
                                  method="post">
@@ -207,16 +155,6 @@
                         <c:if
                          test="${u.deletable}">
                           <li>
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndRemove(t)
-                                {
-                                  var answer = confirm("Are you sure you want to remove this user from the DuraCloud system? This action cannot be undone.");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/users/manage/byid/${u.id}/delete"
                                  method="post">
@@ -314,16 +252,6 @@
                         <c:if
                          test="${a.deletable}">
                           <li>
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndSubmit(t)
-                                {
-                                  var answer = confirm("Are you sure you want to remove the user from this account?");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.id}/users/byid/${u.id}/delete"
                                  method="post">
@@ -355,6 +283,16 @@
             <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
               <tr>
                 <td class="accountlabel"> Manage Accounts</td>
+                    <td align="right">
+                        <a
+                     href="${pageContext.request.contextPath}/accounts/new"
+                     class="button">
+                    <i
+                     class="pre plus">
+                    </i>
+
+                    Add DuraCloud Account</a><br />
+                    </td>
               </tr>
             </table>
            <div style="height:20px"></div>
@@ -407,16 +345,6 @@
 
 
                         <c:if test="${a.accountInfo.status == 'INACTIVE'}">
-                          <script type="text/javascript" language="JavaScript">
-                            function AskAndActivate(t)
-                            {
-                              var answer = confirm("Are you sure you want to activate this account.");
-                              if (answer)
-                              {
-                                t.form.submit();
-                              }
-                            }
-                          </script>
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/activate"
                               method="post">
@@ -427,17 +355,6 @@
 
                         <c:if test="${a.accountInfo.status == 'ACTIVE'}">
                         <c:if test="${a.instanceStatus == null}">
-
-                          <script type="text/javascript" language="JavaScript">
-                            function AskAndDeactivate(t)
-                            {
-                              var answer = confirm("Are you sure you want to deactivate this account.");
-                              if (answer)
-                              {
-                                t.form.submit();
-                              }
-                            }
-                          </script>
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
@@ -453,16 +370,6 @@
                        class="horizontal-list">
                           <li>
                               <c:if test="${a.instanceStatus == null}">
-                              <script type="text/javascript" language="JavaScript">
-                                function AskAndRemove(t)
-                                {
-                                  var answer = confirm("Are you sure you want to remove this account from the DuraCloud system? This action cannot be undone.");
-                                  if (answer)
-                                  {
-                                    t.form.submit();
-                                  }
-                                }
-                              </script>
                                 <form
                                  action="${pageContext.request.contextPath}/users/manage/accounts/byid/${a.accountInfo.id}/delete"
                                  method="post">
@@ -486,7 +393,164 @@
               </table>
             </div>
 
+            <div
+               id="image-list"
+               class="account-record user-list">
+                <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
+                  <tr>
+                    <td class="accountlabel"> Manage Server Images</td>
+                    <td align="right">
 
+                           <a
+                     href="${pageContext.request.contextPath}/manage/serverImage/new"
+                     class="button">
+                    <i
+                     class="pre plus">
+                    </i>
+
+                    Add Server Image</a><br />
+                    </td>
+                  </tr>
+                </table>
+               <div style="height:20px"></div>
+                    <table id="sort-images" class="datatablesimple">
+                    <thead>
+                    <tr>
+                      <th align="left">Provider Account Id</th>
+
+                      <th align="left">Image Id</th>
+
+                      <th align="left">Version</th>
+
+                      <th align="left">Description</th>
+                      <th align="left">Latest</th>
+                      <th align="left"></th>
+                      <th align="left"></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <c:forEach
+                     var="i"
+                     items="${serverImages}">
+                      <tr>
+                        <td align="left">${i.providerAccountId}</td>
+
+                        <td align="left">${i.providerImageId}</td>
+
+                        <td align="left">${i.version}</td>
+                        <td align="left">${i.description}</td>
+                        <td align="left">${i.latest}</td>
+                        <td align="left">
+                         <a
+                         href="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/edit"
+                         class="button">
+                             <i
+                               class="pre pencil">
+                             </i>
+                             Edit</a>
+                        </td>
+                        <td align="left">
+                            <form
+                             action="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/delete"
+                             method="post">
+                              <button style="margin-right:8px !important"
+                               type="submit" onclick="AskAndDelete(this); return false;">
+                              <i
+                               class="pre trash">
+                              </i>
+
+                              Delete</button>
+                            </form>
+                        </td>
+
+                      </tr>
+                    </c:forEach>
+                    </tbody>
+
+                  </table>
+                </div>
+
+            <div
+               id="repository-list"
+               class="account-record user-list">
+                <table class="hover" border="0" cellspacing="0" cellpadding="0" width="100%">
+                  <tr>
+                    <td class="accountlabel"> Manage Service Repositories</td>
+                    <td align="right">
+                           <a
+                     href="${pageContext.request.contextPath}/manage/serviceRepo/new"
+                     class="button">
+                    <i
+                     class="pre plus">
+                    </i>
+
+                    Add Service Repository</a><br />
+                    </td>
+                  </tr>
+                </table>
+               <div style="height:20px"></div>
+                    <table id="sort-repos" class="datatablesimple">
+                    <thead>
+                    <tr>
+                      <th align="left">Host Name</th>
+                      <th align="left">Space Id</th>
+                      <th align="left">Service XML Id</th>
+
+                      <th align="left">Version</th>
+
+                      <th align="left">User name</th>
+                      <th align="left">Type</th>
+                      <th align="left">Plan</th>
+                      <th align="left"></th>
+                      <th align="left"></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <c:forEach
+                     var="r"
+                     items="${serviceRepos}">
+                      <tr>
+                        <td align="left">${r.hostName}</td>
+                        <td align="left">${r.spaceId}</td>
+                        <td align="left">${r.serviceXmlId}</td>
+
+                        <td align="left">${r.version}</td>
+                        <td align="left">${r.username}</td>
+                        <td align="left">${r.serviceRepositoryType}</td>
+                        <td align="left">${r.servicePlan}</td>
+                        <td align="left">
+                            <a
+                             href="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/edit"
+                             class="button">
+                              <i
+                               class="pre pencil">
+                              </i>
+                              Edit</a>
+                        </td>
+                        <td align="left">
+                            <form
+                             action="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/delete"
+                             method="post">
+                              <button style="margin-right:8px !important"
+                               type="submit" onclick="AskAndDel(this); return false;">
+                              <i
+                               class="pre trash">
+                              </i>
+
+                              Delete</button>
+                            </form>
+                        </td>
+
+                      </tr>
+                    </c:forEach>
+                    </tbody>
+
+                  </table>
+                </div>
 
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                <tr>
