@@ -1,6 +1,6 @@
 function AskAndCancel(t)
 {
-    var answer = confirm("Are you sure you want to cancel this account? You much stop the instance first before cancelling the account. An e-mail will be sent to DuraCloud requesting cancellation.");
+    var answer = confirm("Are you sure you want to cancel this account? Canceling this account will remove all stored data. Clicking OK will begin the cancellation process by notifying DuraCloud staff. Cancellation will only proceed if the account instance has first been stopped.");
     if (answer)
     {
         t.form.submit();
