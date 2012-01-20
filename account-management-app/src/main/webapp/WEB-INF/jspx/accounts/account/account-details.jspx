@@ -43,7 +43,7 @@
                 <tr>
                   <td><strong class="accountlabel">Account Identification</strong></td>
 
-                  <c:if test="${userRole == 'ROLE_OWNER'}">
+                  <c:if test="${userRole == 'ROLE_OWNER' || userRole == 'ROLE_ROOT'}">
                   <td align="right"><span>
                   <ul
                    class="horizontal-list">
