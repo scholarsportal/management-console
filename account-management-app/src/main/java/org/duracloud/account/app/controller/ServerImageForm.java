@@ -11,7 +11,6 @@ public class ServerImageForm {
     @NotBlank(message = "You must specify a version.")
     private String version;
 
-    @NotBlank(message = "You must specify a description.")
     private String description;
 
     @NotBlank(message = "You must specify a password.")
