@@ -20,6 +20,9 @@ import org.duracloud.account.db.error.DBUninitializedException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
 import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
+import org.duracloud.account.util.error.InvalidUsernameException;
+import org.duracloud.account.util.error.ReservedPrefixException;
+import org.duracloud.account.util.error.ReservedUsernameException;
 import org.duracloud.common.error.DuraCloudCheckedException;
 import org.duracloud.notification.Emailer;
 import org.easymock.Capture;
@@ -59,12 +62,12 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         String rootName = ServerImage.DC_ROOT_USERNAME;
 
         String initName = new InitUserCredential().getUsername();
-        checkUsername(false,existingName);
-        checkUsername(false,DuracloudGroup.PREFIX+"test");
-        checkUsername(false,"root");
-        checkUsername(false,"RooT");
-        checkUsername(false,rootName);
-        checkUsername(false,initName);
+        checkUsername(false,existingName, UserAlreadyExistsException.class);
+        checkUsername(false,DuracloudGroup.PREFIX+"test", ReservedPrefixException.class);
+        checkUsername(false,"root", ReservedUsernameException.class);
+        checkUsername(false,"RooT", ReservedUsernameException.class);
+        checkUsername(false,rootName,ReservedUsernameException.class);
+        checkUsername(false,initName,ReservedUsernameException.class);
         checkUsername(false,"user-");
         checkUsername(false,"user@");
         checkUsername(false,"user.");
@@ -74,18 +77,21 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         checkUsername(false,".user");
         checkUsername(false,"_user");
         checkUsername(false,"USER");
-
         checkUsername(true,newName);
 
     }
 
-
     private void checkUsername(boolean ok, String newName) {
+        checkUsername(ok, newName, InvalidUsernameException.class);
+    }
+    
+    private void checkUsername(boolean ok, String newName, Class exceptionClass) {
         try{
             this.userService.checkUsername(newName);
             Assert.assertTrue(ok);
         }catch(DuraCloudCheckedException ex){
             Assert.assertTrue(!ok);
+            Assert.assertEquals(exceptionClass, ex.getClass());
         }
     }
 

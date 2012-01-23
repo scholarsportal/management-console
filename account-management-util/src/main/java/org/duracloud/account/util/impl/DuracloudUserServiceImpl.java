@@ -28,6 +28,8 @@ import org.duracloud.account.util.error.AccountRequiresOwnerException;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.InvalidUsernameException;
+import org.duracloud.account.util.error.ReservedPrefixException;
+import org.duracloud.account.util.error.ReservedUsernameException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
@@ -67,14 +69,18 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         throws InvalidUsernameException,
             UserAlreadyExistsException {
 
-        if (!isValidUsername(username)) {
-            throw new InvalidUsernameException(username);
+        if (isReservedPrefix(username)) {
+            throw new ReservedPrefixException(username);
         }
 
         if (isReservedName(username)) {
-            throw new UserAlreadyExistsException(username);
+            throw new ReservedUsernameException(username);
         }
 
+        if (!isValidUsername(username)) {
+            throw new InvalidUsernameException(username);
+        }
+        
         try {
             getUserRepo().findByUsername(username);
             throw new UserAlreadyExistsException(username);
@@ -93,15 +99,20 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     private boolean isReservedName(String username) {
-        if(username.startsWith(DuracloudGroup.PREFIX)){
-            return true;
-        }
-        
         Credential init = new InitUserCredential();
         return ServerImage.DC_ROOT_USERNAME.equalsIgnoreCase(username) ||
             init.getUsername().equalsIgnoreCase(username);
     }
 
+    private boolean isReservedPrefix(String username) {
+        if(username.startsWith(DuracloudGroup.PREFIX)){
+            return true;
+        }
+        
+        return false;
+    }
+
+    
     @Override
     public DuracloudUser createNewUser(String username,
                                        String password,
