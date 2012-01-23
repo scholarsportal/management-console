@@ -367,12 +367,22 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                   String password,
                                   boolean latest) {
         try{
+            
+            DuracloudServerImageRepo imageRepo = getServerImageRepo();
             if(latest) {
                 //Remove current latest
-                ServerImage latestImage = getServerImageRepo().findLatest();
+                ServerImage latestImage = imageRepo.findLatest();
                 latestImage.setLatest(!latest);
-                getServerImageRepo().save(latestImage);
+                imageRepo.save(latestImage);
             }
+            
+            //make the new server image the 'latest' if it is 
+            //the first image.
+            Set<Integer> servers = imageRepo.getIds();
+            if(servers == null ||  servers.size() == 0){
+                latest = true;
+            }
+            
 
             int id = getIdUtil().newServerImageId();
 

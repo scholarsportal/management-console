@@ -139,7 +139,6 @@
                          path="password" />
                       </td>
                     </tr>
-
                     <tr>
                       <td align="right"
                        class="label">
@@ -150,10 +149,18 @@
 
                       <td
                        class="value unrequired">
+                       <c:choose>
+                        <c:when test="${latest != true}">
                         <form:checkbox
                          cssErrorClass="error"
                          id="latest-text"
                          path="latest" />
+                        </c:when>
+                        <c:otherwise>
+                           <form:hidden id="latest" path="latest" />                        
+                           true                        
+                        </c:otherwise>
+                       </c:choose>
                       </td>
                     </tr>
                   </table>

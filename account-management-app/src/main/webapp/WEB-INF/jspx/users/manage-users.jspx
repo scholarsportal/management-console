@@ -452,6 +452,7 @@
                              Edit</a>
                         </td>
                         <td align="left">
+                          <c:if test="${i.latest != true}">
                             <form
                              action="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/delete"
                              method="post">
@@ -463,6 +464,7 @@
 
                               Delete</button>
                             </form>
+                          </c:if>
                         </td>
 
                       </tr>

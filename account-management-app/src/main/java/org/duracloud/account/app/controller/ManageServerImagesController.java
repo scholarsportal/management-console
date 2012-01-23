@@ -108,6 +108,7 @@ public class ManageServerImagesController  extends AbstractController {
         form.setPassword(serverImage.getDcRootPassword());
         form.setLatest(serverImage.isLatest());
 
+        model.addAttribute("latest", serverImage.isLatest());
         model.addAttribute(NEW_FORM_KEY, form);
 
         return EDIT_VIEW;

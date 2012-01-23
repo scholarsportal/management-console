@@ -158,7 +158,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
             .andReturn(1);
         serverImageRepo.save(EasyMock.isA(ServerImage.class));
         EasyMock.expectLastCall();
-
+        EasyMock.expect(serverImageRepo.getIds()).andReturn(new HashSet<Integer>());
         replayMocks();
 
         rootService.createServerImage(1,
