@@ -13,6 +13,7 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 import java.util.Set;
@@ -29,24 +30,28 @@ public interface RootAccountManagerService {
      * @param filter optional filter on org name
      * @return
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<AccountInfo> listAllAccounts(String filter);
 
     /**
      * @param filter optional filter on username
      * @return
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<DuracloudUser> listAllUsers(String filter);
 
     /**
      * @param filter optional filter on provider image id
      * @return
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<ServerImage> listAllServerImages(String filter);
 
     /**
      * @param filter optional filter on host name
      * @return
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public Set<ServiceRepository> listAllServiceRepositories(String filter);
 
     /**
@@ -55,6 +60,7 @@ public interface RootAccountManagerService {
      * @param version
      * @param description
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void addDuracloudImage(String imageId,
                                   String version,
                                   String description);
@@ -64,6 +70,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void deleteUser(int id);
 
     /**
@@ -71,6 +78,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void deleteAccount(int id);
 
     /**
@@ -78,6 +86,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public AccountInfo getAccount(int id);
 
     /**
@@ -90,6 +99,7 @@ public interface RootAccountManagerService {
      * @param password
      * @param latest
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void createServerImage(int providerAccountId,
                                   String providerImageId,
                                   String version,
@@ -107,6 +117,7 @@ public interface RootAccountManagerService {
      * @param password
      * @param latest
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServerImage(int id,
                                 int providerAccountId,
                                 String providerImageId,
@@ -120,6 +131,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public ServerImage getServerImage(int id);
 
     /**
@@ -127,6 +139,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void deleteServerImage(int id);
 
     /**
@@ -141,6 +154,7 @@ public interface RootAccountManagerService {
      * @param username
      * @param password
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void createServiceRepository(ServiceRepositoryType serviceRepositoryType,
                                         ServicePlan servicePlan,
                                         String hostName,
@@ -162,6 +176,7 @@ public interface RootAccountManagerService {
      * @param username
      * @param password
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServiceRepository(int id,
                                       ServiceRepositoryType serviceRepositoryType,
                                       ServicePlan servicePlan,
@@ -177,6 +192,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public ServiceRepository getServiceRepository(int id);
 
     /**
@@ -184,6 +200,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void deleteServiceRepository(int id);
 
     /**
@@ -191,6 +208,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public List<StorageProviderAccount> getSecondaryStorageProviders(int id);
 
     /**
@@ -198,6 +216,7 @@ public interface RootAccountManagerService {
      *
      * @param id
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void activateAccount(int id)
         throws DBConcurrentUpdateException;
 
@@ -208,6 +227,7 @@ public interface RootAccountManagerService {
      * @param username
      * @param password
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupStorageProvider(int id, String username, String password)
         throws DBConcurrentUpdateException;
 
@@ -221,6 +241,7 @@ public interface RootAccountManagerService {
      * @param keypair
      * @param securityGroup
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupComputeProvider(int id, String username, String password,
                                      String elasticIp, String keypair, String securityGroup)
         throws DBConcurrentUpdateException;
@@ -233,6 +254,7 @@ public interface RootAccountManagerService {
      * @throws DBConcurrentUpdateException
      * @throws UnsentEmailException
      */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void resetUsersPassword(int userId)
         throws DBNotFoundException, DBConcurrentUpdateException,
                UnsentEmailException;
