@@ -75,4 +75,6 @@
   <definition name="account-group" template="/WEB-INF/jspx/accounts/account/account-group.jspx" />
   <definition name="account-group-edit" template="/WEB-INF/jspx/accounts/account/account-group-edit.jspx" />
 
+  <definition name="exception" template="/WEB-INF/jspx/exception.jspx" />
+
 </tiles-definitions>

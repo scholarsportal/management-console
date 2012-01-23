@@ -6,6 +6,7 @@ package org.duracloud.account.app.controller;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -104,6 +105,15 @@ public abstract class AbstractController {
         return false;
     }
 
+        
+
+    @ExceptionHandler(DuraCloudRuntimeException.class)
+    public ModelAndView handleException(DuraCloudRuntimeException e, HttpSession session) {
+        log.error(e.getMessage(), e);
+        return new ModelAndView("exception", "ex", e);
+    }
+
+    
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception e, HttpSession session) {
         log.error(e.getMessage(), e);
