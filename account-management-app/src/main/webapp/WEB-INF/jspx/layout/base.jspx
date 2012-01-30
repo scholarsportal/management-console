@@ -147,16 +147,10 @@
 </div>
 <br />
 <div id="ft">
-<div class="outer" id="footer-content" style="margin-left: 15px">
-
-<div class="float-r" id="logo-ds"></div>
-DuraCloud Management Console <span class="sep"> | </span> &#169;2011 <script
-	type="text/javascript">document.write(new Date().getFullYear());</script>
-<a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a> <span
-	class="sep"> | </span> <a target="_blank"
-	href="http://www.duracloud.org">Duracloud.org</a> <span class="sep">
-| </span> <a target="_blank" href="mailto:info@duracloud.org">Contact Us</a></div>
-</div>
+      <div class="outer" id="footer-content" style="margin-left: 15px">
+        <jsp:include page="/WEB-INF/jspx/includes/footer-content.jspx" />
+      </div>
+    </div>
 </div>
 </body>
 </html>

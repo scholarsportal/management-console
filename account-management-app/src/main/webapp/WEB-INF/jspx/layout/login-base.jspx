@@ -117,17 +117,8 @@
 </div>
 </div>
 <div class="footer-text-login">
-    Duracloud Management Console
-      <span class="sep"> | </span>
-      &#169;2011
-      <script type="text/javascript">document.write(new Date().getFullYear());</script>
-      <a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>
-      <span class="sep"> | </span>
-      <a target="_blank" href="http://www.duracloud.org">Duracloud.org</a>
-      <span class="sep"> | </span>
-      <a target="_blank" href="mailto:info@duracloud.org">Contact Us</a>
+    <jsp:include page="/WEB-INF/jspx/includes/footer-content.jspx" />
 </div>
-<div id="duraspace-logo"></div>
 <div></div>
 
 <br />
