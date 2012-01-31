@@ -3,6 +3,9 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
@@ -19,11 +22,9 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.error.DuracloudInstanceCreationException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -155,15 +156,22 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                            computeProviderAcct.getPassword());
 
         // Start the instance
-        String providerInstanceId =
-            computeProvider.start(image.getProviderImageId(),
-                                  computeProviderAcct.getSecurityGroup(),
-                                  computeProviderAcct.getKeypair(),
-                                  computeProviderAcct.getElasticIp());
+        String providerInstanceId = null;
+        
+        try{
+            providerInstanceId = computeProvider.start(image.getProviderImageId(),
+                                      computeProviderAcct.getSecurityGroup(),
+                                      computeProviderAcct.getKeypair(),
+                                      computeProviderAcct.getElasticIp());
+    
+        }catch(RuntimeException ex){
+            repoMgr.getInstanceRepo().delete(instance.getId());
+            throw new DuraCloudRuntimeException(ex.getMessage(), ex);
+        }
 
         instance = repoMgr.getInstanceRepo().findById(instanceId);
         instance.setProviderInstanceId(providerInstanceId);
-        
+
         try {
             repoMgr.getInstanceRepo().save(instance);
         } catch(DBConcurrentUpdateException e) {

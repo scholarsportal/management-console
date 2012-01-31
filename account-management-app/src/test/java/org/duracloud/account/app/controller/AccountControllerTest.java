@@ -166,6 +166,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         AccountInstanceForm instanceForm = new AccountInstanceForm();
         instanceForm.setVersion(version);
         accountController.startInstance(TEST_ACCOUNT_ID,
+                                        null,
                                         instanceForm,
                                         model);
         verifyResult(model);

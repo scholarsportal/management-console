@@ -3,6 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -28,12 +36,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -105,17 +107,22 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
-    public String startInstance(@PathVariable int accountId,
+    public String startInstance(@PathVariable int accountId, HttpServletRequest request,
                                 @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
                                 Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         if(instanceForm.getVersion() == null)
             instanceForm.setVersion(instanceManagerService.getLatestVersion());
-        startInstance(accountId, instanceForm.getVersion());
+        try{
+            startInstance(accountId, instanceForm.getVersion());
+            model.addAttribute(ACTION_STATUS,
+                               "Instance STARTED successfully, it will be " +
+                               "available for use in 5 minutes.");
+
+        }catch(RuntimeException ex){
+            setError(ex, request.getSession());
+        }
         populateAccountInModel(accountId, model);
-        model.addAttribute(ACTION_STATUS,
-                           "Instance STARTED successfully, it will be " +
-                           "available for use in 5 minutes.");
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();

@@ -116,11 +116,15 @@ public abstract class AbstractController {
     
     @ExceptionHandler(Exception.class)
     public ModelAndView handleException(Exception e, HttpSession session) {
-        log.error(e.getMessage(), e);
-        session.setAttribute("error", e.getMessage());
+        setError(e, session);
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
         return new ModelAndView("redirect:/users/byid/" + username);
 
+    }
+
+    protected void setError(Exception e, HttpSession session) {
+        log.error(e.getMessage(), e);
+        session.setAttribute("error", e.getMessage());
     }
 }

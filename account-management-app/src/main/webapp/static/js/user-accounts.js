@@ -1,24 +1,9 @@
 
 $(document).ready(function(){
-    $(".start").click(function() {
+    $(".start").click(function(event) {
         var button = $(this);
-        var id = $(button).attr("id");
-
-        var name = "#instance-start-form-" + id;
-        var form = $(name);
-
-        $.ajax({
-          type: "POST",
-          url: $(form).attr("action"),
-          data: $(form).serialize(),
-          success: function() {
-            window.location.reload(true);
-          }
-        });
-
-        $(button).replaceWith("    Instance is starting...");
-
-        return false;
+        $(button).hide();
+        $(button).after("    Instance is starting...");
     });
 
     $(".available").click(function() {
