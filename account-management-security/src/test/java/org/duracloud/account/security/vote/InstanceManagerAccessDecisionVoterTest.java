@@ -165,7 +165,7 @@ public class InstanceManagerAccessDecisionVoterTest {
         userRoles.add(new GrantedAuthorityImpl(role.name()));
 
         if (withAuthorities) {
-            EasyMock.expect(auth.getAuthorities()).andReturn(userRoles);
+            EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
         }
 
         return auth;

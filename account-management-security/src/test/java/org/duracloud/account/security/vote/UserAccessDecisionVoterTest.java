@@ -3,6 +3,12 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -22,13 +28,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * @author Andrew Woods
@@ -387,9 +387,9 @@ public class UserAccessDecisionVoterTest {
 
         Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
         for (Role role : roles) {
-            userRoles.add(new GrantedAuthorityImpl(role.name()));
+            userRoles.add(new SimpleGrantedAuthority(role.name()));
         }
-        EasyMock.expect(auth.getAuthorities()).andReturn(userRoles);
+        EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
 
         return auth;
     }

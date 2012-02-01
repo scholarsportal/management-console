@@ -51,11 +51,12 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
     }
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(Class clazz) {
         log.trace("supports {}", clazz.getName());
         return MethodInvocation.class.isAssignableFrom(clazz);
     }
 
+    
     protected boolean supportsTarget(MethodInvocation invocation) {
         Class[] interfaces = invocation.getThis().getClass().getInterfaces();
         if (null == interfaces || interfaces.length == 0) {

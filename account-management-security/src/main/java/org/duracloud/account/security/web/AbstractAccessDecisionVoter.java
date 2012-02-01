@@ -32,15 +32,17 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 		return true;
 	}
 
-	public boolean supports(Class<?> clazz) {
+	@Override
+	public boolean supports(Class clazz) {
 		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
-	
-	public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
+
+	@Override
+	public int vote(Authentication authentication, Object object, Collection attributes) {
 		log.trace("voting on {} for {} using attributes {}",
                   new Object[] {authentication, object, attributes });
-		for(ConfigAttribute ca : attributes){
+		for(ConfigAttribute ca : (Collection<ConfigAttribute>)attributes){
 			log.trace("attribute: {}", ca.getAttribute());
 		}
 

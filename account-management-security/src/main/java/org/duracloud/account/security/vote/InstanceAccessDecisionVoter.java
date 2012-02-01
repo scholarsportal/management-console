@@ -44,7 +44,7 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
     @Override
     public int vote(Authentication authentication,
                     Object argInvocation,
-                    Collection<ConfigAttribute> configAttributes) {
+                    Collection configAttributes) {
         int decision = ACCESS_DENIED;
 
         // Collect target method invocation.

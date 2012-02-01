@@ -194,7 +194,7 @@ public class AccountManagerAccessDecisionVoterTest {
 
         Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
         userRoles.add(new GrantedAuthorityImpl(role.name()));
-        EasyMock.expect(auth.getAuthorities()).andReturn(userRoles);
+        EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
 
         return auth;
     }

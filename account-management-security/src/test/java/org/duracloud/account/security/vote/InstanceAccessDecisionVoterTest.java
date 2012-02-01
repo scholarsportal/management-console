@@ -264,7 +264,7 @@ public class InstanceAccessDecisionVoterTest {
             for (Role r : role.getRoleHierarchy()) {
                 grants.add(r.authority());
             }
-            EasyMock.expect(auth.getAuthorities()).andReturn(grants);
+            EasyMock.expect(auth.getAuthorities()).andReturn((Collection)grants);
         }
 
         return auth;

@@ -33,7 +33,7 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 	}
 
 	@Override
-	public boolean supports(Class<?> clazz) {
+	public boolean supports(Class clazz) {
 		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}

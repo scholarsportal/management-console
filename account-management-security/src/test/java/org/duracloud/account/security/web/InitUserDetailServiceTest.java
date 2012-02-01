@@ -49,7 +49,7 @@ public class InitUserDetailServiceTest {
         UserDetails userDetails = initService.loadUserByUsername("init");
         Assert.assertNotNull(userDetails);
 
-        Collection<GrantedAuthority> authorities = userDetails.getAuthorities();
+        Collection authorities = userDetails.getAuthorities();
         Assert.assertNotNull(authorities);
 
         Assert.assertEquals(3, authorities.size());
