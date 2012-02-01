@@ -446,7 +446,7 @@ public class UserController extends AbstractController {
         return new ModelAndView(view);
     }
 
-    private static String formatUserUrl(String username) {
+    protected static String formatUserUrl(String username) {
         String url =  USERS_MAPPING + USER_MAPPING;
         url = url.replaceAll("\\{username.*\\}", username);
         return url;

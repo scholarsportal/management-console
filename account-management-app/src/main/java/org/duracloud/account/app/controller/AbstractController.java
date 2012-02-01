@@ -120,8 +120,8 @@ public abstract class AbstractController {
         setError(e, session);
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return new ModelAndView("redirect:/users/byid/" + username);
-
+        //FIXME - This needs to be refactored 
+        return createRedirectMav(UserController.formatUserUrl(username));
     }
 
     protected void setError(Exception e, HttpSession session) {

@@ -139,10 +139,10 @@ public abstract class AbstractAccountController extends AbstractController {
                                  suffix);
 
         RedirectView redirectView = new RedirectView(url, true);
-        redirectView.setExposePathVariables(false);
+        redirectView.setExposeModelAttributes(false);
         return new ModelAndView(redirectView);
     }
-        	
+
 	protected void loadBillingInfo(int accountId, Model model) {
         //TODO LoadBillingInfo
         model.addAttribute("billingInfo", new CreditCardPaymentInfo());

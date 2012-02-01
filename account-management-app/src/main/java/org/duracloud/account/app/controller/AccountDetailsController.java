@@ -58,7 +58,7 @@ public class AccountDetailsController extends AbstractAccountController {
             accountManagerService.getAccount(accountId);
         accountService.addStorageProvider(StorageProviderType.fromString(
             providerForm.getProvider()));
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), ACCOUNT_DETAILS_PATH);
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
@@ -70,7 +70,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
         setProviderRrs(accountId, true);
 
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), ACCOUNT_DETAILS_PATH);
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
@@ -80,7 +80,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
         setProviderRrs(accountId, false);
 
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), ACCOUNT_DETAILS_PATH);
     }
 
 

@@ -25,7 +25,7 @@ public class AccountInfoController extends AbstractAccountController {
     public static final String ACCOUNT_INFO_EDIT_ID = "account-info-edit";
     public static final String EDIT_ACCOUNT_INFO_FORM_KEY = "accountInfoEditForm";
 
-    public static final String INFO_EDIT_MAPPING = ACCOUNT_PATH + "/account/edit";
+    public static final String INFO_EDIT_MAPPING = AccountDetailsController.ACCOUNT_DETAILS_MAPPING + EDIT_PATH;
 
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.GET)
     public String getEditForm(@PathVariable int accountId, Model model)
@@ -55,18 +55,16 @@ public class AccountInfoController extends AbstractAccountController {
         log.info("editInfo account {}", accountId);
 
         if (result.hasErrors()) {
-			return new ModelAndView(ACCOUNT_INFO_EDIT_ID);
+			return new ModelAndView(ACCOUNT_INFO_EDIT_ID, model.asMap());
 		}
 
         getAccountManagerService().getAccount(accountId).
-            storeAccountInfo(accountEditForm.getAcctName(),
-                             accountEditForm.getOrgName(),
-                             accountEditForm.getDepartment());
+        storeAccountInfo(accountEditForm.getAcctName(),
+                         accountEditForm.getOrgName(),
+                         accountEditForm.getDepartment());
 
-        loadAccountInfo(accountId, model);
-        loadProviderInfo(accountId, model);
-        addUserToModel(model);
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details/");
+        
+        return createAccountRedirectModelAndView(Integer.toString(accountId), AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
     }
 }

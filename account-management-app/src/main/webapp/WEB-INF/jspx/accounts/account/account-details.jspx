@@ -59,7 +59,7 @@
                       <a
                        id="account-edit-link"
                        class="button"
-                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/account/edit">
+                       href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/edit">
                       <i
                        class="pre pencil">
                       </i>
