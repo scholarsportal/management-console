@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 /**
  * 
@@ -173,7 +175,7 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
-    public String deleteUserInvitation(
+    public ModelAndView deleteUserInvitation(
         @PathVariable int accountId, @PathVariable int invitationId, Model model)
         throws Exception {
         log.info("remove invitation {} from account {}",
@@ -182,20 +184,22 @@ public class AccountUsersController extends AbstractAccountController {
         AccountService service = getAccountService(accountId);
         service.deleteUserInvitation(invitationId);
 
-        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
-    public String deleteUserFromAccount(
+    public ModelAndView deleteUserFromAccount(
         @PathVariable int accountId, @PathVariable int userId, Model model)
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
         userService.revokeUserRights(accountId, userId);
         DuracloudUser user = getUser();
 
-        if(user.getId() == userId)
-            return "redirect:/users/byid/" + user.getUsername();
-        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        if(user.getId() == userId){
+            View redirect = UserController.formatUserRedirect(user.getUsername());
+            return new ModelAndView(redirect);
+        }
+        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.GET)
@@ -233,7 +237,7 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
-    public String editUser(@PathVariable int accountId, @PathVariable int userId,
+    public ModelAndView editUser(@PathVariable int accountId, @PathVariable int userId,
                            @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
 					   BindingResult result,
 					   Model model) throws Exception {
@@ -257,11 +261,13 @@ public class AccountUsersController extends AbstractAccountController {
 
 
         addUserToModel(model);
-        if(!exception)
+        if(!exception){
             model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+        }
+        
         model.addAttribute("invitationForm", new InvitationForm());
         get(getAccountService(accountId), model);
-        return formatAccountRedirect(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
     }
 
     /**

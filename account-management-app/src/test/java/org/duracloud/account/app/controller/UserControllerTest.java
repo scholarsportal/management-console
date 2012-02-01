@@ -176,14 +176,12 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult, editForm);
 
-        String view = userController.update(TEST_USERNAME,
+        ModelAndView mav = userController.update(TEST_USERNAME,
                                             editForm,
                                             bindingResult,
                                             null);
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals("redirect:/users/byid/" + TEST_USERNAME, view);
-
+        Assert.assertNotNull(mav);
         EasyMock.verify(bindingResult, editForm, userService);
     }
 
@@ -203,13 +201,13 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult);
 
-        String view = userController.update(TEST_USERNAME,
+        ModelAndView mav = userController.update(TEST_USERNAME,
                                             null,
                                             bindingResult,
                                             new ExtendedModelMap());
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals(userController.USER_EDIT_VIEW, view);
+        Assert.assertNotNull(mav);
+        Assert.assertEquals(userController.USER_EDIT_VIEW, mav.getViewName());
 
         EasyMock.verify(bindingResult);
     }
@@ -242,11 +240,9 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult, newUserForm);
 
-        String view = userController.add(newUserForm, bindingResult, null, null);
+        ModelAndView mav = userController.add(newUserForm, bindingResult, null, null);
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals("redirect:/users/byid/" + TEST_USERNAME, view);
-
+        Assert.assertNotNull(mav);
         EasyMock.verify(bindingResult, newUserForm, userService);
     }
 
@@ -258,10 +254,10 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult);
 
-        String view = userController.add(null, bindingResult, null, null);
+        ModelAndView mav = userController.add(null, bindingResult, new ExtendedModelMap(), null);
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals(userController.NEW_USER_VIEW, view);
+        Assert.assertNotNull(mav);
+        Assert.assertEquals(userController.NEW_USER_VIEW, mav.getViewName());
 
         EasyMock.verify(bindingResult);
     }
@@ -319,14 +315,12 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult, cbangePasswordForm);
 
-        String view = userController.changePassword(TEST_USERNAME,
+        ModelAndView mav = userController.changePassword(TEST_USERNAME,
                                                     cbangePasswordForm,
                                                     bindingResult,
                                                     null);
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals("redirect:/users/byid/" + TEST_USERNAME, view);
-
+        Assert.assertNotNull(mav);
         EasyMock.verify(bindingResult, cbangePasswordForm, userService);
     }
 
@@ -363,13 +357,13 @@ public class UserControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(bindingResult);
 
-        String view = userController.changePassword(TEST_USERNAME,
+        ModelAndView mav = userController.changePassword(TEST_USERNAME,
                                                     null,
                                                     bindingResult,
                                                     model);
 
-        Assert.assertNotNull(view);
-        Assert.assertEquals(userController.USER_EDIT_VIEW, view);
+        Assert.assertNotNull(mav);
+        Assert.assertEquals(userController.USER_EDIT_VIEW, mav.getViewName());
 
         Map map = model.asMap();
         Assert.assertNotNull(map);

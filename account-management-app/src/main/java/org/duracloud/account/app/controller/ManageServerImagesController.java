@@ -3,26 +3,29 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.util.RootAccountManagerService;
-import org.springframework.validation.BindingResult;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
+
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.util.RootAccountManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
 @Lazy
 public class ManageServerImagesController  extends AbstractController {
-    public static final String REDIRECT_USERS_MANAGE = "redirect:/users/manage";
+    public static final String REDIRECT_USERS_MANAGE = "/users/manage";
 
     public static final String MANAGE_SERVER_IMAGES = "/manage/serverImage";
 
@@ -54,7 +57,7 @@ public class ManageServerImagesController  extends AbstractController {
     }
 
     @RequestMapping(value = { MANAGE_SERVER_IMAGES + NEW_MAPPING }, method = RequestMethod.POST)
-    public String add(
+    public ModelAndView add(
         @ModelAttribute(NEW_FORM_KEY) @Valid ServerImageForm serverImageForm,
         BindingResult result, Model model) throws Exception {
         if (!result.hasErrors()) {
@@ -66,10 +69,10 @@ public class ManageServerImagesController  extends AbstractController {
                                                         serverImageForm.getPassword(),
                                                         serverImageForm.isLatest());
 
-            return REDIRECT_USERS_MANAGE;
+            return createRedirectMav(REDIRECT_USERS_MANAGE);
         }
 
-        return NEW_VIEW;
+        return new ModelAndView(NEW_VIEW,model.asMap());
     }
 
     @ModelAttribute("providerAccountIds")
@@ -80,7 +83,7 @@ public class ManageServerImagesController  extends AbstractController {
     }
 
     @RequestMapping(value = DELETE_MAPPING, method = RequestMethod.POST)
-    public String delete(
+    public ModelAndView delete(
         @PathVariable int imageId, Model model)
         throws Exception {
         log.info("delete server image {}", imageId);
@@ -88,7 +91,7 @@ public class ManageServerImagesController  extends AbstractController {
         //delete server image
         rootAccountManagerService.deleteServerImage(imageId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = EDIT_MAPPING, method = RequestMethod.GET)
@@ -115,7 +118,7 @@ public class ManageServerImagesController  extends AbstractController {
     }
 
     @RequestMapping(value = EDIT_MAPPING, method = RequestMethod.POST)
-    public String edit(@PathVariable int imageId,
+    public ModelAndView edit(@PathVariable int imageId,
                        @ModelAttribute(NEW_FORM_KEY) @Valid ServerImageForm serverImageForm,
 					   BindingResult result,
 					   Model model) throws Exception {
@@ -131,9 +134,9 @@ public class ManageServerImagesController  extends AbstractController {
                                                       serverImageForm.getPassword(),
                                                       serverImageForm.isLatest());
 
-            return REDIRECT_USERS_MANAGE;
+            return createRedirectMav(REDIRECT_USERS_MANAGE);
         }
 
-        return EDIT_VIEW;        
+        return new ModelAndView(EDIT_VIEW);        
     }
 }

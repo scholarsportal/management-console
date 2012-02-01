@@ -3,10 +3,18 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -21,37 +29,32 @@ import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @Lazy
 public class ManageUsersController extends AbstractController {
 
+    private static final String ACCOUNT_SETUP_VIEW = "account-setup";
+    private static final String MANAGE_USERS_VIEW = "manage-users";
     public static final String EDIT_ACCOUNT_USERS_FORM_KEY = "accountUsersEditForm";
     public static final String ADD_ACCOUNT_USER_FORM_KEY = "addAccountUserForm";
     public static final String SETUP_ACCOUNT_FORM_KEY = "setupAccountForm";
 
     public static final String USERS_MANAGE = "/users/manage";
-    public static final String REDIRECT_USERS_MANAGE = "redirect:" + USERS_MANAGE;
+    public static final String REDIRECT_USERS_MANAGE = USERS_MANAGE;
 
     public static final String USER_ADD_MAPPING =
         USERS_MANAGE + "/add";
@@ -98,7 +101,7 @@ public class ManageUsersController extends AbstractController {
         this.accountManagerService = accountManagerService;
     }
 
-	@RequestMapping(value = { "/users/manage" }, method = RequestMethod.GET)
+	@RequestMapping(value = { USERS_MANAGE }, method = RequestMethod.GET)
 	public String getUsers(Model model)
         throws Exception {
         List<User> u = new ArrayList<User>();
@@ -176,11 +179,11 @@ public class ManageUsersController extends AbstractController {
         addUserToModel(model);
         model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
         model.addAttribute(ADD_ACCOUNT_USER_FORM_KEY, new AccountUserAddForm());
-		return "manage-users";
+		return MANAGE_USERS_VIEW;
 	}
 
     @RequestMapping(value = USER_ADD_MAPPING, method = RequestMethod.POST)
-    public String addUser(@ModelAttribute("addAccountUserForm") @Valid AccountUserAddForm accountUserAddForm,
+    public ModelAndView addUser(@ModelAttribute("addAccountUserForm") @Valid AccountUserAddForm accountUserAddForm,
 					   BindingResult result,
 					   Model model) throws Exception {
         int accountId = accountUserAddForm.getAccountId();
@@ -196,14 +199,15 @@ public class ManageUsersController extends AbstractController {
         } catch(AccessDeniedException e) {
             result.addError(new ObjectError("role",
                                 "You are unauthorized to set the role for this user"));
-            return "manage-users";
+            return new ModelAndView(MANAGE_USERS_VIEW);
         }
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
+
     }
 
     @RequestMapping(value = USER_EDIT_MAPPING, method = RequestMethod.POST)
-    public String editUser(@PathVariable int accountId, @PathVariable int userId,
+    public ModelAndView editUser(@PathVariable int accountId, @PathVariable int userId,
                            @ModelAttribute("accountUsersEditForm") @Valid AccountUserEditForm accountUserEditForm,
 					   BindingResult result,
 					   Model model) throws Exception {
@@ -217,45 +221,45 @@ public class ManageUsersController extends AbstractController {
         } catch(AccessDeniedException e) {
             result.addError(new ObjectError("role",
                                 "You are unauthorized to set the role for this user"));
-            return "manage-users";
+            return new ModelAndView(MANAGE_USERS_VIEW);
         }
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = USER_DELETE_ACCOUNT_MAPPING, method = RequestMethod.POST)
-    public String deleteUserFromAccount(
-        @PathVariable int accountId, @PathVariable int userId, Model model)
+    public ModelAndView deleteUserFromAccount(
+        @PathVariable int accountId, @PathVariable int userId)
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
         
         userService.revokeUserRights(accountId, userId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = USER_DELETE_MAPPING, method = RequestMethod.POST)
-    public String deleteUser(
-        @PathVariable int userId, Model model)
+    public ModelAndView deleteUser(
+        @PathVariable int userId)
         throws Exception {
         log.info("delete user {}", userId);
 
         //delete user
         rootAccountManagerService.deleteUser(userId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = ACCOUNT_DELETE_MAPPING, method = RequestMethod.POST)
-    public String deleteAccount(
-        @PathVariable int accountId, Model model)
+    public ModelAndView deleteAccount(
+        @PathVariable int accountId)
         throws Exception {
         log.info("delete account {}", accountId);
 
         //delete account
         rootAccountManagerService.deleteAccount(accountId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.GET)
@@ -271,11 +275,11 @@ public class ManageUsersController extends AbstractController {
 
         model.addAttribute("secProviders", providers);
 
-        return "account-setup";
+        return ACCOUNT_SETUP_VIEW;
     }
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.POST)
-    public String setupAccount(
+    public ModelAndView setupAccount(
         @PathVariable int accountId,
         @ModelAttribute(SETUP_ACCOUNT_FORM_KEY) @Valid AccountSetupForm accountSetupForm,
 					   BindingResult result, Model model)
@@ -340,7 +344,7 @@ public class ManageUsersController extends AbstractController {
 
             model.addAttribute("secProviders", providers);
 
-            return "account-setup";
+            return new ModelAndView(ACCOUNT_SETUP_VIEW);
         }
 
         AccountInfo accountInfo = rootAccountManagerService.getAccount(accountId);
@@ -392,36 +396,37 @@ public class ManageUsersController extends AbstractController {
 
         rootAccountManagerService.activateAccount(accountId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = { RESET_USER_MAPPING }, method = RequestMethod.POST)
-    public String resetUsersPassword(
+    public ModelAndView resetUsersPassword(
         @PathVariable int userId, Model model)
         throws Exception {
             rootAccountManagerService.resetUsersPassword(userId);
 
-        return REDIRECT_USERS_MANAGE;            
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = { ACCOUNT_ACTIVATE_MAPPING }, method = RequestMethod.POST)
-    public String activate(@PathVariable int accountId,
+    public ModelAndView activate(@PathVariable int accountId,
                            Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException {
         AccountService accountService = accountManagerService.getAccount(accountId);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
+
     }
 
     @RequestMapping(value = { ACCOUNT_DEACTIVATE_MAPPING }, method = RequestMethod.POST)
-    public String deactivate(@PathVariable int accountId,
+    public ModelAndView deactivate(@PathVariable int accountId,
                            Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException {
         AccountService accountService = accountManagerService.getAccount(accountId);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
 

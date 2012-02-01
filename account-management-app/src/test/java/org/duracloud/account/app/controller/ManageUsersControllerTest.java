@@ -109,10 +109,8 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
 
         this.manageUsersController.setUserService(userService);
         EasyMock.replay(userService);
-        Model model = new ExtendedModelMap();
         this.manageUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID,
-                                                         1,
-                                                         model);
+                                                         1);
         EasyMock.verify(userService);
     }
 
@@ -125,8 +123,7 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
             rootAccountManagerService);
         EasyMock.replay(rootAccountManagerService);
 
-        Model model = new ExtendedModelMap();
-        this.manageUsersController.deleteUser(1, model);
+        this.manageUsersController.deleteUser(1);
         EasyMock.verify(rootAccountManagerService);
     }
 
@@ -138,9 +135,7 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
         this.manageUsersController.setRootAccountManagerService(
             rootAccountManagerService);
         EasyMock.replay(rootAccountManagerService);
-
-        Model model = new ExtendedModelMap();
-        this.manageUsersController.deleteAccount(1, model);
+        this.manageUsersController.deleteAccount(1);
         EasyMock.verify(rootAccountManagerService);
     }
 

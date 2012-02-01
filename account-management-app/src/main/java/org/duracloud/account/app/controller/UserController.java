@@ -3,6 +3,15 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudAccount;
@@ -31,14 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * The default view for this application
@@ -132,12 +135,11 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
-    public String profileRedirect() {
+    public ModelAndView profileRedirect() {
         String username = SecurityContextHolder.getContext()
                                                .getAuthentication()
                                                .getName();
-        return formatUserRedirect(username);
-
+        return new ModelAndView(formatUserRedirect(username));
     }
 
     @RequestMapping(value = { USER_MAPPING }, method = RequestMethod.GET)
@@ -218,7 +220,7 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
-    public String update(@PathVariable String username,
+    public ModelAndView update(@PathVariable String username,
                          @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
                          BindingResult result,
                          Model model) throws Exception {
@@ -231,7 +233,7 @@ public class UserController extends AbstractController {
             DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
             addUserToModel(user, model);
 
-            return USER_EDIT_VIEW;
+            return new ModelAndView(USER_EDIT_VIEW, model.asMap());
         }
 
         log.info("updating user profile for {}", username);
@@ -243,7 +245,7 @@ public class UserController extends AbstractController {
                                           form.getSecurityQuestion(),
                                           form.getSecurityAnswer());
 
-        return formatUserRedirect(username);
+        return new ModelAndView(formatUserRedirect(username));
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.GET)
@@ -257,7 +259,7 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
-    public String changePassword(@PathVariable String username,
+    public ModelAndView changePassword(@PathVariable String username,
                                  @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
                                  BindingResult result,
                                  Model model) throws Exception {
@@ -273,7 +275,7 @@ public class UserController extends AbstractController {
                                                 form.getOldPassword(),
                                                 false,
                                                 form.getPassword());
-                return formatUserRedirect(username);
+                return new ModelAndView(formatUserRedirect(username));
             } catch (InvalidPasswordException e) {
                 result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
                                                "oldPassword",
@@ -292,7 +294,7 @@ public class UserController extends AbstractController {
         editForm.setSecurityQuestion(user.getSecurityQuestion());
         editForm.setSecurityAnswer(user.getSecurityAnswer());
         model.addAttribute(USER_PROFILE_FORM_KEY, editForm);
-        return USER_EDIT_VIEW;
+        return new ModelAndView(USER_EDIT_VIEW, model.asMap());
 
     }
 
@@ -399,14 +401,14 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
-    public String add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
+    public ModelAndView add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
                       BindingResult result,
                       Model model,
                       HttpServletRequest request) throws Exception {
         String name = null == newUserForm ? "null" : newUserForm.getUsername();
         log.debug("Add new user: {}", name);
         if (result.hasErrors()) {
-            return NEW_USER_VIEW;
+            return new ModelAndView(NEW_USER_VIEW, model.asMap());
         }
 
         DuracloudUser user = this.userService.createNewUser(newUserForm.getUsername(),
@@ -433,19 +435,28 @@ public class UserController extends AbstractController {
             }
         }
 
-        String redirect = formatUserRedirect(newUserForm.getUsername());
+        String redirect = formatUserUrl(newUserForm.getUsername());
 
         if (accountId > -1) {
             redirect += "?accountId=" + accountId;
         }
 
-        return redirect;
+        RedirectView view = new RedirectView(redirect, true);
+        view.setExposePathVariables(false);
+        return new ModelAndView(view);
     }
 
-    protected static String formatUserRedirect(String username) {
-        String redirect =  "redirect:" + USERS_MAPPING + USER_MAPPING;
-        redirect = redirect.replaceAll("\\{username.*\\}", username);
-        return redirect;
+    private static String formatUserUrl(String username) {
+        String url =  USERS_MAPPING + USER_MAPPING;
+        url = url.replaceAll("\\{username.*\\}", username);
+        return url;
+    }
+
+    protected static RedirectView formatUserRedirect(String username) {
+        String redirect = formatUserUrl(username);
+        RedirectView view = new RedirectView(redirect, true);
+        view.setExposeModelAttributes(false);
+        return view;
     }
 
     @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)

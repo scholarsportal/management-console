@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * 
@@ -54,7 +56,7 @@ public class AccountController extends AbstractAccountController {
 
     @Autowired
     private NotificationMgr notificationMgr;
-
+   
     @RequestMapping(value = { ACCOUNT_PATH }, method = RequestMethod.GET)
     public String getHome(@PathVariable int accountId, Model model)
         throws AccountNotFoundException {
@@ -107,7 +109,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
-    public String startInstance(@PathVariable int accountId, HttpServletRequest request,
+    public ModelAndView startInstance(@PathVariable int accountId, HttpServletRequest request,
                                 @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
                                 Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -126,11 +128,12 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        
+        return createUserRedirectModelAndView(username);
     }
 
     @RequestMapping(value = { INSTANCE_AVAILABLE_PATH }, method = RequestMethod.POST)
-    public String instanceAvailable(@PathVariable int accountId,
+    public ModelAndView instanceAvailable(@PathVariable int accountId,
                                     Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         DuracloudInstanceService instanceService = null;
@@ -156,7 +159,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     private void sleep(int milliseconds) {
@@ -172,7 +175,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_UPGRADE_PATH }, method = RequestMethod.POST)
-    public String upgradeInstance(@PathVariable int accountId,
+    public ModelAndView upgradeInstance(@PathVariable int accountId,
                                   @PathVariable int instanceId,
                                   Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -186,11 +189,11 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
-    public String restartInstance(@PathVariable int accountId,
+    public ModelAndView restartInstance(@PathVariable int accountId,
                                   @PathVariable int instanceId,
                                   Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -202,7 +205,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     protected void restartInstance(int instanceId)
@@ -214,7 +217,7 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_USERS_PATH},
                     method = RequestMethod.POST)
-    public String reInitializeUserRoles(@PathVariable int accountId,
+    public ModelAndView reInitializeUserRoles(@PathVariable int accountId,
                                         @PathVariable int instanceId,
                                         Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -232,7 +235,7 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_PATH},
                     method = RequestMethod.POST)
-    public String reInitialize(@PathVariable int accountId,
+    public ModelAndView reInitialize(@PathVariable int accountId,
                                @PathVariable int instanceId,
                                Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -248,7 +251,7 @@ public class AccountController extends AbstractAccountController {
         return reInitResult(accountId, model, status);
     }
 
-    private String reInitResult(int accountId, Model model, String status)
+    private ModelAndView reInitResult(int accountId, Model model, String status)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS, status);
@@ -256,11 +259,11 @@ public class AccountController extends AbstractAccountController {
         String username = SecurityContextHolder.getContext()
             .getAuthentication()
             .getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)
-    public String stopInstance(@PathVariable int accountId,
+    public ModelAndView stopInstance(@PathVariable int accountId,
                                @PathVariable int instanceId,
                                Model model)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
@@ -270,7 +273,7 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
 
     }
 
@@ -301,7 +304,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
-    public String add(
+    public ModelAndView add(
         @ModelAttribute(NEW_ACCOUNT_FORM_KEY) @Valid NewAccountForm newAccountForm,
         BindingResult result, Model model) throws Exception {
         DuracloudUser user = getUser();
@@ -327,7 +330,8 @@ public class AccountController extends AbstractAccountController {
 
                 int id = service.retrieveAccountInfo().getId();
                 String idText = Integer.toString(id);
-                return formatAccountRedirect(idText, "/providers");
+                
+                return createAccountRedirectModelAndView(idText, "/providers");
             } catch (SubdomainAlreadyExistsException ex) {
                 result.addError(new ObjectError("subdomain",
                     "The subdomain you selected is already in use. Please choose another."));
@@ -335,13 +339,12 @@ public class AccountController extends AbstractAccountController {
         }
 
         addUserToModel(model);
-        return NEW_ACCOUNT_VIEW;
+        return new ModelAndView(NEW_ACCOUNT_VIEW, model.asMap());
 
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
-    public String activate(@PathVariable int accountId,
-                           Model model)
+    public ModelAndView activate(@PathVariable int accountId)
         throws AccountNotFoundException, DBConcurrentUpdateException {
         AccountService accountService = accountManagerService.getAccount(
             accountId);
@@ -349,11 +352,11 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
-    public String deactivate(@PathVariable int accountId,
+    public ModelAndView deactivate(@PathVariable int accountId,
                            Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException {
         AccountService accountService = accountManagerService.getAccount(accountId);
@@ -361,15 +364,16 @@ public class AccountController extends AbstractAccountController {
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
     
-    private String formatUserRedirect(String username){
-        return UserController.formatUserRedirect(username);
+    private ModelAndView createUserRedirectModelAndView(String username){
+        RedirectView view = UserController.formatUserRedirect(username);
+        return new ModelAndView(view);
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/cancel" }, method = RequestMethod.POST)
-    public String cancel(@PathVariable int accountId,
+    public ModelAndView cancel(@PathVariable int accountId,
                          Model model)
         throws AccountNotFoundException, DBConcurrentUpdateException, DuracloudInstanceNotAvailableException {
 
@@ -387,7 +391,7 @@ public class AccountController extends AbstractAccountController {
         AccountService accountService = accountManagerService.getAccount(accountId);
         accountService.cancelAccount(username, notificationMgr.getEmailer(), notificationMgr.getConfig().getAdminAddresses());
 
-        return formatUserRedirect(username);
+        return createUserRedirectModelAndView(username);
     }
 
     public AuthenticationManager getAuthenticationManager() {

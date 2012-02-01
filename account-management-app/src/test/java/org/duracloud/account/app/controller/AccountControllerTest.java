@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -83,8 +84,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         accountController.setAccountManagerService(accountManagerService);
 
-        Model model = new ExtendedModelMap();
-        accountController.activate(TEST_ACCOUNT_ID, model);
+        accountController.activate(TEST_ACCOUNT_ID);
 
         EasyMock.verify();
     }
@@ -338,12 +338,12 @@ public class AccountControllerTest extends AmaControllerTestBase {
         Model model = new ExtendedModelMap();
 
         // first time around has errors
-        String view = accountController.add(newAccountForm, result, model);
-        Assert.assertEquals(AccountController.NEW_ACCOUNT_VIEW, view);
+        ModelAndView mav = accountController.add(newAccountForm, result, model);
+        Assert.assertEquals(AccountController.NEW_ACCOUNT_VIEW, mav.getViewName());
 
         // second time okay
-        view = accountController.add(newAccountForm, result, model);
-        Assert.assertTrue(view.startsWith("redirect"));
+        mav = accountController.add(newAccountForm, result, model);
+        Assert.assertNotNull(mav.getView());
 
     }
 

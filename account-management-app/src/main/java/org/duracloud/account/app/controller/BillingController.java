@@ -15,7 +15,6 @@ import javax.validation.groups.Default;
 import org.duracloud.account.app.controller.BillingInfoForm.CreditCardForm;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.InvoicePaymentInfo;
-import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * The default view for this application
@@ -115,7 +115,7 @@ public class BillingController extends AbstractAccountController {
 	}
 
 	@RequestMapping(value = { EDIT_PATH }, method = RequestMethod.POST)
-	public String update( @PathVariable int accountId,
+	public ModelAndView update( @PathVariable int accountId,
 					   @ModelAttribute(BILLING_FORM) @Valid BillingInfoForm billingInfoForm,
 					   BindingResult result, 
 					   Model model) throws AccountNotFoundException {
@@ -123,7 +123,7 @@ public class BillingController extends AbstractAccountController {
 		loadAccountInfo(accountId, model);
 
 		if (result.hasErrors()) {
-			return EDIT_VIEW;
+			return new ModelAndView(EDIT_VIEW);
 		}
 
         //TODO update billing info
@@ -131,7 +131,7 @@ public class BillingController extends AbstractAccountController {
         loadBillingInfo(accountId, model);
         
         String accountIdText = Integer.toString(accountId);
-		return formatAccountRedirect(accountIdText, AccountDetailsController.ACCOUNT_DETAILS_PATH);
+		return createAccountRedirectModelAndView(accountIdText, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
 	}
 }

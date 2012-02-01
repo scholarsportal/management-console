@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpSession;
 import java.util.Set;
@@ -127,4 +128,11 @@ public abstract class AbstractController {
         log.error(e.getMessage(), e);
         session.setAttribute("error", e.getMessage());
     }
+    
+    protected ModelAndView createRedirectMav(String url) {
+        RedirectView view = new RedirectView(url, true);
+        view.setExposeModelAttributes(false);
+        return new ModelAndView(view);
+    }
+
 }

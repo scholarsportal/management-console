@@ -3,28 +3,31 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.duracloud.account.util.RootAccountManagerService;
-import org.springframework.validation.BindingResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
 @Lazy
 public class ManageServiceReposController  extends AbstractController {
-    public static final String REDIRECT_USERS_MANAGE = "redirect:/users/manage";
+    public static final String REDIRECT_USERS_MANAGE = "/users/manage";
 
     public static final String MANAGE_SERVICE_REPOS = "/manage/serviceRepo";
 
@@ -74,7 +77,7 @@ public class ManageServiceReposController  extends AbstractController {
     }
 
     @RequestMapping(value = { MANAGE_SERVICE_REPOS + NEW_MAPPING }, method = RequestMethod.POST)
-    public String add(
+    public ModelAndView add(
         @ModelAttribute(NEW_FORM_KEY) @Valid ServiceRepoForm serviceRepoForm,
         BindingResult result, Model model) throws Exception {
         if (!result.hasErrors()) {
@@ -89,16 +92,16 @@ public class ManageServiceReposController  extends AbstractController {
                 serviceRepoForm.getUserName(),
                 serviceRepoForm.getPassword());
 
-            return REDIRECT_USERS_MANAGE;
+            return createRedirectMav(REDIRECT_USERS_MANAGE);
         }
 
-        return NEW_VIEW;
+        return new ModelAndView(NEW_VIEW);
     }
 
 
 
     @RequestMapping(value = DELETE_MAPPING, method = RequestMethod.POST)
-    public String delete(
+    public ModelAndView delete(
         @PathVariable int repoId, Model model)
         throws Exception {
         log.info("delete service repo {}", repoId);
@@ -106,7 +109,7 @@ public class ManageServiceReposController  extends AbstractController {
         //delete service repo
         rootAccountManagerService.deleteServiceRepository(repoId);
 
-        return REDIRECT_USERS_MANAGE;
+        return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 
     @RequestMapping(value = EDIT_MAPPING, method = RequestMethod.GET)
@@ -133,7 +136,7 @@ public class ManageServiceReposController  extends AbstractController {
     }
 
     @RequestMapping(value = EDIT_MAPPING, method = RequestMethod.POST)
-    public String edit(@PathVariable int repoId,
+    public ModelAndView edit(@PathVariable int repoId,
                        @ModelAttribute(NEW_FORM_KEY) @Valid ServiceRepoForm serviceRepoForm,
 					   BindingResult result,
 					   Model model) throws Exception {
@@ -151,9 +154,9 @@ public class ManageServiceReposController  extends AbstractController {
                                                             serviceRepoForm.getUserName(),
                                                             serviceRepoForm.getPassword());
 
-            return REDIRECT_USERS_MANAGE;
+            return createRedirectMav(REDIRECT_USERS_MANAGE);
         }
 
-        return EDIT_VIEW;
+        return new ModelAndView(EDIT_VIEW);
     }
 }

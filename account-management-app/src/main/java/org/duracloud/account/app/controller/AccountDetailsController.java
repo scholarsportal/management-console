@@ -3,21 +3,23 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import javax.validation.Valid;
-import org.springframework.validation.BindingResult;
+
+import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 
@@ -46,7 +48,7 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
-    public String addProvider(@PathVariable int accountId,
+    public ModelAndView addProvider(@PathVariable int accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
 					   BindingResult result,
 					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
@@ -56,27 +58,29 @@ public class AccountDetailsController extends AbstractAccountController {
             accountManagerService.getAccount(accountId);
         accountService.addStorageProvider(StorageProviderType.fromString(
             providerForm.getProvider()));
-        return formatAccountRedirect(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
-    public String enableProviderRrs(@PathVariable int accountId,
-					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+    public ModelAndView
+        enableProviderRrs(@PathVariable int accountId)
+            throws AccountNotFoundException,
+                DBConcurrentUpdateException {
         log.info("enableProviderRrs account {}", accountId);
 
         setProviderRrs(accountId, true);
 
-        return formatAccountRedirect(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
-    public String disableProviderRrs(@PathVariable int accountId,
+    public ModelAndView disableProviderRrs(@PathVariable int accountId,
 					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
         log.info("disableProviderRrs account {}", accountId);
 
         setProviderRrs(accountId, false);
 
-        return formatAccountRedirect(Integer.toString(accountId), "/details");
+        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details");
     }
 
 

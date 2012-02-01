@@ -1,5 +1,7 @@
 package org.duracloud.account.app.controller;
 
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import javax.validation.Valid;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
@@ -46,14 +48,14 @@ public class AccountInfoController extends AbstractAccountController {
 
 
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.POST)
-    public String editInfo(@PathVariable int accountId,
+    public ModelAndView editInfo(@PathVariable int accountId,
                            @ModelAttribute(EDIT_ACCOUNT_INFO_FORM_KEY) @Valid AccountEditForm accountEditForm,
 					   BindingResult result,
 					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException, DBNotFoundException {
         log.info("editInfo account {}", accountId);
 
         if (result.hasErrors()) {
-			return ACCOUNT_INFO_EDIT_ID;
+			return new ModelAndView(ACCOUNT_INFO_EDIT_ID);
 		}
 
         getAccountManagerService().getAccount(accountId).
@@ -64,6 +66,7 @@ public class AccountInfoController extends AbstractAccountController {
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         addUserToModel(model);
-        return ACCOUNT_DETAILS_VIEW_ID;
+        return createAccountRedirectModelAndView(Integer.toString(accountId), "/details/");
+
     }
 }

@@ -3,33 +3,34 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.CreditCardPaymentInfo;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.AccountNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.CreditCardPaymentInfo;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.error.DBConcurrentUpdateException;
+import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.DuracloudInstanceManagerService;
+import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.storage.domain.StorageProviderType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * The default view for this application
@@ -129,13 +130,17 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param suffix
      * @return
      */
-    protected String formatAccountRedirect(String accountId, String suffix) {
-        return "redirect:"
-            + MessageFormat.format(
-                "{0}{1}{2}", 
-                ACCOUNTS_PATH, 
-                ACCOUNT_PATH.replace("{accountId}",accountId), 
-                suffix);
+    protected ModelAndView createAccountRedirectModelAndView(String accountId,
+                                                             String suffix) {
+        String url =
+            MessageFormat.format("{0}{1}{2}",
+                                 ACCOUNTS_PATH,
+                                 ACCOUNT_PATH.replace("{accountId}", accountId),
+                                 suffix);
+
+        RedirectView redirectView = new RedirectView(url, true);
+        redirectView.setExposePathVariables(false);
+        return new ModelAndView(redirectView);
     }
         	
 	protected void loadBillingInfo(int accountId, Model model) {
