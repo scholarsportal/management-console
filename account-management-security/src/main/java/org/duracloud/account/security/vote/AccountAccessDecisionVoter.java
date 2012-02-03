@@ -31,24 +31,20 @@ public class AccountAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     @Override
-    protected Class getTargetService() {
+    protected Class<?> getTargetService() {
         return AccountService.class;
     }
 
     @Override
     public int vote(Authentication authentication,
-                    Object argInvocation,
-                    Collection configAttributes) {
+                    MethodInvocation invocation,
+                    Collection<ConfigAttribute> configAttributes) {
         int decision = ACCESS_DENIED;
 
         // Collect target method invocation.
-        MethodInvocation invocation = (MethodInvocation) argInvocation;
         if (!supportsTarget(invocation)) {
             return castVote(ACCESS_ABSTAIN, invocation);
         }
-
-        // Collect target method arguments
-        Object[] methodArgs = invocation.getArguments();
 
         // Collect user making the call.
         DuracloudUser user = getCurrentUser(authentication);

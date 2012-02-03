@@ -9,7 +9,6 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 
@@ -21,7 +20,7 @@ import java.util.Set;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  * 
  */
-public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter implements AccessDecisionVoter {
+public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter {
 
     private Logger log = LoggerFactory.getLogger(AccountAccessDecisionVoter.class);
 
@@ -33,7 +32,7 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter impl
 	}
 
 	@Override
-	public boolean supports(Class clazz) {
+	public boolean supports(Class<?> clazz) {
 		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}

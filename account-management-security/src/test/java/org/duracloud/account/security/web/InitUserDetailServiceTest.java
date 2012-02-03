@@ -49,13 +49,13 @@ public class InitUserDetailServiceTest {
         UserDetails userDetails = initService.loadUserByUsername("init");
         Assert.assertNotNull(userDetails);
 
-        Collection authorities = userDetails.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         Assert.assertNotNull(authorities);
 
         Assert.assertEquals(3, authorities.size());
         
         Set<String> roleNames = new HashSet<String>();
-        Iterator<GrantedAuthority> itr = authorities.iterator();
+        Iterator<GrantedAuthority> itr = (Iterator<GrantedAuthority>) authorities.iterator();
         while (itr.hasNext()) {
             roleNames.add(itr.next().getAuthority());
         }

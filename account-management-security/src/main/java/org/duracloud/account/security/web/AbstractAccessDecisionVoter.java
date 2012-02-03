@@ -19,7 +19,7 @@ import java.util.Collection;
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
-public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter {
+public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter<MethodInvocation> {
 
 	private Logger log = LoggerFactory.getLogger(AbstractAccessDecisionVoter.class);
 
@@ -27,32 +27,34 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 		super();
 	}
 
+	@Override
 	public boolean supports(ConfigAttribute attribute) {
 		log.trace("supports attribute{}", attribute.getAttribute());
 		return true;
 	}
 
 	@Override
-	public boolean supports(Class clazz) {
+	public boolean supports(Class<?> clazz) {
 		log.trace("supports {}", clazz.getName());
 		return MethodInvocation.class.isAssignableFrom(clazz);
 	}
-
+	
 	@Override
-	public int vote(Authentication authentication, Object object, Collection attributes) {
-		log.trace("voting on {} for {} using attributes {}",
-                  new Object[] {authentication, object, attributes });
-		for(ConfigAttribute ca : (Collection<ConfigAttribute>)attributes){
-			log.trace("attribute: {}", ca.getAttribute());
-		}
+    public int vote(Authentication authentication,
+                    MethodInvocation invocation,
+                    Collection<ConfigAttribute> attributes) {
+        log.trace("voting on {} for {} using attributes {}", new Object[] {
+            authentication, invocation, attributes });
+        for (ConfigAttribute ca : attributes) {
+            log.trace("attribute: {}", ca.getAttribute());
+        }
 
-		if(isRoot(authentication)){
-			return ACCESS_GRANTED;
-		}
-		
-		MethodInvocation rmi = (MethodInvocation)object;
-		return voteImpl(authentication, rmi, attributes);
-	}
+        if (isRoot(authentication)) {
+            return ACCESS_GRANTED;
+        }
+
+        return voteImpl(authentication, invocation, attributes);
+    }
 
 	protected abstract int voteImpl(Authentication authentication, MethodInvocation rmi,
 			Collection<ConfigAttribute> attributes);

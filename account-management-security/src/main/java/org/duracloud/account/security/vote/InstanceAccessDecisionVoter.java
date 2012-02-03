@@ -37,18 +37,16 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     @Override
-    protected Class getTargetService() {
+    protected Class<?> getTargetService() {
         return DuracloudInstanceService.class;
     }
 
     @Override
     public int vote(Authentication authentication,
-                    Object argInvocation,
-                    Collection configAttributes) {
+                    MethodInvocation invocation,
+                    Collection<ConfigAttribute> configAttributes) {
         int decision = ACCESS_DENIED;
 
-        // Collect target method invocation.
-        MethodInvocation invocation = (MethodInvocation) argInvocation;
         if (!supportsTarget(invocation)) {
             return castVote(ACCESS_ABSTAIN, invocation);
         }
@@ -133,11 +131,12 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
         return ACCESS_GRANTED;
     }
 
+    @SuppressWarnings("unchecked")
     private Set<DuracloudUser> getUsersArg(Object[] arguments) {
         if (arguments.length <= USER_INDEX) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Set) arguments[USER_INDEX];
+        return (Set<DuracloudUser>) arguments[USER_INDEX];
     }
 
     private int getAcctId(MethodInvocation invocation) {

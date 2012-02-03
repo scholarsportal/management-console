@@ -162,10 +162,10 @@ public class AccountAccessDecisionVoterTest {
         EasyMock.replay(annotationParser);
 
         // set up recursive voter
-        AccessDecisionVoter subVoter = EasyMock.createMock("AccessDecisionVoter",
+        AccessDecisionVoter<MethodInvocation> subVoter = EasyMock.createMock("AccessDecisionVoter",
                                                         AccessDecisionVoter.class);
         EasyMock.expect(subVoter.vote(EasyMock.<Authentication>anyObject(),
-                                   EasyMock.<Object>anyObject(),
+                                   EasyMock.<MethodInvocation>anyObject(),
                                    EasyMock.<Collection<ConfigAttribute>>anyObject()))
             .andReturn(AccessDecisionVoter.ACCESS_GRANTED);
         EasyMock.replay(subVoter);
@@ -176,7 +176,6 @@ public class AccountAccessDecisionVoterTest {
             annotationParser);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(3);
-        EasyMock.expect(inv.getArguments()).andReturn(new Object[]{id});
 
         return inv;
     }

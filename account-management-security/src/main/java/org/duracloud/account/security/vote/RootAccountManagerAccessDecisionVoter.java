@@ -19,7 +19,7 @@ public class RootAccountManagerAccessDecisionVoter extends AccountManagerAccessD
     }
 
     @Override
-    protected Class getTargetService() {
+    protected Class<?> getTargetService() {
         return RootAccountManagerService.class;
     }
 

@@ -27,7 +27,7 @@ import java.util.Set;
  * @author Andrew Woods
  *         Date: 4/5/11
  */
-public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
+public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<MethodInvocation> {
 
     protected Logger log = LoggerFactory.getLogger(BaseAccessDecisionVoter.class);
 
@@ -42,7 +42,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
      *
      * @return class of target service interface
      */
-    protected abstract Class getTargetService();
+    protected abstract Class<?> getTargetService();
 
     @Override
     public boolean supports(ConfigAttribute attribute) {
@@ -51,19 +51,18 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter {
     }
 
     @Override
-    public boolean supports(Class clazz) {
+    public boolean supports(Class<?> clazz) {
         log.trace("supports {}", clazz.getName());
         return MethodInvocation.class.isAssignableFrom(clazz);
     }
 
-    
     protected boolean supportsTarget(MethodInvocation invocation) {
-        Class[] interfaces = invocation.getThis().getClass().getInterfaces();
+        Class<?>[] interfaces = invocation.getThis().getClass().getInterfaces();
         if (null == interfaces || interfaces.length == 0) {
             return false;
         }
 
-        for (Class c : interfaces) {
+        for (Class<?> c : interfaces) {
             if (c.equals(getTargetService())) {
                 return true;
             }

@@ -4,7 +4,6 @@
 package org.duracloud.account.security.domain;
 
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 
 import java.util.StringTokenizer;
 

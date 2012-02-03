@@ -385,7 +385,7 @@ public class UserAccessDecisionVoterTest {
                                                "answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
-        Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
+        Collection<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
         for (Role role : roles) {
             userRoles.add(new SimpleGrantedAuthority(role.name()));
         }

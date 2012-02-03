@@ -23,6 +23,7 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -192,8 +193,8 @@ public class AccountManagerAccessDecisionVoterTest {
                                                "answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
-        Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
-        userRoles.add(new GrantedAuthorityImpl(role.name()));
+        Collection<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
+        userRoles.add(new SimpleGrantedAuthority(role.name()));
         EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
 
         return auth;

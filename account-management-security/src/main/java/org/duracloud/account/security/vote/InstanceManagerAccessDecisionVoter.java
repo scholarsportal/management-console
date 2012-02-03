@@ -34,18 +34,16 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
     }
 
     @Override
-    protected Class getTargetService() {
+    protected Class<?> getTargetService() {
         return DuracloudInstanceManagerService.class;
     }
 
     @Override
     public int vote(Authentication authentication,
-                    Object argInvocation,
-                    Collection configAttributes) {
+                    MethodInvocation invocation,
+                    Collection<ConfigAttribute> configAttributes) {
         int decision = ACCESS_DENIED;
 
-        // Collect target method invocation.
-        MethodInvocation invocation = (MethodInvocation) argInvocation;
         if (!supportsTarget(invocation)) {
             return castVote(ACCESS_ABSTAIN, invocation);
         }

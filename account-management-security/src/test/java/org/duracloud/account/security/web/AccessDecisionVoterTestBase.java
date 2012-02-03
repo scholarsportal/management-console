@@ -76,8 +76,11 @@ public class AccessDecisionVoterTestBase {
 
     protected Authentication createRootAuthentication() {
         UserDetails r = EasyMock.createMock(UserDetails.class);
+        Collection<? extends GrantedAuthority> authorities =
+            Arrays.asList(new GrantedAuthority[] { Role.ROLE_ROOT.authority() });
+
         EasyMock.expect(r.getAuthorities())
-            .andReturn((Collection) Arrays.asList(new GrantedAuthority[] { Role.ROLE_ROOT.authority() }));
+            .andReturn((Collection)authorities);
         EasyMock.replay(r);
         return createMockAuthentication(r);
     }
