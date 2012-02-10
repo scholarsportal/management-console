@@ -26,12 +26,6 @@ import java.io.IOException;
  *         to the CLEAR, so that you have a backup of the data which was in
  *         the database prior to the clear.
  *
- * FILL - This mode provides an interactive guide to assist in filling
- *        out information in the database that is missing. Specifically rows
- *        which have been marked as TBD when entered into the database. As a
- *        safety precaution, a GET is performed prior to the changes being made,
- *        so that you have a backup of the original database state.
- *
  * Usage Notes:
  *
  * - If you want to remove items (rows) from the database, you can perform a
@@ -73,8 +67,6 @@ public class DbUtilDriver {
             command = DbUtil.COMMAND.PUT;
         } else if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.CLEAR.name())) {
             command = DbUtil.COMMAND.CLEAR;
-        } else if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.FILL.name())) {
-            command = DbUtil.COMMAND.FILL;
         } else {
             usage("The first argument must be either GET, PUT, CLEAR or FILL. " +
                   "You supplied: " + commandArg);
@@ -106,17 +98,15 @@ public class DbUtilDriver {
         sb.append("\n\n");
         sb.append("Usage: ");
         sb.append("\n\t");
-        sb.append("DbUtilDriver [get/put/clear/fill] [credentials-file] [work-dir]");
+        sb.append("DbUtilDriver [get/put/clear] [credentials-file] [work-dir]");
         sb.append("\n\n\t\t");
         sb.append("GET - retrieves and stores all db data in work-dir");
         sb.append("\n\n\t\t");
         sb.append("PUT - updates db based on files in work-dir");
         sb.append("\n\n\t\t");
         sb.append("CLEAR - performs a GET, then removes all data from db");        
-        sb.append("\n\n\t\t");
-        sb.append("FILL - performs a GET, then assists in filling out missing data");
         sb.append("\n\n\t");
-        sb.append("where [get/put/clear/fill] is one of get, put, clear or fill commands");
+        sb.append("where [get/put/clear] is one of get, put, or clear commands");
         sb.append("\n\n\t");
         sb.append("where [credentials-file] is an xml file containing provider");
         sb.append("\n\n\t\t");

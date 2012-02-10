@@ -15,6 +15,7 @@ import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
@@ -47,7 +48,7 @@ import java.util.Set;
  */
 public class DbUtil {
 
-    public enum COMMAND {GET, PUT, CLEAR, FILL};
+    public enum COMMAND {GET, PUT, CLEAR};
 
     private final Logger log = LoggerFactory.getLogger(DbUtil.class);    
 
@@ -82,10 +83,6 @@ public class DbUtil {
         } else if(COMMAND.CLEAR.equals(command)) {
             doGet();
             doClear();
-        } else if(COMMAND.FILL.equals(command)) {
-            doGet();
-            DbUtilFiller filler = new DbUtilFiller(repoMgr);
-            filler.fill();
         }
     }
 
@@ -216,6 +213,8 @@ public class DbUtil {
             repo = repoMgr.getServiceRepositoryRepo();
         } else if(item instanceof DuracloudGroup) {
             repo = repoMgr.getGroupRepo();
+        } else if(item instanceof ServerDetails) {
+            repo = repoMgr.getServerDetailsRepo();
         } else {
             throw new RuntimeException("Item is not a known type: " +
                                        item.getClass().getName());
@@ -247,6 +246,7 @@ public class DbUtil {
         xstream.alias(DuracloudUser.class.getSimpleName(), DuracloudUser.class);
         xstream.alias(DuracloudGroup.class.getSimpleName(), DuracloudGroup.class);
         xstream.alias(AccountInfo.class.getSimpleName(), AccountInfo.class);
+        xstream.alias(ServerDetails.class.getSimpleName(), ServerDetails.class);
         xstream.alias(AccountRights.class.getSimpleName(), AccountRights.class);
         xstream.alias(UserInvitation.class.getSimpleName(), UserInvitation.class);
         xstream.alias(DuracloudInstance.class.getSimpleName(),

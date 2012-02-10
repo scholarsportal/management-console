@@ -17,8 +17,6 @@ import org.junit.Test;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.annotation.Secured;
 
-import java.util.Map;
-
 /**
  * @author Andrew Woods
  *         Date: 4/8/11
@@ -121,9 +119,7 @@ public class AccountServiceFactoryImplTest {
                                -1,
                                -1,
                                null,
-                               null,
-                               -1,
-                               null,
                                null);
     }
+
 }

@@ -7,6 +7,7 @@ import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
@@ -40,6 +41,7 @@ public class IdUtilImplTest {
     private DuracloudComputeProviderAccountRepo computeProviderAccountRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAccountRepo;
     private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
+    private DuracloudServerDetailsRepo serverDetailsRepo;
 
     private static final int COUNT = 5;
 
@@ -55,6 +57,7 @@ public class IdUtilImplTest {
         computeProviderAccountRepo = createMockComputeProviderAccountRepo(COUNT);
         storageProviderAccountRepo = createMockStorageProviderAccountRepo(COUNT);
         serviceRepositoryRepo = createMockServiceRepositoryRepo(COUNT);
+        serverDetailsRepo = createMockServerDetailsRepo(COUNT);
 
         idUtil = new IdUtilImpl();
         idUtil.initialize(userRepo,
@@ -66,7 +69,8 @@ public class IdUtilImplTest {
                           serverImageRepo,
                           computeProviderAccountRepo,
                           storageProviderAccountRepo,
-                          serviceRepositoryRepo);
+                          serviceRepositoryRepo,
+                          serverDetailsRepo);
     }
 
     private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
@@ -148,6 +152,14 @@ public class IdUtilImplTest {
         return repo;
     }
 
+    private DuracloudServerDetailsRepo createMockServerDetailsRepo(int count) {
+        DuracloudServerDetailsRepo repo =
+            EasyMock.createMock(DuracloudServerDetailsRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+
     private Set<Integer> createIds(int count) {
         Set<Integer> ids = new HashSet<Integer>();
         for (int i = 0; i < count; ++i) {
@@ -167,6 +179,7 @@ public class IdUtilImplTest {
         EasyMock.verify(serverImageRepo);
         EasyMock.verify(storageProviderAccountRepo);
         EasyMock.verify(serviceRepositoryRepo);
+        EasyMock.verify(serverDetailsRepo);
     }
 
     @Test
@@ -212,6 +225,11 @@ public class IdUtilImplTest {
     @Test
     public void testNewServiceRepositoryId() throws Exception {
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
+    }
+
+    @Test
+    public void testNewServerDetailsId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newServerDetailsId());
     }
 
 }

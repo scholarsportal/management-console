@@ -94,10 +94,18 @@
                   <td>${accountInfo.department}</td>
                 </tr>
 
+                <c:if test="${serverDetails != null}">
                 <tr>
                   <td align="right">Service Plan</td>
 
-                  <td>${accountInfo.servicePlan.text}</td>
+                  <td>${serverDetails.servicePlan.text}</td>
+                </tr>
+                </c:if>
+
+                <tr>
+                  <td align="right">Type</td>
+
+                  <td>${accountInfo.type.text}</td>
                 </tr>
 
                 <tr>
@@ -111,7 +119,8 @@
             <div
              id="provider-details"
              class="account-record">
-             
+
+              <c:if test="${accountInfo.type.type == 'FULL'}">
               <table width="100%" border="0" cellpadding="4" cellspacing="0" >
                 <tr>
                   <td><strong class="accountlabel">Provider Information</strong></td>
@@ -197,10 +206,9 @@
                   <td class="datatablesimple"><p class="instructions">If you would like to add or remove a Storage Provider please contact DuraCloud support.</p></td>
                 </tr>
               </table>
- 
-
-             
+              </c:if>
             </div>
+
 </div>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

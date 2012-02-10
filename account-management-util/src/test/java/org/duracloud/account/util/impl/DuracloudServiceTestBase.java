@@ -5,7 +5,9 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.*;
 import org.duracloud.account.util.AccountServiceFactory;
@@ -44,6 +46,7 @@ public class DuracloudServiceTestBase {
     protected DuracloudInstanceManagerService instanceManagerService;
     protected DuracloudServerImageRepo serverImageRepo;
     protected DuracloudServiceRepositoryRepo serviceRepositoryRepo;
+    protected DuracloudServerDetailsRepo serverDetailsRepo;
 
     protected IdUtil idUtil;
 
@@ -92,6 +95,8 @@ public class DuracloudServiceTestBase {
                                       DuracloudServerImageRepo.class);
         serviceRepositoryRepo = EasyMock.createMock("DuracloudServiceRepositoryRepo",
                                       DuracloudServiceRepositoryRepo.class);
+        serverDetailsRepo = EasyMock.createMock("DuracloudServerDetailsRepo",
+                                                DuracloudServerDetailsRepo.class);
 
         Set<Integer> userIds = createIds(NUM_USERS);
         Set<Integer> groupIds = createIds(NUM_GROUPS);
@@ -131,12 +136,17 @@ public class DuracloudServiceTestBase {
         EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
             .andReturn(computeProviderAcctRepo)
             .anyTimes();
-        EasyMock.expect(repoMgr.getIdUtil()).andReturn(idUtil).anyTimes();
+        EasyMock.expect(repoMgr.getIdUtil())
+            .andReturn(idUtil)
+            .anyTimes();
         EasyMock.expect(repoMgr.getServerImageRepo())
             .andReturn(serverImageRepo)
             .anyTimes();
         EasyMock.expect(repoMgr.getServiceRepositoryRepo())
             .andReturn(serviceRepositoryRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getServerDetailsRepo())
+            .andReturn(serverDetailsRepo)
             .anyTimes();
     }
 
@@ -167,6 +177,7 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(instanceManagerService);
         EasyMock.verify(serverImageRepo);
         EasyMock.verify(serviceRepositoryRepo);
+        EasyMock.verify(serverDetailsRepo);
     }
 
     protected DuracloudUser newDuracloudUser(int userId, String username) {
@@ -193,7 +204,8 @@ public class DuracloudServiceTestBase {
     }
 
     protected AccountCreationInfo newAccountCreationInfo(int acctId,
-                                                         String subdomain) {
+                                                         String subdomain,
+                                                         AccountType type) {
         Set<StorageProviderType> secStorProvTypes =
             new HashSet<StorageProviderType>();
         return new AccountCreationInfo(subdomain,
@@ -202,29 +214,38 @@ public class DuracloudServiceTestBase {
                                        "dept-" + acctId,
                                        StorageProviderType.AMAZON_S3,
                                        secStorProvTypes,
-                                       ServicePlan.STARTER_ARCHIVING);
+                                       ServicePlan.STARTER_ARCHIVING,
+                                       type);
     }
 
     protected AccountInfo newAccountInfo(int acctId, String subdomain) {
-        int computeProvAcctId = 0;
-        int primStorageProvAcctId = 0;
-        Set<Integer> secStorageProvAcctIds = new HashSet<Integer>();
-        secStorageProvAcctIds.add(0);
-        Set<Integer> secServiceRepoIds = new HashSet<Integer>();
         int paymentInfoId = 0;
+        int serverDetailsId = 1;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.PENDING;
         return new AccountInfo(acctId,
                                subdomain,
                                "account-" + acctId,
                                "org-" + acctId,
                                "dept-" + acctId,
-                               computeProvAcctId,
-                               primStorageProvAcctId,
-                               secStorageProvAcctIds,
-                               secServiceRepoIds,
                                paymentInfoId,
-                               ServicePlan.PROFESSIONAL,
-                               status);
+                               serverDetailsId,
+                               status,
+                               AccountType.FULL);
+    }
+
+    protected ServerDetails newServerDetails(int serverDetailsId) {
+        int computeProvAcctId = 0;
+        int primStorageProvAcctId = 0;
+        Set<Integer> secStorageProvAcctIds = new HashSet<Integer>();
+        secStorageProvAcctIds.add(0);
+        Set<Integer> secServiceRepoIds = new HashSet<Integer>();
+
+        return new ServerDetails(serverDetailsId,
+                                 computeProvAcctId,
+                                 primStorageProvAcctId,
+                                 secStorageProvAcctIds,
+                                 secServiceRepoIds,
+                                 ServicePlan.PROFESSIONAL);
     }
 
     protected void replayMocks() {
@@ -245,5 +266,6 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(instanceManagerService);
         EasyMock.replay(serverImageRepo);
         EasyMock.replay(serviceRepositoryRepo);
+        EasyMock.replay(serverDetailsRepo);
     }
 }

@@ -3,15 +3,10 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -31,6 +26,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The default view for this application
@@ -60,6 +61,7 @@ public abstract class AbstractAccountController extends AbstractController {
     public static final String INSTANCE_AVAILABLE_PATH =
         INSTANCE_PATH + "/available";
     public static final String ACCOUNT_INFO_KEY = "accountInfo";
+    public static final String SERVER_DETAILS_KEY = "serverDetails";
     public static final String INSTANCE_INFO_KEY = "instanceInfo";
     public static final String INSTANCE_STATUS_KEY = "instanceStatus";
     public static final String DC_VERSIONS_KEY = "dcVersions";
@@ -97,8 +99,11 @@ public abstract class AbstractAccountController extends AbstractController {
         this.userService = userService;
     }
 
-    protected void addAccountInfoToModel(AccountInfo info, Model model){
+    protected void addAccountInfoToModel(AccountInfo info,
+                                         ServerDetails serverDetails,
+                                         Model model){
         model.addAttribute(ACCOUNT_INFO_KEY, info);
+        model.addAttribute(SERVER_DETAILS_KEY, serverDetails);
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -121,7 +126,8 @@ public abstract class AbstractAccountController extends AbstractController {
     protected AccountInfo loadAccountInfo(AccountService accountService,
                                           Model model){
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
-        addAccountInfoToModel(accountInfo, model);
+        ServerDetails serverDetails = accountService.retrieveServerDetails();
+        addAccountInfoToModel(accountInfo, serverDetails, model);
         return accountInfo;
     }
 

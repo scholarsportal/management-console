@@ -6,6 +6,7 @@ package org.duracloud.account.util.instance.impl;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
@@ -21,6 +22,7 @@ import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -79,18 +81,18 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         DuracloudStorageProviderAccountRepo storageProviderAcctRepo =
             repoMgr.getStorageProviderAccountRepo();
         Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
-
-        AccountInfo account = getAccount();
+        ServerDetails serverDetails =
+            AccountUtil.getServerDetails(repoMgr, getAccount());
 
         // Primary Storage Provider
         int primaryProviderAccountId =
-            account.getPrimaryStorageProviderAccountId();
+            serverDetails.getPrimaryStorageProviderAccountId();
         storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                            primaryProviderAccountId,
                                            true));
         // Secondary Storage Providers
         Set<Integer> providerAccountIds =
-            account.getSecondaryStorageProviderAccountIds();
+            serverDetails.getSecondaryStorageProviderAccountIds();
         for(int providerAccountId : providerAccountIds) {
             storageAccts.add(getStorageAccount(storageProviderAcctRepo,
                                                providerAccountId,
@@ -187,7 +189,9 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String serviceStoreUsername;
         String serviceStorePassword;
 
-        ServicePlan servicePlan = getAccount().getServicePlan();
+        ServerDetails serverDetails =
+            AccountUtil.getServerDetails(repoMgr, getAccount());
+        ServicePlan servicePlan = serverDetails.getServicePlan();
         ServiceRepository serviceRepo;
         try {
             serviceRepo = repoMgr.getServiceRepositoryRepo()

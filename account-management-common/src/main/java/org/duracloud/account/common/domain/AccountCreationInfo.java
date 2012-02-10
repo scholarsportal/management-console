@@ -53,13 +53,19 @@ public class AccountCreationInfo {
      */
     private ServicePlan servicePlan;
 
+    /*
+     * The type of account to create.
+     */
+    private AccountType accountType;
+
     public AccountCreationInfo(String subdomain,
                                String acctName,
                                String orgName,
                                String department,
                                StorageProviderType primaryStorageProviderType,
                                Set<StorageProviderType> secondaryStorageProviderTypes,
-                               ServicePlan servicePlan) {
+                               ServicePlan servicePlan,
+                               AccountType accountType) {
         this.subdomain = subdomain;
         this.acctName = acctName;
         this.orgName = orgName;
@@ -67,6 +73,7 @@ public class AccountCreationInfo {
         this.primaryStorageProviderType = primaryStorageProviderType;
         this.secondaryStorageProviderTypes = secondaryStorageProviderTypes;
         this.servicePlan = servicePlan;
+        this.accountType = accountType;
     }
 
     public String getSubdomain() {
@@ -95,6 +102,10 @@ public class AccountCreationInfo {
 
     public ServicePlan getServicePlan() {
         return servicePlan;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
     }
 
 }

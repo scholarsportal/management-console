@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
@@ -89,6 +90,7 @@ public class DuracloudInstanceManagerServiceImplTest
     @Test
     public void testCreateInstance() throws Exception {
         int accountId = 33;
+        int serverDetailsId = 22;
         int computeProvAcctId = 5;
         int imageId = 1;
         String username = "username";
@@ -107,7 +109,10 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(accountRepo.findById(accountId))
             .andReturn(account)
             .times(1);
-        EasyMock.expect(account.getComputeProviderAccountId())
+        EasyMock.expect(account.getType())
+            .andReturn(AccountType.FULL)
+            .times(1);
+        EasyMock.expect(serverDetails.getComputeProviderAccountId())
             .andReturn(computeProvAcctId)
             .times(1);
         EasyMock.expect(repoMgr.getComputeProviderAccountRepo())

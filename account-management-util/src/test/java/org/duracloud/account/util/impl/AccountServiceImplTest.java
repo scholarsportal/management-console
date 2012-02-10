@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
@@ -50,6 +51,31 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
         acctService =
             new AccountServiceImpl(acctInfo, repoMgr, providerAccountUtil);
 
+         EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
+            .andReturn(newServerDetails(0))
+            .anyTimes();
+    }
+
+    @Test
+    public void testRetrieveServerDetails() throws Exception {
+        replayMocks();
+
+        ServerDetails serverDetails = acctService.retrieveServerDetails();
+        Assert.assertNotNull(serverDetails);
+    }
+
+    @Test
+    public void testStoreServerDetails() throws Exception {
+        int serverDetailsId = 12;
+
+        serverDetailsRepo.save(EasyMock.isA(ServerDetails.class));
+        EasyMock.expectLastCall()
+           .times(1);
+
+        replayMocks();
+
+        ServerDetails serverDetails = newServerDetails(serverDetailsId);
+        acctService.storeServerDetails(serverDetails);
     }
 
     @Test
@@ -91,9 +117,9 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
             .andReturn(0)
             .times(1);
 
-        accountRepo.save(EasyMock.isA(AccountInfo.class));
+        serverDetailsRepo.save(EasyMock.isA(ServerDetails.class));
         EasyMock.expectLastCall()
-            .times(1);
+           .times(1);
 
         replayMocks();
 
@@ -120,9 +146,9 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testRemoveStorageProvider() throws Exception {
-        accountRepo.save(EasyMock.isA(AccountInfo.class));
+        serverDetailsRepo.save(EasyMock.isA(ServerDetails.class));
         EasyMock.expectLastCall()
-            .times(1);
+           .times(1);
         
         storageProviderAcctRepo.delete(0);
         EasyMock.expectLastCall()

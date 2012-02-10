@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
@@ -32,8 +33,10 @@ import java.util.Set;
 public class DuracloudInstanceServiceTestBase {
 
     protected int accountId = 1;
+    protected int serverDetailsId = 2;
     protected DuracloudInstance instance;
     protected AccountInfo account;
+    protected ServerDetails serverDetails;
     protected DuracloudRepoMgr repoMgr;
     protected DuracloudInstanceServiceFactory instanceServiceFactory;
     protected ComputeProviderUtil computeProviderUtil;
@@ -50,6 +53,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudUserRepo userRepo;
     protected InstanceConfigUtil instanceConfigUtil;
     protected DuracloudAccountRepo accountRepo;
+    protected DuracloudServerDetailsRepo serverDetailsRepo;
     protected DuracloudServerImageRepo serverImageRepo;
     protected ServerImage serverImage;
     protected IdUtil idUtil;
@@ -63,6 +67,8 @@ public class DuracloudInstanceServiceTestBase {
         instance = EasyMock.createMock("DuracloudInstance",
                                        DuracloudInstance.class);
         account = EasyMock.createMock("AccountInfo", AccountInfo.class);
+        serverDetails =
+            EasyMock.createMock("ServerDetails", ServerDetails.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
         instanceServiceFactory = EasyMock.createMock(
@@ -72,12 +78,15 @@ public class DuracloudInstanceServiceTestBase {
                                                   ComputeProviderUtil.class);
         computeProvider = EasyMock.createMock("DuracloudComputeProvider",
                                               DuracloudComputeProvider.class);
-        computeProviderAcctRepo = EasyMock.createMock("DuracloudComputeProviderAccountRepo",
-                                               DuracloudComputeProviderAccountRepo.class);
-        computeProviderAcct = EasyMock.createMock("ComputeProviderAccount",
-                                                  ComputeProviderAccount.class);
-        storageProviderAcctRepo = EasyMock.createMock("DuracloudStorageProviderAccountRepo",
-                                               DuracloudStorageProviderAccountRepo.class);
+        computeProviderAcctRepo =
+            EasyMock.createMock("DuracloudComputeProviderAccountRepo",
+                                DuracloudComputeProviderAccountRepo.class);
+        computeProviderAcct =
+            EasyMock.createMock("ComputeProviderAccount",
+                                ComputeProviderAccount.class);
+        storageProviderAcctRepo =
+            EasyMock.createMock("DuracloudStorageProviderAccountRepo",
+                                DuracloudStorageProviderAccountRepo.class);
         storageProviderAcct = EasyMock.createMock("StorageProviderAccount",
                                            StorageProviderAccount.class);
         instanceRepo = EasyMock.createMock("DuracloudInstanceRepo",
@@ -94,6 +103,9 @@ public class DuracloudInstanceServiceTestBase {
                                                  InstanceConfigUtil.class);
         accountRepo = EasyMock.createMock("DuracloudAccountRepo",
                                           DuracloudAccountRepo.class);
+        serverDetailsRepo =
+            EasyMock.createMock("DuracloudServerDetailsRepo",
+                                DuracloudServerDetailsRepo.class);
         serverImageRepo = EasyMock.createMock("DuracloudServerImageRepo",
                                               DuracloudServerImageRepo.class);
         serverImage = EasyMock.createMock("ServerImage", ServerImage.class);
@@ -121,6 +133,7 @@ public class DuracloudInstanceServiceTestBase {
     protected void replayMocks() {
         EasyMock.replay(instance,
                         account,
+                        serverDetails,
                         repoMgr,
                         instanceServiceFactory,
                         computeProviderUtil,
@@ -136,6 +149,7 @@ public class DuracloudInstanceServiceTestBase {
                         userRepo,
                         instanceConfigUtil,
                         accountRepo,
+                        serverDetailsRepo,
                         serverImageRepo,
                         serverImage,
                         idUtil);
@@ -145,6 +159,7 @@ public class DuracloudInstanceServiceTestBase {
     public void teardown() {
         EasyMock.verify(instance,
                         account,
+                        serverDetails,
                         repoMgr,
                         instanceServiceFactory,
                         computeProviderUtil,
@@ -160,6 +175,7 @@ public class DuracloudInstanceServiceTestBase {
                         userRepo,
                         instanceConfigUtil,
                         accountRepo,
+                        serverDetailsRepo,
                         serverImageRepo,
                         serverImage,
                         idUtil);
@@ -182,7 +198,9 @@ public class DuracloudInstanceServiceTestBase {
         EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(computeProviderAcct)
             .anyTimes();
-        EasyMock.expect(account.getComputeProviderAccountId())
+
+        setUpServerDetails();
+        EasyMock.expect(serverDetails.getComputeProviderAccountId())
             .andReturn(1)
             .anyTimes();
         
@@ -196,6 +214,20 @@ public class DuracloudInstanceServiceTestBase {
             .anyTimes();
         EasyMock.expect(computeProviderAcct.getPassword())
             .andReturn(pass)
+            .anyTimes();
+    }
+
+    protected void setUpServerDetails() throws Exception {
+        EasyMock.expect(account.getServerDetailsId())
+            .andReturn(serverDetailsId)
+            .anyTimes();
+
+        EasyMock.expect(repoMgr.getServerDetailsRepo())
+            .andReturn(serverDetailsRepo)
+            .anyTimes();
+
+        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
+            .andReturn(serverDetails)
             .anyTimes();
     }
 

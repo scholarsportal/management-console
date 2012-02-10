@@ -36,6 +36,8 @@ public interface DuracloudRepoMgr extends Initable {
 
     public DuracloudServiceRepositoryRepo getServiceRepositoryRepo();
 
+    public DuracloudServerDetailsRepo getServerDetailsRepo();
+
     public IdUtil getIdUtil();
 
     public Set<BaseRepo> getAllRepos();

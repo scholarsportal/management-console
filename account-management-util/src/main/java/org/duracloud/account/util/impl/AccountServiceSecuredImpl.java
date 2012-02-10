@@ -7,6 +7,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -195,7 +196,20 @@ public class AccountServiceSecuredImpl implements AccountService {
     public void cancelAccount(String username, Emailer emailer,
                               Collection<String> adminAddresses)
         throws DBConcurrentUpdateException {
-        throwIfAccessDenied();
+        throwIfAccessDenied(username, emailer, adminAddresses);
         accountService.cancelAccount(username, emailer, adminAddresses);
+    }
+
+    @Override
+    public ServerDetails retrieveServerDetails() {
+        throwIfAccessDenied();
+        return accountService.retrieveServerDetails();
+    }
+
+    @Override
+    public void storeServerDetails(ServerDetails serverDetails)
+        throws DBConcurrentUpdateException {
+        throwIfAccessDenied(serverDetails);
+        accountService.storeServerDetails(serverDetails);
     }
 }

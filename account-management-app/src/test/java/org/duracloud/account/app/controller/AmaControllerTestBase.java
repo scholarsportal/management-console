@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.AccountNotFoundException;
@@ -44,8 +45,11 @@ public class AmaControllerTestBase {
         this.accountManagerService =
             EasyMock.createMock(AccountManagerService.class);
         AccountService as = EasyMock.createMock(AccountService.class);
-        EasyMock
-            .expect(as.retrieveAccountInfo()).andReturn(createAccountInfo())
+        EasyMock.expect(as.retrieveAccountInfo())
+            .andReturn(createAccountInfo())
+            .times(1);
+        EasyMock.expect(as.retrieveServerDetails())
+            .andReturn(createServerDetails())
             .times(1);
 
         EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(as);
@@ -67,9 +71,12 @@ public class AmaControllerTestBase {
      * @return
      */
     protected AccountInfo createAccountInfo() {
-        return new AccountInfo(
-            TEST_ACCOUNT_ID, "testdomain", "test", "test", "test", 0, 0, null,
-            null, 0, null, null);
+        return new AccountInfo(TEST_ACCOUNT_ID, "testdomain", "test", "test",
+                               "test", 0, 0, null, null);
+    }
+
+    protected ServerDetails createServerDetails() {
+        return new ServerDetails(TEST_ACCOUNT_ID, 0, 0, null, null, null);
     }
 
     protected DuracloudUser createUser() {

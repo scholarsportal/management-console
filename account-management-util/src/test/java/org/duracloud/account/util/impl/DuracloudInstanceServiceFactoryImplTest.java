@@ -20,7 +20,8 @@ import org.springframework.security.access.annotation.Secured;
  * @author Andrew Woods
  *         Date: 4/11/11
  */
-public class DuracloudInstanceServiceFactoryImplTest extends DuracloudInstanceServiceTestBase {
+public class DuracloudInstanceServiceFactoryImplTest
+    extends DuracloudInstanceServiceTestBase {
 
     private DuracloudInstanceServiceFactoryImpl factory;
 

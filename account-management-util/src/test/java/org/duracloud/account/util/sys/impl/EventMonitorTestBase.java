@@ -53,6 +53,7 @@ public class EventMonitorTestBase {
     }
 
     protected AccountCreationInfo newAccountCreationInfo(String subdomain) {
-        return new AccountCreationInfo(subdomain, null, null, null, null, null, null);
+        return new AccountCreationInfo(subdomain, null, null, null, null,
+                                       null, null, null);
     }
 }

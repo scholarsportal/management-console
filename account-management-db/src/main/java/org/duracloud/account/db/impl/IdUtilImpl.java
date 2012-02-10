@@ -7,6 +7,7 @@ import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
@@ -35,6 +36,7 @@ public class IdUtilImpl implements IdUtil {
     private int computeProviderAccountId = -1;
     private int storageProviderAccountId = -1;
     private int serviceRepositoryId = -1;
+    private int serverDetailsId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudGroupRepo groupRepo,
@@ -45,7 +47,8 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudServerImageRepo serverImageRepo,
                            DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
                            DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
-                           DuracloudServiceRepositoryRepo serviceRepositoryRepo) {
+                           DuracloudServiceRepositoryRepo serviceRepositoryRepo,
+                           DuracloudServerDetailsRepo serverDetailsRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
         this.groupId = max(groupRepo.getIds());
@@ -56,6 +59,7 @@ public class IdUtilImpl implements IdUtil {
         this.computeProviderAccountId = max(computeProviderAccountRepo.getIds());
         this.storageProviderAccountId = max(storageProviderAccountRepo.getIds());
         this.serviceRepositoryId = max(serviceRepositoryRepo.getIds());
+        this.serverDetailsId = max(serverDetailsRepo.getIds());
     }
 
     private int max(Collection<? extends Integer> c) {
@@ -130,4 +134,11 @@ public class IdUtilImpl implements IdUtil {
         checkInitialized();
         return ++serviceRepositoryId;
     }
+
+    @Override
+    public int newServerDetailsId() {
+        checkInitialized();
+        return ++serverDetailsId;
+    }
+
 }

@@ -3,13 +3,13 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -33,6 +33,8 @@ public class NewAccountForm {
     @NotBlank(message = "You must specify a service plan.")
     private String servicePlan;
 
+    private String accountType;
+
     public String getSubdomain() {
         return subdomain;
     }
@@ -40,7 +42,6 @@ public class NewAccountForm {
     public void setSubdomain(String subdomain) {
         this.subdomain = subdomain;
     }
-
 
     public String getOrgName() {
         return orgName;
@@ -80,5 +81,13 @@ public class NewAccountForm {
 
     public void setServicePlan(String servicePlan) {
         this.servicePlan = servicePlan;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 }

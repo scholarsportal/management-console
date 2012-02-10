@@ -6,6 +6,7 @@ package org.duracloud.account.util;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -66,6 +67,22 @@ public interface AccountService {
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
     public void storePaymentInfo(PaymentInfo paymentInfo);
+
+    /**
+     * Retrieves ServerDetails if they are available (if this account type
+     * makes user of ServerDetails).
+     *
+     * @return ServerDetails if available, otherwise null
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public ServerDetails retrieveServerDetails();
+
+    /**
+     * @param serverDetails
+     */
+    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    public void storeServerDetails(ServerDetails serverDetails)
+        throws DBConcurrentUpdateException;
 
     /**
      * @param subdomain

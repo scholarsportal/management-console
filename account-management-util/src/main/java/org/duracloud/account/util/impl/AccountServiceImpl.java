@@ -5,8 +5,10 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudRepoMgr;
@@ -18,7 +20,9 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
+import org.duracloud.account.util.error.DuracloudServerDetailsNotAvailableException;
 import org.duracloud.account.util.error.UnsentEmailException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -94,8 +98,38 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public ServerDetails retrieveServerDetails() {
+        ServerDetails details = null;
+        if(account.getType().equals(AccountType.FULL)) {
+            int serverDetailsId = account.getServerDetailsId();
+            if(serverDetailsId > -1) {
+                try {
+                    details = repoMgr.getServerDetailsRepo()
+                                     .findById(serverDetailsId);
+                } catch (DBNotFoundException e) {
+                    throw new DuracloudServerDetailsNotAvailableException(
+                        serverDetailsId);
+                }
+            }
+        }
+        return details;
+    }
+
+    @Override
+    public void storeServerDetails(ServerDetails serverDetails)
+        throws DBConcurrentUpdateException {
+        if(account.getType().equals(AccountType.FULL)) {
+            repoMgr.getServerDetailsRepo().save(serverDetails);
+        } else {
+            throw new DuraCloudRuntimeException("Cannot store server details " +
+                                                "to Community account!");
+        }
+    }
+
+    @Override
     public StorageProviderAccount getPrimaryStorageProvider() {
-        int primaryId = account.getPrimaryStorageProviderAccountId();
+        ServerDetails serverDetails = retrieveServerDetails();
+        int primaryId = serverDetails.getPrimaryStorageProviderAccountId();
         DuracloudStorageProviderAccountRepo repo =
             repoMgr.getStorageProviderAccountRepo();
         try {
@@ -112,7 +146,8 @@ public class AccountServiceImpl implements AccountService {
         log.info("Setting primary storage provider RRS to {} for account {}",
                  rrs, account.getSubdomain());
 
-        int primaryId = account.getPrimaryStorageProviderAccountId();
+        ServerDetails serverDetails = retrieveServerDetails();
+        int primaryId = serverDetails.getPrimaryStorageProviderAccountId();
         DuracloudStorageProviderAccountRepo repo =
             repoMgr.getStorageProviderAccountRepo();
         try {
@@ -131,9 +166,9 @@ public class AccountServiceImpl implements AccountService {
             repoMgr.getStorageProviderAccountRepo();
         Set<StorageProviderAccount> accounts =
             new HashSet<StorageProviderAccount>();
-
+        ServerDetails serverDetails = retrieveServerDetails();
         try {
-            for(int id : account.getSecondaryStorageProviderAccountIds()) {
+            for(int id : serverDetails.getSecondaryStorageProviderAccountIds()) {
                 accounts.add(repo.findById(id));
             }
         } catch(DBNotFoundException e) {
@@ -152,8 +187,9 @@ public class AccountServiceImpl implements AccountService {
 
         int id = providerAccountUtil.
             createEmptyStorageProviderAccount(storageProviderType);
-        account.getSecondaryStorageProviderAccountIds().add(id);
-        repoMgr.getAccountRepo().save(account);
+        ServerDetails serverDetails = retrieveServerDetails();
+        serverDetails.getSecondaryStorageProviderAccountIds().add(id);
+        storeServerDetails(serverDetails);
     }
 
     @Override
@@ -162,9 +198,10 @@ public class AccountServiceImpl implements AccountService {
         log.info("Removing storage provider with ID {} from account {}",
                  storageProviderId, account.getSubdomain());
 
-        if(account.getSecondaryStorageProviderAccountIds()
-                  .remove(storageProviderId)) {
-            repoMgr.getAccountRepo().save(account);
+        ServerDetails serverDetails = retrieveServerDetails();
+        if(serverDetails.getSecondaryStorageProviderAccountIds()
+                        .remove(storageProviderId)) {
+            storeServerDetails(serverDetails);
             repoMgr.getStorageProviderAccountRepo().delete(storageProviderId);
         } else {
             throw new DuracloudProviderAccountNotAvailableException(

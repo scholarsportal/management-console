@@ -148,9 +148,6 @@ public class InstanceMonitorTest {
                                -1,
                                -1,
                                null,
-                               null,
-                               -1,
-                               null,
                                null);
     }
 

@@ -6,11 +6,14 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -88,29 +91,49 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         }
         try {
             int acctId = getIdUtil().newAccountId();
+            int serverDetailsId = -1;
+            AccountInfo.AccountStatus status = AccountInfo.AccountStatus.ACTIVE;
 
-            int computeProviderAccountId =
-                providerAccountUtil.createEmptyComputeProviderAccount();
+            AccountType accountType = accountCreationInfo.getAccountType();
+            if(AccountType.FULL.equals(accountType)) {
+                status = AccountInfo.AccountStatus.PENDING;
 
-            StorageProviderType primaryStorageType =
-                accountCreationInfo.getPrimaryStorageProviderType();
-            int primaryStorageProviderAccountId =
-                providerAccountUtil.
-                    createEmptyStorageProviderAccount(primaryStorageType);
+                serverDetailsId = getIdUtil().newServerDetailsId();
 
-            Set<Integer> secondaryStorageProviderAccountIds =
-                new HashSet<Integer>();
-            for(StorageProviderType storageType :
-                accountCreationInfo.getSecondaryStorageProviderTypes()) {
-                int id = providerAccountUtil.
-                    createEmptyStorageProviderAccount(storageType);
-                secondaryStorageProviderAccountIds.add(id);
+                int computeProviderAccountId =
+                    providerAccountUtil.createEmptyComputeProviderAccount();
+
+                StorageProviderType primaryStorageType =
+                    accountCreationInfo.getPrimaryStorageProviderType();
+                int primaryStorageProviderAccountId =
+                    providerAccountUtil.
+                        createEmptyStorageProviderAccount(primaryStorageType);
+
+                Set<Integer> secondaryStorageProviderAccountIds =
+                    new HashSet<Integer>();
+                for(StorageProviderType storageType :
+                    accountCreationInfo.getSecondaryStorageProviderTypes()) {
+                    int id = providerAccountUtil.
+                        createEmptyStorageProviderAccount(storageType);
+                    secondaryStorageProviderAccountIds.add(id);
+                }
+
+                // Empty set for now. Will want to provide a way for users to
+                // specify service repos, but likely not on account creation.
+                Set<Integer> secondaryServiceRepositoryIds =
+                    new HashSet<Integer>();
+
+                ServerDetails serverDetails =
+                    new ServerDetails(serverDetailsId,
+                                      computeProviderAccountId,
+                                      primaryStorageProviderAccountId,
+                                      secondaryStorageProviderAccountIds,
+                                      secondaryServiceRepositoryIds,
+                                      accountCreationInfo.getServicePlan());
+
+                getServerDetailsRepo().save(serverDetails);
             }
-                        
-            // Empty set for now. Will want to provide a way for users to
-            // specify service repos, but likely not on account creation.
-            Set<Integer> secondaryServiceRepositoryIds = new HashSet<Integer>();
-            
+
             // TODO: Hook up to payment data
             int paymentInfoId = -1;
 
@@ -120,13 +143,10 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                 accountCreationInfo.getAcctName(),
                                 accountCreationInfo.getOrgName(),
                                 accountCreationInfo.getDepartment(),
-                                computeProviderAccountId,
-                                primaryStorageProviderAccountId,
-                                secondaryStorageProviderAccountIds,
-                                secondaryServiceRepositoryIds,
                                 paymentInfoId,
-                                accountCreationInfo.getServicePlan(),
-                                AccountInfo.AccountStatus.PENDING);
+                                serverDetailsId,
+                                status,
+                                accountType);
 
             getAccountRepo().save(newAccountInfo);
 
@@ -179,6 +199,10 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     private DuracloudRightsRepo getRightsRepo() {
         return repoMgr.getRightsRepo();
+    }
+
+    private DuracloudServerDetailsRepo getServerDetailsRepo() {
+        return repoMgr.getServerDetailsRepo();
     }
 
     private IdUtil getIdUtil() {

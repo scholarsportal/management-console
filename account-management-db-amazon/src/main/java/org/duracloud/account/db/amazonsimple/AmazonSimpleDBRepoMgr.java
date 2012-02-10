@@ -8,11 +8,12 @@ import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
@@ -44,6 +45,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     private DuracloudComputeProviderAccountRepo computeProviderAccountRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAccountRepo;
     private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
+    private DuracloudServerDetailsRepo serverDetailsRepo;
 
     private IdUtil idUtil;
 
@@ -80,6 +82,8 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
                 DOMAIN_PREFIX + "_STORAGE_PROVIDER_ACCOUNT_DOMAIN";
             String serviceRepositoryTable =
                 DOMAIN_PREFIX + "_SERVICE_REPOSITORY_DOMAIN";
+            String serverDetailsTable =
+                DOMAIN_PREFIX + "_SERVER_DETAILS_DOMAIN";
 
             userRepo = new DuracloudUserRepoImpl(dbClientMgr, userTable);
             groupRepo = new DuracloudGroupRepoImpl(dbClientMgr, userTable);
@@ -102,6 +106,9 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
             serviceRepositoryRepo =
                 new DuracloudServiceRepositoryRepoImpl(dbClientMgr,
                                                        serviceRepositoryTable);
+            serverDetailsRepo =
+                new DuracloudServerDetailsRepoImpl(dbClientMgr,
+                                                   serverDetailsTable);
 
         } else {
             userRepo = new DuracloudUserRepoImpl(dbClientMgr);
@@ -118,6 +125,8 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
                 new DuracloudStorageProviderAccountRepoImpl(dbClientMgr);
             serviceRepositoryRepo =
                 new DuracloudServiceRepositoryRepoImpl(dbClientMgr);
+            serverDetailsRepo =
+                new DuracloudServerDetailsRepoImpl(dbClientMgr);
         }
 
         idUtil.initialize(userRepo,
@@ -129,7 +138,8 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
                           serverImageRepo,
                           computeProviderAccountRepo,
                           storageProviderAccountRepo,
-                          serviceRepositoryRepo);
+                          serviceRepositoryRepo,
+                          serverDetailsRepo);
     }
 
     @Override
@@ -197,6 +207,12 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
     }
 
     @Override
+    public DuracloudServerDetailsRepo getServerDetailsRepo() {
+        checkInitialized(this.serverDetailsRepo, "DuracloudServerDetailsRepo");
+        return this.serverDetailsRepo;
+    }
+
+    @Override
     public IdUtil getIdUtil() {
         checkInitialized(this.idUtil, "IdUtil");
         return this.idUtil;
@@ -215,6 +231,7 @@ public class AmazonSimpleDBRepoMgr implements DuracloudRepoMgr {
         repos.add(getComputeProviderAccountRepo());
         repos.add(getStorageProviderAccountRepo());
         repos.add(getServiceRepositoryRepo());
+        repos.add(getServerDetailsRepo());
         return repos;
     }
 

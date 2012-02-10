@@ -11,6 +11,7 @@ import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
@@ -33,6 +34,7 @@ import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -128,8 +130,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         DuracloudComputeProviderAccountRepo providerAcctRepo =
             repoMgr.getComputeProviderAccountRepo();
-        ComputeProviderAccount computeProviderAcct =
-            providerAcctRepo.findById(account.getComputeProviderAccountId());
+        ServerDetails serverDetails =
+            AccountUtil.getServerDetails(repoMgr, account);
+        ComputeProviderAccount computeProviderAcct = providerAcctRepo.findById(
+            serverDetails.getComputeProviderAccountId());
 
         this.computeProvider = computeProviderUtil
             .getComputeProvider(computeProviderAcct.getUsername(),

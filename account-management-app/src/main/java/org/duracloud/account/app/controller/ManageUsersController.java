@@ -3,19 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -42,6 +35,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @Lazy
@@ -347,11 +347,13 @@ public class ManageUsersController extends AbstractController {
             return new ModelAndView(ACCOUNT_SETUP_VIEW);
         }
 
-        AccountInfo accountInfo = rootAccountManagerService.getAccount(accountId);
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+        ServerDetails serverDetails = accountService.retrieveServerDetails();
 
         //setup account
         rootAccountManagerService.setupStorageProvider(
-            accountInfo.getPrimaryStorageProviderAccountId(),
+            serverDetails.getPrimaryStorageProviderAccountId(),
             accountSetupForm.getPrimaryStorageUsername(),
             accountSetupForm.getPrimaryStoragePassword());
 
@@ -387,7 +389,7 @@ public class ManageUsersController extends AbstractController {
         }
 
         rootAccountManagerService.setupComputeProvider(
-            accountInfo.getComputeProviderAccountId(),
+            serverDetails.getComputeProviderAccountId(),
             accountSetupForm.getComputeUsername(),
             accountSetupForm.getComputePassword(),
             accountSetupForm.getComputeElasticIP(),

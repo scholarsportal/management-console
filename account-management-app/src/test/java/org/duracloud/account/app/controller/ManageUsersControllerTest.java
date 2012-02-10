@@ -18,8 +18,7 @@ import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.RootAccountManagerService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.notification.Emailer;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -166,8 +165,11 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testSetupAccount() throws Exception {
-        EasyMock.expect(rootAccountManagerService.getAccount(EasyMock.anyInt()))
-            .andReturn(createAccountInfo());
+        EasyMock.expect(accountService.retrieveServerDetails())
+            .andReturn(createServerDetails());
+
+        EasyMock.expect(accountManagerService.getAccount(EasyMock.anyInt()))
+            .andReturn(accountService);
 
         rootAccountManagerService.setupStorageProvider(EasyMock.anyInt(),
                                                        EasyMock.isA(String.class),
@@ -187,7 +189,12 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
 
         this.manageUsersController.setRootAccountManagerService(
             rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
+        EasyMock.replay(rootAccountManagerService,
+                        accountManagerService,
+                        accountService);
+
+        this.manageUsersController.setAccountManagerService(
+            accountManagerService);
 
         AccountSetupForm setupForm = new AccountSetupForm();
         String test = "test";
@@ -205,7 +212,9 @@ public class ManageUsersControllerTest extends AmaControllerTestBase {
                                                 setupForm,
                                                 bindingResult,
                                                 model);
-        EasyMock.verify(rootAccountManagerService);
+        EasyMock.verify(rootAccountManagerService,
+                        accountManagerService,
+                        accountService);
     }
 
     @Test

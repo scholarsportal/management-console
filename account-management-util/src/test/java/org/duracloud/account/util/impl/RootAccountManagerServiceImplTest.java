@@ -8,7 +8,7 @@ import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
@@ -323,6 +323,10 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
             .andReturn(newAccountInfo(1));
 
+        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
+            .andReturn(newServerDetails(0))
+            .times(1);
+
         storageProviderAcctRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
@@ -359,6 +363,9 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     private void setUpGetSecondaryStorageProviders() throws Exception {
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
             .andReturn(newAccountInfo(1));
+        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
+            .andReturn(newServerDetails(0))
+            .times(1);
         EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(null)
             .anyTimes();

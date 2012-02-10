@@ -24,6 +24,9 @@ $(document).ready(function() {
 
     $("#sort-accounts").tablesorter({
         headers: {
+            3: {
+                sorter: false
+            },
             4: {
                 sorter: false
             },

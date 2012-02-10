@@ -3,8 +3,6 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.Set;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
@@ -36,27 +34,6 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
      */
     private String department;
 
-    /**
-     * The ID of the ComputeProviderAccount which is the compute provider for
-     * an instance
-     */
-    private int computeProviderAccountId;
-
-    /**
-     * The ID of a StorageProviderAccount which is used for primary storage
-     */
-    private int primaryStorageProviderAccountId;
-
-    /**
-     * The IDs of all StorageProviderAccounts which are used for secondary storage
-     */
-    private Set<Integer> secondaryStorageProviderAccountIds;
-
-    /**
-     * The IDs of all ServiceRepositories used to store service binaries
-     */
-    private Set<Integer> secondaryServiceRepositoryIds;
-
     /*
      * The ID of the PaymentInfo which tracks the payment details for this
      * account
@@ -64,36 +41,39 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
     private int paymentInfoId;
 
     /*
-     * The service plan for this account
+     * The current status of this account
      */
-    private ServicePlan servicePlan;
-
     private AccountStatus status;
+
+    /*
+     * The type of account
+     */
+    private AccountType type;
+
+    /*
+     * The ID of the details needed to manage servers associated with this
+     * account
+     */
+    private int serverDetailsId;
 
 	public AccountInfo(int id,
                        String subdomain,
                        String acctName,
                        String orgName,
 			           String department,
-                       int computeProviderAccountId,
-                       int primaryStorageProviderAccountId,
-                       Set<Integer> secondaryStorageProviderAccountIds,
-                       Set<Integer> secondaryServiceRepositoryIds,
                        int paymentInfoId,
-                       ServicePlan servicePlan,
-                       AccountStatus status) {
+                       int serverDetailsId,
+                       AccountStatus status,
+                       AccountType type) {
 		this(id,
              subdomain,
              acctName,
              orgName,
              department,
-             computeProviderAccountId,
-             primaryStorageProviderAccountId,
-             secondaryStorageProviderAccountIds,
-             secondaryServiceRepositoryIds,
              paymentInfoId,
-             servicePlan,
+             serverDetailsId,
              status,
+             type,
              0);
 	}
 
@@ -102,13 +82,10 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
                        String acctName,
                        String orgName,
                        String department,
-                       int computeProviderAccountId,
-                       int primaryStorageProviderAccountId,
-                       Set<Integer> secondaryStorageProviderAccountIds,
-                       Set<Integer> secondaryServiceRepositoryIds,
                        int paymentInfoId,
-                       ServicePlan servicePlan,
+                       int serverDetailsId,
                        AccountStatus status,
+                       AccountType type,
                        int counter) {
 		super();
 		this.id = id;
@@ -116,13 +93,10 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
 		this.acctName = acctName;
 		this.orgName = orgName;
 		this.department = department;
-        this.computeProviderAccountId = computeProviderAccountId;
-        this.primaryStorageProviderAccountId = primaryStorageProviderAccountId;
-        this.secondaryStorageProviderAccountIds = secondaryStorageProviderAccountIds;
-        this.secondaryServiceRepositoryIds = secondaryServiceRepositoryIds;
         this.paymentInfoId = paymentInfoId;
-        this.servicePlan = servicePlan;
         this.status = status;
+        this.type = type;
+        this.serverDetailsId = serverDetailsId;
         this.counter = counter;
 	}
 
@@ -154,28 +128,8 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         this.department = department;
     }    
 
-    public int getComputeProviderAccountId() {
-        return computeProviderAccountId;
-    }
-
-    public int getPrimaryStorageProviderAccountId() {
-        return primaryStorageProviderAccountId;
-    }
-
-    public Set<Integer> getSecondaryStorageProviderAccountIds() {
-        return secondaryStorageProviderAccountIds;
-    }
-
-    public Set<Integer> getSecondaryServiceRepositoryIds() {
-        return secondaryServiceRepositoryIds;
-    }
-
     public int getPaymentInfoId() {
         return paymentInfoId;
-    }
-
-    public ServicePlan getServicePlan() {
-        return servicePlan;
     }
 
     public AccountStatus getStatus() {
@@ -186,14 +140,26 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         this.status = status;
     }
 
+    public AccountType getType() {
+        return type;
+    }
+
+    public void setServerDetailsId(int serverDetailsId) {
+        this.serverDetailsId = serverDetailsId;
+    }
+
+    public int getServerDetailsId() {
+        return serverDetailsId;
+    }
+
     @Override
     public int compareTo(AccountInfo o) {
         return this.acctName.compareTo(o.acctName);
     }
 
     /*
-    * Generated by IntelliJ
-    */
+     * Generated by IntelliJ
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -205,17 +171,10 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
 
         AccountInfo that = (AccountInfo) o;
 
-        if (computeProviderAccountId != that.computeProviderAccountId) {
-            return false;
-        }
         if (paymentInfoId != that.paymentInfoId) {
             return false;
         }
-        if (servicePlan != that.servicePlan) {
-            return false;
-        }
-        if (primaryStorageProviderAccountId !=
-            that.primaryStorageProviderAccountId) {
+        if (serverDetailsId != that.serverDetailsId) {
             return false;
         }
         if (acctName != null ? !acctName.equals(that.acctName) :
@@ -230,18 +189,6 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
             that.orgName != null) {
             return false;
         }
-        if (secondaryServiceRepositoryIds !=
-            null ? !secondaryServiceRepositoryIds
-            .equals(that.secondaryServiceRepositoryIds) :
-            that.secondaryServiceRepositoryIds != null) {
-            return false;
-        }
-        if (secondaryStorageProviderAccountIds !=
-            null ? !secondaryStorageProviderAccountIds
-            .equals(that.secondaryStorageProviderAccountIds) :
-            that.secondaryStorageProviderAccountIds != null) {
-            return false;
-        }
         if (status != that.status) {
             return false;
         }
@@ -249,10 +196,13 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
             that.subdomain != null) {
             return false;
         }
+        if (type != that.type) {
+            return false;
+        }
 
         return true;
     }
-    
+
     /*
      * Generated by IntelliJ
      */
@@ -262,16 +212,10 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         result = 31 * result + (acctName != null ? acctName.hashCode() : 0);
         result = 31 * result + (orgName != null ? orgName.hashCode() : 0);
         result = 31 * result + (department != null ? department.hashCode() : 0);
-        result = 31 * result + computeProviderAccountId;
-        result = 31 * result + primaryStorageProviderAccountId;
-        result = 31 * result + (secondaryStorageProviderAccountIds !=
-            null ? secondaryStorageProviderAccountIds.hashCode() : 0);
-        result = 31 * result + (secondaryServiceRepositoryIds !=
-            null ? secondaryServiceRepositoryIds.hashCode() : 0);
         result = 31 * result + paymentInfoId;
-        result = 31 * result + (servicePlan != null ? servicePlan.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + serverDetailsId;
         return result;
-    }    
-
+    }
 }

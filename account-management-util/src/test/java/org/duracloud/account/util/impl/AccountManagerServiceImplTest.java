@@ -6,8 +6,10 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -75,8 +77,17 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
-    public void testCreateAccount() throws Exception {
-        setUpCreateAccount();
+    public void testCreateFullAccount() throws Exception {
+        testCreateAccount(AccountType.FULL);
+    }
+
+    @Test
+    public void testCreateCommunityAccount() throws Exception {
+        testCreateAccount(AccountType.COMMUNITY);
+    }
+
+    private void testCreateAccount(AccountType type) throws Exception {
+        setUpCreateAccount(AccountType.FULL.equals(type));
         setUpAccountManagerService();
 
         int userId = 0;
@@ -91,21 +102,29 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
 
         int acctId = 0;
         String subdomain = "testdomain";
-        AccountCreationInfo info = newAccountCreationInfo(acctId, subdomain);
+        AccountCreationInfo info =
+            newAccountCreationInfo(acctId, subdomain, type);
 
         AccountService as = accountManagerService.createAccount(info, user);
         Assert.assertNotNull(as);
     }
 
-    private void setUpCreateAccount() throws Exception {
-        EasyMock.expect(providerAccountUtil.createEmptyComputeProviderAccount())
-            .andReturn(1)
-            .times(1);
-        EasyMock.expect(
-            providerAccountUtil.createEmptyStorageProviderAccount(
-                EasyMock.isA(StorageProviderType.class)))
-            .andReturn(1)
-            .times(1);
+    private void setUpCreateAccount(boolean fullAccount) throws Exception {
+        if(fullAccount) {
+            EasyMock.expect(idUtil.newServerDetailsId()).andReturn(0);
+            serverDetailsRepo.save(EasyMock.isA(ServerDetails.class));
+            EasyMock.expectLastCall();
+
+            EasyMock.expect(
+                providerAccountUtil.createEmptyComputeProviderAccount())
+                .andReturn(1)
+                .times(1);
+            EasyMock.expect(
+                providerAccountUtil.createEmptyStorageProviderAccount(
+                    EasyMock.isA(StorageProviderType.class)))
+                .andReturn(1)
+                .times(1);
+        }
 
         userService = EasyMock.createMock(DuracloudUserService.class);
         EasyMock.expect(userService.setUserRights(EasyMock.anyInt(),

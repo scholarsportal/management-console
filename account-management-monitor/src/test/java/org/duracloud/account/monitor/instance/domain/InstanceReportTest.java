@@ -109,9 +109,6 @@ public class InstanceReportTest {
                                -1,
                                -1,
                                null,
-                               null,
-                               -1,
-                               null,
                                null);
     }
 

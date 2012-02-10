@@ -305,8 +305,6 @@
 
                   <th align="left">Status</th>
 
-                  <th align="left">Service Plan</th>
-
                   <th align="left"></th>
                   <th align="left"></th>
                   <th align="left"></th>
@@ -325,7 +323,6 @@
 
                     <td align="left">${a.accountInfo.status}</td>
 
-                    <td align="left">${a.accountInfo.servicePlan.text}</td>
                     <td align="left">
 
                             <a

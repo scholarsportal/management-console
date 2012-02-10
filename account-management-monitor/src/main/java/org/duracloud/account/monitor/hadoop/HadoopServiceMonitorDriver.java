@@ -5,9 +5,11 @@ package org.duracloud.account.monitor.hadoop;
 
 import org.apache.commons.io.IOUtils;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
 import org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl;
+import org.duracloud.account.db.amazonsimple.DuracloudServerDetailsRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudStorageProviderAccountRepoImpl;
 import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.hadoop.domain.HadoopServiceReport;
@@ -47,12 +49,16 @@ public class HadoopServiceMonitorDriver extends MonitorsDriver implements Runnab
         DuracloudAccountRepo acctRepo =
             new DuracloudAccountRepoImpl(dbClientMgr);
 
+        DuracloudServerDetailsRepo serverDetailsRepo =
+            new DuracloudServerDetailsRepoImpl(dbClientMgr);
+
         DuracloudStorageProviderAccountRepo storageProviderAcctRepo =
             new DuracloudStorageProviderAccountRepoImpl(dbClientMgr);
 
         HadoopUtilFactory hadoopUtilFactory = new HadoopUtilFactoryImpl();
 
         this.serviceMonitor = new HadoopServiceMonitor(acctRepo,
+                                                       serverDetailsRepo,
                                                        storageProviderAcctRepo,
                                                        hadoopUtilFactory);
     }

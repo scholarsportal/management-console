@@ -127,6 +127,24 @@
                        class="label">
                         <form:label
                          cssErrorClass="error"
+                         path="accountType">Account Type:</form:label>
+                      </td>
+
+                      <td
+                       class="value required">
+                          <form:select
+                          id="accountType"
+                          cssErrorClass="error"
+                          path="accountType"
+                          items="${accountTypes}" />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td align="right"
+                       class="label">
+                        <form:label
+                         cssErrorClass="error"
                          path="servicePlan">Service Plan:</form:label>
                       </td>
 

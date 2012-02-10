@@ -98,6 +98,13 @@ public class AmazonSimpleDBRepoMgrTest {
             numExceptions++;
         }
 
+        try {
+            repoMgr.getServerDetailsRepo();
+            Assert.fail("exception expected");
+        } catch (DBUninitializedException e) {
+            numExceptions++;
+        }
+
         // IdUtil only throws when a direct call is made.
         try {
             repoMgr.getIdUtil().newAccountId();
@@ -106,7 +113,7 @@ public class AmazonSimpleDBRepoMgrTest {
             numExceptions++;
         }
 
-        Assert.assertEquals(11, numExceptions);
+        Assert.assertEquals(12, numExceptions);
     }
 
 }

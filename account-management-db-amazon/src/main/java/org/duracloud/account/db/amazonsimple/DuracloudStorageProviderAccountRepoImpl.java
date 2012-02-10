@@ -5,9 +5,6 @@ package org.duracloud.account.db.amazonsimple;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.Item;
-import com.amazonaws.services.simpledb.model.PutAttributesRequest;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.amazonsimple.converter.DomainConverter;

@@ -3,16 +3,9 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
@@ -38,6 +31,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -289,6 +289,7 @@ public class AccountController extends AbstractAccountController {
         log.info("serving up new AccountForm");
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL.toString());
+        newAccountForm.setAccountType(AccountType.FULL.toString());
         model.addAttribute(NEW_ACCOUNT_FORM_KEY, newAccountForm);
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
@@ -301,6 +302,15 @@ public class AccountController extends AbstractAccountController {
             plans.add(pType.toString());
         }
         return plans;
+    }
+
+    @ModelAttribute("accountTypes")
+    public List<String> getAccountTypes() {
+        List<String> types = new ArrayList<String>();
+        for (AccountType type: AccountType.values()) {
+            types.add(type.toString());
+        }
+        return types;
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -323,7 +333,9 @@ public class AccountController extends AbstractAccountController {
                                             StorageProviderType.AMAZON_S3,
                                             secondaryStorageProviderTypes,
                                             ServicePlan.fromString(
-                                                newAccountForm.getServicePlan()));
+                                                newAccountForm.getServicePlan()),
+                                            AccountType.fromString(
+                                                newAccountForm.getAccountType()));
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);

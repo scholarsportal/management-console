@@ -4,7 +4,18 @@
 package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.duracloud.account.common.domain.*;
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.ServiceRepository;
+import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
+import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -22,9 +33,8 @@ import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.util.ChecksumUtil;
-import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,19 +154,21 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             return;
         }
 
-        AccountInfo account = getAccount(accountId);
+        ServerDetails serverDetails =
+            AccountUtil.getServerDetails(repoMgr, getAccount(accountId));
 
         // Delete the primary storage provider
-        getStorageRepo().delete(account.getPrimaryStorageProviderAccountId());
+        getStorageRepo()
+            .delete(serverDetails.getPrimaryStorageProviderAccountId());
 
         // Delete any secondary storage providers
-        for(int secId : account.getSecondaryStorageProviderAccountIds()) {
+        for(int secId : serverDetails.getSecondaryStorageProviderAccountIds()) {
             getStorageRepo().delete(secId);
         }
 
         // Delete the compute provider
         repoMgr.getComputeProviderAccountRepo()
-            .delete(account.getComputeProviderAccountId());
+            .delete(serverDetails.getComputeProviderAccountId());
 
         // Delete the account rights
         try {
@@ -182,13 +194,14 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(int accountId) {
-        AccountInfo account = getAccount(accountId);
+        ServerDetails serverDetails =
+            AccountUtil.getServerDetails(repoMgr, getAccount(accountId));
 
         List<StorageProviderAccount> accounts =
             new ArrayList<StorageProviderAccount>();
 
         try {
-            for(int secId : account.getSecondaryStorageProviderAccountIds()) {
+            for(int secId : serverDetails.getSecondaryStorageProviderAccountIds()) {
                 accounts.add(getStorageRepo().findById(secId));
             }
         } catch(DBNotFoundException e) {

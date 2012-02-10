@@ -5,18 +5,22 @@ package org.duracloud.account.db.amazonsimple.converter;
 
 import com.amazonaws.services.simpledb.model.Attribute;
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.junit.BeforeClass;
+import org.duracloud.account.common.domain.AccountType;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
-import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.*;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ACCT_NAME_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.DEPARTMENT_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ORG_NAME_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.PAYMENT_INFO_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SERVER_DETAILS_ID_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.STATUS_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.SUBDOMAIN_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.TYPE_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
 
 /**
@@ -31,26 +35,12 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static final String acctName = "account-name";
     private static final String orgName = "org-name";
     private static final String department = "department";
-    private static final int computeProviderAccountId = 1;
-    private static final int primaryStorageProviderAccountId = 5;
-    private static Set<Integer> secondaryStorageProviderAccountIds = null;
-    private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static ServicePlan servicePlan = ServicePlan.ALL;
-    private static AccountInfo.AccountStatus status =
+    private static final int serverDetailsId = 200;
+    private static final AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
+    private static final AccountType type = AccountType.FULL;
     private static final int counter = 4;
-
-    @BeforeClass
-    public static void initialize() throws Exception {
-        secondaryStorageProviderAccountIds = new HashSet<Integer>();
-        secondaryStorageProviderAccountIds.add(10);
-        secondaryStorageProviderAccountIds.add(15);
-
-        secondaryServiceRepositoryIds = new HashSet<Integer>();
-        secondaryServiceRepositoryIds.add(1);
-        secondaryServiceRepositoryIds.add(2);
-    }
 
     @Override
     protected DomainConverter<AccountInfo> createConverter() {
@@ -68,13 +58,10 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                acctName,
                                orgName,
                                department,
-                               computeProviderAccountId,
-                               primaryStorageProviderAccountId,
-                               secondaryStorageProviderAccountIds,
-                               secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               servicePlan,
+                               serverDetailsId,
                                status,
+                               type,
                                counter);
     }
 
@@ -87,19 +74,12 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         testAtts.add(new Attribute(ACCT_NAME_ATT, acctName));
         testAtts.add(new Attribute(ORG_NAME_ATT, orgName));
         testAtts.add(new Attribute(DEPARTMENT_ATT, department));
-        testAtts.add(new Attribute(COMPUTE_PROVIDER_ACCOUNT_ID_ATT,
-                                   acctCvtr.asString(computeProviderAccountId)));
-        testAtts.add(new Attribute(PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT,
-                                   acctCvtr.asString(primaryStorageProviderAccountId)));
-        testAtts.add(new Attribute(SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
-                                   acctCvtr.idsAsString(
-                                       secondaryStorageProviderAccountIds)));
-        testAtts.add(new Attribute(SECONDARY_SERVICE_REPOSITORY_IDS_ATT,
-                                   acctCvtr.idsAsString(secondaryServiceRepositoryIds)));
         testAtts.add(new Attribute(PAYMENT_INFO_ID_ATT,
                                    acctCvtr.asString(paymentInfoId)));
-        testAtts.add(new Attribute(SERVICE_PLAN_ATT, servicePlan.name()));
+        testAtts.add(new Attribute(SERVER_DETAILS_ID_ATT,
+                                   acctCvtr.asString(serverDetailsId)));
         testAtts.add(new Attribute(STATUS_ATT, status.name()));
+        testAtts.add(new Attribute(TYPE_ATT, type.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -113,30 +93,20 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertNotNull(acct.getAcctName());
         assertNotNull(acct.getOrgName());
         assertNotNull(acct.getDepartment());
-        assertNotNull(acct.getComputeProviderAccountId());
-        assertNotNull(acct.getPrimaryStorageProviderAccountId());
-        assertNotNull(acct.getSecondaryStorageProviderAccountIds());
-        assertNotNull(acct.getSecondaryServiceRepositoryIds());
         assertNotNull(acct.getPaymentInfoId());
-        assertNotNull(acct.getServicePlan());
+        assertNotNull(acct.getServerDetailsId());
         assertNotNull(acct.getStatus());
+        assertNotNull(acct.getType());
 
         assertEquals(counter, acct.getCounter());
         assertEquals(subdomain, acct.getSubdomain());
         assertEquals(acctName, acct.getAcctName());
         assertEquals(orgName, acct.getOrgName());
         assertEquals(department, acct.getDepartment());
-        assertEquals(computeProviderAccountId,
-                     acct.getComputeProviderAccountId());
-        assertEquals(primaryStorageProviderAccountId,
-                     acct.getPrimaryStorageProviderAccountId());
-        assertEquals(secondaryStorageProviderAccountIds,
-                     acct.getSecondaryStorageProviderAccountIds());
-        assertEquals(secondaryServiceRepositoryIds,
-                     acct.getSecondaryServiceRepositoryIds());
         assertEquals(paymentInfoId, acct.getPaymentInfoId());
-        assertEquals(servicePlan, acct.getServicePlan());
+        assertEquals(serverDetailsId, acct.getServerDetailsId());
         assertEquals(status, acct.getStatus());
+        assertEquals(type, acct.getType());
     }
 
 }

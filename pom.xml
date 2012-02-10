@@ -56,6 +56,7 @@
     <module>account-management-compute-amazon</module>
     <module>account-management-monitor</module>
     <module>account-management-app</module>
+    <module>account-management-db-converter</module>
   </modules>
 
   <profiles>

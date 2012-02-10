@@ -3,16 +3,14 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import org.apache.commons.httpclient.HttpStatus;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
 
 /**
  * @author Andrew Woods

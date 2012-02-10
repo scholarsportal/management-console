@@ -3,8 +3,8 @@
  */
 package org.duracloud.account.app.controller;
 
-import javax.validation.Valid;
-
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 /**
  * 
@@ -37,9 +39,12 @@ public class AccountDetailsController extends AbstractAccountController {
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
         throws AccountNotFoundException, DBNotFoundException {
-        loadAccountInfo(accountId, model);
+        AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
-        loadProviderInfo(accountId, model);
+
+        if(AccountType.FULL.equals(accountInfo.getType())) {
+            loadProviderInfo(accountId, model);
+        }
 
         DuracloudUser user = getUser();
         model.addAttribute(UserController.USER_KEY, user);

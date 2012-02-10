@@ -3,12 +3,11 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
@@ -25,6 +24,9 @@ import org.duracloud.account.util.error.DuracloudInstanceCreationException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -129,6 +131,11 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         // Get Account information
         AccountInfo account = repoMgr.getAccountRepo().findById(accountId);
 
+        if(account.getType().equals(AccountType.COMMUNITY)) {
+            throw new DuraCloudRuntimeException("Cannot associate instance " +
+                                                "with a community account");
+        }
+
         // Create entry for new instance in DB
         String hostName = account.getSubdomain() + HOST_SUFFIX;
         int instanceId = repoMgr.getIdUtil().newInstanceId();
@@ -146,7 +153,17 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         }
 
         // Get info about compute provider account associated with this account
-        int cpAccountId = account.getComputeProviderAccountId();
+        int serverDetailsId = account.getServerDetailsId();
+        if(serverDetailsId < 0) {
+            String err = "Cannot start instance for account with ID " +
+                accountId +
+                ". No ServerDetails are associated with this account.";
+            throw new DuraCloudRuntimeException(err);
+        }
+
+        ServerDetails details = repoMgr.getServerDetailsRepo()
+                                       .findById(serverDetailsId);
+        int cpAccountId = details.getComputeProviderAccountId();
         ComputeProviderAccount computeProviderAcct =
             repoMgr.getComputeProviderAccountRepo().findById(cpAccountId);
 

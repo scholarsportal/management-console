@@ -4,20 +4,17 @@
 package org.duracloud.account.db.amazonsimple;
 
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -35,25 +32,11 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final String acctName = "account-name";
     private static final String orgName = "org-name";
     private static final String department = "department";
-    private static final int computeProviderAccountId = 1;
-    private static final int primaryStorageProviderAccountId = 5;
-    private static Set<Integer> secondaryStorageProviderAccountIds = null;
-    private static Set<Integer> secondaryServiceRepositoryIds = null;
     private static final int paymentInfoId = 100;
-    private static ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
-    private static AccountInfo.AccountStatus status =
+    private static final int serverDetailsId = 200;
+    private static final AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
-
-    @BeforeClass
-    public static void initialize() throws Exception {
-        secondaryStorageProviderAccountIds = new HashSet<Integer>();
-        secondaryStorageProviderAccountIds.add(10);
-        secondaryStorageProviderAccountIds.add(15);
-
-        secondaryServiceRepositoryIds = new HashSet<Integer>();
-        secondaryServiceRepositoryIds.add(1);
-        secondaryServiceRepositoryIds.add(2);
-    }
+    private static final AccountType type = AccountType.FULL;
 
     @Before
     public void setUp() throws Exception {
@@ -159,13 +142,10 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                acctName,
                                orgName,
                                department,
-                               computeProviderAccountId,
-                               primaryStorageProviderAccountId,
-                               secondaryStorageProviderAccountIds,
-                               secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               servicePlan,
-                               status);
+                               serverDetailsId,
+                               status,
+                               type);
     }
 
     private void verifyAccount(final AccountInfo acct) {

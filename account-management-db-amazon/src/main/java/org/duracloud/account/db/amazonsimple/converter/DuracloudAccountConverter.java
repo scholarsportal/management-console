@@ -7,14 +7,13 @@ import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.util.SimpleDBUtils;
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.db.util.FormatUtil;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 
@@ -32,17 +31,10 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
     protected static final String ACCT_NAME_ATT = "ACCT_NAME";
     protected static final String ORG_NAME_ATT = "ORG_NAME";
     protected static final String DEPARTMENT_ATT = "DEPARTMENT";
-    protected static final String COMPUTE_PROVIDER_ACCOUNT_ID_ATT =
-        "COMPUTE_PROVIDER_ACCOUNT_ID";
-    protected static final String PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT =
-        "PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID";
-    protected static final String SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT =
-        "SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS";
-    protected static final String SECONDARY_SERVICE_REPOSITORY_IDS_ATT =
-        "SECONDARY_SERVICE_REPOSITORY_IDS";
     protected static final String PAYMENT_INFO_ID_ATT = "PAYMENT_INFO_ID";
-    protected static final String SERVICE_PLAN_ATT = "SERVICE_PLAN";
     protected static final String STATUS_ATT = "STATUS";
+    protected static final String TYPE_ATT = "TYPE";
+    protected static final String SERVER_DETAILS_ID_ATT = "SERVER_DETAILS_ID";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(AccountInfo acct) {
@@ -61,30 +53,17 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         atts.add(new ReplaceableAttribute(DEPARTMENT_ATT,
                                           acct.getDepartment(),
                                           true));
-        atts.add(new ReplaceableAttribute(
-            COMPUTE_PROVIDER_ACCOUNT_ID_ATT,
-            asString(acct.getComputeProviderAccountId()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT,
-            asString(acct.getPrimaryStorageProviderAccountId()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
-            idsAsString(acct.getSecondaryStorageProviderAccountIds()),
-            true));
-        atts.add(new ReplaceableAttribute(
-            SECONDARY_SERVICE_REPOSITORY_IDS_ATT,
-            idsAsString(acct.getSecondaryServiceRepositoryIds()),
-            true));
         atts.add(new ReplaceableAttribute(PAYMENT_INFO_ID_ATT,
                                           asString(acct.getPaymentInfoId()),
                                           true));
-        atts.add(new ReplaceableAttribute(SERVICE_PLAN_ATT,
-                                          acct.getServicePlan().name(),
-                                          true));
         atts.add(new ReplaceableAttribute(STATUS_ATT,
                                           acct.getStatus().name(),
+                                          true));
+        atts.add(new ReplaceableAttribute(TYPE_ATT,
+                                          acct.getType().name(),
+                                          true));
+        atts.add(new ReplaceableAttribute(SERVER_DETAILS_ID_ATT,
+                                          asString(acct.getServerDetailsId()),
                                           true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
@@ -98,13 +77,10 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         String acctName = null;
         String orgName = null;
         String department = null;
-        int computeProviderAccountId = -1;
-        int primaryStorageProviderAccountId = -1;
-        Set<Integer> secondaryStorageProviderAccountIds = null;
-        Set<Integer> secondaryServiceRepositoryIds = null;
         AccountInfo.AccountStatus status = null;
         int paymentInfoId = -1;
-        ServicePlan servicePlan = null;
+        AccountType type = null;
+        int serverDetailsId = -1;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -124,35 +100,19 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
             } else if (DEPARTMENT_ATT.equals(name)) {
                 department = value;
 
-            } else if (COMPUTE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
-                computeProviderAccountId =
-                    idFromString(value,
-                                 "Compute Provider Account",
-                                 "Instance",
-                                 id);
-
-            } else if (PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID_ATT.equals(name)) {
-                primaryStorageProviderAccountId =
-                    idFromString(value,
-                                 "Primary Storage Provider Account",
-                                 "Instance",
-                                 id);
-
-            } else if (SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT.equals(name)) {
-                secondaryStorageProviderAccountIds = idsFromString(value);
-
-            } else if (SECONDARY_SERVICE_REPOSITORY_IDS_ATT.equals(name)) {
-                secondaryServiceRepositoryIds = idsFromString(value);
-
             } else if (PAYMENT_INFO_ID_ATT.equals(name)) {
                 paymentInfoId =
                     idFromString(value, "Payment Info", "Account", id);
 
-            } else if (SERVICE_PLAN_ATT.equals(name)) {
-                servicePlan = ServicePlan.fromString(value);
-
             } else if (STATUS_ATT.equals(name)) {
                 status = AccountInfo.AccountStatus.valueOf(value);
+
+            } else if (TYPE_ATT.equals(name)) {
+                type = AccountType.valueOf(value);
+
+            } else if (SERVER_DETAILS_ID_ATT.equals(name)) {
+                serverDetailsId =
+                    idFromString(value, "Server Details", "Account", id);               
 
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
@@ -170,13 +130,10 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                acctName,
                                orgName,
                                department,
-                               computeProviderAccountId,
-                               primaryStorageProviderAccountId,
-                               secondaryStorageProviderAccountIds,
-                               secondaryServiceRepositoryIds,
                                paymentInfoId,
-                               servicePlan,
+                               serverDetailsId,
                                status,
+                               type,
                                counter);
     }
 

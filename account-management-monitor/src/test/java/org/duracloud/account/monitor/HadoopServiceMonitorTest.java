@@ -4,8 +4,11 @@
 package org.duracloud.account.monitor;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.monitor.hadoop.HadoopServiceMonitor;
@@ -40,6 +43,7 @@ public class HadoopServiceMonitorTest {
     private HadoopServiceMonitor monitor;
 
     private DuracloudAccountRepo acctRepo;
+    private DuracloudServerDetailsRepo serverDetailsRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
 
     private HadoopUtilFactory factory;
@@ -49,6 +53,8 @@ public class HadoopServiceMonitorTest {
     public void setUp() throws Exception {
         acctRepo = EasyMock.createMock("DuracloudAccountRepo",
                                        DuracloudAccountRepo.class);
+        serverDetailsRepo = EasyMock.createMock("DuracloudServerDetailsRepo",
+                                                DuracloudServerDetailsRepo.class);
         storageProviderAcctRepo = EasyMock.createMock(
             "DuracloudStorageProviderAccountRepo",
             DuracloudStorageProviderAccountRepo.class);
@@ -56,17 +62,24 @@ public class HadoopServiceMonitorTest {
                                       HadoopUtilFactory.class);
 
         monitor = new HadoopServiceMonitor(acctRepo,
+                                           serverDetailsRepo,
                                            storageProviderAcctRepo,
                                            factory);
     }
 
     @After
     public void tearDown() throws Exception {
-        EasyMock.verify(acctRepo, storageProviderAcctRepo, factory);
+        EasyMock.verify(acctRepo,
+                        serverDetailsRepo,
+                        storageProviderAcctRepo,
+                        factory);
     }
 
     private void replayMocks() {
-        EasyMock.replay(acctRepo, storageProviderAcctRepo, factory);
+        EasyMock.replay(acctRepo,
+                        serverDetailsRepo,
+                        storageProviderAcctRepo,
+                        factory);
     }
 
     @Test
@@ -121,8 +134,12 @@ public class HadoopServiceMonitorTest {
         for (int i = 0; i < numAccts; ++i) {
             ids.add(i);
             AccountInfo acctInfo = createAcctInfo(i);
-
             EasyMock.expect(acctRepo.findById(i)).andReturn(acctInfo);
+
+            ServerDetails serverDetails = createServerDetails(i);
+            EasyMock.expect(serverDetailsRepo.findById(i))
+                    .andReturn(serverDetails).anyTimes();
+
             EasyMock.expect(storageProviderAcctRepo.findById(i)).andReturn(
                 storageProviderAcct);
         }
@@ -206,12 +223,13 @@ public class HadoopServiceMonitorTest {
                                -1,
                                id,
                                null,
-                               null,
-                               -1,
-                               null,
-                               null);
+                               AccountType.FULL);
     }
 
+    private ServerDetails createServerDetails(int id) {
+        return new ServerDetails(id, id, id, null, null, null);
+    }
+    
     private enum Mode {
         ERROR, VALID;
     }

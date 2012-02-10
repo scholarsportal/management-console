@@ -4,8 +4,11 @@
 package org.duracloud.account.monitor.hadoop;
 
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.monitor.error.HadoopMonitorException;
@@ -38,14 +41,17 @@ public class HadoopServiceMonitor {
     private Logger log = LoggerFactory.getLogger(HadoopServiceMonitor.class);
 
     private DuracloudAccountRepo acctRepo;
+    private DuracloudServerDetailsRepo serverDetailsRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
     private HadoopUtilFactory hadoopUtilFactory;
 
 
     public HadoopServiceMonitor(DuracloudAccountRepo acctRepo,
+                                DuracloudServerDetailsRepo serverDetailsRepo,
                                 DuracloudStorageProviderAccountRepo storageProviderAcctRepo,
                                 HadoopUtilFactory factory) {
         this.acctRepo = acctRepo;
+        this.serverDetailsRepo = serverDetailsRepo;
         this.storageProviderAcctRepo = storageProviderAcctRepo;
         this.hadoopUtilFactory = factory;
     }
@@ -63,7 +69,10 @@ public class HadoopServiceMonitor {
 
         List<AccountInfo> accts = getDuracloudAccts();
         for (AccountInfo acct : accts) {
-            doMonitorServices(report, acct);
+            // only full accounts need to be monitored
+            if(AccountType.FULL.equals(acct.getType())) {
+                doMonitorServices(report, acct);
+            }
         }
 
         return report;
@@ -170,17 +179,28 @@ public class HadoopServiceMonitor {
 
     private HadoopUtil getHadoopUtil(AccountInfo acct)
         throws HadoopMonitorException {
-        int storageAcctId = acct.getPrimaryStorageProviderAccountId();
+
+        int serverDetailsId = acct.getServerDetailsId();
+        if(serverDetailsId < 0) {
+            String error = "Account " + acct.getSubdomain() + " cannot be " +
+                           "monitored, as it has no associated ServerDetails.";
+            throw new HadoopMonitorException(error, null);
+        }
+
         StorageProviderAccount storageAcct;
         try {
+            ServerDetails serverDetails =
+                serverDetailsRepo.findById(serverDetailsId);
+            int storageAcctId =
+                serverDetails.getPrimaryStorageProviderAccountId();
             storageAcct = getAmazonStorageAcct(storageAcctId);
 
         } catch (DBNotFoundException e) {
             StringBuilder error = new StringBuilder();
             error.append("Error getting Amazon storage acct for ");
             error.append(acct.getSubdomain());
-            error.append(", id ");
-            error.append(storageAcctId);
+            error.append(", with serverDetailsId ");
+            error.append(serverDetailsId);
             error.append(", msg: ");
             error.append(e.getMessage());
             throw new HadoopMonitorException(error.toString(), e);
