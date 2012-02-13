@@ -96,7 +96,7 @@
             </tr>
             </table>
            <div style="height:20px"></div>
-                <table id="sort" class="datatablesimple">
+                <table id="sort" class="datatablesimple users">
                 <thead>
                 <tr>
                   <th align="left">Username</th>
@@ -125,7 +125,7 @@
                 <c:forEach
                  var="u"
                  items="${users}">
-                  <tr>
+                  <tr data-username="${u.username}">
                     <td align="left">${u.username}</td>
 
                     <td align="left">${u.firstName}</td>
@@ -158,12 +158,11 @@
                                 <form
                                  action="${pageContext.request.contextPath}/users/manage/byid/${u.id}/delete"
                                  method="post">
-                                  <button style="margin-right:8px !important"
+                                  <button class="delete" style="margin-right:8px !important"
                                    type="submit" onclick="AskAndRemove(this); return false;">
                                   <i
                                    class="pre trash">
                                   </i>
-
                                   Delete</button>
                                 </form>
                           </li>

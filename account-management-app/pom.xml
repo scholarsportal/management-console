@@ -24,7 +24,6 @@
     <innerClasses>**/*$*</innerClasses>
     <log.level.default>DEBUG</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty.port>9000</jetty.port>
     <credentials.file.path>${basedir}/src/test/resources/credentials.xml</credentials.file.path>
     <jquery.target.path>static/jquery</jquery.target.path>
   </properties>
@@ -33,59 +32,6 @@
   <build>
 
     <plugins>
-      
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
-        <!--
-          The jetty-maven-plugin (jetty 7.0) is generating a ClassNotFoundException and breaking the tests for the time, I'm reverting back to the older (v6.x) version. When the time comes, we'll
-          change to <artifactId>maven-jetty-plugin</artifactId>
-        -->
-        <configuration>
-          <systemProperties>
-            <systemProperty>
-              <name>jetty.port</name>
-              <value>${jetty.port}</value>
-            </systemProperty>
-          </systemProperties>
-          <webAppConfig>
-            <contextPath>/ama</contextPath>
-          </webAppConfig>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <stopKey>foo</stopKey>
-          <stopPort>9999</stopPort>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-        </configuration>
-        <executions>
-          <execution>
-            <id>integrationtest</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <systemProperties />
-              <excludes>
-                <exclude>${unitTests}</exclude>
-                <exclude>${instrumentedTests}</exclude>
-                <exclude>${innerClasses}</exclude>
-                <exclude>**/integration/*</exclude>
-              </excludes>
-              <includes>
-                <include>${integrationTests}</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -165,7 +111,6 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <systemProperties />
                   <excludes>
                     <exclude>${unitTests}</exclude>
                     <exclude>${instrumentedTests}</exclude>
@@ -176,29 +121,15 @@
                   </includes>
                 </configuration>
               </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>maven-jetty-plugin</artifactId>
-            <executions>
               <execution>
-                <id>start-jetty</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
+                <!-- This execution 'default-test' overrides the built-in default execution for the test phase. 
+                     Thus unit tests aren't run when you running integration tests.  It comes in handy when trying to
+                     debug a single integration test as you only need to attach your debugger once. 
+                -->
+                <id>default-test</id>
                 <configuration>
-                  <scanIntervalSeconds>0</scanIntervalSeconds>
-                  <daemon>true</daemon>
+                    <skipTests>true</skipTests>
                 </configuration>
-              </execution>
-              <execution>
-                <id>stop-jetty</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
               </execution>
             </executions>
           </plugin>
@@ -332,13 +263,18 @@
       <type>zip</type>
       <version>1.6.2</version>
     </dependency>
-    
     <dependency>
-      <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-      <artifactId>selenium-java-client-driver</artifactId>
-      <version>1.0.2</version>
-      <scope>test</scope>
-    </dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>2.19.0</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+    </dependency>  
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.web</artifactId>

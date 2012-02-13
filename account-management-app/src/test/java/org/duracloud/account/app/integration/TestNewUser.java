@@ -11,38 +11,78 @@ import org.junit.Test;
 /**
  * 
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
+ * 
  */
 public class TestNewUser extends AbstractIntegrationTest {
-	private String newusername = System.currentTimeMillis()+"";
-	private String newpassword = "pw-" + newusername;
-	
-	@Test
+
+    @Override
+    public void before() throws Exception {
+        super.before();
+    }
+
+    @Test
     public void testNewUserLink() throws Exception {
-        sc.open(getAppRoot()+"/");
+        openHome();
         String newUserLink = "id=new-user-link";
-        assertTrue(this.sc.isElementPresent(newUserLink));
-        this.sc.click(newUserLink);
-		SeleniumHelper.waitForPage(sc);
+        assertTrue(isElementPresent(newUserLink));
+        clickAndWait(newUserLink);
         confirmNewUserFormIsLoaded();
     }
 
-	/**
-	 * 
-	 */
-	private void confirmNewUserFormIsLoaded() {
-		assertTrue(sc.isElementPresent("id=new-user-form"));
-	}
-	
+    private void confirmNewUserFormIsLoaded() {
+        UserHelper.confirmNewUserFormIsLoaded(sc);
+    }
 
-	
-	@Test
-	public void createUser(){
-		UserTestHelper.createUser(sc,newusername, newpassword, "Walter", "Berglund", "walter@cerulean-mtr.org");
-        SeleniumHelper.waitForPage(sc);
-		Assert.assertTrue(sc.isTextPresent("Profile"));
-		Assert.assertTrue(sc.isTextPresent(newusername));
-	}
-	
-	
+    @Test
+    public void newUserFormSuccess() {
+        String username = UserHelper.createUser(sc);
+        Assert.assertTrue(isTextPresent(username));
+        Assert.assertTrue(sc.isElementPresent("id=account-list"));
+        logout();
+        deleteUser(username);
+    }
+
+    @Test
+    public void testNullValuesCheck() {
+        String[] userFormParams = UserHelper.createDefaultUserFormParams();
+        for (int i = 0; i < userFormParams.length; i++) {
+            String value = userFormParams[i];
+            userFormParams[i] = "";
+            createUser(userFormParams);
+            confirmNewUserFormIsLoaded();
+            confirmGlobalErrorsPresent();
+            userFormParams[i] = value;
+        }
+    }
+
+    @Test
+    public void testPasswordNoMatch() {
+        String[] userFormParams =
+            UserHelper.createDefaultUserFormParams("t"
+                                                       + System.currentTimeMillis(),
+                                                   "password",
+                                                   "password-nomatch");
+        createUser(userFormParams);
+        confirmNewUserFormIsLoaded();
+        confirmGlobalErrorsPresent();
+    }
+    
+    private void createUser(String[] userFormParams) {
+        UserHelper.createUser(sc,
+                              userFormParams[0],
+                              userFormParams[1],
+                              userFormParams[2],
+                              userFormParams[3],
+                              userFormParams[4],
+                              userFormParams[5],
+                              userFormParams[6],
+                              userFormParams[7]);
+    }
+
+
+
+    protected void confirmGlobalErrorsPresent() {
+        Assert.assertTrue(isElementPresent("css=.global-errors"));
+    }
+
 }

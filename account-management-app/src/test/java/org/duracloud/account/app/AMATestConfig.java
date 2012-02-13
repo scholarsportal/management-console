@@ -6,6 +6,7 @@ package org.duracloud.account.app;
 import java.io.File;
 import java.util.Properties;
 
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ApplicationConfig;
 
 /**
@@ -40,5 +41,24 @@ public class AMATestConfig extends ApplicationConfig {
 
     public static  File getCredentialsFile() throws Exception{
         return new File(getProps().getProperty(credentialsFilePath));
+    }
+    
+    public static String getTestEmail() {
+        String email =  System.getProperty("test.email");
+        
+        if(email == null){
+            try {
+                email = getProps().getProperty("test.email");
+            } catch (Exception e) {
+                throw new DuraCloudRuntimeException(e);
+            }
+        }
+        
+        if(email == null){
+            throw new DuraCloudRuntimeException("Missing test.email parameter. " +
+            		"Make sure it is set either in the " + getConfigFileName() + 
+            		" or on the command line (-Dtest.email)");
+        }
+        return email;
     }
 }

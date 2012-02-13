@@ -3,15 +3,15 @@
  */
 package org.duracloud.account.app.integration;
 
+import java.io.File;
 import java.io.FileInputStream;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.duracloud.account.app.AMATestConfig;
+import org.duracloud.account.common.domain.InitUserCredential;
+import org.duracloud.common.web.RestHttpHelper;
+import org.duracloud.common.web.RestHttpHelper.HttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,18 +21,22 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 
+/**
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
+ *
+ */
 public abstract class AbstractIntegrationTest {
-    protected static final String TEST_USER_1 = "testuser-1";
 
-    protected static final String TEST_USER_2 = "testuser-2";
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected static Logger log =
+        LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
-    protected DefaultSelenium sc;
+    protected Selenium sc;
     private String port;
     private static String DEFAULT_PORT = "9000";
+
     protected String getAppRoot() {
-    	return SeleniumHelper.getAppRoot();
+        return SeleniumHelper.getAppRoot();
     }
 
     private String getPort() throws Exception {
@@ -50,105 +54,114 @@ public abstract class AbstractIntegrationTest {
     }
 
     @BeforeClass
-    public static void initializeAma() throws Exception{
-        HttpClient client = new HttpClient();
-        PostMethod post = new PostMethod("http://localhost:"+AMATestConfig.getPort()+"/ama/init");
-        post.addRequestHeader("Content-Type", "text/xml");
-        RequestEntity requestEntity = new InputStreamRequestEntity(new FileInputStream(AMATestConfig.getCredentialsFile()));
-        post.setRequestEntity(requestEntity);
-        int response = client.executeMethod(post);
-        Assert.assertEquals(200,response);
-        
+    public static void initializeAma() throws Exception {
+        String initUrl =
+            "http://localhost:" + AMATestConfig.getPort() + "/ama/init";
+        File credentialsFile = AMATestConfig.getCredentialsFile();
+        log.info("attempting to initialize ama: url={}; credentialsFile={}",
+                 initUrl,
+                 credentialsFile.getAbsolutePath());
 
-        
-    }
-    
-    /**
-     * @param testUser2
-     */
-    private static void createIfNotExists(Selenium sc, String testUser) {
-        LoginHelper.loginWithoutCheckingForSuccess(sc, testUser, testUser);
-        if(!LoginHelper.isLoggedIn(sc)){
-            UserTestHelper.createUser(sc, testUser, testUser, testUser, "Test", testUser+"@duraspace.org");
-        }
-        LoginHelper.logout(sc);
+        RestHttpHelper rest = new RestHttpHelper(new InitUserCredential());
+        HttpResponse response =
+            rest.post(initUrl,
+                      new FileInputStream(credentialsFile),
+                      credentialsFile.length() + "",
+                      "text/xml",
+                      null);
+        Assert.assertEquals(200, response.getStatusCode());
     }
 
     @Before
     public void before() throws Exception {
-        String url = "http://localhost:" + getPort() + getAppRoot()+"/";
+        String url = "http://localhost:" + getPort() + getAppRoot() + "/";
         sc = createSeleniumClient(url);
         sc.start();
         log.info("started selenium client on " + url);
-        
-        //openUserProfilePage(TEST_USER_1);
-        //createIfNotExists(sc,TEST_USER_1);
-      
-        //openUserProfilePage(TEST_USER_2);
-        //createIfNotExists(sc,TEST_USER_2);
     }
 
     /**
 	 * 
 	 */
-	protected void logout() {
-		LoginHelper.logout(sc);
-	}
+    protected void logout() {
+        LoginHelper.logout(sc);
+    }
 
-	
-	protected void login(String username, String password){
-		LoginHelper.login(sc, username, password);
-	}
-	
-	protected void loginAdmin(){
-		login(TEST_USER_1,TEST_USER_1);
-	}
-	
-	@After
+    protected void login(String username, String password) {
+        logout();
+        LoginHelper.login(sc, username, password);
+    }
+
+
+
+
+    @After
     public void after() {
         sc.stop();
         sc = null;
         log.info("stopped selenium client");
     }
 
-    /**
-     * sc.isTextPresent is not working properly -
-     * selenium is reporting back that the body empty
-     * assertTrue(sc.isTextPresent("Welcome"));
-     *
-     * @param text
-     * @return
-     */
-    protected boolean isTextPresent(String text) {
-        return sc.getHtmlSource().contains(text);
-
+    protected boolean isTextPresent(String pattern) {
+        return sc.isTextPresent(pattern);
     }
 
-    protected DefaultSelenium createSeleniumClient(String url) {
+    protected boolean isElementPresent(String locator) {
+        return sc.isElementPresent(locator);
+    }
+
+    protected Selenium createSeleniumClient(String url) {
+
         return new DefaultSelenium("localhost", 4444, "*firefox", url);
-	}
+    }
 
-	protected void openUserProfilePage(String username){
-		sc.open(getAppRoot()+"/users/byid/" + username);
-	}
-	
-	/**
-	 * @param accountId
-	 */
-	protected void openAccountHome(String accountId) {
-		sc.open(getAppRoot()+"/accounts/byid/"+accountId);
-		SeleniumHelper.waitForPage(sc);
-		log.debug("after opening accountHome: " + sc.getHtmlSource());
-	}
+    protected void openUserProfilePage() {
+        UserHelper.openUserProfile(sc);
+    }
+    
 
-	protected void openAccountDetails(String accountId) {
-		sc.open(getAppRoot()+"/accounts/byid/"+accountId +"/details/");
-		SeleniumHelper.waitForPage(sc);
-		log.debug("after opening accountHome: " + sc.getHtmlSource());
-	}
+    protected void openAccountHome(String accountId) {
+        open(formatAccountURL(accountId, null));
+    }
 
-	protected void waitForPage() {
-		SeleniumHelper.waitForPage(sc);
-	}
+    protected String formatURL(String path) {
+        return UrlHelper.formatURL(path);
+    }
 
+    protected String formatAccountURL(String accountId, String suffix) {
+        return getAppRoot()
+            + "/accounts/byid/" + accountId + (suffix != null ? suffix : "");
+    }
+
+    protected void openAccountDetails(String accountId) {
+        open(formatAccountURL(accountId, "/details/"));
+    }
+
+    protected void openHome(){
+        UrlHelper.open(sc, SeleniumHelper.getAppRoot());
+    }
+
+    protected void open(String location){
+        UrlHelper.open(sc, location);
+    }
+
+    protected void waitForPage() {
+        SeleniumHelper.waitForPage(sc);
+    }
+    
+    protected void clickAndWait(String locator) {
+        SeleniumHelper.clickAndWait(sc, locator);
+    }
+    
+    protected String createNewUser() {
+        return UserHelper.createAndConfirm(sc);
+    }
+
+    protected void deleteUser(String username) {
+        new RootBot(sc).deleteUser(username);
+    }
+
+    protected void openUserProfile() {
+        UserHelper.openUserProfile(sc);
+    }
 }

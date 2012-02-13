@@ -58,7 +58,6 @@
     <module>account-management-app</module>
     <module>account-management-db-converter</module>
   </modules>
-
   <profiles>
     <profile>
       <id>profile-dev</id>
@@ -360,26 +359,6 @@
             <include>${unitTests}</include>
           </includes>
         </configuration>
-        <executions>
-          <execution>
-            <id>integrationtest</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <systemProperties />
-              <excludes>
-                <exclude>${unitTests}</exclude>
-                <exclude>${instrumentedTests}</exclude>
-                <exclude>${innerClasses}</exclude>
-              </excludes>
-              <includes>
-                <include>${integrationTests}</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>        
       </plugin>
 
       <plugin>
@@ -409,7 +388,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-beta-1</version>
+        <version>1.0.1</version>
         <executions>
           <execution>
             <goals>
@@ -447,6 +426,13 @@
            <artifactId>maven-assembly-plugin</artifactId>
            <version>2.2-beta-4</version>
          </plugin>
+
+        <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+            <artifactId>selenium-maven-plugin</artifactId>
+           <version>2.2</version>
+         </plugin>
+
 
       </plugins>
     </pluginManagement>
@@ -864,7 +850,5 @@
       <artifactId>log4j-over-slf4j</artifactId>
       <scope>runtime</scope>
     </dependency>
-
   </dependencies>
-
 </project>

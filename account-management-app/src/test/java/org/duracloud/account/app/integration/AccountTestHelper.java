@@ -8,7 +8,7 @@ import org.junit.Assert;
 import com.thoughtworks.selenium.Selenium;
 
 /**
- * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
+ * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
  */
 public class AccountTestHelper {
