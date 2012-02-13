@@ -9,6 +9,8 @@
   <jsp:directive.page
    contentType="application/xhtml+xml;charset=UTF-8" />
 
+  <c:set var="usersPath"
+    value="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users" />
   <tiles:insertDefinition
    name="app-base">
     <tiles:putAttribute
@@ -69,7 +71,7 @@
                         <form:form
                          id="account-users-edit-form"
                          method="post"
-                         action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/byid/${u.id}/edit"
+                         action="${usersPath}/byid/${u.id}/edit"
                          modelAttribute="accountUsersEditForm">
                           <jsp:include
                            page="/WEB-INF/jspx/includes/global-errors.jspx">
@@ -136,7 +138,7 @@
                                 }
                               </script>
                                 <form
-                                 action="${pageContext.request.contextPath}/accounts/byid/${account.accountInfo.id}/users/byid/${u.id}/delete"
+                                 action="${usersPath}/byid/${u.id}/delete"
                                  method="post">
                                   <button style="margin-right:8px !important" 
                                    type="submit" onclick="AskAndSubmit(this); return false;">
@@ -155,56 +157,37 @@
               </table>
             </div>
 
-          <div
-           id="invite-list"
-           class="account-record" style="min-height:150px !important">
-            <table border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td class="accountlabel"> Invite Users</td>
-              </tr>
-            </table>
-           <div style="height:20px"></div>
-            <p  class="instructions">
-                To invite a user to this account enter their email address here.
-            </p>
-              <table width="90%">
-                <form:form
-               id="invitation-form"
-               modelAttribute="invitationForm"
-               method="POST">
-                  <tr>
-                    <td></td>
-                    <td align="left" valign="middle"
-                     >
-                      <form:input
-                       cssErrorClass="error"
-                       id="email-addresses"
-                       path="emailAddresses"
-                       />
-                    </td>
-                      <td align="left" valign="middle">
-                <div>
-                  <button
-                   type="submit">
-                  Invite</button>
-                </div>
-				</td>
-				<td>
-				<jsp:include
-               page="/WEB-INF/jspx/includes/global-errors.jspx">
-                <jsp:param
-                 name="formName"
-                 value="invitationForm" />
-              </jsp:include>
-				</td>
-
-                  </tr>
+          <div id="invite-list" class="section account-record"
+            style="min-height: 150px !important">
+            <h2 class="account-label">
+              Add Users
+            </h2>
+            <div class="section-body" style="width: 45%;float:left">
+              <p class="instructions">To invite a user to this
+                account enter their email address here.</p>
+              <form:form id="invitation-form" 
+                modelAttribute="invitationForm" method="POST">
+                <form:label path="emailAddresses" for="email-addresses">Email
+                  <form:input cssErrorClass="error" id="email-addresses"
+                    path="emailAddresses" />
+                </form:label>
+                <button type="submit">Invite</button>
+                <form:errors path="emailAddresses" cssClass="error" />
               </form:form>
-              </table>
-</div>
-            
-            
-
+            </div>
+            <div class="section-body" style="float:right; width: 49%">
+              <p class="instructions">Add an existing user by their username.</p>
+              <form:form id="add-user-form" 
+                modelAttribute="usernameForm" method="POST" action="${usersPath}/adduser">
+                <form:label path="username" for="username">Username
+                  <form:input cssErrorClass="error" id="username"
+                    path="username" />
+                </form:label>
+                <button type="submit">Add</button>
+                <form:errors path="username" cssClass="error" />
+              </form:form>
+            </div>            
+          </div>
           <div
            class="account-record user-list">
             <table border="0" cellspacing="0" cellpadding="0">
