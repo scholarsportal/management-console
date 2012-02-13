@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -69,6 +70,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         throws InvalidUsernameException,
             UserAlreadyExistsException {
 
+        if (!isValidUsername(username)) {
+            throw new InvalidUsernameException(username);
+        }
+        
         if (isReservedPrefix(username)) {
             throw new ReservedPrefixException(username);
         }
@@ -77,10 +82,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             throw new ReservedUsernameException(username);
         }
 
-        if (!isValidUsername(username)) {
-            throw new InvalidUsernameException(username);
-        }
-        
         try {
             getUserRepo().findByUsername(username);
             throw new UserAlreadyExistsException(username);

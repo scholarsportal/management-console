@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -65,9 +66,9 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         checkUsername(false,existingName, UserAlreadyExistsException.class);
         checkUsername(false,DuracloudGroup.PREFIX+"test", ReservedPrefixException.class);
         checkUsername(false,"root", ReservedUsernameException.class);
-        checkUsername(false,"RooT", ReservedUsernameException.class);
         checkUsername(false,rootName,ReservedUsernameException.class);
         checkUsername(false,initName,ReservedUsernameException.class);
+        checkUsername(false,"RooT");
         checkUsername(false,"user-");
         checkUsername(false,"user@");
         checkUsername(false,"user.");
@@ -77,6 +78,7 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         checkUsername(false,".user");
         checkUsername(false,"_user");
         checkUsername(false,"USER");
+        checkUsername(false,null);
         checkUsername(true,newName);
 
     }
