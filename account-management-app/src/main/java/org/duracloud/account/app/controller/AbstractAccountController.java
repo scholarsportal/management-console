@@ -136,12 +136,12 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param suffix
      * @return
      */
-    protected ModelAndView createAccountRedirectModelAndView(String accountId,
+    protected ModelAndView createAccountRedirectModelAndView(int accountId,
                                                              String suffix) {
         String url =
             MessageFormat.format("{0}{1}{2}",
                                  ACCOUNTS_PATH,
-                                 ACCOUNT_PATH.replace("{accountId}", accountId),
+                                 ACCOUNT_PATH.replace("{accountId}", String.valueOf(accountId)),
                                  suffix);
 
         RedirectView redirectView = new RedirectView(url, true);

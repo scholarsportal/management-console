@@ -87,6 +87,11 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
                 decision = voteMyUsername(user, username);
             }
 
+        } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
+            // Does user have required role on the account?
+            int acctId = getAccountIdArg(methodArgs);
+            decision = voteUserHasRoleOnAccount(user, role, acctId);
+
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT_PEER)) {
             // Does user have required role on the account AND
             //  does the calling user have adequate rights to manage the

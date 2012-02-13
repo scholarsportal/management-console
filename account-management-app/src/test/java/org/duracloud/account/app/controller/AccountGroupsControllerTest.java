@@ -16,20 +16,11 @@ import javax.servlet.http.HttpSession;
 import org.duracloud.account.app.controller.GroupsForm.Action;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudGroupService;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -42,74 +33,24 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
     private static final String TEST_GROUP_NAME = "test";
     private AccountGroupsController accountGroupsController;
-    private AccountService accountService;
-    private DuracloudUserService userService;
     private DuracloudGroupService groupService;
     private Integer accountId = AmaControllerTestBase.TEST_ACCOUNT_ID;
-    private Model model = new ExtendedModelMap();
-    private BindingResult result;
 
     @Before
     public void before() throws Exception {
         super.before();
 
-        accountGroupsController = new AccountGroupsController();
-        accountManagerService =
-            EasyMock.createMock("AccountManagerService",
-                                AccountManagerService.class);
-        accountService =
-            EasyMock.createMock("AccountService", AccountService.class);
-        userService =
-            EasyMock.createMock("DuracloudUserService",
-                                DuracloudUserService.class);
         groupService =
             EasyMock.createMock("DuracloudGroupService",
                                 DuracloudGroupService.class);
+        mocks.add(groupService);
 
+        accountGroupsController = new AccountGroupsController();
         accountGroupsController.setAccountManagerService(accountManagerService);
         accountGroupsController.setUserService(userService);
         accountGroupsController.setDuracloudGroupService(groupService);
         result = null;
-        setupMocks(accountId);
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        EasyMock.verify(accountManagerService);
-        EasyMock.verify(accountService);
-        EasyMock.verify(userService);
-        EasyMock.verify(groupService);
-        if(result != null){
-            EasyMock.verify(result);
-        }
-    }
-
-    private void setupMocks(int accountId)
-        throws DBConcurrentUpdateException,
-            AccountNotFoundException,
-            DBNotFoundException {
-        EasyMock.expect(accountService.getAccountId())
-                .andReturn(accountId)
-                .anyTimes();
-
-        EasyMock.expect(accountService.getUsers())
-                .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() })))
-                .anyTimes();
-
-        EasyMock.expect(accountManagerService.getAccount(accountId))
-                .andReturn(accountService)
-                .anyTimes();
-
-        DuracloudUser user = createUser();
-
-        EasyMock.expect(userService.loadDuracloudUserByUsername(user.getUsername()))
-                .andReturn(user)
-                .anyTimes();
-
-        EasyMock.expect(userService.loadDuracloudUserByIdInternal(user.getId()))
-                .andReturn(user)
-                .anyTimes();
+        setupGenericAccountAndUserServiceMocks(accountId);
 
     }
 
@@ -127,7 +68,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     @Test
     public void testGetGroups() throws Exception {
         expectGroupGroups(1);
-        replay();
+        replayMocks();
 
         String view = this.accountGroupsController.getGroups(accountId, model);
         Assert.assertEquals(AccountGroupsController.GROUPS_VIEW_ID, view);
@@ -139,12 +80,6 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
                 .times(times);
     }
 
-    private void replay() {
-        EasyMock.replay(this.accountManagerService,
-                        this.accountService,
-                        this.userService,
-                        this.groupService);
-    }
 
     @Test
     public void testGetGroupsAddGroup() throws Exception {
@@ -155,15 +90,14 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(groupService.createGroup(
             DuracloudGroup.PREFIX + groupName, accountId)).andReturn(group);
 
-        replay();
+        result =  EasyMock.createMock("BindingResult", BindingResult.class);
+        EasyMock.expect(result.hasFieldErrors()).andReturn(false);
+
+        replayMocks();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.ADD);
         form.setGroupName(groupName);
         
-        result =  EasyMock.createMock("BindingResult", BindingResult.class);
-        EasyMock.expect(result.hasFieldErrors()).andReturn(false);
-        EasyMock.replay(result);
-
         String view = this.accountGroupsController.modifyGroups(accountId,
                                                                 model,
                                                                 form,
@@ -180,13 +114,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(groupService.getGroup(group.getName()))
                 .andReturn(group)
                 .once();
-        replay();
+        replayMocks();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.REMOVE);
         form.setGroupNames(new String[] { TEST_GROUP_NAME });
-
-        result =  EasyMock.createMock("BindingResult", BindingResult.class);
-        EasyMock.replay(result);
 
         String view = this.accountGroupsController.modifyGroups(accountId,
                                                                 model,
@@ -202,7 +133,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     @Test
     public void testGetGroup() throws Exception {
         expectGroupGroups(1);
-        replay();
+        replayMocks();
         String view =
             this.accountGroupsController.getGroup(accountId,
                                                   TEST_GROUP_NAME,
@@ -234,7 +165,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(request, session);
 
-        replay();
+        replayMocks();
         String view =
             this.accountGroupsController.editGroup(accountId,
                                                    TEST_GROUP_NAME,
@@ -275,7 +206,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(request, session);
 
-        replay();
+        replayMocks();
 
         GroupForm form = new GroupForm();
         form.setAction(GroupForm.Action.SAVE);
@@ -319,7 +250,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         EasyMock.replay(request, session);
 
-        replay();
+        replayMocks();
 
         String testUsername = groupUsers.get(0).getUsername();
 

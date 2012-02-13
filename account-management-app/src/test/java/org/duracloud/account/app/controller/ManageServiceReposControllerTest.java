@@ -7,12 +7,9 @@ import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.duracloud.account.util.RootAccountManagerService;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
 public class ManageServiceReposControllerTest extends AmaControllerTestBase {
     private ManageServiceReposController manageServiceReposController;
@@ -21,10 +18,11 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-
-        manageServiceReposController = new ManageServiceReposController();
         rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
                                                         RootAccountManagerService.class);
+        mocks.add(rootAccountManagerService);
+        manageServiceReposController = new ManageServiceReposController();
+        manageServiceReposController.setRootAccountManagerService(rootAccountManagerService);
     }
 
     @Test
@@ -40,11 +38,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         serviceRepoForm.setUserName("username");
         serviceRepoForm.setPassword("password");
 
-        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResult);
-        Model model = new ExtendedModelMap();
-
+        EasyMock.expect(result.hasErrors()).andReturn(false);
         rootAccountManagerService.createServiceRepository(EasyMock.isA(
             ServiceRepository.ServiceRepositoryType.class),
                                                           EasyMock.isA(
@@ -57,13 +51,10 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
                                                           EasyMock.isA(String.class));
         EasyMock.expectLastCall();
 
-
-        this.manageServiceReposController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
+        replayMocks();
 
         // method under test
-        manageServiceReposController.add(serviceRepoForm, bindingResult, model);
+        manageServiceReposController.add(serviceRepoForm, result, model);
 
         EasyMock.verify(rootAccountManagerService);
     }
@@ -72,14 +63,8 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
     public void testDelete() throws Exception {
         rootAccountManagerService.deleteServiceRepository(1);
         EasyMock.expectLastCall();
-
-        this.manageServiceReposController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
-
-        Model model = new ExtendedModelMap();
+        replayMocks();
         this.manageServiceReposController.delete(1, model);
-        EasyMock.verify(rootAccountManagerService);
     }
 
     @Test
@@ -97,11 +82,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         serviceRepoForm.setUserName("username");
         serviceRepoForm.setPassword("password");
 
-        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResult);
-        Model model = new ExtendedModelMap();
-
+        EasyMock.expect(result.hasErrors()).andReturn(false);
         rootAccountManagerService.editServiceRepository(repoId,
                                                         ServiceRepositoryType.PRIVATE,
                                                         ServicePlan.PROFESSIONAL,
@@ -113,17 +94,13 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
                                                         serviceRepoForm.getPassword());
         EasyMock.expectLastCall();
 
-
-        this.manageServiceReposController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
+        replayMocks();
 
         // method under test
         manageServiceReposController.edit(repoId,
                                           serviceRepoForm,
-                                          bindingResult,
+                                          result,
                                           model);
 
-        EasyMock.verify(rootAccountManagerService);
     }
 }

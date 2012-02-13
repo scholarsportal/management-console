@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.util.notification;
 
+import org.apache.commons.lang.StringUtils;
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.util.error.UnsentEmailException;
@@ -69,6 +71,44 @@ public class Notifier {
         message.append("\n\n");
         message.append("The DuraCloud team");
         sendEmail(subject, message.toString(), adminEmail);
+    }
+    
+    public void sendNotificationUserAddedToAccount(DuracloudUser user, AccountInfo accountInfo) {
+        String subject = "You are now a member of "
+                         + accountInfo.getOrgName() + "'s DuraCloud Account.";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Dear ");
+        sb.append(user.getFirstName());
+        sb.append(" ");
+        sb.append(user.getLastName());
+        sb.append(":\n\n");
+
+        sb.append("You have been added to the DuraCloud account which is managed by ");
+        sb.append(accountInfo.getOrgName());
+        if (StringUtils.isNotBlank(accountInfo.getDepartment())) {
+            sb.append(", ");
+            sb.append(accountInfo.getDepartment());
+        }
+        sb.append(".  You may now log into the ");
+        sb.append(accountInfo.getAcctName());
+        sb.append(" account at https://");
+        sb.append(accountInfo.getSubdomain());
+        sb.append(".duracloud.org with the following username: " + user.getUsername() + ".");
+        sb.append("\n\n");
+        sb.append("Please note that the links above are not supported by ");
+        sb.append("Internet Explorer version 8 or prior. It is recommended ");
+        sb.append("that you use either Internet Explorer version 9 (or ");
+        sb.append("later) or another web browser to access DuraCloud.");
+        sb.append("\n\n");
+        sb.append("If you have any issues accepting the invitation or ");
+        sb.append("creating your personal user profile, please contact the ");
+        sb.append("DuraCloud team by emailing your issue to ");
+        sb.append("support@duracloud.org.");
+        sb.append("\n");
+        sb.append("\n");
+        sb.append("The DuraCloud team");
+
+        sendEmail(subject, sb.toString(), user.getEmail());
     }
 
     private void sendEmail(String subject, String message, String emailAddr) {

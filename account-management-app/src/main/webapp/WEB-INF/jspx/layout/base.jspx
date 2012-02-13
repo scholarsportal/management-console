@@ -130,10 +130,6 @@
 			class="icon-link logout"><i class="pre logoff"></i>Logout</a></li>
 
 	</sec:authorize>
-	<!--
-	<li id="help"><a class="icon-link" href="#"><i
-		class="pre help"></i>Help</a></li>
--->
 </ul>
 </div>
 </div>

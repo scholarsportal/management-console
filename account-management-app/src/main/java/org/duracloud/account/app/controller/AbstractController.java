@@ -3,12 +3,15 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Set;
+
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,10 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpSession;
-import java.util.Set;
 
 /**
  * Base class for all controllers.
@@ -31,6 +32,9 @@ import java.util.Set;
 public abstract class AbstractController {
 
     protected Logger log = LoggerFactory.getLogger(AbstractController.class);
+    public static final String USERS_MAPPING = "/users";
+    public static final String USER_MAPPING = "/byid/{username:[a-z0-9.\\-_@]*}";
+    
 
     public static final String NEW_MAPPING = "/new";
     public static final String EDIT_MAPPING = "/edit";
@@ -106,33 +110,57 @@ public abstract class AbstractController {
         return false;
     }
 
-        
 
     @ExceptionHandler(DuraCloudRuntimeException.class)
-    public ModelAndView handleException(DuraCloudRuntimeException e, HttpSession session) {
+    public ModelAndView handleException(DuraCloudRuntimeException e) {
         log.error(e.getMessage(), e);
         return new ModelAndView("exception", "ex", e);
     }
 
-    
+    /*
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception e, HttpSession session) {
-        setError(e, session);
+    public ModelAndView handleException(Exception e) {
+        setError(e);
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
-        //FIXME - This needs to be refactored 
         return createRedirectMav(UserController.formatUserUrl(username));
     }
+    */
 
-    protected void setError(Exception e, HttpSession session) {
-        log.error(e.getMessage(), e);
-        session.setAttribute("error", e.getMessage());
+    protected static String formatUserUrl(String username) {
+        String url =  USERS_MAPPING + USER_MAPPING;
+        url = url.replaceAll("\\{username.*\\}", username);
+        return url;
     }
+
+    protected void setError(Exception e) {
+        setError(e,null);
+    }
+    
+    protected void setError(Exception e, RedirectAttributes redirectAttributes) {
+        log.error(e.getMessage(), e);
+        if(redirectAttributes == null){
+            log.warn("redirectAttributes are null. Skipping add flash attribute.");
+        }else{
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+    }
+    
+
     
     protected ModelAndView createRedirectMav(String url) {
         RedirectView view = new RedirectView(url, true);
         view.setExposeModelAttributes(false);
         return new ModelAndView(view);
+    }
+
+    protected void setNotice(String notice, RedirectAttributes redirectAttributes) {
+        if(redirectAttributes == null){
+            log.warn("redirectAttributes are null. Skipping add flash attribute.");
+        }else{
+            redirectAttributes.addFlashAttribute("notice", notice);
+        }
+        
     }
 
 }

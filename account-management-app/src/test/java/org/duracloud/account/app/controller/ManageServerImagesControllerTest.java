@@ -4,12 +4,9 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.util.RootAccountManagerService;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
 public class ManageServerImagesControllerTest extends AmaControllerTestBase {
     private ManageServerImagesController manageServerImagesController;
@@ -18,10 +15,12 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-
-        manageServerImagesController = new ManageServerImagesController();
         rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
                                                         RootAccountManagerService.class);
+        mocks.add(rootAccountManagerService);
+        manageServerImagesController = new ManageServerImagesController();
+        manageServerImagesController.setRootAccountManagerService(rootAccountManagerService);
+
     }
 
     @Test
@@ -35,10 +34,7 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
         serverImageForm.setPassword("password");
         serverImageForm.setLatest(true);
 
-        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResult);
-        Model model = new ExtendedModelMap();
+        EasyMock.expect(result.hasErrors()).andReturn(false);
 
         rootAccountManagerService.createServerImage(serverImageForm.getProviderAccountId(),
                           serverImageForm.getProviderImageId(),
@@ -47,16 +43,10 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
                           serverImageForm.getPassword(),
                           serverImageForm.isLatest());
         EasyMock.expectLastCall();
-
-
-        this.manageServerImagesController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
-
+        replayMocks();
         // method under test
-        manageServerImagesController.add(serverImageForm, bindingResult, model);
+        manageServerImagesController.add(serverImageForm, result, model);
 
-        EasyMock.verify(rootAccountManagerService);
     }
 
     @Test
@@ -64,13 +54,8 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
         rootAccountManagerService.deleteServerImage(1);
         EasyMock.expectLastCall();
 
-        this.manageServerImagesController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
-
-        Model model = new ExtendedModelMap();
+        replayMocks();
         this.manageServerImagesController.delete(1, model);
-        EasyMock.verify(rootAccountManagerService);
     }
 
     @Test
@@ -86,10 +71,7 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
         serverImageForm.setPassword("password");
         serverImageForm.setLatest(true);
 
-        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResult);
-        Model model = new ExtendedModelMap();
+        EasyMock.expect(result.hasErrors()).andReturn(false);
 
         rootAccountManagerService.editServerImage(imageId,
                           serverImageForm.getProviderAccountId(),
@@ -100,17 +82,13 @@ public class ManageServerImagesControllerTest extends AmaControllerTestBase {
                           serverImageForm.isLatest());
         EasyMock.expectLastCall();
 
-
-        this.manageServerImagesController.setRootAccountManagerService(
-            rootAccountManagerService);
-        EasyMock.replay(rootAccountManagerService);
+        replayMocks();
 
         // method under test
         manageServerImagesController.edit(imageId,
                                           serverImageForm,
-                                          bindingResult,
+                                          result,
                                           model);
 
-        EasyMock.verify(rootAccountManagerService);
     }
 }

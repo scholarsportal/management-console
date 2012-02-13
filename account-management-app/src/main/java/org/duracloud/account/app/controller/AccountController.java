@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,28 +110,28 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
-    public ModelAndView startInstance(@PathVariable int accountId, HttpServletRequest request,
+    public ModelAndView startInstance(@PathVariable int accountId,
                                 @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
-                                Model model)
+                                RedirectAttributes redirectAttributes)
         throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
         if(instanceForm.getVersion() == null)
             instanceForm.setVersion(instanceManagerService.getLatestVersion());
         try{
             startInstance(accountId, instanceForm.getVersion());
-            model.addAttribute(ACTION_STATUS,
+            redirectAttributes.addFlashAttribute(ACTION_STATUS,
                                "Instance STARTED successfully, it will be " +
                                "available for use in 5 minutes.");
-
         }catch(RuntimeException ex){
-            setError(ex, request.getSession());
+            setError(ex,redirectAttributes);
         }
-        populateAccountInModel(accountId, model);
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();
         
         return createUserRedirectModelAndView(username);
     }
+
+
 
     @RequestMapping(value = { INSTANCE_AVAILABLE_PATH }, method = RequestMethod.POST)
     public ModelAndView instanceAvailable(@PathVariable int accountId,
@@ -169,9 +170,10 @@ public class AccountController extends AbstractAccountController {
         }
     }
 
-    protected void startInstance(int accountId, String version) {
+    protected DuracloudInstanceService startInstance(int accountId, String version) {
         DuracloudInstanceService instanceService =
             instanceManagerService.createInstance(accountId, version);
+        return instanceService;
     }
 
     @RequestMapping(value = { INSTANCE_UPGRADE_PATH }, method = RequestMethod.POST)
@@ -341,9 +343,8 @@ public class AccountController extends AbstractAccountController {
                     createAccount(accountCreationInfo, user);
 
                 int id = service.retrieveAccountInfo().getId();
-                String idText = Integer.toString(id);
                 
-                return createAccountRedirectModelAndView(idText, "/providers");
+                return createAccountRedirectModelAndView(id, "/providers");
             } catch (SubdomainAlreadyExistsException ex) {
                 result.addError(new ObjectError("subdomain",
                     "The subdomain you selected is already in use. Please choose another."));

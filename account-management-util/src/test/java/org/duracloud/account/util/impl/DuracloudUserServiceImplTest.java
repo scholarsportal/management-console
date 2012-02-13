@@ -264,6 +264,53 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         testSetRole(initialRoles, capture, Role.ROLE_INIT, Role.ROLE_ROOT);
     }
 
+    @Test
+    public void testAddUserToAccountAlreadyExists() throws Exception {
+        int userId = 7;
+        DuracloudUser user = newDuracloudUser(userId, "some-username");
+        setUpAddUserToAccount(user);
+        boolean result = userService.addUserToAccount(acctId, userId);
+        Assert.assertFalse(result);
+        Set<Role> roles = user.getRolesByAcct(acctId);
+        Assert.assertNotNull(roles);
+        Assert.assertTrue(!roles.contains(Role.ROLE_USER));
+    }
+
+    @Test
+    public void testAddUserToNewAccount() throws Exception {
+
+        int userId = 7;
+        DuracloudUser user = newDuracloudUser(userId, "some-username");
+        AccountInfo account = newAccountInfo(acctId);
+        EasyMock.expect(userRepo.findById(userId)).andReturn(user).anyTimes();
+        EasyMock.expect(accountRepo.findById(acctId)).andReturn(account);
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(acctId, userId))
+                .andThrow(new DBNotFoundException("test"));
+        EasyMock.expect(idUtil.newRightsId()).andReturn(1);
+        rightsRepo.save(EasyMock.isA(AccountRights.class));
+        EasyMock.expectLastCall();
+        EasyMock.expect(rightsRepo.findByUserId(userId))
+                .andReturn(getRightsSet(Role.ROLE_USER));
+
+        propagator.propagateRights(EasyMock.eq(acctId),
+                                   EasyMock.eq(userId),
+                                   EasyMock.isA(Set.class));
+        EasyMock.expectLastCall();
+        Emailer emailer = EasyMock.createMock(Emailer.class);
+        EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
+        emailer.send(EasyMock.isA(String.class),
+                     EasyMock.isA(String.class),
+                     EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+        EasyMock.replay(emailer);
+
+        boolean result = userService.addUserToAccount(acctId, userId);
+        Assert.assertTrue(result);
+        EasyMock.verify(emailer);
+    }
+    
     private Capture<AccountRights> setUpSetRights(int numAccounts,
                                                   Role... initialRoles)
         throws Exception {

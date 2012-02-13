@@ -72,6 +72,19 @@ public interface DuracloudUserService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT_PEER_UPDATE"})
     public boolean setUserRights(int acctId, int userId, Role... roles);
 
+    
+    /**
+     * This method sets the roles of a user in an account.
+     * <p/>
+     * Note that this method only sets a user to new roles. To remove a user
+     * from an account, use revokeAllRights().
+     *
+     * @return true if an update was performed.
+     */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    public boolean addUserToAccount(int acctId, int userId)
+        throws DBNotFoundException;
+    
     /**
      * This method removes all rights to an account for a given user.
      *

@@ -4,7 +4,6 @@
 package org.duracloud.account.app.controller;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -12,20 +11,15 @@ import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.notification.Emailer;
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -33,85 +27,73 @@ import org.springframework.validation.BindingResult;
  */
 public class AccountUsersControllerTest extends AmaControllerTestBase {
     private AccountUsersController accountUsersController;
-    private AccountService accountService;
-    private DuracloudUserService userService;
-    private NotificationMgr notificationMgr;
 
     @Before
     public void before() throws Exception {
         super.before();
-
-        accountUsersController = new AccountUsersController();
-        accountManagerService = EasyMock.createMock("AccountManagerService",
-                                                    AccountManagerService.class);
-        accountService = EasyMock.createMock("AccountService",
-                                             AccountService.class);
-        userService = EasyMock.createMock("DuracloudUserService",
-                                          DuracloudUserService.class);
-        notificationMgr = EasyMock.createMock("NotificationMgr",
-                                              NotificationMgr.class);
-
+        this.accountUsersController = new AccountUsersController();
         this.accountUsersController.setNotificationMgr(notificationMgr);
         this.accountUsersController.setAccountManagerService(
             accountManagerService);
         this.accountUsersController.setUserService(userService);
-
     }
+
+
     
-    @After
-    public void after() throws Exception {
-        super.after();
-        EasyMock.verify(accountManagerService,
-                        accountService, 
-                        userService, 
-                        notificationMgr);
-    }
+    @Test
+    public void testAddUserByUsername() throws Exception {
+        int accountId = 2;
+        UsernameForm usernameForm = new UsernameForm();
+        usernameForm.setUsername(TEST_USERNAME);
+        Model model = new ExtendedModelMap();
+        DuracloudUser user = createUser(TEST_USERNAME);
 
-    private void replayMocks() {
-        EasyMock.replay(accountManagerService,
-                        accountService, 
-                        userService,
-                        notificationMgr);
-    }
+        EasyMock.expect(result.hasErrors()).andReturn(false);
+        EasyMock.expect(userService.loadDuracloudUserByUsernameInternal(TEST_USERNAME))
+                            .andReturn(user)
+                            .anyTimes();
+
+        EasyMock.expect(userService.addUserToAccount(accountId, user.getId()))
+                .andReturn(true);
+
+        EasyMock.expect(redirectAttributes.addFlashAttribute(EasyMock.isA(String.class),
+                                                             EasyMock.isA(String.class)))
+                .andReturn(redirectAttributes);
+        
+        replayMocks();
+        ModelAndView mav =
+            this.accountUsersController.addUser(accountId,
+                                                usernameForm,
+                                                result,
+                                                model,
+                                                redirectAttributes);
+        Assert.assertNotNull(mav);
+        Assert.assertTrue(mav.getView() instanceof RedirectView);
+    }   
     
     @Test
     public void testSendInvitations() throws Exception {
-        setupGet(TEST_ACCOUNT_ID);
+        setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         UserInvitation ui = createUserInvitation();
 
-        Emailer emailer = EasyMock.createMock("Emailer", Emailer.class);
         EasyMock.expect(notificationMgr.getEmailer()).andReturn(emailer);
 
         EasyMock.expect(accountService.inviteUser(ui.getUserEmail(), ui.getAdminUsername(), emailer))
             .andReturn(ui);
 
-        EasyMock.expect(accountService.getPendingInvitations())
-        .andReturn(new HashSet<UserInvitation>(Arrays.asList(new UserInvitation[]{
-            ui})))
-        .times(1);
-        
-        BindingResult result = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(result.hasErrors()).andReturn(false);
-        EasyMock.replay(result);
-        EasyMock.replay(emailer);
-
+        addFlashAttribute();
         replayMocks();
 
-        Model model = new ExtendedModelMap();
         InvitationForm invitationForm = new InvitationForm();
         invitationForm.setEmailAddresses("test@duracloud.org");
-
+        
         // call under test.
         this.accountUsersController.sendInvitations(TEST_ACCOUNT_ID,
                                                     invitationForm,
                                                     result,
-                                                    model);
-
-        Collection<AccountUsersController.PendingAccountUser> accountUsers = (Collection<AccountUsersController.PendingAccountUser>) model.asMap()
-            .get("pendingUserInvitations");
-        Assert.assertNotNull(accountUsers);
-        Assert.assertFalse(accountUsers.isEmpty());
-        EasyMock.verify(result);
+                                                    model,
+                                                    redirectAttributes);
     }
 
     /**
@@ -134,8 +116,6 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         .andReturn(new HashSet<UserInvitation>(Arrays.asList(new UserInvitation[0])))
         .times(1);              
         replayMocks();
-
-        Model model = new ExtendedModelMap();
         accountUsersController.get(TEST_ACCOUNT_ID, model);
         verifyGet(model);
 
@@ -153,7 +133,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
             .times(1);
 
         EasyMock.expect(accountService.getUsers())
-            .andReturn(new HashSet<DuracloudUser>(Arrays.asList(new DuracloudUser[] { createUser() })))
+            .andReturn(createUserSet())
             .times(1);
 
         EasyMock.expect(accountManagerService.getAccount(accountId))
@@ -181,14 +161,11 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     public void testDeleteUser() throws Exception {
         userService.revokeUserRights(TEST_ACCOUNT_ID, 1);
         EasyMock.expectLastCall();
-        
         EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
             .andReturn(createUser())
             .anyTimes();
         
         replayMocks();
-        
-        Model model = new ExtendedModelMap();
         this.accountUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID,
                                                           1,
                                                           model);
@@ -202,35 +179,23 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
 
         AccountUserEditForm acctUserEditForm = new AccountUserEditForm();
         acctUserEditForm.setRole(Role.ROLE_ADMIN.name());
-
-        BindingResult bindingResult = EasyMock.createMock(BindingResult.class);
-        EasyMock.expect(bindingResult.hasErrors()).andReturn(false);
-        EasyMock.replay(bindingResult);
-        Model model = new ExtendedModelMap();
-
-        setupGet(acctId);
-
+        EasyMock.expect(result.hasErrors()).andReturn(false);
         EasyMock.expect(userService.setUserRights(EasyMock.eq(acctId),
                                                   EasyMock.eq(userId),
                                                   EasyMock.isA(Role.class),
                                                   EasyMock.isA(Role.class),
-                                                  EasyMock.isA(Role.class)))
-            .andReturn(true);
-
-        EasyMock.expect(accountService.getPendingInvitations())
-        .andReturn(new HashSet<UserInvitation>(Arrays.asList(new UserInvitation[0])))
-        .times(1);              
-
-        
+                                                  EasyMock.isA(Role.class))).andReturn(true);
+      
+        addFlashAttribute();
         replayMocks();
 
         // method under test
-        accountUsersController.setUserService(userService);
         accountUsersController.editUser(acctId,
                                         userId,
                                         acctUserEditForm,
-                                        bindingResult,
-                                        model);
+                                        result,
+                                        model,
+                                        redirectAttributes);
 
     }
 

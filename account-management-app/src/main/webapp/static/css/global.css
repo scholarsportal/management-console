@@ -122,7 +122,6 @@ h1 {
 h2 {
 	font-size:1.0em;
 	font-weight:bold;
-	background-image: url(../img/panel_header_back.jpg);
 	background-repeat: repeat-x;
 	background-position: left top;
 }
@@ -543,8 +542,7 @@ li.account:hover {
 .instructions {
 	font-size: 11px;
 	margin-bottom: 20px;
-	margin-left: 8px;
- 	color: #515151 !important;	
+	color: #515151 !important;	
 }
 .lighttext {
 	font-size: 10pt;
@@ -635,7 +633,7 @@ li.account:hover {
     top: -4px;
 }
 
-.account-record {
+.section, .account-record {
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -656,6 +654,10 @@ li.account:hover {
 	-moz-border-radius:8px;	
 	-webkit-border-radius:8px;
 	border-radius:8px;
+}
+
+.section .section-body{
+	padding: 20px 0px 0px 20px; 
 }
 
 .user-list {
@@ -725,7 +727,8 @@ td.detail {
     -khtml-border-radius: 5px;
     border-radius: 5px;
 }
-.accountlabel
+.accountlabel, 
+.section > h2
 {
 	font-size:16px;
 	margin-left:8px;

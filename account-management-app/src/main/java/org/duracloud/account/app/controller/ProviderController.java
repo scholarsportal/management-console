@@ -46,7 +46,7 @@ public class ProviderController extends AbstractAccountController {
             accountManagerService.getAccount(accountId);
         accountService.addStorageProvider(
             StorageProviderType.fromString(providerForm.getProvider()));
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/providers");
+        return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
     @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{providerId}/delete", method = RequestMethod.POST)
@@ -58,7 +58,7 @@ public class ProviderController extends AbstractAccountController {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         accountService.removeStorageProvider(providerId);
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/providers");
+        return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/enable", method = RequestMethod.POST)
@@ -68,7 +68,7 @@ public class ProviderController extends AbstractAccountController {
 
         setProviderRrs(accountId, true);
 
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/providers");
+        return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/disable", method = RequestMethod.POST)
@@ -78,6 +78,6 @@ public class ProviderController extends AbstractAccountController {
 
         setProviderRrs(accountId, false);
 
-        return createAccountRedirectModelAndView(Integer.toString(accountId), "/providers");
+        return createAccountRedirectModelAndView(accountId, "/providers");
     }
 }

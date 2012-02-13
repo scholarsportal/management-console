@@ -183,27 +183,31 @@ public class ManageUsersController extends AbstractController {
 	}
 
     @RequestMapping(value = USER_ADD_MAPPING, method = RequestMethod.POST)
-    public ModelAndView addUser(@ModelAttribute("addAccountUserForm") @Valid AccountUserAddForm accountUserAddForm,
-					   BindingResult result,
-					   Model model) throws Exception {
+    public ModelAndView
+        addUser(@ModelAttribute("addAccountUserForm") @Valid AccountUserAddForm accountUserAddForm,
+                BindingResult result,
+                Model model) throws Exception {
         int accountId = accountUserAddForm.getAccountId();
         int userId = accountUserAddForm.getUserId();
         log.debug("addUser account {} user {}", accountId, userId);
-
         Role role = Role.valueOf(accountUserAddForm.getRole());
-        try {
-            setUserRights(userService,
-                          accountId,
-                          userId,
-                          role);
-        } catch(AccessDeniedException e) {
-            result.addError(new ObjectError("role",
-                                "You are unauthorized to set the role for this user"));
+
+        boolean hasErrors = result.hasErrors();
+        if (!hasErrors) {
+
+            try {
+                setUserRights(userService, accountId, userId, role);
+            } catch (AccessDeniedException e) {
+                result.addError(new ObjectError("role",
+                                                "You are unauthorized to set the role for this user"));
+                hasErrors = true;
+            }
+        }
+        if (hasErrors) {
             return new ModelAndView(MANAGE_USERS_VIEW);
         }
 
         return createRedirectMav(REDIRECT_USERS_MANAGE);
-
     }
 
     @RequestMapping(value = USER_EDIT_MAPPING, method = RequestMethod.POST)
@@ -212,18 +216,25 @@ public class ManageUsersController extends AbstractController {
 					   BindingResult result,
 					   Model model) throws Exception {
         log.debug("editUser account {}", accountId);
+        boolean hasErrors = result.hasErrors();
+        if (!hasErrors) {
+            Role role = Role.valueOf(accountUserEditForm.getRole());
+            log.info("New role: {}", role);
 
-        Role role = Role.valueOf(accountUserEditForm.getRole());
-        log.info("New role: {}", role);
-
-        try {
-            setUserRights(userService, accountId, userId, role);
-        } catch(AccessDeniedException e) {
-            result.addError(new ObjectError("role",
-                                "You are unauthorized to set the role for this user"));
+            try {
+                setUserRights(userService, accountId, userId, role);
+            } catch(AccessDeniedException e) {
+                result.addError(new ObjectError("role",
+                                    "You are unauthorized to set the role for this user"));
+                hasErrors = true;
+            }
+        }
+        if (hasErrors) {
             return new ModelAndView(MANAGE_USERS_VIEW);
         }
 
+        
+        
         return createRedirectMav(REDIRECT_USERS_MANAGE);
     }
 

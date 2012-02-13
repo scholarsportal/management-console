@@ -153,6 +153,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     @Override
     public boolean setUserRights(int acctId, int userId, Role... roles) {
+        return setUserRightsInternal(acctId, userId, roles);
+    }
+
+    private boolean setUserRightsInternal(int acctId, int userId, Role... roles) {
+
         Set<Role> roleSet = new HashSet<Role>();
         for (Role role : roles) {
             roleSet.add(role);
@@ -530,6 +535,20 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             notifier = new Notifier(notificationMgr.getEmailer());
         }
         return notifier;
+    }
+
+    @Override
+    public boolean addUserToAccount(int acctId, int userId) throws DBNotFoundException {
+        boolean added = setUserRightsInternal(acctId, userId, Role.ROLE_USER);
+        if(added){
+            DuracloudUser user;
+            user = loadDuracloudUserByIdInternal(userId);
+            AccountInfo accountInfo =
+                this.repoMgr.getAccountRepo().findById(acctId);
+            getNotifier().sendNotificationUserAddedToAccount(user, accountInfo);
+        }
+        
+        return added;
     }
 
 }

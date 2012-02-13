@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 
@@ -48,6 +50,8 @@ public class AccountUsersController extends AbstractAccountController {
     public static final String ACCOUNT_USERS_EDIT_ID = "account-users-edit";
 
     public static final String EDIT_ACCOUNT_USERS_FORM_KEY = "accountUsersEditForm";
+    private static final String USERNAME_FORM_KEY = "usernameForm";
+    private static final String INVITATION_FORM_KEY = "invitationForm";
 
     public static final String ACCOUNT_USERS_PATH = "/users";
     public static final String ACCOUNT_USERS_MAPPING =
@@ -66,6 +70,22 @@ public class AccountUsersController extends AbstractAccountController {
     @Autowired
     private NotificationMgr notificationMgr;
 
+    
+    @ModelAttribute(INVITATION_FORM_KEY)
+    public InvitationForm invitationForm(){
+        return new InvitationForm();
+    }
+
+    @ModelAttribute(USERNAME_FORM_KEY)
+    public UsernameForm usernameForm(){
+        return new UsernameForm();
+    }
+    
+    @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY)
+    public AccountUserEditForm accountUserEditForm(){
+        return new AccountUserEditForm();
+    }
+
     /**
      * 
      * @param accountId
@@ -77,46 +97,39 @@ public class AccountUsersController extends AbstractAccountController {
     public String get(@PathVariable int accountId, Model model)
         throws Exception {
         addUserToModel(model);
-        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
-
-        model.addAttribute("invitationForm", new InvitationForm());
         return get(getAccountService(accountId), model);
     }
 
-    @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
-    public String sendInvitation(
-        @PathVariable int accountId,
-        @ModelAttribute("invitationForm") @Valid InvitationForm invitationForm,
-        BindingResult result, Model model) throws Exception {
-        log.info("sending invitation from account {}", accountId);
+    @RequestMapping(value = ACCOUNT_USERS_MAPPING+"/adduser", method = RequestMethod.POST)
+    public ModelAndView
+        addUser(@PathVariable int accountId,
+                @ModelAttribute(USERNAME_FORM_KEY) @Valid UsernameForm usernameForm,
+                BindingResult result,
+                Model model,
+                RedirectAttributes redirectAttributes) throws Exception {
+        String username = usernameForm.getUsername();
+        log.debug("entering addUser: adding {} to account {}",
+                  username,
+                  accountId);
         if (result.hasErrors()) {
-            model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
             addUserToModel(model);
             get(getAccountService(accountId), model);
-            return ACCOUNT_USERS_VIEW_ID;
+            return new ModelAndView(ACCOUNT_USERS_VIEW_ID, model.asMap());
         }
-        String emailAddress = invitationForm.getEmailAddresses();
-        AccountService service = getAccountService(accountId);
 
-            try {
-                UserInvitation ui = service.inviteUser(emailAddress,
-                                                       getUser().getUsername(),
-                                                       notificationMgr.getEmailer());
-                log.debug(
-                "created user invitation on account {} for {} expiring on {}",
-                new Object[]{ui.getAccountId(),
-                             ui.getUserEmail(),
-                             ui.getExpirationDate()});
-            } catch(UnsentEmailException e) {
-                result.addError(new ObjectError("emailAddresses",
-                    "Unable to send an email to the following recipient, but the user has been added: " + emailAddress));
-            }
+        
+        DuracloudUser user =  userService.loadDuracloudUserByUsernameInternal(username);
+        if(userService.addUserToAccount(accountId, user.getId())){
+            log.info("added user {} to account {}",
+                     new Object[] { username, accountId });
 
+            String notice =  MessageFormat.format("Successfully added {0} to account.",
+                                                  username);
+            setNotice(notice, redirectAttributes);
+        }
 
-        addUserToModel(model);
-        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
-        model.addAttribute("invitationForm", new InvitationForm());
-        return get(service, model);
+        return createAccountRedirectModelAndView(accountId,
+                                                 ACCOUNT_USERS_PATH);
     }
 
     protected String get(AccountService accountService, Model model)
@@ -125,53 +138,64 @@ public class AccountUsersController extends AbstractAccountController {
         return ACCOUNT_USERS_VIEW_ID;
     }
 
-    @RequestMapping(value = USERS_INVITE_MAPPING, method = RequestMethod.GET)
-    public String newInivation(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException {
-        log.info("serving up new user invitation form");
-        loadAccountInfo(accountId, model);
-        model.addAttribute("invitationForm", new InvitationForm());
-        return USERS_INVITE_VIEW_ID;
-    }
-
-    @RequestMapping(value = USERS_INVITE_MAPPING, method = RequestMethod.POST)
-    public String sendInvitations(
+    @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
+    public ModelAndView sendInvitations(
         @PathVariable int accountId,
-        @ModelAttribute("invitationForm") @Valid InvitationForm invitationForm,
-        BindingResult result, Model model) throws Exception {
+        @ModelAttribute(INVITATION_FORM_KEY) @Valid InvitationForm invitationForm,
+        BindingResult result, Model model,
+        RedirectAttributes redirectAttributes) throws Exception {
         log.info("sending invitations from account {}", accountId);
-        if (result.hasErrors()) {
-            return USERS_INVITE_VIEW_ID;
-        }
-        List<String> emailAddresses =
-            EmailAddressesParser.parse(invitationForm.getEmailAddresses());
+        boolean hasErrors = result.hasErrors();
         AccountService service = getAccountService(accountId);
 
-        List<String> failedEmailAddresses =  new ArrayList<String>();
-        String adminUsername = getUser().getUsername();
+        if (!hasErrors) {
 
-        for (String emailAddress : emailAddresses) {
-            try {
-                UserInvitation ui = service.inviteUser(emailAddress,
-                                                       adminUsername,
-                                                       notificationMgr.getEmailer());
-                log.debug(
-                "created user invitation on account {} for {} expiring on {}",
-                new Object[]{ui.getAccountId(),
-                             ui.getUserEmail(),
-                             ui.getExpirationDate()});
-            } catch(UnsentEmailException e) {
-                failedEmailAddresses.add(emailAddress);
+            List<String> emailAddresses =
+                EmailAddressesParser.parse(invitationForm.getEmailAddresses());
+
+            List<String> failedEmailAddresses = new ArrayList<String>();
+            String adminUsername = getUser().getUsername();
+
+            for (String emailAddress : emailAddresses) {
+                try {
+                    UserInvitation ui =
+                        service.inviteUser(emailAddress,
+                                           adminUsername,
+                                           notificationMgr.getEmailer());
+                    String template =
+                        "Successfully created user invitation on "
+                            + "account {0} for {1} expiring on {2}";
+                    String message =
+                        MessageFormat.format(template,
+                                             ui.getAccountId(),
+                                             ui.getUserEmail(),
+                                             ui.getExpirationDate());
+                    log.info(message);
+                } catch (UnsentEmailException e) {
+                    failedEmailAddresses.add(emailAddress);
+                }
+            }
+
+            if (!failedEmailAddresses.isEmpty()) {
+                String template =
+                    "Unable to send an email to the following recipients, "
+                        + "but the user has been added: {0}";
+                String message =
+                    MessageFormat.format(template, failedEmailAddresses);
+
+                result.addError(new ObjectError("emailAddresses", message));
+                hasErrors = true;
             }
         }
 
-        if(!failedEmailAddresses.isEmpty()) {
-            result.addError(new ObjectError("emailAddresses",
-                    "Unable to send an email to the following recipients, but the user has been added: " + failedEmailAddresses));
-            return USERS_INVITE_VIEW_ID;
+        if (hasErrors) {
+            addUserToModel(model);
+            get(service, model);
+            return new ModelAndView(ACCOUNT_USERS_VIEW_ID);
         }
-
-        return get(service, model);
+        
+        setNotice("Successfully sent invitations.", redirectAttributes);
+        return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
@@ -184,7 +208,7 @@ public class AccountUsersController extends AbstractAccountController {
         AccountService service = getAccountService(accountId);
         service.deleteUserInvitation(invitationId);
 
-        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
@@ -199,15 +223,13 @@ public class AccountUsersController extends AbstractAccountController {
             View redirect = UserController.formatUserRedirect(user.getUsername());
             return new ModelAndView(redirect);
         }
-        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+        return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.GET)
     public String getEditUserForm(@PathVariable int accountId, @PathVariable int userId, Model model)
         throws Exception {
         log.info("getEditUserForm user {} account {}", userId, accountId);
-        AccountUserEditForm editForm = new AccountUserEditForm();
-
         AccountService accountService = getAccountService(accountId);
         Set<DuracloudUser> users = accountService.getUsers();
 
@@ -230,44 +252,40 @@ public class AccountUsersController extends AbstractAccountController {
         }
 
         loadAccountInfo(accountId, model);        
-
-        model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, editForm);
-
         return ACCOUNT_USERS_EDIT_ID;
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
-    public ModelAndView editUser(@PathVariable int accountId, @PathVariable int userId,
-                           @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
-					   BindingResult result,
-					   Model model) throws Exception {
+    public ModelAndView
+        editUser(@PathVariable int accountId,
+                 @PathVariable int userId,
+                 @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
+                 BindingResult result,
+                 Model model,
+                 RedirectAttributes redirectAttributes) throws Exception {
         log.debug("editUser account {}", accountId);
 
-        Role role = Role.valueOf(accountUserEditForm.getRole());
-        log.info("New role: {}", role);
-
-        boolean exception = false;
-        try {
-            setUserRights(userService,
-                          accountId,
-                          userId,
-                          role);
-        } catch(AccessDeniedException e) {
-            result.addError(new ObjectError("role",
-                                "You are unauthorized to set the role for this user"));
-            exception = true;
+        boolean hasErrors = result.hasErrors();
+        if (!hasErrors) {
+            Role role = Role.valueOf(accountUserEditForm.getRole());
+            log.info("New role: {}", role);
+            try {
+                setUserRights(userService, accountId, userId, role);
+                setNotice("Successfully updated user.", redirectAttributes);                
+            } catch (AccessDeniedException e) {
+                result.addError(new ObjectError("role",
+                                                "You are unauthorized to set the role for this user"));
+                hasErrors = true;
+            }
         }
 
-
-
-        addUserToModel(model);
-        if(!exception){
-            model.addAttribute(EDIT_ACCOUNT_USERS_FORM_KEY, new AccountUserEditForm());
+        if (hasErrors) {
+            addUserToModel(model);
+            return new ModelAndView(ACCOUNT_USERS_VIEW_ID, model.asMap());
         }
-        
-        model.addAttribute("invitationForm", new InvitationForm());
-        get(getAccountService(accountId), model);
-        return createAccountRedirectModelAndView(String.valueOf(accountId), ACCOUNT_USERS_PATH);
+
+        return createAccountRedirectModelAndView(accountId,
+                                                 ACCOUNT_USERS_PATH);
     }
 
     /**
@@ -316,15 +334,6 @@ public class AccountUsersController extends AbstractAccountController {
             pendingUsers.add(new PendingAccountUser(ui, Role.ROLE_USER));
         }
         model.addAttribute("pendingUserInvitations", pendingUsers);
-    }
-
-    /**
-     * @param ui
-     * @return
-     */
-    private InvitationStatus resolveStatus(UserInvitation ui) {
-        return ui.getExpirationDate().getTime() > System.currentTimeMillis()
-            ? InvitationStatus.PENDING : InvitationStatus.EXPIRED;
     }
 
     /**
@@ -462,6 +471,10 @@ public class AccountUsersController extends AbstractAccountController {
         @Override
         public int compareTo(PendingAccountUser o) {
             return this.getEmail().compareTo(o.getEmail());
+        }
+
+        public Role getRole() {
+            return role;
         }
     }
 

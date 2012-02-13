@@ -14,6 +14,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
@@ -40,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -50,7 +50,7 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 @Controller
 @Lazy
-@RequestMapping(UserController.USERS_MAPPING)
+@RequestMapping(AbstractController.USERS_MAPPING)
 public class UserController extends AbstractController {
 
     public static final String USER_KEY = "user";
@@ -63,14 +63,10 @@ public class UserController extends AbstractController {
 
     public static final String USER_HOME = "user-home";
     
-    public static final String USERS_MAPPING = "/users";
-    
     public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
 
     public static final String USER_ACCOUNTS = "user-accounts";
 
-    public static final String USER_MAPPING = "/byid/{username:[a-z0-9.\\-_@]*}";
-    
     public static final String USER_WELCOME_MAPPING = USER_MAPPING + "/welcome";
 
     public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
@@ -153,14 +149,11 @@ public class UserController extends AbstractController {
         if (redemptionCode != null) {
             log.debug("redemption code found in session: {}", redemptionCode);
             DuracloudUser user = this.userService.loadDuracloudUserByUsername(username);
-            int accountId;
             try {
-                accountId = this.userService.redeemAccountInvitation(user.getId(),
-                                                                     redemptionCode);
-
+                this.userService.redeemAccountInvitation(user.getId(),
+                                                         redemptionCode);
                 user = this.userService.loadDuracloudUserByUsername(username);
                 reauthenticate(user, this.authenticationManager);
-
             } catch (InvalidRedemptionCodeException e) {
                 log.error("redemption failed for {} on redemption {}",
                           username,
@@ -318,17 +311,14 @@ public class UserController extends AbstractController {
             AccountInfo acctInfo = iterator.next();
             DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo,
                                                                      user);
-
-            if (acctInfo.getStatus().equals(AccountInfo.AccountStatus.ACTIVE)) {
+            AccountStatus status = acctInfo.getStatus();
+            if (AccountInfo.AccountStatus.ACTIVE.equals(status)) {
                 activeAccounts.add(duracloudAccount);
-            } else if (acctInfo.getStatus()
-                               .equals(AccountInfo.AccountStatus.INACTIVE)) {
+            } else if (AccountInfo.AccountStatus.INACTIVE.equals(status)) {
                 inactiveAccounts.add(duracloudAccount);
-            } else if (acctInfo.getStatus()
-                               .equals(AccountInfo.AccountStatus.PENDING)) {
+            } else if (AccountInfo.AccountStatus.PENDING.equals(status)) {
                 pendingAccounts.add(duracloudAccount);
-            } else if (acctInfo.getStatus()
-                               .equals(AccountInfo.AccountStatus.CANCELLED)) {
+            } else if (AccountInfo.AccountStatus.CANCELLED.equals(status)) {
                 cancelledAccounts.add(duracloudAccount);
             }
         }
@@ -360,10 +350,9 @@ public class UserController extends AbstractController {
             duracloudAccount.setInstanceStatus(instanceService.getStatus());
             duracloudAccount.setInstanceVersion(instanceService.getInstanceVersion());
         } else {
-            if (accountInfo.getStatus()
-                           .equals(AccountInfo.AccountStatus.ACTIVE)
-                    || accountInfo.getStatus()
-                                  .equals(AccountInfo.AccountStatus.INACTIVE)) {
+            AccountStatus accountStatus = accountInfo.getStatus();
+            if (AccountInfo.AccountStatus.ACTIVE.equals(accountStatus)
+                    || AccountInfo.AccountStatus.INACTIVE.equals(accountStatus)) {
                 Set<String> versions = instanceManagerService.getVersions();
                 duracloudAccount.setVersions(versions);
             }
@@ -446,11 +435,7 @@ public class UserController extends AbstractController {
         return new ModelAndView(view);
     }
 
-    protected static String formatUserUrl(String username) {
-        String url =  USERS_MAPPING + USER_MAPPING;
-        url = url.replaceAll("\\{username.*\\}", username);
-        return url;
-    }
+
 
     protected static RedirectView formatUserRedirect(String username) {
         String redirect = formatUserUrl(username);

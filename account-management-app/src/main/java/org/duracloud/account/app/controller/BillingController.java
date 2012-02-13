@@ -129,9 +129,7 @@ public class BillingController extends AbstractAccountController {
         //TODO update billing info
 
         loadBillingInfo(accountId, model);
-        
-        String accountIdText = Integer.toString(accountId);
-		return createAccountRedirectModelAndView(accountIdText, AccountDetailsController.ACCOUNT_DETAILS_PATH);
+		return createAccountRedirectModelAndView(accountId, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
 	}
 }

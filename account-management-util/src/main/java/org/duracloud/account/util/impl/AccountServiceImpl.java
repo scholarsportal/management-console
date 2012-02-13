@@ -299,7 +299,8 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             String msg =
                 "Error: Unable to send email to: " + invitation.getUserEmail();
-            log.error(msg);
+
+            log.error(msg,e);
             throw new UnsentEmailException(msg, e);
         }
     }

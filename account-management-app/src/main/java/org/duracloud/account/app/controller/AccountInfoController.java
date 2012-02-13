@@ -64,7 +64,7 @@ public class AccountInfoController extends AbstractAccountController {
                          accountEditForm.getDepartment());
 
         
-        return createAccountRedirectModelAndView(Integer.toString(accountId), AccountDetailsController.ACCOUNT_DETAILS_PATH);
+        return createAccountRedirectModelAndView(accountId, AccountDetailsController.ACCOUNT_DETAILS_PATH);
 
     }
 }
