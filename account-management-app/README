@@ -2,18 +2,8 @@
 * The Account Management App        
 * @author dbernstein@duraspace.org
 ****************************************************************************************************
-
-To run, execute:  
-    mvn jetty:run
-and open http://localhost:9000/ama in your browser.
-
-To use an alternate port use -Djetty.port option. This will update the port that jetty starts on,
-as well as the port that the unit tests connect to (see: src/test/resources/test-ama.properties).
-
-If you wish to run the jetty server  a port
-other than the default:9000, you must specify the jetty port with a command line property:
-    mvn -Djetty.port=9991 clean install;
-
+To build and deploy on a running tomcat instance
+mvn clean install
 ****************************************************************************************************
 * Notes on Running Integration Tests
 ****************************************************************************************************
@@ -26,18 +16,14 @@ sudo apt-get install xfonts-base
 
 To run the tests you must enable the selenium test profile: 
 
-mvn clean install -Pprofile-selenium
+mvn clean integration-test -Pprofile-selenium -Dcredentials.file.path=/path/to/ama-init.xml -DargLine="-Droot.username=rootUsername -Droot.password=rootPassword -Dtest.email=your-ses-verified-address@whatever.org"
 
-To run a single selenium test you must start the jetty server in one console, the selenium server
-in another and the test run in yet a third.
+To enable debugging on port 5005 with your IDE  append the following to the above command:
+-Dmaven.surefire.debug=true
+NOTE: you must attach your debugger after running the above mvn command - the jvm will pause until you do. 
 
-Console #1: mvn jetty:run
-Console #2: mvn selenium:start-server
-Console #3: mvn test -Pprofile-selenium -Dtest=<YourTestNameHere>
-
-
-To debug a single test in eclipse,  just follow the above steps for consoles #1 and #2 and run the
-test of choice in Eclipse or the IDE of choice.
+To run a single test append the following to the above command
+-Dtest=YourTestHere ----> e.g. -Dtest=TestRootConsole
 
 ****************************************************************************************************
 * Eclipse Users
