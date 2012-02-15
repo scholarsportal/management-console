@@ -49,6 +49,7 @@
                 </jsp:include>
 
                 <form:form
+                 id="service-repo-form"
                  cssClass="change-aware"
                  modelAttribute="serviceRepoForm"
                  method="POST">
@@ -133,7 +134,7 @@
                        class="value required">
                         <form:input
                          cssErrorClass="error"
-                         id="userName-text"
+                         id="username-text"
                          path="userName" />
                       </td>
                     </tr>

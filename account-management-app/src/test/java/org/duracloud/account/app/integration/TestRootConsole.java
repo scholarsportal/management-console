@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
  */
 package org.duracloud.account.app.integration;
 
@@ -62,41 +62,13 @@ public class TestRootConsole extends AbstractIntegrationTest {
     public void testAddUserToAccount() {
         //TODO implement test
     }
-
-    @Test
-    public void testAddAccount() {
-        //TODO implement test
-    }
-
-    @Test
-    public void testDeleteAccount() {
-        //TODO implement test
-    }
+    
 
     @Test
     public void testRestPassword() {
         //TODO implement test
     }
 
-    @Test
-    public void testAddServerImage() {
-        //TODO implement test
-    }
-
-    @Test
-    public void testDeleteServerImage() {
-        //TODO implement test
-    }
-
-    @Test
-    public void testAddServiceRepository() {
-        //TODO implement test
-    }
-
-    @Test
-    public void testDeleteServiceRepository() {
-        //TODO implement test
-    }
     */
 
 }

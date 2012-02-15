@@ -22,4 +22,23 @@ public class BaseBot {
         LoginHelper.logout(sc);
     }
 
+    public void loginRoot(){
+        LoginHelper.loginRoot(sc);
+    }
+
+    public void clickCancelButton(){
+        clickBackButton();
+    }
+    public void clickBackButton(){
+        SeleniumHelper.clickAndWait(sc, "id=cancel-button");
+    }
+    
+    protected void clickAndWait(String locator) {
+        SeleniumHelper.clickAndWait(sc, locator);
+    }
+
+    protected boolean isElementPresent(String locator) {
+        return sc.isElementPresent(locator);
+    }
+    
 }

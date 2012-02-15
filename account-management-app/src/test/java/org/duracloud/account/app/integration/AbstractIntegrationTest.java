@@ -164,4 +164,9 @@ public abstract class AbstractIntegrationTest {
     protected void openUserProfile() {
         UserHelper.openUserProfile(sc);
     }
+    
+    protected void confirmGlobalErrorsPresent() {
+        Assert.assertTrue(isElementPresent("css=.global-errors"));
+    }
+
 }

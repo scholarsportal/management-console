@@ -96,4 +96,11 @@ public class RootBot extends AdminBot {
     public void confirmManageUsersPageIsLoaded() {
         Assert.assertTrue(sc.isElementPresent("id=user-list"));
     }
+
+
+    public void openServiceRepositoryManagement() {
+        openRootConsole();
+        confirmManageUsersPageIsLoaded();
+    }
+    
 }

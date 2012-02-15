@@ -31,7 +31,6 @@
      name="body">
       <tiles:insertDefinition
        name="user-base">
-
         <tiles:putAttribute
          name="content">
           <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -409,7 +408,7 @@
                   </tr>
                 </table>
                <div style="height:20px"></div>
-                    <table id="sort-images" class="datatablesimple">
+                    <table id="sort-images" class="datatablesimple server-images">
                     <thead>
                     <tr>
                       <th align="left">Provider Account Id</th>
@@ -430,7 +429,7 @@
                     <c:forEach
                      var="i"
                      items="${serverImages}">
-                      <tr>
+                      <tr  data-provider-image-id="${i.providerImageId}">
                         <td align="left">${i.providerAccountId}</td>
 
                         <td align="left">${i.providerImageId}</td>
@@ -439,9 +438,8 @@
                         <td align="left">${i.description}</td>
                         <td align="left">${i.latest}</td>
                         <td align="left">
-                         <a
-                         href="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/edit"
-                         class="button">
+                         <a href="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/edit"
+                         class="button edit">
                              <i
                                class="pre pencil">
                              </i>
@@ -452,7 +450,7 @@
                             <form
                              action="${pageContext.request.contextPath}/manage/serverImage/byid/${i.id}/delete"
                              method="post">
-                              <button style="margin-right:8px !important"
+                              <button  class="delete" style="margin-right:8px !important"
                                type="submit" onclick="AskAndDelete(this); return false;">
                               <i
                                class="pre trash">
@@ -477,19 +475,18 @@
                   <tr>
                     <td class="accountlabel"> Manage Service Repositories</td>
                     <td align="right">
-                           <a
-                     href="${pageContext.request.contextPath}/manage/serviceRepo/new"
-                     class="button">
-                    <i
-                     class="pre plus">
-                    </i>
-
-                    Add Service Repository</a><br />
+                      <a id="add-service-repo" 
+                         href="${pageContext.request.contextPath}/manage/serviceRepo/new"
+                         class="button"> 
+                         <i class="pre plus"> </i> 
+                         Add Service Repository
+                      </a>
+                      <br/>
                     </td>
                   </tr>
                 </table>
                <div style="height:20px"></div>
-                    <table id="sort-repos" class="datatablesimple">
+                    <table id="sort-repos" class="datatablesimple service-repos">
                     <thead>
                     <tr>
                       <th align="left">Host Name</th>
@@ -511,40 +508,32 @@
                     <c:forEach
                      var="r"
                      items="${serviceRepos}">
-                      <tr>
-                        <td align="left">${r.hostName}</td>
-                        <td align="left">${r.spaceId}</td>
-                        <td align="left">${r.serviceXmlId}</td>
+                  <tr 
+                    data-host-name="${r.hostName}">
+                    <td align="left">${r.hostName}</td>
+                    <td align="left">${r.spaceId}</td>
+                    <td align="left">${r.serviceXmlId}</td>
+                    <td align="left">${r.version}</td>
+                    <td align="left">${r.username}</td>
+                    <td align="left">${r.serviceRepositoryType}</td>
+                    <td align="left">${r.servicePlan}</td>
+                    <td align="left">
+                      <a href="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/edit"
+                      class="button edit"> <i class="pre pencil"> </i>
+                        Edit</a></td>
+                    <td align="left">
+                      <form
+                        action="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/delete"
+                        method="post">
+                        <button class="delete" style="margin-right: 8px !important"
+                          type="submit"
+                          onclick="AskAndDel(this); return false;">
+                          <i class="pre trash"> </i> Delete
+                        </button>
+                      </form></td>
 
-                        <td align="left">${r.version}</td>
-                        <td align="left">${r.username}</td>
-                        <td align="left">${r.serviceRepositoryType}</td>
-                        <td align="left">${r.servicePlan}</td>
-                        <td align="left">
-                            <a
-                             href="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/edit"
-                             class="button">
-                              <i
-                               class="pre pencil">
-                              </i>
-                              Edit</a>
-                        </td>
-                        <td align="left">
-                            <form
-                             action="${pageContext.request.contextPath}/manage/serviceRepo/byid/${r.id}/delete"
-                             method="post">
-                              <button style="margin-right:8px !important"
-                               type="submit" onclick="AskAndDel(this); return false;">
-                              <i
-                               class="pre trash">
-                              </i>
-
-                              Delete</button>
-                            </form>
-                        </td>
-
-                      </tr>
-                    </c:forEach>
+                  </tr>
+                </c:forEach>
                     </tbody>
 
                   </table>

@@ -81,8 +81,5 @@ public class TestNewUser extends AbstractIntegrationTest {
 
 
 
-    protected void confirmGlobalErrorsPresent() {
-        Assert.assertTrue(isElementPresent("css=.global-errors"));
-    }
 
 }
