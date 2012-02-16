@@ -31,6 +31,8 @@ public class ManageServiceReposController  extends AbstractController {
 
     public static final String MANAGE_SERVICE_REPOS = "/manage/serviceRepo";
 
+    public static final String MANAGE_SERVICE_REPO_NEW_MAPPING = MANAGE_SERVICE_REPOS + NEW_MAPPING;
+
     public static final String DELETE_MAPPING =
         MANAGE_SERVICE_REPOS + "/byid/{repoId}/delete";
     public static final String EDIT_MAPPING =
@@ -48,7 +50,7 @@ public class ManageServiceReposController  extends AbstractController {
         this.rootAccountManagerService = rootAccountManagerService;
     }
 
-    @RequestMapping(value = MANAGE_SERVICE_REPOS + NEW_MAPPING, method = RequestMethod.GET)
+    @RequestMapping(value = MANAGE_SERVICE_REPO_NEW_MAPPING, method = RequestMethod.GET)
     public String openAddForm(Model model)
         throws Exception {
         log.info("serving up new ServiceRepoForm");
@@ -76,7 +78,7 @@ public class ManageServiceReposController  extends AbstractController {
         return repoType;
     }
 
-    @RequestMapping(value = { MANAGE_SERVICE_REPOS + NEW_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = { MANAGE_SERVICE_REPO_NEW_MAPPING }, method = RequestMethod.POST)
     public ModelAndView add(
         @ModelAttribute(NEW_FORM_KEY) @Valid ServiceRepoForm serviceRepoForm,
         BindingResult result, Model model) throws Exception {

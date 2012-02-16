@@ -29,6 +29,8 @@ public class ManageServerImagesController  extends AbstractController {
 
     public static final String MANAGE_SERVER_IMAGES = "/manage/serverImage";
 
+    public static final String MANAGE_SERVER_IMAGES_NEW_MAPPING = MANAGE_SERVER_IMAGES + NEW_MAPPING;
+
     public static final String DELETE_MAPPING =
         MANAGE_SERVER_IMAGES + "/byid/{imageId}/delete";
     public static final String EDIT_MAPPING =
@@ -46,7 +48,7 @@ public class ManageServerImagesController  extends AbstractController {
         this.rootAccountManagerService = rootAccountManagerService;
     }
 
-    @RequestMapping(value = MANAGE_SERVER_IMAGES + NEW_MAPPING, method = RequestMethod.GET)
+    @RequestMapping(value = MANAGE_SERVER_IMAGES_NEW_MAPPING, method = RequestMethod.GET)
     public String openAddForm(Model model)
         throws Exception {
         log.info("serving up new ServerImageForm");
@@ -56,7 +58,7 @@ public class ManageServerImagesController  extends AbstractController {
         return NEW_VIEW;
     }
 
-    @RequestMapping(value = { MANAGE_SERVER_IMAGES + NEW_MAPPING }, method = RequestMethod.POST)
+    @RequestMapping(value = { MANAGE_SERVER_IMAGES_NEW_MAPPING }, method = RequestMethod.POST)
     public ModelAndView add(
         @ModelAttribute(NEW_FORM_KEY) @Valid ServerImageForm serverImageForm,
         BindingResult result, Model model) throws Exception {
