@@ -215,12 +215,14 @@ public class DuracloudServiceTestBase {
                                        StorageProviderType.AMAZON_S3,
                                        secStorProvTypes,
                                        ServicePlan.STARTER_ARCHIVING,
-                                       type);
+                                       type,
+                                       acctId);
     }
 
     protected AccountInfo newAccountInfo(int acctId, String subdomain) {
         int paymentInfoId = 0;
         int serverDetailsId = 1;
+        int accountClusterId = 2;
         AccountInfo.AccountStatus status = AccountInfo.AccountStatus.PENDING;
         return new AccountInfo(acctId,
                                subdomain,
@@ -229,6 +231,7 @@ public class DuracloudServiceTestBase {
                                "dept-" + acctId,
                                paymentInfoId,
                                serverDetailsId,
+                               accountClusterId,
                                status,
                                AccountType.FULL);
     }

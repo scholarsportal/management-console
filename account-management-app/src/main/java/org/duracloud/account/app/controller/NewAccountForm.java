@@ -35,6 +35,8 @@ public class NewAccountForm {
 
     private String accountType;
 
+    private String accountClusterId;
+
     public String getSubdomain() {
         return subdomain;
     }
@@ -90,4 +92,13 @@ public class NewAccountForm {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
+
+    public String getAccountClusterId() {
+        return accountClusterId;
+    }
+
+    public void setAccountClusterId(String accountClusterId) {
+        this.accountClusterId = accountClusterId;
+    }
+
 }

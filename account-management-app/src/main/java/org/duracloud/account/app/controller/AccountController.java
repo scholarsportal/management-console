@@ -33,7 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -327,6 +326,8 @@ public class AccountController extends AbstractAccountController {
                 Set<StorageProviderType> secondaryStorageProviderTypes =
                     new HashSet<StorageProviderType>();
 
+                int accountClusterId = getAccountClusterId(newAccountForm);
+
                 AccountCreationInfo accountCreationInfo =
                     new AccountCreationInfo(newAccountForm.getSubdomain(),
                                             newAccountForm.getAcctName(),
@@ -337,7 +338,8 @@ public class AccountController extends AbstractAccountController {
                                             ServicePlan.fromString(
                                                 newAccountForm.getServicePlan()),
                                             AccountType.fromString(
-                                                newAccountForm.getAccountType()));
+                                                newAccountForm.getAccountType()),
+                                            accountClusterId);
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);
@@ -353,7 +355,24 @@ public class AccountController extends AbstractAccountController {
 
         addUserToModel(model);
         return new ModelAndView(NEW_ACCOUNT_VIEW, model.asMap());
+    }
 
+    private int getAccountClusterId(NewAccountForm newAccountForm) {
+        int accountClusterId = -1;
+        String formId = newAccountForm.getAccountClusterId();
+        if(null != formId) {
+            try {
+                accountClusterId = Integer.valueOf(formId).intValue();
+            } catch(NumberFormatException e) {
+                log.error("NumberFormatException encountered attempting to " +
+                          "convert accountClusterId value " + formId +
+                          " to a number. Account with subdomain " +
+                          newAccountForm.getSubdomain() +
+                          " will be created without an associated cluster.");
+                accountClusterId = -1;
+            }
+        }
+        return accountClusterId;
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)

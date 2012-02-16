@@ -35,6 +35,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
     protected static final String STATUS_ATT = "STATUS";
     protected static final String TYPE_ATT = "TYPE";
     protected static final String SERVER_DETAILS_ID_ATT = "SERVER_DETAILS_ID";
+    protected static final String ACCOUNT_CLUSTER_ID_ATT = "ACCOUNT_CLUSTER_ID";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(AccountInfo acct) {
@@ -65,6 +66,9 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         atts.add(new ReplaceableAttribute(SERVER_DETAILS_ID_ATT,
                                           asString(acct.getServerDetailsId()),
                                           true));
+        atts.add(new ReplaceableAttribute(ACCOUNT_CLUSTER_ID_ATT,
+                                          asString(acct.getAccountClusterId()),
+                                          true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -81,6 +85,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
         int paymentInfoId = -1;
         AccountType type = null;
         int serverDetailsId = -1;
+        int accountClusterId = -1;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -112,7 +117,11 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
 
             } else if (SERVER_DETAILS_ID_ATT.equals(name)) {
                 serverDetailsId =
-                    idFromString(value, "Server Details", "Account", id);               
+                    idFromString(value, "Server Details", "Account", id);
+
+            } else if (ACCOUNT_CLUSTER_ID_ATT.equals(name)) {
+                accountClusterId =
+                    idFromString(value, "Account Cluster", "Account", id);
 
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
@@ -132,6 +141,7 @@ public class DuracloudAccountConverter extends BaseDomainConverter implements Do
                                department,
                                paymentInfoId,
                                serverDetailsId,
+                               accountClusterId,
                                status,
                                type,
                                counter);

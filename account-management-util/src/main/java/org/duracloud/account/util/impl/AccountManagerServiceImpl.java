@@ -145,6 +145,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                 accountCreationInfo.getDepartment(),
                                 paymentInfoId,
                                 serverDetailsId,
+                                accountCreationInfo.getAccountClusterId(),
                                 status,
                                 accountType);
 

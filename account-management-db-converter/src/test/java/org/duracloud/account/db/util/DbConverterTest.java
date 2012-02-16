@@ -70,6 +70,7 @@ public class DbConverterTest {
             "    <status>ACTIVE</status>\n" +
             "    <type>FULL</type>\n" +
             "    <serverDetailsId>0</serverDetailsId>\n" +
+            "    <accountClusterId>-1</accountClusterId>\n" +
             "  </AccountInfo>\n" +
             "</list>";
 

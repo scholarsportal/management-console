@@ -56,6 +56,11 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
      */
     private int serverDetailsId;
 
+    /*
+     * The ID of the cluster of accounts to which this account belongs
+     */
+    private int accountClusterId;
+
 	public AccountInfo(int id,
                        String subdomain,
                        String acctName,
@@ -63,6 +68,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
 			           String department,
                        int paymentInfoId,
                        int serverDetailsId,
+                       int accountClusterId,
                        AccountStatus status,
                        AccountType type) {
 		this(id,
@@ -72,6 +78,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
              department,
              paymentInfoId,
              serverDetailsId,
+             accountClusterId,
              status,
              type,
              0);
@@ -84,6 +91,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
                        String department,
                        int paymentInfoId,
                        int serverDetailsId,
+                       int accountClusterId,
                        AccountStatus status,
                        AccountType type,
                        int counter) {
@@ -97,6 +105,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         this.status = status;
         this.type = type;
         this.serverDetailsId = serverDetailsId;
+        this.accountClusterId = accountClusterId;
         this.counter = counter;
 	}
 
@@ -152,6 +161,14 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         return serverDetailsId;
     }
 
+    public int getAccountClusterId() {
+        return accountClusterId;
+    }
+
+    public void setAccountClusterId(int accountClusterId) {
+        this.accountClusterId = accountClusterId;
+    }
+
     @Override
     public int compareTo(AccountInfo o) {
         return this.acctName.compareTo(o.acctName);
@@ -171,6 +188,9 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
 
         AccountInfo that = (AccountInfo) o;
 
+        if (accountClusterId != that.accountClusterId) {
+            return false;
+        }
         if (paymentInfoId != that.paymentInfoId) {
             return false;
         }
@@ -216,6 +236,7 @@ public class AccountInfo extends BaseDomainData implements Comparable<AccountInf
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + serverDetailsId;
+        result = 31 * result + accountClusterId;
         return result;
     }
 }

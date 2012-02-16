@@ -13,6 +13,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ACCOUNT_CLUSTER_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ACCT_NAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.DEPARTMENT_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudAccountConverter.ORG_NAME_ATT;
@@ -37,6 +38,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
     private static final String department = "department";
     private static final int paymentInfoId = 100;
     private static final int serverDetailsId = 200;
+    private static final int accountClusterId = 300;
     private static final AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
     private static final AccountType type = AccountType.FULL;
@@ -60,6 +62,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                department,
                                paymentInfoId,
                                serverDetailsId,
+                               accountClusterId,
                                status,
                                type,
                                counter);
@@ -78,6 +81,8 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
                                    acctCvtr.asString(paymentInfoId)));
         testAtts.add(new Attribute(SERVER_DETAILS_ID_ATT,
                                    acctCvtr.asString(serverDetailsId)));
+        testAtts.add(new Attribute(ACCOUNT_CLUSTER_ID_ATT,
+                                   acctCvtr.asString(accountClusterId)));
         testAtts.add(new Attribute(STATUS_ATT, status.name()));
         testAtts.add(new Attribute(TYPE_ATT, type.name()));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
@@ -95,6 +100,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertNotNull(acct.getDepartment());
         assertNotNull(acct.getPaymentInfoId());
         assertNotNull(acct.getServerDetailsId());
+        assertNotNull(acct.getAccountClusterId());
         assertNotNull(acct.getStatus());
         assertNotNull(acct.getType());
 
@@ -105,6 +111,7 @@ public class DuraCloudAccountConverterTest extends DomainConverterTest<AccountIn
         assertEquals(department, acct.getDepartment());
         assertEquals(paymentInfoId, acct.getPaymentInfoId());
         assertEquals(serverDetailsId, acct.getServerDetailsId());
+        assertEquals(accountClusterId, acct.getAccountClusterId());
         assertEquals(status, acct.getStatus());
         assertEquals(type, acct.getType());
     }

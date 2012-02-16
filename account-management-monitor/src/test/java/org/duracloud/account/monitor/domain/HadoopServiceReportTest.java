@@ -195,6 +195,7 @@ public class HadoopServiceReportTest {
                                null,
                                -1,
                                -1,
+                               -1,
                                null,
                                null);
     }

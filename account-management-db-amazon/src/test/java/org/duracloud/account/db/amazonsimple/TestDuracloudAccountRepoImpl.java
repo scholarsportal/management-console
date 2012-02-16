@@ -34,6 +34,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
     private static final String department = "department";
     private static final int paymentInfoId = 100;
     private static final int serverDetailsId = 200;
+    private static final int accountClusterId = 300;
     private static final AccountInfo.AccountStatus status =
         AccountInfo.AccountStatus.PENDING;
     private static final AccountType type = AccountType.FULL;
@@ -144,6 +145,7 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
                                department,
                                paymentInfoId,
                                serverDetailsId,
+                               accountClusterId,
                                status,
                                type);
     }

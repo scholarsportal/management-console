@@ -3,20 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -35,6 +29,12 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -139,7 +139,7 @@ public class AmaControllerTestBase {
      */
     protected AccountInfo createAccountInfo() {
         return new AccountInfo(TEST_ACCOUNT_ID, "testdomain", "test", "test",
-                               "test", 0, 0, null, null);
+                               "test", 0, 0, -1, null, null);
     }
 
     protected ServerDetails createServerDetails() {

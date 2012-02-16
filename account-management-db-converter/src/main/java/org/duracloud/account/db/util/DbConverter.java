@@ -75,6 +75,7 @@ public class DbConverter {
 			    oldAccount.getDepartment(),
                 -1,
                 id,
+                -1,
                 oldAccount.getStatus(),
                 AccountType.FULL,
                 oldAccount.getCounter());

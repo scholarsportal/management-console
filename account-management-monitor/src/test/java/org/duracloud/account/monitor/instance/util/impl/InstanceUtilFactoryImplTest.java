@@ -47,6 +47,7 @@ public class InstanceUtilFactoryImplTest {
                                null,
                                -1,
                                -1,
+                               -1,
                                null,
                                null);
     }

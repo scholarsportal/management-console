@@ -222,6 +222,7 @@ public class HadoopServiceMonitorTest {
                                null,
                                -1,
                                id,
+                               -1,
                                null,
                                AccountType.FULL);
     }

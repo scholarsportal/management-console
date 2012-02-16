@@ -58,6 +58,11 @@ public class AccountCreationInfo {
      */
     private AccountType accountType;
 
+    /*
+     * The ID of the account cluster this account should join
+     */
+    private int accountClusterId;
+
     public AccountCreationInfo(String subdomain,
                                String acctName,
                                String orgName,
@@ -65,7 +70,8 @@ public class AccountCreationInfo {
                                StorageProviderType primaryStorageProviderType,
                                Set<StorageProviderType> secondaryStorageProviderTypes,
                                ServicePlan servicePlan,
-                               AccountType accountType) {
+                               AccountType accountType,
+                               int accountClusterId) {
         this.subdomain = subdomain;
         this.acctName = acctName;
         this.orgName = orgName;
@@ -74,6 +80,7 @@ public class AccountCreationInfo {
         this.secondaryStorageProviderTypes = secondaryStorageProviderTypes;
         this.servicePlan = servicePlan;
         this.accountType = accountType;
+        this.accountClusterId = accountClusterId;
     }
 
     public String getSubdomain() {
@@ -106,6 +113,10 @@ public class AccountCreationInfo {
 
     public AccountType getAccountType() {
         return accountType;
+    }
+
+    public int getAccountClusterId() {
+        return accountClusterId;
     }
 
 }
