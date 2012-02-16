@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.impl;
 
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudGroupRepo;
@@ -37,6 +38,7 @@ public class IdUtilImpl implements IdUtil {
     private int storageProviderAccountId = -1;
     private int serviceRepositoryId = -1;
     private int serverDetailsId = -1;
+    private int accountClusterId = -1;
 
     public void initialize(DuracloudUserRepo userRepo,
                            DuracloudGroupRepo groupRepo,
@@ -48,7 +50,8 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
                            DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo,
-                           DuracloudServerDetailsRepo serverDetailsRepo) {
+                           DuracloudServerDetailsRepo serverDetailsRepo,
+                           DuracloudAccountClusterRepo accountClusterRepo) {
         this.accountId = max(accountRepo.getIds());
         this.userId = max(userRepo.getIds());
         this.groupId = max(groupRepo.getIds());
@@ -60,6 +63,7 @@ public class IdUtilImpl implements IdUtil {
         this.storageProviderAccountId = max(storageProviderAccountRepo.getIds());
         this.serviceRepositoryId = max(serviceRepositoryRepo.getIds());
         this.serverDetailsId = max(serverDetailsRepo.getIds());
+        this.accountClusterId = max(accountClusterRepo.getIds());
     }
 
     private int max(Collection<? extends Integer> c) {
@@ -139,6 +143,12 @@ public class IdUtilImpl implements IdUtil {
     public int newServerDetailsId() {
         checkInitialized();
         return ++serverDetailsId;
+    }
+
+    @Override
+    public int newAccountClusterId() {
+        checkInitialized();
+        return ++accountClusterId;
     }
 
 }

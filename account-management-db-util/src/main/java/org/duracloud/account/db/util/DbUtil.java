@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.BaseDomainData;
@@ -215,6 +216,8 @@ public class DbUtil {
             repo = repoMgr.getGroupRepo();
         } else if(item instanceof ServerDetails) {
             repo = repoMgr.getServerDetailsRepo();
+        } else if(item instanceof AccountCluster) {
+            repo = repoMgr.getAccountClusterRepo();
         } else {
             throw new RuntimeException("Item is not a known type: " +
                                        item.getClass().getName());
@@ -262,6 +265,8 @@ public class DbUtil {
         xstream.alias(Role.class.getSimpleName(), Role.class);
         xstream.alias(StorageProviderType.class.getSimpleName(),
                       StorageProviderType.class);
+        xstream.alias(AccountCluster.class.getSimpleName(),
+                      AccountCluster.class);
 
         return xstream;
     }

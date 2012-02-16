@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.db.impl;
 
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudGroupRepo;
@@ -42,6 +43,7 @@ public class IdUtilImplTest {
     private DuracloudStorageProviderAccountRepo storageProviderAccountRepo;
     private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
     private DuracloudServerDetailsRepo serverDetailsRepo;
+    private DuracloudAccountClusterRepo accountClusterRepo;
 
     private static final int COUNT = 5;
 
@@ -58,6 +60,7 @@ public class IdUtilImplTest {
         storageProviderAccountRepo = createMockStorageProviderAccountRepo(COUNT);
         serviceRepositoryRepo = createMockServiceRepositoryRepo(COUNT);
         serverDetailsRepo = createMockServerDetailsRepo(COUNT);
+        accountClusterRepo = createMockAccountClusterRepo(COUNT);
 
         idUtil = new IdUtilImpl();
         idUtil.initialize(userRepo,
@@ -70,7 +73,8 @@ public class IdUtilImplTest {
                           computeProviderAccountRepo,
                           storageProviderAccountRepo,
                           serviceRepositoryRepo,
-                          serverDetailsRepo);
+                          serverDetailsRepo,
+                          accountClusterRepo);
     }
 
     private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
@@ -160,6 +164,14 @@ public class IdUtilImplTest {
         return repo;
     }
 
+    private DuracloudAccountClusterRepo createMockAccountClusterRepo(int count) {
+        DuracloudAccountClusterRepo repo =
+            EasyMock.createMock(DuracloudAccountClusterRepo.class);
+        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
+        EasyMock.replay(repo);
+        return repo;
+    }
+
     private Set<Integer> createIds(int count) {
         Set<Integer> ids = new HashSet<Integer>();
         for (int i = 0; i < count; ++i) {
@@ -180,6 +192,7 @@ public class IdUtilImplTest {
         EasyMock.verify(storageProviderAccountRepo);
         EasyMock.verify(serviceRepositoryRepo);
         EasyMock.verify(serverDetailsRepo);
+        EasyMock.verify(accountClusterRepo);
     }
 
     @Test
@@ -230,6 +243,11 @@ public class IdUtilImplTest {
     @Test
     public void testNewServerDetailsId() throws Exception {
         Assert.assertEquals(COUNT, idUtil.newServerDetailsId());
+    }
+
+    @Test
+    public void testNewAccountClusterId() throws Exception {
+        Assert.assertEquals(COUNT, idUtil.newAccountClusterId());
     }
 
 }
