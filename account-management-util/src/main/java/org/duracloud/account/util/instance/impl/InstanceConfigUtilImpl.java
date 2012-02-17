@@ -54,13 +54,16 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
+    private AccountUtil accountUtil;
     private NotificationMgrConfig notMgrConfig;
 
     public InstanceConfigUtilImpl(DuracloudInstance instance,
                                   DuracloudRepoMgr repoMgr,
+                                  AccountUtil accountUtil,
                                   NotificationMgrConfig notMgrConfig) {
         this.instance = instance;
         this.repoMgr = repoMgr;
+        this.accountUtil = accountUtil;
         this.notMgrConfig = notMgrConfig;
     }
 
@@ -82,7 +85,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
             repoMgr.getStorageProviderAccountRepo();
         Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
         ServerDetails serverDetails =
-            AccountUtil.getServerDetails(repoMgr, getAccount());
+            accountUtil.getServerDetails(getAccount());
 
         // Primary Storage Provider
         int primaryProviderAccountId =
@@ -190,7 +193,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         String serviceStorePassword;
 
         ServerDetails serverDetails =
-            AccountUtil.getServerDetails(repoMgr, getAccount());
+            accountUtil.getServerDetails(getAccount());
         ServicePlan servicePlan = serverDetails.getServicePlan();
         ServiceRepository serviceRepo;
         try {

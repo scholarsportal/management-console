@@ -3,15 +3,17 @@
  */
 package org.duracloud.account.util.usermgmt.impl;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.AccountServiceFactory;
+import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +31,18 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
 
     private Logger log = LoggerFactory.getLogger(UserDetailsPropagatorImpl.class);
 
+    private DuracloudRepoMgr repoMgr;
     private DuracloudInstanceManagerService instanceManagerService;
-    private AccountServiceFactory accountServiceFactory;
+    private AccountClusterUtil accountClusterUtil;
 
     private Exception error = null;
 
-    public UserDetailsPropagatorImpl(DuracloudInstanceManagerService instanceManagerService,
-                                     AccountServiceFactory accountServiceFactory) {
+    public UserDetailsPropagatorImpl(DuracloudRepoMgr repoMgr,
+                                     DuracloudInstanceManagerService instanceManagerService,
+                                     AccountClusterUtil accountClusterUtil) {
+        this.repoMgr = repoMgr;
         this.instanceManagerService = instanceManagerService;
-        this.accountServiceFactory = accountServiceFactory;
+        this.accountClusterUtil = accountClusterUtil;
     }
 
     @Override
@@ -90,9 +95,9 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
     private Set<DuracloudUser> findUsers(int acctId) {
         Set<DuracloudUser> users = new HashSet<DuracloudUser>();
         try {
-            users = accountServiceFactory.getAccount(acctId).getUsers();
-
-        } catch (AccountNotFoundException e) {
+            AccountInfo acctInfo = repoMgr.getAccountRepo().findById(acctId);
+            users = accountClusterUtil.getAccountClusterUsers(acctInfo);
+        } catch (DBNotFoundException e) {
             log.error("Unable to get users for acct: " + acctId, e);
             error = e;
         }
@@ -131,7 +136,7 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         log.debug("propagating user roles for acct: " + acctId);
 
         Set<DuracloudInstanceService> services =
-            instanceManagerService.getInstanceServices(acctId);
+            instanceManagerService.getClusterInstanceServices(acctId);
         for (DuracloudInstanceService service : services) {
             DuracloudInstance instanceInfo = service.getInstanceInfo();
             log.debug("propagating user roles: {}, {}",

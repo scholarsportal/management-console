@@ -61,4 +61,19 @@ public interface DuracloudInstanceManagerService {
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
     public Set<DuracloudInstanceService> getInstanceServices(int accountId);
 
+    /**
+     * Retrieves the Set of DuraCloud instances associated with the account
+     * cluster of which a given account is a member. If the account is not a
+     * member with a cluster, then instances associated with the account are
+     * retrieved. Each instance is wrapped in a class which provides services
+     * on the instances. If no instances exist for any account in the cluster,
+     * an empty set is returned.
+     *
+     * @param accountId
+     * @return
+     *
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public Set<DuracloudInstanceService> getClusterInstanceServices(int accountId);
+
 }

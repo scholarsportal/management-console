@@ -12,6 +12,8 @@ import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.security.AnnotationParser;
 import org.duracloud.account.util.security.SecurityContextUtil;
+import org.duracloud.account.util.util.AccountClusterUtil;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.security.error.NoUserLoggedInException;
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private DuracloudRepoMgr repoMgr;
     private AccessDecisionVoter voter;
     private SecurityContextUtil securityContext;
+    private AccountUtil accountUtil;
+    private AccountClusterUtil accountClusterUtil;
     private ComputeProviderUtil computeUtil;
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
@@ -38,12 +42,16 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
+                                               AccountUtil accountUtil,
+                                               AccountClusterUtil accountClusterUtil,
                                                ComputeProviderUtil computeUtil,
                                                AnnotationParser annotationParser,
                                                NotificationMgr notificationMgr) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
+        this.accountUtil = accountUtil;
+        this.accountClusterUtil = accountClusterUtil;
         this.computeUtil = computeUtil;
         this.annotationParser = annotationParser;
         this.notificationMgr = notificationMgr;
@@ -56,6 +64,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             instance.getAccountId(),
             instance,
             repoMgr,
+            accountUtil,
+            accountClusterUtil,
             computeUtil,
             notificationMgr.getConfig());
 

@@ -56,15 +56,18 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
     private Notifier notifier;
+    private AccountUtil accountUtil;
     private DuracloudInstanceManagerService instanceManagerService;
 
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
                                     UserDetailsPropagator propagator,
+                                    AccountUtil accountUtil,
                                     DuracloudInstanceManagerService instanceManagerService) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
+        this.accountUtil = accountUtil;
         this.instanceManagerService = instanceManagerService;
     }
 
@@ -155,7 +158,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         }
 
         ServerDetails serverDetails =
-            AccountUtil.getServerDetails(repoMgr, getAccount(accountId));
+            accountUtil.getServerDetails(getAccount(accountId));
 
         // Delete the primary storage provider
         getStorageRepo()
@@ -195,7 +198,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(int accountId) {
         ServerDetails serverDetails =
-            AccountUtil.getServerDetails(repoMgr, getAccount(accountId));
+            accountUtil.getServerDetails(getAccount(accountId));
 
         List<StorageProviderAccount> accounts =
             new ArrayList<StorageProviderAccount>();

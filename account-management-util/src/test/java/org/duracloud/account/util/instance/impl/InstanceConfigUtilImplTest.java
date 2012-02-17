@@ -19,6 +19,7 @@ import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
@@ -51,6 +52,7 @@ public class InstanceConfigUtilImplTest {
     protected AccountInfo account;
     protected ServerDetails serverDetails;
     protected DuracloudRepoMgr repoMgr;
+    protected AccountUtil accountUtil;
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudServerDetailsRepo serverDetailsRepo;
     protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
@@ -73,6 +75,7 @@ public class InstanceConfigUtilImplTest {
             EasyMock.createMock("ServerDetails", ServerDetails.class);
         repoMgr = EasyMock.createMock("DuracloudRepoMgr",
                                       DuracloudRepoMgr.class);
+        accountUtil = EasyMock.createMock("AccountUtil", AccountUtil.class);
         accountRepo = EasyMock.createMock("DuracloudAccountRepo",
                                           DuracloudAccountRepo.class);
         storageProviderAcctRepo =
@@ -94,8 +97,10 @@ public class InstanceConfigUtilImplTest {
                                       notificationPassword,
                                       notificationAdminAddresses);
 
-        instanceConfigUtil =
-            new InstanceConfigUtilImpl(instance, repoMgr, notConfig);
+        instanceConfigUtil = new InstanceConfigUtilImpl(instance,
+                                                        repoMgr,
+                                                        accountUtil,
+                                                        notConfig);
     }
 
     protected void replayMocks() {
@@ -103,6 +108,7 @@ public class InstanceConfigUtilImplTest {
                         account,
                         serverDetails,
                         repoMgr,
+                        accountUtil,
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
@@ -116,6 +122,7 @@ public class InstanceConfigUtilImplTest {
                         account,
                         serverDetails,
                         repoMgr,
+                        accountUtil,
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
@@ -234,18 +241,9 @@ public class InstanceConfigUtilImplTest {
     }
 
     private void setUpGetServerDetails() throws Exception {
-        int serverDetailsId = 22;
-        EasyMock.expect(account.getServerDetailsId())
-            .andReturn(serverDetailsId)
-            .times(1);
-
-        EasyMock.expect(repoMgr.getServerDetailsRepo())
-            .andReturn(serverDetailsRepo)
-            .times(1);
-
-        EasyMock.expect(serverDetailsRepo.findById(serverDetailsId))
-            .andReturn(serverDetails)
-            .anyTimes();
+        AccountInfo info = EasyMock.isA(AccountInfo.class);
+        EasyMock.expect(accountUtil.getServerDetails(info))
+            .andReturn(serverDetails);
     }
 
     @Test

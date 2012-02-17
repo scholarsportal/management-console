@@ -54,6 +54,8 @@ public class DuracloudInstanceServiceFactoryImplTest
         factory = new DuracloudInstanceServiceFactoryImpl(repoMgr,
                                                           voter,
                                                           securityContext,
+                                                          accountUtil,
+                                                          accountClusterUtil,
                                                           computeProviderUtil,
                                                           annotationParser,
                                                           notificationMgr);

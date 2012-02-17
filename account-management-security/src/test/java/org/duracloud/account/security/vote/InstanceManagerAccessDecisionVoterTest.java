@@ -22,7 +22,6 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
@@ -179,10 +178,8 @@ public class InstanceManagerAccessDecisionVoterTest {
         EasyMock.expect(inv.getMethod()).andReturn(this.getClass()
                                                        .getMethods()[0]);
 
-        DuracloudInstanceManagerServiceImpl serviceImpl = new DuracloudInstanceManagerServiceImpl(
-            null,
-            null,
-            null);
+        DuracloudInstanceManagerServiceImpl serviceImpl =
+            new DuracloudInstanceManagerServiceImpl(null, null, null, null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
 

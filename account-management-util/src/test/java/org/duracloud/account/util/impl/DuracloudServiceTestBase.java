@@ -14,6 +14,7 @@ import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
@@ -30,6 +31,7 @@ import java.util.Set;
 public class DuracloudServiceTestBase {
 
     protected DuracloudRepoMgr repoMgr;
+    protected AccountUtil accountUtil;
     protected NotificationMgr notificationMgr;
     protected DuracloudUserRepo userRepo;
     protected DuracloudGroupRepo groupRepo;
@@ -59,6 +61,7 @@ public class DuracloudServiceTestBase {
 
     @Before
     public void before() throws Exception {
+        accountUtil = EasyMock.createMock("AccountUtil", AccountUtil.class);
         userRepo = EasyMock.createMock("DuracloudUserRepo",
                                        DuracloudUserRepo.class);
         groupRepo = EasyMock.createMock("DuracloudGroupRepo",
@@ -161,6 +164,7 @@ public class DuracloudServiceTestBase {
     @After
     public void tearDown() throws Exception {
         EasyMock.verify(repoMgr);
+        EasyMock.verify(accountUtil);
         EasyMock.verify(notificationMgr);
         EasyMock.verify(userRepo);
         EasyMock.verify(groupRepo);
@@ -252,6 +256,7 @@ public class DuracloudServiceTestBase {
     }
 
     protected void replayMocks() {
+        EasyMock.replay(accountUtil);
         EasyMock.replay(userRepo);
         EasyMock.replay(groupRepo);
         EasyMock.replay(notificationMgr);

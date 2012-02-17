@@ -18,6 +18,8 @@ import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
+import org.duracloud.account.util.util.AccountClusterUtil;
+import org.duracloud.account.util.util.AccountUtil;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -34,11 +36,14 @@ public class DuracloudInstanceServiceTestBase {
 
     protected int accountId = 1;
     protected int serverDetailsId = 2;
+    protected int accountClusterId = 3;
     protected DuracloudInstance instance;
     protected AccountInfo account;
     protected ServerDetails serverDetails;
     protected DuracloudRepoMgr repoMgr;
     protected DuracloudInstanceServiceFactory instanceServiceFactory;
+    protected AccountUtil accountUtil;
+    protected AccountClusterUtil accountClusterUtil;
     protected ComputeProviderUtil computeProviderUtil;
     protected DuracloudComputeProvider computeProvider;
     protected DuracloudInstanceServiceImpl service;
@@ -55,6 +60,7 @@ public class DuracloudInstanceServiceTestBase {
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudServerDetailsRepo serverDetailsRepo;
     protected DuracloudServerImageRepo serverImageRepo;
+    protected DuracloudAccountClusterRepo accountClusterRepo;
     protected ServerImage serverImage;
     protected IdUtil idUtil;
     protected NotificationMgrConfig notConfig;
@@ -74,6 +80,9 @@ public class DuracloudInstanceServiceTestBase {
         instanceServiceFactory = EasyMock.createMock(
             "DuracloudInstanceServiceFactory",
             DuracloudInstanceServiceFactory.class);
+        accountUtil = EasyMock.createMock("AccountUtil", AccountUtil.class);
+        accountClusterUtil = EasyMock.createMock("AccountClusterUtil",
+                                                 AccountClusterUtil.class);
         computeProviderUtil = EasyMock.createMock("ComputeProviderUtil",
                                                   ComputeProviderUtil.class);
         computeProvider = EasyMock.createMock("DuracloudComputeProvider",
@@ -108,8 +117,42 @@ public class DuracloudInstanceServiceTestBase {
                                 DuracloudServerDetailsRepo.class);
         serverImageRepo = EasyMock.createMock("DuracloudServerImageRepo",
                                               DuracloudServerImageRepo.class);
+        accountClusterRepo =
+            EasyMock.createMock("DuracloudAccountClusterRepo",
+                                DuracloudAccountClusterRepo.class);
         serverImage = EasyMock.createMock("ServerImage", ServerImage.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
+
+        EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
+            .andReturn(computeProviderAcctRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getAccountRepo())
+            .andReturn(accountRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getServerDetailsRepo())
+            .andReturn(serverDetailsRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getInstanceRepo())
+            .andReturn(instanceRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getAccountClusterRepo())
+            .andReturn(accountClusterRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getGroupRepo())
+            .andReturn(groupRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getRightsRepo())
+            .andReturn(rightsRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getUserRepo())
+            .andReturn(userRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getServerImageRepo())
+            .andReturn(serverImageRepo)
+            .anyTimes();
+        EasyMock.expect(repoMgr.getIdUtil())
+            .andReturn(idUtil)
+            .anyTimes();
 
         String notificationUsername = "notUser";
         String notificationPassword = "notPass";
@@ -123,11 +166,14 @@ public class DuracloudInstanceServiceTestBase {
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
+                                                   accountUtil,
+                                                   accountClusterUtil,
                                                    computeProviderUtil,
                                                    computeProvider,
                                                    instanceUpdater,
                                                    instanceConfigUtil,
                                                    notConfig);
+
     }
 
     protected void replayMocks() {
@@ -136,6 +182,8 @@ public class DuracloudInstanceServiceTestBase {
                         serverDetails,
                         repoMgr,
                         instanceServiceFactory,
+                        accountUtil,
+                        accountClusterUtil,
                         computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
@@ -151,6 +199,7 @@ public class DuracloudInstanceServiceTestBase {
                         accountRepo,
                         serverDetailsRepo,
                         serverImageRepo,
+                        accountClusterRepo,
                         serverImage,
                         idUtil);
     }
@@ -162,6 +211,8 @@ public class DuracloudInstanceServiceTestBase {
                         serverDetails,
                         repoMgr,
                         instanceServiceFactory,
+                        accountUtil,
+                        accountClusterUtil,
                         computeProviderUtil,
                         computeProvider,
                         computeProviderAcctRepo,
@@ -177,14 +228,12 @@ public class DuracloudInstanceServiceTestBase {
                         accountRepo,
                         serverDetailsRepo,
                         serverImageRepo,
+                        accountClusterRepo,
                         serverImage,
                         idUtil);
     }
 
     protected void setUpInitComputeProvider() throws Exception {
-        EasyMock.expect(repoMgr.getAccountRepo())
-            .andReturn(accountRepo)
-            .anyTimes();
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
             .andReturn(account)
             .anyTimes();
@@ -192,9 +241,6 @@ public class DuracloudInstanceServiceTestBase {
             .andReturn(accountId)
             .anyTimes();
 
-        EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
-            .andReturn(computeProviderAcctRepo)
-            .anyTimes();
         EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(computeProviderAcct)
             .anyTimes();
@@ -218,15 +264,8 @@ public class DuracloudInstanceServiceTestBase {
     }
 
     protected void setUpServerDetails() throws Exception {
-        EasyMock.expect(account.getServerDetailsId())
-            .andReturn(serverDetailsId)
-            .anyTimes();
-
-        EasyMock.expect(repoMgr.getServerDetailsRepo())
-            .andReturn(serverDetailsRepo)
-            .anyTimes();
-
-        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
+        AccountInfo info = EasyMock.isA(AccountInfo.class);
+        EasyMock.expect(accountUtil.getServerDetails(info))
             .andReturn(serverDetails)
             .anyTimes();
     }

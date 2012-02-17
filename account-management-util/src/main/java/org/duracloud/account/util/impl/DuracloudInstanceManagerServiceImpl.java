@@ -21,6 +21,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.error.DuracloudInstanceCreationException;
+import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +41,16 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     private static final String HOST_SUFFIX = ".duracloud.org";
 
     private DuracloudRepoMgr repoMgr;
+    private AccountClusterUtil accountClusterUtil;
     private ComputeProviderUtil computeUtil;
     private DuracloudInstanceServiceFactory instanceServiceFactory;
 
     public DuracloudInstanceManagerServiceImpl(DuracloudRepoMgr repoMgr,
+                                               AccountClusterUtil accountClusterUtil,
                                                ComputeProviderUtil computeUtil,
                                                DuracloudInstanceServiceFactory instanceServiceFactory) {
         this.repoMgr = repoMgr;
+        this.accountClusterUtil = accountClusterUtil;
         this.computeUtil = computeUtil;
         this.instanceServiceFactory = instanceServiceFactory;
     }
@@ -264,5 +268,30 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         } catch (DBNotFoundException e) {
             return new HashSet<Integer>();
         }
+    }
+
+    @Override
+    public Set<DuracloudInstanceService> getClusterInstanceServices(int accountId) {
+        Set<Integer> accountIds;
+        try {
+            AccountInfo account = repoMgr.getAccountRepo().findById(accountId);
+            accountIds = accountClusterUtil.getClusterAccountIds(account);
+        } catch (DBNotFoundException e) {
+            String error = "Unable to retrieve cluster " +
+                           "instance services due to DBNotFoundException: " +
+                           e.getMessage();
+            throw new DuraCloudRuntimeException(error);
+        }
+
+        Set<DuracloudInstanceService> allInstanceServices =
+            new HashSet<DuracloudInstanceService>();
+        for(int clusterAccountId : accountIds) {
+            Set<DuracloudInstanceService> instanceServices =
+                getInstanceServices(clusterAccountId);
+            if(null != instanceServices && instanceServices.size() > 0) {
+                allInstanceServices.addAll(instanceServices);
+            }
+        }
+        return allInstanceServices;
     }
 }

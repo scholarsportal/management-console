@@ -17,13 +17,23 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
  */
 public class AccountUtil {
 
-    public static ServerDetails getServerDetails(DuracloudRepoMgr repoMgr,
-                                                 AccountInfo account) {
-        return new AccountUtil().doGetServerDetails(repoMgr, account);
+    private DuracloudRepoMgr repoMgr;
+
+    public AccountUtil(DuracloudRepoMgr repoMgr) {
+        this.repoMgr = repoMgr;
     }
 
-    private ServerDetails doGetServerDetails(DuracloudRepoMgr repoMgr,
-                                             AccountInfo account) {
+    /**
+     *  Retrieves the server details for a given account.
+     *
+     * @param account from which server details are requested
+     * @return ServerDetails associated with the account
+     * @throws DuraCloudRuntimeException if no server details are associated
+     *                                   with this account
+     * @throws DuracloudServerDetailsNotAvailableException if the server details
+     *     associated with this account are not found in the database
+     */
+    public ServerDetails getServerDetails(AccountInfo account) {
         int serverDetailsId = account.getServerDetailsId();
         if(serverDetailsId < 0) {
             String err = "No ServerDetails are associated with account with ID" +

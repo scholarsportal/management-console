@@ -34,6 +34,7 @@ public class DuracloudInstanceManagerServiceImplTest
         super.setup();
         managerService =
             new DuracloudInstanceManagerServiceImpl(repoMgr,
+                                                    accountClusterUtil,
                                                     computeProviderUtil,
                                                     instanceServiceFactory);
     }
@@ -48,10 +49,6 @@ public class DuracloudInstanceManagerServiceImplTest
     }
 
     private void setupGetServerImages() throws Exception {
-        EasyMock.expect(repoMgr.getServerImageRepo())
-            .andReturn(serverImageRepo)
-            .times(1);
-
         Set<Integer> imageIds = new HashSet<Integer>();
         imageIds.add(1);
         imageIds.add(2);
@@ -77,10 +74,6 @@ public class DuracloudInstanceManagerServiceImplTest
     }
 
     private void setupGetLatestImage() throws Exception {
-        EasyMock.expect(repoMgr.getServerImageRepo())
-            .andReturn(serverImageRepo)
-            .times(1);
-
         ServerImage latest = new ServerImage(1, 1, "1", "1.0", "1", "1", false);
         EasyMock.expect(serverImageRepo.findLatest())
             .andReturn(latest)
@@ -103,20 +96,19 @@ public class DuracloudInstanceManagerServiceImplTest
         String subdomain = "subdomain";
         int instanceId = 87;
 
-        EasyMock.expect(repoMgr.getAccountRepo())
-            .andReturn(accountRepo)
-            .times(1);
         EasyMock.expect(accountRepo.findById(accountId))
             .andReturn(account)
             .times(1);
         EasyMock.expect(account.getType())
             .andReturn(AccountType.FULL)
             .times(1);
+        EasyMock.expect(account.getServerDetailsId())
+            .andReturn(serverDetailsId)
+            .times(1);
+        EasyMock.expect(serverDetailsRepo.findById(serverDetailsId))
+            .andReturn(serverDetails);
         EasyMock.expect(serverDetails.getComputeProviderAccountId())
             .andReturn(computeProvAcctId)
-            .times(1);
-        EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
-            .andReturn(computeProviderAcctRepo)
             .times(1);
         EasyMock.expect(computeProviderAcctRepo.findById(computeProvAcctId))
             .andReturn(computeProviderAcct)
@@ -155,18 +147,12 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(account.getSubdomain())
             .andReturn(subdomain)
             .times(1);
-        EasyMock.expect(repoMgr.getIdUtil())
-            .andReturn(idUtil)
-            .times(1);
         EasyMock.expect(idUtil.newInstanceId())
             .andReturn(instanceId)
             .times(1);
         EasyMock.expect(serverImage.getId())
             .andReturn(imageId)
             .times(1);
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .times(3);
         EasyMock.expect(instanceRepo.findById(instanceId))
             .andReturn(instance)
             .times(1);
@@ -195,10 +181,6 @@ public class DuracloudInstanceManagerServiceImplTest
 
         EasyMock.expect(instanceServiceFactory.getInstance(instance))
             .andReturn(service);
-
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .times(2);
 
         // A known instance ID returns a valid instance
         EasyMock.expect(instanceRepo.findById(instanceId))
@@ -239,7 +221,6 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(instanceServiceFactory.getInstance(instance)).andReturn(
             service);
 
-        EasyMock.expect(repoMgr.getInstanceRepo()).andReturn(instanceRepo);
         EasyMock.expect(instanceRepo.findById(instanceId)).andReturn(instance);
         EasyMock.expect(instance.getProviderInstanceId()).andReturn(providerId);
         EasyMock.expect(computeProvider.getStatus(providerId))
@@ -272,9 +253,6 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(instanceServiceFactory.getInstance(instance))
             .andReturn(service);
 
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .times(1);
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
             .andReturn(instance)
             .times(1);
@@ -294,10 +272,6 @@ public class DuracloudInstanceManagerServiceImplTest
     private void setUpGetInstanceIds(int accountId,
                                      int instanceId,
                                      int times) throws Exception{
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .times(times);
-
         Set<Integer> instanceIds = new HashSet<Integer>();
         instanceIds.add(instanceId);
         EasyMock.expect(instanceRepo.findByAccountId(accountId))

@@ -5,7 +5,6 @@ package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
@@ -19,9 +18,7 @@ import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableExceptio
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
@@ -34,6 +31,7 @@ import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
+import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
@@ -65,6 +63,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private int accountId;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
+    private AccountUtil accountUtil;
+    private AccountClusterUtil accountClusterUtil;
     private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
@@ -76,12 +76,16 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     public DuracloudInstanceServiceImpl(int accountId,
                                         DuracloudInstance instance,
                                         DuracloudRepoMgr repoMgr,
+                                        AccountUtil accountUtil,
+                                        AccountClusterUtil accountClusterUtil,
                                         ComputeProviderUtil computeProviderUtil,
                                         NotificationMgrConfig notMgrConfig)
         throws DBNotFoundException {
         this(accountId,
              instance,
              repoMgr,
+             accountUtil,
+             accountClusterUtil,
              computeProviderUtil,
              null,
              null,
@@ -92,6 +96,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     protected DuracloudInstanceServiceImpl(int accountId,
                                            DuracloudInstance instance,
                                            DuracloudRepoMgr repoMgr,
+                                           AccountUtil accountUtil,
+                                           AccountClusterUtil accountClusterUtil,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
                                            InstanceUpdater instanceUpdater,
@@ -102,6 +108,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
+        this.accountUtil = accountUtil;
+        this.accountClusterUtil = accountClusterUtil;
         this.computeProviderUtil = computeProviderUtil;
         this.computeProvider = computeProvider;
         this.instanceUpdater = instanceUpdater;
@@ -117,27 +125,31 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         }
 
         if (null == instanceConfigUtil) {
-            this.instanceConfigUtil =
-                new InstanceConfigUtilImpl(instance, repoMgr, notMgrConfig);
+            this.instanceConfigUtil = new InstanceConfigUtilImpl(instance,
+                                                                 repoMgr,
+                                                                 accountUtil,
+                                                                 notMgrConfig);
         }
     }
 
     private void initializeComputeProvider()
         throws DBNotFoundException {
-
-        DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
-        AccountInfo account = accountRepo.findById(instance.getAccountId());
+        AccountInfo account = getAccount();
 
         DuracloudComputeProviderAccountRepo providerAcctRepo =
             repoMgr.getComputeProviderAccountRepo();
-        ServerDetails serverDetails =
-            AccountUtil.getServerDetails(repoMgr, account);
+        ServerDetails serverDetails = accountUtil.getServerDetails(account);
         ComputeProviderAccount computeProviderAcct = providerAcctRepo.findById(
             serverDetails.getComputeProviderAccountId());
 
         this.computeProvider = computeProviderUtil
             .getComputeProvider(computeProviderAcct.getUsername(),
                                 computeProviderAcct.getPassword());
+    }
+
+    private AccountInfo getAccount() throws DBNotFoundException {
+        DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
+        return accountRepo.findById(instance.getAccountId());
     }
 
     @Override
@@ -307,16 +319,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     private void initializeUserRoles() {
         try {
-            DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
-            Set<AccountRights> acctRights = rightsRepo.findByAccountId(accountId);
-
-            DuracloudUserRepo userRepo = repoMgr.getUserRepo();
-            Set<DuracloudUser> users = new HashSet<DuracloudUser>();
-            for(AccountRights rights : acctRights) {
-                DuracloudUser user = userRepo.findById(rights.getUserId());
-                user.setAccountRights(rights);
-                users.add(user);
-            }
+            Set<DuracloudUser> users =
+                accountClusterUtil.getAccountClusterUsers(getAccount());
             setUserRoles(users);
         } catch(DBNotFoundException e) {
             String msg = "Exception encountered attempting to initialize user" +
@@ -354,9 +358,16 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String email = user.getEmail();
             Set<Role> roles = user.getRolesByAcct(accountId);
 
+            if(roles == null) {
+                roles = new HashSet<Role>();
+            }
+
+            if(roles.isEmpty()) {
+                roles.add(Role.ROLE_USER);
+            }
+
             if (StringUtils.isBlank(username) ||
-                StringUtils.isBlank(password) || null == roles ||
-                roles.size() == 0) {
+                StringUtils.isBlank(password)) {
                 StringBuilder msg = new StringBuilder("invalid user: ");
                 msg.append(accountId + ", ");
                 msg.append(username + ", ");

@@ -3,15 +3,24 @@
  */
 package org.duracloud.account.util.impl;
 
-import org.duracloud.account.common.domain.*;
+import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.ServiceRepository;
+import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
-import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.easymock.EasyMock;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +40,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         rootService = new RootAccountManagerServiceImpl(repoMgr,
                                                         notificationMgr,
                                                         propagator,
+                                                        accountUtil,
                                                         instanceManagerService);
     }
 
@@ -320,12 +330,12 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
             .andReturn(new HashSet<DuracloudInstanceService>());
 
+        AccountInfo account = newAccountInfo(1);
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
-            .andReturn(newAccountInfo(1));
+            .andReturn(account);
 
-        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
-            .andReturn(newServerDetails(0))
-            .times(1);
+        EasyMock.expect(accountUtil.getServerDetails(account))
+            .andReturn(newServerDetails(0));
 
         storageProviderAcctRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
@@ -361,11 +371,11 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     }
 
     private void setUpGetSecondaryStorageProviders() throws Exception {
+        AccountInfo account = newAccountInfo(1);
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
-            .andReturn(newAccountInfo(1));
-        EasyMock.expect(serverDetailsRepo.findById(EasyMock.anyInt()))
-            .andReturn(newServerDetails(0))
-            .times(1);
+            .andReturn(account);
+        EasyMock.expect(accountUtil.getServerDetails(account))
+            .andReturn(newServerDetails(0));
         EasyMock.expect(storageProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(null)
             .anyTimes();

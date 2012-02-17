@@ -3,17 +3,19 @@
  */
 package org.duracloud.account.util.usermgmt.impl;
 
+import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.AccountServiceFactory;
+import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
-import org.easymock.IAnswer;
+import org.duracloud.account.util.util.AccountClusterUtil;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,9 +32,11 @@ public class UserDetailsPropagatorImplTest {
 
     private UserDetailsPropagator propagator;
 
+    private DuracloudRepoMgr repoMgr;
+    private DuracloudAccountRepo accountRepo;
+    private AccountClusterUtil accountClusterUtil;
     private DuracloudInstanceManagerService instanceManagerService;
-    private AccountServiceFactory accountServiceFactory;
-    private AccountService accountService;
+    private AccountInfo accountInfo;
 
     private static final int NUM_INSTANCES = 2;
     private Set<DuracloudInstanceService> instanceServices;
@@ -51,8 +55,17 @@ public class UserDetailsPropagatorImplTest {
 
         instanceServices = new HashSet<DuracloudInstanceService>();
 
-        accountServiceFactory = EasyMock.createMock("AccountServiceFactory",
-                                                    AccountServiceFactory.class);
+        repoMgr = EasyMock.createMock("DuracloudRepoMgr",
+                                      DuracloudRepoMgr.class);
+        accountRepo = EasyMock.createMock("DuracloudAccountRepo",
+                                          DuracloudAccountRepo.class);
+        accountClusterUtil = EasyMock.createMock("AccountClusterUtil",
+                                                 AccountClusterUtil.class);
+        accountInfo = EasyMock.createMock("AccountInfo", AccountInfo.class);
+
+        EasyMock.expect(repoMgr.getAccountRepo())
+                .andReturn(accountRepo)
+                .anyTimes();
 
         roles = new HashSet<Role>();
         roles.add(Role.ROLE_ADMIN);
@@ -68,9 +81,11 @@ public class UserDetailsPropagatorImplTest {
     }
 
     private void replayMocks() {
-        EasyMock.replay(accountServiceFactory);
+        EasyMock.replay(repoMgr);
+        EasyMock.replay(accountRepo);
+        EasyMock.replay(accountClusterUtil);
         EasyMock.replay(instanceManagerService);
-        EasyMock.replay(accountService);
+        EasyMock.replay(accountInfo);
 
         for (DuracloudInstanceService service : instanceServices) {
             EasyMock.replay(service);
@@ -79,9 +94,11 @@ public class UserDetailsPropagatorImplTest {
 
     @After
     public void tearDown() throws Exception {
-        EasyMock.verify(accountServiceFactory);
+        EasyMock.verify(repoMgr);
+        EasyMock.verify(accountRepo);
+        EasyMock.verify(accountClusterUtil);
         EasyMock.verify(instanceManagerService);
-        EasyMock.verify(accountService);
+        EasyMock.verify(accountInfo);
 
         for (DuracloudInstanceService service : instanceServices) {
             EasyMock.verify(service);
@@ -94,8 +111,9 @@ public class UserDetailsPropagatorImplTest {
         createInstanceServiceExpectation();
         replayMocks();
 
-        propagator = new UserDetailsPropagatorImpl(instanceManagerService,
-                                                   accountServiceFactory);
+        propagator = new UserDetailsPropagatorImpl(repoMgr,
+                                                   instanceManagerService,
+                                                   accountClusterUtil);
         propagator.propagateGroupUpdate(acctId, groupId);
     }
 
@@ -119,8 +137,9 @@ public class UserDetailsPropagatorImplTest {
             instanceServices.add(instance);
         }
 
-        EasyMock.expect(instanceManagerService.getInstanceServices(acctId))
-                .andReturn(instanceServices);
+        EasyMock
+            .expect(instanceManagerService.getClusterInstanceServices(acctId))
+            .andReturn(instanceServices);
     }
 
     @Test
@@ -130,8 +149,9 @@ public class UserDetailsPropagatorImplTest {
         createInstanceManagerExpectation(revoke);
         replayMocks();
 
-        propagator = new UserDetailsPropagatorImpl(instanceManagerService,
-                                                   accountServiceFactory);
+        propagator = new UserDetailsPropagatorImpl(repoMgr,
+                                                   instanceManagerService,
+                                                   accountClusterUtil);
 
         propagator.propagateRights(acctId, userId, newRoles);
     }
@@ -143,19 +163,17 @@ public class UserDetailsPropagatorImplTest {
         createInstanceManagerExpectation(revoke);
         replayMocks();
 
-        propagator = new UserDetailsPropagatorImpl(instanceManagerService,
-                                                   accountServiceFactory);
+        propagator = new UserDetailsPropagatorImpl(repoMgr,
+                                                   instanceManagerService,
+                                                   accountClusterUtil);
 
         propagator.propagateRevocation(acctId, userId);
     }
 
     private void createAccountManagerExpectation() throws Exception {
-        accountService = EasyMock.createMock("AccountService",
-                                             AccountService.class);
-        EasyMock.expect(accountService.getUsers()).andReturn(users);
-
-        EasyMock.expect(accountServiceFactory.getAccount(acctId)).andReturn(
-            accountService);
+        EasyMock.expect(accountRepo.findById(acctId)).andReturn(accountInfo);
+        EasyMock.expect(accountClusterUtil.getAccountClusterUsers(accountInfo))
+                .andReturn(users);
     }
 
     private void createInstanceManagerExpectation(boolean revoke)
@@ -179,7 +197,8 @@ public class UserDetailsPropagatorImplTest {
             instanceServices.add(instance);
         }
 
-        EasyMock.expect(instanceManagerService.getInstanceServices(acctId))
+        EasyMock
+            .expect(instanceManagerService.getClusterInstanceServices(acctId))
             .andReturn(instanceServices);
     }
 

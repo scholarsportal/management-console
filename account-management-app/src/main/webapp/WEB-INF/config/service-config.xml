@@ -100,10 +100,24 @@
     <constructor-arg ref="computeProviderFactory"/>
   </bean>
 
+  <bean id="accountUtil"
+        class="org.duracloud.account.util.util.AccountUtil"
+        scope="singleton">
+    <constructor-arg ref="repoMgr"/>
+  </bean>
+
+  <bean id="accountClusterUtil"
+        class="org.duracloud.account.util.util.AccountClusterUtil"
+        scope="singleton">
+    <constructor-arg ref="repoMgr"/>
+  </bean>
+
   <bean id="instanceServiceFactory" class="org.duracloud.account.util.impl.DuracloudInstanceServiceFactoryImpl">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="instanceVoter"/>
     <constructor-arg ref="securityContextUtil"/>
+    <constructor-arg ref="accountUtil" />
+    <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="annotationParser"/>
     <constructor-arg ref="notificationMgr"/>
@@ -113,6 +127,7 @@
         class="org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl"
         scope="singleton">
     <constructor-arg ref="repoMgr"/>
+    <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="instanceServiceFactory"/>
   </bean>
@@ -124,14 +139,16 @@
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
+    <constructor-arg ref="accountUtil" />
     <constructor-arg ref="instanceManagerService" />
   </bean>
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->
   <bean id="userDetailsPropagator"
         class="org.duracloud.account.util.usermgmt.impl.UserDetailsPropagatorImpl">
+    <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="instanceManagerService" />
-    <constructor-arg ref="accountServiceFactory" />
+    <constructor-arg ref="accountClusterUtil"/>
   </bean>
 
 </beans>

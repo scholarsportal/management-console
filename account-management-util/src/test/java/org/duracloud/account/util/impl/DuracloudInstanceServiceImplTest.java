@@ -104,9 +104,6 @@ public class DuracloudInstanceServiceImplTest
             .times(2);
 
         int instanceId = 42;
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .times(1);
         instanceRepo.delete(instanceId);
         EasyMock.expectLastCall().times(1);
 
@@ -149,36 +146,39 @@ public class DuracloudInstanceServiceImplTest
 
     private void doSetUpReInitializeUserRolesMocks()
         throws DBNotFoundException {
+        EasyMock.expect(instance.getAccountId()).andReturn(accountId).times(1);
+        EasyMock.expect(accountRepo.findById(accountId))
+            .andReturn(account)
+            .times(1);
+
+        Set<DuracloudUser> users = new HashSet<DuracloudUser>();
+        users.add(createUser(22));
+        users.add(createUser(33));
+        EasyMock.expect(
+            accountClusterUtil.getAccountClusterUsers(account))
+                .andReturn(users);
+
         EasyMock.expect(groupRepo.findAllGroups())
             .andReturn(null)
             .times(1);
-        EasyMock.expect(repoMgr.getGroupRepo()).andReturn(groupRepo).times(1);
-        EasyMock.expect(repoMgr.getRightsRepo()).andReturn(rightsRepo).times(1);
-        EasyMock.expect(repoMgr.getUserRepo()).andReturn(userRepo).times(1);
-
-        int userId = 5;
-        Set<AccountRights> accountRights = new HashSet<AccountRights>();
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
-        accountRights.add(new AccountRights(0, accountId, userId, roles));
-        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
-            .andReturn(accountRights);
-
-        DuracloudUser user = new DuracloudUser(userId,
-                                               "user",
-                                               "pass",
-                                               "first",
-                                               "last",
-                                               "email",
-                                               "question",
-                                               "answer");
-        user.setAccountRights(accountRights);
-        EasyMock.expect(userRepo.findById(userId)).andReturn(user);
 
         instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
                                           EasyMock.isA(Set.class),
                                           EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
+    }
+
+    private DuracloudUser createUser(int userId) {
+        Set<AccountRights> accountRights = new HashSet<AccountRights>();
+        Set<Role> roles = new HashSet<Role>();
+        roles.add(Role.ROLE_USER);
+        accountRights.add(new AccountRights(0, accountId, userId, roles));
+
+        DuracloudUser user = new DuracloudUser(userId, "user", "pass", "first",
+                                               "last", "email","question",
+                                               "answer");
+        user.setAccountRights(accountRights);
+        return user;
     }
 
     private void setUpReInitializeMocks() throws Exception {
@@ -205,10 +205,6 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expectLastCall();
 
         EasyMock.expect(instance.getId()).andReturn(1);
-
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .anyTimes();
 
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
             .andReturn(new DuracloudInstance(1,1,1,"host","provider",false));
@@ -267,51 +263,13 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expectLastCall()
             .times(1);
 
-        EasyMock.expect(groupRepo.findAllGroups())
-            .andReturn(null)
-            .times(1);
-        EasyMock.expect(repoMgr.getGroupRepo())
-            .andReturn(groupRepo)
-            .times(1);
-        EasyMock.expect(repoMgr.getRightsRepo())
-            .andReturn(rightsRepo)
-            .times(1);
-        EasyMock.expect(repoMgr.getUserRepo())
-            .andReturn(userRepo)
-            .times(1);
-        EasyMock.expect(repoMgr.getInstanceRepo())
-            .andReturn(instanceRepo)
-            .anyTimes();
-
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
             .andReturn(new DuracloudInstance(1,1,1,"host","provider",false));
 
         instanceRepo.save(EasyMock.isA(DuracloudInstance.class));
         EasyMock.expectLastCall();
 
-        int userId = 5;
-        Set<AccountRights> accountRights = new HashSet<AccountRights>();
-        Set<Role> roles = new HashSet<Role>();
-        roles.add(Role.ROLE_USER);
-        accountRights.add(new AccountRights(0, accountId, userId, roles));
-        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyInt()))
-            .andReturn(accountRights)
-            .times(1);
-
-        DuracloudUser user =
-            new DuracloudUser(userId, "user", "pass", "first", "last",
-                              "email", "question", "answer");
-        user.setAccountRights(accountRights);
-        EasyMock.expect(userRepo.findById(userId))
-            .andReturn(user)
-            .times(1);
-
-        instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
-                                          EasyMock.isA(Set.class),
-                                          EasyMock.isA(RestHttpHelper.class));
-        EasyMock.expectLastCall()
-            .times(1);
-
+        doSetUpReInitializeUserRolesMocks();
         setUpServerImageMocks();
     }
 
@@ -326,9 +284,6 @@ public class DuracloudInstanceServiceImplTest
                                                   rootPassword,
                                                   false);
 
-        EasyMock.expect(repoMgr.getServerImageRepo())
-            .andReturn(serverImageRepo)
-            .times(1);
         EasyMock.expect(instance.getImageId())
             .andReturn(imageId)
             .times(1);
@@ -345,6 +300,8 @@ public class DuracloudInstanceServiceImplTest
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
+                                                   accountUtil,
+                                                   accountClusterUtil,
                                                    computeProviderUtil,
                                                    notConfig);
     }
@@ -370,8 +327,7 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(groupRepo.findAllGroups())
             .andReturn(groups)
             .times(1);
-        EasyMock.expect(repoMgr.getGroupRepo()).andReturn(groupRepo).times(1);
-        
+
         Capture<Set<SecurityUserBean>> capture = new Capture<Set<SecurityUserBean>>();
         setUpUserRoleMocks(capture);
         Set<DuracloudUser> users = createUsers();
