@@ -18,6 +18,7 @@ import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.EmailAddressesParser;
 import org.duracloud.account.util.error.AccountNotFoundException;
@@ -123,11 +124,13 @@ public class AccountUsersController extends AbstractAccountController {
             log.info("added user {} to account {}",
                      new Object[] { username, accountId });
 
-            String notice =  MessageFormat.format("Successfully added {0} to account.",
+            String message =  MessageFormat.format("Successfully added {0} to account.",
                                                   username);
-            setNotice(notice, redirectAttributes);
+            setSuccessFeedback(message, redirectAttributes);
+
         }
 
+        
         return createAccountRedirectModelAndView(accountId,
                                                  ACCOUNT_USERS_PATH);
     }
@@ -194,7 +197,7 @@ public class AccountUsersController extends AbstractAccountController {
             return new ModelAndView(ACCOUNT_USERS_VIEW_ID);
         }
         
-        setNotice("Successfully sent invitations.", redirectAttributes);
+        setSuccessFeedback("Successfully sent invitations.", redirectAttributes);
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
@@ -271,7 +274,7 @@ public class AccountUsersController extends AbstractAccountController {
             log.info("New role: {}", role);
             try {
                 setUserRights(userService, accountId, userId, role);
-                setNotice("Successfully updated user.", redirectAttributes);                
+                setSuccessFeedback("Successfully updated user.", redirectAttributes);                
             } catch (AccessDeniedException e) {
                 result.addError(new ObjectError("role",
                                                 "You are unauthorized to set the role for this user"));

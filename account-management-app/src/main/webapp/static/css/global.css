@@ -782,3 +782,43 @@ th.headerSortDown {
 .shuttle button[name='action'] {
 	min-width:100px;
 }
+
+/*user feedback classes*/
+.feedback-holder {
+	position: fixed;
+	z-index: 10; 
+	width:100%;
+}
+
+.feedback {
+    border-radius: 10px;
+	padding:10px;
+	font-size:1.0em;
+	margin-top:10px;
+	margin-button:10px;
+	margin-left:auto;
+	margin-right:auto;
+	min-width:200px;
+	max-width:500px;
+	opacity:0.75;
+}
+
+.success {
+	border:1px solid #0F0;
+	background-color: #AFA;
+	color: #050;
+}
+
+.failure {
+	border:1px solid #F00;
+	background-color: #FAA;
+	color: #500;
+}
+
+.warning {
+	border:1px solid #FF0;
+	background-color: #FFA;
+	color: #550;
+}
+
+

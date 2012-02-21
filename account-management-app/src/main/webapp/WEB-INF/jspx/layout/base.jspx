@@ -86,6 +86,8 @@
 </head>
 
 <body>
+<jsp:include page="/WEB-INF/jspx/includes/feedback.jspx"/>
+
 <sec:authentication property="principal" var="principal" />
 <div id="doc3">
 <div id="hd">

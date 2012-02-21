@@ -8,6 +8,7 @@ import java.util.Set;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.UserFeedbackUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,11 +140,7 @@ public abstract class AbstractController {
     
     protected void setError(Exception e, RedirectAttributes redirectAttributes) {
         log.error(e.getMessage(), e);
-        if(redirectAttributes == null){
-            log.warn("redirectAttributes are null. Skipping add flash attribute.");
-        }else{
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        }
+        UserFeedbackUtil.addFailureFlash(e.getMessage(), redirectAttributes);
     }
     
 
@@ -154,13 +151,8 @@ public abstract class AbstractController {
         return new ModelAndView(view);
     }
 
-    protected void setNotice(String notice, RedirectAttributes redirectAttributes) {
-        if(redirectAttributes == null){
-            log.warn("redirectAttributes are null. Skipping add flash attribute.");
-        }else{
-            redirectAttributes.addFlashAttribute("notice", notice);
-        }
-        
+    protected void setSuccessFeedback(String message, RedirectAttributes redirectAttributes) {
+        UserFeedbackUtil.addSuccessFlash(message, redirectAttributes);
     }
 
 }
