@@ -65,6 +65,7 @@
     <constructor-arg ref="duracloudUserService"/>
     <constructor-arg ref="accountServiceFactory"/>
     <constructor-arg ref="providerAccountUtil"/>
+    <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg>
       <set>
         <ref bean="systemMonitor"/>

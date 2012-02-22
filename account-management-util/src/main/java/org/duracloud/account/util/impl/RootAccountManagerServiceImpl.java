@@ -4,6 +4,7 @@
 package org.duracloud.account.util.impl;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
@@ -16,6 +17,7 @@ import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -34,6 +36,7 @@ import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.account.util.util.AccountUtil;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +148,41 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         getUserRepo().delete(userId);
 	}
 
-	@Override
+    @Override
+    public void deleteAccountCluster(int clusterId)
+        throws DBConcurrentUpdateException {
+        log.info("Deleting account cluster with ID {}", clusterId);
+
+        // Find the cluster
+        DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
+        AccountCluster cluster;
+        try {
+            cluster = clusterRepo.findById(clusterId);
+        } catch(DBNotFoundException e) {
+            String error = "Cluster with ID " + clusterId + " was not found " +
+                           "in the database, so could not be deleted.";
+            throw new DuraCloudRuntimeException(error);
+        }
+
+        // Reset the cluster ID of all accounts in this cluster
+        Set<Integer> clusterAccounts = cluster.getClusterAccountIds();
+        DuracloudAccountRepo accountRepo = getAccountRepo();
+        for(int accountId : clusterAccounts) {
+            try {
+                AccountInfo account = accountRepo.findById(accountId);
+                account.setAccountClusterId(-1);
+                accountRepo.save(account);
+            } catch(DBNotFoundException e) {
+                log.warn("Account with ID " + accountId + " not found in the " +
+                         "DB, cannot update cluster membership");
+            }
+        }
+
+        // Remove the cluster
+        clusterRepo.delete(clusterId);
+    }
+
+    @Override
 	public void deleteAccount(int accountId) {
         log.info("Deleting account with ID {}", accountId);
 
@@ -567,6 +604,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private DuracloudStorageProviderAccountRepo getStorageRepo() {
         return repoMgr.getStorageProviderAccountRepo();
+    }
+
+    private DuracloudAccountClusterRepo getClusterRepo() {
+        return repoMgr.getAccountClusterRepo();
     }
 
     private IdUtil getIdUtil() {

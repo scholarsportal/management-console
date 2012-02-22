@@ -14,6 +14,7 @@ import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.util.ChecksumUtil;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -32,10 +33,12 @@ public class DuracloudServiceTestBase {
 
     protected DuracloudRepoMgr repoMgr;
     protected AccountUtil accountUtil;
+    protected AccountClusterUtil clusterUtil;
     protected NotificationMgr notificationMgr;
     protected DuracloudUserRepo userRepo;
     protected DuracloudGroupRepo groupRepo;
     protected DuracloudAccountRepo accountRepo;
+    protected DuracloudAccountClusterRepo accountClusterRepo;
     protected DuracloudRightsRepo rightsRepo;
     protected DuracloudUserInvitationRepo invitationRepo;
     protected DuracloudInstanceRepo instanceRepo;
@@ -62,12 +65,17 @@ public class DuracloudServiceTestBase {
     @Before
     public void before() throws Exception {
         accountUtil = EasyMock.createMock("AccountUtil", AccountUtil.class);
+        clusterUtil = EasyMock.createMock("AccountClusterUtil",
+                                          AccountClusterUtil.class);
         userRepo = EasyMock.createMock("DuracloudUserRepo",
                                        DuracloudUserRepo.class);
         groupRepo = EasyMock.createMock("DuracloudGroupRepo",
                                         DuracloudGroupRepo.class);
         accountRepo = EasyMock.createMock("DuracloudAccountRepo",
                                           DuracloudAccountRepo.class);
+        accountClusterRepo =
+            EasyMock.createMock("DuracloudAccountClusterRepo",
+                                DuracloudAccountClusterRepo.class);
         rightsRepo = EasyMock.createMock("DuracloudRightsRepo",
                                          DuracloudRightsRepo.class);
         invitationRepo = EasyMock.createMock("DuracloudUserInvitationRepo",
@@ -124,6 +132,9 @@ public class DuracloudServiceTestBase {
         EasyMock.expect(repoMgr.getAccountRepo())
             .andReturn(accountRepo)
             .anyTimes();
+        EasyMock.expect(repoMgr.getAccountClusterRepo())
+            .andReturn(accountClusterRepo)
+            .anyTimes();
         EasyMock.expect(repoMgr.getRightsRepo())
             .andReturn(rightsRepo)
             .anyTimes();
@@ -165,10 +176,12 @@ public class DuracloudServiceTestBase {
     public void tearDown() throws Exception {
         EasyMock.verify(repoMgr);
         EasyMock.verify(accountUtil);
+        EasyMock.verify(clusterUtil);
         EasyMock.verify(notificationMgr);
         EasyMock.verify(userRepo);
         EasyMock.verify(groupRepo);
         EasyMock.verify(accountRepo);
+        EasyMock.verify(accountClusterRepo);
         EasyMock.verify(rightsRepo);
         EasyMock.verify(invitationRepo);
         EasyMock.verify(instanceRepo);
@@ -257,10 +270,12 @@ public class DuracloudServiceTestBase {
 
     protected void replayMocks() {
         EasyMock.replay(accountUtil);
+        EasyMock.replay(clusterUtil);
         EasyMock.replay(userRepo);
         EasyMock.replay(groupRepo);
         EasyMock.replay(notificationMgr);
         EasyMock.replay(accountRepo);
+        EasyMock.replay(accountClusterRepo);
         EasyMock.replay(rightsRepo);
         EasyMock.replay(invitationRepo);
         EasyMock.replay(instanceRepo);

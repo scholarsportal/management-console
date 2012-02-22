@@ -74,6 +74,15 @@ public interface RootAccountManagerService {
     public void deleteUser(int id);
 
     /**
+     * Delete an account cluster from the system
+     *
+     * @param id
+     */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public void deleteAccountCluster(int id)
+        throws DBConcurrentUpdateException;
+
+    /**
      * Delete an account from the system
      *
      * @param id

@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
@@ -17,6 +18,7 @@ import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -318,6 +320,53 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expectLastCall();
         replayMocks();
     }
+
+    @Test
+    public void testDeleteAccountCluster() throws Exception {
+        int clusterId = 12;
+        String clusterName = "clusterName";
+        int acctId1 = 35;
+        int acctId2 = 36;
+        Set<Integer> accounts = new HashSet<Integer>();
+        accounts.add(acctId1);
+        accounts.add(acctId2);
+        AccountCluster cluster =
+            new AccountCluster(clusterId, clusterName, accounts);
+        EasyMock.expect(accountClusterRepo.findById(clusterId))
+                .andReturn(cluster);
+
+        // First account set to have no cluster
+        EasyMock.expect(accountRepo.findById(acctId1))
+                .andReturn(newAccountInfo(acctId1));
+        Capture<AccountInfo> capAcct1 = new Capture<AccountInfo>();
+        accountRepo.save(EasyMock.capture(capAcct1));
+
+        // Second account set to have no cluster
+        EasyMock.expect(accountRepo.findById(acctId2))
+                .andReturn(newAccountInfo(acctId2));
+        Capture<AccountInfo> capAcct2 = new Capture<AccountInfo>();
+        accountRepo.save(EasyMock.capture(capAcct2));
+
+        accountClusterRepo.delete(clusterId);
+        EasyMock.expectLastCall();
+
+        replayMocks();
+
+        rootService.deleteAccountCluster(clusterId);
+
+        // Check first account
+        AccountInfo info1 = capAcct1.getValue();
+        Assert.assertNotNull(info1);
+        Assert.assertEquals(acctId1, info1.getId());
+        Assert.assertEquals(-1, info1.getAccountClusterId());
+
+        // Check second account
+        AccountInfo info2 = capAcct2.getValue();
+        Assert.assertNotNull(info2);
+        Assert.assertEquals(acctId2, info2.getId());
+        Assert.assertEquals(-1, info2.getAccountClusterId());
+    }
+
 
     @Test
     public void testDeleteAccount() throws Exception {

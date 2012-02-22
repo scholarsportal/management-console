@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
@@ -11,8 +12,10 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.sys.EventMonitor;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -73,6 +76,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
                                           userService,
                                           accountServiceFactory,
                                           providerAccountUtil,
+                                          clusterUtil,
                                           eventMonitors);
     }
 
@@ -161,6 +165,9 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         AccountService accountService = EasyMock.createMock("AccountService",
                                                             AccountService.class);
         EasyMock.replay(accountService);
+
+        clusterUtil.addAccountToCluster(EasyMock.anyInt(), EasyMock.anyInt());
+        EasyMock.expectLastCall();
 
         EasyMock.expect(accountServiceFactory.getAccount(EasyMock.isA(
             AccountInfo.class))).andReturn(accountService);
@@ -258,6 +265,56 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         setUpAccountManagerService();
 
         Assert.assertFalse(accountManagerService.subdomainAvailable(subdomain));
+    }
+
+    @Test
+    public void testGetAccountCluster() throws Exception {
+        int clusterId = 27;
+        String clusterName = "clustery";
+        AccountCluster cluster =
+            new AccountCluster(clusterId, clusterName, new HashSet<Integer>());
+
+        EasyMock.expect(accountClusterRepo.findById(clusterId))
+                .andReturn(cluster);
+
+        replayMocks();
+        setUpAccountManagerService();
+
+        // Expect failure
+        try {
+            accountManagerService.getAccountCluster(-5);
+            Assert.fail("Expection expected with negative cluster ID");
+        } catch(AccountClusterNotFoundException expected) {
+            Assert.assertNotNull(expected);
+        }
+
+        // Expect success
+        AccountClusterService clusterService =
+            accountManagerService.getAccountCluster(clusterId);
+        Assert.assertNotNull(clusterService);
+        Assert.assertEquals(cluster, clusterService.retrieveAccountCluster());
+    }
+
+    @Test
+    public void testCreateAccountCluster() throws Exception {
+        int clusterId = 28;
+        String clusterName = "clustery";
+        EasyMock.expect(idUtil.newAccountClusterId())
+                .andReturn(clusterId);
+        accountClusterRepo.save(EasyMock.isA(AccountCluster.class));
+        EasyMock.expectLastCall();
+
+        replayMocks();
+        setUpAccountManagerService();
+
+        AccountClusterService clusterService =
+            accountManagerService.createAccountCluster(clusterName);
+        Assert.assertNotNull(clusterService);
+
+        AccountCluster cluster = clusterService.retrieveAccountCluster();
+        Assert.assertNotNull(cluster);
+        Assert.assertEquals(clusterId, cluster.getId());
+        Assert.assertEquals(clusterName, cluster.getClusterName());
     }
 
 }

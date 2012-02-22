@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util.impl;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
@@ -10,6 +11,7 @@ import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
@@ -17,13 +19,17 @@ import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.util.sys.EventMonitor;
+import org.duracloud.account.util.util.AccountClusterUtil;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +53,19 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     private AccountServiceFactory accountServiceFactory;
     private Set<EventMonitor> eventMonitors;
     private DuracloudProviderAccountUtil providerAccountUtil;
+    private AccountClusterUtil clusterUtil;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                      DuracloudUserService duracloudUserService,
                                      AccountServiceFactory accountServiceFactory,
                                      DuracloudProviderAccountUtil providerAccountUtil,
+                                     AccountClusterUtil clusterUtil,
                                      Set<EventMonitor> eventMonitors) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
         this.accountServiceFactory = accountServiceFactory;
         this.providerAccountUtil = providerAccountUtil;
+        this.clusterUtil = clusterUtil;
         this.eventMonitors = eventMonitors;
     }
 
@@ -92,6 +101,8 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         try {
             int acctId = getIdUtil().newAccountId();
             int serverDetailsId = -1;
+            int paymentInfoId = -1; // TODO: Hook up to payment data
+            int clusterId = accountCreationInfo.getAccountClusterId();
             AccountInfo.AccountStatus status = AccountInfo.AccountStatus.ACTIVE;
 
             AccountType accountType = accountCreationInfo.getAccountType();
@@ -134,9 +145,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                 getServerDetailsRepo().save(serverDetails);
             }
 
-            // TODO: Hook up to payment data
-            int paymentInfoId = -1;
-
             AccountInfo newAccountInfo =
                 new AccountInfo(acctId,
                                 accountCreationInfo.getSubdomain(),
@@ -145,17 +153,25 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                                 accountCreationInfo.getDepartment(),
                                 paymentInfoId,
                                 serverDetailsId,
-                                accountCreationInfo.getAccountClusterId(),
+                                clusterId,
                                 status,
                                 accountType);
 
             getAccountRepo().save(newAccountInfo);
 
             userService.setUserRights(acctId, owner.getId(), Role.ROLE_OWNER);
+
+            if(clusterId > -1) {
+                clusterUtil.addAccountToCluster(acctId, clusterId);
+            }
+
             return accountServiceFactory.getAccount(newAccountInfo);
             
-        } catch (DBConcurrentUpdateException ex) {
-            throw new Error(ex);
+        } catch (DBConcurrentUpdateException e) {
+            String msg = "Error encountered attempting to create account " +
+                "with subdomain " + accountCreationInfo.getSubdomain() + ": " +
+                e.getMessage();
+            throw new DuraCloudRuntimeException(msg, e);
         }
     }
 
@@ -192,6 +208,43 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         } catch (DBNotFoundException e) {
             return true;
         }
+    }
+
+    @Override
+    public AccountClusterService getAccountCluster(int accountClusterId)
+        throws AccountClusterNotFoundException {
+        if(accountClusterId < 0) {
+            throw new AccountClusterNotFoundException(accountClusterId);
+        }
+
+        try {
+            DuracloudAccountClusterRepo clusterRepo =
+                repoMgr.getAccountClusterRepo();
+            AccountCluster cluster = clusterRepo.findById(accountClusterId);
+            return new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
+        } catch(DBNotFoundException e) {
+            throw new AccountClusterNotFoundException(accountClusterId);
+        }
+    }
+
+    @Override
+    public AccountClusterService createAccountCluster(String clusterName) {
+        DuracloudAccountClusterRepo clusterRepo =
+            repoMgr.getAccountClusterRepo();
+
+        int clusterId =  getIdUtil().newAccountClusterId();
+        AccountCluster cluster =
+            new AccountCluster(clusterId, clusterName, new HashSet<Integer>());
+
+        try {
+            clusterRepo.save(cluster);
+        } catch(DBConcurrentUpdateException e) {
+            String msg = "Error encountered attempting to create new account " +
+                "cluster with name " + clusterName + ": " + e.getMessage();
+            throw new DuraCloudRuntimeException(msg, e);
+        }
+
+        return new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
     }
 
     private DuracloudAccountRepo getAccountRepo() {

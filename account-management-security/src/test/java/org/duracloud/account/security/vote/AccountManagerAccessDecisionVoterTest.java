@@ -22,7 +22,6 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
@@ -208,6 +207,7 @@ public class AccountManagerAccessDecisionVoterTest {
                                                        .getMethods()[0]);
 
         AccountManagerServiceImpl serviceImpl = new AccountManagerServiceImpl(
+            null,
             null,
             null,
             null,
