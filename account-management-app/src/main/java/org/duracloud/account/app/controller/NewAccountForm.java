@@ -4,6 +4,8 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
+import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -31,11 +33,11 @@ public class NewAccountForm {
     private List<StorageProviderType> storageProviders = new ArrayList<StorageProviderType>(0);
 
     @NotBlank(message = "You must specify a service plan.")
-    private String servicePlan;
+    private ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
 
-    private String accountType;
+    private AccountType accountType;
 
-    private String accountClusterId;
+    private Integer accountClusterId;
 
     public String getSubdomain() {
         return subdomain;
@@ -77,27 +79,27 @@ public class NewAccountForm {
         this.storageProviders = storageProviders;
     }
 
-    public String getServicePlan() {
+    public ServicePlan getServicePlan() {
         return servicePlan;
     }
 
-    public void setServicePlan(String servicePlan) {
+    public void setServicePlan(ServicePlan servicePlan) {
         this.servicePlan = servicePlan;
     }
 
-    public String getAccountType() {
+    public AccountType getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
     }
 
-    public String getAccountClusterId() {
+    public Integer getAccountClusterId() {
         return accountClusterId;
     }
 
-    public void setAccountClusterId(String accountClusterId) {
+    public void setAccountClusterId(Integer accountClusterId) {
         this.accountClusterId = accountClusterId;
     }
 

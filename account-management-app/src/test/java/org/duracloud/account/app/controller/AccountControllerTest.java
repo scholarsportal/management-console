@@ -249,13 +249,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setSubdomain("testdomain");
-        newAccountForm.setAccountClusterId("0");
-        newAccountForm.setAccountType(AccountType.FULL.name());
-        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL.name());
+        newAccountForm.setAccountClusterId(0);
+        newAccountForm.setAccountType(AccountType.FULL);
+        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL);
         newAccountForm.setStorageProviders(new LinkedList<StorageProviderType>());
-        newAccountForm.setAcctName("testname");
-        newAccountForm.setOrgName("orgname");
-        newAccountForm.setDepartment("testdept");
 
         replayMocks();
         // first time around has errors

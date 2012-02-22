@@ -289,8 +289,6 @@ public class AccountController extends AbstractAccountController {
     public String openAddForm(Model model) throws DBNotFoundException {
         log.info("serving up new AccountForm");
         NewAccountForm newAccountForm = new NewAccountForm();
-        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL.toString());
-        newAccountForm.setAccountType(AccountType.FULL.toString());
         model.addAttribute(NEW_ACCOUNT_FORM_KEY, newAccountForm);
         addUserToModel(model);
         return NEW_ACCOUNT_VIEW;
@@ -326,8 +324,6 @@ public class AccountController extends AbstractAccountController {
                 Set<StorageProviderType> secondaryStorageProviderTypes =
                     new HashSet<StorageProviderType>();
 
-                int accountClusterId = getAccountClusterId(newAccountForm);
-
                 AccountCreationInfo accountCreationInfo =
                     new AccountCreationInfo(newAccountForm.getSubdomain(),
                                             newAccountForm.getAcctName(),
@@ -335,11 +331,9 @@ public class AccountController extends AbstractAccountController {
                                             newAccountForm.getDepartment(),
                                             StorageProviderType.AMAZON_S3,
                                             secondaryStorageProviderTypes,
-                                            ServicePlan.fromString(
-                                                newAccountForm.getServicePlan()),
-                                            AccountType.fromString(
-                                                newAccountForm.getAccountType()),
-                                            accountClusterId);
+                                            newAccountForm.getServicePlan(),
+                                            newAccountForm.getAccountType(),
+                                            newAccountForm.getAccountClusterId());
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);
@@ -355,24 +349,7 @@ public class AccountController extends AbstractAccountController {
 
         addUserToModel(model);
         return new ModelAndView(NEW_ACCOUNT_VIEW, model.asMap());
-    }
 
-    private int getAccountClusterId(NewAccountForm newAccountForm) {
-        int accountClusterId = -1;
-        String formId = newAccountForm.getAccountClusterId();
-        if(null != formId) {
-            try {
-                accountClusterId = Integer.valueOf(formId).intValue();
-            } catch(NumberFormatException e) {
-                log.error("NumberFormatException encountered attempting to " +
-                          "convert accountClusterId value " + formId +
-                          " to a number. Account with subdomain " +
-                          newAccountForm.getSubdomain() +
-                          " will be created without an associated cluster.");
-                accountClusterId = -1;
-            }
-        }
-        return accountClusterId;
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
