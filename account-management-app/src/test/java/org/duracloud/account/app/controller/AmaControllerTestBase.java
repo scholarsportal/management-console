@@ -14,6 +14,7 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.UserFeedbackMessage;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.notification.Emailer;
@@ -217,7 +218,7 @@ public class AmaControllerTestBase {
 
     protected void addFlashAttribute() {
         EasyMock.expect(redirectAttributes.addFlashAttribute(EasyMock.isA(String.class),
-                                                             EasyMock.isA(String.class)))
+                                                             EasyMock.isA(UserFeedbackMessage.class)))
                 .andReturn(redirectAttributes);
     }
 }

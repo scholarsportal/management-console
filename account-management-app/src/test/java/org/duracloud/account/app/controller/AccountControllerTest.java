@@ -4,15 +4,19 @@
 package org.duracloud.account.app.controller;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -245,6 +249,13 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         NewAccountForm newAccountForm = new NewAccountForm();
         newAccountForm.setSubdomain("testdomain");
+        newAccountForm.setAccountClusterId(0);
+        newAccountForm.setAccountType(AccountType.FULL);
+        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL);
+        newAccountForm.setStorageProviders(new LinkedList<StorageProviderType>());
+        newAccountForm.setAcctName("testname");
+        newAccountForm.setOrgName("orgname");
+        newAccountForm.setDepartment("testdept");
 
         replayMocks();
         // first time around has errors

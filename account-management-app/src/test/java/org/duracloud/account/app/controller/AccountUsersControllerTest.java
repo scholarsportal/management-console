@@ -56,9 +56,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         EasyMock.expect(userService.addUserToAccount(accountId, user.getId()))
                 .andReturn(true);
 
-        EasyMock.expect(redirectAttributes.addFlashAttribute(EasyMock.isA(String.class),
-                                                             EasyMock.isA(String.class)))
-                .andReturn(redirectAttributes);
+        addFlashAttribute();
         
         replayMocks();
         ModelAndView mav =
