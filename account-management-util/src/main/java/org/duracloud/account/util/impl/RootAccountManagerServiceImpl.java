@@ -7,6 +7,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
@@ -185,30 +186,32 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     @Override
 	public void deleteAccount(int accountId) {
         log.info("Deleting account with ID {}", accountId);
+        AccountInfo account = getAccount(accountId);
 
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if (instanceServices.size() > 0) {
-            log.error("Unable to delete account {} found an instance",
-                      accountId);
-            return;
+        if(account.getType().equals(AccountType.FULL)) {
+            Set<DuracloudInstanceService> instanceServices =
+                instanceManagerService.getInstanceServices(accountId);
+            if (instanceServices.size() > 0) {
+                log.error("Unable to delete account {} found an instance",
+                          accountId);
+                return;
+            }
+
+            ServerDetails serverDetails = accountUtil.getServerDetails(account);
+
+            // Delete the primary storage provider
+            getStorageRepo()
+                .delete(serverDetails.getPrimaryStorageProviderAccountId());
+
+            // Delete any secondary storage providers
+            for(int secId : serverDetails.getSecondaryStorageProviderAccountIds()) {
+                getStorageRepo().delete(secId);
+            }
+
+            // Delete the compute provider
+            repoMgr.getComputeProviderAccountRepo()
+                .delete(serverDetails.getComputeProviderAccountId());
         }
-
-        ServerDetails serverDetails =
-            accountUtil.getServerDetails(getAccount(accountId));
-
-        // Delete the primary storage provider
-        getStorageRepo()
-            .delete(serverDetails.getPrimaryStorageProviderAccountId());
-
-        // Delete any secondary storage providers
-        for(int secId : serverDetails.getSecondaryStorageProviderAccountIds()) {
-            getStorageRepo().delete(secId);
-        }
-
-        // Delete the compute provider
-        repoMgr.getComputeProviderAccountRepo()
-            .delete(serverDetails.getComputeProviderAccountId());
 
         // Delete the account rights
         try {
