@@ -20,16 +20,6 @@ public enum AccountType {
         this.text = text;
     }
 
-    public static AccountType fromString(String typeString) {
-        for (AccountType aType : values()) {
-            if (aType.text.equalsIgnoreCase(typeString) ||
-                aType.name().equalsIgnoreCase(typeString)) {
-                return aType;
-            }
-        }
-        return null;
-    }
-
     public String getText() {
         return text;
     }
@@ -40,7 +30,7 @@ public enum AccountType {
 
     @Override
     public String toString() {
-        return text;
+        return name();
     }
 
 }

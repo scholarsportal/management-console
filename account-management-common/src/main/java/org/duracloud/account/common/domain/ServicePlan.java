@@ -25,23 +25,17 @@ public enum ServicePlan {
         text = sp;
     }
 
-    public static ServicePlan fromString(String pt) {
-        for (ServicePlan pType : values()) {
-            if (pType.text.equalsIgnoreCase(pt) ||
-                pType.name().equalsIgnoreCase(pt)) {
-                return pType;
-            }
-        }
-        return null;
-    }
-
     public String getText() {
         return text;
     }
 
+    public String getValue(){
+        return name();
+    }
+    
     @Override
     public String toString() {
-        return text;
+        return name();
     }
 
 }

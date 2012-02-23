@@ -35,6 +35,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -295,21 +296,13 @@ public class AccountController extends AbstractAccountController {
     }
 
     @ModelAttribute("servicePlans")
-    public List<String> getServicePlans() {
-        List<String> plans = new ArrayList<String>();
-        for (ServicePlan pType : ServicePlan.values()) {
-            plans.add(pType.toString());
-        }
-        return plans;
+    public List<ServicePlan> getServicePlans() {
+        return Arrays.asList(ServicePlan.values());
     }
 
     @ModelAttribute("accountTypes")
-    public List<String> getAccountTypes() {
-        List<String> types = new ArrayList<String>();
-        for (AccountType type: AccountType.values()) {
-            types.add(type.toString());
-        }
-        return types;
+    public List<AccountType> getAccountTypes() {
+        return Arrays.asList(AccountType.values());
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
@@ -323,7 +316,11 @@ public class AccountController extends AbstractAccountController {
                 // TODO: This needs to be populated based on user selection of storage providers
                 Set<StorageProviderType> secondaryStorageProviderTypes =
                     new HashSet<StorageProviderType>();
-
+                int clusterId = -1;
+                
+                if(newAccountForm.getAccountClusterId() != null){
+                    clusterId = newAccountForm.getAccountClusterId();
+                }
                 AccountCreationInfo accountCreationInfo =
                     new AccountCreationInfo(newAccountForm.getSubdomain(),
                                             newAccountForm.getAcctName(),
@@ -333,7 +330,7 @@ public class AccountController extends AbstractAccountController {
                                             secondaryStorageProviderTypes,
                                             newAccountForm.getServicePlan(),
                                             newAccountForm.getAccountType(),
-                                            newAccountForm.getAccountClusterId());
+                                            clusterId);
 
                 AccountService service = this.accountManagerService.
                     createAccount(accountCreationInfo, user);

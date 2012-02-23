@@ -1,5 +1,6 @@
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.common.domain.ServicePlan;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class ServiceRepoForm {
@@ -21,8 +22,7 @@ public class ServiceRepoForm {
     @NotBlank(message = "You must specify a password.")
     private String password;
 
-    @NotBlank(message = "You must specify a service plan.")
-    private String servicePlan;
+    private ServicePlan servicePlan;
 
     @NotBlank(message = "You must specify a service repo type.")
     private String serviceRepoType;
@@ -75,11 +75,11 @@ public class ServiceRepoForm {
         this.password = password;
     }
 
-    public String getServicePlan() {
+    public ServicePlan getServicePlan() {
         return servicePlan;
     }
 
-    public void setServicePlan(String servicePlan) {
+    public void setServicePlan(ServicePlan servicePlan) {
         this.servicePlan = servicePlan;
     }
 

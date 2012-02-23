@@ -104,7 +104,7 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
                 secondaryServiceRepositoryIds = idsFromString(value);
 
             } else if (SERVICE_PLAN_ATT.equals(name)) {
-                servicePlan = ServicePlan.fromString(value);
+                servicePlan = ServicePlan.valueOf(value);
 
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");

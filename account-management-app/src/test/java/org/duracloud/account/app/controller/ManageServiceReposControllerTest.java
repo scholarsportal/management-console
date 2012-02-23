@@ -30,7 +30,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         // set up mocks, and args
         ServiceRepoForm serviceRepoForm = new ServiceRepoForm();
         serviceRepoForm.setServiceRepoType("PRIVATE");
-        serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL.getText());
+        serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL);
         serviceRepoForm.setHostName("hostname");
         serviceRepoForm.setVersion("version");
         serviceRepoForm.setSpaceId("spaceId");
@@ -74,7 +74,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
 
         ServiceRepoForm serviceRepoForm = new ServiceRepoForm();
         serviceRepoForm.setServiceRepoType("PRIVATE");
-        serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL.getText());
+        serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL);
         serviceRepoForm.setHostName("hostname");
         serviceRepoForm.setVersion("version");
         serviceRepoForm.setSpaceId("spaceId");

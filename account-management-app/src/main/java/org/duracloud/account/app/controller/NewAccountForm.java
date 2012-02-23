@@ -32,7 +32,6 @@ public class NewAccountForm {
 
     private List<StorageProviderType> storageProviders = new ArrayList<StorageProviderType>(0);
 
-    @NotBlank(message = "You must specify a service plan.")
     private ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
 
     private AccountType accountType;

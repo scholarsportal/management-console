@@ -86,7 +86,7 @@ public class ManageServiceReposController  extends AbstractController {
             //Add new Service Repo
             rootAccountManagerService.createServiceRepository(
                 ServiceRepositoryType.valueOf(serviceRepoForm.getServiceRepoType()),
-                ServicePlan.fromString(serviceRepoForm.getServicePlan()),
+                serviceRepoForm.getServicePlan(),
                 serviceRepoForm.getHostName(),
                 serviceRepoForm.getSpaceId(),
                 serviceRepoForm.getXmlId(),
@@ -129,7 +129,7 @@ public class ManageServiceReposController  extends AbstractController {
         form.setVersion(serviceRepo.getVersion());
         form.setUserName(serviceRepo.getUsername());
         form.setPassword(serviceRepo.getPassword());
-        form.setServicePlan(serviceRepo.getServicePlan().getText());
+        form.setServicePlan(serviceRepo.getServicePlan());
         form.setServiceRepoType(serviceRepo.getServiceRepositoryType().name());
 
         model.addAttribute(NEW_FORM_KEY, form);
@@ -148,7 +148,7 @@ public class ManageServiceReposController  extends AbstractController {
             //Update repo info
             rootAccountManagerService.editServiceRepository(repoId,
                                                             ServiceRepositoryType.valueOf(serviceRepoForm.getServiceRepoType()),
-                                                            ServicePlan.fromString(serviceRepoForm.getServicePlan()),
+                                                            serviceRepoForm.getServicePlan(),
                                                             serviceRepoForm.getHostName(),
                                                             serviceRepoForm.getSpaceId(),
                                                             serviceRepoForm.getXmlId(),
