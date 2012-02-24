@@ -1,29 +1,31 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
- version="2.0"
- xmlns="http://www.w3.org/1999/xhtml"
- xmlns:jsp="http://java.sun.com/JSP/Page"
- xmlns:tiles="http://tiles.apache.org/tags-tiles"
- xmlns:form="http://www.springframework.org/tags/form"
- xmlns:spring="http://www.springframework.org/tags"
- xmlns:c="http://java.sun.com/jsp/jstl/core">
-  <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
-        <div class="float-r" id="logo-ds"></div>
-        DuraCloud Management Console <span class="sep"> | </span>
-        &#169;2011
-        <script type="text/javascript">
-                                    document.write(new Date().getFullYear());
-                                </script>
-        <a target="_blank" href="http://www.duraspace.org">DuraSpace.org</a>
-        <span class="sep"> | </span> 
-        <a target="_blank"
-          href="http://www.duracloud.org">Duracloud.org</a> 
-        <span class="sep"> | </span> 
-        <a target="_blank" href="http://duracloud.kayako.com">Help Desk</a> 
-        <span class="sep"> | </span>        
-        <a target="_blank"
-          href="mailto:info@duracloud.org">Contact Us</a>
+  version="2.0"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:tiles="http://tiles.apache.org/tags-tiles"
+  xmlns:form="http://www.springframework.org/tags/form"
+  xmlns:spring="http://www.springframework.org/tags"
+  xmlns:c="http://java.sun.com/jsp/jstl/core">
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
+  <div id="footer-links" class="float-l">
+  <ul class="horizontal-list">
+    <li><span>DuraCloud Management Console</span></li>
+    <li><a
+      target="_blank"
+      href="http://www.duraspace.org">DuraSpace.org</a></li>
+    <li><a
+      target="_blank"
+      href="http://www.duracloud.org">Duracloud.org</a></li>
+    <li><a
+      target="_blank"
+      href="http://duracloud.kayako.com">Help Desk</a></li>
+    <li><a
+      target="_blank"
+      href="mailto:info@duracloud.org">Contact Us</a></li>
+  </ul>
+  </div>
+  
+  <div id="duraspace-logo"><!--  --></div>
 
 </jsp:root>
 

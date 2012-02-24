@@ -13,18 +13,17 @@
 
   <http auto-config="false" use-expressions="true">
     <access-denied-handler error-page="/access-denied" />
-
     <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')" />
-    <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')" />
+    <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')"  />
     <intercept-url pattern="/init" access="hasRole('ROLE_INIT')" />
 
     <form-login login-page="/login" always-use-default-target="false"
                 default-target-url="/users/profile"
                 authentication-failure-url="/login?error=true" />
     <http-basic />
-    <logout invalidate-session="true" />
+    <logout invalidate-session="true" delete-cookies="jsessionid" />
   </http>
 
   <!-- AuthN Manager -->

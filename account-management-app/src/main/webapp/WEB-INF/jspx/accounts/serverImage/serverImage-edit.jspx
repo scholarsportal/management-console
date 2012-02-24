@@ -7,7 +7,7 @@
  xmlns:form="http://www.springframework.org/tags/form"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition
    name="app-base">
@@ -37,7 +37,7 @@
                 <td class="accountlabel">Server Image Details</td>
               </tr>
             </table>
-           <div style="height:20px"></div>
+           <div style="height:20px"><!--  --></div>
 
               <div>
 			   <br /><div class="instructions"> Please complete the information to edit a server image.</div>
@@ -183,9 +183,6 @@
                   
                 </form:form>
               </div>
-            </div>
-
-            <div>
             </div>
 </div>
         </tiles:putAttribute>

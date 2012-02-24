@@ -1,25 +1,22 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root version="2.0"  xmlns:jsp="http://java.sun.com/JSP/Page">
+<![CDATA[<!DOCTYPE html>]]>
+
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:tiles="http://tiles.apache.org/tags-tiles"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:form="http://www.springframework.org/tags/form"
 	xmlns:sec="http://www.springframework.org/security/tags">
-<jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
+<jsp:output omit-xml-declaration="yes" />
+<jsp:directive.page contentType="text/html;charset=UTF-8" />
 
 <head>
-<jsp:output omit-xml-declaration="yes" doctype-root-element="html"
-	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
 
 <title>DuraCloud : <tiles:insertAttribute name="title"
 	ignore="true" /></title>
 
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/static/css/yui-grids-2.8.2r1-min.css" />
-
-<link href="${pageContext.request.contextPath}/static/css/login.css"
-	rel="stylesheet" type="text/css" />
 
 <link href="${pageContext.request.contextPath}/static/css/global.css"
 	rel="stylesheet" type="text/css" />
@@ -34,8 +31,7 @@
 <link rel="shortcut icon"
 	href="${pageContext.request.contextPath}/static/img/favicon.ico" />
 
-<script src="${pageContext.request.contextPath}/static/jquery/jquery.js"
-	type="text/javascript" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/static/jquery/jquery.js"><!-- --></script>
 
 <script>
 	$(function(){
@@ -96,45 +92,58 @@
 
 <div id="dc-logo-panel"><c:choose>
 	<c:when test="${(principal == 'anonymousUser') || (empty principal)}">
-		<a href="${pageContext.request.contextPath}" id="dc-logo"></a>
+		<a href="${pageContext.request.contextPath}" id="dc-logo"><!--  --></a>
 	</c:when>
 	<c:otherwise>
 		<sec:authorize
 			ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
 			<sec:authentication property="principal.username" var="username" />
 			<a href="${pageContext.request.contextPath}/users/byid/${username}"
-				id="dc-logo"></a>
+				id="dc-logo"><!--  --></a>
 		</sec:authorize>
 	</c:otherwise>
 </c:choose></div>
 </div>
 <div id="right" class="float-r outer">
-<div id="dc-user" class="float-r">
-<ul class="horizontal-list" style="margin-top: 10px;">
-	<sec:authorize ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
-		<sec:authentication property="principal.username" var="username" />
-		<li><i class="pre"></i>Welcome ${username}</li>
+        <div
+          id="dc-user"
+          class="float-r">
+          <ul class="horizontal-list">
+            <sec:authorize
+              ifAnyGranted="ROLE_USER,ROLE_ADMIN,ROLE_OWNER,ROLE_ROOT">
+              <sec:authentication
+                property="principal.username"
+                var="username" />
+              <li>Welcome ${username}</li>
+              <li><a
+                id="user-profile-link"
+                accesskey="p"
+                href="${pageContext.request.contextPath}/users/byid/${username}/edit">
+                  My Profile</a></li>
+              <sec:authorize ifAnyGranted="ROLE_ROOT">
+                <li><a
+                  id="root-console-link"
+                  accesskey="p"
+                  class="root-link"
+                  href="${pageContext.request.contextPath}/users/manage">Root
+                    Console Classic</a></li>
+                <li><a
+                  id="new-root-console-link"
+                  accesskey="p"
+                  class="root-link"
+                  href="${pageContext.request.contextPath}/root">Root
+                    Console</a></li>
 
-		<li><a id="user-profile-link" accesskey="p" class="icon-link"
-			href="${pageContext.request.contextPath}/users/byid/${username}/edit">
-		<i class="pre "></i> My Profile </a></li>
-		<li style="margin-left: 8px">|</li>
-
-        <sec:authorize ifAnyGranted="ROLE_ROOT">
-		<li><a id="manage-user-link" accesskey="p" class="root-link"
-			href="${pageContext.request.contextPath}/users/manage">
-		<i class="pre "></i> Root Console </a></li>
-		<li style="margin-left: 8px">|</li>
-        </sec:authorize>
-
-		<li><a id="logout-link" accesskey="l"
-			href="${pageContext.request.contextPath}/j_spring_security_logout"
-			class="icon-link logout"><i class="pre logoff"></i>Logout</a></li>
-
-	</sec:authorize>
-</ul>
-</div>
-</div>
+              </sec:authorize>
+              <li><a
+                id="logout-link"
+                accesskey="l"
+                href="${pageContext.request.contextPath}/j_spring_security_logout"
+                class="icon-link logout"><i class="pre logoff"><!--  --></i>Logout</a></li>
+            </sec:authorize>
+          </ul>
+        </div>
+      </div>
 
 </div>
 <div id="bd" class="pane-L1-body">
@@ -143,7 +152,6 @@
 </div>
 </div>
 </div>
-<br />
 <div id="ft">
       <div class="outer" id="footer-content" style="margin-left: 15px">
         <jsp:include page="/WEB-INF/jspx/includes/footer-content.jspx" />
@@ -152,3 +160,4 @@
 </div>
 </body>
 </html>
+</jsp:root>

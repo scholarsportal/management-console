@@ -8,7 +8,7 @@
  xmlns:form="http://www.springframework.org/tags/form"
  xmlns:sec="http://www.springframework.org/security/tags">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition
    name="app-base">
@@ -18,8 +18,14 @@
 
     <tiles:putAttribute
      name="header-extensions">
+     <style>
+      table .horizontal-list li:last-child:before {
+        content:"";
+      }
+     
+     </style>
         <script type="text/javascript"
-             src="${pageContext.request.contextPath}/static/js/account-details.js"></script>
+             src="${pageContext.request.contextPath}/static/js/account-details.js"><!-- --></script>
     </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -61,7 +67,7 @@
                        class="button"
                        href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/edit">
                       <i
-                       class="pre pencil">
+                       class="pre pencil"><!--  -->
                       </i>
 
                       Edit</a>
@@ -70,7 +76,7 @@
                   </span></td>
                   </c:if>
                 </tr>
-              </table><div style="height:20px"></div><table class="datatablesimple">
+              </table><div style="height:20px"><!--  --></div><table class="datatablesimple">
                 <tr>
                   <td width="22%" align="right">Subdomain:</td>
 
@@ -125,7 +131,7 @@
                 <tr>
                   <td><strong class="accountlabel">Provider Information</strong></td>
                 </tr>
-              </table><div style="height:20px"></div><table border="0">
+              </table><div style="height:20px"><!--  --></div><table border="0">
                 <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                  <tr>
                   <td>
@@ -150,7 +156,7 @@
                         <button style="margin-left:8px !important"
                          id="provider-add-button"
                          type="submit">
-                            <i class="pre plus"></i>
+                            <i class="pre plus"><!--  --></i>
                             Add</button>
 
                         </c:if>

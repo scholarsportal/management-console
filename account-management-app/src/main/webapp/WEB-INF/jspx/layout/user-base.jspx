@@ -6,7 +6,7 @@
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:sec="http://www.springframework.org/security/tags">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <div>
     <sec:authentication

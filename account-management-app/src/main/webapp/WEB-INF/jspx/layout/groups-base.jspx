@@ -6,7 +6,7 @@
   xmlns:form="http://www.springframework.org/tags/form"
   xmlns:fn="http://java.sun.com/jsp/jstl/functions"
   xmlns:c="http://java.sun.com/jsp/jstl/core">
-  <jsp:directive.page contentType="application/xhtml+xml;charset=UTF-8" />
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
 
 
   <h1>Manage Account Groups</h1>
@@ -32,8 +32,8 @@
                     path="groupName"
                     style="width:200px; margin-right:10px"
                     placeholder="Enter a new group name here" />
-                  <button type="submit" name="action" value="ADD"><i class="pre plus"></i>Add New Group</button>
-            <button type="submit" name="action" value="REMOVE"><i class="pre trash"></i>Remove Selected</button>
+                  <button type="submit" name="action" value="ADD"><i class="pre plus"><!--  --></i>Add New Group</button>
+            <button type="submit" name="action" value="REMOVE"><i class="pre trash"><!--  --></i>Remove Selected</button>
             </span>
             
           </div>

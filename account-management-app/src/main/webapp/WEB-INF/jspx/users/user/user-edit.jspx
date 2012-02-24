@@ -8,7 +8,7 @@
  xmlns:sec="http://www.springframework.org/security/tags"
  xmlns:form="http://www.springframework.org/tags/form">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition
    name="app-base">
@@ -41,9 +41,9 @@
                 <td class="accountlabel">Account Identification</td>
               </tr>
             </table>
-           <div style="height:20px"></div>
+           <div style="height:20px"><!--  --></div>
               <div
-               class="dc-second-subgroup">
+               class="dc-second-subgroup"><!--  -->
 
               <div
                class="dc-second-subgroup-body">
@@ -151,7 +151,7 @@
                     </td>
                   </tr>
                 </table>
-                <div style="height:20px;"></div>
+                <div style="height:20px;"><!--  --></div>
                 <div>
 
                   <button
@@ -171,7 +171,7 @@
                 <td class="accountlabel">Change Password</td>
               </tr>
             </table>
-           <div style="height:20px"></div>
+           <div style="height:20px"><!--  --></div>
          
             <div
                class="dc-second-subgroup">
@@ -263,10 +263,7 @@
           </form:form>
 </div></div>
             
-<div style="height:20px">
-            
-              
-</div>
+<div style="height:20px"><!--  --></div>
                <table width="100%" border="0" cellpadding="0" cellspacing="0">
                  <tr>
                    <td><div
@@ -280,7 +277,7 @@
   </div></td>
                  </tr>
                </table>
-<div style="height:20px;"></div>
+<div style="height:20px;"><!--  --></div> 
 
         </tiles:putAttribute>
       </tiles:insertDefinition>

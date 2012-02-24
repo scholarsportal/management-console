@@ -15,8 +15,8 @@
   <context:component-scan base-package="org.duracloud"/>
   <import resource="config/service-config.xml" />  
   <import resource="config/security-config.xml" />  
-  <import resource="config/handler-config.xml" />  
   <import resource="config/view-config.xml" />
   <import resource="config/aop-config.xml" />  
+
 </beans>
 

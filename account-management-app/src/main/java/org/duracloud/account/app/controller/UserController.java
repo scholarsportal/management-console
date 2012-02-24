@@ -28,7 +28,9 @@ import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,15 +61,11 @@ public class UserController extends AbstractController {
     
     public static final String FORGOT_PASSWORD_VIEW = "forgot-password";
 
-    public static final String NEW_USER_WELCOME = "user-welcome";
-
     public static final String USER_HOME = "user-home";
     
     public static final String FORGOT_PASSWORD_MAPPING = "/forgot-password";
 
     public static final String USER_ACCOUNTS = "user-accounts";
-
-    public static final String USER_WELCOME_MAPPING = USER_MAPPING + "/welcome";
 
     public static final String USER_EDIT_MAPPING = USER_MAPPING + EDIT_MAPPING;
 
@@ -132,9 +130,16 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
     public ModelAndView profileRedirect() {
-        String username = SecurityContextHolder.getContext()
-                                               .getAuthentication()
-                                               .getName();
+        Authentication auth = SecurityContextHolder.getContext()
+            .getAuthentication();
+        if(auth.isAuthenticated() && auth instanceof AnonymousAuthenticationToken){
+            //this check is necessary because on logout the browser is getting directed here
+            //I'm not sure why the request is getting through - everything seems properly configured
+            //in security-config.xml
+            auth.setAuthenticated(false);
+            return new ModelAndView("redirect:/users/profile");
+        }
+        String username = auth.getName();
         return new ModelAndView(formatUserRedirect(username));
     }
 
@@ -362,22 +367,6 @@ public class UserController extends AbstractController {
 
     private void addUserToModel(DuracloudUser user, Model model) {
         model.addAttribute(USER_KEY, user);
-    }
-
-    @RequestMapping(value = { USER_WELCOME_MAPPING }, method = RequestMethod.GET)
-    public ModelAndView getUserWelcome(@PathVariable String username,
-                                       @RequestParam(value = "accountId", required = false) Integer accountId)
-        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
-
-        log.debug("opening welcome page for for {}: accountId={}",
-                  username,
-                  accountId);
-        ModelAndView mav = new ModelAndView(NEW_USER_WELCOME);
-        if (accountId != null) {
-            mav.addObject("accountId", accountId);
-        }
-        prepareModel(username, mav);
-        return mav;
     }
 
     /**

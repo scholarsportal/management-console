@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
@@ -8,30 +7,31 @@
  xmlns:sec="http://www.springframework.org/security/tags"
  xmlns:form="http://www.springframework.org/tags/form">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Accounts" />
+     value="Accounts"></tiles:putAttribute>
 
     <tiles:putAttribute
      name="header-extensions">
         <script type="text/javascript"
-             src="${pageContext.request.contextPath}/static/js/user-accounts.js"></script>
+             src="${pageContext.request.contextPath}/static/js/user-accounts.js"><!-- --></script>
+          
     </tiles:putAttribute>
 
     <tiles:putAttribute
      name="body">
       <tiles:insertDefinition
-       name="user-base">
+       name="user-base" >
 
         <tiles:putAttribute
          name="content">
        <h5>Management Console
         </h5>
-        <div style="height:20px" ></div>
+        <div style="height:20px" ><!-- place-holder --></div>
 
         <c:if test="${error != null}">
           <div class="instance-panel alert">
@@ -52,21 +52,23 @@
              class="dc-subgroup-body">
             <table border="0" cellspacing="0" cellpadding="4">
               <tr>
-                <td class="accountlabel"><strong> Active Accounts</strong></td>
+                <td class="accountlabel"><strong> Active Accounts</strong>
+                        <div style="height:20px" ><!-- place-holder --></div>
+                
+                </td>
                 <td align="right">
               <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                 <a
                  href="${pageContext.request.contextPath}/accounts/new"
                  class="button">
                 <i
-                 class="pre plus">
+                 class="pre plus"><!--  -->
                 </i>
 
-                Add DuraCloud Account</a><br />
+                Add DuraCloud Account</a>
               </sec:authorize></td>
         </tr>
       </table>
-      <br />
               
               <c:choose>
                 <c:when
@@ -85,8 +87,7 @@
                         <c:if test="${a.userRole != 'ROLE_USER'}">
 
 
-                      <c:if test="${a.userRole == 'ROLE_ROOT'}">
-                      <c:if test="${a.instanceStatus == null}">
+                      <c:if test="${a.userRole == 'ROLE_ROOT' and a.instanceStatus == null}">
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
@@ -94,12 +95,11 @@
                           </form>
                             </td>
                       </c:if>
-                      </c:if>
 
                         <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
                              > <span
-                             class="pre plus"> </span> Account Information</a></td>
+                             class="pre plus"><!--  --> </span> Account Information</a></td>
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
@@ -208,10 +208,7 @@
                         <c:out value="${a.instanceStatus}" />
                       </td>
                       <c:if test="${a.userRole != 'ROLE_USER'}">
-                      <!--<td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/restart"
-                              method="post">
-                        <button type="submit" onclick="AskAndSubmit(this); return false;">Restart</button>
-                      </form></td>-->
+
                       <c:if test="${a.instanceVersion != latestVersion}">
 
                           <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
@@ -297,7 +294,7 @@
                         <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
                              > <span
-                             class="pre plus"> </span> Account Information</a></td>
+                             class="pre plus"><!--  --> </span> Account Information</a></td>
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
@@ -308,8 +305,6 @@
                       </tr>
                       <tr class="account">
                         <td colspan="6" align="left" valign="middle">
-                        <div />
-                        <div />
 
                             <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
 
@@ -375,7 +370,7 @@
                         <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
                              > <span
-                             class="pre plus"> </span> Account Information</a></td>
+                             class="pre plus"><!--  --> </span> Account Information</a></td>
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
@@ -386,10 +381,6 @@
                       </tr>
                       <tr class="account">
                         <td colspan="5" align="left" valign="middle">
-                        <div />
-                        <div />
-
-
                             <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
                             </div>
                             <div class="instance-panel inactive">
@@ -452,7 +443,7 @@
                         <td width="90" align="right" valign="middle"><a class="button"
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details"
                              > <span
-                             class="pre plus"> </span> Account Information</a></td>
+                             class="pre plus"><!--  --> </span> Account Information</a></td>
                         <td width="90" align="right" valign="middle"><a
                              href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                              class="button"> Manage Users and Roles</a></td>
@@ -463,8 +454,6 @@
                       </tr>
                       <tr class="account">
                         <td colspan="5" align="left" valign="middle">
-                        <div />
-                        <div />
 
 
                             <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>

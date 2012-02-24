@@ -1,1 +1,2 @@
-<jsp:forward page="/index.html"/>
+<%@page session="false" %>
+<jsp:forward page="/users/profile" />

@@ -159,24 +159,26 @@ li a:hover{
 	width:80%;
 }
 
-.footer-text-login{
-	width:80%;
-	clear: right;
-	font-size: 10px;
+#footer-content {
+	font-size: 11px;
 	color: #4A4A4A;
-	float: left;
 	text-align: left;
 	margin-top: 5px;
 	margin-left: 10px;
-	}
-	.footer-text-login a{
+}
 
+#footer-links {
+	height:10px; 
+	padding:10px;
+	
+}
+
+#footer-content a {
 	font-size: 10px;
 	color: #4A4A4A;
+}
 
-	}
-.required:before
-{ 
+.required:before {
 	content:"*";
 	color:blue;
 	padding-right: 5px;
@@ -342,37 +344,21 @@ div.global-errors{
 #duraspace-logo
 {
 	background-image:url(../img/logo_duraspace_onwhite.gif);
-	width:130px;
+	width:100px;
 	background-repeat: no-repeat;
-	height:60px;
+	height:20px;
 	float: right;
-	margin-top:5px;
+	display:inline-block;
 }
 
 #hd,#bd, .dc-main-tabs
 {
 	min-width:70%;
 }
-.pane-L1-body-login
-{
-	margin-top:10px;
-	background:url(../img/bg_L1.png) no-repeat top right;
-	padding-top:5px;
-	min-height:200px;
-	width: 100%;
-	left: -15px;
-	-moz-border-radius:8px;
-	-webkit-border-radius:8px;
-	border-radius:8px;
-	margin-left: -20px;
-}
-.pane-L1-body-login a
-{
-	text-decoration: none;	
-	
-}
+
 .pane-L1-body
 {
+	border-radius:0px 10px 10px 0px;
 	margin-top:5px;
 	background:url(../img/bg_L1.png) no-repeat top right;
 	padding-top:5px;
@@ -394,13 +380,25 @@ ing-right:10px;
 #dc-user
 {	
 	border-right:solid 1px #ccc;
-	height:60px;
-	margin-right:10px;
 	padding-right:20px;
 	text-align:right;
 	width:400px;
 }
 
+#dc-user .horizontal-list {
+	margin-top:10px;
+}
+
+.horizontal-list li:before
+ {
+	content: "|";	
+	padding: 0px 8px 0px 8px;
+}
+
+.horizontal-list li:first-child:before
+{
+	content: "";	
+}
 .dc-main-tabs
 {
 	position:absolute;
@@ -544,12 +542,18 @@ li.account:hover {
 	margin-bottom: 20px;
 	color: #515151 !important;	
 }
-.lighttext {
+
+.lighttext, div.login label, div.login a {
 	font-size: 10pt;
-	margin-bottom: 20px;
-	margin-left: 8px;
 	color: #CCC !important;
 }
+
+
+.lighttext {
+	margin-bottom: 20px;
+	margin-left: 8px;
+}
+
 
 .providerSelctionRow {
 	margin-left: 15px;

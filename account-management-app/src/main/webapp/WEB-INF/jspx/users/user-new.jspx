@@ -8,7 +8,7 @@
  xmlns:spring="http://www.springframework.org/tags"
  xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page
-   contentType="application/xhtml+xml;charset=UTF-8" />
+   contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition
    name="app-base">
@@ -29,10 +29,7 @@
                 <td class="accountlabel">Profile Details</td>
               </tr>
             </table>
-           <div style="height:20px"></div>
-
-
-            
+           <div style="height:20px"><!--  --></div>
               <jsp:include page="/WEB-INF/jspx/includes/required-field-text.jspx"/>
               <jsp:include
                page="/WEB-INF/jspx/includes/global-errors.jspx">
@@ -197,7 +194,7 @@
                     </td>
                   </tr>
                 </table>
-            <div style="height:20px"></div>
+            <div style="height:20px"><!--  --></div>
             <div>
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
@@ -215,7 +212,7 @@
                 </tr>
 
               </table></div>
-              <div style="height:20px"></div>
+              <div style="height:20px"><!--  --></div>
           </form:form>
         </div></div>
       

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions >
@@ -12,19 +12,7 @@
     <put-attribute name="body" value="body" />
   </definition>
 
-  <definition name="login-base" template="/WEB-INF/jspx/layout/login-base.jspx" >
-    <put-attribute name="title" value="title" />
-    <put-attribute name="header-extensions" value=""  />
-    <put-attribute name="body" value="body" />
-  </definition>
-
   <definition name="user-base" template="/WEB-INF/jspx/layout/user-base.jspx">
-    <put-attribute name="mainTab" value="home" />
-    <put-attribute name="content" value="content" />
-  </definition>
-
-
-  <definition name="account-base" template="/WEB-INF/jspx/layout/account-base.jspx">
     <put-attribute name="mainTab" value="home" />
     <put-attribute name="content" value="content" />
   </definition>
@@ -39,7 +27,6 @@
   <definition name="home" template="/WEB-INF/jspx/index.jspx" />
 
   <!-- root views -->
-  <definition name="accounts-home" template="/WEB-INF/jspx/accounts/accounts-home.jspx" />
   <definition name="manage-users" template="/WEB-INF/jspx/users/manage-users.jspx" />
   <definition name="account-setup" template="/WEB-INF/jspx/accounts/account/account-setup.jspx" />
   <definition name="serverImage-new" template="/WEB-INF/jspx/accounts/serverImage/serverImage-new.jspx" />
@@ -50,8 +37,6 @@
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
   <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />
-  <definition name="user-home" template="/WEB-INF/jspx/users/user/user-home.jspx" />
-  <definition name="user-welcome" template="/WEB-INF/jspx/users/user/new-user-welcome.jspx" />
   <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />
   <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx" />
 
@@ -59,18 +44,13 @@
 
   <!-- account views -->
   <definition name="account-new" template="/WEB-INF/jspx/accounts/account-new.jspx" />
-  <definition name="account-home" template="/WEB-INF/jspx/accounts/account/account-home.jspx" />
-
+ 
   <definition name="account-details" template="/WEB-INF/jspx/accounts/account/account-details.jspx" />
   <definition name="account-info-edit" template="/WEB-INF/jspx/accounts/account/account-info-edit.jspx" />
-  <definition name="account-billing-edit" template="/WEB-INF/jspx/accounts/account/account-billing-edit.jspx" />
-
-  <definition name="account-statement" template="/WEB-INF/jspx/accounts/account/account-statement.jspx" />
   <definition name="account-providers" template="/WEB-INF/jspx/accounts/account/account-providers.jspx" />
   <definition name="account-instance" template="/WEB-INF/jspx/accounts/account/account-instance.jspx" />
   <definition name="account-users" template="/WEB-INF/jspx/accounts/account/account-users.jspx" />
   <definition name="account-users-invite" template="/WEB-INF/jspx/accounts/account/account-users-invite.jspx" />
-  <definition name="account-users-edit" template="/WEB-INF/jspx/accounts/account/account-users-edit.jspx" />
   <definition name="account-groups" template="/WEB-INF/jspx/accounts/account/account-groups.jspx" />
   <definition name="account-group" template="/WEB-INF/jspx/accounts/account/account-group.jspx" />
   <definition name="account-group-edit" template="/WEB-INF/jspx/accounts/account/account-group-edit.jspx" />
