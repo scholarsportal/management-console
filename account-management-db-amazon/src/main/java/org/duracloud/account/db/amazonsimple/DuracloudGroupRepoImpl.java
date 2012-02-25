@@ -13,10 +13,14 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudGroupConverter.ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudGroupConverter.GROUPNAME_ATT;
 
 /**
@@ -56,23 +60,46 @@ public class DuracloudGroupRepoImpl extends BaseDuracloudRepoImpl implements Dur
     }
 
     @Override
-    public DuracloudGroup findByGroupname(String groupname)
+    public DuracloudGroup findInAccountByGroupname(String groupname, int acctId)
         throws DBNotFoundException {
-        Item item = findItemsByAttribute(GROUPNAME_ATT, groupname).get(0);
+        Map<String, String> attributes = new HashMap<String, String>();
+        attributes.put(GROUPNAME_ATT, groupname);
+        attributes.put(ACCOUNT_ID_ATT, String.valueOf(acctId));
+        Item item = findItemByAttributes(attributes);
         List<Attribute> atts = item.getAttributes();
         return converter.fromAttributes(atts, idFromString(item.getName()));
     }
 
     @Override
-    public Set<DuracloudGroup> findAllGroups() throws DBNotFoundException {
-        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+    public Set<DuracloudGroup> findByAccountId(int acctId) {
+        List<Item> items;
+        try {
+            items = findItemsByAttribute(ACCOUNT_ID_ATT,
+                                         String.valueOf(acctId));
+        } catch(DBNotFoundException e) {
+            items = new ArrayList<Item>(0);
+        }
+        return convertToGroups(items);
+    }
 
-        List<Item> items = findAllItems();
-        for (Item item : items) {
+    private Set<DuracloudGroup> convertToGroups(List<Item> items) {
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        for(Item item : items) {
             groups.add(converter.fromAttributes(item.getAttributes(),
                                                 idFromString(item.getName())));
         }
         return groups;
+    }
+
+    @Override
+    public Set<DuracloudGroup> findAllGroups() {
+        List<Item> items;
+        try {
+            items = findAllItems();
+        } catch(DBNotFoundException e) {
+            items = new ArrayList<Item>(0);
+        }
+        return convertToGroups(items);
     }
 
     @Override

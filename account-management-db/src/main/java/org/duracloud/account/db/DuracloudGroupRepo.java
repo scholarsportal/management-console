@@ -15,14 +15,25 @@ import java.util.Set;
 public interface DuracloudGroupRepo extends BaseRepo<DuracloudGroup> {
 
     /**
-     * This method returns a single group with the given groupname.
+     * This method returns a single group within the given account, with the
+     * given groupname.
      *
      * @param groupname of group
+     * @param acctId associated with group
      * @return group
      * @throws DBNotFoundException if no item found
      */
-    public DuracloudGroup findByGroupname(String groupname)
+    public DuracloudGroup findInAccountByGroupname(String groupname, int acctId)
         throws DBNotFoundException;
+
+    /**
+     * This method returns all groups within the given account.
+     *
+     * @param acctId associated with group
+     * @return all groups in account
+     * @throws DBNotFoundException if no item found
+     */
+    public Set<DuracloudGroup> findByAccountId(int acctId);
 
     /**
      * This method returns all groups.
@@ -30,6 +41,6 @@ public interface DuracloudGroupRepo extends BaseRepo<DuracloudGroup> {
      * @return all groups
      * @throws DBNotFoundException if no groups found
      */
-    public Set<DuracloudGroup> findAllGroups() throws DBNotFoundException;
+    public Set<DuracloudGroup> findAllGroups();
 
 }

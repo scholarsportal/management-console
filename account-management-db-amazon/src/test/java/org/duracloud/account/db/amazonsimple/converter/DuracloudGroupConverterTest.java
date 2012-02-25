@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import static org.duracloud.account.db.amazonsimple.converter.DuracloudGroupConverter.ACCOUNT_ID_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudGroupConverter.GROUPNAME_ATT;
 import static org.duracloud.account.db.amazonsimple.converter.DuracloudGroupConverter.USERS_ATT;
 import static org.duracloud.account.db.util.FormatUtil.padded;
@@ -26,7 +27,7 @@ public class DuracloudGroupConverterTest extends DomainConverterTest<DuracloudGr
 
     private static final int id = 0;
     private static final String groupname = DuracloudGroup.PREFIX + "test";
-
+    private static final int accountId = 7;
     private static Set<Integer> userIds;
     private static final int counter = 4;
 
@@ -45,7 +46,7 @@ public class DuracloudGroupConverterTest extends DomainConverterTest<DuracloudGr
 
     @Override
     protected DuracloudGroup createTestItem() {
-        return new DuracloudGroup(id, groupname, userIds, counter);
+        return new DuracloudGroup(id, groupname, accountId, userIds, counter);
     }
 
     @Override
@@ -55,6 +56,7 @@ public class DuracloudGroupConverterTest extends DomainConverterTest<DuracloudGr
         List<Attribute> testAtts = new ArrayList<Attribute>();
         testAtts.add(new Attribute(GROUPNAME_ATT, groupname));
         testAtts.add(new Attribute(USERS_ATT, helper.idsAsString(userIds)));
+        testAtts.add(new Attribute(ACCOUNT_ID_ATT, helper.asString(accountId)));
         testAtts.add(new Attribute(COUNTER_ATT, padded(counter)));
         return testAtts;
     }
@@ -66,10 +68,12 @@ public class DuracloudGroupConverterTest extends DomainConverterTest<DuracloudGr
         Assert.assertNotNull(group.getCounter());
         Assert.assertNotNull(group.getName());
         Assert.assertNotNull(group.getUserIds());
+        Assert.assertNotNull(group.getAccountId());
 
         Assert.assertEquals(counter, group.getCounter());
         Assert.assertEquals(groupname, group.getName());
         Assert.assertEquals(userIds, group.getUserIds());
+        Assert.assertEquals(accountId, group.getAccountId());
     }
 
 }

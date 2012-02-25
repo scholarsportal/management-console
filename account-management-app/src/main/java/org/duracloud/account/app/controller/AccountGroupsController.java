@@ -3,18 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
 import org.duracloud.account.app.controller.GroupsForm.Action;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -25,7 +13,6 @@ import org.duracloud.account.util.DuracloudGroupService;
 import org.duracloud.account.util.error.DuracloudGroupAlreadyExistsException;
 import org.duracloud.account.util.error.DuracloudGroupNotFoundException;
 import org.duracloud.account.util.error.InvalidGroupNameException;
-import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -36,6 +23,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -126,7 +124,7 @@ public class AccountGroupsController extends AbstractAccountController {
             if(groups != null){
                 for (String name : groups) {
                     DuracloudGroup group = duracloudGroupService.getGroup(
-                        DuracloudGroup.PREFIX + name);
+                        DuracloudGroup.PREFIX + name, accountId);
                     removeGroup(group, accountId);
                 }
             }
@@ -137,8 +135,6 @@ public class AccountGroupsController extends AbstractAccountController {
         return GROUPS_VIEW_ID;
     }
 
-
-
     @RequestMapping(value = GROUP_PATH, method = RequestMethod.GET)
     public String getGroup(@PathVariable int accountId,
                            @PathVariable String groupName,
@@ -147,7 +143,7 @@ public class AccountGroupsController extends AbstractAccountController {
         addUserToModel(model);
         model.addAttribute(GROUPS_FORM_KEY, new GroupsForm());
         AccountService as = getAccountService(accountId);
-        List<DuracloudGroup> groups = getGroups(as);
+        List<DuracloudGroup> groups = getGroups(accountId);
         DuracloudGroup group = getGroup(groupName, groups);
         addGroupToModel(group, model);
 
@@ -155,8 +151,9 @@ public class AccountGroupsController extends AbstractAccountController {
         return GROUP_VIEW_ID;
     }
 
-    private List<DuracloudGroup> getGroups(AccountService as) {
-        Set<DuracloudGroup> set = this.duracloudGroupService.getGroups();
+    private List<DuracloudGroup> getGroups(int accountId) {
+        Set<DuracloudGroup> set =
+            this.duracloudGroupService.getGroups(accountId);
         List<DuracloudGroup> list = new LinkedList<DuracloudGroup>();
         if (set != null) {
             list.addAll(set);
@@ -173,7 +170,7 @@ public class AccountGroupsController extends AbstractAccountController {
 
         AccountService as = getAccountService(accountId);
         
-        List<DuracloudGroup> groups = getGroups(as);
+        List<DuracloudGroup> groups = getGroups(accountId);
         addGroupsObjectsToModel(as, groups, model);
 
         DuracloudGroup group = getGroup(groupName, groups);
@@ -217,7 +214,7 @@ public class AccountGroupsController extends AbstractAccountController {
         
         GroupForm.Action action = form.getAction();
         AccountService as = getAccountService(accountId);
-        List<DuracloudGroup> groups = getGroups(as);
+        List<DuracloudGroup> groups = getGroups(accountId);
         DuracloudGroup group = getGroup(groupName, groups);
         addGroupToModel(group, model);
 
@@ -349,10 +346,13 @@ public class AccountGroupsController extends AbstractAccountController {
 
     private void addGroupsObjectsToModel(AccountService as, Model model)
         throws Exception {
-        addGroupsObjectsToModel(as, this.getGroups(as), model);
+        int accountId = as.retrieveAccountInfo().getId();
+        addGroupsObjectsToModel(as, this.getGroups(accountId), model);
     }
 
-    private void addGroupsObjectsToModel(AccountService as, List<DuracloudGroup> groups, Model model)
+    private void addGroupsObjectsToModel(AccountService as,
+                                         List<DuracloudGroup> groups,
+                                         Model model)
         throws Exception {
         addUserToModel(model);
         model.addAttribute("accountId", as.getAccountId());
@@ -406,14 +406,17 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private DuracloudGroup getGroup(String groupName,
-                                    List<DuracloudGroup> groups) throws DuracloudGroupNotFoundException {
+                                    List<DuracloudGroup> groups)
+        throws DuracloudGroupNotFoundException {
         for (DuracloudGroup g : groups) {
             if (g.getName().equalsIgnoreCase(DuracloudGroup.PREFIX + groupName)) {
                 return g;
             }
         }
         
-        throw new DuracloudGroupNotFoundException("no group named '"+groupName+"' found in group set.");
+        throw new DuracloudGroupNotFoundException("no group named '" +
+                                                  groupName +
+                                                  "' found in group set.");
     }
 
     private void addGroupsToModel(Model model, List<DuracloudGroup> groups) {

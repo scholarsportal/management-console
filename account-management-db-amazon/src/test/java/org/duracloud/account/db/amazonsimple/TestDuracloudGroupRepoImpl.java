@@ -27,7 +27,7 @@ public class TestDuracloudGroupRepoImpl extends BaseTestDuracloudRepoImpl {
     private DuracloudGroupRepoImpl groupRepo;
 
     private static final String DOMAIN = "TEST_DURACLOUD_GROUPS";
-
+    private static final int accountId = 7;
     private static final String groupPrefix = DuracloudGroup.PREFIX;
     private static Set<Integer> userIds;
 
@@ -128,6 +128,34 @@ public class TestDuracloudGroupRepoImpl extends BaseTestDuracloudRepoImpl {
     }
 
     @Test
+    public void testFindByAccountId() throws DBConcurrentUpdateException {
+        DuracloudGroup group3 = createGroup(3, groupPrefix + "3", accountId);
+        DuracloudGroup group4 = createGroup(4, groupPrefix + "4", accountId);
+        DuracloudGroup group5 = createGroup(5, groupPrefix + "5", accountId + 1);
+
+        groupRepo.save(group3);
+        groupRepo.save(group4);
+        groupRepo.save(group5); // In a different account
+
+        Set<DuracloudGroup> expectedGroups = new HashSet<DuracloudGroup>();
+        expectedGroups.add(group3);
+        expectedGroups.add(group4);
+
+        Object result = new DBCaller<Set<DuracloudGroup>>() {
+            protected Set<DuracloudGroup> doCall() throws Exception {
+                return groupRepo.findByAccountId(accountId);
+            }
+        }.call(expectedGroups);
+
+        Set<DuracloudGroup> groups = (Set<DuracloudGroup>) result;
+        Assert.assertEquals(expectedGroups.size(), groups.size());
+
+        for (DuracloudGroup expectedGroup : expectedGroups) {
+            Assert.assertTrue(groups.contains(expectedGroup));
+        }
+    }
+
+    @Test
     public void testFindAllGroups() throws DBConcurrentUpdateException {
         DuracloudGroup group6 = createGroup(6, groupPrefix + "6");
         DuracloudGroup group7 = createGroup(7, groupPrefix + "7");
@@ -167,7 +195,11 @@ public class TestDuracloudGroupRepoImpl extends BaseTestDuracloudRepoImpl {
     }
 
     private DuracloudGroup createGroup(int id, String name) {
-        return new DuracloudGroup(id, name, userIds);
+        return new DuracloudGroup(id, name, accountId, userIds);
+    }
+
+    private DuracloudGroup createGroup(int id, String name, int acctId) {
+        return new DuracloudGroup(id, name, acctId, userIds);
     }
 
     private void verifyGroup(final DuracloudGroup group) {
@@ -181,7 +213,8 @@ public class TestDuracloudGroupRepoImpl extends BaseTestDuracloudRepoImpl {
     private void verifyGroupByName(final DuracloudGroup group) {
         new DBCaller<DuracloudGroup>() {
             protected DuracloudGroup doCall() throws Exception {
-                return groupRepo.findByGroupname(group.getName());
+                return groupRepo.findInAccountByGroupname(group.getName(),
+                                                          group.getAccountId());
             }
         }.call(group);
     }

@@ -158,9 +158,7 @@ public class DuracloudInstanceServiceImplTest
             accountClusterUtil.getAccountClusterUsers(account))
                 .andReturn(users);
 
-        EasyMock.expect(groupRepo.findAllGroups())
-            .andReturn(null)
-            .times(1);
+        setUpGetClusterGroupsMocks();
 
         instanceUpdater.updateUserDetails(EasyMock.isA(String.class),
                                           EasyMock.isA(Set.class),
@@ -317,18 +315,15 @@ public class DuracloudInstanceServiceImplTest
 
     @Test
     public void testSetUserRoles() throws Exception {
+        int accountId = 13;
         setUpServerImageMocks();
 
-        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
-        DuracloudGroup group = new DuracloudGroup(1, "group-test");
-        group.addUserId(1);
-        groups.add(group);
+        EasyMock.expect(instance.getAccountId()).andReturn(accountId);
+        EasyMock.expect(accountRepo.findById(accountId)).andReturn(account);
+        setUpGetClusterGroupsMocks();
 
-        EasyMock.expect(groupRepo.findAllGroups())
-            .andReturn(groups)
-            .times(1);
-
-        Capture<Set<SecurityUserBean>> capture = new Capture<Set<SecurityUserBean>>();
+        Capture<Set<SecurityUserBean>> capture =
+            new Capture<Set<SecurityUserBean>>();
         setUpUserRoleMocks(capture);
         Set<DuracloudUser> users = createUsers();
 
@@ -340,6 +335,25 @@ public class DuracloudInstanceServiceImplTest
 
         verifyData(users, beans);
         verifyRoles(users, beans);
+    }
+
+    private void setUpGetClusterGroupsMocks() throws DBNotFoundException {
+        Set<Integer> clusterAccountIds = new HashSet<Integer>();
+        clusterAccountIds.add(accountId);
+        int clusterAcctId = 14;
+        clusterAccountIds.add(clusterAcctId);
+        EasyMock.expect(accountClusterUtil.getClusterAccountIds(account))
+            .andReturn(clusterAccountIds);
+
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        DuracloudGroup group = new DuracloudGroup(1, "group-test", accountId);
+        group.addUserId(1);
+        groups.add(group);
+
+        EasyMock.expect(groupRepo.findByAccountId(accountId))
+            .andReturn(groups);
+        EasyMock.expect(groupRepo.findByAccountId(clusterAcctId))
+            .andReturn(groups);
     }
 
     private void setUpUserRoleMocks(Capture<Set<SecurityUserBean>> capturedUsers) {

@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
@@ -20,6 +21,7 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
+import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
@@ -223,6 +225,13 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         } catch (DBNotFoundException ex) {
             log.warn("No rights found for account {}, " +
                      "which is being deleted", accountId);
+        }
+
+        // Delete the groups associated with the account
+        DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();
+        Set<DuracloudGroup> groups = groupRepo.findByAccountId(accountId);
+        for(DuracloudGroup group : groups) {
+            groupRepo.delete(group.getId());
         }
 
         // Delete any user invitations

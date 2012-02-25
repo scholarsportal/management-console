@@ -31,7 +31,8 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
     }
 
     public static final String GROUPNAME_ATT = "GROUPNAME";
-    protected static final String USERS_ATT = "USERS";
+    public static final String USERS_ATT = "USERS";
+    public static final String ACCOUNT_ID_ATT = "ACCOUNT_ID";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(DuracloudGroup group) {
@@ -41,6 +42,9 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
 
         atts.add(new ReplaceableAttribute(GROUPNAME_ATT,
                                           group.getName(),
+                                          true));
+        atts.add(new ReplaceableAttribute(ACCOUNT_ID_ATT,
+                                          asString(group.getAccountId()),
                                           true));
         atts.add(new ReplaceableAttribute(USERS_ATT,
                                           idsAsString(group.getUserIds()),
@@ -55,6 +59,7 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
         int counter = -1;
         String groupname = null;
         Set<Integer> userIds = null;
+        int accountId = -1;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -68,6 +73,9 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
             } else if (USERS_ATT.equals(name)) {
                 userIds = idsFromString(value);
 
+            } else if (ACCOUNT_ID_ATT.equals(name)) {
+                accountId = idFromString(value, "Account", "Group", id);
+
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -79,6 +87,6 @@ public class DuracloudGroupConverter extends BaseDomainConverter implements Doma
             }
         }
 
-        return new DuracloudGroup(id, groupname, userIds, counter);
+        return new DuracloudGroup(id, groupname, accountId, userIds, counter);
     }
 }

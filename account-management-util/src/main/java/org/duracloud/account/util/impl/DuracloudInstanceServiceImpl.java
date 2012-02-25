@@ -17,6 +17,7 @@ import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
+import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -37,6 +38,7 @@ import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
@@ -61,6 +63,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private static final int MAX_INIT_RETRIES = 10;
 
     private int accountId;
+    private AccountInfo accountInfo;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
     private AccountUtil accountUtil;
@@ -148,8 +151,11 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     }
 
     private AccountInfo getAccount() throws DBNotFoundException {
-        DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
-        return accountRepo.findById(instance.getAccountId());
+        if(null == accountInfo) {
+            DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
+            accountInfo = accountRepo.findById(instance.getAccountId());
+        }
+        return accountInfo;
     }
 
     @Override
@@ -342,12 +348,12 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             throw new DuracloudInstanceUpdateException(msg);
         }
 
-        Set<DuracloudGroup> groups = null;
-        try {
-            groups =
-                repoMgr.getGroupRepo().findAllGroups();
-        } catch (DBNotFoundException e) {
-            log.warn("No groups found.");
+        // collect groups for the cluster
+        DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();
+        Set<Integer> clusterAcctIds = getClusterAccountIds();
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        for(int clusterAcctId : clusterAcctIds) {
+            groups.addAll(groupRepo.findByAccountId(clusterAcctId));
         }
 
         // collect user roles for this account
@@ -407,6 +413,17 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         // do the update
         updateUserDetails(userBeans);
+    }
+
+    private Set<Integer> getClusterAccountIds() {
+        try {
+            return accountClusterUtil.getClusterAccountIds(getAccount());
+        } catch(DBNotFoundException e) {
+            String error = "Could not retrieve account IDs for " +
+                "cluster associated with account with ID " + accountId +
+                " from the database due to: " + e.getMessage();
+            throw new DuraCloudRuntimeException(error);
+        }
     }
 
     private void updateUserDetails(Set<SecurityUserBean> userBeans) {

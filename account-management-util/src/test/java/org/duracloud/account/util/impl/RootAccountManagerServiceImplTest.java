@@ -7,6 +7,7 @@ import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
+import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
@@ -370,16 +371,17 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
     @Test
     public void testDeleteAccount() throws Exception {
-        setUpDeleteAccount();
+        int acctId = 7;
+        setUpDeleteAccount(acctId);
 
-        rootService.deleteAccount(1);
+        rootService.deleteAccount(acctId);
     }
 
-    private void setUpDeleteAccount() throws Exception {
+    private void setUpDeleteAccount(int acctId) throws Exception {
         EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
             .andReturn(new HashSet<DuracloudInstanceService>());
 
-        AccountInfo account = newAccountInfo(1);
+        AccountInfo account = newAccountInfo(acctId);
         EasyMock.expect(accountRepo.findById(EasyMock.anyInt()))
             .andReturn(account);
 
@@ -393,12 +395,23 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expectLastCall();
 
         Set<AccountRights> accountRights = new HashSet<AccountRights>();
-        accountRights.add(new AccountRights(1,1,1,null));
+        accountRights.add(new AccountRights(acctId,1,1,null));
 
         EasyMock.expect(rightsRepo.findByAccountIdSkipRoot(EasyMock.anyInt()))
             .andReturn(accountRights);
 
         rightsRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        int group1Id = 1;
+        int group2Id = 2;
+        groups.add(new DuracloudGroup(group1Id, "group-1", acctId, null));
+        groups.add(new DuracloudGroup(group2Id, "group-2", acctId, null));
+        EasyMock.expect(groupRepo.findByAccountId(acctId)).andReturn(groups);
+        groupRepo.delete(group1Id);
+        EasyMock.expectLastCall();
+        groupRepo.delete(group2Id);
         EasyMock.expectLastCall();
 
         EasyMock.expect(invitationRepo.findByAccountId(EasyMock.anyInt()))

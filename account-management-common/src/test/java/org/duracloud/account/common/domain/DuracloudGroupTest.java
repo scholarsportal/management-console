@@ -3,12 +3,12 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Daniel Bernstein
@@ -21,6 +21,7 @@ public class DuracloudGroupTest {
 
     private static final String testGroupname = DuracloudGroup.PREFIX + "test";
     private static final int groupId = 5;
+    private static final int accountId = 12;
 
     @Before
     public void setUp() throws Exception {
@@ -38,7 +39,7 @@ public class DuracloudGroupTest {
     @Test
     public void testNullConstructor() {
         try{
-            group = new DuracloudGroup(groupId, null);
+            group = new DuracloudGroup(groupId, null, accountId);
             Assert.assertTrue(false);
         }catch(IllegalArgumentException ex){
             Assert.assertTrue(true);
@@ -47,13 +48,13 @@ public class DuracloudGroupTest {
 
     @Test
     public void testConstructor() {
-        group = new DuracloudGroup(groupId, testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname, accountId);
         Assert.assertEquals(testGroupname, group.getName());
     }
 
     @Test
     public void testSetDuracloudUser(){
-        group = new DuracloudGroup(groupId, testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname, accountId);
         Set<Integer> userIds = new HashSet<Integer>();
         userIds.add(user.getId());
         group.setUserIds(userIds);
@@ -63,7 +64,7 @@ public class DuracloudGroupTest {
 
     @Test
     public void testAddUserId(){
-        group = new DuracloudGroup(groupId, testGroupname);
+        group = new DuracloudGroup(groupId, testGroupname, accountId);
         group.addUserId(user.getId());
         Assert.assertEquals(1, group.getUserIds().size());
     }
@@ -83,9 +84,12 @@ public class DuracloudGroupTest {
     @Test
     public void testEquals(){
         int id = groupId;
-        DuracloudGroup group1 = new DuracloudGroup(id++, testGroupname);
-        DuracloudGroup group2 = new DuracloudGroup(id++, testGroupname);
-        DuracloudGroup group3 = new DuracloudGroup(id++, testGroupname + 1);
+        DuracloudGroup group1 =
+            new DuracloudGroup(id++, testGroupname, accountId);
+        DuracloudGroup group2 =
+            new DuracloudGroup(id++, testGroupname, accountId);
+        DuracloudGroup group3 =
+            new DuracloudGroup(id++, testGroupname + 1, accountId);
 
         Assert.assertTrue(group1.equals(group2));
         Assert.assertFalse(group2.equals(group3));

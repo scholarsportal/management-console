@@ -4,10 +4,6 @@
 
 package org.duracloud.account.util.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.DuracloudGroupRepo;
@@ -22,6 +18,10 @@ import org.duracloud.account.util.error.InvalidGroupNameException;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Daniel Bernstein
@@ -42,24 +42,16 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
     }
 
     @Override
-    public Set<DuracloudGroup> getGroups() {
-        Set<DuracloudGroup> groups;
-        try {
-            groups = getGroupRepo().findAllGroups();
-
-        } catch (DBNotFoundException e) {
-            log.warn("No groups found.");
-            groups = new HashSet<DuracloudGroup>();
-        }
+    public Set<DuracloudGroup> getGroups(int acctId) {
+        Set<DuracloudGroup> groups = getGroupRepo().findByAccountId(acctId);
         return Collections.unmodifiableSet(groups);
     }
 
     @Override
-    public DuracloudGroup getGroup(String name)
+    public DuracloudGroup getGroup(String name, int acctId)
         throws DuracloudGroupNotFoundException {
         try {
-            return getGroupRepo().findByGroupname(name);
-
+            return getGroupRepo().findInAccountByGroupname(name, acctId);
         } catch (DBNotFoundException e) {
             throw new DuracloudGroupNotFoundException(name + " not found");
         }
@@ -73,12 +65,12 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             throw new InvalidGroupNameException(name);
         }
 
-        if (groupExists(name)) {
+        if (groupExistsInAccount(name, acctId)) {
             throw new DuracloudGroupAlreadyExistsException(name);
         }
 
         int newGroupId = getIdUtil().newGroupId();
-        DuracloudGroup group = new DuracloudGroup(newGroupId, name);
+        DuracloudGroup group = new DuracloudGroup(newGroupId, name, acctId);
         getGroupRepo().save(group);
 
         return group;
@@ -104,9 +96,9 @@ public class DuracloudGroupServiceImpl implements DuracloudGroupService {
             "\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
     }
 
-    private boolean groupExists(String name) {
+    private boolean groupExistsInAccount(String name, int acctId) {
         try {
-            getGroup(name);
+            getGroup(name, acctId);
             return true;
 
         } catch (DuracloudGroupNotFoundException e) {

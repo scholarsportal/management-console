@@ -3,9 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -16,6 +13,9 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -47,20 +47,20 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
         if (null == name) {
             name = DuracloudGroup.PREFIX + i;
         }
-        return new DuracloudGroup(i, name, null);
+        return new DuracloudGroup(i, name, acctId, null);
     }
 
     @Test
     public void testGetGroups() throws Exception {
         createGetGroupsMocks();
 
-        Set<DuracloudGroup> groupsFound = groupService.getGroups();
+        Set<DuracloudGroup> groupsFound = groupService.getGroups(acctId);
         Assert.assertNotNull(groupsFound);
         Assert.assertEquals(groups, groupsFound);
     }
 
     private void createGetGroupsMocks() throws DBNotFoundException {
-        EasyMock.expect(groupRepo.findAllGroups()).andReturn(groups);
+        EasyMock.expect(groupRepo.findByAccountId(acctId)).andReturn(groups);
         replayMocks();
     }
 
@@ -69,15 +69,16 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
         DuracloudGroup groupExpected = createGetGroupMocks();
 
         DuracloudGroup groupFound =
-            groupService.getGroup(groupExpected.getName());
+            groupService.getGroup(groupExpected.getName(), acctId);
         Assert.assertNotNull(groupFound);
         Assert.assertEquals(groupExpected, groupFound);
     }
 
     private DuracloudGroup createGetGroupMocks() throws DBNotFoundException {
         DuracloudGroup group = createGroup(0);
-        EasyMock.expect(groupRepo.findByGroupname(group.getName())).andReturn(
-            group);
+        EasyMock
+            .expect(groupRepo.findInAccountByGroupname(group.getName(), acctId))
+            .andReturn(group);
         replayMocks();
 
         return group;
@@ -160,12 +161,14 @@ public class DuracloudGroupServiceImplTest extends DuracloudServiceTestBase {
         throws DBNotFoundException, DBConcurrentUpdateException {
         DuracloudGroup group = createGroup(id, name);
         if (exists) {
-            EasyMock.expect(groupRepo.findByGroupname(group.getName()))
+            EasyMock.expect(groupRepo.findInAccountByGroupname(group.getName(),
+                                                               acctId))
                     .andReturn(group);
 
         } else {
             EasyMock.expect(idUtil.newGroupId()).andReturn(id);
-            EasyMock.expect(groupRepo.findByGroupname(group.getName()))
+            EasyMock.expect(groupRepo.findInAccountByGroupname(group.getName(),
+                                                               acctId))
                     .andThrow(new DBNotFoundException("canned exception"));
             groupRepo.save(EasyMock.<DuracloudGroup>anyObject());
             EasyMock.expectLastCall();
