@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
+  <form:form
+   modelAttribute="serverImageForm"
+   method="POST">
+    <fieldset>
+      <legend>
+        <tiles:insertAttribute
+         name="formTitle" />
+      </legend>
+
+      <ol>
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="providerAccountId">
+            <spring:message
+             code="serverimage.provideraccountid" />
+          </form:label>
+
+          <form:select
+           cssErrorClass="error"
+           path="providerAccountId">
+            <form:options
+             items="${providerAccountIds}" />
+          </form:select>
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="providerImageId">
+            <spring:message
+             code="serverimage.imageid" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="providerImageId" />
+
+          <form:errors
+           path="providerImageId"
+           cssClass="error"
+           element="div" />
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="version">
+            <spring:message
+             code="version" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="version" />
+
+          <form:errors
+           path="version"
+           cssClass="error"
+           element="div" />
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="description">
+            <spring:message
+             code="description" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="description" />
+
+          <form:errors
+           path="description"
+           cssClass="error"
+           element="div" />
+        </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="password">
+            <spring:message
+             code="password" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="password" />
+
+          <form:errors
+           path="password"
+           cssClass="error"
+           element="div" />
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset>
+      <legend>Is this the latest version?</legend>
+
+      <ol>
+        <li>
+          <spring:message
+           code="latest"
+           var="latest" />
+
+          <form:checkbox
+           label="${latest}"
+           path="latest" />
+        </li>
+      </ol>
+    </fieldset>
+
+    <fieldset
+     class="button-bar">
+      <a
+       href="${pageContext.request.contextPath}/root/serverimages"
+       id="cancel"
+       class="button"
+       name="action">
+        <spring:message
+         code="cancel" />
+      </a>
+
+      <button
+       id="ok"
+       name="action"
+       value="ok"
+       type="submit">
+        <spring:message
+         code="ok" />
+      </button>
+    </fieldset>
+  </form:form>
+</jsp:root>
+

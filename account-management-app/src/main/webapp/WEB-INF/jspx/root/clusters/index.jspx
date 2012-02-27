@@ -1,0 +1,15 @@
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:spring="http://www.springframework.org/tags" 
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <tiles:insertDefinition name="clusters-base" flush="true">
+    <tiles:putAttribute name="title">Account Clusters</tiles:putAttribute>
+    <tiles:putAttribute name="mainContent" cascade="true">
+      <a href="cluster/new" class="button">New</a>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

@@ -1,0 +1,14 @@
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:spring="http://www.springframework.org/tags" 
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <tiles:insertDefinition name="root-base" flush="true">
+    <tiles:putAttribute name="title">Root Console Home</tiles:putAttribute>
+    <tiles:putAttribute name="primaryTab" cascade="true">home</tiles:putAttribute>
+    <tiles:putAttribute name="mainContent" cascade="true">Test</tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

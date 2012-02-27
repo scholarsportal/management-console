@@ -54,13 +54,10 @@ button,
 
 button,
 .button
-{
-	background-color:-webkit-gradient(;
-	background: -moz-linear-gradient(top, #797979, #515151); 	/* For WebKit (Safari, Google Chrome etc) */
-
-
-
-
+{	
+	background-color:#515151;
+	background: -moz-linear-gradient(top, #797979, #515151);
+	background: -webkit-gradient(linear, left top, left bottom, from(#797979), to(#515151)); 	/* For WebKit (Safari, Google Chrome etc) */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979, endColorstr=#FF515151); /* For Internet Explorer 5.5 - 7 */
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979, endColorstr=#FF515151)";	/* For Internet Explorer 8 */
 	cursor:pointer;
@@ -85,15 +82,7 @@ button.featured,
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FF999999)";	/* For Internet Explorer 8 */
 	color:#444;
 }
-.button.dura
-{ 
-	background-color:#f9f9f9;
-	background: -moz-linear-gradient(top, #e4e4e4, #f9f9f9);
-	background: -webkit-gradient(linear, left top, left bottom, from(#e4e4e4), to(#f9f9f9)); 	/* For WebKit (Safari, Google Chrome etc) */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FFf9f9f9); /* For Internet Explorer 5.5 - 7 */
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFe4e4e4, endColorstr=#FFf9f9f9)";	/* For Internet Explorer 8 */
-	color:#f9f9f9;
-}
+
 button.primary,
 .button.primary
 {
@@ -104,6 +93,7 @@ button.primary,
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de, endColorstr=#FF2375b2); /* For Internet Explorer 5.5 - 7 */
 	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de, endColorstr=#FF2375b2)";	/* For Internet Explorer 8 */
 	color:#56ffff;
+    width:122px;
 }
 
 button.primary:hover,
@@ -160,6 +150,12 @@ span.switch i,
 	margin-top:-1px;
 	vertical-align:middle;
 	width:14px;
+}
+
+button.save
+{
+    vertical-align:top;
+    padding-bottom:5px;
 }
 
 .icon-link:hover i
@@ -263,10 +259,7 @@ span.off i,
 
 .plus { background-image:url(../img/icon_sm_plus.png); }
 .featured .plus { background-image:url(../img/icon_sm_plus_featured.png); }
-.pencil {
-	background-image:url(../img/icon_sm_pencil.png);
-	float: left; !important
-}
+.pencil { background-image:url(../img/icon_sm_pencil.png); }
 .trash { background-image:url(../img/icon_sm_trash.png); }
 .x { background:url(../img/icon_sm_x.png); }
 .lock { background-image:url(../img/icon_sm_lock.png); }

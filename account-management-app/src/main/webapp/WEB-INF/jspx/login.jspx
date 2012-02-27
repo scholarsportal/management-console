@@ -15,26 +15,7 @@
 
 <head>
 <title>Duracloud Management Console: Login</title>
-
-<link
-  href="${pageContext.request.contextPath}/static/css/global.css"
-  rel="stylesheet"
-  type="text/css" />
-<link
-  href="${pageContext.request.contextPath}/static/css/flex.css"
-  rel="stylesheet"
-  type="text/css" />
-<link
-  href="${pageContext.request.contextPath}/static/css/buttons2.css"
-  rel="stylesheet"
-  type="text/css" />
-<link
-  href="${pageContext.request.contextPath}/static/css/blue-buttons.css"
-  rel="stylesheet"
-  type="text/css" />
-<link
-  rel="shortcut icon"
-  href="${pageContext.request.contextPath}/static/img/favicon.ico" />
+<jsp:include page="/WEB-INF/jspx/includes/global-styles.jspx"/>
 
   <style>
 #dc-logo {
@@ -75,31 +56,11 @@
 .form ul {
     float:right;
 }
-form label {
-	float: left;
-	font-size: 13px;
-	width: 50px;
-    padding:10px;
-}
-
-form input {
-    float:right;    
-}
-
 
 [type='submit']{
   float:right;
 }
 
-form fieldset {
-  width: 400px;
-  margin-bottom:10px;
-}
-form ol li {
-list-style: none;
-padding:20px 0px 20px 20px;
-vertical-align:middle;
-}
 #footer-content {
 	width: 80%;
     float:none;
@@ -137,13 +98,11 @@ vertical-align:middle;
               name="j_username"
               type="text"
               autofocus="true"
-              class="field"
               id="username" /></li>
 
             <li><label>Password</label> <input
               name="j_password"
               type="password"
-              class="field"
               id="password" /></li>
           </ol>
         </fieldset>
@@ -167,10 +126,12 @@ vertical-align:middle;
       </ul>
     </div>
   </div>
+  <div class="ft">
   <div id="footer-content">
     <jsp:include page="/WEB-INF/jspx/includes/footer-content.jspx" />
   </div>
-
+  </div>
+  
 </body>
 </html>
 </jsp:root>

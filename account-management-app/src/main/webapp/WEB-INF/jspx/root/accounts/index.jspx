@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <tiles:insertDefinition
+   name="accounts-base"
+   flush="true">
+    <tiles:putAttribute
+     name="title">Accounts Home</tiles:putAttribute>
+
+    <tiles:putAttribute
+     name="mainContent"
+     cascade="true">
+      <spring:message
+       code="account"
+       var="entityName" />
+
+      <a
+       id="new"
+       href="${pageContext.request.contextPath}/create-account"
+       class="button">
+        <spring:message
+         code="new"
+         arguments="${entityName}" />
+      </a>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

@@ -13,6 +13,7 @@
 
   <http auto-config="false" use-expressions="true">
     <access-denied-handler error-page="/access-denied" />
+    <intercept-url pattern="/root/**" access="hasRole('ROLE_ROOT')" />
     <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')" />

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:f="http://java.sun.com/jsp/jstl/functions"
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <c:set
+   var="currentUri" scope="request"
+   value="${requestScope['javax.servlet.forward.request_uri']}" />
+
+  <tiles:insertDefinition
+   name="servicerepositories-base"
+   flush="true">
+    <tiles:putAttribute
+     name="title">
+      <spring:message
+       code="servicerepositories" />
+    </tiles:putAttribute>
+
+    <tiles:putAttribute
+     name="mainContent"
+     cascade="true">
+      <div
+       class="button-bar clearfix">
+
+        <spring:message
+         code="servicerepository"
+         var="entityName" />
+        <a
+         id="new"
+         href="${currentUri}/new"
+         class="button">
+          <spring:message
+           code="new"
+           arguments="${entityName}" />
+        </a>
+      </div>
+
+</tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

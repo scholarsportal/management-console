@@ -54,7 +54,7 @@ public abstract class SimpleFormBot extends BaseBot implements FormBot{
     }
     
     public void cancel(){
-        clickAndWait("css=#cancel-button");
+        clickAndWait("css=#cancel");
         Assert.assertTrue(isCancelSuccess(config));
     }
     

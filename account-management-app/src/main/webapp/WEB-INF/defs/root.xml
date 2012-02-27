@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+  <definition name="app-base-2" template="/WEB-INF/jspx/layout/base2.jspx" preparer="globalPreparer">
+    <put-attribute name="title" value="title" />
+    <put-attribute name="header-extensions" />
+    <put-attribute name="body" value="body" />
+  </definition>
+  <definition name="root-base" extends="app-base-2">
+    <put-attribute name="title" />
+    <put-attribute name="body">
+      <definition template="/WEB-INF/jspx/layout/root-body.jspx" preparer="rootPreparer">
+        <put-attribute name="primaryTab" cascade="true" />
+        <put-attribute name="mainContent" cascade="true" />
+      </definition>
+    </put-attribute>
+  </definition>
+  <!-- top level root views -->
+  <definition name="/root" template="/WEB-INF/jspx/root/index.jspx" />
+ 
+  <!-- account views views -->
+  <definition name="accounts-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="accounts" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+  <definition name="/root/accounts" template="/WEB-INF/jspx/root/accounts/index.jspx" />
+
+
+  <!-- cluster views -->
+  <definition name="clusters-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="clusters" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+  <definition name="/root/clusters" template="/WEB-INF/jspx/root/clusters/index.jspx" />
+
+  <!-- user views -->
+  <definition name="users-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="users" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+  <definition name="/root/users" template="/WEB-INF/jspx/root/users/index.jspx" />
+
+  <!-- server image views -->
+  <definition name="serverimages-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="serverimages" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+
+  <definition name="serverimages-form" template="/WEB-INF/jspx/root/serverimages/form.jspx">
+    <put-attribute name="formTitle" cascade="true" />
+  </definition>
+  
+  <definition name="serverimages-form-base" extends="serverimages-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="serverimages" />
+    <put-attribute name="mainContent" cascade="true">
+      <definition extends="serverimages-form">
+        <put-attribute name="formTitle" cascade="true" />
+      </definition>
+    </put-attribute>
+  </definition>
+
+  <definition name="/root/serverimages" template="/WEB-INF/jspx/root/serverimages/index.jspx" preparer="globalPreparer"/>
+  <definition name="/root/serverimages/new" template="/WEB-INF/jspx/root/serverimages/new.jspx" preparer="globalPreparer"/>
+  <definition name="/root/serverimages/edit" template="/WEB-INF/jspx/root/serverimages/edit.jspx" preparer="globalPreparer"/>
+
+  <!-- service repository views -->
+  <definition name="servicerepositories-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="servicerepositories" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+  <definition name="/root/servicerepositories" template="/WEB-INF/jspx/root/servicerepositories/index.jspx" preparer="globalPreparer"/>
+</tiles-definitions>
