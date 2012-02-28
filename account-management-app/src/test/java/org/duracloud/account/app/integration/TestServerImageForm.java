@@ -68,7 +68,7 @@ class ServerImageFormConfig extends FormConfig {
 
     @Override
     public String getFormId() {
-        return "serverImageForm";
+        return "form";
     }
 
     @Override
