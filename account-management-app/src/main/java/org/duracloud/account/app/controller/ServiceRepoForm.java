@@ -1,6 +1,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class ServiceRepoForm {
@@ -24,8 +25,7 @@ public class ServiceRepoForm {
 
     private ServicePlan servicePlan;
 
-    @NotBlank(message = "You must specify a service repo type.")
-    private String serviceRepoType;
+    private ServiceRepositoryType serviceRepoType;
 
     public String getHostName() {
         return hostName;
@@ -83,11 +83,11 @@ public class ServiceRepoForm {
         this.servicePlan = servicePlan;
     }
 
-    public String getServiceRepoType() {
+    public ServiceRepositoryType getServiceRepoType() {
         return serviceRepoType;
     }
 
-    public void setServiceRepoType(String serviceRepoType) {
+    public void setServiceRepoType(ServiceRepositoryType serviceRepoType) {
         this.serviceRepoType = serviceRepoType;
     }
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.duracloud.account.app.controller.ManageServiceReposController;
+import org.duracloud.account.app.controller.ServiceRepositoryController;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -40,43 +41,44 @@ class ServiceRepositoryFormBot extends SimpleFormBot {
 }
 
 class ServiceRepoAddFormConfig extends FormConfig {
-    public static final String HOST_NAME_FIELD_KEY = "host-name-text";
+    public static final String HOST_NAME_FIELD_KEY = "hostName";
 
     @Override
     protected Map<String, String> createDefaultFieldMap() {
         Map<String, String> map = new HashMap<String, String>();
         map.put(HOST_NAME_FIELD_KEY, "testhost.duracloud.org");
-        map.put("space-id-text", "test-space-id");
-        map.put("xml-id-text", "test-service-xml");
-        map.put("version-text", "test-version");
-        map.put("username-text", "test-username");
-        map.put("password-text", "test-password");
+        map.put("spaceId", "test-space-id");
+        map.put("xmlId", "test-service-xml");
+        map.put("version", "test-version");
+        map.put("userName", "test-username");
+        map.put("password", "test-password");
         return map;
     }
 
     @Override
     public String getFormPath() {
-        return ManageServiceReposController.MANAGE_SERVICE_REPO_NEW_MAPPING;
+        return ServiceRepositoryController.BASE_MAPPING
+            + ServiceRepositoryController.NEW_MAPPING;
     }
 
     @Override
     public String getFormId() {
-        return "service-repo-form";
+        return "form";
     }
 
     @Override
     String getCancelSuccessLocator() {
-        return "css=.service-repos";
+        return "css=table#serviceRepositories";
     }
 
     @Override
     public String getSubmitSuccessLocator() {
-        return formatHostNameLocator(getFieldNameValueMap().get(HOST_NAME_FIELD_KEY));
+        return "css=.success";
     }
-
+    
     private String formatHostNameLocator(String hostName) {
-        String template = "css=.service-repos [data-{0}=\"{1}\"]";
-        String locator = MessageFormat.format(template, "host-name", hostName);
+        String template = "css=table#serviceRepositories [data-{0}=\"{1}\"]";
+        String locator = MessageFormat.format(template, "hostName", hostName);
         return locator;
     }
 

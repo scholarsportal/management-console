@@ -11,8 +11,13 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ManageServiceReposControllerTest extends AmaControllerTestBase {
-    private ManageServiceReposController manageServiceReposController;
+/**
+ * 
+ * @author Daniel Bernstein
+ *
+ */
+public class ServiceRepositoryControllerTest extends AmaControllerTestBase {
+    private ServiceRepositoryController serviceRepositoryController;
     private RootAccountManagerService rootAccountManagerService;
 
     @Before
@@ -21,15 +26,16 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
                                                         RootAccountManagerService.class);
         mocks.add(rootAccountManagerService);
-        manageServiceReposController = new ManageServiceReposController();
-        manageServiceReposController.setRootAccountManagerService(rootAccountManagerService);
+        serviceRepositoryController = new ServiceRepositoryController();
+        serviceRepositoryController.setRootAccountManagerService(rootAccountManagerService);
+        addFlashAttribute();
     }
 
     @Test
     public void testAdd() throws Exception {
         // set up mocks, and args
         ServiceRepoForm serviceRepoForm = new ServiceRepoForm();
-        serviceRepoForm.setServiceRepoType("PRIVATE");
+        serviceRepoForm.setServiceRepoType(ServiceRepositoryType.PRIVATE);
         serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL);
         serviceRepoForm.setHostName("hostname");
         serviceRepoForm.setVersion("version");
@@ -54,8 +60,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         replayMocks();
 
         // method under test
-        manageServiceReposController.add(serviceRepoForm, result, model);
-
+        serviceRepositoryController.create(serviceRepoForm, result, model, redirectAttributes);
         EasyMock.verify(rootAccountManagerService);
     }
 
@@ -64,7 +69,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         rootAccountManagerService.deleteServiceRepository(1);
         EasyMock.expectLastCall();
         replayMocks();
-        this.manageServiceReposController.delete(1, model);
+        this.serviceRepositoryController.delete(1, redirectAttributes);
     }
 
     @Test
@@ -73,7 +78,7 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         int repoId = 7;
 
         ServiceRepoForm serviceRepoForm = new ServiceRepoForm();
-        serviceRepoForm.setServiceRepoType("PRIVATE");
+        serviceRepoForm.setServiceRepoType(ServiceRepositoryType.PRIVATE);
         serviceRepoForm.setServicePlan(ServicePlan.PROFESSIONAL);
         serviceRepoForm.setHostName("hostname");
         serviceRepoForm.setVersion("version");
@@ -97,10 +102,11 @@ public class ManageServiceReposControllerTest extends AmaControllerTestBase {
         replayMocks();
 
         // method under test
-        manageServiceReposController.edit(repoId,
+        serviceRepositoryController.update(repoId,
                                           serviceRepoForm,
                                           result,
-                                          model);
+                                          model,
+                                          redirectAttributes);
 
     }
 }

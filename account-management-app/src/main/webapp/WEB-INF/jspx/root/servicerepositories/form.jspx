@@ -20,36 +20,40 @@
         <li>
           <form:label
            cssErrorClass="error"
-           path="providerAccountId">
+           path="hostName">
             <spring:message
-             code="serverimage.provideraccountid" />
+             code="servicerepository.hostname" />
           </form:label>
 
-          <form:select
+          <form:input
            cssErrorClass="error"
-           path="providerAccountId">
-            <form:options
-             items="${providerAccountIds}" />
-          </form:select>
+           path="hostName" />
+
+          <form:errors
+           path="hostName"
+           cssClass="error"
+           element="div" />
         </li>
 
         <li>
           <form:label
            cssErrorClass="error"
-           path="providerImageId">
+           path="spaceId">
             <spring:message
-             code="serverimage.imageid" />
+             code="servicerepository.spaceid" />
           </form:label>
 
           <form:input
            cssErrorClass="error"
-           path="providerImageId" />
+           path="spaceId" />
 
           <form:errors
-           path="providerImageId"
+           path="spaceId"
            cssClass="error"
            element="div" />
         </li>
+
+
 
         <li>
           <form:label
@@ -72,20 +76,40 @@
         <li>
           <form:label
            cssErrorClass="error"
-           path="description">
+           path="xmlId">
             <spring:message
-             code="description" />
+             code="servicerepository.servicexmlid" />
           </form:label>
 
           <form:input
            cssErrorClass="error"
-           path="description" />
+           path="xmlId" />
 
           <form:errors
-           path="description"
+           path="xmlId"
            cssClass="error"
            element="div" />
         </li>
+ 
+
+         <li>
+          <form:label
+           cssErrorClass="error"
+           path="userName">
+            <spring:message
+             code="username" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="userName" />
+
+          <form:errors
+           path="userName"
+           cssClass="error"
+           element="div" />
+        </li>
+
 
         <li>
           <form:label
@@ -104,22 +128,39 @@
            cssClass="error"
            element="div" />
         </li>
-      </ol>
-    </fieldset>
 
-    <fieldset>
-      <legend>Is this the latest version?</legend>
-
-      <ol>
         <li>
-          <spring:message
-           code="latest"
-           var="latest" />
+          <form:label
+           cssErrorClass="error"
+           path="servicePlan">
+            <spring:message
+             code="servicerepository.serviceplan" />
+          </form:label>
 
-          <form:checkbox
-           label="${latest}"
-           path="latest" />
+          <form:select
+           cssErrorClass="error"
+           path="servicePlan">
+            <form:options
+             items="${servicePlans}" />
+          </form:select>
         </li>
+
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="serviceRepoType">
+            <spring:message
+             code="servicerepository.servicerepositorytype" />
+          </form:label>
+
+          <form:select
+           cssErrorClass="error"
+           path="serviceRepoType">
+            <form:options
+             items="${serviceRepositoryTypes}" />
+          </form:select>
+        </li>
+        
       </ol>
     </fieldset>
 
@@ -134,7 +175,7 @@
          code="ok" />
       </button>
       <a
-       href="${pageContext.request.contextPath}/root/serverimages"
+       href="${pageContext.request.contextPath}/root/servicerepositories"
        id="cancel"
        class="button"
        name="action">

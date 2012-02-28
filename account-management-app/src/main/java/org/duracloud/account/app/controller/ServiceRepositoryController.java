@@ -1,38 +1,109 @@
+/*
+ * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.common.domain.ServiceRepository;
+import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+
+/**
+ * 
+ * @author Daniel Bernstein
+ *         Date: Feb 27, 2012
+ */
 
 @Controller
 @RequestMapping(ServiceRepositoryController.BASE_MAPPING)
-public class ServiceRepositoryController {
-    public static final String BASE_MAPPING = RootConsoleHomeController.BASE_MAPPING + "/servicerepositories";
-    private static final String NEW_MAPPING = AbstractController.NEW_MAPPING;
-    private static final String BASE_VIEW = BASE_MAPPING;
-    private static final String NEW_VIEW = BASE_MAPPING + NEW_MAPPING;
+public class ServiceRepositoryController extends AbstractRootCrudController<ServiceRepoForm>{
     
-    @RequestMapping("")
-    public ModelAndView redirect() {
-        return new ModelAndView(new RedirectView(BASE_MAPPING+"/", true));
-    }
- 
-    
-    @RequestMapping("/")
-    public ModelAndView get(){
-        return new ModelAndView(BASE_VIEW);
+    @ModelAttribute("serviceRepositoryTypes")
+    public ServiceRepositoryType[] serviceRepositoryTypes(){
+        return ServiceRepositoryType.values();
     }
 
-    @RequestMapping(NEW_MAPPING)
-    public ModelAndView getNew(){
-        return new ModelAndView(NEW_VIEW);
+    @ModelAttribute("servicePlans")
+    public ServicePlan[] servicePlans(){
+        return ServicePlan.values();
     }
 
-    @RequestMapping(value=NEW_MAPPING, method = RequestMethod.POST )
-    public ModelAndView postNew(){
-        return new ModelAndView(NEW_VIEW);
+    public ServiceRepositoryController() {
+        super(ServiceRepoForm.class);
+    }
+
+    private static final String RELATIVE_MAPPING = "/servicerepositories";
+    public static final String BASE_MAPPING =
+        RootConsoleHomeController.BASE_MAPPING + RELATIVE_MAPPING;
+
+
+    @Override
+    protected String getBaseViewId() {
+        return super.getBaseView() + RELATIVE_MAPPING;
+    }
+
+    @Override
+    public ModelAndView get() {
+        ModelAndView mav = new ModelAndView(getBaseViewId());
+        mav.addObject("serviceRepositories",
+                      getRootAccountManagerService().listAllServiceRepositories(null));
+        return mav;
+
+    }
+
+    @Override
+    protected void create(ServiceRepoForm form) {
+        getRootAccountManagerService().createServiceRepository(form.getServiceRepoType(),
+                                                               form.getServicePlan(),
+                                                               form.getHostName(),
+                                                               form.getSpaceId(),
+                                                               form.getXmlId(),
+                                                               form.getVersion(),
+                                                               form.getUserName(),
+                                                               form.getPassword());
+        
+    }
+
+    @Override
+    protected Object getEntity(int id) {
+        return getRootAccountManagerService().getServiceRepository(id);
+    }
+
+    @Override
+    protected ServiceRepoForm loadForm(Object obj) {
+        ServiceRepository entity = (ServiceRepository)obj;
+        ServiceRepoForm form = form();
+        form.setHostName(entity.getHostName());
+        form.setSpaceId(entity.getSpaceId());
+        form.setXmlId(entity.getServiceXmlId());
+        form.setVersion(entity.getVersion());
+        form.setUserName(entity.getUsername());
+        form.setPassword(entity.getPassword());
+        form.setServicePlan(entity.getServicePlan());
+        form.setServiceRepoType(entity.getServiceRepositoryType());
+        return form;
+    }
+
+    @Override
+    protected void update(int id, ServiceRepoForm form) {
+        getRootAccountManagerService().editServiceRepository(id,
+                                                        form.getServiceRepoType(),
+                                                        form.getServicePlan(),
+                                                        form.getHostName(),
+                                                        form.getSpaceId(),
+                                                        form.getXmlId(),
+                                                        form.getVersion(),
+                                                        form.getUserName(),
+                                                        form.getPassword());
+        
+    }
+
+    @Override
+    protected void delete(int id) {
+        getRootAccountManagerService().deleteServiceRepository(id);
     }
 
 

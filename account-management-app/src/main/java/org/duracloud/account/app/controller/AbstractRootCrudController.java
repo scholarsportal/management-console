@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * 
  * @author Daniel Bernstein
- *         Date: Feb 17, 2012
+ *         Date: Feb 27, 2012
  */
-public abstract class AbstractRootController extends AbstractController{
+public abstract class AbstractRootCrudController<T> extends AbstractCrudController<T>{
 
+    public AbstractRootCrudController(Class<T> clazz) {
+        super(clazz);
+    }
 
     @Autowired(required = true)
     private RootAccountManagerService rootAccountManagerService;

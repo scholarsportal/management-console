@@ -8,6 +8,8 @@
  xmlns:c="http://java.sun.com/jsp/jstl/core"
  xmlns:f="http://java.sun.com/jsp/jstl/functions"
  xmlns:sec="http://www.springframework.org/security/tags">
+ <jsp:directive.page contentType="text/html; charset=utf-8" />
+
   <c:set
    var="currentUri" scope="request"
    value="${requestScope['javax.servlet.forward.request_uri']}" />
@@ -20,6 +22,26 @@
       <spring:message
        code="servicerepositories" />
     </tiles:putAttribute>
+
+   <tiles:putAttribute
+     name="header-extensions">
+      <script>
+        $(function(){
+            $(".delete").click(function(evt){
+              var answer = confirm('<spring:message code="servicerepository.delete.confirm"/>');
+              
+              if (answer) {
+                  t.form.submit();
+                  return true;
+            }
+                      
+              return false;
+            });
+        });
+      </script>
+     
+    </tiles:putAttribute>
+
 
     <tiles:putAttribute
      name="mainContent"
@@ -39,7 +61,98 @@
            arguments="${entityName}" />
         </a>
       </div>
+    <c:choose>
+        <c:when
+         test="${not empty serviceRepositories}">
+          <table
+           id="serviceRepositories"
+           class="entity-list">
+            <thead>
+              <tr>
+                <th>
+                  <spring:message
+                   code="servicerepository.hostname" />
+                </th>
 
+                <th>
+                  <spring:message
+                   code="servicerepository.spaceid" />
+                </th>
+
+                <th>
+                  <spring:message
+                   code="servicerepository.servicexmlid" />
+                </th>
+
+                <th>
+                  <spring:message
+                   code="version" />
+                </th>
+                <th>
+                  <spring:message
+                   code="username" />
+                </th>
+                <th>
+                  <spring:message
+                   code="servicerepository.servicerepositorytype" />
+                </th>
+                <th colspan="3">
+                  <spring:message
+                   code="servicerepository.serviceplan" />
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <c:forEach
+               var="i"
+               items="${serviceRepositories}">
+                <tr
+                 data-hostName="${i.hostName}">
+                  <td>${i.hostName}</td>
+                  <td>${i.spaceId}</td>
+                  <td>${i.serviceXmlId}</td>
+                  <td>${i.version}</td>
+                  <td>${i.username}</td>
+                  <td>${i.serviceRepositoryType}</td>
+                  <td>${i.servicePlan}</td>
+                  <td>
+                    <a class="button featured edit"
+                     href="${currentUri}/byid/${i.id}/edit">
+                          <i class="pre pencil"><!--  --></i>
+                      <spring:message
+                       code="edit" />
+                    </a>
+                  </td>
+
+                  <td>
+                      <form
+                       action="${currentUri}/byid/${i.id}/delete"
+                       method="post">
+                        <input
+                         type="hidden"
+                         name="id"
+                         value="${i.id}" />
+
+                        <button
+                         class="delete"
+                         type="submit">
+                          <i class="pre trash"><!--  --></i>
+                          <spring:message
+                           code="delete" />
+                        </button>
+                      </form>
+                  </td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+        </c:when>
+
+        <c:otherwise>
+          <p>There are no service repositories currently defined.</p>
+        </c:otherwise>
+      </c:choose>
 </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>
