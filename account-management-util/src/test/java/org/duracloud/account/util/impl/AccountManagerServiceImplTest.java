@@ -12,6 +12,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountClusterDescriptor;
 import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -317,4 +318,31 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
         Assert.assertEquals(clusterName, cluster.getClusterName());
     }
 
+    
+    @Test
+    public void testAccountClusterList() throws Exception {
+
+        int clusterId = 1;
+        String clusterName = "clustery";
+        AccountCluster cluster =
+            new AccountCluster(clusterId, clusterName, new HashSet<Integer>());
+
+        Set<Integer> ids = new HashSet<Integer>();
+        ids.add(clusterId);
+
+        EasyMock.expect(accountClusterRepo.getIds()).andReturn(ids).times(2);
+        EasyMock.expect(accountClusterRepo.findById(clusterId)).andReturn(cluster).times(2);
+        replayMocks();
+        setUpAccountManagerService();
+        
+        //first pass no filter
+        Set<AccountClusterDescriptor> clusters = accountManagerService.listAccountClusters(null);
+        Assert.assertEquals(1, clusters.size());
+        Assert.assertEquals(clusterName, clusters.iterator().next().getName());
+        
+        //second pass with filter
+        Assert.assertEquals(0, accountManagerService.listAccountClusters("notclustery").size());
+        
+    }
+    
 }

@@ -94,4 +94,32 @@
   <definition name="/root/servicerepositories" template="/WEB-INF/jspx/root/servicerepositories/index.jspx" preparer="globalPreparer"/>
   <definition name="/root/servicerepositories/new" template="/WEB-INF/jspx/root/servicerepositories/new.jspx" preparer="globalPreparer"/>
   <definition name="/root/servicerepositories/edit" template="/WEB-INF/jspx/root/servicerepositories/edit.jspx" preparer="globalPreparer"/>
+
+
+  <!-- account cluster views -->
+  <definition name="clusters-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="clusters" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+
+  <definition name="clusters-form" template="/WEB-INF/jspx/root/clusters/form.jspx">
+    <put-attribute name="formTitle" cascade="true" />
+  </definition>  
+  
+  <definition name="clusters-form-base" extends="clusters-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="clusters" />
+    <put-attribute name="mainContent" cascade="true">
+      <definition extends="clusters-form">
+        <put-attribute name="formTitle" cascade="true" />
+      </definition>
+    </put-attribute>
+  </definition>
+
+  <definition name="/root/clusters" template="/WEB-INF/jspx/root/clusters/index.jspx" preparer="globalPreparer"/>
+  <definition name="/root/clusters/new" template="/WEB-INF/jspx/root/clusters/new.jspx" preparer="globalPreparer"/>
+  <definition name="/root/clusters/edit" template="/WEB-INF/jspx/root/clusters/edit.jspx" preparer="globalPreparer"/>
+
+
 </tiles-definitions>

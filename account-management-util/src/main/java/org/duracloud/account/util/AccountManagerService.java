@@ -65,7 +65,7 @@ public interface AccountManagerService {
 	 * @throws AccountClusterNotFoundException
 	 *
 	 */
-    @Secured({"role:ROLE_ROOT, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
 	public AccountClusterService getAccountCluster(int accountClusterId)
         throws AccountClusterNotFoundException;
 
@@ -77,7 +77,15 @@ public interface AccountManagerService {
 	 * @return AccountClusterService
 	 *
 	 */
-    @Secured({"role:ROLE_ROOT, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
 	public AccountClusterService createAccountCluster(String clusterName);
+
+    /**
+     * Returns a list of account cluster descriptors
+     * @param filter
+     * @return
+     */
+    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    public Set<AccountClusterDescriptor> listAccountClusters(String filter);
 
 }

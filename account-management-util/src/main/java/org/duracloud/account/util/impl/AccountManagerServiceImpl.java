@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
@@ -19,6 +24,7 @@ import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.util.AccountClusterDescriptor;
 import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
@@ -33,10 +39,6 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -219,7 +221,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
         try {
             DuracloudAccountClusterRepo clusterRepo =
-                repoMgr.getAccountClusterRepo();
+                getClusterRepo();
             AccountCluster cluster = clusterRepo.findById(accountClusterId);
             return new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
         } catch(DBNotFoundException e) {
@@ -230,7 +232,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     @Override
     public AccountClusterService createAccountCluster(String clusterName) {
         DuracloudAccountClusterRepo clusterRepo =
-            repoMgr.getAccountClusterRepo();
+            getClusterRepo();
 
         int clusterId =  getIdUtil().newAccountClusterId();
         AccountCluster cluster =
@@ -261,6 +263,30 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     private IdUtil getIdUtil() {
         return repoMgr.getIdUtil();
+    }
+
+    @Override
+    public Set<AccountClusterDescriptor> listAccountClusters(String filter) {
+        DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
+        HashSet<AccountClusterDescriptor> set = new HashSet<AccountClusterDescriptor>();
+        Set<Integer> ids = clusterRepo.getIds();
+        for(int id : ids){
+            try {
+                AccountClusterService acs = getAccountCluster(id);
+                String name = acs.retrieveAccountCluster().getClusterName();
+                if(StringUtils.isBlank(filter) || name.startsWith(filter.trim())){
+                    set.add(new AccountClusterDescriptor(id, name));
+                }
+            } catch (AccountClusterNotFoundException e) {
+                log.warn(e.getMessage(), e);
+            }
+        }
+        
+        return set;
+    }
+
+    private DuracloudAccountClusterRepo getClusterRepo() {
+        return repoMgr.getAccountClusterRepo();
     }
 
 }
