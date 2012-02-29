@@ -80,8 +80,8 @@
                var="i"
                items="${clusters}">
                 <tr
-                 data-name="${i.name}">
-                  <td>${i.name}</td>
+                 data-name="${i.clusterName}">
+                  <td>${i.clusterName}</td>
                   <td>
                     <a class="button featured edit"
                      href="${currentUri}/byid/${i.id}/edit">

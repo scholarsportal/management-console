@@ -24,7 +24,6 @@ import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountClusterDescriptor;
 import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
@@ -266,18 +265,18 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     }
 
     @Override
-    public Set<AccountClusterDescriptor> listAccountClusters(String filter) {
+    public Set<AccountCluster> listAccountClusters(String filter) {
         DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
-        HashSet<AccountClusterDescriptor> set = new HashSet<AccountClusterDescriptor>();
+        HashSet<AccountCluster> set = new HashSet<AccountCluster>();
         Set<Integer> ids = clusterRepo.getIds();
         for(int id : ids){
             try {
-                AccountClusterService acs = getAccountCluster(id);
-                String name = acs.retrieveAccountCluster().getClusterName();
+                AccountCluster ac = clusterRepo.findById(id);
+                String name = ac.getClusterName();
                 if(StringUtils.isBlank(filter) || name.startsWith(filter.trim())){
-                    set.add(new AccountClusterDescriptor(id, name));
+                    set.add(ac);
                 }
-            } catch (AccountClusterNotFoundException e) {
+            } catch (DBNotFoundException e) {
                 log.warn(e.getMessage(), e);
             }
         }

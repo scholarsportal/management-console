@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -86,6 +87,6 @@ public interface AccountManagerService {
      * @return
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public Set<AccountClusterDescriptor> listAccountClusters(String filter);
+    public Set<AccountCluster> listAccountClusters(String filter);
 
 }
