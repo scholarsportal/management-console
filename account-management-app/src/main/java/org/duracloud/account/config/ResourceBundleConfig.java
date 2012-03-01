@@ -12,7 +12,8 @@ public class ResourceBundleConfig {
     public MessageSource messageSource(){
         ResourceBundleMessageSource m = new ResourceBundleMessageSource();
         m.setBasenames("global",
-                       "root");
+                       "root",
+                       "user");
         return m;
     }
 }

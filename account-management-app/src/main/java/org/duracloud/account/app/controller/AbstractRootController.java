@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
+import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.RootAccountManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class AbstractRootController extends AbstractController{
 
-
     @Autowired(required = true)
     private RootAccountManagerService rootAccountManagerService;
 
+    @Autowired
+    private AccountManagerService accountManagerService;
+    
     public RootAccountManagerService getRootAccountManagerService() {
         return rootAccountManagerService;
     }
@@ -29,5 +32,13 @@ public abstract class AbstractRootController extends AbstractController{
     public String getBaseView() {
         return RootConsoleHomeController.BASE_MAPPING;
     }
+    
+    public AccountManagerService getAccountManagerService() {
+        return accountManagerService;
+    }
 
+    public void
+        setAccountManagerService(AccountManagerService accountManagerService) {
+        this.accountManagerService = accountManagerService;
+    }
 }

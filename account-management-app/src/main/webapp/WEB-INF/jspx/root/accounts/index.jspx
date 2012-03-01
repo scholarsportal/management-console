@@ -1,16 +1,51 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <jsp:root
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:f="http://java.sun.com/jsp/jstl/functions"
  xmlns:spring="http://www.springframework.org/tags"
  xmlns:sec="http://www.springframework.org/security/tags">
+<jsp:directive.page contentType="text/html; charset=utf-8" />
+   <c:set
+   var="currentUri" scope="request"
+   value="${requestScope['javax.servlet.forward.request_uri']}" />
+ 
+ 
   <tiles:insertDefinition
    name="accounts-base"
    flush="true">
     <tiles:putAttribute
-     name="title">Accounts Home</tiles:putAttribute>
+     name="title"><spring:message code="accounts"/></tiles:putAttribute>
+
+    <tiles:putAttribute
+     name="header-extensions">
+      <script xml:space="preserve">
+      	function doConfirm(/*string*/message){
+            var answer = confirm(message);
+            if (answer) {
+                t.form.submit();
+                return true; 
+            }
+                    
+            return false;
+      	}
+
+      	$(function(){
+            $(".delete").click(function(evt){
+              	return doConfirm('<spring:message code="account.delete.confirm" />');
+            });
+            $(".activate").click(function(evt){
+              	return doConfirm('<spring:message code="account.activate.confirm" />');
+            });
+            $(".deactivate").click(function(evt){
+              	return doConfirm('<spring:message code="account.deactivate.confirm" />');
+            });
+      	});
+            
+      </script>
+    </tiles:putAttribute>
 
     <tiles:putAttribute
      name="mainContent"
@@ -19,14 +54,140 @@
        code="account"
        var="entityName" />
 
-      <a
-       id="new"
-       href="${pageContext.request.contextPath}/create-account"
-       class="button">
-        <spring:message
-         code="new"
-         arguments="${entityName}" />
-      </a>
+      <div
+       class="button-bar">
+        <a
+         id="new"
+         href="${pageContext.request.contextPath}/accounts/new"
+         class="button">
+          <spring:message
+           code="new"
+           arguments="${entityName}" />
+        </a>
+      </div>
+
+      <c:choose>
+        <c:when
+         test="${not empty accounts}">
+          <table
+           id="accounts"
+           class="entity-list">
+            <thead>
+              <tr>
+                <th>
+                  <spring:message
+                   code="account.acctname" />
+                </th>
+
+                <th>
+                  <spring:message
+                   code="account.subdomain" />
+                </th>
+
+                <th
+                 colspan="4">
+                  <spring:message
+                   code="account.status" />
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <c:forEach
+               var="a"
+               items="${accounts}">
+                <tr
+                 data-name="${a.accountInfo.acctName}">
+                  <td>
+                    <a
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details">
+                    ${a.accountInfo.acctName}</a>
+                  </td>
+
+                  <td>
+                    <a
+                      href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
+                      target="_blank">${a.accountInfo.subdomain}</a>
+                  </td>
+                  <td>${a.accountInfo.status}</td>
+
+                  <td>
+                    <a target="_blank"
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
+                     class="button"><spring:message code="account.manageusersandroles" /></a>
+                  </td>
+
+                  <td>
+                    <c:choose>
+                      <c:when
+                       test="${a.accountInfo.status == 'PENDING'}">
+                        <a
+                         href="${currentUri}/byid/${a.accountInfo.id}/setup"
+                         class="button">     
+                         <spring:message
+                          code="configure" />
+                        </a>
+                      </c:when>
+                      <c:when
+                       test="${a.accountInfo.status == 'INACTIVE'}">
+                        <form
+                         action="${currentUri}/byid/${a.accountInfo.id}/activate"
+                         method="post">
+                          <button
+                           type="submit"
+                           class="activate"><spring:message code="activate" /></button>
+                        </form>
+                      </c:when>
+                      <c:when
+                       test="${a.accountInfo.status == 'ACTIVE' and a.instanceStatus == null}">
+                        <form
+                         action="${currentUri}/byid/${a.accountInfo.id}/deactivate"
+                         method="post">
+                          <button class="deactivate"
+                           type="submit">
+                          <spring:message
+                         code="deactivate" /></button>
+                        </form>
+                      </c:when>
+                      <c:otherwise>
+                        <!-- placeholder -->
+                      </c:otherwise>
+                    </c:choose>                    
+                  </td>
+
+                  <td><!-- placeholder -->
+                    <c:if
+                     test="${a.instanceStatus == null}">
+
+                    <form
+                     action="${currentUri}/byid/${a.accountInfo.id}/delete"
+                     method="post">
+                      <input type="hidden"
+                       name="id"
+                       value="${a.accountInfo.id}" />
+
+                      <button
+                       class="delete"
+                       type="submit">
+                        <i
+                         class="pre trash"><!--  -->
+                        </i>
+                        <spring:message
+                         code="delete" />
+                      </button>
+                    </form>
+                    </c:if>
+                  </td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+        </c:when>
+
+        <c:otherwise>
+          <p><spring:message code="account.none"/></p>
+        </c:otherwise>
+      </c:choose>
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

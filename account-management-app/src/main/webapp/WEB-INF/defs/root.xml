@@ -27,6 +27,7 @@
     <put-attribute name="mainContent" cascade="true" />
   </definition>
   <definition name="/root/accounts" template="/WEB-INF/jspx/root/accounts/index.jspx" />
+  <definition name="/root/accounts/setup" template="/WEB-INF/jspx/root/accounts/setup.jspx" />
 
 
   <!-- cluster views -->

@@ -24,9 +24,6 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public abstract class AbstractCrudController<T> extends AbstractController{
 
-    public static final String  BY_ID_EDIT_MAPPING = "/byid/{id}/edit";
-    public static final String BY_ID_DELETE_MAPPING = "/byid/{id}/delete";
-
     protected abstract String getBaseViewId();
 
     private Class<T> clazz;

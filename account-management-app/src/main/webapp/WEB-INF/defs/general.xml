@@ -26,14 +26,6 @@
   <definition name="login" template="/WEB-INF/jspx/login.jspx" />
   <definition name="home" template="/WEB-INF/jspx/index.jspx" />
 
-  <!-- root views -->
-  <definition name="manage-users" template="/WEB-INF/jspx/users/manage-users.jspx" />
-  <definition name="account-setup" template="/WEB-INF/jspx/accounts/account/account-setup.jspx" />
-  <definition name="serverImage-new" template="/WEB-INF/jspx/accounts/serverImage/serverImage-new.jspx" />
-  <definition name="serverImage-edit" template="/WEB-INF/jspx/accounts/serverImage/serverImage-edit.jspx" />
-  <definition name="serviceRepo-new" template="/WEB-INF/jspx/accounts/serviceRepo/serviceRepo-new.jspx" />
-  <definition name="serviceRepo-edit" template="/WEB-INF/jspx/accounts/serviceRepo/serviceRepo-edit.jspx" />
-
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
   <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />

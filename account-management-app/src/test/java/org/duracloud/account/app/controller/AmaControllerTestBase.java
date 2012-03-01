@@ -45,6 +45,7 @@ public class AmaControllerTestBase {
    protected static final String TEST_USERNAME = "testuser";
     protected static final Integer TEST_ACCOUNT_ID = 1;
     protected static final Integer TEST_INSTANCE_ID = 1;
+    protected static final int TEST_USER_ID = 0;
 
     protected AccountManagerService accountManagerService;
     protected AccountService accountService;
@@ -103,18 +104,7 @@ public class AmaControllerTestBase {
             EasyMock.verify(m);
         }
     }
-    /*
 
-    protected void setupSimpleAccountManagerService()
-        throws AccountNotFoundException {
-        EasyMock.expect(this.accountService.retrieveAccountInfo())
-            .andReturn(createAccountInfo())
-            .times(1);
-        EasyMock.expect(this.accountService.retrieveServerDetails())
-            .andReturn(createServerDetails())
-            .times(1);
-    }
-    */
     protected void replayMocks() {
         for(Object m : mocks){
             EasyMock.replay(m);
@@ -153,7 +143,7 @@ public class AmaControllerTestBase {
     
     protected DuracloudUser createUser(String username) {
         DuracloudUser user =
-            new DuracloudUser(0, username, "test", "test", "test", "test",
+            new DuracloudUser(TEST_USER_ID, username, "test", "test", "test", "test",
                               "test", "test");
         Set<AccountRights> rights = new HashSet<AccountRights>();
         Set<Role> roles = new HashSet<Role>();

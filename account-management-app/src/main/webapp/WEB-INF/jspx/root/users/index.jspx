@@ -2,13 +2,217 @@
  version="2.0"
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:f="http://java.sun.com/jsp/jstl/functions"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:spring="http://www.springframework.org/tags" 
+ xmlns:form="http://www.springframework.org/tags/form"
  xmlns:sec="http://www.springframework.org/security/tags">
+<jsp:directive.page contentType="text/html; charset=utf-8" />
+
+  <c:set
+   var="currentUri" scope="request"
+   value="${requestScope['javax.servlet.forward.request_uri']}" />
+
   <tiles:insertDefinition name="users-base" flush="true">
     <tiles:putAttribute name="title">Users</tiles:putAttribute>
+    <tiles:putAttribute name="header-extensions">
+    <script>
+        function doConfirm(/*string*/message){
+            var answer = confirm(message);
+            if (answer) {
+                return true; 
+            }
+            return false;
+        }
+
+        $(function(){
+            $(".delete").click(function(evt){
+                return doConfirm('<spring:message code="user.delete.confirm" javaScriptEscape="true" />');
+            });
+            $(".reset").click(function(evt){
+                return doConfirm('<spring:message code="user.reset.confirm" javaScriptEscape="true"/>');
+            });
+            $(".remove-user").click(function(evt){
+                return doConfirm('<spring:message code="user.remove.confirm" javaScriptEscape="true"/>');
+            });
+        });
+                
+        </script>
+        
+      <style>
+        .horizontal-list li:before {
+          content:"";
+        }
+      
+      </style>
+    </tiles:putAttribute> 
     <tiles:putAttribute name="mainContent" cascade="true">
-      Users!
+  
+                <table class="entity-list" id="users" >
+                <thead>
+                <tr>
+                  <th><spring:message code="username"/></th>
+
+                  <th><spring:message code="user.firstname"/></th>
+
+                  <th><spring:message code="user.lastname"/></th>
+
+                  <th><spring:message code="user.email"/></th>
+
+                  <th colspan="2"><!--  --></th>
+
+                  <th><spring:message code="account"/></th>
+
+                  <th><spring:message code="role"/></th>
+
+                  <th colspan="1"><spring:message code="change"/>${' '} <spring:message code="role"/></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <c:forEach
+                 var="u"
+                 items="${users}">
+                  <tr data-username="${u.username}">
+                    <td>${u.username}</td>
+
+                    <td>${u.firstName}</td>
+
+                    <td>${u.lastName}</td>
+
+                    <td>${u.email}</td>
+
+                    <td>
+                      <ul
+                       class="horizontal-list">
+                          <li>
+                                <form
+                                 action="${currentUri}/byid/${u.id}/reset"
+                                 method="post">
+                                  <button 
+                                   class="reset"
+                                   type="submit" >
+                                  <spring:message code="reset"/>${' '}<spring:message code="password"/></button>
+                                </form>
+                          </li>
+                      </ul>
+                    </td>
+
+                    <td>
+                      <ul
+                       class="horizontal-list"><!--  -->
+                        <c:if
+                         test="${u.deletable}">
+                          <li>
+                                <form
+                                 action="${currentUri}/byid/${u.id}/delete"
+                                 method="post">
+                                  <button class="delete"
+                                   type="submit">
+                                  <i
+                                   class="pre trash"><!--  -->
+                                  </i>
+                                  <spring:message code="delete"/></button>
+                                </form>
+                          </li>
+                        </c:if>
+                      </ul>
+                    </td>
+
+                    <td colspan="3"><!--  --></td>
+                  </tr>
+
+                <c:forEach
+                 var="a"
+                 items="${u.accounts}">
+              <tr class="expand-child">
+                    <td colspan="6"><!--  --></td>
+                  <td>
+                    <a 
+                      target="_blank"
+                      href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users">
+                        ${a.accountName} (${a.subdomain})
+                    </a>
+                  </td>
+                  <td>${a.role.displayName}</td>
+                    <td> <!--  -->
+                        <c:if test="${a.deletable}">
+                          <div style="min-width:250px">
+                          <ul class="horizontal-list">
+                            <li>
+                              
+                              <form:form
+                                 method="post"
+                                 action="${currentUri}/byid/${u.id}/changerole"
+                                 modelAttribute="accountUsersEditForm">
+                                <ul class="horizontal-list">
+                                  <li>
+                                  <form:hidden path="accountId" value="${a.id}"/>
+                                  <form:select
+                                      style="max-width:100px"
+                                      id="role"
+                                      path="role">
+                                      <form:option
+                                        value="${a.role}"
+                                        label="${a.role.displayName}" />
+    
+                                      <c:if test="${a.role == ownerRole}">
+                                        <form:option
+                                          value="${adminRole}"
+                                          label="${adminRole.displayName}" />
+                                        <form:option
+                                          value="${userRole}"
+                                          label="${userRole.displayName}" />
+                                      </c:if>
+    
+                                      <c:if test="${a.role == adminRole}">
+                                        <form:option
+                                          value="${ownerRole}"
+                                          label="${ownerRole.displayName}" />
+                                        <form:option
+                                          value="${userRole}"
+                                          label="${userRole.displayName}" />
+                                      </c:if>
+    
+                                      <c:if test="${a.role == userRole}">
+                                        <form:option
+                                          value="${ownerRole}"
+                                          label="${ownerRole.displayName}" />
+                                        <form:option
+                                          value="${adminRole}"
+                                          label="${adminRole.displayName}" />
+                                      </c:if>
+                                    </form:select></li>
+                                  <li>
+                                    <button type="submit">
+                                      <spring:message code="save" />
+                                    </button></li>
+                                </ul>
+                          </form:form>
+                          </li>
+                          <li>
+                            <form 
+                             action="${currentUri}/byid/${u.id}/revoke"
+                             method="post">
+                              <input type="hidden" name="accountId" value="${a.id}"/>
+                              <button
+                               class="remove-user"
+                               type="submit">
+                              <i
+                               class="pre trash"><!--  -->
+                              </i><spring:message code="remove"/></button>
+                            </form>
+                          </li>
+                        </ul>
+                        </div>
+                      </c:if>
+                    </td>
+                  </tr>
+                </c:forEach>
+                </c:forEach>
+                </tbody>
+              </table>
     </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

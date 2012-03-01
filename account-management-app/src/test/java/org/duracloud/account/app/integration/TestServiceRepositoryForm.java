@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.duracloud.account.app.controller.ManageServiceReposController;
 import org.duracloud.account.app.controller.ServiceRepositoryController;
 
 import com.thoughtworks.selenium.Selenium;

@@ -849,9 +849,14 @@ float: left;
 form label {
 float: left;
 font-size: 13px;
-width: 150px;
-
+width: 250px;
+text-align: right;
 }
+
+form label:after {
+	content: ":";
+}
+
 
 form legend, form label{
 	color: #333;

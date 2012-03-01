@@ -68,7 +68,7 @@
            class="entity-list">
             <thead>
               <tr>
-                <th>
+                <th colspan="3">
                   <spring:message
                    code="cluster.name" />
                 </th>

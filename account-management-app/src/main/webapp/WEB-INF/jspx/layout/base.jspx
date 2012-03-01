@@ -122,16 +122,10 @@
                   My Profile</a></li>
               <sec:authorize ifAnyGranted="ROLE_ROOT">
                 <li><a
-                  id="root-console-link"
-                  accesskey="p"
-                  class="root-link"
-                  href="${pageContext.request.contextPath}/users/manage">Root
-                    Console Classic</a></li>
-                <li><a
                   id="new-root-console-link"
                   accesskey="p"
                   class="root-link"
-                  href="${pageContext.request.contextPath}/root">Root
+                  href="${pageContext.request.contextPath}/root/accounts">Root
                     Console</a></li>
 
               </sec:authorize>

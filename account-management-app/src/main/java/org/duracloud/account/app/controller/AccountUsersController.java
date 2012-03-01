@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -262,7 +263,7 @@ public class AccountUsersController extends AbstractAccountController {
     public ModelAndView
         editUser(@PathVariable int accountId,
                  @PathVariable int userId,
-                 @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) @Valid AccountUserEditForm accountUserEditForm,
+                 @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) AccountUserEditForm accountUserEditForm,
                  BindingResult result,
                  Model model,
                  RedirectAttributes redirectAttributes) throws Exception {
@@ -274,7 +275,7 @@ public class AccountUsersController extends AbstractAccountController {
             log.info("New role: {}", role);
             try {
                 setUserRights(userService, accountId, userId, role);
-                setSuccessFeedback("Successfully updated user.", redirectAttributes);                
+                setSuccessFeedback("Successfully changed user role.", redirectAttributes);                
             } catch (AccessDeniedException e) {
                 result.addError(new ObjectError("role",
                                                 "You are unauthorized to set the role for this user"));

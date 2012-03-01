@@ -34,10 +34,15 @@ public abstract class AbstractController {
     protected Logger log = LoggerFactory.getLogger(AbstractController.class);
     public static final String USERS_MAPPING = "/users";
     public static final String USER_MAPPING = "/byid/{username:[a-z0-9.\\-_@]*}";
-    
 
     public static final String NEW_MAPPING = "/new";
     public static final String EDIT_MAPPING = "/edit";
+
+    public static final String BY_ID_MAPPING = "/byid/{id}";
+    public static final String BY_ID_EDIT_MAPPING = BY_ID_MAPPING + EDIT_MAPPING;
+    public static final String BY_ID_DELETE_MAPPING = BY_ID_MAPPING + "/delete";
+
+
 
     /**
      * @param user
@@ -152,6 +157,10 @@ public abstract class AbstractController {
 
     protected void setSuccessFeedback(String message, RedirectAttributes redirectAttributes) {
         UserFeedbackUtil.addSuccessFlash(message, redirectAttributes);
+    }
+
+    protected void setFailureFeedback(String message, RedirectAttributes redirectAttributes) {
+        UserFeedbackUtil.addFailureFlash(message, redirectAttributes);
     }
 
 }

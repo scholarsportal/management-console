@@ -164,12 +164,12 @@
                    class="button-bar">
                     <a
                      class="button"
-                     id="cancel-button"
-                     href="${pageContext.request.contextPath}/users/byid/${user.username}/accounts">
+                     id="cancel"
+                     href="${pageContext.request.contextPath}/root/accounts">
                     Cancel</a>
 
                     <button
-                     id="create-account-button"
+                     id="ok"
                      type="submit">Create</button>
                   </div></td>
             </tr>
