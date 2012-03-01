@@ -79,6 +79,13 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         checkForErrors(acctId, groupId, "groupId");
     }
 
+    @Override
+    public void propagateClusterUpdate(int acctId, int clusterId) {
+        Set<DuracloudUser> users = findUsers(acctId);
+        doPropagate(acctId, users);
+        checkForErrors(acctId, clusterId, "clusterId");
+    }
+
     private void checkForErrors(int acctId, int id, String idName) {
         if (null != error) {
             StringBuilder msg = new StringBuilder("Failed to propagate, ");

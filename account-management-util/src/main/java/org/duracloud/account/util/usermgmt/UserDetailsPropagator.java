@@ -54,4 +54,13 @@ public interface UserDetailsPropagator {
      */
     public void propagateGroupUpdate(int acctId, int groupId);
 
+    /**
+     * This method propagates the change in an account cluster, such
+     * as the addition or removal of an account to a cluster.
+     *
+     * @param acctId of DuraCloud acct to update
+     * @param clusterId of the cluster that has changed
+     */
+    public void propagateClusterUpdate(int acctId, int clusterId);
+
 }

@@ -63,25 +63,20 @@ public class AccountServiceImpl implements AccountService {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
 
         Set<DuracloudUser> users = new HashSet<DuracloudUser>();
-        try {
-            Set<AccountRights> rights =
-                rightsRepo.findByAccountId(account.getId());
+        Set<AccountRights> rights =
+            rightsRepo.findByAccountId(account.getId());
 
-            for (AccountRights right : rights) {
-                try {
-                    DuracloudUser user = userRepo.findById(right.getUserId());
-                    Set<AccountRights> userRights = new HashSet<AccountRights>();
-                    userRights.add(right);
-                    user.setAccountRights(userRights);
-                    users.add(user);
-                } catch (DBNotFoundException ex) {
-                    log.warn("User with ID {} could not be found, skipping",
-                             right.getUserId());
-                }
+        for (AccountRights right : rights) {
+            try {
+                DuracloudUser user = userRepo.findById(right.getUserId());
+                Set<AccountRights> userRights = new HashSet<AccountRights>();
+                userRights.add(right);
+                user.setAccountRights(userRights);
+                users.add(user);
+            } catch (DBNotFoundException ex) {
+                log.warn("User with ID {} could not be found, skipping",
+                         right.getUserId());
             }
-        } catch (DBNotFoundException ex) {
-            log.warn("No account rights found for account with ID {}",
-                     account.getId());
         }
 
         return users;

@@ -145,13 +145,9 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
     }
 
     private boolean accountHasRights(Integer accountId) {
-        try {
-            Set<AccountRights> rights =
-                rightsRepo().findByAccountId(accountId);
-            return (rights != null && rights.size() > 0);
-        } catch (DBNotFoundException e) {
-            return false;
-        }
+        Set<AccountRights> rights =
+            rightsRepo().findByAccountId(accountId);
+        return (rights != null && rights.size() > 0);
     }
     
     private DuracloudRightsRepo rightsRepo(){

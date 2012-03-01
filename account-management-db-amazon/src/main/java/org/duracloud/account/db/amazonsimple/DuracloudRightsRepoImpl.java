@@ -14,6 +14,7 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,12 +68,15 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
      * If the arg userId is for a root user, all accounts are returned.
      * @param userId of user
      * @return accountRights set
-     * @throws DBNotFoundException
      */
     @Override
-    public Set<AccountRights> findByUserId(int userId) throws DBNotFoundException {
-        List<Item> items =
-            findItemsByAttribute(USER_ID_ATT, String.valueOf(userId));
+    public Set<AccountRights> findByUserId(int userId) {
+        List<Item> items;
+        try {
+            items = findItemsByAttribute(USER_ID_ATT, String.valueOf(userId));
+        } catch(DBNotFoundException e) {
+            items = new ArrayList<Item>();
+        }
 
         Set<AccountRights> rights = getAccountRightsFromItems(items);
         if (isRootRights(rights)) {
@@ -92,11 +96,15 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
     }
 
     private Set<AccountRights> getAllAccountRights(int userId,
-                                                   Set<Role> rootRoles)
-        throws DBNotFoundException {
+                                                   Set<Role> rootRoles) {
         Set<AccountRights> rights = new HashSet<AccountRights>();
 
-        List<Item> all = findAllItems();
+        List<Item> all;
+        try {
+            all = findAllItems();
+        } catch(DBNotFoundException e) {
+            all = new ArrayList<Item>();
+        }
 
         Set<AccountRights> allRights = getAccountRightsFromItems(all);
         for (AccountRights r : allRights) {
@@ -116,8 +124,7 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
      * @throws DBNotFoundException
      */
     @Override
-    public Set<AccountRights> findByAccountId(int accountId)
-        throws DBNotFoundException {
+    public Set<AccountRights> findByAccountId(int accountId) {
         Set<AccountRights> userAccountRights = doFindByAccountId(accountId);
         Set<AccountRights> rootAccountRights = getRootAccountRights(accountId);
 
@@ -138,15 +145,18 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
      * @throws DBNotFoundException
      */
     @Override
-    public Set<AccountRights> findByAccountIdSkipRoot(int accountId)
-        throws DBNotFoundException {
+    public Set<AccountRights> findByAccountIdSkipRoot(int accountId) {
         return doFindByAccountId(accountId);
     }
 
-    private Set<AccountRights> doFindByAccountId(int accountId)
-        throws DBNotFoundException {
-        List<Item> items = findItemsByAttribute(ACCOUNT_ID_ATT, String.valueOf(
-            accountId));
+    private Set<AccountRights> doFindByAccountId(int accountId) {
+        List<Item> items;
+        try {
+            items = findItemsByAttribute(ACCOUNT_ID_ATT,
+                                         String.valueOf(accountId));
+        } catch(DBNotFoundException e) {
+            items = new ArrayList<Item>();
+        }
 
         return getAccountRightsFromItems(items);
     }
@@ -225,17 +235,17 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
 
         } catch (DBNotFoundException e) {
             // item not found, does account exist?
-            doFindByAccountId(accountId);
-
-            // account exists
-            for (AccountRights root : getRootAccountRights(accountId)) {
-                // was the target user a root user?
-                if (root.getUserId() == userId) {
-                    rootRights = new AccountRights(root.getId(),
-                                                   accountId,
-                                                   root.getUserId(),
-                                                   root.getRoles(),
-                                                   root.getCounter());
+            Set<AccountRights> rights = doFindByAccountId(accountId);
+            if(rights.size() > 0) { // account exists
+                for (AccountRights root : getRootAccountRights(accountId)) {
+                    // was the target user a root user?
+                    if (root.getUserId() == userId) {
+                        rootRights = new AccountRights(root.getId(),
+                                                       accountId,
+                                                       root.getUserId(),
+                                                       root.getRoles(),
+                                                       root.getCounter());
+                    }
                 }
             }
 

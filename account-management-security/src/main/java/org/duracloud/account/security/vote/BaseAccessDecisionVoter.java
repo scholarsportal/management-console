@@ -178,12 +178,8 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
     }
 
     protected int numUsersForAccount(int acctId) {
-        Set<AccountRights> rights = null;
-        try {
-            rights = repoMgr.getRightsRepo().findByAccountId(acctId);
-        } catch (DBNotFoundException e) {
-            log.warn("Account not found: {}", acctId);
-        }
+        Set<AccountRights> rights =
+            repoMgr.getRightsRepo().findByAccountId(acctId);
         return (null != rights) ? rights.size() : 0;
     }
 
@@ -201,14 +197,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
     protected Set<AccountRights> getAllUserRightsForAcct(int acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         Set<AccountRights> rights = null;
-        try {
-            rights = rightsRepo.findByAccountId(acctId);
-
-        } catch (DBNotFoundException e) {
-            log.error("Error find rights for acct: {}", acctId);
-            throw new DuraCloudRuntimeException(e);
-        }
-        return rights;
+        return rightsRepo.findByAccountId(acctId);
     }
 
     protected int voteMyUserId(DuracloudUser user, int userId) {

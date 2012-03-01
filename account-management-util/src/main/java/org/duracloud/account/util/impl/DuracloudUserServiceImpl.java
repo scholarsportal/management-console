@@ -3,10 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
@@ -15,6 +11,7 @@ import org.duracloud.account.common.domain.InitUserCredential;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
@@ -43,6 +40,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -212,36 +213,32 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private void verifyAccountOwnerExists(int acctId,
                                           int userId,
                                           DuracloudRightsRepo rightsRepo) {
-        try {
-            Set<AccountRights> acctRightsSet =
-                rightsRepo.findByAccountId(acctId);
+        Set<AccountRights> acctRightsSet =
+            rightsRepo.findByAccountId(acctId);
 
-            // Determine the list of root users
-            Set<Integer> roots = new HashSet<Integer>();
-            for(AccountRights acctRights : acctRightsSet) {
-                if(acctRights.getRoles().contains(Role.ROLE_ROOT)) {
-                    roots.add(acctRights.getUserId());
-                }
+        // Determine the list of root users
+        Set<Integer> roots = new HashSet<Integer>();
+        for(AccountRights acctRights : acctRightsSet) {
+            if(acctRights.getRoles().contains(Role.ROLE_ROOT)) {
+                roots.add(acctRights.getUserId());
             }
+        }
 
-            // Determine the list of owners who are not root users
-            Set<Integer> owners = new HashSet<Integer>();
-            for(AccountRights acctRights : acctRightsSet) {
-                if(acctRights.getRoles().contains(Role.ROLE_OWNER) &&
-                   !roots.contains(acctRights.getUserId())) {
-                    owners.add(acctRights.getUserId());
-                }
+        // Determine the list of owners who are not root users
+        Set<Integer> owners = new HashSet<Integer>();
+        for(AccountRights acctRights : acctRightsSet) {
+            if(acctRights.getRoles().contains(Role.ROLE_OWNER) &&
+               !roots.contains(acctRights.getUserId())) {
+                owners.add(acctRights.getUserId());
             }
+        }
 
-            // Ensure at least one non-root owner is maintained on the account
-            if(owners.size() == 1 && owners.contains(userId)) {
-                String err = "Cannot remove owner rights from user with ID " +
-                    userId + " from account with ID " + acctId +
-                    ". This account must maintain at least one owner.";
-                throw new AccountRequiresOwnerException(err);
-            }
-        } catch(DBNotFoundException e) {
-            log.error("Could not find rights associated with account " + acctId);
+        // Ensure at least one non-root owner is maintained on the account
+        if(owners.size() == 1 && owners.contains(userId)) {
+            String err = "Cannot remove owner rights from user with ID " +
+                userId + " from account with ID " + acctId +
+                ". This account must maintain at least one owner.";
+            throw new AccountRequiresOwnerException(err);
         }
     }
 
@@ -309,10 +306,11 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         log.info("Revoking rights for user {} on account {}", userId, acctId);
 
         doRevokeUserRights(acctId, userId);
+        removeUserFromAccountGroups(acctId, userId);
         propagator.propagateRevocation(acctId, userId);
     }
 
-    public void doRevokeUserRights(int acctId, int userId) {
+    private void doRevokeUserRights(int acctId, int userId) {
         DuracloudRightsRepo rightsRepo = getRightsRepo();
         verifyAccountOwnerExists(acctId, userId, rightsRepo);
         try {
@@ -322,7 +320,27 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         } catch (DBNotFoundException e) {
             // User has no rights in this account
         }
-    }    
+    }
+
+    private void removeUserFromAccountGroups(int acctId, int userId) {
+        DuracloudGroupRepo groupRepo = getGroupRepo();
+        Set<DuracloudGroup> acctGroups = groupRepo.findByAccountId(acctId);
+        for(DuracloudGroup group : acctGroups) {
+            Set<Integer> groupUserIds = group.getUserIds();
+            if(groupUserIds.contains(userId)) {
+                groupUserIds.remove(userId);
+                group.setUserIds(groupUserIds);
+                try {
+                    groupRepo.save(group);
+                } catch (DBConcurrentUpdateException e) {
+                    String error = "Could not remove user with ID " +
+                        userId + " from group with ID " + group.getId() +
+                        " due to a DBConcurrentUpdateException";
+                    throw new DuraCloudRuntimeException(error, e);
+                }
+            }
+        }
+    }
 
     @Override
     public void changePassword(int userId,
@@ -351,19 +369,13 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     private void propagateUserUpdate(int userId, String username) {
-        try {
-            Set<AccountRights> rightsSet =
-                repoMgr.getRightsRepo().findByUserId(userId);
-            // Propagate changes for each of the user's accounts
-            if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
-                for(AccountRights rights : rightsSet) {
-                    propagator.propagateUserUpdate(rights.getAccountId(),
-                                                   userId);
-                }
+        Set<AccountRights> rightsSet =
+            repoMgr.getRightsRepo().findByUserId(userId);
+        // Propagate changes for each of the user's accounts
+        if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
+            for(AccountRights rights : rightsSet) {
+                propagator.propagateUserUpdate(rights.getAccountId(), userId);
             }
-        } catch (DBNotFoundException e) {
-            // Not all users are associated with an account.
-            log.debug("No account rights found for {}", username);
         }
     }
 
@@ -430,12 +442,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     private void loadRights(DuracloudUser user) {
-        try {
-            user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
-        } catch (DBNotFoundException e) {
-            // Not all users are associated with an account.
-            log.debug("No account rights found for {}", user.getUsername());
-        }
+        user.setAccountRights(getRightsRepo().findByUserId(user.getId()));
     }
     
 
@@ -498,6 +505,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();
+    }
+
+    private DuracloudGroupRepo getGroupRepo() {
+        return repoMgr.getGroupRepo();
     }
 
     private DuracloudRightsRepo getRightsRepo() {

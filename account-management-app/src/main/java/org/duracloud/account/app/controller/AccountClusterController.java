@@ -4,7 +4,6 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.AccountClusterService;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.error.AccountClusterNotFoundException;
@@ -85,12 +84,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
 
     @Override
     protected void delete(int id) {
-        try {
-            getRootAccountManagerService().deleteAccountCluster(id);
-        } catch (DBConcurrentUpdateException e) {
-            log.error(e.getMessage(), e);
-            throw new DuraCloudRuntimeException(e);
-        }
+        getRootAccountManagerService().deleteAccountCluster(id);
     }
 
     private AccountManagerService getAccountManagerService() {

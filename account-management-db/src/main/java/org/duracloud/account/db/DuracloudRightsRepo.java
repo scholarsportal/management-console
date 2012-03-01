@@ -16,21 +16,21 @@ public interface DuracloudRightsRepo extends BaseRepo<AccountRights> {
 
     /**
      * This method returns the set of rights for a given user
+     * The set may be of 0 length
      *
      * @param userId of user
      * @return set of rights
-     * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
      */
-    public Set<AccountRights> findByUserId(int userId) throws DBNotFoundException;
+    public Set<AccountRights> findByUserId(int userId);
 
     /**
      * This method returns the set of rights for a given account
+     * The set may be of 0 length
      *
      * @param accountId of account
      * @return set of rights
-     * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
      */
-    public Set<AccountRights> findByAccountId(int accountId) throws DBNotFoundException;
+    public Set<AccountRights> findByAccountId(int accountId);
 
     /**
      * This method returns the set of rights for a given user in a given account
@@ -58,11 +58,11 @@ public interface DuracloudRightsRepo extends BaseRepo<AccountRights> {
     /**
      * This method returns the set of rights for a given account not including
      * the root users
+     * The set may be of 0 length
      *
      * @param accountId of account
      * @return set of rights
-     * @throws org.duracloud.account.db.error.DBNotFoundException if no item found
      */
-    public Set<AccountRights> findByAccountIdSkipRoot(int accountId) throws DBNotFoundException;
+    public Set<AccountRights> findByAccountIdSkipRoot(int accountId);
 
 }

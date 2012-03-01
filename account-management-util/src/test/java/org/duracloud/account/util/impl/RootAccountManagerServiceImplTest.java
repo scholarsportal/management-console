@@ -299,25 +299,51 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
     @Test
     public void testDeleteUser() throws Exception {
-        setUpDeleteUser();
+        int userId = 21;
+        setUpDeleteUser(userId);
 
-        rootService.deleteUser(1);
+        rootService.deleteUser(userId);
     }
 
-    private void setUpDeleteUser() throws Exception {
+    private void setUpDeleteUser(int userId) throws Exception {
+        int accountId = 27;
+        int rightsId = 28;
         Set<AccountRights> accountRights = new HashSet<AccountRights>();
-        accountRights.add(new AccountRights(1,1,1,null));
+        accountRights.add(new AccountRights(rightsId, accountId, userId, null));
 
-        EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
+        EasyMock.expect(rightsRepo.findByUserId(userId))
             .andReturn(accountRights);
 
-        rightsRepo.delete(EasyMock.anyInt());
+        rightsRepo.delete(rightsId);
         EasyMock.expectLastCall();
 
-        propagator.propagateRevocation(EasyMock.anyInt(), EasyMock.anyInt());
+        propagator.propagateRevocation(accountId, userId);
         EasyMock.expectLastCall();
 
-        userRepo.delete(EasyMock.anyInt());
+        // Two groups have this user as a member, both should be updated
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        Set<Integer> groupUserIds1 = new HashSet<Integer>();
+        groupUserIds1.add(userId);
+        groupUserIds1.add(userId + 1);
+        DuracloudGroup group1 =
+            new DuracloudGroup(1, "group-1", 1, groupUserIds1);
+        groups.add(group1);
+
+        Set<Integer> groupUserIds2 = new HashSet<Integer>();
+        groupUserIds2.add(userId);
+        groupUserIds2.add(userId + 1);
+        DuracloudGroup group2 =
+            new DuracloudGroup(2, "group-2", 2, groupUserIds2);
+        groups.add(group2);
+
+        // Group update calls
+        EasyMock.expect(groupRepo.findAllGroups()).andReturn(groups);
+        groupRepo.save(group1);
+        EasyMock.expectLastCall();
+        groupRepo.save(group2);
+        EasyMock.expectLastCall();
+
+        userRepo.delete(userId);
         EasyMock.expectLastCall();
         replayMocks();
     }
@@ -372,12 +398,19 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
     @Test
     public void testDeleteAccount() throws Exception {
         int acctId = 7;
-        setUpDeleteAccount(acctId);
+        Capture<AccountCluster> clusterCapture = setUpDeleteAccount(acctId);
 
         rootService.deleteAccount(acctId);
+
+        AccountCluster cluster = clusterCapture.getValue();
+        Assert.assertNotNull(cluster);
+        Set<Integer> clusterAcctIds = cluster.getClusterAccountIds();
+        Assert.assertNotNull(clusterAcctIds);
+        Assert.assertEquals(1, clusterAcctIds.size());
+        Assert.assertFalse(clusterAcctIds.contains(acctId));
     }
 
-    private void setUpDeleteAccount(int acctId) throws Exception {
+    private Capture<AccountCluster> setUpDeleteAccount(int acctId) throws Exception {
         EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
             .andReturn(new HashSet<DuracloudInstanceService>());
 
@@ -420,9 +453,27 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         invitationRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
+        // Set up removeAccountFromCluster()
+        Set<Integer> accounts = new HashSet<Integer>();
+        accounts.add(acctId);
+        accounts.add(acctId + 1);
+        int clusterId = account.getAccountClusterId();
+        AccountCluster cluster =
+            new AccountCluster(clusterId, "clusterName", accounts);
+        EasyMock.expect(accountClusterRepo.findById(clusterId))
+                .andReturn(cluster);
+        Capture<AccountCluster> clusterCapture = new Capture<AccountCluster>();
+        accountClusterRepo.save(EasyMock.capture(clusterCapture));
+        EasyMock.expectLastCall();
+
+        propagator.propagateClusterUpdate(acctId, clusterId);
+        EasyMock.expectLastCall();
+
         accountRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall();
         replayMocks();
+
+        return clusterCapture;
     }
 
     @Test

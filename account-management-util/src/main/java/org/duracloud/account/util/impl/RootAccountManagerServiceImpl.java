@@ -99,21 +99,16 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         getUserRepo().save(user);
 
-        try {
-            Set<AccountRights> rightsSet =
-                repoMgr.getRightsRepo().findByUserId(userId);
-            // Propagate changes for each of the user's accounts
-            if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
-                for(AccountRights rights : rightsSet) {
-                    log.debug("Propagating password update to account {}",
-                              rights.getAccountId());
-                    propagator.propagateUserUpdate(rights.getAccountId(),
-                                                   userId);
-                }
+        Set<AccountRights> rightsSet =
+            repoMgr.getRightsRepo().findByUserId(userId);
+        // Propagate changes for each of the user's accounts
+        if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
+            for(AccountRights rights : rightsSet) {
+                log.debug("Propagating password update to account {}",
+                          rights.getAccountId());
+                propagator.propagateUserUpdate(rights.getAccountId(),
+                                               userId);
             }
-        } catch (DBNotFoundException e) {
-            // Not all users are associated with an account.
-            log.debug("No account rights found for {}", user.getUsername());
         }
 
         getNotifier().sendNotificationPasswordReset(user, generatedPassword);
@@ -132,40 +127,49 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	public void deleteUser(int userId) {
         log.info("Deleting user with ID {}", userId);
 
-        try{
-            Set<AccountRights> accountRights =
-                getRightsRepo().findByUserId(userId);
-            for(AccountRights accountRight : accountRights) {
-                getRightsRepo().delete(accountRight.getId());
+        // Remove all user rights
+        Set<AccountRights> accountRights =
+            getRightsRepo().findByUserId(userId);
+        for(AccountRights accountRight : accountRights) {
+            getRightsRepo().delete(accountRight.getId());
 
-                log.debug("Propagating rights revocation for user {} " +
-                          "to account {}", userId, accountRight.getAccountId());
+            log.debug("Propagating rights revocation for user {} " +
+                      "to account {}", userId, accountRight.getAccountId());
 
-                propagator.propagateRevocation(accountRight.getAccountId(),
-                                               userId);
-            }
-        }catch(DBNotFoundException ex){
-            log.error("Unable to find account rights for user " +
-                      "with ID {} due to {}", userId, ex.getMessage());
+            propagator.propagateRevocation(accountRight.getAccountId(),
+                                           userId);
         }
+
+        // Remove user from all groups
+        DuracloudGroupRepo groupRepo = getGroupRepo();
+        Set<DuracloudGroup> allGroups = groupRepo.findAllGroups();
+        for(DuracloudGroup group : allGroups) {
+            Set<Integer> groupUserIds = group.getUserIds();
+            if(groupUserIds.contains(userId)) {
+                groupUserIds.remove(userId);
+                group.setUserIds(groupUserIds);
+                try {
+                    groupRepo.save(group);
+                } catch (DBConcurrentUpdateException e) {
+                    String error = "Could not remove user with ID " +
+                        userId + " from group with ID " + group.getId() +
+                        " due to a DBConcurrentUpdateException";
+                    throw new DuraCloudRuntimeException(error, e);
+                }
+            }
+        }
+
+        // Remove the user
         getUserRepo().delete(userId);
 	}
 
     @Override
-    public void deleteAccountCluster(int clusterId)
-        throws DBConcurrentUpdateException {
+    public void deleteAccountCluster(int clusterId) {
         log.info("Deleting account cluster with ID {}", clusterId);
 
         // Find the cluster
         DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
-        AccountCluster cluster;
-        try {
-            cluster = clusterRepo.findById(clusterId);
-        } catch(DBNotFoundException e) {
-            String error = "Cluster with ID " + clusterId + " was not found " +
-                           "in the database, so could not be deleted.";
-            throw new DuraCloudRuntimeException(error);
-        }
+        AccountCluster cluster = getCluster(clusterId, clusterRepo);
 
         // Reset the cluster ID of all accounts in this cluster
         Set<Integer> clusterAccounts = cluster.getClusterAccountIds();
@@ -178,11 +182,26 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             } catch(DBNotFoundException e) {
                 log.warn("Account with ID " + accountId + " not found in the " +
                          "DB, cannot update cluster membership");
+            } catch (DBConcurrentUpdateException e) {
+                String error = "Could not remove account with ID " + accountId +
+                    " from cluster due to a DBConcurrentUpdateException";
+                throw new DuraCloudRuntimeException(error, e);
             }
         }
 
         // Remove the cluster
         clusterRepo.delete(clusterId);
+    }
+
+    private AccountCluster getCluster(int clusterId,
+                                      DuracloudAccountClusterRepo clusterRepo) {
+        try {
+            return clusterRepo.findById(clusterId);
+        } catch(DBNotFoundException e) {
+            String error = "Cluster with ID " + clusterId + " was not found " +
+                           "in the database, so could not be deleted.";
+            throw new DuraCloudRuntimeException(error);
+        }
     }
 
     @Override
@@ -216,15 +235,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         }
 
         // Delete the account rights
-        try {
-            Set<AccountRights> rights =
-                    getRightsRepo().findByAccountIdSkipRoot(accountId);
-            for(AccountRights right : rights) {
-                getRightsRepo().delete(right.getId());
-            }
-        } catch (DBNotFoundException ex) {
-            log.warn("No rights found for account {}, " +
-                     "which is being deleted", accountId);
+        Set<AccountRights> rights =
+            getRightsRepo().findByAccountIdSkipRoot(accountId);
+        for(AccountRights right : rights) {
+            getRightsRepo().delete(right.getId());
         }
 
         // Delete the groups associated with the account
@@ -240,9 +254,36 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             repoMgr.getUserInvitationRepo().delete(invitation.getId());
         }
 
+        // Update cluster if necessary
+        removeAccountFromCluster(account);
+
         // Delete account
         getAccountRepo().delete(accountId);
 	}
+
+    private void removeAccountFromCluster(AccountInfo account) {
+        int accountId = account.getId();
+        int clusterId = account.getAccountClusterId();
+        if(clusterId > -1) { // Account is part of a cluster
+            // Update the cluster to no longer include this account
+            DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
+            AccountCluster cluster = getCluster(clusterId, clusterRepo);
+            Set<Integer> clusterAcctIds = cluster.getClusterAccountIds();
+            clusterAcctIds.remove(accountId);
+            cluster.setClusterAccountIds(clusterAcctIds);
+            try {
+                clusterRepo.save(cluster);
+            } catch (DBConcurrentUpdateException e) {
+                String error = "Could not remove account with ID " + accountId +
+                    " from cluster with ID " + clusterId +
+                    " due to a DBConcurrentUpdateException";
+                throw new DuraCloudRuntimeException(error, e);
+            }
+
+            // Propagate any changes to cluster users/groups
+            propagator.propagateClusterUpdate(accountId, clusterId);
+        }
+    }
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(int accountId) {
@@ -363,13 +404,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                     || user.getLastName().startsWith(filter)
                     || user.getEmail().startsWith(filter))
             ){
-                try{
-                    user.setAccountRights(
-                        getRightsRepo().findByUserId(user.getId()));
-                }catch(DBNotFoundException ex){
-                    log.info("No AccountRights found for user with ID {}", id);
-                }
-                
+                user.setAccountRights(
+                    getRightsRepo().findByUserId(user.getId()));
                 users.add(user);
             }
 		}
@@ -604,6 +640,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();
+    }
+
+    private DuracloudGroupRepo getGroupRepo() {
+        return repoMgr.getGroupRepo();
     }
 
     private DuracloudAccountRepo getAccountRepo() {

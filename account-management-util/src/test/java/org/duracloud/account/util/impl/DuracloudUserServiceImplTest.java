@@ -3,11 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
@@ -32,6 +27,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -483,6 +483,10 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         roles.add(Role.ROLE_USER);
 
         setUpRevokeUserRights(roles);
+        setUpRemoveUserFromAccountGroups();
+
+        replayMocks();
+
         userService.revokeUserRights(acctId, userId);
     }
 
@@ -494,6 +498,9 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         roles.add(Role.ROLE_OWNER);
 
         setUpRevokeUserRights(roles);
+
+        replayMocks();
+
         try {
             userService.revokeUserRights(acctId, userId);
             Assert.fail("AccountRequiresOwnerException Expected");
@@ -524,8 +531,31 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
             EasyMock.expectLastCall()
                 .times(1);
         }
+    }
 
-        replayMocks();
+    private void setUpRemoveUserFromAccountGroups() throws Exception {
+        // Two groups have this user as a member, both should be updated
+        Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
+        Set<Integer> groupUserIds1 = new HashSet<Integer>();
+        groupUserIds1.add(userId);
+        groupUserIds1.add(userId + 1);
+        DuracloudGroup group1 =
+            new DuracloudGroup(1, "group-1", 1, groupUserIds1);
+        groups.add(group1);
+
+        Set<Integer> groupUserIds2 = new HashSet<Integer>();
+        groupUserIds2.add(userId);
+        groupUserIds2.add(userId + 1);
+        DuracloudGroup group2 =
+            new DuracloudGroup(2, "group-2", 2, groupUserIds2);
+        groups.add(group2);
+
+        // Group update calls
+        EasyMock.expect(groupRepo.findByAccountId(acctId)).andReturn(groups);
+        groupRepo.save(group1);
+        EasyMock.expectLastCall();
+        groupRepo.save(group2);
+        EasyMock.expectLastCall();
     }
 
     @Test

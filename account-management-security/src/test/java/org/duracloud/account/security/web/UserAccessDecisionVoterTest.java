@@ -140,10 +140,10 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         replayRightsMock();        
     }
 
-    private void expectNotRightsForAccount(int accountId) throws DBNotFoundException{
+    private void expectNotRightsForAccount(int accountId) {
         reinitRightsMock();
         EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
-        .andThrow(new DBNotFoundException("no rights for this account"));
+            .andReturn(new HashSet<AccountRights>());
         replayRightsMock();        
     }
 
