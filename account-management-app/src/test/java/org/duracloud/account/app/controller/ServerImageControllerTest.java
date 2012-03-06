@@ -15,9 +15,7 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-        rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
-                                                        RootAccountManagerService.class);
-        mocks.add(rootAccountManagerService);
+        rootAccountManagerService = createMock(RootAccountManagerService.class);
         serverImagesController = new ServerImageController();
         serverImagesController.setRootAccountManagerService(rootAccountManagerService);
         addFlashAttribute();

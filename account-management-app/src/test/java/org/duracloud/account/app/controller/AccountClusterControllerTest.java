@@ -18,20 +18,13 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-        rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
-                                                        RootAccountManagerService.class);
-        mocks.add(rootAccountManagerService);
-
-        accountManagerService = EasyMock.createMock("AccountManagerService",
-                                                        AccountManagerService.class);
-        mocks.add(accountManagerService);
-        
+        rootAccountManagerService = createMock(RootAccountManagerService.class);
+        accountManagerService = createMock(AccountManagerService.class);
         accountClusterController = new AccountClusterController();
         accountClusterController.setRootAccountManagerService(rootAccountManagerService);
         accountClusterController.setAccountManagerService(accountManagerService);
 
-        accountClusterService = EasyMock.createMock("AccountClusterService",AccountClusterService.class);
-        mocks.add(accountClusterService);
+        accountClusterService = createMock(AccountClusterService.class);
 
         addFlashAttribute();
     }

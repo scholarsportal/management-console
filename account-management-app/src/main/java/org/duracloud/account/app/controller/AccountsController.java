@@ -46,7 +46,7 @@ public class AccountsController extends AbstractRootController{
     public static final String BASE_MAPPING = RootConsoleHomeController.BASE_MAPPING + "/accounts";
     private static final String BASE_VIEW = BASE_MAPPING;
     private static final String ACCOUNT_SETUP_VIEW = BASE_VIEW+"/setup";
-    private static final String ACCOUNT_SETUP_MAPPING = BY_ID_MAPPING + "/setup";
+    public static final String ACCOUNT_SETUP_MAPPING = BY_ID_MAPPING + "/setup";
     private static final String SETUP_ACCOUNT_FORM_KEY = "setupAccountForm";
 
     @Autowired

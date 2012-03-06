@@ -31,7 +31,9 @@ public abstract class FormConfig {
 
     abstract String getCancelSuccessLocator();
 
-    abstract public String getSubmitSuccessLocator();
+    public String getSubmitSuccessLocator(){
+            return "css=.info";
+    }
 
     abstract public String getDeleteLocator();
 

@@ -17,6 +17,7 @@
   <import resource="config/security-config.xml" />  
   <import resource="config/view-config.xml" />
   <import resource="config/aop-config.xml" />  
+  <import resource="config/webflow-config.xml" />
 
 </beans>
 

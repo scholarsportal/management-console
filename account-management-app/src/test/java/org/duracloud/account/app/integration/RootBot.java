@@ -34,7 +34,7 @@ public class RootBot extends AdminBot {
         login();
 
         //open root manage page
-        openRootConsole();
+        openRootUserList();
 
         while(true){
             try{
@@ -60,14 +60,16 @@ public class RootBot extends AdminBot {
         //make sure root is logged in.
         login();
 
-        //open root manage page
-        openRootConsole();
-
+        openRootUserList();
         clickDelete(username);
         //log out
         LoginHelper.logout(sc);
         log.info("done deletion user " + username);
 
+    }
+
+    private void openRootUserList() {
+        open("/root/users");
     }
 
     private void clickDelete(String username) {
@@ -85,22 +87,11 @@ public class RootBot extends AdminBot {
         Assert.assertFalse(sc.isElementPresent(deleteUserSelector));
     }
 
-    private void openRootConsole() {
-        open("/users/manage");
-    }
-
     public void clickRootConsoleLink() {
-        SeleniumHelper.clickAndWait(sc, "id=manage-user-link");
+        SeleniumHelper.clickAndWait(sc, "id=root-console-link");
     }
 
     public void confirmManageUsersPageIsLoaded() {
-        Assert.assertTrue(sc.isElementPresent("id=user-list"));
+        Assert.assertTrue(sc.isElementPresent("id=users"));
     }
-
-
-    public void openServiceRepositoryManagement() {
-        openRootConsole();
-        confirmManageUsersPageIsLoaded();
-    }
-    
 }

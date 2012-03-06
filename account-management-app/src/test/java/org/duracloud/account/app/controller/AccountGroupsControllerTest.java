@@ -40,9 +40,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         super.before();
 
         groupService =
-            EasyMock.createMock("DuracloudGroupService",
-                                DuracloudGroupService.class);
-        mocks.add(groupService);
+            createMock(DuracloudGroupService.class);
 
         accountGroupsController = new AccountGroupsController();
         accountGroupsController.setAccountManagerService(accountManagerService);

@@ -43,13 +43,9 @@ public class AccountControllerTest extends AmaControllerTestBase {
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         
         this.instanceManagerService =
-            EasyMock.createMock("DuracloudInstanceManagerService",
-                                DuracloudInstanceManagerService.class);
-        mocks.add(instanceManagerService);
+            createMock(DuracloudInstanceManagerService.class);
         this.instanceService =
-            EasyMock.createMock("DuracloudInstanceService",
-                                DuracloudInstanceService.class);
-        mocks.add(instanceService);
+            createMock(DuracloudInstanceService.class);
         
         accountController = new AccountController();
         accountController.setAccountManagerService(this.accountManagerService);
@@ -224,45 +220,9 @@ public class AccountControllerTest extends AmaControllerTestBase {
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));
     }
 
-    /**
-     * Test method for
-     * {@link org.duracloud.account.app.controller.AccountController #getNewForm()}
-     * .
-     */
-    @Test
-    public void testOpenAddForm() throws Exception {
-        replayMocks();
-        String view = accountController.openAddForm(model);
-        Assert.assertEquals(AccountController.NEW_ACCOUNT_VIEW, view);
-        Assert.assertNotNull(model.asMap()
-            .get(AccountController.NEW_ACCOUNT_FORM_KEY));
-    }
 
-    @Test
-    public void testAdd() throws Exception {
-        EasyMock.expect(result.hasErrors()).andReturn(true);
-        EasyMock.expect(result.hasErrors()).andReturn(false);
 
-        EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class),
-                                          EasyMock.isA(DuracloudUser.class)))
-            .andReturn(accountService);
 
-        NewAccountForm newAccountForm = new NewAccountForm();
-        newAccountForm.setSubdomain("testdomain");
-        newAccountForm.setAccountClusterId(0);
-        newAccountForm.setAccountType(AccountType.FULL);
-        newAccountForm.setServicePlan(ServicePlan.PROFESSIONAL);
-        newAccountForm.setStorageProviders(new LinkedList<StorageProviderType>());
-
-        replayMocks();
-        // first time around has errors
-        ModelAndView mav = accountController.add(newAccountForm, result, model);
-        Assert.assertEquals(AccountController.NEW_ACCOUNT_VIEW, mav.getViewName());
-
-        // second time okay
-        mav = accountController.add(newAccountForm, result, model);
-        Assert.assertNotNull(mav.getView());
-    }
 
     private void initializeMockInstanceManagerService() throws Exception {
         initializeMockInstanceManagerService(1);

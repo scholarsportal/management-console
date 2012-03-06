@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+  "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+  <definition name="wizard-panel" template="/WEB-INF/jspx/layout/wizard-panel.jspx">
+    <put-attribute name="panelTitle" cascade="true" />
+    <put-attribute name="panelMessage" cascade="true" />
+    <put-attribute name="panelContent" cascade="true" />
+  </definition>
+  <definition name="create-account-wizard" extends="accounts-base">
+    <put-attribute name="title" value="Create Account" />
+    <put-attribute name="mainContent" cascade="true">
+      <definition extends="wizard-panel">
+        <put-attribute name="panelTitle" cascade="true" />
+        <put-attribute name="panelMessage" cascade="true" />
+        <put-attribute name="panelContent" cascade="true" />
+      </definition>
+    </put-attribute>
+  </definition>
+  <definition name="/create-account/account-info" template="/WEB-INF/flows/create-account/account-info.jspx" />
+  <definition name="/create-account/storage-providers" template="/WEB-INF/flows/create-account/storage-providers.jspx" />
+</tiles-definitions>

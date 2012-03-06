@@ -23,9 +23,7 @@ public class ServiceRepositoryControllerTest extends AmaControllerTestBase {
     @Before
     public void before() throws Exception {
         super.before();
-        rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
-                                                        RootAccountManagerService.class);
-        mocks.add(rootAccountManagerService);
+        rootAccountManagerService = createMock(RootAccountManagerService.class);
         serviceRepositoryController = new ServiceRepositoryController();
         serviceRepositoryController.setRootAccountManagerService(rootAccountManagerService);
         addFlashAttribute();

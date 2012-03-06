@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
  */
 package org.duracloud.account.app.integration;
 
@@ -10,8 +10,7 @@ import org.duracloud.account.app.AMATestConfig;
 import com.thoughtworks.selenium.Selenium;
 
 /**
- * @author "Daniel Bernstein (dbernstein@duraspace.org)"
- *
+ * @author Daniel Bernstein
  */
 public class UserHelper {
     public static final String TEST_EMAIL = AMATestConfig.getTestEmail();

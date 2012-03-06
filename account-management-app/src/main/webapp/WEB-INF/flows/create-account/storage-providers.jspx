@@ -1,0 +1,93 @@
+<jsp:root
+  version="2.0"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:tiles="http://tiles.apache.org/tags-tiles"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:spring="http://www.springframework.org/tags"
+  xmlns:form="http://www.springframework.org/tags/form"
+  xmlns:sec="http://www.springframework.org/security/tags">
+  <jsp:directive.page contentType="text/html; charset=utf-8" />
+  
+  <tiles:insertDefinition
+    name="create-account-wizard"
+    flush="true">
+    <tiles:putAttribute name="title">Step 1</tiles:putAttribute>
+    <tiles:putAttribute
+      name="panelTitle"
+      cascade="true">
+      Step 2
+    </tiles:putAttribute>
+    <tiles:putAttribute
+      name="panelMessage"
+      cascade="true">
+      This is step 2  of the embedded flow
+    </tiles:putAttribute>
+
+    <tiles:putAttribute
+      name="panelContent"
+      cascade="true">
+      <form:form
+        modelAttribute="fullAccountForm"
+        method="POST">
+        <fieldset>
+          <ol>
+            <li>
+              <legend>Service Plans</legend>
+              <form:label
+                cssErrorClass="error"
+                path="servicePlan">
+                <spring:message code="account.serviceplan"/>
+              </form:label>
+              <form:select
+                cssErrorClass="error"
+                path="servicePlan"
+                items="${newAccountForm.servicePlans}" /> 
+                <a
+                 class="servicePlan"
+                 target="_blank"
+                 href="http://duracloud.org/pricing"> <spring:message
+                 code="account.plandescriptions" /> 
+                </a>
+              </li>    
+            </ol>
+        </fieldset> 
+
+        <fieldset>
+          <legend><spring:message code="account.reducedredundancy"/></legend>
+          <ol>
+            <li>
+              <form:checkbox path="useReducedRedundancy"/>
+              <form:label path="useReducedRedundancy">
+                <spring:message code="account.userreducedredundancy"/>
+              </form:label>
+            </li>
+          </ol>
+        </fieldset>
+
+        <fieldset>
+          <legend><spring:message code="account.secondaryproviders"/></legend>
+          <ol>
+            <form:checkboxes
+              element="li"
+              path="secondaryStorageProviders"
+              items="${fullAccountForm.secondaryStorageProviderOptions}" itemValue="name"   />
+          </ol>
+        </fieldset>
+
+
+        <fieldset class="button-bar">
+          <button
+            id="finish"
+            type="submit"
+            name="_eventId_finish"><spring:message code="finish"/></button>
+          <button
+            id="cancel"
+            type="submit"
+            name="_eventId_cancel"><spring:message code="cancel"/></button>
+        </fieldset>
+      </form:form>
+    </tiles:putAttribute>
+  </tiles:insertDefinition>
+</jsp:root>
+

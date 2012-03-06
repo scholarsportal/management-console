@@ -286,15 +286,6 @@ public class AccountController extends AbstractAccountController {
         instanceService.stop();
     }
 
-    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.GET)
-    public String openAddForm(Model model) throws DBNotFoundException {
-        log.info("serving up new AccountForm");
-        NewAccountForm newAccountForm = new NewAccountForm();
-        model.addAttribute(NEW_ACCOUNT_FORM_KEY, newAccountForm);
-        addUserToModel(model);
-        return NEW_ACCOUNT_VIEW;
-    }
-
     @ModelAttribute("servicePlans")
     public List<ServicePlan> getServicePlans() {
         return Arrays.asList(ServicePlan.values());
@@ -305,49 +296,6 @@ public class AccountController extends AbstractAccountController {
         return Arrays.asList(AccountType.values());
     }
 
-    @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
-    public ModelAndView add(
-        @ModelAttribute(NEW_ACCOUNT_FORM_KEY) @Valid NewAccountForm newAccountForm,
-        BindingResult result, Model model) throws Exception {
-        DuracloudUser user = getUser();
-
-        if (!result.hasErrors()) {
-            try {
-                // TODO: This needs to be populated based on user selection of storage providers
-                Set<StorageProviderType> secondaryStorageProviderTypes =
-                    new HashSet<StorageProviderType>();
-                int clusterId = -1;
-                
-                if(newAccountForm.getAccountClusterId() != null){
-                    clusterId = newAccountForm.getAccountClusterId();
-                }
-                AccountCreationInfo accountCreationInfo =
-                    new AccountCreationInfo(newAccountForm.getSubdomain(),
-                                            newAccountForm.getAcctName(),
-                                            newAccountForm.getOrgName(),
-                                            newAccountForm.getDepartment(),
-                                            StorageProviderType.AMAZON_S3,
-                                            secondaryStorageProviderTypes,
-                                            newAccountForm.getServicePlan(),
-                                            newAccountForm.getAccountType(),
-                                            clusterId);
-
-                AccountService service = this.accountManagerService.
-                    createAccount(accountCreationInfo, user);
-
-                int id = service.retrieveAccountInfo().getId();
-                
-                return createAccountRedirectModelAndView(id, "/providers");
-            } catch (SubdomainAlreadyExistsException ex) {
-                result.addError(new ObjectError("subdomain",
-                    "The subdomain you selected is already in use. Please choose another."));
-            }
-        }
-
-        addUserToModel(model);
-        return new ModelAndView(NEW_ACCOUNT_VIEW, model.asMap());
-
-    }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
     public ModelAndView activate(@PathVariable int accountId)

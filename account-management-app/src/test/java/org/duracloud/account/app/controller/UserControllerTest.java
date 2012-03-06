@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -20,6 +19,7 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,9 +32,7 @@ public class UserControllerTest extends AmaControllerTestBase {
         super.before();
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         instanceManagerService =
-            EasyMock.createMock("DuracloudInstanceManagerService",
-                                DuracloudInstanceManagerService.class);
-        mocks.add(instanceManagerService);
+            createMock(DuracloudInstanceManagerService.class);
         userController = new UserController();
         userController.setUserService(userService);
         userController.setAccountManagerService(accountManagerService);
@@ -116,11 +114,9 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(instanceManagerService.getInstanceServices(TEST_ACCOUNT_ID))
         .andReturn(new HashSet<DuracloudInstanceService>());
 
-        HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
-        mocks.add(request);
-        HttpSession session = EasyMock.createMock(HttpSession.class);
-        mocks.add(session);
-
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        HttpSession session = createMock(HttpSession.class);
+      
         EasyMock.expect(session.getAttribute("redemptionCode"))
                 .andReturn(null)
                 .anyTimes();
@@ -170,7 +166,7 @@ public class UserControllerTest extends AmaControllerTestBase {
     @Test
     public void testUpdateUser() throws Exception {
         initializeMockUserServiceStoreUser();
-        UserProfileEditForm editForm = EasyMock.createMock(UserProfileEditForm.class);
+        UserProfileEditForm editForm = createMock(UserProfileEditForm.class);
         setupNoBindingResultErrors();
         EasyMock.expect(editForm.getFirstName()).andReturn("").anyTimes();
         EasyMock.expect(editForm.getLastName()).andReturn("").anyTimes();
@@ -179,7 +175,6 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn("")
                 .anyTimes();
         EasyMock.expect(editForm.getSecurityAnswer()).andReturn("").anyTimes();
-        mocks.add(editForm);
         replayMocks();
         ModelAndView mav = userController.update(TEST_USERNAME,
                                             editForm,
@@ -214,7 +209,7 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn(createUser())
                 .anyTimes();
         
-        NewUserForm newUserForm = EasyMock.createMock(NewUserForm.class);
+        NewUserForm newUserForm = createMock(NewUserForm.class);
         setupNoBindingResultErrors();
         EasyMock.expect(newUserForm.getUsername())
                 .andReturn(TEST_USERNAME)
@@ -232,8 +227,11 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(newUserForm.getRedemptionCode())
                 .andReturn("")
                 .anyTimes();
-        mocks.add(newUserForm);
+
+        this.authenticationManager.authenticate(EasyMock.isA(UsernamePasswordAuthenticationToken.class));
+        EasyMock.expectLastCall().andReturn(null);
         replayMocks();
+        
         
         ModelAndView mav = userController.add(newUserForm, result, null, null);
         Assert.assertNotNull(mav);
@@ -252,7 +250,7 @@ public class UserControllerTest extends AmaControllerTestBase {
     @Test
     public void testForgotPassword() throws Exception {
         initializeForgotPasswordMockUserService();
-        ForgotPasswordForm forgotPasswordForm = EasyMock.createMock(ForgotPasswordForm.class);
+        ForgotPasswordForm forgotPasswordForm = createMock(ForgotPasswordForm.class);
         setupNoBindingResultErrors();
         EasyMock.expect(forgotPasswordForm.getUsername())
                 .andReturn(TEST_USERNAME)
@@ -261,8 +259,6 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn("question")
                 .anyTimes();
         
-        mocks.add(forgotPasswordForm);
-
         forgotPasswordForm.setSecurityQuestion(EasyMock.isA(String.class));
 
         EasyMock.expectLastCall().anyTimes();
@@ -285,8 +281,7 @@ public class UserControllerTest extends AmaControllerTestBase {
     @Test
     public void testChangePassword() throws Exception {
         initializeChangePasswordMockUserService();
-        ChangePasswordForm cbangePasswordForm = EasyMock.createMock(ChangePasswordForm.class);
-        mocks.add(cbangePasswordForm);
+        ChangePasswordForm cbangePasswordForm = createMock(ChangePasswordForm.class);
         setupNoBindingResultErrors();
         EasyMock.expect(cbangePasswordForm.getOldPassword())
                 .andReturn("")

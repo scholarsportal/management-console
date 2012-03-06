@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+  <view-state id="enterAccountInfo" 
+              view="/create-account/account-info" 
+              model="newAccountForm" >
+    <on-entry>
+      <evaluate  expression="accountManagerService.listAccountClusters('')"  
+                 result="viewScope.accountClusters" />
+      <set name="flowScope.newAccountForm" value="newAccountForm"/>
+    </on-entry>
+    
+    <transition on="next" to="isCommunity"/> 
+    <transition on="cancel" to="end"/>
+  </view-state>
+ 
+  <decision-state id="isCommunity">
+    <if test="newAccountForm.community" 
+        then="createAccount" 
+        else="configureStorageProviders"/>
+  </decision-state>
+
+  <view-state id="configureStorageProviders" view="/create-account/storage-providers">
+    <on-entry>
+      <set name="flowScope.fullAccountForm" value="fullAccountForm"/>
+    </on-entry>
+    <transition on="previous" to="enterAccountInfo"/>
+    <transition on="finish" to="createAccount"/>
+    <transition on="cancel" to="end"/>
+  </view-state>
+
+  <action-state id="createAccount">
+    <evaluate expression="createAccountAction"/>
+    <transition to="end"/>
+  </action-state>
+
+  <end-state id="end">
+    <output name="message" value="flowScope.message"/>
+  </end-state>
+  
+</flow>

@@ -28,9 +28,7 @@ public class UsersControllerTest extends AmaControllerTestBase {
         
         setupGenericAccountAndUserServiceMocks(TEST_ACCOUNT_ID);
         rootAccountManagerService =
-            EasyMock.createMock("RootAccountManagerService",
-                                RootAccountManagerService.class);
-        mocks.add(rootAccountManagerService);
+            createMock(RootAccountManagerService.class);
         usersController = new UsersController();
         usersController.setRootAccountManagerService(rootAccountManagerService);
         usersController.setAccountManagerService(this.accountManagerService);

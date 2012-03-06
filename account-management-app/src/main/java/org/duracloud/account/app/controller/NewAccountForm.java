@@ -1,7 +1,13 @@
 /*
- * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
  */
 package org.duracloud.account.app.controller;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
 import org.duracloud.account.common.domain.AccountType;
@@ -9,15 +15,20 @@ import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
- * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
+ * @author Daniel Bernstein
  * 
  */
-public class NewAccountForm {
+@Component("newAccountForm")
+@Scope(value=WebApplicationContext.SCOPE_REQUEST)
+public class NewAccountForm implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @NotBlank(message = "You must specify an organization.")
     private String orgName;
 
@@ -30,18 +41,24 @@ public class NewAccountForm {
     @Length(min = 3, max = 25, message = "Subdomain must be between 3 and 25 characters.")
     private String subdomain;
 
-    private List<StorageProviderType> storageProviders = new ArrayList<StorageProviderType>(0);
-
-    private ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
-
     private AccountType accountType;
 
     private Integer accountClusterId;
 
+    public List<ServicePlan> getServicePlans(){
+        return new LinkedList<ServicePlan>(Arrays.asList(ServicePlan.values()));
+    }
+
+    public List<AccountType> getAccountTypes(){
+        return new LinkedList<AccountType>(Arrays.asList(AccountType.values()));
+    }
+    
     public String getSubdomain() {
         return subdomain;
     }
 
+    
+    
     public void setSubdomain(String subdomain) {
         this.subdomain = subdomain;
     }
@@ -70,21 +87,6 @@ public class NewAccountForm {
         this.acctName = acctName;
     }
 
-    public List<StorageProviderType> getStorageProviders() {
-        return storageProviders;
-    }
-
-    public void setStorageProviders(List<StorageProviderType> storageProviders) {
-        this.storageProviders = storageProviders;
-    }
-
-    public ServicePlan getServicePlan() {
-        return servicePlan;
-    }
-
-    public void setServicePlan(ServicePlan servicePlan) {
-        this.servicePlan = servicePlan;
-    }
 
     public AccountType getAccountType() {
         return accountType;
@@ -100,6 +102,10 @@ public class NewAccountForm {
 
     public void setAccountClusterId(Integer accountClusterId) {
         this.accountClusterId = accountClusterId;
+    }
+    
+    public boolean isCommunity(){
+        return AccountType.COMMUNITY == this.accountType;
     }
 
 }

@@ -70,11 +70,6 @@ class ServiceRepoAddFormConfig extends FormConfig {
         return "css=table#serviceRepositories";
     }
 
-    @Override
-    public String getSubmitSuccessLocator() {
-        return "css=.success";
-    }
-    
     private String formatHostNameLocator(String hostName) {
         String template = "css=table#serviceRepositories [data-{0}=\"{1}\"]";
         String locator = MessageFormat.format(template, "hostName", hostName);

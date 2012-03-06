@@ -3,13 +3,16 @@
  */
 package org.duracloud.account.common.domain;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * @author: Bill Branan
  * Date: 2/16/12
  */
-public class AccountCluster extends BaseDomainData {
+public class AccountCluster extends BaseDomainData implements Serializable{
+
+    private static final long serialVersionUID = 1L;
 
     private String clusterName;
 

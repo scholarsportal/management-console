@@ -15,6 +15,7 @@ import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.StorageProviderTypeUtil;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,20 +170,14 @@ public abstract class AbstractAccountController extends AbstractController {
 
         // Get available providers for account
         ProviderForm providerForm = new ProviderForm();
-        List<StorageProviderType> availableProviderTypes =
-            new ArrayList<StorageProviderType>();
+        List<StorageProviderType> availableProviderTypes = StorageProviderTypeUtil.getAvailableSecondaryTypes();
 
         Set<StorageProviderType> usedTypes = new HashSet<StorageProviderType>();
         for(StorageProviderAccount secondaryAcct : secondarySPs) {
             usedTypes.add(secondaryAcct.getProviderType());
         }
-
-        if(!usedTypes.contains(StorageProviderType.RACKSPACE)) {
-            availableProviderTypes.add(StorageProviderType.RACKSPACE);
-        }
-        if(!usedTypes.contains(StorageProviderType.MICROSOFT_AZURE)) {
-            availableProviderTypes.add(StorageProviderType.MICROSOFT_AZURE);
-        }
+        
+        availableProviderTypes.removeAll(usedTypes);
 
         if(availableProviderTypes.size() > 0) {
             providerForm.setStorageProviders(availableProviderTypes);

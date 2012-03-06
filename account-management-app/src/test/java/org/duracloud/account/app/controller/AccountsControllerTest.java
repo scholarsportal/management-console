@@ -28,9 +28,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         super.before();
 
         accountsController = new AccountsController();
-        rootAccountManagerService = EasyMock.createMock("RootAccountManagerService",
-                                                        RootAccountManagerService.class);
-        mocks.add(rootAccountManagerService);
+        rootAccountManagerService = createMock(RootAccountManagerService.class);
         accountsController.setRootAccountManagerService(rootAccountManagerService);
         accountsController.setAccountManagerService(accountManagerService);        
         

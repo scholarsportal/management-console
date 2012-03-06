@@ -58,8 +58,9 @@
        class="button-bar">
         <a
          id="new"
-         href="${pageContext.request.contextPath}/accounts/new"
+         href="${pageContext.request.contextPath}/create-account"
          class="button">
+          <i class="pre plus"><!--  --></i>
           <spring:message
            code="new"
            arguments="${entityName}" />
@@ -83,6 +84,10 @@
                   <spring:message
                    code="account.subdomain" />
                 </th>
+                <th>
+                  <spring:message
+                   code="account.type" />
+                </th>
 
                 <th
                  colspan="4">
@@ -103,12 +108,13 @@
                      href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details">
                     ${a.accountInfo.acctName}</a>
                   </td>
-
                   <td>
                     <a
                       href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
                       target="_blank">${a.accountInfo.subdomain}</a>
                   </td>
+                  <td>${a.accountInfo.type}</td>
+
                   <td>${a.accountInfo.status}</td>
 
                   <td>

@@ -122,7 +122,7 @@
                   My Profile</a></li>
               <sec:authorize ifAnyGranted="ROLE_ROOT">
                 <li><a
-                  id="new-root-console-link"
+                  id="root-console-link"
                   accesskey="p"
                   class="root-link"
                   href="${pageContext.request.contextPath}/root/accounts">Root

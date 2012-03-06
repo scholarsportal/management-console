@@ -766,13 +766,13 @@ th.headerSortDown {
 }
 
 /*user feedback classes*/
-.feedback-holder {
+.message-holder {
 	position: fixed;
 	z-index: 10; 
 	width:100%;
 }
 
-.feedback {
+.message {
     border-radius: 10px;
 	padding:10px;
 	font-size:1.0em;
@@ -785,19 +785,19 @@ th.headerSortDown {
 	opacity:0.75;
 }
 
-.success {
+.message-holder .info {
 	border:1px solid #0F0;
 	background-color: #AFA;
 	color: #050;
 }
 
-.failure {
+.message-holder .error {
 	border:1px solid #F00;
 	background-color: #FAA;
 	color: #500;
 }
 
-.warning {
+.message-holder .warning {
 	border:1px solid #FF0;
 	background-color: #FFA;
 	color: #550;

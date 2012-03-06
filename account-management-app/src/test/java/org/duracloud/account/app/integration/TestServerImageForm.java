@@ -76,10 +76,6 @@ class ServerImageFormConfig extends FormConfig {
         return "css=table#serverImages";
     }
 
-    @Override
-    public String getSubmitSuccessLocator() {
-        return "css=.success";
-    }
 
     private String formatProviderImageIdLocator(String providerImageId) {
         String template = "css=#serverImages [data-{0}=\"{1}\"]";

@@ -63,11 +63,6 @@ class AccountClusterFormConfig extends FormConfig {
         return "css=table#clusters";
     }
 
-    @Override
-    public String getSubmitSuccessLocator() {
-        return "css=.success";
-    }
-
     private String formatNameLocator(String name) {
         String template = "css=#clusters [data-{0}=\"{1}\"]";
         String locator =
