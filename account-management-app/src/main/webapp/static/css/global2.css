@@ -111,7 +111,8 @@ input:-webkit-autofill {
 	content: "";	
 }
 
-.dc-main-tabs.horizontal-list li:before
+.dc-main-tabs.horizontal-list li:before, 
+.button-bar li:before
  {
 	content: "";	
 	padding: 0;
@@ -805,14 +806,23 @@ th.headerSortDown {
 
 .main-content {
 	padding:20px;
-	
 }
 
-form {
+
+
+form, .main-content > p {
 	background: rgba(255,255,255,.3);
 	padding:10px;
 	border-radius: 10px;
 }
+
+.horizontal-list form {
+	background: none;
+	padding: none;
+	border-radius: 0;
+	
+}
+
 
 table form {
 	background:none;
@@ -824,48 +834,41 @@ form legend {
 	padding: 10px 0px 10px 0px;
 }
 
-form ol li { /*	
-background: #b9cf6a;
-background: rgba(255,255,255,.3);
-border-color: #e3ebc3;
-border-color: rgba(255,255,255,.3);
-border-style: solid;
-border-width: 1px;
-border-radius: 5px;
-*/
-	border-bottom: 1px solid rgba(255, 255, 255, .3);
-	line-height: 30px;
-	list-style: none;
-	padding: 5px 10px;
-	margin-bottom: 5px;
+form ol li { 
+  border-bottom: 1px solid rgba(255, 255, 255, .3);
+  line-height: 30px;
+  list-style: none;
+  padding: 5px 10px;
+  margin-bottom: 5px;
 }
 
 form ol ol li {
-background: none;
-border: none;
-float: left;
+  background: none;
+  border: none;
+  float: left;
 }
 
 form label {
-float: left;
-font-size: 13px;
-width: 250px;
-text-align: right;
+  float: left;
+  font-size: 13px;
+  width: 250px;
+  text-align: right;
 }
 
 form label:after {
-	content: ":";
+  content: ":";
 }
 
 
 form legend, form label{
-	color: #333;
+  color: #333;
 }
+
 form fieldset fieldset label {
-background:none no-repeat left 50%;
-line-height: 20px;
-padding: 0 0 0 30px;
-width: auto;
+  background:none no-repeat left 50%;
+  line-height: 20px;
+  padding: 0 0 0 30px;
+  width: auto;
 }
 
 form fieldset fieldset label:hover {
@@ -875,24 +878,28 @@ cursor: pointer;
 form input:not([type=radio]),
 form select,
 form textarea {
-background: #ffffff;
-border: none;
-border-radius: 3px;
-outline: none;
-padding: 5px;
-width: 200px;
-font-size-adjust:+1;
+  background: #ffffff;
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  padding: 5px;
+  width: 200px;
+  font-size-adjust:+1;
 }
 form input:not([type=submit]):focus,
 form textarea:focus {
-background: #eaeaea;
-}
-form input[type=radio]
-{
-float: left;
-margin-right: 5px;
+  background: #eaeaea;
 }
 
+form input[type=radio]
+{
+  float: left;
+  margin-right: 5px;
+}
+
+form input[type=checkbox] {
+	width:20px;
+}
 .wizard-panel {
 	margin:10px; 
 	padding:20px; 

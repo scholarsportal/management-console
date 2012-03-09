@@ -81,7 +81,7 @@
                items="${clusters}">
                 <tr
                  data-name="${i.clusterName}">
-                  <td>${i.clusterName}</td>
+                  <td><a href="${currentUri}/byid/${i.id}"><c:out value="${i.clusterName}"/></a></td>
                   <td>
                     <a class="button featured edit"
                      href="${currentUri}/byid/${i.id}/edit">

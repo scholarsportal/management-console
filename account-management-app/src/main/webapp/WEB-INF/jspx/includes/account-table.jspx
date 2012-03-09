@@ -1,0 +1,82 @@
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:f="http://java.sun.com/jsp/jstl/functions"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:sec="http://www.springframework.org/security/tags">
+  <table
+   id="accounts"
+   class="entity-list">
+    <thead>
+      <tr>
+        <th colspan="5"><spring:message code="accounts"/></th>
+      </tr>
+      <tr>
+        <th><input type="checkbox" class="select-all"/></th>
+        <th>
+          <spring:message
+           code="account.acctname" />
+        </th>
+
+        <th>
+          <spring:message
+           code="account.subdomain" />
+        </th>
+
+        <th>
+          <spring:message
+           code="account.type" />
+        </th>
+
+        <th>
+          <spring:message
+           code="account.status" />
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <c:forEach
+       var="accountInfo"
+       items="${accounts}">
+        <tr
+         data-accountId="${accountInfo.id}">
+          <td>
+            <form:checkbox class="select" path="accountIds" value="${accountInfo.id}"/>
+          </td>
+          <td>
+            <a
+             href="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details">
+            ${accountInfo.acctName}</a>
+          </td>
+          <td>
+            <a
+             href="http://${accountInfo.subdomain}.duracloud.org/duradmin"
+             target="_blank">${accountInfo.subdomain}</a>
+          </td>
+
+          <td>${accountInfo.type}</td>
+
+          <td>${accountInfo.status}</td>
+        </tr>
+      </c:forEach>
+    </tbody>
+  </table>
+  <script>
+  	$(function(){
+  	    $(".select-all").change(
+  	        function(evt){
+  	        	var checked = $(evt.target).prop("checked");
+  	        	$(".select-all").closest("table")
+  	        					.find(".select")
+  	        					.prop("checked", checked);
+  	    	}
+  	    );
+  	    
+  	});
+  </script>
+ </jsp:root>

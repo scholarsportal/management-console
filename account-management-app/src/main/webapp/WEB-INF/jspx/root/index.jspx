@@ -8,7 +8,10 @@
   <tiles:insertDefinition name="root-base" flush="true">
     <tiles:putAttribute name="title">Root Console Home</tiles:putAttribute>
     <tiles:putAttribute name="primaryTab" cascade="true">home</tiles:putAttribute>
-    <tiles:putAttribute name="mainContent" cascade="true">Test</tiles:putAttribute>
+    <tiles:putAttribute name="mainContent" cascade="true">
+    <p>Test</p>
+    
+    </tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>
 

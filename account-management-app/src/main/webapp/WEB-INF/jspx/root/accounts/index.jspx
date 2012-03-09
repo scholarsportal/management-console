@@ -88,6 +88,10 @@
                   <spring:message
                    code="account.type" />
                 </th>
+                <th>
+                  <spring:message
+                   code="account.cluster" />
+                </th>
 
                 <th
                  colspan="4">
@@ -114,6 +118,14 @@
                       target="_blank">${a.accountInfo.subdomain}</a>
                   </td>
                   <td>${a.accountInfo.type}</td>
+                  <td>
+                    <c:set var="clusterId" value="${a.accountInfo.accountClusterId}"/>
+                    <c:if test="${not empty clusterId and clusterId gt -1}">
+                      <a href="${pageContext.request.contextPath}/root/clusters/byid/${clusterId}">
+                        <spring:message code="account.cluster"/>
+                      </a>
+                    </c:if>
+                  </td>
 
                   <td>${a.accountInfo.status}</td>
 
