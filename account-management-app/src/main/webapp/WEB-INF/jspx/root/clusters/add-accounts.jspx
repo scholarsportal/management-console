@@ -57,7 +57,7 @@
               <ul class="horizontal-list">
                 <li>
                   <button type="submit"
-                   id="addAccounts"
+                   id="add-selected"
                    >
                     <i class="pre plus"><!--  --></i>
                     <spring:message code="add.selected" /> ${' '}<spring:message code="accounts" />

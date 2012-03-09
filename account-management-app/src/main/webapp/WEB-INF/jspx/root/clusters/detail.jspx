@@ -49,7 +49,7 @@
               <i class="pre pencil"><!--  --></i>
               <spring:message code="edit" />  ${' '}<spring:message code="account.acctname" />
             </a>
-            <a
+            <a id="add-accounts"
              href="${currentUri}/add-accounts"
              class="button">
               <i class="pre plus"><!--  --></i>
@@ -77,7 +77,7 @@
               <ul class="horizontal-list">
                 <li>
                   <button type="submit"
-                   id="removeAccounts"
+                   id="remove-selected"
                    >
                     <i class="pre trash"><!--  --></i>
                     <spring:message code="remove.selected" /> ${' '}<spring:message code="accounts" />
