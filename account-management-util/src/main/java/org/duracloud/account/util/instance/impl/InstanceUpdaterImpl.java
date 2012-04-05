@@ -11,7 +11,7 @@ import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
+import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
                                    DuradminConfig duradminConfig,
                                    DurastoreConfig durastoreConfig,
                                    DuraserviceConfig duraserviceConfig,
-                                   DurareportConfig durareportConfig,
+                                   DurabossConfig durabossConfig,
                                    RestHttpHelper restHelper){
         log.info("Initializing DuraCloud applications at host {}", host);
 
@@ -45,14 +45,14 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
            null == duradminConfig ||
            null == durastoreConfig ||
            null == duraserviceConfig  ||
-           null == durareportConfig  ||
+           null == durabossConfig ||
            null == restHelper) {
             StringBuilder msg = new StringBuilder("Invalid arguments: ");
             msg.append(host + ", ");
             msg.append(duradminConfig + ", ");
             msg.append(durastoreConfig + ", ");
             msg.append(duraserviceConfig + ", ");
-            msg.append(durareportConfig + ", ");
+            msg.append(durabossConfig + ", ");
             msg.append(restHelper);
 
             throw new DuracloudInstanceUpdateException(msg.toString());
@@ -70,7 +70,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
 
         Application durareportApp = getDurareportApplication(host, restHelper);
         checkResponse("DuraReport",
-                      durareportApp.initialize(durareportConfig));
+                      durareportApp.initialize(durabossConfig));
     }
 
     @Override

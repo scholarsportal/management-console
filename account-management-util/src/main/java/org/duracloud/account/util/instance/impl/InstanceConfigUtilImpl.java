@@ -23,8 +23,8 @@ import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountUtil;
+import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
@@ -231,8 +231,8 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         return config;
     }
 
-    public DurareportConfig getDurareportConfig() {
-        DurareportConfig config = new DurareportConfig();
+    public DurabossConfig getDurabossConfig() {
+        DurabossConfig config = new DurabossConfig();
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
@@ -251,7 +251,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         notificationConfigMap.put("0", notificationConfig);
         config.setNotificationConfigs(notificationConfigMap);
 
-        config.setDurareportContext(InstanceUtil.DURAREPORT_CONTEXT);
+        config.setDurabossContext(InstanceUtil.DURAREPORT_CONTEXT);
         return config;
     }
     

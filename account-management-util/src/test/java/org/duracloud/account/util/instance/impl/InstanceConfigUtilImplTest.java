@@ -20,8 +20,8 @@ import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountUtil;
+import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
@@ -363,7 +363,7 @@ public class InstanceConfigUtilImplTest {
 
         replayMocks();
 
-        DurareportConfig config = instanceConfigUtil.getDurareportConfig();
+        DurabossConfig config = instanceConfigUtil.getDurabossConfig();
         assertNotNull(config);
 
         assertEquals(hostName, config.getDurastoreHost());
@@ -379,7 +379,7 @@ public class InstanceConfigUtilImplTest {
                      config.getDuraserviceContext());
 
         assertEquals(InstanceUtil.DURAREPORT_CONTEXT,
-                     config.getDurareportContext());
+                     config.getDurabossContext());
 
         Collection<NotificationConfig> notConfigs =
             config.getNotificationConfigs();

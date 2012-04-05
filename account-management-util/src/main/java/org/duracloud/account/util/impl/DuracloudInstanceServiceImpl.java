@@ -34,8 +34,8 @@ import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.account.util.util.AccountUtil;
+import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DurareportConfig;
 import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.common.error.DuraCloudRuntimeException;
@@ -309,8 +309,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             instanceConfigUtil.getDurastoreConfig();
         DuraserviceConfig duraserviceConfig =
             instanceConfigUtil.getDuraserviceConfig();
-        DurareportConfig durareportConfig =
-            instanceConfigUtil.getDurareportConfig();
+        DurabossConfig durabossConfig =
+            instanceConfigUtil.getDurabossConfig();
 
         RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
         String host = instance.getHostName();
@@ -319,7 +319,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            duradminConfig,
                                            durastoreConfig,
                                            duraserviceConfig,
-                                           durareportConfig,
+                                           durabossConfig,
                                            restHelper);
     }
 
