@@ -378,7 +378,7 @@ public class InstanceConfigUtilImplTest {
         assertEquals(DuraserviceConfig.QUALIFIER,
                      config.getDuraserviceContext());
 
-        assertEquals(InstanceUtil.DURAREPORT_CONTEXT,
+        assertEquals(InstanceUtil.DURABOSS_CONTEXT,
                      config.getDurabossContext());
 
         Collection<NotificationConfig> notConfigs =

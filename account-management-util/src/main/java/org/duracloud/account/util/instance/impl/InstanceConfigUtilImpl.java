@@ -251,7 +251,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         notificationConfigMap.put("0", notificationConfig);
         config.setNotificationConfigs(notificationConfigMap);
 
-        config.setDurabossContext(InstanceUtil.DURAREPORT_CONTEXT);
+        config.setDurabossContext(InstanceUtil.DURABOSS_CONTEXT);
         return config;
     }
     

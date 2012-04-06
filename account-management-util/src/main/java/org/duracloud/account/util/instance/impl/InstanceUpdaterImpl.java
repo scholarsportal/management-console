@@ -68,9 +68,8 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         checkResponse("DuraService",
                       duraserviceApp.initialize(duraserviceConfig));
 
-        Application durareportApp = getDurareportApplication(host, restHelper);
-        checkResponse("DuraReport",
-                      durareportApp.initialize(durabossConfig));
+        Application durabossApp = getDurabossApplication(host, restHelper);
+        checkResponse("DuraBoss", durabossApp.initialize(durabossConfig));
     }
 
     @Override
@@ -101,7 +100,7 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         apps.add(getDuradminApplication(host, restHelper));
         apps.add(getDurastoreApplication(host, restHelper));
         apps.add(getDuraserviceApplication(host, restHelper));
-        apps.add(getDurareportApplication(host, restHelper));
+        apps.add(getDurabossApplication(host, restHelper));
         return apps;
     }
 
@@ -120,9 +119,9 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         return new Application(host, port, DURASERVICE_CONTEXT, restHelper);
     }
 
-    private Application getDurareportApplication(String host,
-                                                 RestHttpHelper restHelper) {
-        return new Application(host, port, DURAREPORT_CONTEXT, restHelper);
+    private Application getDurabossApplication(String host,
+                                               RestHttpHelper restHelper) {
+        return new Application(host, port, DURABOSS_CONTEXT, restHelper);
     }
 
 

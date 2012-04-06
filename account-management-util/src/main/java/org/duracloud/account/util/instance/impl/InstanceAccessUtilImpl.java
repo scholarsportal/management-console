@@ -58,7 +58,7 @@ public class InstanceAccessUtilImpl implements InstanceAccessUtil, InstanceUtil 
         String duraserviceUrl =
             PROTOCOL + hostname + "/" + DURASERVICE_CONTEXT + INIT_PATH;
         String durareportUrl =
-            PROTOCOL + hostname + "/" + DURAREPORT_CONTEXT + INIT_PATH;
+            PROTOCOL + hostname + "/" + DURABOSS_CONTEXT + INIT_PATH;
 
         try {
             if(!checkResponse(restHelper.get(duradminUrl)) ||
