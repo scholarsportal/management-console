@@ -12,13 +12,13 @@
     <li><span>DuraCloud Management Console</span></li>
     <li><a
       target="_blank"
-      href="http://www.duraspace.org">DuraSpace.org</a></li>
-    <li><a
-      target="_blank"
       href="http://www.duracloud.org">DuraCloud.org</a></li>
     <li><a
       target="_blank"
-      href="http://duracloud.kayako.com">Help Desk</a></li>
+      href="http://www.duraspace.org">DuraSpace.org</a></li>
+    <li><a
+      target="_blank"
+      href="https://wiki.duraspace.org/display/DURACLOUD/DuraCloud+Help+Center">Help Center</a></li>
     <li><a
       target="_blank"
       href="mailto:info@duracloud.org">Contact Us</a></li>

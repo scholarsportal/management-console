@@ -129,7 +129,7 @@
                             <input type="hidden" value="${user.username}" name="j_username"/>
                             <input type="hidden" value="${user.password}" name="j_password"/>
                             <button id="duradmin-link-${a.accountInfo.id}" type="submit" class="button durabutton">
-                              <span>Launch DuraCloud<br />Administrator</span>
+                              <span>Launch DuraCloud</span>
                             </button>
                           </form>
                        </td>
@@ -185,7 +185,7 @@
                               <input type="hidden" value="${user.username}" name="j_username"/>
                               <input type="hidden" value="${user.password}" name="j_password"/>
                               <button id="duradmin-link-${a.accountInfo.id}" type="submit" class="button durabutton">
-                                <span>Launch DuraCloud<br />Administrator</span>
+                                <span>Launch DuraCloud</span>
                               </button>
                             </form>
                           </c:when>

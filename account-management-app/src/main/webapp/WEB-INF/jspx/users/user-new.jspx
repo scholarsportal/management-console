@@ -14,7 +14,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: New User Signup" />
+     value="New User Signup" />
 
     <tiles:putAttribute
      name="header-extensions">

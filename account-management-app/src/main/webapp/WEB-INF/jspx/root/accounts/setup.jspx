@@ -14,7 +14,7 @@
    name="accounts-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: Setup Account Form" />
+     value="Setup Account Form" />
 
     <tiles:putAttribute
      name="header-extensions">

@@ -15,7 +15,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="Account Management App: ${account.accountInfo.id} :: Users" />
+     value="${account.accountInfo.id} :: Users" />
 
     <tiles:putAttribute
      name="header-extensions"
