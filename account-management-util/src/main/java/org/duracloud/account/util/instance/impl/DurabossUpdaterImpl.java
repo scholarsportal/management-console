@@ -8,6 +8,8 @@ import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.util.error.DurabossUpdateException;
 import org.duracloud.account.util.instance.DurabossUpdater;
 import org.duracloud.appconfig.domain.DurabossConfig;
+import org.duracloud.audit.Auditor;
+import org.duracloud.audit.error.AuditLogNotFoundException;
 import org.duracloud.client.exec.ExecutorImpl;
 import org.duracloud.common.util.CalendarUtil;
 import org.duracloud.common.web.RestHttpHelper;
@@ -17,6 +19,8 @@ import org.duracloud.exec.error.InvalidActionRequestException;
 import org.duracloud.execdata.ExecConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static org.duracloud.common.util.CalendarUtil.DAY_OF_WEEK.SAT;
 
@@ -33,6 +37,7 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
     protected final static String port = "443";
 
     private Executor executor;
+    private Auditor auditor;
 
     @Override
     public void startDuraboss(String host,
@@ -86,6 +91,9 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
             throw new DurabossUpdateException(host, "not initialized");
         }
 
+        Auditor auditor = getAuditor(host, restHelper);
+        stopAuditor(auditor);
+
         Executor executor = getExecutor(host, restHelper);
 
         // Start BitIntegrity handler.
@@ -95,6 +103,11 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
         if (null != servicePlan && servicePlan.supportsMedia()) {
             stopMediaStreaming(executor);
         }
+    }
+
+    private void stopAuditor(Auditor auditor) {
+        log.info("Stopping auditor.");
+        auditor.stop();
     }
 
     private void stopBitIntegrity(Executor executor) {
@@ -160,6 +173,38 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
             this.executor = new ExecutorImpl(host, port, restHelper);
         }
         return executor;
+    }
+
+    private Auditor getAuditor(final String host,
+                               final RestHttpHelper restHelper) {
+        if (null == auditor) {
+            // FIXME: This should be replaced with a yet to be created Auditor
+            //        client.
+            this.auditor = new Auditor() {
+                @Override
+                public void createInitialAuditLogs(boolean async) {
+                    throw new UnsupportedOperationException("createAuditLogs");
+                }
+
+                @Override
+                public List<String> getAuditLogs(String spaceId)
+                    throws AuditLogNotFoundException {
+                    throw new UnsupportedOperationException("getAuditLogs");
+                }
+
+                @Override
+                public void stop() {
+                    String url = "https://" + host + "/duraboss/audit";
+                    try {
+                        restHelper.delete(url);
+
+                    } catch (Exception e) {
+                        log.warn("Error stopping the Auditor at: {}", url, e);
+                    }
+                }
+            };
+        }
+        return auditor;
     }
 
 }

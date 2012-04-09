@@ -161,6 +161,7 @@ public class DurabossUpdaterImplTest {
 
     private void setExpectations(MODE mode) throws Exception {
         String url = getInitUrl();
+        String auditUrl = getAuditUrl();
         String bitIntegrityUrl;
         String streamingUrl;
 
@@ -197,6 +198,7 @@ public class DurabossUpdaterImplTest {
                 bitIntegrityUrl = getActionUrl(CANCEL_BIT_INTEGRITY);
                 streamingUrl = getActionUrl(STOP_STREAMING);
 
+                EasyMock.expect(restHelper.delete(auditUrl)).andReturn(null);
                 EasyMock.expect(restHelper.post(EasyMock.eq(bitIntegrityUrl),
                                                 EasyMock.<String>anyObject(),
                                                 EasyMock.<Map<String, String>>isNull()))
@@ -232,6 +234,7 @@ public class DurabossUpdaterImplTest {
                 servicePlan = ServicePlan.STARTER_ARCHIVING;
 
                 EasyMock.expect(initResponse.getStatusCode()).andReturn(SC_OK);
+                EasyMock.expect(restHelper.delete(auditUrl)).andReturn(null);
 
                 bitIntegrityUrl = getActionUrl(CANCEL_BIT_INTEGRITY);
                 EasyMock.expect(restHelper.post(EasyMock.eq(bitIntegrityUrl),
@@ -260,7 +263,7 @@ public class DurabossUpdaterImplTest {
                 bitIntegrityUrl = getActionUrl(CANCEL_BIT_INTEGRITY);
 
                 EasyMock.expect(initResponse.getStatusCode()).andReturn(SC_OK);
-
+                EasyMock.expect(restHelper.delete(auditUrl)).andReturn(null);
                 EasyMock.expect(restHelper.post(EasyMock.eq(bitIntegrityUrl),
                                                 EasyMock.<String>anyObject(),
                                                 EasyMock.<Map<String, String>>isNull()))
@@ -288,6 +291,10 @@ public class DurabossUpdaterImplTest {
 
     private String getActionUrl(String action) {
         return "https://" + host + "/" + context + "/exec/" + action;
+    }
+
+    private String getAuditUrl() {
+        return "https://" + host + "/" + context + "/audit";
     }
 
     private enum MODE {
