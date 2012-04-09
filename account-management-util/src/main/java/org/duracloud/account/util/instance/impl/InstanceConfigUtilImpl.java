@@ -31,8 +31,10 @@ import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -245,6 +247,12 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         notificationConfig.setUsername(notMgrConfig.getUsername());
         notificationConfig.setPassword(notMgrConfig.getPassword());
         notificationConfig.setOriginator(notMgrConfig.getFromAddress());
+
+        List<String> admins = new ArrayList<String>();
+        for(String admin : notMgrConfig.getAdminAddresses()) {
+            admins.add(admin);
+        }
+        notificationConfig.setAdmins(admins);
 
         Map<String, NotificationConfig> notificationConfigMap =
             new HashMap<String, NotificationConfig>();

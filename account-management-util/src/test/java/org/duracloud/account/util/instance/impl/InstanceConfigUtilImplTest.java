@@ -32,12 +32,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
@@ -61,12 +64,18 @@ public class InstanceConfigUtilImplTest {
     private String notificationUsername = "notUser";
     private String notificationPassword = "notPass";
     private String notificationFromAddress = "notAddress";
+    private String adminAddr1 = "admin-addr-1";
+    private String adminAddr2 = "admin-addr-2";
     private Collection<String> notificationAdminAddresses;
 
     @Before
     public void setup() throws Exception {
         Set<Integer> ids = new HashSet<Integer>();
         ids.add(1);
+
+        notificationAdminAddresses = new ArrayList<String>();
+        notificationAdminAddresses.add(adminAddr1);
+        notificationAdminAddresses.add(adminAddr2);
 
         instance = EasyMock.createMock("DuracloudInstance",
                                        DuracloudInstance.class);
@@ -355,7 +364,7 @@ public class InstanceConfigUtilImplTest {
     }
 
     @Test
-    public void testGetDurareportConfig() {
+    public void testGetDurabossConfig() {
         String hostName = "host";
         EasyMock.expect(instance.getHostName())
             .andReturn(hostName)
@@ -392,6 +401,10 @@ public class InstanceConfigUtilImplTest {
         assertEquals(notificationUsername, notConfig.getUsername());
         assertEquals(notificationPassword, notConfig.getPassword());
         assertEquals(notificationFromAddress, notConfig.getOriginator());
+
+        List<String> admins = notConfig.getAdmins();
+        assertTrue(admins.contains(adminAddr1));
+        assertTrue(admins.contains(adminAddr2));
     }
 
 }
