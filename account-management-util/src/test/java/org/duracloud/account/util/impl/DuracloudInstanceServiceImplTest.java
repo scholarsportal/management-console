@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.duracloud.account.common.domain.ServicePlan.PROFESSIONAL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -76,7 +78,7 @@ public class DuracloudInstanceServiceImplTest
         assertNotNull(resultStatus);
         assertEquals(status, resultStatus);
     }
-    
+
     @Test
     public void testGetStatusInternal() throws Exception {
         String status = "status";
@@ -96,6 +98,21 @@ public class DuracloudInstanceServiceImplTest
 
     @Test
     public void testStop() throws Exception {
+        EasyMock.expect(instanceConfigUtil.getDurabossConfig())
+                .andReturn(new DurabossConfig());
+
+        EasyMock.expect(instance.getAccountId()).andReturn(accountId);
+        EasyMock.expect(accountRepo.findById(accountId)).andReturn(account);
+        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
+            serverDetails);
+        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
+
+        durabossUpdater.stopDuraboss(EasyMock.isA(String.class),
+                                     EasyMock.isA(DurabossConfig.class),
+                                     EasyMock.isA(ServicePlan.class),
+                                     EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall();
+
         computeProvider.stop(EasyMock.isA(String.class));
         EasyMock.expectLastCall()
             .times(1);
@@ -111,6 +128,7 @@ public class DuracloudInstanceServiceImplTest
             .andReturn(instanceId)
             .times(1);
 
+        setUpServerImageMocks();
         replayMocks();
 
         service.stop();
@@ -202,6 +220,16 @@ public class DuracloudInstanceServiceImplTest
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
 
+        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
+            serverDetails);
+        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
+
+        durabossUpdater.startDuraboss(EasyMock.isA(String.class),
+                                      EasyMock.isA(DurabossConfig.class),
+                                      EasyMock.isA(ServicePlan.class),
+                                      EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall();
+
         EasyMock.expect(instance.getId()).andReturn(1);
 
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
@@ -261,8 +289,23 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expectLastCall()
             .times(1);
 
+        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
+            serverDetails);
+        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
+
+        durabossUpdater.startDuraboss(EasyMock.isA(String.class),
+                                      EasyMock.isA(DurabossConfig.class),
+                                      EasyMock.isA(ServicePlan.class),
+                                      EasyMock.isA(RestHttpHelper.class));
+        EasyMock.expectLastCall();
+
         EasyMock.expect(instanceRepo.findById(EasyMock.anyInt()))
-            .andReturn(new DuracloudInstance(1,1,1,"host","provider",false));
+            .andReturn(new DuracloudInstance(1,
+                                             1,
+                                             1,
+                                             "host",
+                                             "provider",
+                                             false));
 
         instanceRepo.save(EasyMock.isA(DuracloudInstance.class));
         EasyMock.expectLastCall();
@@ -472,7 +515,7 @@ public class DuracloudInstanceServiceImplTest
     @Test
     public void testSetUserRolesEmpty() throws Exception {
         replayMocks();
-        
+
         doTestSetUserRoles(new HashSet<DuracloudUser>());
         doTestSetUserRoles(null);
     }

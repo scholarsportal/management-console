@@ -56,6 +56,16 @@
       <artifactId>notification</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>duraboss-api</artifactId>
+      <version>${duracloud.artifact.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>executorclient</artifactId>
+      <version>${duracloud.artifact.version}</version>
+    </dependency>
 
     <!--External dependencies-->
     <dependency>

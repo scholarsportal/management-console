@@ -12,6 +12,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
@@ -24,10 +25,12 @@ import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
+import org.duracloud.account.util.instance.DurabossUpdater;
 import org.duracloud.account.util.instance.InstanceAccessUtil;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceInitListener;
 import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.DurabossUpdaterImpl;
 import org.duracloud.account.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
@@ -72,6 +75,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
     private InstanceConfigUtil instanceConfigUtil;
+    private DurabossUpdater durabossUpdater;
     private Credential rootCredential;
     private int timeoutMinutes = 20;
     private NotificationMgrConfig notMgrConfig;
@@ -93,6 +97,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
              null,
              null,
              null,
+             null,
              notMgrConfig);
     }
 
@@ -105,6 +110,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            DuracloudComputeProvider computeProvider,
                                            InstanceUpdater instanceUpdater,
                                            InstanceConfigUtil instanceConfigUtil,
+                                           DurabossUpdater durabossUpdater,
                                            NotificationMgrConfig notMgrConfig)
         throws DBNotFoundException {
 
@@ -117,6 +123,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.computeProvider = computeProvider;
         this.instanceUpdater = instanceUpdater;
         this.instanceConfigUtil = instanceConfigUtil;
+        this.durabossUpdater = durabossUpdater;
         this.notMgrConfig = notMgrConfig;
 
         if (null == computeProvider) {
@@ -132,6 +139,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                                                  repoMgr,
                                                                  accountUtil,
                                                                  notMgrConfig);
+        }
+
+        if (null == durabossUpdater){
+            this.durabossUpdater = new DurabossUpdaterImpl();
         }
     }
 
@@ -193,10 +204,37 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         log.info("Stopping instance with provider ID {} at host {}",
                  instance.getProviderInstanceId(), instance.getHostName());
 
+        // Gracefully shutdown duraboss
+        String host = instance.getHostName();
+        DurabossConfig durabossConfig = instanceConfigUtil.getDurabossConfig();
+        RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
+
+        ServicePlan servicePlan = getServicePlan();
+        try {
+            durabossUpdater.stopDuraboss(host,
+                                         durabossConfig,
+                                         servicePlan,
+                                         restHelper);
+        } catch (Exception e) {
+            // Do not let DuraBoss errors stop the instance shutdown.
+            log.error("Error stopping DuraBoss: {}", e.getMessage(), e);
+        }
+
         // Terminate the instance
         computeProvider.stop(instance.getProviderInstanceId());
         // Remove this instance from the DB
         repoMgr.getInstanceRepo().delete(instance.getId());
+    }
+
+    private ServicePlan getServicePlan()  {
+        AccountInfo account;
+        try {
+            account = getAccount();
+        } catch (DBNotFoundException e) {
+            return null;
+        }
+        ServerDetails serverDetails = accountUtil.getServerDetails(account);
+        return serverDetails.getServicePlan();
     }
 
     @Override
@@ -321,6 +359,12 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            duraserviceConfig,
                                            durabossConfig,
                                            restHelper);
+
+        ServicePlan servicePlan = getServicePlan();
+        durabossUpdater.startDuraboss(host,
+                                      durabossConfig,
+                                      servicePlan,
+                                      restHelper);
     }
 
     private void initializeUserRoles() {

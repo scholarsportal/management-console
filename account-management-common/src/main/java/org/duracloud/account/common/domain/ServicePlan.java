@@ -32,6 +32,10 @@ public enum ServicePlan {
     public String getValue(){
         return name();
     }
+
+    public boolean supportsMedia() {
+        return !this.equals(STARTER_ARCHIVING);
+    }
     
     @Override
     public String toString() {

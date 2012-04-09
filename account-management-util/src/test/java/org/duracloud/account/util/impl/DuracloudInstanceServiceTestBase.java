@@ -14,8 +14,10 @@ import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.*;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
+import org.duracloud.account.util.instance.DurabossUpdater;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUpdater;
+import org.duracloud.account.util.instance.impl.DurabossUpdaterImpl;
 import org.duracloud.account.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountClusterUtil;
@@ -53,6 +55,7 @@ public class DuracloudInstanceServiceTestBase {
     protected StorageProviderAccount storageProviderAcct;
     protected DuracloudInstanceRepo instanceRepo;
     protected InstanceUpdater instanceUpdater;
+    protected DurabossUpdater durabossUpdater;
     protected DuracloudRightsRepo rightsRepo;
     protected DuracloudGroupRepo groupRepo;
     protected DuracloudUserRepo userRepo;
@@ -102,6 +105,8 @@ public class DuracloudInstanceServiceTestBase {
                                            DuracloudInstanceRepo.class);
         instanceUpdater = EasyMock.createMock("InstanceUpdaterImpl",
                                               InstanceUpdaterImpl.class);
+        durabossUpdater = EasyMock.createMock("DurabossUpdaterImpl",
+                                              DurabossUpdaterImpl.class);
         rightsRepo = EasyMock.createMock("DuracloudRightsRepo",
                                          DuracloudRightsRepo.class);
         groupRepo = EasyMock.createMock("DuracloudGroupRepo",
@@ -172,6 +177,7 @@ public class DuracloudInstanceServiceTestBase {
                                                    computeProvider,
                                                    instanceUpdater,
                                                    instanceConfigUtil,
+                                                   durabossUpdater,
                                                    notConfig);
 
     }
@@ -192,6 +198,7 @@ public class DuracloudInstanceServiceTestBase {
                         storageProviderAcct,
                         instanceRepo,
                         instanceUpdater,
+                        durabossUpdater,
                         rightsRepo,
                         groupRepo,
                         userRepo,
@@ -221,6 +228,7 @@ public class DuracloudInstanceServiceTestBase {
                         storageProviderAcct,
                         instanceRepo,
                         instanceUpdater,
+                        durabossUpdater,
                         rightsRepo,
                         groupRepo,
                         userRepo,
