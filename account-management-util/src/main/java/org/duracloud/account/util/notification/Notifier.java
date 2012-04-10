@@ -96,11 +96,6 @@ public class Notifier {
         sb.append("Internet Explorer version 8 or prior. It is recommended ");
         sb.append("that you use either Internet Explorer version 9 (or ");
         sb.append("later) or another web browser to access DuraCloud.");
-        sb.append("\n\n");
-        sb.append("If you have any issues accepting the invitation or ");
-        sb.append("creating your personal user profile, please contact the ");
-        sb.append("DuraCloud team by emailing your issue to ");
-        sb.append("support@duracloud.org.");
         sb.append("\n");
         sb.append("\n");
         sb.append("The DuraCloud team");
