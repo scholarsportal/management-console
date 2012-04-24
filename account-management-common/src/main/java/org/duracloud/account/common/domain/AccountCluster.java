@@ -3,17 +3,13 @@
  */
 package org.duracloud.account.common.domain;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
  * @author: Bill Branan
  * Date: 2/16/12
  */
-public class AccountCluster extends BaseDomainData implements Serializable{
-
-    private static final long serialVersionUID = 1L;
+public class AccountCluster extends BaseDomainData {
 
     private String clusterName;
 
@@ -89,19 +85,5 @@ public class AccountCluster extends BaseDomainData implements Serializable{
         result = 31 * result +
             (clusterAccountIds != null ? clusterAccountIds.hashCode() : 0);
         return result;
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out)
-        throws IOException{
-        out.defaultWriteObject();
-        out.writeInt(this.id);
-        out.writeInt(this.counter);
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-        throws IOException, ClassNotFoundException{
-        in.defaultReadObject();
-        this.id = in.readInt();
-        this.counter = in.readInt();
     }
 }

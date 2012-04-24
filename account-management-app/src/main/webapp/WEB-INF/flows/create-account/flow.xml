@@ -7,7 +7,7 @@
               view="/create-account/account-info" 
               model="newAccountForm" >
     <on-entry>
-      <evaluate  expression="accountManagerService.listAccountClusters('')"  
+      <evaluate  expression="createAccountFlowHelper.getAccountClusters()"  
                  result="viewScope.accountClusters" />
       <set name="flowScope.newAccountForm" value="newAccountForm"/>
     </on-entry>
