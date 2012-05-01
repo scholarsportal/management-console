@@ -3,6 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.CreditCardPaymentInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
@@ -16,6 +22,7 @@ import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.StorageProviderTypeUtil;
+import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +34,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The default view for this application
@@ -102,9 +103,13 @@ public abstract class AbstractAccountController extends AbstractController {
 
     protected void addAccountInfoToModel(AccountInfo info,
                                          ServerDetails serverDetails,
-                                         Model model){
+                                         AccountCluster accountCluster, Model model){
         model.addAttribute(ACCOUNT_INFO_KEY, info);
         model.addAttribute(SERVER_DETAILS_KEY, serverDetails);
+        if(accountCluster != null){
+            model.addAttribute("accountCluster", accountCluster);
+        }
+
     }
 
     protected void addAccountOwnersToModel(List<DuracloudUser> owners, Model model)
@@ -115,9 +120,10 @@ public abstract class AbstractAccountController extends AbstractController {
     /**
      * @param accountId
      * @param model
+     * @throws AccountClusterNotFoundException 
      */
     protected AccountInfo loadAccountInfo(int accountId, Model model)
-        throws AccountNotFoundException {
+        throws AccountNotFoundException, AccountClusterNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         return loadAccountInfo(accountService, model);
@@ -125,10 +131,16 @@ public abstract class AbstractAccountController extends AbstractController {
 
     
     protected AccountInfo loadAccountInfo(AccountService accountService,
-                                          Model model){
+                                          Model model) throws AccountClusterNotFoundException{
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
         ServerDetails serverDetails = accountService.retrieveServerDetails();
-        addAccountInfoToModel(accountInfo, serverDetails, model);
+        AccountCluster cluster = null;
+        int clusterId = accountInfo.getAccountClusterId();
+        if( clusterId > -1){
+            cluster = this.accountManagerService.getAccountCluster(clusterId)
+                                                .retrieveAccountCluster();
+        }
+        addAccountInfoToModel(accountInfo, serverDetails, cluster, model);
         return accountInfo;
     }
 

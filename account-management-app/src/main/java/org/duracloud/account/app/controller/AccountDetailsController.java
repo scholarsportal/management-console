@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Lazy;
@@ -38,7 +39,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException, DBNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException, AccountClusterNotFoundException {
         AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
 

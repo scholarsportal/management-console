@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Lazy;
@@ -28,7 +29,9 @@ public class ProviderController extends AbstractAccountController {
 
     @RequestMapping(value = { PROVIDER_PATH }, method = RequestMethod.GET)
     public String getProviders(@PathVariable int accountId, Model model)
-        throws AccountNotFoundException, DBNotFoundException {
+        throws AccountNotFoundException,
+            DBNotFoundException,
+            AccountClusterNotFoundException {
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         addUserToModel(model);

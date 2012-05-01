@@ -1,12 +1,22 @@
+/*
+ * Copyright (c) 2009-2012 DuraSpace. All rights reserved.
+ */
 package org.duracloud.account.app.controller;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * 
+ * @author Daniel Bernstein
+ *
+ */
 public class AccountEditForm {
     @NotBlank(message = "You must specify an organization.")
     private String orgName;
 
     private String department;
+    
+    private int accountClusterId;
 
     @NotBlank(message = "You must specify an account name.")
     private String acctName;
@@ -34,4 +44,13 @@ public class AccountEditForm {
     public void setDepartment(String department) {
         this.department = department;
     }
+
+    public int getAccountClusterId() {
+        return accountClusterId;
+    }
+
+    public void setAccountClusterId(int accountClusterId) {
+        this.accountClusterId = accountClusterId;
+    }
+    
 }
