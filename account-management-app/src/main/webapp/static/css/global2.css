@@ -884,7 +884,6 @@ form textarea {
   outline: none;
   padding: 5px;
   width: 200px;
-  font-size-adjust:+1;
 }
 form input:not([type=submit]):focus,
 form textarea:focus {
