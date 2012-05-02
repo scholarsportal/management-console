@@ -47,7 +47,7 @@
              href="${currentUri}/edit"
              class="button">
               <i class="pre pencil"><!--  --></i>
-              <spring:message code="edit" />  ${' '}<spring:message code="account.acctname" />
+              <spring:message code="edit" />  ${' '}<spring:message code="cluster.name" />
             </a>
             <a id="add-accounts"
              href="${currentUri}/add-accounts"
