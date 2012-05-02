@@ -4,6 +4,8 @@ import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.text.MessageFormat;
+
 public class ServiceRepoForm {
     @NotBlank(message = "You must specify a host name.")
     private String hostName;
@@ -89,5 +91,22 @@ public class ServiceRepoForm {
 
     public void setServiceRepoType(ServiceRepositoryType serviceRepoType) {
         this.serviceRepoType = serviceRepoType;
+    }
+
+    @Override
+    public String toString() {
+        String template = "{0}(hostName={1},spaceId={2}," +
+                          "xmlId={3},version={4},userName={5},password={6}, " +
+                          "servicePlan={7},serviceRepoType={8})";
+        return MessageFormat.format(template, 
+                                    getClass().getSimpleName(),
+                                    this.hostName,
+                                    this.spaceId,
+                                    this.xmlId,
+                                    this.version,
+                                    this.userName,
+                                    this.password,
+                                    this.servicePlan,
+                                    this.serviceRepoType);
     }
 }

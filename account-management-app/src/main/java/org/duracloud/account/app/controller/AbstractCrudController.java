@@ -71,7 +71,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
         }
         
         create(form);
-        log.info("created server image: {}" + form);
+        log.info("created entity: {}", form);
         setSuccessFeedback(createSuccessMessage(),
                         redirectAttributes);
 

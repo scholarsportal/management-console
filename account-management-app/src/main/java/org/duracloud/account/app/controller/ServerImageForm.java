@@ -2,6 +2,8 @@ package org.duracloud.account.app.controller;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.text.MessageFormat;
+
 public class ServerImageForm {
     private int providerAccountId;
 
@@ -64,5 +66,20 @@ public class ServerImageForm {
 
     public void setLatest(boolean latest) {
         this.latest = latest;
+    }
+
+    @Override
+    public String toString() {
+        String template = "{0}(providerAccountId={1},providerImageId={2}," +
+                          "version={3},description={4},password={5},latest={6})";
+        return MessageFormat.format(template, 
+                                    getClass().getSimpleName(),
+                                    this.providerAccountId,
+                                    this.providerImageId,
+                                    this.version,
+                                    this.description,
+                                    this.password,
+                                    this.latest);
+        
     }
 }

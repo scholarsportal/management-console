@@ -3,6 +3,8 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.text.MessageFormat;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 
@@ -22,4 +24,13 @@ public class AccountClusterForm {
     public void setName(String name) {
         this.name = name;
     }
+    
+    @Override
+    public String toString() {
+        String template = "{0}(name={1})";
+        return MessageFormat.format(template, 
+                                    getClass().getSimpleName(),
+                                    this.name);
+    }
+ 
 }
