@@ -21,7 +21,7 @@
     <tiles:putAttribute
       name="panelMessage"
       cascade="true">
-      This is step 1 of the embedded flow
+      Basic Account Information
     </tiles:putAttribute>
 
     <tiles:putAttribute

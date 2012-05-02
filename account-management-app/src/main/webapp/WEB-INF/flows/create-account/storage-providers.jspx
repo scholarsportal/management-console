@@ -12,7 +12,7 @@
   <tiles:insertDefinition
     name="create-account-wizard"
     flush="true">
-    <tiles:putAttribute name="title">Step 1</tiles:putAttribute>
+    <tiles:putAttribute name="title">Step 2</tiles:putAttribute>
     <tiles:putAttribute
       name="panelTitle"
       cascade="true">
@@ -21,7 +21,7 @@
     <tiles:putAttribute
       name="panelMessage"
       cascade="true">
-      This is step 2  of the embedded flow
+      Service Plan and Storage Provider Configuration 
     </tiles:putAttribute>
 
     <tiles:putAttribute
