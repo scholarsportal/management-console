@@ -3,29 +3,30 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.AccountCreationInfo;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
-import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.UserFeedbackUtil;
 import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,13 +34,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -233,49 +227,70 @@ public class AccountController extends AbstractAccountController {
                     method = RequestMethod.POST)
     public ModelAndView reInitializeUserRoles(@PathVariable int accountId,
                                         @PathVariable int instanceId,
-                                        Model model)
-        throws  AccountNotFoundException, 
-                DuracloudInstanceNotAvailableException, 
-                AccountClusterNotFoundException {
+                                        Model model,
+                                        RedirectAttributes redirectAttributes)        
+                throws  AccountNotFoundException, 
+                        DuracloudInstanceNotAvailableException, 
+                        AccountClusterNotFoundException {
+
         log.info("ReInit UserRoles for acct: {}, instance: {}",
                   accountId,
                   instanceId);
 
-        DuracloudInstanceService instanceService = instanceManagerService.getInstanceService(
-            instanceId);
-        instanceService.reInitializeUserRoles();
-
-        String status = "Instance User Roles ReInitialized successfully.";
-        return reInitResult(accountId, model, status);
+        try{
+            DuracloudInstanceService instanceService =
+                instanceManagerService.getInstanceService(instanceId);
+            instanceService.reInitializeUserRoles();
+            UserFeedbackUtil.addSuccessFlash("Successfully reinitialized users!",
+                                             redirectAttributes);
+        }catch(Exception ex){
+            log.error("failed to reinitialize service", ex);    
+            UserFeedbackUtil.addFailureFlash("Unable to  reinitialize users. "+
+                                             "Please try again in a few minutes.",
+                                             redirectAttributes);
+        }   
+        return reInitResult(accountId, model, redirectAttributes);
     }
 
     @RequestMapping(value = {INSTANCE_REINIT_PATH},
                     method = RequestMethod.POST)
     public ModelAndView reInitialize(@PathVariable int accountId,
                                @PathVariable int instanceId,
-                               Model model)
-        throws  AccountNotFoundException, 
-                DuracloudInstanceNotAvailableException, 
-                AccountClusterNotFoundException {
+                               Model model,
+                               RedirectAttributes redirectAttributes)        
+            throws  AccountNotFoundException, 
+                    DuracloudInstanceNotAvailableException, 
+                    AccountClusterNotFoundException {
+        
         log.info("ReInit Instance for acct: {}, instance: {}",
                   accountId,
                   instanceId);
 
-        DuracloudInstanceService instanceService = instanceManagerService.getInstanceService(
-            instanceId);
-        instanceService.reInitialize();
 
-        String status = "Instance ReInitialized successfully.";
-        return reInitResult(accountId, model, status);
+        try{
+            DuracloudInstanceService instanceService =
+                instanceManagerService.getInstanceService(instanceId);
+            instanceService.reInitialize();
+            UserFeedbackUtil.addSuccessFlash("Successfully reinitialized instance!",
+                redirectAttributes);
+
+        }catch(Exception ex){
+            log.error("failed to reinitialize service", ex);
+            UserFeedbackUtil.addFailureFlash("Unable to  reinitialize instance. "+
+                                             "Please try again in a few minutes.",
+                                             redirectAttributes);
+        }
+
+        return reInitResult(accountId, model, redirectAttributes);
     }
 
-    private ModelAndView
-        reInitResult(int accountId, Model model, String status)
-            throws AccountNotFoundException,
+    private ModelAndView reInitResult(int accountId,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException,
                 DuracloudInstanceNotAvailableException,
                 AccountClusterNotFoundException {
         populateAccountInModel(accountId, model);
-        model.addAttribute(ACTION_STATUS, status);
 
         String username =
             SecurityContextHolder.getContext().getAuthentication().getName();

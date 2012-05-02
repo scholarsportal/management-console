@@ -145,11 +145,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
         boolean initUsers = true;
         createReInitInstanceMocks(initUsers);
         replayMocks();
-        
         accountController.reInitializeUserRoles(TEST_ACCOUNT_ID,
                                                 TEST_INSTANCE_ID,
-                                                model);
-        verifyResult(model);
+                                                model,
+                                                this.redirectAttributes);
     }
 
     @Test
@@ -158,8 +157,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         createReInitInstanceMocks(initUsers);
         
         replayMocks();
-        accountController.reInitialize(TEST_ACCOUNT_ID, TEST_INSTANCE_ID, model);
-        verifyResult(model);
+        accountController.reInitialize(TEST_ACCOUNT_ID, TEST_INSTANCE_ID, model,this.redirectAttributes);
     }
 
     private void createReInitInstanceMocks(boolean initUsers) throws Exception {
@@ -188,7 +186,12 @@ public class AccountControllerTest extends AmaControllerTestBase {
                                                            "providerInstanceId",
                                                            false);
         EasyMock.expect(instanceService.getInstanceInfo()).andReturn(instance);
+    
+        addFlashAttribute();
+
     }
+    
+    
 
     @Test
     public void testStopInstance() throws Exception {
