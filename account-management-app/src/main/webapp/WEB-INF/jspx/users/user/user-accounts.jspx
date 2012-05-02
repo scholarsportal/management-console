@@ -56,17 +56,7 @@
                         <div style="height:20px" ><!-- place-holder --></div>
                 
                 </td>
-                <td align="right">
-              <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                <a
-                 href="${pageContext.request.contextPath}/accounts/new"
-                 class="button">
-                <i
-                 class="pre plus"><!--  -->
-                </i>
-
-                Add DuraCloud Account</a>
-              </sec:authorize></td>
+                <td align="right"></td>
         </tr>
       </table>
               
