@@ -164,18 +164,18 @@ li a:hover{
 	color: #4A4A4A;
 	text-align: left;
 	margin-top: 5px;
-	margin-left: 10px;
 }
 
 #footer-links {
 	height:10px; 
-	padding:10px;
+	padding:5px;
 	
 }
 
 #footer-content a {
-	font-size: 10px;
+	font-size: 11px;
 	color: #4A4A4A;
+	text-decoration: underline;
 }
 
 .required:before {

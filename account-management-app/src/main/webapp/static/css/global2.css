@@ -176,22 +176,25 @@ li a:hover{
 	width:80%;
 }
 
-.footer-text-login{
-	width:80%;
-	clear: right;
-	font-size: 10px;
+
+#footer-content {
+	font-size: 11px;
 	color: #4A4A4A;
-	float: left;
 	text-align: left;
 	margin-top: 5px;
-	margin-left: 10px;
-	}
-	.footer-text-login a{
+}
 
-	font-size: 10px;
+#footer-links {
+	padding:5px;
+}
+
+#footer-content a {
+	font-size: 11px;
 	color: #4A4A4A;
+	text-decoration: underline;
+}
 
-	}
+
 .required:before
 { 
 	content:"*";
@@ -200,6 +203,55 @@ li a:hover{
 	vertical-align:top;
 }
 
+.login a, .login label {
+	color: #ccc;
+}
+
+.login .horizontal-list li a:hover {
+	color:#eee;
+}
+
+.login .horizontal-list {
+	margin-right:22px;
+	margin-top:10px;
+}
+
+.login .horizontal-list li a {
+	font-size: 12px;	
+}
+
+.login .horizontal-list li:before {
+	color: #ccc;
+}
+
+
+.login form label:after {
+	padding-right:10px;
+	content:"";
+	color: #ccc;
+}
+
+.login form {
+	background: transparent;
+}
+
+.login input {
+	border-radius: 0 !important;
+	background-color: #585B5E !important;
+	border: 1px solid #36383A !important;
+	border-bottom-color: #727576 !important;
+	color: #CCC !important;
+	font-size: 14px !important;
+	padding: 3px !important;
+}
+
+.login form ol li {
+	border-bottom: 0 !important;
+}
+
+#login-button {
+	margin-right:10px;
+}
 /*
 *this unrequired setting is used here purely for 
 *the purpose of field alignment:
@@ -326,11 +378,10 @@ table.standard-form{
 #duraspace-logo
 {
 	background-image:url(../img/logo_duraspace_onwhite.gif);
-	width:130px;
+	width:100px;
 	background-repeat: no-repeat;
 	height:60px;
 	float: right;
-	margin-top:5px;
 }
 
 #hd,#bd, .dc-main-tabs
@@ -378,10 +429,15 @@ ing-right:10px;
 	padding: 8px;
 }
 
+
 #dc-user .horizontal-list li:first-child:before,
 #footer-content .horizontal-list li:first-child:before
 {
 	content: "";	
+}
+
+#footer-content .horizontal-list li:first-child:before {
+	padding-left: 0px;
 }
 
 .dc-main-tabs

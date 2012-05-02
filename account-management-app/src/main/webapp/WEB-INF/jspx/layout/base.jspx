@@ -147,7 +147,7 @@
 </div>
 </div>
 <div id="ft">
-      <div class="outer" id="footer-content" style="margin-left: 15px">
+      <div class="outer" id="footer-content" >
         <jsp:include page="/WEB-INF/jspx/includes/footer-content.jspx" />
       </div>
     </div>

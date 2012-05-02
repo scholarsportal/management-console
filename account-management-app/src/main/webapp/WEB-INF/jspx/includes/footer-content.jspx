@@ -9,13 +9,13 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
   <div id="footer-links" class="float-l">
   <ul class="horizontal-list">
-    <li><span>DuraCloud Management Console</span></li>
+    <li><span>DuraCloud Management Console v${project.version} ${prefix.revision}${prefix.specialStatus}</span>${' '}&#169;<span id="copyright"></span></li>
     <li><a
       target="_blank"
-      href="http://www.duracloud.org">DuraCloud.org</a></li>
+      href="http://www.duracloud.org">DuraCloud</a></li>
     <li><a
       target="_blank"
-      href="http://www.duraspace.org">DuraSpace.org</a></li>
+      href="http://www.duraspace.org">DuraSpace</a></li>
     <li><a
       target="_blank"
       href="https://wiki.duraspace.org/display/DURACLOUD/DuraCloud+Help+Center">Help Center</a></li>
@@ -24,8 +24,12 @@
       href="mailto:info@duracloud.org">Contact Us</a></li>
   </ul>
   </div>
+  <script>
+  	$(function(){
+  	    $("#copyright").html(new Date().getUTCFullYear());
+  	});
+  </script>
   
-  <div id="duraspace-logo"><!--  --></div>
 
 </jsp:root>
 
