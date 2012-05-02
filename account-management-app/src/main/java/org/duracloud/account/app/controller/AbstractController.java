@@ -116,8 +116,8 @@ public abstract class AbstractController {
     }
 
 
-    @ExceptionHandler(DuraCloudRuntimeException.class)
-    public ModelAndView handleException(DuraCloudRuntimeException e) {
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception e) {
         log.error(e.getMessage(), e);
         return new ModelAndView("exception", "ex", e);
     }
