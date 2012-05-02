@@ -27,7 +27,6 @@ public class RootPreparer implements ViewPreparer {
 
         public RootTabs() {
             super();
-            add(new Tab(RootConsoleHomeController.BASE_MAPPING, "home"));
             add(new Tab("/root/accounts", "accounts"));
             add(new Tab("/root/clusters", "clusters"));
             add(new Tab("/root/users", "users"));
