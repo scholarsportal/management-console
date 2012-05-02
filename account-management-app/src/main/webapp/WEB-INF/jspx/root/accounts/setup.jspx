@@ -125,7 +125,7 @@
             <li>
               <form:label
                cssErrorClass="error"
-               path="computeCredentialsSame">Credentials the same as Primary?</form:label>
+               path="computeCredentialsSame">Use Primary Storage Credentials</form:label>
               <form:checkbox
                cssErrorClass="error"
                path="computeCredentialsSame"
