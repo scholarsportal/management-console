@@ -108,7 +108,7 @@
                 <tr
                  data-name="${a.accountInfo.acctName}">
                   <td>
-                    <a
+                    <a target="_blank"
                      href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details">
                     ${a.accountInfo.acctName}</a>
                   </td>
