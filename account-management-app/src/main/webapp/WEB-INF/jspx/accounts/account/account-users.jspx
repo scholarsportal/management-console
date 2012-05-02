@@ -159,9 +159,11 @@
 
           <div id="invite-list" class="section account-record"
             style="min-height: 150px !important">
-            <h2 class="account-label">
-              Add Users
-            </h2>
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="accountlabel">Add Users</td>
+              </tr>
+            </table>
             <div class="section-body" style="width: 45%;float:left">
               <p class="instructions">To invite a user to this
                 account enter their email address here.</p>
