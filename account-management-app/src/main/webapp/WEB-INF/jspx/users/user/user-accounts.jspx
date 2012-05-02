@@ -219,7 +219,7 @@
                           </form></td>
                            <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
                                   method="post">
-                            <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit Users</button>
+                            <button type="submit" onclick="AskAndSubmitInitUsers(this); return false;">ReInit Users</button>
                           </form></td>
                       </sec:authorize>
 

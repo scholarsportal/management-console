@@ -93,6 +93,15 @@ function AskAndSubmitInit(t)
   }
 }
 
+function AskAndSubmitInitUsers(t)
+{
+  var answer = confirm("Are you sure you want to re-init the users?");
+  if (answer)
+  {
+    t.form.submit();
+  }
+}
+
 function AskAndActivate(t)
 {
   var answer = confirm("Are you sure you want to activate this account.");
