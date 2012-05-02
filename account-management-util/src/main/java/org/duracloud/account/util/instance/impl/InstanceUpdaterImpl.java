@@ -58,9 +58,6 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
             throw new DuracloudInstanceUpdateException(msg.toString());
         }
 
-        Application duradminApp = getDuradminApplication(host, restHelper);
-        checkResponse("DurAdmin", duradminApp.initialize(duradminConfig));
-
         Application durastoreApp = getDurastoreApplication(host, restHelper) ;
         checkResponse("DuraStore", durastoreApp.initialize(durastoreConfig));
 
@@ -70,6 +67,9 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
 
         Application durabossApp = getDurabossApplication(host, restHelper);
         checkResponse("DuraBoss", durabossApp.initialize(durabossConfig));
+
+        Application duradminApp = getDuradminApplication(host, restHelper);
+        checkResponse("DurAdmin", duradminApp.initialize(duradminConfig));
     }
 
     @Override
