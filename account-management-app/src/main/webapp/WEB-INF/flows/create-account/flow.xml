@@ -13,7 +13,7 @@
     </on-entry>
     
     <transition on="next" to="isCommunity"/> 
-    <transition on="cancel" to="end"/>
+    <transition on="cancel" to="end" validate="false"/>
   </view-state>
  
   <decision-state id="isCommunity">
