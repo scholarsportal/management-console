@@ -232,6 +232,9 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             // Delete the compute provider
             repoMgr.getComputeProviderAccountRepo()
                 .delete(serverDetails.getComputeProviderAccountId());
+            
+            // Delete the server details
+            repoMgr.getServerDetailsRepo().delete(serverDetails.getId());
         }
 
         // Delete the account rights

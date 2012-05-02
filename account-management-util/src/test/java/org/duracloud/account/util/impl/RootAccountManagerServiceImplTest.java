@@ -421,10 +421,14 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         EasyMock.expect(accountUtil.getServerDetails(account))
             .andReturn(newServerDetails(0));
 
+
         storageProviderAcctRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
         computeProviderAcctRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall();
+
+        serverDetailsRepo.delete(EasyMock.anyInt());
         EasyMock.expectLastCall();
 
         Set<AccountRights> accountRights = new HashSet<AccountRights>();
