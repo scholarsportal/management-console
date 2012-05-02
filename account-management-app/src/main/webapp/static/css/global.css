@@ -611,17 +611,17 @@ li.account:hover {
 	background-image: url(../img/durabutton.png);
 	background-repeat: no-repeat;
 	background-position: center left;
-	height:32px;
-	width:210px;
-	margin-left: 25px;
-	text-align: center;
+    height: 28px;
+    width: 190px;
+    text-align: right;
 	color: #333;
 	vertical-align: middle;
 	font-weight: bold;
 	font-size: 11px;
-    padding-left: 80px;
-    padding-top:5px;
-    padding-bottom:5px;
+}
+
+.instance-panel td:first-child {
+    width: 300px;
 }
 
 .button.durabutton:hover {
