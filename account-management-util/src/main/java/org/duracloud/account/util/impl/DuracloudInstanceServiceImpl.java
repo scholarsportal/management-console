@@ -281,7 +281,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 try {
                     doInitialize(false);
                     return;
-                } catch(DuracloudInstanceUpdateException ex) {
+                } catch(DuraCloudRuntimeException ex) {
                     logInitException(ex);
                 }
             }
