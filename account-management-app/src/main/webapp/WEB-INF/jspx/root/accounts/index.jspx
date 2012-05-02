@@ -134,6 +134,11 @@
                      href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
                      class="button"><spring:message code="account.manageusersandroles" /></a>
                   </td>
+                  <td>
+                    <a target="_blank"
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/groups"
+                     class="button"><spring:message code="account.managegroups" /></a>
+                  </td>
 
                   <td>
                     <c:choose>
