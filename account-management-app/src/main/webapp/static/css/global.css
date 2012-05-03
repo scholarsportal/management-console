@@ -791,7 +791,18 @@ th.headerSortDown {
 .message-holder {
 	position: fixed;
 	z-index: 10; 
-	width:100%;
+	width:500px;
+	height:1px;
+	overflow: visible;
+	position:fixed;
+	left:50%;
+	margin-left:-250px;
+}
+
+.message-holder a {
+	font-size: 12px;
+	color: #555;
+	margin-left: 10px;	
 }
 
 .message {

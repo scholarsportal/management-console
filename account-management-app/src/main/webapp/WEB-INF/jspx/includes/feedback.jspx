@@ -16,6 +16,20 @@
         <span>${message.text}</span>
       </div>
     </div>
+    <script>
+    	var fadeOut = function(){
+    	    $(".message-holder").fadeOut();  
+    	};
+    	
+    	$(document).keyup(function(e){
+    	    if(e.keyCode == 27){
+				fadeOut();    	        
+    	    }
+    	})
+    	
+    	setTimeout(fadeOut, 7000);
+    	
+    </script>
   </c:if>
 </jsp:root>
 
