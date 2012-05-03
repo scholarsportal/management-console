@@ -24,7 +24,7 @@
   <!-- global views -->
   <definition name="access-denied" template="/WEB-INF/jspx/access-denied.jspx" />
   <definition name="login" template="/WEB-INF/jspx/login.jspx" />
-  <definition name="home" template="/WEB-INF/jspx/index.jspx" />
+  <definition name="home" template="/WEB-INF/jspx/login.jspx" />
 
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
