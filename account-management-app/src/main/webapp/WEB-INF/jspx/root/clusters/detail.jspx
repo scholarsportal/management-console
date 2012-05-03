@@ -43,12 +43,24 @@
           <ul class="horizontal-list">
           <li>
             <a
+              id="back"
+              href="${pageContext.request.contextPath}/root/clusters"
+              class="button">
+               <i class="pre back"><!--  --></i>
+               <spring:message code="back" />
+             </a>
+           </li>
+ 
+           <li>
+             <a
              id="edit"
              href="${currentUri}/edit"
              class="button">
               <i class="pre pencil"><!--  --></i>
               <spring:message code="edit" />  ${' '}<spring:message code="cluster.name" />
             </a>
+	    </li>
+	    <li>
             <a id="add-accounts"
              href="${currentUri}/add-accounts"
              class="button">
