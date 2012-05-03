@@ -112,7 +112,7 @@
                   <td>${i.latest}</td>
 
                   <td>
-                    <a class="button featured edit"
+                    <a class="button edit"
                      href="${currentUri}/byid/${i.id}/edit">
                           <i class="pre pencil"><!--  --></i>
                       <spring:message

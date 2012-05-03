@@ -117,7 +117,7 @@
                   <td>${i.serviceRepositoryType}</td>
                   <td>${i.servicePlan}</td>
                   <td>
-                    <a class="button featured edit"
+                    <a class="button edit"
                      href="${currentUri}/byid/${i.id}/edit">
                           <i class="pre pencil"><!--  --></i>
                       <spring:message

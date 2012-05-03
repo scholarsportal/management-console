@@ -706,9 +706,17 @@ li.account:hover {
 
 table.entity-list {
 	border-radius: 5px;
-	color: #515151;
 	background-color: rgba(200,200,200,.6);
 }
+
+table.entity-list, .entity-list a{
+	color: #515151;
+}
+
+.entity-list a.button{
+	color: #ccc;
+}
+
 
 .entity-list tr {
 	margin-left: 25px;

@@ -83,7 +83,7 @@
                  data-name="${i.clusterName}">
                   <td><a class="cluster-detail-link" href="${currentUri}/byid/${i.id}"><c:out value="${i.clusterName}"/></a></td>
                   <td>
-                    <a class="button featured edit"
+                    <a class="button edit"
                      href="${currentUri}/byid/${i.id}/edit">
                           <i class="pre pencil"><!--  --></i>
                       <spring:message
