@@ -158,11 +158,14 @@
                       <th align="left" colspan="2">Host Name</th>
                       <th width="173" align="center">Version</th>
                       <th width="173" align="center">Status</th>
-                      <th width="73" align="left"></th>
-                      <th width="58" align="left"></th>
-                      <c:if test="${actionStatus != null}">
-                        <th align="left">Notice</th>
-                      </c:if>
+                      <th width="73" align="left" colspan="4"></th>
+                      <th align="left">
+                        <c:if test="${actionStatus != null}">
+                            <c:if test="${a.instance.initialized == false}">
+                                Notice
+                            </c:if>
+                        </c:if>
+                        </th>
                       </tr>
                     <tr>
                       <td align="left" valign="middle" class="instructions">
@@ -197,36 +200,50 @@
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceStatus}" />
                       </td>
-                      <c:if test="${a.userRole != 'ROLE_USER'}">
 
-                      <c:if test="${a.instanceVersion != latestVersion}">
-
-                          <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
+                      <sec:authorize access="! hasAnyRole('ROLE_ADMIN')">
+                        <td colspan="5"><!--  --></td>
+                      </sec:authorize>                      
+                      <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                      <td align="left" valign="middle">
+                        <c:if test="${a.instanceVersion != latestVersion}">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
                                                                  id="instance-upgrade-form-${a.accountInfo.id}"
                                   method="post">
                             <button id="${a.accountInfo.id}" type="submit" class="upgrade" onclick="AskAndSubmitUpgrade(this); return false;">Upgrade</button>
-                          </form></td>
-                      </c:if>
-                      <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
+                          </form>
+                        </c:if>
+                      </td>
+                      <td align="left" valign="middle">
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
                               method="post">
-                        <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>
-                      </form></td>
-
-                      <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                          <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinit"
+                          <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>
+                        </form>
+                      </td>
+                      <td align="left" valign="middle">
+                        <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinit"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit</button>
-                          </form></td>
-                           <td align="left" valign="middle"><form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
+                          </form>
+                        </sec:authorize>
+                      </td>
+                       <td align="left" valign="middle">
+                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInitUsers(this); return false;">ReInit Users</button>
-                          </form></td>
-                      </sec:authorize>
-
-                      <c:if test="${actionStatus != null}">
-                        <td align="left" valign="middle"><strong><c:out value="${actionStatus}" /></strong></td>
-                      </c:if>
-                    </c:if>
+                          </form>
+                          </sec:authorize>
+                      </td>
+                      <td align="left" valign="middle">
+                        <c:if test="${actionStatus != null}">
+                          <c:if test="${a.instance.initialized == false}">
+                            <strong><c:out value="${actionStatus}" /></strong>
+                          </c:if>
+                        </c:if>
+                      </td>
+                    </sec:authorize>
 
                     </tr>
                   </table></div>
