@@ -23,7 +23,7 @@
     <tiles:putAttribute
      name="title">
       <spring:message
-       code="clusters" /> ${" : "} ${cluster.clusterName}
+       code="clusters" />
     </tiles:putAttribute>
 
    <tiles:putAttribute

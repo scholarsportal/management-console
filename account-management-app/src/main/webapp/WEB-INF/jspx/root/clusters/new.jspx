@@ -11,7 +11,7 @@
   <tiles:insertDefinition
     name="clusters-form-base"
     flush="true">
-    <tiles:putAttribute name="title" cascade="true">New Cluster</tiles:putAttribute>
+    <tiles:putAttribute name="title">New Cluster</tiles:putAttribute>
     <tiles:putAttribute name="formTitle" cascade="true">New Cluster</tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

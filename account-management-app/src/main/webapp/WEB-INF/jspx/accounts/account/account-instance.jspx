@@ -9,7 +9,7 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
 
   <tiles:insertDefinition name="app-base">
-    <tiles:putAttribute name="title" value="${accountInfo.id} :: Instance" />
+    <tiles:putAttribute name="title" value="Instance" />
 
     <tiles:putAttribute name="header-extensions" value="" />
 

@@ -13,7 +13,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="${account.accountInfo.id} :: Groups :: ${userGroup.name}" />
+     value="Groups" />
 
     <tiles:putAttribute
      name="header-extensions"

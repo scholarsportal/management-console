@@ -8,7 +8,7 @@
 
 	<tiles:insertDefinition name="app-base">
 		<tiles:putAttribute name="title"
-			value="${accountInfo.id} :: Providers" />
+			value="Providers" />
 
 		<tiles:putAttribute name="header-extensions" value="" />
 

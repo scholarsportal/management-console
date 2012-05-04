@@ -9,7 +9,7 @@
   <tiles:insertDefinition
     name="servicerepositories-form-base"
     flush="true">
-    <tiles:putAttribute name="title" cascade="true">New Service Repository</tiles:putAttribute>
+    <tiles:putAttribute name="title">New Service Repository</tiles:putAttribute>
     <tiles:putAttribute name="formTitle" cascade="true">New Service Repository</tiles:putAttribute>
   </tiles:insertDefinition>
 

@@ -15,7 +15,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="${account.accountInfo.id} :: Groups :: ${group.displayName}" />
+     value="Edit Group" />
 
     <tiles:putAttribute
      name="header-extensions"

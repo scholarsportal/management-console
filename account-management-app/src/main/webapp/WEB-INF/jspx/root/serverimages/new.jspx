@@ -11,7 +11,7 @@
   <tiles:insertDefinition
     name="serverimages-form-base"
     flush="true">
-    <tiles:putAttribute name="title" cascade="true">New Server Image</tiles:putAttribute>
+    <tiles:putAttribute name="title">New Server Image</tiles:putAttribute>
     <tiles:putAttribute name="formTitle" cascade="true">New Server Image</tiles:putAttribute>
   </tiles:insertDefinition>
 </jsp:root>

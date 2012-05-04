@@ -14,7 +14,7 @@
    name="app-base">
     <tiles:putAttribute
      name="title"
-     value="${accountInfo.orgName} :: Edit Account Information" />
+     value="Edit Account Information" />
 
     <tiles:putAttribute
      name="body">
