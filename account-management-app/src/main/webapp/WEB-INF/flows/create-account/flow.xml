@@ -22,7 +22,8 @@
         else="configureStorageProviders"/>
   </decision-state>
 
-  <view-state id="configureStorageProviders" view="/create-account/storage-providers">
+  <view-state id="configureStorageProviders" view="/create-account/storage-providers"
+    model="fullAccountForm">
     <on-entry>
       <set name="flowScope.fullAccountForm" value="fullAccountForm"/>
     </on-entry>
