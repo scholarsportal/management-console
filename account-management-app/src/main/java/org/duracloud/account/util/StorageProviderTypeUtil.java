@@ -16,6 +16,6 @@ public class StorageProviderTypeUtil {
     }
     
     public static List<StorageProviderType> getAvailableSecondaryTypes() {
-        return SECONDARY_PROVIDER_TYPES;
+        return new ArrayList<StorageProviderType>(SECONDARY_PROVIDER_TYPES);
     }
 }
