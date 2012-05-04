@@ -32,7 +32,7 @@
   </webflow:flow-registry>
 
   <!-- Plugs in a custom creator for Web Flow views -->
-  <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" 
+  <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" conversion-service="defaultConversionService"
     development="true" validator="validator" 
      />
 

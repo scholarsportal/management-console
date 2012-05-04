@@ -3,8 +3,13 @@ package org.duracloud.account.config;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.convert.converters.StringToEnum;
+import org.springframework.binding.convert.service.DefaultConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.support.ConversionServiceFactory;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -33,5 +38,15 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
         initializer.setPropertyEditorRegistrar(propertyEditorRegistrar);
         return adapter;
+    }
+    
+    
+    @Bean
+    public DefaultFormattingConversionService defaultFormattingConversionService() {
+        return new ApplicationFormattingConversionService();
+    }
+    
+    @Bean ConversionService defaultConversionService() {
+        return new DefaultConversionService(defaultFormattingConversionService());
     }
 }
