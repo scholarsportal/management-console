@@ -26,8 +26,20 @@
        code="clusters" /> ${" : "} ${cluster.clusterName}
     </tiles:putAttribute>
 
-    <tiles:putAttribute
+   <tiles:putAttribute
      name="header-extensions">
+      <script>
+      	$(function(){
+      	    $(".delete").click(function(evt){
+      	      var answer = confirm('<spring:message code="cluster.delete.confirm"/>');
+      	      if (answer) {
+      		        t.form.submit();
+      		        return true;
+	      	  }
+      	      return false;
+      	    });
+      	});
+      </script>
     </tiles:putAttribute>
 
     <tiles:putAttribute
@@ -72,7 +84,7 @@
           <li>
             <form action="${currentUri}/delete" method="POST">
               <button type="submit"
-               id="delete">
+               class="delete">
                 <i class="pre trash"><!--  --></i>
                 <spring:message code="delete" /> ${' '}<spring:message code="cluster" />
               </button>
