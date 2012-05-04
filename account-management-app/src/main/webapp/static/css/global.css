@@ -543,6 +543,10 @@ li.account:hover {
 	color: #515151 !important;	
 }
 
+.indent {
+	margin-left: 20px;
+}
+
 .lighttext, div.login label, div.login a {
 	font-size: 10pt;
 	color: #CCC !important;

@@ -38,6 +38,9 @@
               </tr>
             </table>
            <div style="height:20px"><!--  --></div>
+           
+            <c:choose>
+              <c:when test="${not empty users}">
                 <table class="datatablesimple">
                 <tr>
                   <th align="left">Username</th>
@@ -155,6 +158,13 @@
                   </tr>
                 </c:forEach>
               </table>
+              </c:when>
+              <c:otherwise>
+                <p class="instructions indent">
+                  There are no active users associated with this account at this time.
+                </p>
+              </c:otherwise>
+              </c:choose>
             </div>
 
           <div id="invite-list" class="section account-record"
@@ -198,6 +208,10 @@
               </tr>
             </table>
            <div style="height:20px"><!--  --></div>
+
+           <c:choose>
+             <c:when
+               test="${not empty pendingUserInvitations}">
               <table width="90%" class="datatablesimple">
                 <tr>
                   <th align="left" valign="middle">Email</th>
@@ -207,10 +221,6 @@
                   <th align="left" valign="middle">
                   </th>
                 </tr>
-              <c:choose>
-                <c:when
-                 test="${not empty pendingUserInvitations}">
-
                 <c:forEach
                  var="up"
                  items="${pendingUserInvitations}">
@@ -247,14 +257,12 @@
                     </td>
                   </tr>
                 </c:forEach>
-
+                </table>
                 </c:when>
-
                 <c:otherwise>
-                  <p class="instructions">There are no pending users.</p>
+                  <p class="instructions indent">There are no pending users.</p>
                 </c:otherwise>
               </c:choose>   
-              </table>
             </div>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                <tr>
