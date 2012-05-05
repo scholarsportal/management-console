@@ -406,7 +406,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String username = user.getUsername();
             String password = user.getPassword();
             String email = user.getEmail();
-            Set<Role> roles = user.getRolesByAcct(accountId);
+            Set<Role> roles = getRolesByAccounts(user, clusterAcctIds);
 
             if(roles == null) {
                 roles = new HashSet<Role>();
@@ -457,6 +457,16 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         // do the update
         updateUserDetails(userBeans);
+    }
+
+    private Set<Role> getRolesByAccounts(DuracloudUser user,
+                                         Set<Integer> clusterAcctIds) {
+        Set<Role> roles = user.getRolesByAcct(accountId);
+        for (Integer clusterAcctId : clusterAcctIds) {
+            roles.addAll(user.getRolesByAcct(clusterAcctId));
+        }
+
+        return roles;
     }
 
     private Set<Integer> getClusterAccountIds() {
