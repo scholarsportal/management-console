@@ -189,6 +189,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             }
         }
 
+        // Propagate user/group changes for all accounts in this cluster
+        for(int accountId : clusterAccounts) {
+            propagator.propagateClusterUpdate(accountId, clusterId);
+        }
+
         // Remove the cluster
         clusterRepo.delete(clusterId);
     }

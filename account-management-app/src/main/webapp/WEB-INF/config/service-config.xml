@@ -66,6 +66,7 @@
     <constructor-arg ref="accountServiceFactory"/>
     <constructor-arg ref="providerAccountUtil"/>
     <constructor-arg ref="accountClusterUtil"/>
+    <constructor-arg ref="userDetailsPropagator"/>
     <constructor-arg>
       <set>
         <ref bean="systemMonitor"/>

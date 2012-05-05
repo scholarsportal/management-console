@@ -3,10 +3,6 @@
  */
 package org.duracloud.account.util.impl;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountCreationInfo;
@@ -33,11 +29,16 @@ import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.account.util.error.SubdomainAlreadyExistsException;
 import org.duracloud.account.util.sys.EventMonitor;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -55,18 +56,21 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     private Set<EventMonitor> eventMonitors;
     private DuracloudProviderAccountUtil providerAccountUtil;
     private AccountClusterUtil clusterUtil;
+    private UserDetailsPropagator propagator;
 
     public AccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                      DuracloudUserService duracloudUserService,
                                      AccountServiceFactory accountServiceFactory,
                                      DuracloudProviderAccountUtil providerAccountUtil,
                                      AccountClusterUtil clusterUtil,
+                                     UserDetailsPropagator propagator,
                                      Set<EventMonitor> eventMonitors) {
         this.repoMgr = duracloudRepoMgr;
         this.userService = duracloudUserService;
         this.accountServiceFactory = accountServiceFactory;
         this.providerAccountUtil = providerAccountUtil;
         this.clusterUtil = clusterUtil;
+        this.propagator = propagator;
         this.eventMonitors = eventMonitors;
     }
 
@@ -222,7 +226,10 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             DuracloudAccountClusterRepo clusterRepo =
                 getClusterRepo();
             AccountCluster cluster = clusterRepo.findById(accountClusterId);
-            return new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
+            return new AccountClusterServiceImpl(cluster,
+                                                 repoMgr,
+                                                 clusterUtil,
+                                                 propagator);
         } catch(DBNotFoundException e) {
             throw new AccountClusterNotFoundException(accountClusterId);
         }
@@ -245,7 +252,10 @@ public class AccountManagerServiceImpl implements AccountManagerService {
             throw new DuraCloudRuntimeException(msg, e);
         }
 
-        return new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
+        return new AccountClusterServiceImpl(cluster,
+                                             repoMgr,
+                                             clusterUtil,
+                                             propagator);
     }
 
     private DuracloudAccountRepo getAccountRepo() {

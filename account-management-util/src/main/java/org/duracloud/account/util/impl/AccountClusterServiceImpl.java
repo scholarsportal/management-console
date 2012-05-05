@@ -8,6 +8,7 @@ import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.util.AccountClusterService;
+import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 
@@ -20,13 +21,16 @@ public class AccountClusterServiceImpl implements AccountClusterService {
     private AccountCluster cluster;
     private DuracloudRepoMgr repoMgr;
     private AccountClusterUtil clusterUtil;
+    private UserDetailsPropagator propagator;
 
     public AccountClusterServiceImpl(AccountCluster cluster,
                                      DuracloudRepoMgr repoMgr,
-                                     AccountClusterUtil clusterUtil) {
+                                     AccountClusterUtil clusterUtil,
+                                     UserDetailsPropagator propagator) {
         this.cluster = cluster;
         this.repoMgr = repoMgr;
         this.clusterUtil = clusterUtil;
+        this.propagator = propagator;
     }
 
     @Override
@@ -56,6 +60,9 @@ public class AccountClusterServiceImpl implements AccountClusterService {
 
         // Add account to cluster
         clusterUtil.addAccountToCluster(accountId, cluster.getId());
+
+        // Propagate users/groups changes down to cluster instances
+        propagator.propagateClusterUpdate(accountId, cluster.getId());
     }
 
     @Override
@@ -65,6 +72,12 @@ public class AccountClusterServiceImpl implements AccountClusterService {
 
         // Remove account from cluster
         clusterUtil.removeAccountFromCluster(accountId, cluster.getId());
+
+        // Propagate users/groups changes down to instances (removed account)
+        propagator.propagateClusterUpdate(accountId, cluster.getId());
+
+        // Propagate users/groups changes down to instances (cluster)
+        propagator.propagateClusterUpdate(cluster.getId());
     }
 
 }

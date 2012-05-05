@@ -77,6 +77,7 @@ public class AccountManagerServiceImplTest extends DuracloudServiceTestBase {
                                           accountServiceFactory,
                                           providerAccountUtil,
                                           clusterUtil,
+                                          propagator,
                                           eventMonitors);
     }
 

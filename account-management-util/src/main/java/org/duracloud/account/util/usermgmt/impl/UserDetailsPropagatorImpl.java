@@ -3,11 +3,13 @@
  */
 package org.duracloud.account.util.usermgmt.impl;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -84,6 +86,26 @@ public class UserDetailsPropagatorImpl implements UserDetailsPropagator {
         Set<DuracloudUser> users = findUsers(acctId);
         doPropagate(acctId, users);
         checkForErrors(acctId, clusterId, "clusterId");
+    }
+
+    @Override
+    public void propagateClusterUpdate(int clusterId) {
+        try {
+            DuracloudAccountClusterRepo clusterRepo =
+                repoMgr.getAccountClusterRepo();
+            AccountCluster cluster =  clusterRepo.findById(clusterId);
+            Set<Integer> clusterAcctIds = cluster.getClusterAccountIds();
+            if(null != clusterAcctIds && clusterAcctIds.size() > 0) {
+                propagateClusterUpdate(clusterAcctIds.iterator().next(),
+                                       clusterId);
+            } else {
+                log.info("No accounts found within cluster with ID: " +
+                         clusterId + ". No propagation necessary.");
+            }
+        } catch(DBNotFoundException e) {
+            log.error("No cluster found for clusterId: " + clusterId);
+            error = e;
+        }
     }
 
     private void checkForErrors(int acctId, int id, String idName) {

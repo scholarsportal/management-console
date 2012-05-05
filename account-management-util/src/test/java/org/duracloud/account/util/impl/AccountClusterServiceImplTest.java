@@ -33,8 +33,10 @@ public class AccountClusterServiceImplTest extends DuracloudServiceTestBase {
         cluster = new AccountCluster(clusterId,
                                      clusterName,
                                      new HashSet<Integer>());
-        clusterService =
-            new AccountClusterServiceImpl(cluster, repoMgr, clusterUtil);
+        clusterService = new AccountClusterServiceImpl(cluster,
+                                                       repoMgr,
+                                                       clusterUtil,
+                                                       propagator);
     }
 
     @Test
@@ -69,6 +71,9 @@ public class AccountClusterServiceImplTest extends DuracloudServiceTestBase {
         clusterUtil.addAccountToCluster(accountId, clusterId);
         EasyMock.expectLastCall();
 
+        propagator.propagateClusterUpdate(accountId, clusterId);
+        EasyMock.expectLastCall();
+
         replayMocks();
 
         clusterService.addAccountToCluster(accountId);
@@ -80,6 +85,12 @@ public class AccountClusterServiceImplTest extends DuracloudServiceTestBase {
         clusterUtil.setAccountCluster(accountId, -1);
         EasyMock.expectLastCall();
         clusterUtil.removeAccountFromCluster(accountId, clusterId);
+        EasyMock.expectLastCall();
+
+        propagator.propagateClusterUpdate(accountId, clusterId);
+        EasyMock.expectLastCall();
+
+        propagator.propagateClusterUpdate(clusterId);
         EasyMock.expectLastCall();
 
         replayMocks();

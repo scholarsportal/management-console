@@ -374,6 +374,12 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         Capture<AccountInfo> capAcct2 = new Capture<AccountInfo>();
         accountRepo.save(EasyMock.capture(capAcct2));
 
+        propagator.propagateClusterUpdate(acctId1, clusterId);
+        EasyMock.expectLastCall();
+
+        propagator.propagateClusterUpdate(acctId2, clusterId);
+        EasyMock.expectLastCall();
+
         accountClusterRepo.delete(clusterId);
         EasyMock.expectLastCall();
 

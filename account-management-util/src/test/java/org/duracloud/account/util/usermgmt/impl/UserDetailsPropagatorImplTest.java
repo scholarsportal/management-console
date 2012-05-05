@@ -3,11 +3,13 @@
  */
 package org.duracloud.account.util.usermgmt.impl;
 
+import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -37,6 +39,8 @@ public class UserDetailsPropagatorImplTest {
     private AccountClusterUtil accountClusterUtil;
     private DuracloudInstanceManagerService instanceManagerService;
     private AccountInfo accountInfo;
+    private DuracloudAccountClusterRepo clusterRepo;
+    private AccountCluster cluster;
 
     private static final int NUM_INSTANCES = 2;
     private Set<DuracloudInstanceService> instanceServices;
@@ -44,6 +48,7 @@ public class UserDetailsPropagatorImplTest {
     private int acctId = 2;
     private int userId = 3;
     private int groupId = 7;
+    private int clusterId = 9;
     private Set<Role> roles;
     private Set<Role> newRoles;
 
@@ -62,6 +67,9 @@ public class UserDetailsPropagatorImplTest {
         accountClusterUtil = EasyMock.createMock("AccountClusterUtil",
                                                  AccountClusterUtil.class);
         accountInfo = EasyMock.createMock("AccountInfo", AccountInfo.class);
+        clusterRepo = EasyMock.createMock("DuracloudAccountClusterRepo",
+                                          DuracloudAccountClusterRepo.class);
+        cluster = EasyMock.createMock("AccountCluster", AccountCluster.class);
 
         EasyMock.expect(repoMgr.getAccountRepo())
                 .andReturn(accountRepo)
@@ -86,6 +94,8 @@ public class UserDetailsPropagatorImplTest {
         EasyMock.replay(accountClusterUtil);
         EasyMock.replay(instanceManagerService);
         EasyMock.replay(accountInfo);
+        EasyMock.replay(clusterRepo);
+        EasyMock.replay(cluster);
 
         for (DuracloudInstanceService service : instanceServices) {
             EasyMock.replay(service);
@@ -99,6 +109,8 @@ public class UserDetailsPropagatorImplTest {
         EasyMock.verify(accountClusterUtil);
         EasyMock.verify(instanceManagerService);
         EasyMock.verify(accountInfo);
+        EasyMock.verify(clusterRepo);
+        EasyMock.verify(cluster);
 
         for (DuracloudInstanceService service : instanceServices) {
             EasyMock.verify(service);
@@ -115,6 +127,25 @@ public class UserDetailsPropagatorImplTest {
                                                    instanceManagerService,
                                                    accountClusterUtil);
         propagator.propagateGroupUpdate(acctId, groupId);
+    }
+
+    @Test
+    public void testPropagateClusterUpdate() throws Exception {
+        EasyMock.expect(repoMgr.getAccountClusterRepo()).andReturn(clusterRepo);
+        EasyMock.expect(clusterRepo.findById(clusterId)).andReturn(cluster);
+
+        Set<Integer> acctIds = new HashSet<Integer>();
+        acctIds.add(acctId);
+        EasyMock.expect(cluster.getClusterAccountIds()).andReturn(acctIds);
+
+        createAccountManagerExpectation();
+        createInstanceServiceExpectation();
+        replayMocks();
+
+        propagator = new UserDetailsPropagatorImpl(repoMgr,
+                                                   instanceManagerService,
+                                                   accountClusterUtil);
+        propagator.propagateClusterUpdate(clusterId);
     }
 
     private void createInstanceServiceExpectation()
