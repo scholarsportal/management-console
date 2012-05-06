@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.duracloud</groupId>
     <artifactId>duracloud-priv</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -10,7 +10,7 @@
   <groupId>org.duracloud</groupId>
   <artifactId>ama</artifactId>
   <packaging>war</packaging>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <name>Account Management App</name>
   <url>http://duraspace.org</url>
 
