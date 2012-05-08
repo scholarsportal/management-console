@@ -66,7 +66,7 @@ public interface AccountManagerService {
 	 * @throws AccountClusterNotFoundException
 	 *
 	 */
-    @Secured({"role:ROLE_ROOT, scope:ANY"})
+    @Secured({"role:ROLE_ADMIN, scope:ANY"})
 	public AccountClusterService getAccountCluster(int accountClusterId)
         throws AccountClusterNotFoundException;
 
