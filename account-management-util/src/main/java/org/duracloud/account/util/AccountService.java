@@ -74,7 +74,7 @@ public interface AccountService {
      *
      * @return ServerDetails if available, otherwise null
      */
-    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public ServerDetails retrieveServerDetails();
 
     /**
