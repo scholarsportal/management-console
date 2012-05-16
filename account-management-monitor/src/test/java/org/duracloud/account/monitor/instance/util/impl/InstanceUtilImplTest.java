@@ -73,7 +73,7 @@ public class InstanceUtilImplTest {
         SERVICE(200,
                 503,
                 "https://subdomain.duracloud.org:443/duraservice/init"),
-        REPORT(200, 503, "https://subdomain.duracloud.org:443/durareport/init"),
+        BOSS(200, 503, "https://subdomain.duracloud.org:443/duraboss/init"),
         ADMIN(200, 503, "https://subdomain.duracloud.org:443/duradmin/init");
 
         private int success;

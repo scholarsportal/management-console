@@ -22,7 +22,7 @@ public class InstanceUtilImpl implements InstanceUtil {
 
     private WebApplication durastore;
     private WebApplication duraservice;
-    private WebApplication durareport;
+    private WebApplication duraboss;
     private WebApplication duradmin;
 
     private String subdomain;
@@ -31,7 +31,7 @@ public class InstanceUtilImpl implements InstanceUtil {
     private static final String PORT = "443";
     private static final String CTXT_STORE = "durastore";
     private static final String CTXT_SERVICE = "duraservice";
-    private static final String CTXT_REPORT = "durareport";
+    private static final String CTXT_BOSS = "duraboss";
     private static final String CTXT_ADMIN = "duradmin";
 
     private static final String PATH_INIT = "/init";
@@ -49,7 +49,7 @@ public class InstanceUtilImpl implements InstanceUtil {
         String host = subdomain + DOMAIN;
         durastore = new WebApplication(host, PORT, CTXT_STORE, restHelper);
         duraservice = new WebApplication(host, PORT, CTXT_SERVICE, restHelper);
-        durareport = new WebApplication(host, PORT, CTXT_REPORT, restHelper);
+        duraboss = new WebApplication(host, PORT, CTXT_BOSS, restHelper);
         duradmin = new WebApplication(host, PORT, CTXT_ADMIN, restHelper);
     }
 
@@ -59,7 +59,7 @@ public class InstanceUtilImpl implements InstanceUtil {
 
         pingWebApp(durastore, PATH_INIT, 200, info);
         pingWebApp(duraservice, PATH_INIT, 200, info);
-        pingWebApp(durareport, PATH_INIT, 200, info);
+        pingWebApp(duraboss, PATH_INIT, 200, info);
         pingWebApp(duradmin, PATH_INIT, 200, info);
 
         return info;
