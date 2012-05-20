@@ -64,10 +64,16 @@
       <artifactId>notification</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.duracloud</groupId>
       <artifactId>notification-amazon</artifactId>
+      <version>${duracloud.artifact.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>reportclient</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
 

@@ -9,6 +9,7 @@ import org.duracloud.account.db.backup.util.EmailUtil;
 import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
 import org.duracloud.account.monitor.hadoop.HadoopServiceMonitorDriver;
 import org.duracloud.account.monitor.instance.InstanceMonitorDriver;
+import org.duracloud.account.monitor.storereporter.StoreReporterMonitorDriver;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import java.util.Properties;
 
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.HADOOP;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.INSTANCE;
+import static org.duracloud.account.monitor.MonitorsDriver.Monitor.STORE_REPORTER;
 
 /**
  * This class is the command-line driver for executing monitors for both
@@ -56,7 +58,7 @@ public class MonitorsDriver {
      * This enum defines the types of monitors available through this driver.
      */
     public enum Monitor {
-        HADOOP, INSTANCE;
+        HADOOP, INSTANCE, STORE_REPORTER;
 
         public Runnable getMonitorDriver(Properties props) {
             if (this.equals(HADOOP)) {
@@ -64,6 +66,9 @@ public class MonitorsDriver {
 
             } else if (this.equals(INSTANCE)) {
                 return new InstanceMonitorDriver(props);
+
+            } else if (this.equals(STORE_REPORTER)) {
+                return new StoreReporterMonitorDriver(props);
 
             } else {
                 throw new DuraCloudRuntimeException("Unknown type: " + this);
@@ -174,8 +179,14 @@ public class MonitorsDriver {
             target = Monitor.valueOf(targetName.toUpperCase());
 
         } catch (Exception e) {
-            String msg = "Target must be '" + HADOOP + "' | '" + INSTANCE + "'";
-            System.err.println(usage(msg));
+            StringBuilder msg = new StringBuilder("Target must be '");
+            msg.append(HADOOP);
+            msg.append("' | '");
+            msg.append(INSTANCE);
+            msg.append("' | '");
+            msg.append(STORE_REPORTER);
+            msg.append("'");
+            System.err.println(usage(msg.toString()));
             System.exit(1);
         }
 
@@ -210,7 +221,9 @@ public class MonitorsDriver {
         sb.append("-----------------------------------------\n");
         sb.append("Error: " + msg);
         sb.append("\n\n");
-        sb.append("Usage: MonitorsDriver <hadoop|instance> <properties-file>");
+        sb.append("Usage: ");
+        sb.append("MonitorsDriver ");
+        sb.append("<hadoop|instance|store_reporter> <properties-file>");
         sb.append("\n\t");
         sb.append("Where either '");
         sb.append(HADOOP);
