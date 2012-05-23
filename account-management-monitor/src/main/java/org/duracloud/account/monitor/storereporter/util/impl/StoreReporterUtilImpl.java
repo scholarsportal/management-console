@@ -78,8 +78,9 @@ public class StoreReporterUtilImpl implements StoreReporterUtil {
             // Determine if the Storage Reporter has hung.
             long nextStart = reportInfo.getNextScheduledStartTime();
             if (isThresholdDaysAgo(nextStart)) {
-                error.append("Next scheduled storage report is");
-                error.append(" more than 3 days AGO.");
+                error.append("Next scheduled storage report is more than ");
+                error.append(thresholdDays);
+                error.append(" days AGO.");
                 error.append("\n");
             }
         }
@@ -104,10 +105,10 @@ public class StoreReporterUtilImpl implements StoreReporterUtil {
         Calendar nextDate = Calendar.getInstance();
         nextDate.setTimeInMillis(timeMillis);
 
-        Calendar threeDaysAgo = Calendar.getInstance();
-        threeDaysAgo.add(Calendar.DATE, -thresholdDays);
+        Calendar thresholdDaysAgo = Calendar.getInstance();
+        thresholdDaysAgo.add(Calendar.DATE, -thresholdDays);
 
-        return nextDate.before(threeDaysAgo);
+        return nextDate.before(thresholdDaysAgo);
     }
 
 }
