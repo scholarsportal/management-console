@@ -55,9 +55,7 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
         startBitIntegrity(executor);
 
         // Start MediaStreaming handler.
-        if (null != servicePlan && servicePlan.supportsMedia()) {
-            startMediaStreaming(executor);
-        }
+        startMediaStreaming(executor);
     }
 
     private void startBitIntegrity(Executor executor) {
@@ -100,9 +98,7 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
         stopBitIntegrity(executor);
 
         // Start MediaStreaming handler.
-        if (null != servicePlan && servicePlan.supportsMedia()) {
-            stopMediaStreaming(executor);
-        }
+        stopMediaStreaming(executor);
     }
 
     private void stopAuditor(Auditor auditor) {

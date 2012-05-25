@@ -80,12 +80,6 @@ public class DurabossUpdaterImplTest {
     }
 
     @Test
-    public void testStartDurabossNoMedia() throws Exception {
-        setExpectations(MODE.START_NO_MEDIA);
-        updater.startDuraboss(host, durabossConfig, servicePlan, restHelper);
-    }
-
-    @Test
     public void testStartDurabossErrorInit() throws Exception {
         setExpectations(MODE.START_ERROR_INIT);
         boolean threw = false;
@@ -122,12 +116,6 @@ public class DurabossUpdaterImplTest {
     @Test
     public void testStopDuraboss() throws Exception {
         setExpectations(MODE.STOP);
-        updater.stopDuraboss(host, durabossConfig, servicePlan, restHelper);
-    }
-
-    @Test
-    public void testStopDurabossNoMedia() throws Exception {
-        setExpectations(MODE.STOP_NO_MEDIA);
         updater.stopDuraboss(host, durabossConfig, servicePlan, restHelper);
     }
 
@@ -215,37 +203,6 @@ public class DurabossUpdaterImplTest {
                     SC_OK);
                 break;
 
-            case START_NO_MEDIA:
-                servicePlan = ServicePlan.STARTER_ARCHIVING;
-
-                EasyMock.expect(initResponse.getStatusCode()).andReturn(SC_OK);
-
-                bitIntegrityUrl = getActionUrl(START_BIT_INTEGRITY);
-                EasyMock.expect(restHelper.post(EasyMock.eq(bitIntegrityUrl),
-                                                EasyMock.<String>anyObject(),
-                                                EasyMock.<Map<String, String>>isNull()))
-                        .andReturn(bitIntegrityResponse);
-
-                EasyMock.expect(bitIntegrityResponse.getStatusCode()).andReturn(
-                    SC_OK);
-                break;
-
-            case STOP_NO_MEDIA:
-                servicePlan = ServicePlan.STARTER_ARCHIVING;
-
-                EasyMock.expect(initResponse.getStatusCode()).andReturn(SC_OK);
-                EasyMock.expect(restHelper.delete(auditUrl)).andReturn(null);
-
-                bitIntegrityUrl = getActionUrl(CANCEL_BIT_INTEGRITY);
-                EasyMock.expect(restHelper.post(EasyMock.eq(bitIntegrityUrl),
-                                                EasyMock.<String>anyObject(),
-                                                EasyMock.<Map<String, String>>isNull()))
-                        .andReturn(bitIntegrityResponse);
-
-                EasyMock.expect(bitIntegrityResponse.getStatusCode()).andReturn(
-                    SC_OK);
-                break;
-
             case START_ERROR_ACTION:
                 bitIntegrityUrl = getActionUrl(START_BIT_INTEGRITY);
 
@@ -299,11 +256,9 @@ public class DurabossUpdaterImplTest {
 
     private enum MODE {
         START,
-        START_NO_MEDIA,
         START_ERROR_ACTION,
         START_ERROR_INIT,
         STOP,
-        STOP_NO_MEDIA,
         STOP_ERROR_ACTION,
         STOP_ERROR_INIT;
     }

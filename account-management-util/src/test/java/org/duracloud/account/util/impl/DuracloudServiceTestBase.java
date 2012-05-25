@@ -231,7 +231,7 @@ public class DuracloudServiceTestBase {
                                        "dept-" + acctId,
                                        StorageProviderType.AMAZON_S3,
                                        secStorProvTypes,
-                                       ServicePlan.STARTER_ARCHIVING,
+                                       ServicePlan.PROFESSIONAL,
                                        type,
                                        acctId);
     }

@@ -13,8 +13,6 @@ package org.duracloud.account.common.domain;
  */
 public enum ServicePlan {
 
-    STARTER_ARCHIVING("Starter Package: Archiving and Preservation"),
-    STARTER_MEDIA("Starter Package: Media Access"),
     PROFESSIONAL("Professional Package"),
     TRIAL("Trial Package"),
     ALL("All Services");
@@ -33,10 +31,6 @@ public enum ServicePlan {
         return name();
     }
 
-    public boolean supportsMedia() {
-        return !this.equals(STARTER_ARCHIVING);
-    }
-    
     @Override
     public String toString() {
         return name();

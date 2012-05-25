@@ -79,8 +79,8 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
         String version2 = "2.0";
 
         ServicePlan servicePlan0 = ServicePlan.PROFESSIONAL;
-        ServicePlan servicePlan1 = ServicePlan.STARTER_ARCHIVING;
-        ServicePlan servicePlan2 = ServicePlan.STARTER_MEDIA;
+        ServicePlan servicePlan1 = ServicePlan.TRIAL;
+        ServicePlan servicePlan2 = ServicePlan.ALL;
 
         ServiceRepository serviceRepo0 =
             createServiceRepo(0, verifiedType, servicePlan0, version1);
@@ -137,10 +137,8 @@ public class TestDuracloudServiceRepositoryRepoImpl extends BaseTestDuracloudRep
 
     @Test
     public void testDelete() throws Exception {
-        ServiceRepository serviceRepo0 = createServiceRepo(0,
-                                                           verifiedType,
-                                                           ServicePlan.STARTER_MEDIA,
-                                                           "0.0");
+        ServiceRepository serviceRepo0 =
+            createServiceRepo(0, verifiedType, ServicePlan.PROFESSIONAL, "0.0");
         serviceRepositoryRepo.save(serviceRepo0);
         verifyRepoSize(serviceRepositoryRepo, 1);
 

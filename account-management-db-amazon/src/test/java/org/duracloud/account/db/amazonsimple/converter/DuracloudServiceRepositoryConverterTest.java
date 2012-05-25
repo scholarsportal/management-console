@@ -31,7 +31,7 @@ public class DuracloudServiceRepositoryConverterTest extends DomainConverterTest
     private static final int id = 0;
     private static final ServiceRepository.ServiceRepositoryType serviceRepositoryType =
         ServiceRepository.ServiceRepositoryType.VERIFIED;
-    private static final ServicePlan servicePlan = ServicePlan.STARTER_ARCHIVING;
+    private static final ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
     private static final String hostName = "hostName";
     private static final String spaceId = "spaceId";
     private static final String serviceXmlId = "serviceXmlId";
