@@ -161,8 +161,17 @@ public abstract class BaseDuracloudRepoImpl {
         throws DBConcurrentUpdateException {
         UpdateCondition condition = getUpdateCondition(item.getCounter());
 
-        List<ReplaceableAttribute> atts = converter.toAttributesAndIncrement(
-            item);
+        // Convert to SimpleDB attributes
+        List<ReplaceableAttribute> atts =
+            converter.toAttributesAndIncrement(item);
+
+        // Make sure there are no null attributes
+        for(ReplaceableAttribute att : atts) {
+            if(null == att.getValue()) {
+                att.setValue(new String());
+            }
+        }
+
         PutAttributesRequest request = new PutAttributesRequest(domain,
                                                                 idAsString(item),
                                                                 atts,

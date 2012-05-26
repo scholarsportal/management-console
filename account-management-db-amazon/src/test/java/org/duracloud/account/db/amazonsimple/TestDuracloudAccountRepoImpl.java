@@ -137,6 +137,17 @@ public class TestDuracloudAccountRepoImpl extends BaseTestDuracloudRepoImpl {
         verifyRepoSize(accountRepo, 0);
     }
 
+    @Test
+    public void testNullDept() throws Exception {
+        AccountInfo acct0 = createAccount(0, subdomain0);
+        acct0.setDepartment(null);
+        accountRepo.save(acct0);
+        verifyRepoSize(accountRepo, 1);
+
+        accountRepo.delete(acct0.getId());
+        verifyRepoSize(accountRepo, 0);
+    }
+
     private AccountInfo createAccount(int id, String subdomain) {
         return new AccountInfo(id,
                                subdomain,
