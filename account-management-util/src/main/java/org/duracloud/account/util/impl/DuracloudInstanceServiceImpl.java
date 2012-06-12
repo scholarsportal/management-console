@@ -326,8 +326,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         if(wait && timeoutMinutes > 0) {
             new ThreadedInitializer(timeoutMinutes, this).start();
         } else {
-            initializeInstance();
             initializeUserRoles();
+            initializeInstance();
             updateInstance();
         }
     }
