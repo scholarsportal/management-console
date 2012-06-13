@@ -225,10 +225,12 @@ public class MonitorsDriver {
         sb.append("MonitorsDriver ");
         sb.append("<hadoop|instance|store_reporter> <properties-file>");
         sb.append("\n\t");
-        sb.append("Where either '");
+        sb.append("Where '");
         sb.append(HADOOP);
-        sb.append("' or '");
+        sb.append("', '");
         sb.append(INSTANCE);
+        sb.append("', or '");
+        sb.append(STORE_REPORTER);
         sb.append("' must be provided to indicate the monitoring target.");
         sb.append("\n\t");
         sb.append("And where 'properties-file' contains the necessary ");
