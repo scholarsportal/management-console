@@ -60,7 +60,7 @@ public class DurabossUpdaterImpl implements DurabossUpdater {
 
     private void startBitIntegrity(Executor executor) {
         long startTime = new CalendarUtil().getDateAtOneAmNext(SAT).getTime();
-        long frequency = CalendarUtil.ONE_WEEK_MILLIS;
+        long frequency = CalendarUtil.ONE_WEEK_MILLIS * 4;
 
         String action = ExecConstants.START_BIT_INTEGRITY;
         String params = startTime + "," + frequency;
