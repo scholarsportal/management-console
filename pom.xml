@@ -51,6 +51,7 @@
     <module>account-management-db</module>
     <module>account-management-db-amazon</module>
     <module>account-management-db-ldap</module>
+    <module>account-management-db-hybrid</module>
     <module>account-management-db-util</module>
     <module>account-management-db-backup</module>
     <module>account-management-compute</module>

@@ -26,6 +26,10 @@ public class AmaConfigTest {
     private String ctxt = "context";
     private String admin0 = "a@g.com";
     private String admin1 = "x@y.org";
+    private String ldapBaseDn = "ldap-base-dn";
+    private String ldapUserDn = "ldap-user-dn";
+    private String ldapPassword = "ldap-password";
+    private String ldapUrl = "ldap-url";
 
     private EncryptionUtil encryptionUtil;
 
@@ -39,6 +43,10 @@ public class AmaConfigTest {
         amaConfig.setCtxt(ctxt);
         amaConfig.addAdminAddress("0", admin0);
         amaConfig.addAdminAddress("1", admin1);
+        amaConfig.setLdapBaseDn(ldapBaseDn);
+        amaConfig.setLdapUserDn(ldapUserDn);
+        amaConfig.setLdapPassword(ldapPassword);
+        amaConfig.setLdapUrl(ldapUrl);
 
         encryptionUtil = new EncryptionUtil();
     }
@@ -58,6 +66,11 @@ public class AmaConfigTest {
         Assert.assertTrue(xml.contains(ctxt));
         Assert.assertTrue(xml.contains(admin0));
         Assert.assertTrue(xml.contains(admin1));
+
+        Assert.assertTrue(xml.contains(ldapBaseDn));
+        Assert.assertTrue(xml.contains(ldapUserDn));
+        Assert.assertTrue(xml.contains(ldapPassword));
+        Assert.assertTrue(xml.contains(ldapUrl));
     }
 
     @Test

@@ -11,6 +11,8 @@ import org.duracloud.account.db.ldap.converter.DomainConverter;
 import org.duracloud.account.db.ldap.converter.DuracloudGroupConverter;
 import org.duracloud.account.db.ldap.domain.LdapRdn;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.ldap.NameAlreadyBoundException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
@@ -102,6 +104,10 @@ public class DuracloudGroupRepoImpl extends BaseDuracloudRepoImpl implements Dur
             throw new DBNotFoundException(
                 "No items found for acctDn: " + acctDn + ", msg: " +
                     e.getMessage());
+        } catch (EmptyResultDataAccessException e) {
+            throw new DBNotFoundException(
+                "No items found for acctDn: " + acctDn + ", msg: " +
+                    e.getMessage());
         }
     }
 
@@ -179,6 +185,9 @@ public class DuracloudGroupRepoImpl extends BaseDuracloudRepoImpl implements Dur
 
         } catch (NameNotFoundException e) {
             log.info("Item not saved: {}", item, e);
+        } catch (NameAlreadyBoundException e) {
+            log.info("Updating item: {}", item, e);
+            ldapTemplate.rebind(dn.toString(), null, attrs);
         }
     }
 

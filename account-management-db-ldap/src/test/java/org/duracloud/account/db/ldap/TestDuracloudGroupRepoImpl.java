@@ -34,7 +34,6 @@ public class TestDuracloudGroupRepoImpl extends BaseTestDuracloudRepoImpl {
 
     @BeforeClass
     public static void initialize() throws Exception {
-        beforeClass();
         userIds = new HashSet<Integer>();
         userIds.add(6);
         userIds.add(3);

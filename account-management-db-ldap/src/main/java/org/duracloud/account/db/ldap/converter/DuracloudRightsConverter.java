@@ -180,7 +180,7 @@ public class DuracloudRightsConverter implements DomainConverter<AccountRights> 
         String roleAtt = COMMON_NAME + "=";
         String role = parts[0].substring(roleAtt.length(), parts[0].length());
         try {
-            return Role.valueOf(role);
+            return Role.valueOf(role.toUpperCase());
 
         } catch (IllegalArgumentException e) {
             throw new ContextMapperException(roleDn, e);

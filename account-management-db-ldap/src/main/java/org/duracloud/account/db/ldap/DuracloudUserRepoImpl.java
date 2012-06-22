@@ -11,6 +11,8 @@ import org.duracloud.account.db.ldap.converter.DomainConverter;
 import org.duracloud.account.db.ldap.converter.DuracloudUserConverter;
 import org.duracloud.account.db.ldap.domain.LdapRdn;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.ldap.NameAlreadyBoundException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 
@@ -68,8 +70,10 @@ public class DuracloudUserRepoImpl extends BaseDuracloudRepoImpl implements Dura
             return (DuracloudUser) ldapTemplate.lookup(rdn.toString(),
                                                        converter);
 
+        } catch (EmptyResultDataAccessException e) {
+            throw new DBNotFoundException("No items found for RDN: " + rdn);
         } catch (NameNotFoundException e) {
-            throw new DBNotFoundException("No items found for id: " + id);
+            throw new DBNotFoundException("No items found for RDN: " + rdn);
         }
     }
 
@@ -82,6 +86,9 @@ public class DuracloudUserRepoImpl extends BaseDuracloudRepoImpl implements Dura
             return (DuracloudUser) ldapTemplate.searchForObject(BASE_OU,
                                                                 filter,
                                                                 converter);
+
+        } catch (EmptyResultDataAccessException e) {
+            throw new DBNotFoundException("No items found for: " + username);
         } catch (NameNotFoundException e) {
             throw new DBNotFoundException("No items found for: " + username);
         }
@@ -103,9 +110,11 @@ public class DuracloudUserRepoImpl extends BaseDuracloudRepoImpl implements Dura
 
         } catch (NameNotFoundException e) {
             log.warn("Item not saved: {}", item, e);
+        } catch (NameAlreadyBoundException e) {
+            log.info("Updating item: {}", item, e);
+            ldapTemplate.rebind(dn.toString(), null, attrs);
         }
     }
-
 
     @Override
     public Set<Integer> getIds() {

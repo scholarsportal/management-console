@@ -29,6 +29,10 @@ public class AmaInitDocumentBindingTest {
     private String ctxt = "ctxt";
     private String admin0 = "a@g.com";
     private String admin1 = "x@y.org";
+    private String ldapBaseDn = "ldap-base-dn";
+    private String ldapUserDn = "ldap-user-dn";
+    private String ldapPassword = "ldap-password";
+    private String ldapUrl = "ldap-url";
 
     private EncryptionUtil encryptionUtil;
 
@@ -61,6 +65,11 @@ public class AmaInitDocumentBindingTest {
         Assert.assertTrue(admins.contains(admin0));
         Assert.assertTrue(admins.contains(admin1));
 
+        Assert.assertEquals(ldapBaseDn, amaConfig.getLdapBaseDn());
+        Assert.assertEquals(ldapUserDn, amaConfig.getLdapUserDn());
+        Assert.assertEquals(ldapPassword, amaConfig.getLdapPassword());
+        Assert.assertEquals(ldapUrl, amaConfig.getLdapUrl());
+
         Assert.assertEquals("/init", amaConfig.getInitResource());
     }
 
@@ -81,6 +90,12 @@ public class AmaInitDocumentBindingTest {
         sb.append("  <host>" + host + "</host>");
         sb.append("  <port>" + port + "</port>");
         sb.append("  <ctxt>" + ctxt + "</ctxt>");
+        sb.append("  <ldap>");
+        sb.append("    <basedn>" + ldapBaseDn + "</basedn>");
+        sb.append("    <userdn>" + ldapUserDn + "</userdn>");
+        sb.append("    <password>" + ldapPassword + "</password>");
+        sb.append("    <url>" + ldapUrl + "</url>");
+        sb.append("  </ldap>");
         sb.append("</ama>");
 
         return new ByteArrayInputStream(sb.toString().getBytes());
@@ -96,6 +111,10 @@ public class AmaInitDocumentBindingTest {
         amaConfig.setCtxt(ctxt);
         amaConfig.addAdminAddress("0", admin0);
         amaConfig.addAdminAddress("1", admin1);
+        amaConfig.setLdapBaseDn(ldapBaseDn);
+        amaConfig.setLdapUserDn(ldapUserDn);
+        amaConfig.setLdapPassword(ldapPassword);
+        amaConfig.setLdapUrl(ldapUrl);
 
         String doc = AmaInitDocumentBinding.createDocumentFrom(amaConfig);
         Assert.assertNotNull(doc);
@@ -110,5 +129,9 @@ public class AmaInitDocumentBindingTest {
         Assert.assertTrue(doc.contains(ctxt));
         Assert.assertTrue(doc.contains(admin0));
         Assert.assertTrue(doc.contains(admin1));
+        Assert.assertTrue(doc.contains(ldapBaseDn));
+        Assert.assertTrue(doc.contains(ldapUserDn));
+        Assert.assertTrue(doc.contains(ldapPassword));
+        Assert.assertTrue(doc.contains(ldapUrl));
     }
 }

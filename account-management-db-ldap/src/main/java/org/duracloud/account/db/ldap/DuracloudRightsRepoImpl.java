@@ -12,7 +12,9 @@ import org.duracloud.account.db.ldap.converter.DomainConverter;
 import org.duracloud.account.db.ldap.converter.DuracloudRightsConverter;
 import org.duracloud.account.db.ldap.domain.LdapRdn;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.ldap.NameAlreadyBoundException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
@@ -227,26 +229,10 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
             right = (AccountRights) ldapTemplate.searchForObject(BASE_OU,
                                                                  filter.encode(),
                                                                  converter);
+        } catch (EmptyResultDataAccessException e) {
+            rootRight = getRightsIfUserIsRoot(accountId, userId, e);
         } catch (IncorrectResultSizeDataAccessException e) {
-            // item not found, does account exist?
-            Set<AccountRights> rights = doFindByAccountId(accountId);
-            if (rights.size() > 0) { // account exists
-                for (AccountRights root : getRootAccountRights(accountId)) {
-                    // was the target user a root user?
-                    if (root.getUserId() == userId) {
-                        rootRight = new AccountRights(root.getId(),
-                                                      accountId,
-                                                      root.getUserId(),
-                                                      root.getRoles(),
-                                                      root.getCounter());
-                    }
-                }
-            }
-
-            // item not found and not root.
-            if (null == rootRight) {
-                throw e;
-            }
+            rootRight = getRightsIfUserIsRoot(accountId, userId, e);
         }
 
         if (null != right) {
@@ -255,6 +241,34 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
         } else {
             return rootRight;
         }
+    }
+
+    private AccountRights getRightsIfUserIsRoot(int accountId,
+                                                int userId,
+                                                Exception e)
+        throws DBNotFoundException {
+        AccountRights rootRight = null;
+
+        // item not found, does account exist?
+        Set<AccountRights> rights = doFindByAccountId(accountId);
+        if (rights.size() > 0) { // account exists
+            for (AccountRights root : getRootAccountRights(accountId)) {
+                // was the target user a root user?
+                if (root.getUserId() == userId) {
+                    rootRight = new AccountRights(root.getId(),
+                                                  accountId,
+                                                  root.getUserId(),
+                                                  root.getRoles(),
+                                                  root.getCounter());
+                }
+            }
+        }
+
+        // item not found and not root.
+        if (null == rootRight) {
+            throw new DBNotFoundException(e);
+        }
+        return rootRight;
     }
 
     /**
@@ -357,6 +371,9 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
 
         } catch (NameNotFoundException e) {
             log.warn("Item not saved: {}", item, e);
+        } catch (NameAlreadyBoundException e) {
+            log.info("Updating item: {}", item, e);
+            ldapTemplate.rebind(dn.toString(), null, attrs);
         }
     }
 

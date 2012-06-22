@@ -56,6 +56,14 @@ public class AmaInitDocumentBinding {
                 }
             }
 
+            Element ldap = root.getChild("ldap");
+            if (null != ldap) {
+                config.setLdapBaseDn(ldap.getChildText("basedn"));
+                config.setLdapUserDn(ldap.getChildText("userdn"));
+                config.setLdapPassword(ldap.getChildText("password"));
+                config.setLdapUrl(ldap.getChildText("url"));
+            }
+
             config.setHost(root.getChildText("host"));
             config.setPort(root.getChildText("port"));
             config.setCtxt(root.getChildText("ctxt"));
@@ -85,6 +93,10 @@ public class AmaInitDocumentBinding {
             String host = amaConfig.getHost();
             String port = amaConfig.getPort();
             String ctxt = amaConfig.getCtxt();
+            String ldapBaseDn = amaConfig.getLdapBaseDn();
+            String ldapUserDn = amaConfig.getLdapUserDn();
+            String ldapPassword = amaConfig.getLdapPassword();
+            String ldapUrl = amaConfig.getLdapUrl();
             Collection emails = amaConfig.getAdminAddresses();
 
             xml.append("<ama>");
@@ -104,6 +116,14 @@ public class AmaInitDocumentBinding {
                 }
                 xml.append("  </admin>");
             }
+
+            xml.append("  <ldap>");
+            xml.append("    <basedn>" + ldapBaseDn + "</basedn>");
+            xml.append("    <userdn>" + ldapUserDn + "</userdn>");
+            xml.append("    <password>" + ldapPassword + "</password>");
+            xml.append("    <url>" + ldapUrl + "</url>");
+            xml.append("  </ldap>");
+
             xml.append("  <host>" + host + "</host>");
             xml.append("  <port>" + port + "</port>");
             xml.append("  <ctxt>" + ctxt + "</ctxt>");

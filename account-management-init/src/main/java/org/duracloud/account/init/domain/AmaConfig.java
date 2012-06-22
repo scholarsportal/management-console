@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -29,12 +28,22 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     public static final String awsUsernameKey = "username";
     public static final String awsPasswordKey = "password";
     public static final String adminEmailKey = "admin";
+    public static final String ldapKey = "ldap";
+
+    protected static final String ldapBaseDnKey = "basedn";
+    protected static final String ldapUserDnKey = "userdn";
+    protected static final String ldapPasswordKey = "password";
+    protected static final String ldapUrlKey = "url";
 
     private String awsUsername;
     private String awsPassword;
     private String host;
     private String port;
     private String ctxt;
+    private String ldapBaseDn;
+    private String ldapUserDn;
+    private String ldapPassword;
+    private String ldapUrl;
 
     private Map<String, String> adminAddresses = new HashMap<String, String>();
 
@@ -46,6 +55,8 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     @Override
     protected void loadProperty(String key, String value) {
         String prefix = getPrefix(key.toLowerCase());
+        String suffix = getSuffix(key.toLowerCase());
+
         if (prefix.equalsIgnoreCase(awsUsernameKey)) {
             this.awsUsername = value;
 
@@ -53,11 +64,34 @@ public class AmaConfig extends BaseConfig implements AppConfig {
             this.awsPassword = value;
 
         } else if (prefix.equalsIgnoreCase(adminEmailKey)) {
-            String id = getSuffix(key);
+            String id = suffix;
             adminAddresses.put(id, value);
+
+        } else if (prefix.equalsIgnoreCase(ldapKey)) {
+            loadLdap(suffix, value);
 
         } else {
             String msg = "unknown key: " + key + " (" + value + ")";
+            log.error(msg);
+            throw new DuraCloudRuntimeException(msg);
+        }
+    }
+
+    private void loadLdap(String key, String value) {
+        if (key.equalsIgnoreCase(ldapBaseDnKey)) {
+            this.ldapBaseDn = value;
+
+        } else if (key.equalsIgnoreCase(ldapUserDnKey)) {
+            this.ldapUserDn = value;
+
+        } else if (key.equalsIgnoreCase(ldapPasswordKey)) {
+            this.ldapPassword = value;
+
+        } else if (key.equalsIgnoreCase(ldapUrlKey)) {
+            this.ldapUrl = value;
+
+        } else {
+            String msg = "unknown ldap key: " + key + " (" + value + ")";
             log.error(msg);
             throw new DuraCloudRuntimeException(msg);
         }
@@ -119,5 +153,37 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public void addAdminAddress(String id, String adminAddress) {
         this.adminAddresses.put(id, adminAddress);
+    }
+
+    public String getLdapBaseDn() {
+        return ldapBaseDn;
+    }
+
+    public void setLdapBaseDn(String ldapBaseDn) {
+        this.ldapBaseDn = ldapBaseDn;
+    }
+
+    public String getLdapUserDn() {
+        return ldapUserDn;
+    }
+
+    public void setLdapUserDn(String ldapUserDn) {
+        this.ldapUserDn = ldapUserDn;
+    }
+
+    public String getLdapPassword() {
+        return ldapPassword;
+    }
+
+    public void setLdapPassword(String ldapPassword) {
+        this.ldapPassword = ldapPassword;
+    }
+
+    public String getLdapUrl() {
+        return ldapUrl;
+    }
+
+    public void setLdapUrl(String ldapUrl) {
+        this.ldapUrl = ldapUrl;
     }
 }

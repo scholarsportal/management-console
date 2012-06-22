@@ -56,11 +56,15 @@ public class DuracloudGroupConverter implements DomainConverter<DuracloudGroup> 
         attrs.put(DISPLAY_NAME.toString(), item.getDisplayName());
         attrs.put(ACCOUNT.toString(), getAccountDn(item.getAccountId()));
 
-        Attribute members = new BasicAttribute(MEMBER.toString());
-        for (Integer userId : item.getUserIds()) {
-            members.add(getMemberDn(userId));
+        Set<Integer> userIds = item.getUserIds();
+        if (null != userIds && userIds.size() > 0) {
+
+            Attribute members = new BasicAttribute(MEMBER.toString());
+            for (Integer userId : userIds) {
+                members.add(getMemberDn(userId));
+            }
+            attrs.put(members);
         }
-        attrs.put(members);
 
         return attrs;
     }
@@ -87,8 +91,10 @@ public class DuracloudGroupConverter implements DomainConverter<DuracloudGroup> 
         int accountId = getAccountId(accountIdAttr);
 
         Set<Integer> userIds = new HashSet<Integer>();
-        for (int i = 0; i < membersAttr.size(); ++i) {
-            userIds.add(getUserId(membersAttr, i));
+        if (null != membersAttr) {
+            for (int i = 0; i < membersAttr.size(); ++i) {
+                userIds.add(getUserId(membersAttr, i));
+            }
         }
 
         return new DuracloudGroup(uniqueIdentifier, cn, accountId, userIds);
@@ -111,8 +117,10 @@ public class DuracloudGroupConverter implements DomainConverter<DuracloudGroup> 
 
     private Attribute getMultiAttribute(Attributes attrs, String key) {
         Attribute attr = attrs.get(key);
+
+        // None is fine.
         if (null == attr) {
-            throw new ContextMapperException("Attribute not found: " + key);
+            log.info("Attribute not found: " + key);
         }
 
         return attr;
