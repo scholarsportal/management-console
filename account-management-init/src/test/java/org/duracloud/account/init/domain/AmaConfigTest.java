@@ -8,8 +8,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Andrew Woods
@@ -67,9 +65,12 @@ public class AmaConfigTest {
         Assert.assertTrue(xml.contains(admin0));
         Assert.assertTrue(xml.contains(admin1));
 
+        String encLdapUserDn = encryptionUtil.encrypt(ldapUserDn);
+        String encLdapPassword = encryptionUtil.encrypt(ldapPassword);
+
         Assert.assertTrue(xml.contains(ldapBaseDn));
-        Assert.assertTrue(xml.contains(ldapUserDn));
-        Assert.assertTrue(xml.contains(ldapPassword));
+        Assert.assertTrue(xml.contains(encLdapUserDn));
+        Assert.assertTrue(xml.contains(encLdapPassword));
         Assert.assertTrue(xml.contains(ldapUrl));
     }
 

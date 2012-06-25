@@ -76,6 +76,8 @@ public class AmaInitDocumentBindingTest {
     private InputStream createInputStream() throws Exception {
         String encUsername = encryptionUtil.encrypt(username);
         String encPassword = encryptionUtil.encrypt(password);
+        String encLdapUserDn = encryptionUtil.encrypt(ldapUserDn);
+        String encLdapPassword = encryptionUtil.encrypt(ldapPassword);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<ama>");
@@ -92,8 +94,8 @@ public class AmaInitDocumentBindingTest {
         sb.append("  <ctxt>" + ctxt + "</ctxt>");
         sb.append("  <ldap>");
         sb.append("    <basedn>" + ldapBaseDn + "</basedn>");
-        sb.append("    <userdn>" + ldapUserDn + "</userdn>");
-        sb.append("    <password>" + ldapPassword + "</password>");
+        sb.append("    <userdn>" + encLdapUserDn + "</userdn>");
+        sb.append("    <password>" + encLdapPassword + "</password>");
         sb.append("    <url>" + ldapUrl + "</url>");
         sb.append("  </ldap>");
         sb.append("</ama>");
@@ -129,9 +131,12 @@ public class AmaInitDocumentBindingTest {
         Assert.assertTrue(doc.contains(ctxt));
         Assert.assertTrue(doc.contains(admin0));
         Assert.assertTrue(doc.contains(admin1));
+
+        String encLdapUserDn = encryptionUtil.encrypt(ldapUserDn);
+        String encLdapPassword = encryptionUtil.encrypt(ldapPassword);
         Assert.assertTrue(doc.contains(ldapBaseDn));
-        Assert.assertTrue(doc.contains(ldapUserDn));
-        Assert.assertTrue(doc.contains(ldapPassword));
+        Assert.assertTrue(doc.contains(encLdapUserDn));
+        Assert.assertTrue(doc.contains(encLdapPassword));
         Assert.assertTrue(doc.contains(ldapUrl));
     }
 }

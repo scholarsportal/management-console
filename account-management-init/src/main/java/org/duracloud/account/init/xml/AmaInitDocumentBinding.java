@@ -58,9 +58,12 @@ public class AmaInitDocumentBinding {
 
             Element ldap = root.getChild("ldap");
             if (null != ldap) {
+                String encLdapUserDn =ldap.getChildText("userdn");
+                String encLdapPassword =ldap.getChildText("password");
+
                 config.setLdapBaseDn(ldap.getChildText("basedn"));
-                config.setLdapUserDn(ldap.getChildText("userdn"));
-                config.setLdapPassword(ldap.getChildText("password"));
+                config.setLdapUserDn(decrypt(encLdapUserDn));
+                config.setLdapPassword(decrypt(encLdapPassword));
                 config.setLdapUrl(ldap.getChildText("url"));
             }
 
@@ -94,8 +97,8 @@ public class AmaInitDocumentBinding {
             String port = amaConfig.getPort();
             String ctxt = amaConfig.getCtxt();
             String ldapBaseDn = amaConfig.getLdapBaseDn();
-            String ldapUserDn = amaConfig.getLdapUserDn();
-            String ldapPassword = amaConfig.getLdapPassword();
+            String ldapUserDn = encrypt(amaConfig.getLdapUserDn());
+            String ldapPassword = encrypt(amaConfig.getLdapPassword());
             String ldapUrl = amaConfig.getLdapUrl();
             Collection emails = amaConfig.getAdminAddresses();
 

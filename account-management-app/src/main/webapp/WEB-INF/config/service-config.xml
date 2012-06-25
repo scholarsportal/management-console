@@ -14,7 +14,7 @@
   <bean id="idUtil" class="org.duracloud.account.db.impl.IdUtilImpl"/>
 
   <bean id="repoMgr"
-        class="org.duracloud.account.db.amazonsimple.AmazonSimpleDBRepoMgr">
+        class="org.duracloud.account.db.hybrid.HybridDBRepoMgr">
     <constructor-arg ref="idUtil"/>
   </bean>
 

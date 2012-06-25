@@ -176,6 +176,18 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
+      <artifactId>account-management-db-ldap</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>account-management-db-hybrid</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
       <artifactId>account-management-compute</artifactId>
       <version>${project.version}</version>
     </dependency>
