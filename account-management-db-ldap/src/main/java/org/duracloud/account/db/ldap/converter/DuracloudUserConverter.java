@@ -45,7 +45,7 @@ public class DuracloudUserConverter implements DomainConverter<DuracloudUser> {
 
     @Override
     public Attributes toAttributes(DuracloudUser item) {
-        log.info("toAttributes for: {}", item);
+        log.debug("toAttributes for: {}", item.getUsername());
 
         String fullname = item.getFirstName() + " " + item.getLastName();
 
@@ -76,7 +76,7 @@ public class DuracloudUserConverter implements DomainConverter<DuracloudUser> {
 
     @Override
     public DuracloudUser mapFromContext(Object o) {
-        log.info("mapFromContent for class: {}", o.getClass());
+        log.debug("mapFromContent for class: {}", o.getClass());
 
         if (!(o instanceof DirContextAdapter)) {
             throw new InvalidParameterException("Illegal arg: " + o.getClass());

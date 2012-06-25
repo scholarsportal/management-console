@@ -47,7 +47,7 @@ public class DuracloudGroupConverter implements DomainConverter<DuracloudGroup> 
 
     @Override
     public Attributes toAttributes(DuracloudGroup item) {
-        log.info("toAttributes for: {}", item);
+        log.debug("toAttributes for: {}", item);
 
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS.toString(), GROUP.toString());
@@ -71,7 +71,7 @@ public class DuracloudGroupConverter implements DomainConverter<DuracloudGroup> 
 
     @Override
     public DuracloudGroup mapFromContext(Object o) {
-        log.info("mapFromContext for class: {}", o.getClass());
+        log.debug("mapFromContext for class: {}", o.getClass());
 
         if (!(o instanceof DirContextAdapter)) {
             throw new InvalidParameterException("Illegal arg: " + o.getClass());

@@ -23,9 +23,9 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.amazonsimple.AmazonSimpleDBRepoMgr;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.hybrid.HybridDBRepoMgr;
 import org.duracloud.account.db.impl.IdUtilImpl;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
@@ -109,7 +109,7 @@ public class DbUtil {
     }
 
     private DuracloudRepoMgr getRepoManager(AmaConfig config) {
-        DuracloudRepoMgr repoMgr = new AmazonSimpleDBRepoMgr(new IdUtilImpl());
+        DuracloudRepoMgr repoMgr = new HybridDBRepoMgr(new IdUtilImpl());
         repoMgr.initialize(config);
         return repoMgr;
     }

@@ -47,7 +47,7 @@ public class DuracloudRightsConverter implements DomainConverter<AccountRights> 
 
     @Override
     public Attributes toAttributes(AccountRights item) {
-        log.info("toAttributes for: {}", item);
+        log.debug("toAttributes for: {}", item);
 
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS.toString(), RIGHTS.toString());
@@ -66,7 +66,7 @@ public class DuracloudRightsConverter implements DomainConverter<AccountRights> 
 
     @Override
     public AccountRights mapFromContext(Object o) {
-        log.info("mapFromContext for class: {}", o.getClass());
+        log.debug("mapFromContext for class: {}", o.getClass());
 
         if (!(o instanceof DirContextAdapter)) {
             throw new InvalidParameterException("Illegal arg: " + o.getClass());
