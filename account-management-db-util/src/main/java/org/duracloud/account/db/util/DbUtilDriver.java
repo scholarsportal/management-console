@@ -48,7 +48,7 @@ import java.io.IOException;
  *   values are equal, no update occurs (and the database counter is not
  *   updated, as this only occurs when an item is changed.)
  * 
- * @author: Bill Branan
+ * @author Bill Branan
  * Date: Dec 21, 2010
  */
 public class DbUtilDriver {   
@@ -68,7 +68,7 @@ public class DbUtilDriver {
         } else if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.CLEAR.name())) {
             command = DbUtil.COMMAND.CLEAR;
         } else {
-            usage("The first argument must be either GET, PUT, CLEAR or FILL. " +
+            usage("The first argument must be either GET, PUT, or CLEAR. " +
                   "You supplied: " + commandArg);
             System.exit(1);
         }
