@@ -20,42 +20,51 @@ package edu.internet2.middleware.shibboleth.idp.system.conf1;
 import java.security.Principal;
 
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
+import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.saml2.core.AuthnRequest;
+import org.opensaml.saml2.core.Issuer;
 import org.opensaml.ws.transport.http.HTTPInTransport;
 import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
+import org.opensaml.xml.io.Marshaller;
+import org.opensaml.xml.io.MarshallingException;
+import org.opensaml.xml.util.Base64;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.profile.ProfileException;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager;
 import edu.internet2.middleware.shibboleth.common.profile.provider.AbstractShibbolethProfileHandler;
-import edu.internet2.middleware.shibboleth.idp.authn.ShibbolethSSOLoginContext;
+import edu.internet2.middleware.shibboleth.idp.authn.LoginContext;
+import edu.internet2.middleware.shibboleth.idp.authn.Saml2LoginContext;
 import edu.internet2.middleware.shibboleth.idp.authn.UsernamePrincipal;
 import edu.internet2.middleware.shibboleth.idp.session.AuthenticationMethodInformation;
 import edu.internet2.middleware.shibboleth.idp.session.impl.AuthenticationMethodInformationImpl;
 import edu.internet2.middleware.shibboleth.idp.util.HttpServletHelper;
 
 /**
- * Unit test for Shibboleth SSO requests.
+ * 
  */
-public class ShibbolethSSOTestCase extends BaseConf1TestCase {
+public class SAML2SSOTest extends BaseConf1TestCase {
 
     /** Tests initial leg of the SSO request where request is decoded and sent to the authentication engine. */
     public void testFirstAuthenticationLeg() throws Exception {
         MockServletContext servletContext = new MockServletContext();
-
-        MockHttpServletRequest servletRequest = buildServletRequest();
+        
+        MockHttpServletRequest servletRequest = buildServletRequest("urn:example.org:sp1");
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();
 
         ProfileHandlerManager handlerManager = (ProfileHandlerManager) getApplicationContext().getBean(
                 "shibboleth.HandlerManager");
-        AbstractShibbolethProfileHandler handler = (AbstractShibbolethProfileHandler) handlerManager
-                .getProfileHandler(servletRequest);
+        AbstractShibbolethProfileHandler handler = (AbstractShibbolethProfileHandler) handlerManager.getProfileHandler(servletRequest);
         assertNotNull(handler);
 
         // Process request
@@ -64,19 +73,16 @@ public class ShibbolethSSOTestCase extends BaseConf1TestCase {
         handler.processRequest(profileRequest, profileResponse);
 
         servletRequest.setCookies(servletResponse.getCookies());
-        ShibbolethSSOLoginContext loginContext = (ShibbolethSSOLoginContext) HttpServletHelper.getLoginContext(handler
-                .getStorageService(), servletContext, servletRequest);
+        Saml2LoginContext loginContext = (Saml2LoginContext) HttpServletHelper.getLoginContext(handler.getStorageService(), servletContext, servletRequest);
 
         assertNotNull(loginContext);
         assertEquals(false, loginContext.getAuthenticationAttempted());
         assertEquals(false, loginContext.isForceAuthRequired());
         assertEquals(false, loginContext.isPassiveAuthRequired());
         assertEquals("/AuthnEngine", loginContext.getAuthenticationEngineURL());
-        assertEquals("/shibboleth/SSO", loginContext.getProfileHandlerURL());
+        assertEquals("/saml2/POST/SSO", loginContext.getProfileHandlerURL());
         assertEquals("urn:example.org:sp1", loginContext.getRelyingPartyId());
         assertEquals(0, loginContext.getRequestedAuthenticationMethods().size());
-        assertEquals("https://example.org/mySP", loginContext.getSpAssertionConsumerService());
-        assertEquals("https://example.org/mySP", loginContext.getSpAssertionConsumerService());
 
         assertTrue(servletResponse.getRedirectedUrl().endsWith("/AuthnEngine"));
     }
@@ -84,16 +90,15 @@ public class ShibbolethSSOTestCase extends BaseConf1TestCase {
     /** Tests second leg of the SSO request where request returns to SSO handler and AuthN statement is generated. */
     public void testSecondAuthenticationLeg() throws Exception {
         MockServletContext servletContext = new MockServletContext();
-        MockHttpServletRequest servletRequest = buildServletRequest();
+        MockHttpServletRequest servletRequest = buildServletRequest("urn:example.org:sp1");
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();
 
         ProfileHandlerManager handlerManager = (ProfileHandlerManager) getApplicationContext().getBean(
                 "shibboleth.HandlerManager");
-        AbstractShibbolethProfileHandler handler = (AbstractShibbolethProfileHandler) handlerManager
-                .getProfileHandler(servletRequest);
+        AbstractShibbolethProfileHandler handler = (AbstractShibbolethProfileHandler) handlerManager.getProfileHandler(servletRequest);
         assertNotNull(handler);
-
-        HttpServletHelper.bindLoginContext(buildLoginContext(), handler.getStorageService(), servletContext,
+        
+        HttpServletHelper.bindLoginContext(buildLoginContext("urn:example.org:sp1"), handler.getStorageService(), servletContext,
                 servletRequest, servletResponse);
         servletRequest.setCookies(servletResponse.getCookies());
 
@@ -104,15 +109,13 @@ public class ShibbolethSSOTestCase extends BaseConf1TestCase {
 
         String response = servletResponse.getContentAsString();
         assertTrue(response.contains("action=\"https&#x3a;&#x2f;&#x2f;example.org&#x2f;mySP\" method=\"post\""));
-        assertTrue(response.contains("name=\"TARGET\" value=\"https&#x3a;&#x2f;&#x2f;example.org&#x2f;mySP\""));
         assertTrue(response.contains("SAMLResponse"));
     }
 
-    /** Tests that the SSO handler correctly fails out if the Shib SSO profile is not configured. */
-    public void testAuthenticationWithoutConfiguredSSO() {
-        MockHttpServletRequest servletRequest = buildServletRequest();
-        servletRequest.setParameter("providerId", "urn:example.org:BogusSP");
-
+    /** Tests that the handler correctly fails out if the SSO profile is not configured. */
+    public void testAuthenticationWithoutConfiguredSSO() throws Exception{
+        MockHttpServletRequest servletRequest = buildServletRequest("urn:example.org:BogusSP");
+        
         MockHttpServletResponse servletResponse = new MockHttpServletResponse();
 
         ProfileHandlerManager handlerManager = (ProfileHandlerManager) getApplicationContext().getBean(
@@ -125,23 +128,25 @@ public class ShibbolethSSOTestCase extends BaseConf1TestCase {
         HTTPOutTransport profileResponse = new HttpServletResponseAdapter(servletResponse, false);
         try {
             handler.processRequest(profileRequest, profileResponse);
-            fail("Request processing expected to due to lack of configured Shib SSO profile");
+            fail("Request processing expected to due to lack of configured SAML 2 SSO profile");
         } catch (ProfileException e) {
 
         }
     }
 
-    protected MockHttpServletRequest buildServletRequest() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setPathInfo("/shibboleth/SSO");
-        request.setParameter("providerId", "urn:example.org:sp1");
-        request.setParameter("shire", "https://example.org/mySP");
-        request.setParameter("target", "https://example.org/mySP");
+    protected MockHttpServletRequest buildServletRequest(String relyingPartyId) throws Exception{
+        AuthnRequest authnRequest = buildAuthnRequest(relyingPartyId);
+        String authnRequestString = getSamlRequestString(authnRequest);
+        
+        MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+        servletRequest.setMethod("POST");
+        servletRequest.setPathInfo("/saml2/POST/SSO");
+        servletRequest.setParameter("SAMLRequest", Base64.encodeBytes(authnRequestString.getBytes()));
 
-        return request;
+        return servletRequest;
     }
 
-    protected ShibbolethSSOLoginContext buildLoginContext() {
+    protected Saml2LoginContext buildLoginContext(String relyingPartyId) throws Exception{
         Principal principal = new UsernamePrincipal("test");
 
         Subject subject = new Subject();
@@ -149,14 +154,36 @@ public class ShibbolethSSOTestCase extends BaseConf1TestCase {
 
         AuthenticationMethodInformation authnInfo = new AuthenticationMethodInformationImpl(subject, principal,
                 "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified", new DateTime(), 3600);
-
-        ShibbolethSSOLoginContext loginContext = new ShibbolethSSOLoginContext();
+        
+        AuthnRequest request = buildAuthnRequest(relyingPartyId);
+        
+        Saml2LoginContext loginContext = new Saml2LoginContext(relyingPartyId, null, request);
         loginContext.setAuthenticationMethodInformation(authnInfo);
         loginContext.setPrincipalAuthenticated(true);
-        loginContext.setRelyingParty("urn:example.org:sp1");
-        loginContext.setSpAssertionConsumerService("https://example.org/mySP");
-        loginContext.setSpTarget("https://example.org/mySP");
+        loginContext.setRelyingParty(relyingPartyId);
 
         return loginContext;
+    }
+    
+    protected AuthnRequest buildAuthnRequest(String relyingPartyId) {
+        SAMLObjectBuilder<Issuer> issuerBuilder = (SAMLObjectBuilder<Issuer>) builderFactory
+                .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+        Issuer issuer = issuerBuilder.buildObject();
+        issuer.setValue(relyingPartyId);
+
+        SAMLObjectBuilder<AuthnRequest> authnRequestBuilder = (SAMLObjectBuilder<AuthnRequest>) builderFactory
+                .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        AuthnRequest request = authnRequestBuilder.buildObject();
+        request.setID("1");
+        request.setIssueInstant(new DateTime());
+        request.setIssuer(issuer);
+
+        return request;
+    }
+
+    protected String getSamlRequestString(AuthnRequest request) throws MarshallingException {
+        Marshaller marshaller = marshallerFactory.getMarshaller(request);
+        Element requestElem = marshaller.marshall(request);
+        return XMLHelper.nodeToString(requestElem);
     }
 }

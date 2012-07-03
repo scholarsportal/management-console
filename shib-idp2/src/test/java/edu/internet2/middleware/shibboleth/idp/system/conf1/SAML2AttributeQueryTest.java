@@ -46,7 +46,7 @@ import edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager;
 /**
  * A system test that meant to simulate various types of SAML 2 attribute queries.
  */
-public class SAML2AttributeQueryTestCase extends BaseConf1TestCase {
+public class SAML2AttributeQueryTest extends BaseConf1TestCase {
 
     /** Tests that the attribute query handler correctly handles an incomming query. */
     public void testAttributeQuery() throws Exception{

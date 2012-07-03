@@ -45,7 +45,7 @@ import edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager;
 /**
  * Unit test for the SAML 1 attribute query flow.
  */
-public class SAML1AttributeQueryTestCase extends BaseConf1TestCase {
+public class SAML1AttributeQueryTest extends BaseConf1TestCase {
     
     /** Tests that the attribute query handler correctly handles an incomming query. */
     public void testAttributeQuery() throws Exception{
