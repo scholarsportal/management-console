@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.duracloud.common.util.ChecksumUtil;
 import org.opensaml.saml2.core.AuthnContext;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
@@ -43,6 +44,8 @@ import edu.internet2.middleware.shibboleth.idp.authn.AuthenticationEngine;
 import edu.internet2.middleware.shibboleth.idp.authn.AuthenticationException;
 import edu.internet2.middleware.shibboleth.idp.authn.LoginHandler;
 import edu.internet2.middleware.shibboleth.idp.authn.UsernamePrincipal;
+
+import static org.duracloud.common.util.ChecksumUtil.Algorithm.SHA_256;
 
 /**
  * This Servlet authenticates a user via JAAS. The user's credential is always added to the returned {@link Subject} as
@@ -79,10 +82,10 @@ public class UsernamePasswordLoginServlet extends HttpServlet {
     private final String failureParam = "loginFailed";
 
     /** HTTP request parameter containing the user name. */
-    private final String usernameAttribute = "j_username";
+    protected final static String usernameAttribute = "j_username";
 
     /** HTTP request parameter containing the user's password. */
-    private final String passwordAttribute = "j_password";
+    protected final static String passwordAttribute = "j_password";
 
     /** {@inheritDoc} */
     public void init(ServletConfig config) throws ServletException {
@@ -119,8 +122,11 @@ public class UsernamePasswordLoginServlet extends HttpServlet {
             return;
         }
 
+        ChecksumUtil checksumUtil = new ChecksumUtil(SHA_256);
+        String encPassword = checksumUtil.generateChecksum(password);
+
         try {
-            authenticateUser(request, username, password);
+            authenticateUser(request, username, encPassword);
             AuthenticationEngine.returnToAuthenticationEngine(request, response);
         } catch (LoginException e) {
             request.setAttribute(failureParam, "true");
