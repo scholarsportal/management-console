@@ -11,32 +11,59 @@
            http://www.springframework.org/schema/mvc
            http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-  <http auto-config="false" use-expressions="true">
+  <!--Security Filters for REST endpoints-->
+  <http pattern="/init"
+        auto-config="false"
+        use-expressions="true"
+        create-session="stateless">
+    <intercept-url pattern="**" access="hasRole('ROLE_INIT')"/>
+    <http-basic/>
+  </http>
+
+  <!--Security Filters for Browser/Shib endpoints-->
+  <http pattern="/**"
+        auto-config="false"
+        use-expressions="true"
+        entry-point-ref="http403ForbiddenEntryPoint">
     <access-denied-handler error-page="/access-denied" />
     <intercept-url pattern="/root/**" access="hasRole('ROLE_ROOT')" />
     <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')"  />
-    <intercept-url pattern="/init" access="hasRole('ROLE_INIT')" />
 
-    <form-login login-page="/login" always-use-default-target="false"
-                default-target-url="/users/profile"
-                authentication-failure-url="/login?error=true" />
-    <http-basic />
-    <logout invalidate-session="true" delete-cookies="jsessionid" />
+    <logout invalidate-session="true" delete-cookies="jsessionid" success-handler-ref="shibLogoutHandler"/>
+    <custom-filter position="PRE_AUTH_FILTER" ref="requestHeaderAuthenticationFilter"/>
   </http>
+
+  <beans:bean id="shibLogoutHandler" class="org.duracloud.account.auth.ShibLogoutHandler"/>
+
+  <beans:bean id="http403ForbiddenEntryPoint"
+                class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+
+  <beans:bean id="requestHeaderAuthenticationFilter"
+              class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+    <beans:property name="principalRequestHeader" value="REMOTE_USER"/>
+    <beans:property name="authenticationManager" ref="authenticationManager"/>
+  </beans:bean>
 
   <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager" >
     <authentication-provider user-service-ref="initDetailsService" >
       <password-encoder ref="passwordEncoder"/>
     </authentication-provider>
-    <authentication-provider user-service-ref="userDetailsService" >
-      <password-encoder ref="passwordEncoder"/>
-    </authentication-provider>
-    <authentication-provider user-service-ref="userDetailsService" />
+    <authentication-provider ref="preauthAuthProvider"/>
   </authentication-manager>
+
+  <beans:bean id="preauthAuthProvider"
+              class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+    <beans:property name="preAuthenticatedUserDetailsService">
+      <beans:bean id="userDetailsServiceWrapper"
+                  class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+        <beans:property name="userDetailsService" ref="userDetailsService"/>
+      </beans:bean>
+    </beans:property>
+  </beans:bean>
 
   <beans:bean id="securityContextUtil" class="org.duracloud.account.util.security.SecurityContextUtil"/>
 
