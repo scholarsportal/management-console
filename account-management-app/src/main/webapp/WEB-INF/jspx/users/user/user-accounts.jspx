@@ -139,13 +139,21 @@
                         method="post"
                         action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
                         modelAttribute="instanceForm">
-                          <c:if test="${a.userRole == 'ROLE_ROOT'}">
+                          <sec:authorize access="hasRole('ROLE_ROOT')">
                         <form:select
                           id="versions"
                           cssErrorClass="error"
                           path="version"
                           items="${a.versions}" />
-                          </c:if>
+                        <form:select
+                          id="instanceType"
+                          cssErrorClass="error"
+                          path="instanceType"
+                          items="${instanceTypes}" />
+                        
+                          </sec:authorize>
+                          
+                          
                         <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
                       </form:form>
                       </div>
@@ -157,6 +165,9 @@
                     <tr>
                       <th align="left" colspan="2">Host Name</th>
                       <th width="173" align="center">Version</th>
+                      <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                        <th width="173" align="center">Type</th>
+                      </sec:authorize>
                       <th width="173" align="center">Status</th>
                       <th width="73" align="left" colspan="4"></th>
                       <th align="left">
@@ -197,6 +208,11 @@
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceVersion}" />
                       </td>
+                      <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                        <td align="center" valign="middle" class="instructions">
+                          <c:out value="${a.instanceType}" />
+                        </td>
+                      </sec:authorize>
                       <td align="center" valign="middle" class="instructions">
                         <c:out value="${a.instanceStatus}" />
                       </td>

@@ -5,6 +5,8 @@ package org.duracloud.account.compute;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.*;
+
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -91,7 +93,8 @@ public class AmazonComputeProviderTest {
                                                           securityGroup,
                                                           keyname,
                                                           elasticIp,
-                                                          false);
+                                                          false,
+                                                          InstanceType.SMALL);
         assertEquals(instanceId, resultInstanceId);
 
         EasyMock.verify(mockEC2Client);

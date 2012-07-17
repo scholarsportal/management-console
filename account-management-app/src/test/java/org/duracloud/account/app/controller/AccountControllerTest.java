@@ -12,6 +12,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
@@ -212,6 +213,8 @@ public class AccountControllerTest extends AmaControllerTestBase {
         String version = "1.0";
         EasyMock.expect(instanceManagerService.getLatestVersion())
             .andReturn(version);
+        EasyMock.expect(instanceService.getInstanceType())
+                .andReturn(InstanceType.SMALL);
         initStart(TEST_ACCOUNT_ID, version);
         replayMocks();
         accountController.upgradeInstance(TEST_ACCOUNT_ID,
@@ -284,7 +287,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     private void initStart(int accountId, String version) throws Exception {
         EasyMock.expect(instanceManagerService.
-            createInstance(accountId, version))
+            createInstance(accountId, version, InstanceType.SMALL))
             .andReturn(instanceService)
             .anyTimes();
     }

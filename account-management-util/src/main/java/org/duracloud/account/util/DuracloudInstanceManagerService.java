@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.util;
 
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.springframework.security.access.annotation.Secured;
 
@@ -19,9 +20,10 @@ public interface DuracloudInstanceManagerService {
     /**
      * Starts a new instance for the given account based on the given
      * DuraCloud software version
+     * @param instanceSize 
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
-    public DuracloudInstanceService createInstance(int accountId, String version);
+    public DuracloudInstanceService createInstance(int accountId, String version, InstanceType instanceType);
 
     /**
      * Retrieves all of the active DuraCloud versions

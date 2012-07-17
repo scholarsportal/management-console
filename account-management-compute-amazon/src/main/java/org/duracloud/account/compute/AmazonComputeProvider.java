@@ -20,6 +20,8 @@ import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.compute.error.InstanceStartupException;
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.InstanceType;
+import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,15 +74,16 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     public String start(String providerImageId,
                         String securityGroup,
                         String keyname,
-                        String elasticIp) {
-        return doStart(providerImageId, securityGroup, keyname, elasticIp, true);
+                        String elasticIp,
+                        InstanceType instanceType) {
+        return doStart(providerImageId, securityGroup, keyname, elasticIp, true, instanceType);
     }
 
     protected String doStart(String providerImageId,
                              String securityGroup,
                              String keyname,
                              String elasticIp,
-                             boolean wait) {
+                             boolean wait, InstanceType instanceType) {
         stopExistingInstances(elasticIp);
 
         // FIXME: Availability Zone is temporarily hard coded (DURACLOUDPRIV-98)
@@ -88,12 +91,12 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
         RunInstancesResult result;
         try {
-            result = doRun(providerImageId, securityGroup, keyname, zone, true);
+            result = doRun(providerImageId, securityGroup, keyname, zone, true, instanceType);
         } catch(AmazonServiceException e) {
             log.warn("Error attempting to start instance: {}. " +
                      "Attempting again with no zone setting.", e.getMessage());
             // Try again with no set zone.
-            result = doRun(providerImageId, securityGroup, keyname, null, false);
+            result = doRun(providerImageId, securityGroup, keyname, null, false, instanceType);
         }
         String instanceId = result.getReservation().getInstances()
                                   .iterator().next().getInstanceId();
@@ -124,7 +127,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                                      String securityGroup,
                                      String keyname,
                                      String availabilityZone,
-                                     boolean includeZone) {
+                                     boolean includeZone, InstanceType instanceType) {
         RunInstancesRequest request =
             new RunInstancesRequest(providerImageId, 1, 1);
 
@@ -132,7 +135,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         securityGroups.add(securityGroup);
         request.setSecurityGroups(securityGroups);
         request.setKeyName(keyname);
-
+        request.setInstanceType(convertDuracloudInstanceTypeToNative(instanceType));
         if(includeZone) {
             request.setPlacement(new Placement(availabilityZone));
         }
@@ -296,5 +299,38 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         List<String> ids = new ArrayList<String>();
         ids.add(id);
         return ids;
+    }
+
+    @Override
+    public InstanceType getInstanceType(String providerInstanceId)
+        throws DuracloudInstanceNotAvailableException {
+        
+        DescribeInstancesResult result = describeInstance(providerInstanceId);
+        try {
+            // Allowed Values: pending, running, shutting-down, terminated
+            String instanceType =  result.getReservations().iterator().next().getInstances()
+                         .iterator().next().getInstanceType();
+            
+            for (InstanceType it : InstanceType.values()) {
+                if (convertDuracloudInstanceTypeToNative(it).equals(instanceType)) {
+                    return it;
+                }
+            }
+
+            String message = "Unable to get instance type for EC2 instance with ID " +
+                providerInstanceId + ": amazon instance type '" + instanceType + "' unknown to DuraCloud MC.";
+            throw new DuraCloudRuntimeException(message);
+
+        } catch(Exception e) {
+            String message = "Unable to get instance type for EC2 instance with ID " +
+                providerInstanceId + " due to error: " + e.getMessage();
+            log.error(message, e);
+            throw new DuraCloudRuntimeException(message, e);
+        }
+
+    }
+
+    protected String convertDuracloudInstanceTypeToNative(InstanceType it) {
+        return "m1." + it.name().toLowerCase();
     }
 }

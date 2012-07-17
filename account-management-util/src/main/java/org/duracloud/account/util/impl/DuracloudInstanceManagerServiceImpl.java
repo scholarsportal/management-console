@@ -3,10 +3,14 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.ComputeProviderUtil;
@@ -25,9 +29,6 @@ import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -101,11 +102,13 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
      *     added to the AMA database
      */
     @Override
-    public DuracloudInstanceService createInstance(int accountId, String version) {
+    public DuracloudInstanceService createInstance(int accountId,
+                                                   String version,
+                                                   InstanceType instanceType) {
         Set<ServerImage> serverImages = getServerImages();
-        for(ServerImage image : serverImages) {
-            if(version.equals(image.getVersion())) {
-                return createInstance(accountId, image);
+        for (ServerImage image : serverImages) {
+            if (version.equals(image.getVersion())) {
+                return createInstance(accountId, image, instanceType);
             }
         }
 
@@ -114,12 +117,13 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     }
 
     private DuracloudInstanceService createInstance(int accountId,
-                                                    ServerImage image) {
+                                                    ServerImage image,
+                                                    InstanceType instanceType) {
         log.info("Creating new instance for account {} using image {} ",
                  accountId, image.getDescription());
 
         try {
-            DuracloudInstance instance = doCreateInstance(accountId, image);
+            DuracloudInstance instance = doCreateInstance(accountId, image, instanceType);
             return initializeInstance(instance);
         } catch(DBNotFoundException e) {
             String err = "Could not create instance for account with ID " +
@@ -130,7 +134,8 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     }
 
     protected DuracloudInstance doCreateInstance(int accountId,
-                                                 ServerImage image)
+                                                 ServerImage image,
+                                                 InstanceType instanceType)
         throws DBNotFoundException {
         // Get Account information
         AccountInfo account = repoMgr.getAccountRepo().findById(accountId);
@@ -183,7 +188,8 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
             providerInstanceId = computeProvider.start(image.getProviderImageId(),
                                       computeProviderAcct.getSecurityGroup(),
                                       computeProviderAcct.getKeypair(),
-                                      computeProviderAcct.getElasticIp());
+                                      computeProviderAcct.getElasticIp(),
+                                      instanceType);
     
         }catch(RuntimeException ex){
             repoMgr.getInstanceRepo().delete(instance.getId());

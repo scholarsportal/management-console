@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudInstance;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -140,7 +141,8 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expect(computeProvider.start(providerImageId,
                                               securityGroup,
                                               keypair,
-                                              elasticIp))
+                                              elasticIp, 
+                                              InstanceType.SMALL))
             .andReturn(providerInstanceId)
             .times(1);
 
@@ -167,7 +169,9 @@ public class DuracloudInstanceManagerServiceImplTest
         replayMocks();
 
         DuracloudInstance instance =
-            managerService.doCreateInstance(accountId, serverImage);
+            managerService.doCreateInstance(accountId,
+                                            serverImage,
+                                            InstanceType.SMALL);
         assertNotNull(instance);
     }
 

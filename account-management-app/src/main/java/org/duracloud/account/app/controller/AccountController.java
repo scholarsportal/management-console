@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
@@ -117,7 +118,7 @@ public class AccountController extends AbstractAccountController {
         if(instanceForm.getVersion() == null)
             instanceForm.setVersion(instanceManagerService.getLatestVersion());
         try{
-            startInstance(accountId, instanceForm.getVersion());
+            startInstance(accountId, instanceForm.getVersion(), instanceForm.getInstanceType());
             redirectAttributes.addFlashAttribute(ACTION_STATUS,
                                "Instance STARTED successfully, it will be " +
                                "available for use in 5 minutes.");
@@ -170,9 +171,9 @@ public class AccountController extends AbstractAccountController {
         }
     }
 
-    protected DuracloudInstanceService startInstance(int accountId, String version) {
+    protected DuracloudInstanceService startInstance(int accountId, String version, InstanceType instanceType) {
         DuracloudInstanceService instanceService =
-            instanceManagerService.createInstance(accountId, version);
+            instanceManagerService.createInstance(accountId, version, instanceType);
         return instanceService;
     }
 
@@ -184,8 +185,13 @@ public class AccountController extends AbstractAccountController {
             throws AccountNotFoundException,
                 DuracloudInstanceNotAvailableException,
                 AccountClusterNotFoundException {
+        InstanceType instanceType =
+            instanceManagerService.getInstanceService(instanceId)
+                                  .getInstanceType();
         stopInstance(instanceId);
-        startInstance(accountId, instanceManagerService.getLatestVersion());
+        startInstance(accountId,
+                      instanceManagerService.getLatestVersion(),
+                      instanceType);
 
         populateAccountInModel(accountId, model);
         model.addAttribute(ACTION_STATUS,

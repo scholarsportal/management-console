@@ -17,6 +17,7 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
@@ -127,6 +128,11 @@ public class UserController extends AbstractController {
                                 forgotPasswordForm);
     }
 
+    @ModelAttribute("instanceTypes")
+    public InstanceType[] instanceTypes(){
+        return InstanceType.values();
+    }
+    
     @RequestMapping(value = { "/profile" }, method = RequestMethod.GET)
     public ModelAndView profileRedirect() {
         Authentication auth = SecurityContextHolder.getContext()
@@ -353,6 +359,7 @@ public class UserController extends AbstractController {
             duracloudAccount.setInstance(instanceService.getInstanceInfo());
             duracloudAccount.setInstanceStatus(instanceService.getStatus());
             duracloudAccount.setInstanceVersion(instanceService.getInstanceVersion());
+            duracloudAccount.setInstanceType(instanceService.getInstanceType());
         } else {
             AccountStatus accountStatus = accountInfo.getStatus();
             if (AccountInfo.AccountStatus.ACTIVE.equals(accountStatus)

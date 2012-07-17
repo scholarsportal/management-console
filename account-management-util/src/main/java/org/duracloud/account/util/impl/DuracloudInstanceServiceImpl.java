@@ -9,6 +9,7 @@ import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
@@ -517,6 +518,12 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             throw new
                 DuracloudServerImageNotAvailableException(e.getMessage(), e);
         }
-    }    
+    }
+
+    @Override
+    public InstanceType getInstanceType()
+        throws DuracloudInstanceNotAvailableException {
+        return this.computeProvider.getInstanceType(this.instance.getProviderInstanceId());
+    }
 
 }

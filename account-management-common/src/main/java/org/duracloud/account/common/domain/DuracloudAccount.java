@@ -11,6 +11,8 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
 
     private String instanceVersion;
 
+    private InstanceType instanceType;
+    
     private Set<String> versions;
 
     private Role userRole;
@@ -66,5 +68,13 @@ public class DuracloudAccount implements Comparable<DuracloudAccount> {
     @Override
     public int compareTo(DuracloudAccount o) {
         return this.accountInfo.compareTo(o.accountInfo);
+    }
+
+    public InstanceType getInstanceType() {
+        return instanceType;
+    }
+
+    public void setInstanceType(InstanceType instanceType) {
+        this.instanceType = instanceType;
     }
 }

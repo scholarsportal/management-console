@@ -5,6 +5,7 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.springframework.security.access.annotation.Secured;
 
@@ -45,6 +46,16 @@ public interface DuracloudInstanceService {
     public String getStatus() throws DuracloudInstanceNotAvailableException;
 
     /**
+     * Returns the hardware type of the instance.
+     * @return
+     * @throws DuracloudInstanceNotAvailableException
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public InstanceType getInstanceType()
+        throws DuracloudInstanceNotAvailableException;
+
+    /**
+     * 
      * Returns the state of the Duracloud with relaxed security.
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
@@ -83,6 +94,6 @@ public interface DuracloudInstanceService {
      * @param users to update
      */
     @Secured({"role:ROLE_ANONYMOUS, scope:ANY"}) // should be admin
-    public void setUserRoles(Set<DuracloudUser> users);    
+    public void setUserRoles(Set<DuracloudUser> users);
 
 }

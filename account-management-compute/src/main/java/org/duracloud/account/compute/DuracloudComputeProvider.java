@@ -3,6 +3,7 @@
  */
 package org.duracloud.account.compute;
 
+import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 
 /**
@@ -16,17 +17,21 @@ public interface DuracloudComputeProvider{
      *
      * @param providerImageId the ID of the server image to use in creating
      *                        a new instance
-     * @param securityGroup the security group which is used to define the
+     * @param securityGroup     the security group which is used to define the
      *                      firewall settings for an instance
      * @param keyname the name of the key pair which can be used to access
      *                the instance server
      * @param elasticIp the IP address to be associated with this instance
+     *
+     * @param instanceType the type of hardward to be used for the instance 
+     * 
      * @return provider instance ID
      */
     public String start(String providerImageId,
                         String securityGroup,
                         String keyname,
-                        String elasticIp);
+                        String elasticIp, 
+                        InstanceType instanceType);
 
     /**
      * Stops a running instance.
@@ -49,6 +54,15 @@ public interface DuracloudComputeProvider{
      * @return the current status of the instance
      */
     public String getStatus(String providerInstanceId)
+        throws DuracloudInstanceNotAvailableException;
+
+    /**
+     * Retrieves the instance type of the instance.  The instance type describes 
+     * the computing power of the hardware component of the instance.
+     * @return
+     * @throws DuracloudInstanceNotAvailableException 
+     */
+    public InstanceType getInstanceType(String providerInstanceId)
         throws DuracloudInstanceNotAvailableException;
 
 }

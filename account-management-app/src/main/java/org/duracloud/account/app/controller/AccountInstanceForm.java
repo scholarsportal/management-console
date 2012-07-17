@@ -3,7 +3,8 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.duracloud.account.common.domain.InstanceType;
+
 
 /**
  * @author: Bill Branan
@@ -11,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class AccountInstanceForm {
     private String version;
-
+    private InstanceType instanceType = InstanceType.SMALL;
     public String getVersion() {
         return version;
     }
@@ -19,4 +20,13 @@ public class AccountInstanceForm {
     public void setVersion(String version) {
         this.version = version;
     }
+
+    public InstanceType getInstanceType() {
+        return instanceType;
+    }
+
+    public void setInstanceType(InstanceType instanceType) {
+        this.instanceType = instanceType;
+    }
+    
 }
