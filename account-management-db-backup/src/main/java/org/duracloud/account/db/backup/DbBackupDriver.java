@@ -46,6 +46,12 @@ public class DbBackupDriver {
 
     private static final String STORE_BUCKET = PREFIX_STORE + "bucket";
 
+    private static final String LDAP_PREFIX = PREFIX + "ldap.";
+    private static final String LDAP_URL = LDAP_PREFIX + "url";
+    private static final String LDAP_BASEDN = LDAP_PREFIX + "basedn";
+    private static final String LDAP_USERDN = LDAP_PREFIX + "userdn";
+    private static final String LDAP_PASSWORD = LDAP_PREFIX + "password";
+
     private static final String FROM_ADDRESS = PREFIX_EMAIL + "from";
     private static final String TO_ADDRESS = PREFIX_EMAIL + "to.";
 
@@ -71,10 +77,18 @@ public class DbBackupDriver {
     private DbUtil buildDbUtil(Properties props) {
         String dbUsername = getProperty(props, AWS_USERNAME);
         String dbPassword = getProperty(props, AWS_PASSWORD);
+        String ldapUrl = getProperty(props, LDAP_URL);
+        String ldapBaseDn = getProperty(props, LDAP_BASEDN);
+        String ldapUserDn = getProperty(props, LDAP_USERDN);
+        String ldapPassword = getProperty(props, LDAP_PASSWORD);
 
         AmaConfig amaConfig = new AmaConfig();
         amaConfig.setUsername(dbUsername);
         amaConfig.setPassword(dbPassword);
+        amaConfig.setLdapUrl(ldapUrl);
+        amaConfig.setLdapBaseDn(ldapBaseDn);
+        amaConfig.setLdapUserDn(ldapUserDn);
+        amaConfig.setLdapPassword(ldapPassword);
 
         return new DbUtil(amaConfig, getWorkDir(props));
     }
