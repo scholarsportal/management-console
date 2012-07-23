@@ -1,63 +1,272 @@
-div.loginbox {
-    background-color: #FFFFFF;
-    position: relative;
-    width: 840px;
-    height: 300px;
+body,ol,ul,li,button,fieldset,form,label,legend,table,tr,th,td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+/* CLEARFIX *************************************************/
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
 }
 
-div.loginbox div.leftpane {
-    border: 2px #A40000 solid;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 47%;
-    height: 90%;
+.clearfix {
+  display: inline-block;
 }
 
-div.loginbox div.rightpane {
-	border: 2px #A40000 solid;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 47%;
-    height: 90%;
-    overflow: hidden;
-    text-align: center;
+.horizontal-list li {
+  display: inline-block;
+  border-bottom: 0 !important;
 }
 
-div.loginbox div.content{
-    padding-top: 5px;
-    padding-left: 7px;
-    padding-right: 7px;
-    margin:auto;
+.horizontal-list li:before {
+  content: "|";
+  padding: 0px 8px 0px 8px;
 }
 
-div.loginbox #splogo{
+.horizontal-list li:first-child:before {
+  content: "";
 }
 
-
-div.loginbox #clippedsplogoX {
-    width: 350px;
+body {
+  background: #fff url(images/bg_clouds.jpg) repeat-y;
+  font-family: Verdana, Helvetica, sans-serif;
+  font-size: 1em;
+  *font-size: 90%; /* IE only */
+  margin-right: 10px !important;
 }
 
-div.loginbox #clippedsplogoY {
-    height: 147px;
+#dc-logo {
+  background-image: url(images/logo.png);
+  background-repeat: no-repeat;
+  margin: 150px 0px 0px 10px;
+  width: 531px;
+  height: 60px;
 }
 
-div.loginbox #spName{
-    padding-top:5px;
-    padding-bottom:5px;
-    font-size:1.2em;
+.global-errors {
+  border: 1px solid red !important;
+  background-color: #FFBBBB !important;
+  padding: 5px;
+  margin-bottom: 5px;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-top: 5px;
+  font-size: 11px;
+  color: #515151 !important;
 }
 
-div.loginbox #spDescription{
-    padding-top:15px;
-    text-align:left;
+.two-thirds {
+  width: 80%;
 }
 
-/*
-div.loginbox button, div {
-	height: 46px;
-	width: 80%;
+.pane-L1-body {
+  border-radius: 0px 10px 10px 0px;
+  background: url(images/bg_L1.png) no-repeat top right;
+  padding: 5px 5px 5px 5px;
+  min-height: 200px;
+  height: 225px;
 }
-*/
+
+.pane-L1-body a {
+  color: #ccc;
+}
+
+#footer-content {
+  font-size: 11px;
+  color: #4A4A4A;
+  text-align: left;
+  margin-top: 5px;
+}
+
+#footer-links {
+  padding: 5px;
+}
+
+#footer-content a {
+  font-size: 11px;
+  color: #4A4A4A;
+  text-decoration: underline;
+}
+
+#error-holder {
+  min-height: 30px;
+}
+
+.title {
+  margin: 20px 20px 0px 20px;
+  height: 100px;
+  display: inline-block;
+  float: left;
+  display: inline-block;
+}
+
+.title h1 {
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+form ol li {
+  line-height: 30px;
+  list-style: none;
+  margin-bottom: 5px;
+}
+
+form ol ol li {
+  background: none;
+  border: none;
+  float: left;
+}
+
+form label {
+  float: left;
+  font-size: 13px;
+  width: 250px;
+  text-align: right;
+  color: #CCC;
+  margin-right: 10px;
+}
+
+form fieldset fieldset label {
+  background: none no-repeat left 50%;
+  line-height: 20px;
+  padding: 0 0 0 30px;
+  width: auto;
+}
+
+form fieldset fieldset label:hover {
+  cursor: pointer;
+}
+
+form input:not  ([type=radio]  ),form select,form textarea {
+  border-radius: 0 !important;
+  background-color: #585B5E !important;
+  border: 1px solid #36383A !important;
+  border-bottom-color: #727576 !important;
+  color: #CCC !important;
+  font-size: 14px !important;
+  padding: 3px !important outline:   none;
+  padding: 5px;
+  width: 200px;
+}
+
+form input:not  ([type=submit]  ):focus,form textarea:focus {
+  background: #eaeaea;
+}
+
+form input[type=radio] {
+  float: left;
+  margin-right: 5px;
+}
+
+form input[type=checkbox] {
+  width: 20px;
+}
+
+.form {
+  display: inline-block;
+  margin-right: 150px;
+  margin-top: 30px;
+  float: right;
+}
+
+.form ul {
+  float: right;
+  margin-top: 10px;
+}
+
+.form  a {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.form a:hover {
+  color: #DDD;
+}
+
+.form .horizontal-list li::before {
+  color: #CCC;
+  padding: 8px 8px 0px 8px !important;
+}
+
+[type='submit'] {
+  float: right;
+}
+
+#footer-content {
+  width: 80%;
+  float: none;
+}
+
+button::-moz-focus-inner {
+  border: none; /* overrides extra padding in Firefox */
+  padding: 0 !important;
+}
+
+button {
+  font-size: 11px;
+  font-style: normal;
+  white-space: nowrap;
+  width: auto;
+  color: #ccc;
+  display: inline-block;
+  position: relative;
+  overflow: visible; /* removes extra side padding in IE */
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #333;
+  padding: 1px 10px 0 10px;
+  background-color: #515151;
+  background: -moz-linear-gradient(top, #797979, #515151);
+  background: -webkit-gradient(linear, left top, left bottom, from(#797979),
+    to(#515151) ); /* For WebKit (Safari, Google Chrome etc) */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979,
+    endColorstr=#FF515151 ); /* For Internet Explorer 5.5 - 7 */
+  -ms-filter:
+    "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF797979, endColorstr=#FF515151)";
+  /* For Internet Explorer 8 */
+  cursor: pointer;
+  height: 25px;
+  margin-right: 2px;
+}
+
+button.primary,.button.primary {
+  background-color: #2375b2;
+  background: -moz-linear-gradient(top, #37a9de, #2375b2);
+  background: -webkit-gradient(linear, left top, left bottom, from(#37a9de),
+    to(#2375b2) ); /* For WebKit (Safari, Google Chrome etc) */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de,
+    endColorstr=#FF2375b2 ); /* For Internet Explorer 5.5 - 7 */
+  -ms-filter:
+    "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF37a9de, endColorstr=#FF2375b2)";
+  /* For Internet Explorer 8 */
+  color: #56ffff;
+  width: 122px;
+}
+
+button.primary:hover,.button.primary:hover {
+  background-color: #3793d6;
+  background: -moz-linear-gradient(top, #4db6e8, #3793d6);
+  background: -webkit-gradient(linear, left top, left bottom, from(#4db6e8),
+    to(#3793d6) ); /* For WebKit (Safari, Google Chrome etc) */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF4db6e8,
+    endColorstr=#FF3793d6 ); /* For Internet Explorer 5.5 - 7 */
+  -ms-filter:
+    "progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF4db6e8, endColorstr=#FF3793d6)";
+  /* For Internet Explorer 8 */
+  border-color: #4db6e8;
+  color: #ffffff;
+}

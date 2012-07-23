@@ -1,38 +1,96 @@
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 <html>
   <head>
-    <title>Shibboleth Identity Provider - Example Login Page</title>
-    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/login.css"/>
+    <title>DuraSpace Identity Provider </title>
+
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/login.css"/>
+
+
   </head>
 
-  <body id="homepage">
-    <img src="<%= request.getContextPath()%>/images/logo.jpg" alt="Shibboleth Logo"/>
-    <h1>Example Login Page</h1>
-    <p>This login page is an example and should be customized.  Refer to the 
-       <a href="https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage" target="_blank"> documentation</a>.
-    </p>
+  <body>
+  <div id="dc-logo">
+    <!-- placeholder  -->
+  </div>
+  <div class="clearfix">
+    <!-- this is a placeholder -->
+  </div>
+  <div class="pane-L1-body two-thirds">
+    <div id="error-holder">
+      <% if ("true".equals(request.getAttribute("loginFailed"))) { %>
+        <div class="global-errors">
+          <p>The username/password combination is not valid.</p>
+          <p>Please reenter your credentials.</p>
+        </div>
+      <% } %>
+    </div>
 
-    <div class="loginbox">
-       <div class="leftpane">
-         <div class="content">
-           <p>The web site described to the right has asked you to log in and you have chosen &lt;FILL IN YOUR SITE&gt; as your home institution.</p>
-           <% if ("true".equals(request.getAttribute("loginFailed"))) { %>
-              <p><font color="red"> Credentials not recognized. </font> </p>
-           <% } %>
-           <% if(request.getAttribute("actionUrl") != null){ %>
-             <form action="<%=request.getAttribute("actionUrl")%>" method="post">
-           <% }else{ %>
-             <form action="j_security_check" method="post">
-           <% } %>
-           <table>
-             <tr><td width="40%"><label for="username">Username:</label></td><td><input name="j_username" type="text" id="username" autocapitalize="off" /></td></tr>
-             <tr><td><label for="password">Password:</label></td><td><input name="j_password" type="password" id="password" /></td></tr>
-             <tr><td></td><td><button type="submit" value="Login" >Continue</button></td></tr>
-           </table></form>
-         </div>
-       </div>
-       <div class="rightpane">
-         <div class="content">
+    <div class="title"><h1>Login</h1></div>
+       <%
+    	String action = (String)request.getAttribute("actionUrl");
+        if(action == null) { 
+            action = "j_security_check";
+		}
+		%>
+    <div class="form login">
+		
+		<form
+        id="loginForm"
+        action="<%=action%>"
+        method="POST">
+        <fieldset>
+          <ol>
+            <li><label for="username">Username</label> <input
+              name="j_username"
+              type="text"
+              autofocus="true"
+              id="username" /></li>
+
+            <li><label>Password</label> <input
+              name="j_password"
+              type="password"
+              id="password" /></li>
+          </ol>
+        </fieldset>
+
+        <fieldset>
+          <button
+            class="primary"
+            type="submit"
+	    value="Login"
+            id="login-button">Login</button>
+        </fieldset>
+      </form>
+      <ul class="horizontal-list">
+
+<li><a href="">Forgot
+            Password</a></li><li><a href="" id="new-user-link">Create New
+            Profile</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft">
+    <div id="footer-content">
+      <div id="footer-links" class="float-l">
+        <ul class="horizontal-list">
+          <li><a
+            target="_blank"
+            href="http://www.duracloud.org">DuraCloud</a></li>
+          <li><a
+            target="_blank"
+            href="http://www.duraspace.org">DuraSpace</a></li>
+          <li><a
+            target="_blank"
+            href="https://wiki.duraspace.org/display/DURACLOUD/DuraCloud+Help+Center">Help
+              Center</a></li>
+          <li><a
+            target="_blank"
+            href="mailto:info@duracloud.org">Contact Us</a></li>
+        </ul>
+      </div>
+  </div>
+  </div>
+<%--
            <div id="spName"><idpui:serviceName/></div>
            <!-- pick the logo.  If its between 64 & max width/height display it
                 If its too high but OK wide clip by height
@@ -47,8 +105,8 @@
            <div id="spDescription">
              <idpui:serviceDescription>You have asked to login to <idpui:serviceName/></idpui:serviceDescription>
            </div>
-         </div>
-      </div>
-    </div>
+--%>
+
   </body>
 </html>
+
