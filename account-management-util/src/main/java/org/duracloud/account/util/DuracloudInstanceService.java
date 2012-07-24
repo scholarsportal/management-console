@@ -65,20 +65,20 @@ public interface DuracloudInstanceService {
      * Stops the instance.
      * Stopped instances cannot be restarted (stop == terminate).
      */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ROOT, scope:SELF_ACCT"})
     public void stop();
 
     /**
      * Restarts the server instance and calls initialize
      */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ROOT, scope:SELF_ACCT"})
     public void restart();
 
     /**
      * Collects all of the necessary information and initializes a
      * Duracloud instance
      */
-    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    @Secured({"role:ROLE_ROOT, scope:SELF_ACCT"})
     public void initialize();
 
     @Secured({"role:ROLE_ROOT, scope:ANY"})

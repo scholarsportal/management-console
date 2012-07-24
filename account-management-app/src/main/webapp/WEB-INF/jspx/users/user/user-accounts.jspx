@@ -131,33 +131,28 @@
                   <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
 
                   </div>
-                    <c:if test="${a.userRole != 'ROLE_USER'}">
-                      <div class="instance-panel inactive">
+                  <sec:authorize access="hasRole('ROLE_ROOT')">
+                  <div class="instance-panel inactive">
+                        <form:form
+                          id="instance-start-form-${a.accountInfo.id}"
+                          method="post"
+                          action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
+                          modelAttribute="instanceForm">
+                          <form:select
+                            id="versions"
+                            cssErrorClass="error"
+                            path="version"
+                            items="${a.versions}" />
+                          <form:select
+                            id="instanceType"
+                            cssErrorClass="error"
+                            path="instanceType"
+                            items="${instanceTypes}" />
+                          <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
+                        </form:form>
+                    </div>
+                    </sec:authorize>
 
-                      <form:form
-                        id="instance-start-form-${a.accountInfo.id}"
-                        method="post"
-                        action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/start"
-                        modelAttribute="instanceForm">
-                          <sec:authorize access="hasRole('ROLE_ROOT')">
-                        <form:select
-                          id="versions"
-                          cssErrorClass="error"
-                          path="version"
-                          items="${a.versions}" />
-                        <form:select
-                          id="instanceType"
-                          cssErrorClass="error"
-                          path="instanceType"
-                          items="${instanceTypes}" />
-                        
-                          </sec:authorize>
-                          
-                          
-                        <button id="${a.accountInfo.id}" class="start" style="margin-left:8px !important" type="submit">Start New Instance</button>
-                      </form:form>
-                      </div>
-                    </c:if>
 
                 </c:when>
                 <c:otherwise>
@@ -217,10 +212,10 @@
                         <c:out value="${a.instanceStatus}" />
                       </td>
 
-                      <sec:authorize access="! hasAnyRole('ROLE_ADMIN')">
+                      <sec:authorize access="! hasAnyRole('ROLE_ROOT')">
                         <td colspan="5"><!--  --></td>
                       </sec:authorize>                      
-                      <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
+                      <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                       <td align="left" valign="middle">
                         <c:if test="${a.instanceVersion != latestVersion}">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
@@ -237,20 +232,16 @@
                         </form>
                       </td>
                       <td align="left" valign="middle">
-                        <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinit"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit</button>
                           </form>
-                        </sec:authorize>
                       </td>
                        <td align="left" valign="middle">
-                          <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                            <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInitUsers(this); return false;">ReInit Users</button>
                           </form>
-                          </sec:authorize>
                       </td>
                       <td align="left" valign="middle">
                         <c:if test="${actionStatus != null}">
