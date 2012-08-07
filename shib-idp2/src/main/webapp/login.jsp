@@ -1,4 +1,19 @@
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
+
+<%@ page import="java.net.URL" %>
+<%@ page import="java.io.InputStream" %>
+<%@ page import="java.util.Properties" %>
+<%@ page import="java.lang.String" %>
+
+<%
+URL myURL=application.getResource("/WEB-INF/app.properties");
+InputStream in = myURL.openStream();
+Properties p = new Properties();
+p.load( in );
+
+String mcHost = (String)p.getProperty("managementConsoleHost");
+%>
+
 <html>
   <head>
     <title>DuraSpace Identity Provider </title>
@@ -63,8 +78,8 @@
       </form>
       <ul class="horizontal-list">
 
-<li><a href="">Forgot
-            Password</a></li><li><a href="" id="new-user-link">Create New
+<li><a href="http://<%=mcHost%>/ama/users/forgot-password">Forgot
+            Password</a></li><li><a href="http://<%=mcHost%>/ama/users/new" id="new-user-link">Create New
             Profile</a></li>
       </ul>
     </div>
