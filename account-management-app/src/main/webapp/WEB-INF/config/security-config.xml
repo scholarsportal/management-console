@@ -20,6 +20,22 @@
     <http-basic/>
   </http>
 
+  <!--Security Filters for Anonymous endpoints-->
+  <http pattern="/users/forgot-password"
+        auto-config="false"
+        use-expressions="true"
+        create-session="stateless">
+    <intercept-url pattern="**" access="permitAll"/>
+    <http-basic/>
+  </http>
+  <http pattern="/users/new"
+        auto-config="false"
+        use-expressions="true"
+        create-session="stateless">
+    <intercept-url pattern="**" access="permitAll"/>
+    <http-basic/>
+  </http>
+
   <!--Security Filters for Browser/Shib endpoints-->
   <http pattern="/**"
         auto-config="false"
