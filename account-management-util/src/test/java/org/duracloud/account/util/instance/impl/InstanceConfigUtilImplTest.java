@@ -344,7 +344,7 @@ public class InstanceConfigUtilImplTest {
                      userStore.getPort());
         assertEquals(InstanceConfigUtilImpl.DEFAULT_DURASTORE_CONTEXT,
                      userStore.getContext());
-        assertEquals("tcp://" + instanceHost + ":" +
+        assertEquals("failover:tcp://" + instanceHost + ":" +
                      InstanceConfigUtilImpl.DEFAULT_MSG_BROKER_PORT ,
                      userStore.getMsgBrokerUrl());
 

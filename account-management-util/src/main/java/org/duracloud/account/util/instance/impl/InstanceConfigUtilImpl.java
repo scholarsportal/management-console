@@ -182,7 +182,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         userStore.setHost(instanceHost);
         userStore.setPort(DEFAULT_SSL_PORT);
         userStore.setContext(DEFAULT_DURASTORE_CONTEXT);
-        userStore.setMsgBrokerUrl("tcp://" + instanceHost + ":" +
+        userStore.setMsgBrokerUrl("failover:tcp://" + instanceHost + ":" +
                                       DEFAULT_MSG_BROKER_PORT);
         config.setUserStore(userStore);
 
