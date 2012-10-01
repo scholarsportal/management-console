@@ -754,6 +754,13 @@
 
       <!-- Needed to indicate specific version to work with amazon-aws jar -->
       <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-core-asl</artifactId>
+        <version>1.9.5</version>
+      </dependency>
+
+      <!-- Needed to indicate specific version to work with amazon-aws jar -->
+      <dependency>
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient</artifactId>
           <version>4.1.1</version>
