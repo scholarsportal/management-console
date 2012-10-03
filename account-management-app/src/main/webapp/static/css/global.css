@@ -206,9 +206,16 @@ table.standard-form{
 	width:100%;
 }
 
+
+.dc-subgroup > p {
+  padding: 10px;
+}
+
 .dc-subgroup-body p {
 	padding-bottom:10px;	
 }
+
+
 
 .standard-form .label {
 	vertical-align: top;
@@ -822,7 +829,7 @@ th.headerSortDown {
 	opacity:0.75;
 }
 
-.message-holder .info {
+.message-holder .info, .success h2 {
 	border:1px solid #0F0;
 	background-color: #AFA;
 	color: #050;
@@ -839,5 +846,3 @@ th.headerSortDown {
 	background-color: #FFA;
 	color: #550;
 }
-
-

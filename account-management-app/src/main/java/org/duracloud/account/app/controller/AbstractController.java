@@ -44,26 +44,6 @@ public abstract class AbstractController {
 
 
 
-    /**
-     * @param user
-     */
-    protected void reauthenticate(
-        DuracloudUser user, AuthenticationManager authenticationManager) {
-        reauthenticate(user.getUsername(),
-                       user.getPassword(),
-                       authenticationManager);
-    }
-
-    protected void reauthenticate(
-        String username, String password,
-        AuthenticationManager authenticationManager) {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        UsernamePasswordAuthenticationToken token =
-            new UsernamePasswordAuthenticationToken(username, password);
-        Authentication auth = authenticationManager.authenticate(token);
-        ctx.setAuthentication(auth);
-    }
-
     public void init() {
         log.info("initializing " + this.toString());
     }

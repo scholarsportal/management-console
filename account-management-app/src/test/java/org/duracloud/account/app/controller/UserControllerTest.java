@@ -19,7 +19,6 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,7 +35,6 @@ public class UserControllerTest extends AmaControllerTestBase {
         userController = new UserController();
         userController.setUserService(userService);
         userController.setAccountManagerService(accountManagerService);
-        userController.setAuthenticationManager(authenticationManager);
         userController.setInstanceManagerService(instanceManagerService);
 
     }
@@ -228,8 +226,6 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn("")
                 .anyTimes();
 
-        this.authenticationManager.authenticate(EasyMock.isA(UsernamePasswordAuthenticationToken.class));
-        EasyMock.expectLastCall().andReturn(null);
         replayMocks();
         
         

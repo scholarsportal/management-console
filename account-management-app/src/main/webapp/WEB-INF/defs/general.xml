@@ -28,6 +28,8 @@
 
   <!-- user views -->
   <definition name="user-new" template="/WEB-INF/jspx/users/user-new.jspx" />
+  <definition name="user-new-success" template="/WEB-INF/jspx/users/user-new-success.jspx" />
+
   <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />
   <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />
   <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx" />

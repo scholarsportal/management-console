@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -87,9 +88,6 @@ public class UserController extends AbstractController {
 
     @Autowired
     private DuracloudUserService userService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired(required = true)
     protected DuracloudInstanceManagerService instanceManagerService;
@@ -163,7 +161,6 @@ public class UserController extends AbstractController {
                 this.userService.redeemAccountInvitation(user.getId(),
                                                          redemptionCode);
                 user = this.userService.loadDuracloudUserByUsername(username);
-                reauthenticate(user, this.authenticationManager);
             } catch (InvalidRedemptionCodeException e) {
                 log.error("redemption failed for {} on redemption {}",
                           username,
@@ -387,8 +384,9 @@ public class UserController extends AbstractController {
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
     public ModelAndView add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
                       BindingResult result,
-                      Model model,
-                      HttpServletRequest request) throws Exception {
+                      Model model, 
+                      RedirectAttributes redirectAttributes) throws Exception {
+
         String name = null == newUserForm ? "null" : newUserForm.getUsername();
         log.debug("Add new user: {}", name);
         if (result.hasErrors()) {
@@ -403,10 +401,6 @@ public class UserController extends AbstractController {
                                                             newUserForm.getSecurityQuestion(),
                                                             newUserForm.getSecurityAnswer());
 
-        reauthenticate(user.getUsername(),
-                       user.getPassword(),
-                       this.authenticationManager);
-
         String redemptionCode = newUserForm.getRedemptionCode();
         int accountId = -1;
         if (!StringUtils.isEmpty(redemptionCode)) {
@@ -419,15 +413,15 @@ public class UserController extends AbstractController {
             }
         }
 
-        String redirect = formatUserUrl(newUserForm.getUsername());
+        String userUrl = formatUserUrl(newUserForm.getUsername());
 
         if (accountId > -1) {
-            redirect += "?accountId=" + accountId;
+            userUrl += "?accountId=" + accountId;
         }
 
-        RedirectView view = new RedirectView(redirect, true);
-        view.setExposePathVariables(false);
-        return new ModelAndView(view);
+        ModelAndView mav = new ModelAndView("user-new-success");
+        mav.addObject("userUrl", userUrl);
+        return mav;
     }
 
 
@@ -512,14 +506,6 @@ public class UserController extends AbstractController {
         ModelAndView mav = new ModelAndView(HomeController.HOME_VIEW_ID);
         mav.addObject("redemptionCode", redemptionCode);
         return mav;
-    }
-
-    public AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
-    }
-
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
     }
 
     public void setAccountManagerService(AccountManagerService accountManagerService) {
