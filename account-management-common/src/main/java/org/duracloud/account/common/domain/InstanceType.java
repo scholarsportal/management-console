@@ -14,5 +14,5 @@ public enum InstanceType {
     SMALL,
     MEDIUM,
     LARGE,
-    EXTRA_LARGE;
+    XLARGE;
 }
