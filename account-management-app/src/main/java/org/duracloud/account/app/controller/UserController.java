@@ -476,7 +476,7 @@ public class UserController extends AbstractController {
                 return FORGOT_PASSWORD_VIEW;
             }
 
-            String redirect = "redirect:/login";
+            String redirect = "redirect:/";
 
             return redirect;
         }

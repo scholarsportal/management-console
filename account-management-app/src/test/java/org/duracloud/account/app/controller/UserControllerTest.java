@@ -270,7 +270,7 @@ public class UserControllerTest extends AmaControllerTestBase {
                                                     null);
 
         Assert.assertNotNull(view);
-        Assert.assertEquals("redirect:/login", view);
+        Assert.assertEquals("redirect:/", view);
 
     }
 
