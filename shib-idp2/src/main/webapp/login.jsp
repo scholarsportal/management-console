@@ -34,8 +34,8 @@ String mcHost = (String)p.getProperty("managementConsoleHost");
     <div id="error-holder">
       <% if ("true".equals(request.getAttribute("loginFailed"))) { %>
         <div class="global-errors">
-          <p>The username/password combination is not valid.</p>
-          <p>Please reenter your credentials.</p>
+          <p>The username/password combination is not valid.<br/>
+          Please reenter your credentials.</p>
         </div>
       <% } %>
     </div>

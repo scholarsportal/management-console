@@ -55,13 +55,11 @@ body {
 .global-errors {
   border: 1px solid red !important;
   background-color: #FFBBBB !important;
-  padding: 5px;
-  margin-bottom: 5px;
   margin-right: 8px;
   margin-left: 8px;
-  margin-top: 5px;
   font-size: 11px;
   color: #515151 !important;
+  text-align: center;
 }
 
 .two-thirds {
@@ -73,6 +71,7 @@ body {
   background: url(images/bg_L1.png) no-repeat top right;
   padding: 5px 5px 5px 5px;
   min-height: 200px;
+  min-width: 700px;
   height: 225px;
 }
 
@@ -99,8 +98,6 @@ body {
 
 #error-holder {
   min-height: 30px;
-  position: absolute;
-  left: 150px;
 }
 
 .title {
@@ -273,3 +270,4 @@ button.primary:hover,.button.primary:hover {
   border-color: #4db6e8;
   color: #ffffff;
 }
+
