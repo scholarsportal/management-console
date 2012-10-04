@@ -2,8 +2,23 @@
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 
 <html>
-<body>
-	<img src="<%= request.getContextPath() %>/images/logo.jpg" />
+  <head>
+    <title>DuraSpace Identity Provider </title>
+
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/login.css"/>
+
+
+  </head>
+
+  <body>
+  <div id="dc-logo">
+    <!-- placeholder  -->
+  </div>
+  <div class="clearfix">
+    <!-- this is a placeholder -->
+  </div>
+  <div class="pane-L1-body two-thirds">
+     
 	<h3>ERROR</h3>
 	<p>
 	    An error occurred while processing your request.  Please contact your helpdesk or
@@ -28,6 +43,6 @@
 	%>
 	<strong>Error Message: <%= esapiEncoder.encodeForHTML(error.getMessage()) %></strong>
 	<% } %>
-
+  </div>
 </body>
 </html>

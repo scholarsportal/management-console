@@ -41,6 +41,7 @@ body {
   font-size: 1em;
   *font-size: 90%; /* IE only */
   margin-right: 10px !important;
+  color: #CCC;
 }
 
 #dc-logo {
@@ -98,6 +99,8 @@ body {
 
 #error-holder {
   min-height: 30px;
+  position: absolute;
+  left: 150px;
 }
 
 .title {
