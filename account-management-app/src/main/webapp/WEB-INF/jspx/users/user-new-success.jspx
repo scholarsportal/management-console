@@ -25,8 +25,7 @@
 		$(function(){
 		    var redirectUrl = "${redirectUrl}";
 	   		var seconds = 11;
-	   		
-		    setInterval(function(){
+		    var interval = setInterval(function(){
 
 			   if(seconds > 0) {
 			       seconds--;
@@ -34,6 +33,7 @@
 			   }	
 
 		       if(seconds == 0){
+		         clearInterval(interval);
 		         $("#redirecting").html("Redirecting now...");
 		         window.location.replace(redirectUrl);
 		       }
