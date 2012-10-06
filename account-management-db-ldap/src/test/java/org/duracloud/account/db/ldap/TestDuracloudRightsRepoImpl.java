@@ -456,6 +456,61 @@ public class TestDuracloudRightsRepoImpl extends BaseTestDuracloudRepoImpl {
         }
     }
 
+    @Test
+    public void testFindByUserIdRoot() throws Exception {
+        final int acctId1 = acctId + 1;
+        final int acctId2 = acctId + 2;
+        final int acctId3 = acctId + 3;
+        final int acctId4 = acctId + 4;
+        final int acctId5 = acctId + 5;
+        final int userId1 = userId + 1;
+        final int userId2 = userId + 2; // root user
+
+        AccountRights rightsA = createRights(generateId(), acctId1, userId1);
+        AccountRights rightsB = createRights(generateId(), acctId1, userId2);
+        AccountRights rightsC = createRights(generateId(), acctId2, userId1);
+        // Set root role
+        AccountRights rightsD = createRights(generateId(),
+                                             acctId2,
+                                             userId2,
+                                             ROLE_ROOT);
+        AccountRights rightsE = createRights(generateId(), acctId3, userId1);
+        AccountRights rightsF = createRights(generateId(), acctId4, userId1);
+        AccountRights rightsG = createRights(generateId(), acctId5, userId1);
+
+        repo.save(rightsA);
+        repo.save(rightsB);
+        repo.save(rightsC);
+        repo.save(rightsD);
+        repo.save(rightsE);
+        repo.save(rightsF);
+        repo.save(rightsG);
+
+        Set<AccountRights> expectedRights = new HashSet<AccountRights>();
+        expectedRights.add(rightsA);
+        expectedRights.add(rightsC);
+        expectedRights.add(rightsE);
+        expectedRights.add(rightsF);
+        expectedRights.add(rightsG);
+
+        // Perform test
+        Set<AccountRights> rights = repo.findByUserId(userId2);
+        Assert.assertNotNull(rights);
+
+        Assert.assertEquals(expectedRights.size(), rights.size());
+        for (AccountRights expectedRight : expectedRights) {
+            boolean found = false;
+            for (AccountRights right : rights) {
+                if (right.getAccountId() == expectedRight.getAccountId() &&
+                    right.getUserId() == userId2 && // root user
+                    right.getRoles().contains(ROLE_ROOT)) {
+                    found = true;
+                }
+            }
+            Assert.assertTrue("AccountRight !found: " + expectedRight, found);
+        }
+    }
+
     private int generateId() {
         int id = new Random().nextInt(999999999);
         ids.add(id);
