@@ -95,7 +95,40 @@ public class DuracloudRightsRepoImpl extends BaseDuracloudRepoImpl implements Du
         filter.append(",");
         filter.append(getBaseDn());
 
-        return search(filter.toString());
+        Set<AccountRights> rights = search(filter.toString());
+        if (isRootRights(rights)) {
+            Set<Role> rootRoles = Role.ROLE_ROOT.getRoleHierarchy();
+            rights = getAllAccountRights(userId, rootRoles);
+        }
+
+        return rights;
+    }
+
+    private boolean isRootRights(Set<AccountRights> rights) {
+        for (AccountRights r : rights) {
+            if (r.getRoles().contains(Role.ROLE_ROOT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<AccountRights> getAllAccountRights(int userId,
+                                                   Set<Role> rootRoles) {
+        Set<AccountRights> rights = new HashSet<AccountRights>();
+
+        Filter filter = new EqualsFilter(OBJECT_CLASS.toString(),
+                                         RIGHTS.toString());
+
+        Set<AccountRights> allRights = search(filter.toString());
+        for (AccountRights r : allRights) {
+            rights.add(new AccountRights(r.getId(),
+                                         r.getAccountId(),
+                                         userId,
+                                         rootRoles,
+                                         r.getCounter()));
+        }
+        return rights;
     }
 
     @Override
