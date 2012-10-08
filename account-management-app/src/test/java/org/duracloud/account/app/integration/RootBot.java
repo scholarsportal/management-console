@@ -81,7 +81,7 @@ public class RootBot extends AdminBot {
         sc.click(deleteUserSelector);
         Assert.assertTrue(sc.isConfirmationPresent());
         log.info("confirmation=" + sc.getConfirmation());
-        sc.waitForPageToLoad(20*1000+"");
+        SeleniumHelper.waitForPage(sc);
         
         //verify that it's gone
         Assert.assertFalse(sc.isElementPresent(deleteUserSelector));

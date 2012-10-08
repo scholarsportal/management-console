@@ -14,7 +14,7 @@ import com.thoughtworks.selenium.Selenium;
  */
 public class SeleniumHelper {
 	private static Logger log = LoggerFactory.getLogger(SeleniumHelper.class);
-	public static String DEFAULT_PAGE_LOAD_WAIT_IN_MS = "30000";
+	public static String DEFAULT_PAGE_LOAD_WAIT_IN_MS = "120000";
 	  
 	public static boolean isTextPresent(Selenium s, String text){
 		return s.isTextPresent(text);

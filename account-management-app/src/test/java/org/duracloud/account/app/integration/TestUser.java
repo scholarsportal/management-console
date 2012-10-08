@@ -8,6 +8,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.thoughtworks.selenium.Selenium;
+
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  *
@@ -22,9 +24,9 @@ public class TestUser extends AbstractIntegrationTest{
 	public void before() throws Exception {
 		super.before();
 		username = createNewUser();
+		setRemoteUser(this.sc,username);
 		openUserProfile();
 	}
-
 
     /* (non-Javadoc)
 	 * @see org.duracloud.account.app.integration.AbstractIntegrationTest#after()
@@ -32,27 +34,35 @@ public class TestUser extends AbstractIntegrationTest{
 	@Override
 	@After
 	public void after() {
-		deleteUser(username);
-        super.after();
+	    deleteUserWithSeparateBrowser(username);
+	    super.after();
 	}
 
-    @Test
+	@Test
 	public void testProfile(){
-		Assert.assertTrue(isElementPresent("css=#dc-user"));
-        Assert.assertTrue(isTextPresent(username));
-
+        verifyUserProfilePage(username);
     }
 
-	@Test
-	public void testUnauthorizedAccessToAnotherUser(){
-	    logout();
-        String username2 = createNewUser();
+	private void verifyUserProfilePage(String username) {
+        Assert.assertTrue(isElementPresent("css=#dc-user"));
+        Assert.assertTrue(isTextPresent(username));
+    }
+
+    @Test
+	public void testUnauthorizedAccessToAnotherUser() throws Exception{
+        openUserProfile();
+        verifyUserProfilePage(username);
         logout();
+	    String username2 = createNewUser();
+	    setRemoteUser(this.sc,username2);
+        openUserProfile();
+        verifyUserProfilePage(username2);
+	    
+	    logout();
         login(username, UserHelper.generatePassword(username));
         UserHelper.openUserProfile(sc, username2);
-        Assert.assertTrue(isTextPresent("Access Denied"));
-        Assert.assertTrue(isTextPresent("403"));
-        deleteUser(username2);
+        Assert.assertTrue(isTextPresent("denied"));
+        deleteUserWithSeparateBrowser(username2);
 	}
 
 }

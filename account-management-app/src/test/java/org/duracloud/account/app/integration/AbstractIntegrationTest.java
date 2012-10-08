@@ -74,17 +74,31 @@ public abstract class AbstractIntegrationTest {
 
     @Before
     public void before() throws Exception {
-        String url = "http://localhost:" + getPort() + getAppRoot() + "/";
+        String url = createAppUrl();
         sc = createSeleniumClient(url);
-        sc.start();
         log.info("started selenium client on " + url);
+    }
+    
+    protected String createAppUrl() throws Exception{
+        return  "http://localhost:" + getPort() + getAppRoot() + "/";
+    }
+    
+
+    protected void setRemoteUser(Selenium s, String username) {
+        LoginHelper.setRemoteUser(s, username);
     }
 
     /**
 	 * 
 	 */
     protected void logout() {
-        LoginHelper.logout(sc);
+        sc.close();
+        try {
+            sc = createSeleniumClient(createAppUrl());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     protected void login(String username, String password) {
@@ -111,8 +125,10 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected Selenium createSeleniumClient(String url) {
-
-        return new DefaultSelenium("localhost", 4444, "*firefox", url);
+        Selenium s =  new DefaultSelenium("localhost", 4444, "*pifirefox", url);
+        s.start("addCustomRequestHeader=true");
+        //setRemoteUser(s,System.getProperty("rootUsername", "monkey"));
+        return s;
     }
 
     protected void openUserProfilePage() {
@@ -157,8 +173,28 @@ public abstract class AbstractIntegrationTest {
         return UserHelper.createAndConfirm(sc);
     }
 
+    private void deleteUser(Selenium s, String username) {
+        new RootBot(s).deleteUser(username);
+    }
+
+    protected void deleteUserWithSeparateBrowser(String username) {
+        Selenium newSc = null;
+
+        try {
+            newSc = createSeleniumClient(createAppUrl());
+            deleteUser(newSc,username);
+        } catch (Exception e) {
+            log.error("failed to delete " + username + ": " + e.getMessage(), e);
+            e.printStackTrace();
+        }finally{
+            if(newSc != null){
+                newSc.close();
+            }
+        }
+    }
+
     protected void deleteUser(String username) {
-        new RootBot(sc).deleteUser(username);
+        deleteUser(sc, username);
     }
 
     protected void openUserProfile() {

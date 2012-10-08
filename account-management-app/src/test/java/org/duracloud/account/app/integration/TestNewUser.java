@@ -20,28 +20,16 @@ public class TestNewUser extends AbstractIntegrationTest {
         super.before();
     }
 
-    @Test
-    public void testNewUserLink() throws Exception {
-        openHome();
-        String newUserLink = "id=new-user-link";
-        assertTrue(isElementPresent(newUserLink));
-        clickAndWait(newUserLink);
-        confirmNewUserFormIsLoaded();
-    }
-
     private void confirmNewUserFormIsLoaded() {
         UserHelper.confirmNewUserFormIsLoaded(sc);
     }
 
     @Test
-    public void newUserFormSuccess() {
+    public void newUserFormSuccess() throws InterruptedException {
         String username = UserHelper.createUser(sc);
-        Assert.assertTrue(isTextPresent(username));
-        Assert.assertTrue(sc.isElementPresent("id=account-list"));
-        logout();
-        deleteUser(username);
+        Assert.assertTrue(sc.isTextPresent("Success"));
+        deleteUserWithSeparateBrowser(username);
     }
-
     @Test
     public void testNullValuesCheck() {
         String[] userFormParams = UserHelper.createDefaultUserFormParams();

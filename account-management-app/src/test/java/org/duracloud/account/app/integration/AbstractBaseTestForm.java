@@ -36,9 +36,10 @@ public abstract class AbstractBaseTestForm<T extends FormBot>
     @Before
     public void before() throws Exception {
         super.before();
-        openHome();
         fb = createFormBot();
         fb.login();
+        openHome();
+
     }
 
     /*

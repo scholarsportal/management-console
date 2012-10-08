@@ -15,6 +15,7 @@ import org.junit.Test;
 public class TestHomePage extends AbstractIntegrationTest {
     @Test
     public void test() throws Exception {
+        new RootBot(sc).loginRoot();
         openHome();
         assertTrue(isElementPresent("id=dc-logo"));
     }

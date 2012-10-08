@@ -28,10 +28,6 @@ public class UserHelper {
         SeleniumHelper.clickAndWait(sc, "create-user-button");
 	}
 	
-	public static boolean userExists(Selenium sc, String username, String password){
-	    return LoginHelper.loginQuietly(sc, username, password);
-	}
-	
 	public static void confirmNewUserFormIsLoaded(Selenium sc) {
 	     assertTrue(sc.isElementPresent("id=new-user-form"));
 	}

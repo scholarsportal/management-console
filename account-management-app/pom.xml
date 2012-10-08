@@ -96,6 +96,7 @@
                 </goals>
                 <configuration>
                   <background>true</background>
+		  <timeout>180</timeout>
                 </configuration>
               </execution>
             </executions>
