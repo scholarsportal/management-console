@@ -3,7 +3,11 @@
  */
 package org.duracloud.account.util;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.common.domain.ServerDetails;
@@ -13,9 +17,6 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * An interface for manipulating account data.
@@ -105,6 +106,14 @@ public interface AccountService {
      */
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public StorageProviderAccount getPrimaryStorageProvider();
+
+    /**
+     * Retrieves the primary storage provider account info
+     *
+     * @return
+     */
+    @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
+    public ComputeProviderAccount getComputeProvider();
 
     /**
      * Retrieves the info for all secondary storage provider accounts

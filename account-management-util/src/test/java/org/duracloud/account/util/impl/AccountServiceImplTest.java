@@ -3,14 +3,22 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
+import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.Capture;
@@ -18,12 +26,6 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andrew Woods Date: Dec 10, 2010
@@ -86,6 +88,14 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
         Assert.assertEquals(storageAcct, retVal);
     }
 
+    
+    @Test
+    public void testGetComputeProvider() throws Exception {
+        setUpGetComputeProvider();
+        ComputeProviderAccount retVal = acctService.getComputeProvider();
+        Assert.assertNotNull(retVal);
+    }
+
     @Test
     public void testGetSecondaryStorageProviders() throws Exception {
         StorageProviderAccount storageAcct = setUpGetStorageProviders();
@@ -106,6 +116,24 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
         replayMocks();
 
         return storageAcct;
+    }
+
+    private ComputeProviderAccount setUpGetComputeProvider() throws Exception {
+        ComputeProviderAccount compute =
+            new ComputeProviderAccount(1,
+                                       ComputeProviderType.AMAZON_EC2,
+                                       "username",
+                                       "password",
+                                       "ip",
+                                       "security-group",
+                                       "keypair");
+        EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
+            .andReturn(compute)
+            .times(1);
+
+        replayMocks();
+
+        return compute;
     }
 
     @Test

@@ -5,6 +5,7 @@ package org.duracloud.account.util.impl;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.common.domain.ServerDetails;
@@ -211,5 +212,11 @@ public class AccountServiceSecuredImpl implements AccountService {
         throws DBConcurrentUpdateException {
         throwIfAccessDenied(serverDetails);
         accountService.storeServerDetails(serverDetails);
+    }
+
+    @Override
+    public ComputeProviderAccount getComputeProvider() {
+        throwIfAccessDenied();
+        return accountService.getComputeProvider();
     }
 }

@@ -5,9 +5,14 @@ package org.duracloud.account.app.controller;
 
 import java.util.ArrayList;
 
+import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.computeprovider.domain.ComputeProviderType;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +51,31 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetSetupAccount() throws Exception {
+        AccountInfo info = createMock(AccountInfo.class);
+        EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
+        EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
+        
+        StorageProviderAccount spa =
+            new StorageProviderAccount(0,
+                                       StorageProviderType.AMAZON_S3,
+                                       "username",
+                                       "password",
+                                       true);
+        
+        EasyMock.expect(accountService.getPrimaryStorageProvider())
+                .andReturn(spa);
+
+        ComputeProviderAccount cpa =
+            new ComputeProviderAccount(0,
+                                       ComputeProviderType.AMAZON_EC2,
+                                       "username",
+                                       "password",
+                                       "ip",
+                                       "security",
+                                       "keypair");
+
+        EasyMock.expect(accountService.getComputeProvider()).andReturn(cpa);
+        
         EasyMock.expect(rootAccountManagerService.getSecondaryStorageProviders(TEST_ACCOUNT_ID))
             .andReturn(new ArrayList<StorageProviderAccount>());
         replayMocks();
@@ -54,7 +84,11 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testSetupAccount() throws Exception {
+        AccountInfo info = createMock(AccountInfo.class);
+        EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
+        EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
 
+        
         rootAccountManagerService.setupStorageProvider(EasyMock.anyInt(),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class));
@@ -73,9 +107,11 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
         AccountSetupForm setupForm = new AccountSetupForm();
         String test = "test";
-        setupForm.setPrimaryStorageUsername(test);
-        setupForm.setPrimaryStoragePassword(test);
-        setupForm.setComputeCredentialsSame(true);
+        StorageCredentials p = setupForm.getPrimaryStorageCredentials();
+        p.setUsername(test);
+        p.setPassword(test);
+        setupForm.setComputeUsername(test);
+        setupForm.setComputePassword(test);
         setupForm.setComputeElasticIP(test);
         setupForm.setComputeKeypair(test);
         setupForm.setComputeSecurityGroup(test);

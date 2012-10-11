@@ -29,8 +29,7 @@
     </tiles:putAttribute>
     <tiles:putAttribute
      name="mainContent" cascade="true">
-	  <h1>Setup Account</h1>
-      <p class="instructions"> Please complete the information to setup this account.</p>
+	  <h1><spring:message code="account.configureproviders" /></h1>
       <form:form
        modelAttribute="setupAccountForm"
        method="POST">
@@ -40,16 +39,16 @@
             <li>
               <form:label
                cssErrorClass="error"
-               path="primaryStorageUsername"><spring:message code="username"/></form:label>
+               path="primaryStorageCredentials.username"><spring:message code="username"/></form:label>
 
               <form:input
                cssErrorClass="error"
-               path="primaryStorageUsername"
+               path="primaryStorageCredentials.username"
                onclick="same(this.form)"
                autofocus="true" />
                
               <form:errors
-               path="primaryStorageUsername"
+               path="primaryStorageCredentials.username"
                cssClass="error"
                element="div" />               
             </li>
@@ -57,47 +56,41 @@
             <li>
               <form:label
                cssErrorClass="error"
-               path="primaryStoragePassword"><spring:message code="password"/></form:label>
+               path="primaryStorageCredentials.password"><spring:message code="password"/></form:label>
               <form:password
                cssErrorClass="error"
                showPassword="true"
-               path="primaryStoragePassword"
+               path="primaryStorageCredentials.password"
                onclick="same(this.form)"/>                      
               <form:errors
-               path="primaryStoragePassword"
+               path="primaryStorageCredentials.password"
                cssClass="error"
                element="div" />               
             </li>
            </ol>
            </fieldset>
           <c:if
-           test="${not empty secProviders}">
+           test="${not empty setupAccountForm.secondaryStorageCredentailsList}">
             <c:forEach
                var="s"
                varStatus="loop"
-               items="${secProviders}">
+               items="${setupAccountForm.secondaryStorageCredentailsList}">
             <fieldset>
-              <legend>Secondary Storage #${loop.index+1}</legend>
+              <legend>Secondary Storage : ${s.providerType}</legend>
+                  <form:hidden
+                   path="secondaryStorageCredentailsList[${loop.index}].id">
+                  </form:hidden>
               <ol>
               <li>
                   <form:label
                    cssErrorClass="error"
-                   path="secondaryId${loop.index}">Provider Type</form:label>
-                  <form:select
-                   cssErrorClass="error"
-                   path="secondaryId${loop.index}">
-                      <form:option value="${s.id}" label="${s.providerType}"/>
-                  </form:select>
-              </li>
-              <li>
-                  <form:label
-                   cssErrorClass="error"
-                   path="secondaryUsername${loop.index}"><spring:message code="username"/></form:label>
+                   path="secondaryStorageCredentailsList[${loop.index}].username">
+                   <spring:message code="username"/></form:label>
                   <form:input
                    cssErrorClass="error"
-                   path="secondaryUsername${loop.index}"/>
+                   path="secondaryStorageCredentailsList[${loop.index}].username"/>
                   <form:errors
-                   path="secondaryUsername${loop.index}"
+                   path="secondaryStorageCredentailsList[${loop.index}].username"
                    cssClass="error"
                    element="div" />               
 
@@ -105,13 +98,14 @@
               <li>
                   <form:label
                    cssErrorClass="error"
-                   path="secondaryPassword${loop.index}"><spring:message code="password"/></form:label>
+                   path="secondaryStorageCredentailsList[${loop.index}].password">
+                   <spring:message code="password"/></form:label>
                   <form:password
                    cssErrorClass="error"
                    showPassword="true"
-                   path="secondaryPassword${loop.index}"/>
+                   path="secondaryStorageCredentailsList[${loop.index}].password"/>
                   <form:errors
-                   path="secondaryPassword${loop.index}"
+                   path="secondaryStorageCredentailsList[${loop.index}].password"
                    cssClass="error"
                    element="div" />               
                </li>
@@ -202,7 +196,16 @@
 
           <button
            id="ok"
-           type="submit"><spring:message code="activate"/></button>
+           type="submit">
+            <c:choose>
+              <c:when test="${pending}">
+                <spring:message code="activate"/>
+              </c:when>
+              <c:otherwise>
+                <spring:message code="save"/>
+              </c:otherwise>
+            </c:choose> 
+          </button>
         
           <a
            class="button"

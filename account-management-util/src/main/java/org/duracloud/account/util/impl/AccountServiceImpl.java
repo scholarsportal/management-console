@@ -6,11 +6,13 @@ package org.duracloud.account.util.impl;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.PaymentInfo;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
+import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
@@ -134,6 +136,25 @@ public class AccountServiceImpl implements AccountService {
                 e.getMessage(), e);
         }
     }
+    
+    @Override
+    public ComputeProviderAccount getComputeProvider() {
+        ServerDetails serverDetails = retrieveServerDetails();
+        int computeId = serverDetails.getComputeProviderAccountId();
+        if(computeId > -1){
+            DuracloudComputeProviderAccountRepo repo =
+                repoMgr.getComputeProviderAccountRepo();
+            try {
+                return repo.findById(computeId);
+            } catch(DBNotFoundException e) {
+                throw new DuracloudProviderAccountNotAvailableException(
+                    e.getMessage(), e);
+            }
+        }else{
+            return null;
+        }
+    }
+
 
     @Override
     public void setPrimaryStorageProviderRrs(boolean rrs)
@@ -355,4 +376,5 @@ public class AccountServiceImpl implements AccountService {
         //Set the account to cancelled
         storeAccountStatus(AccountInfo.AccountStatus.CANCELLED);
     }
+
 }

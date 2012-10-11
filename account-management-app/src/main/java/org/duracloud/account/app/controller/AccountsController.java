@@ -11,7 +11,10 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
 import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
+import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.StorageProviderAccount;
@@ -21,6 +24,7 @@ import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.RootAccountManagerService;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -122,13 +126,20 @@ public class AccountsController extends AbstractRootController{
         throws Exception {
         log.info("setup account {}", id);
 
-        List<StorageProviderAccount> providers =
-            getRootAccountManagerService().getSecondaryStorageProviders(id);
+        AccountService as = getAccountManagerService().getAccount(id);
+        StorageProviderAccount primary = as.getPrimaryStorageProvider();
 
-        model.addAttribute(SETUP_ACCOUNT_FORM_KEY, new AccountSetupForm());
+        RootAccountManagerService rams =  getRootAccountManagerService();
+        AccountInfo info = rams.getAccount(id);
+        List<StorageProviderAccount> secondary =
+            rams.getSecondaryStorageProviders(id);
+        
+        ComputeProviderAccount compute = as.getComputeProvider();
+        AccountSetupForm form = new AccountSetupForm(primary, secondary,compute);
 
-        model.addAttribute("secProviders", providers);
-
+        model.addAttribute(SETUP_ACCOUNT_FORM_KEY, form);
+        model.addAttribute("pending",
+                           info.getStatus().equals(AccountStatus.PENDING));
         return ACCOUNT_SETUP_VIEW;
     }
 
@@ -140,104 +151,30 @@ public class AccountsController extends AbstractRootController{
                        RedirectAttributes redirectAttributes)
         throws Exception {
         log.info("setup account {}", id);
-        boolean hasErrors = result.hasErrors();
 
-        if(!hasErrors) {
-            if(accountSetupForm.getSecondaryId0() > 0) {
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryUsername0())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryUsername0",
-                        "Secondary Storage account's username is required"));
-                    hasErrors = true;
-                }
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryPassword0())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryPassword0",
-                        "Secondary Storage account's password is required"));
-                    hasErrors = true;
-                }
-            }
-            if(accountSetupForm.getSecondaryId1() > 0) {
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryUsername1())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryUsername1",
-                        "Secondary Storage account's username is required"));
-                    hasErrors = true;
-                }
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryPassword1())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryPassword1",
-                        "Secondary Storage account's password is required"));
-                    hasErrors = true;
-                }
-            }
-            if(accountSetupForm.getSecondaryId2() > 0) {
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryUsername2())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryUsername2",
-                        "Secondary Storage account's username is required"));
-                    hasErrors = true;
-                }
-                if(StringUtils.isBlank(accountSetupForm.getSecondaryPassword2())) {
-                    result.addError(new FieldError(SETUP_ACCOUNT_FORM_KEY,
-                        "secondaryPassword2",
-                        "Secondary Storage account's password is required"));
-                    hasErrors = true;
-                }
-            }
-        }
+        RootAccountManagerService rams = getRootAccountManagerService();
+        AccountInfo info = rams.getAccount(id);
 
-        if (hasErrors) {
-            List<StorageProviderAccount> providers =
-                getRootAccountManagerService().getSecondaryStorageProviders(id);
-
-            model.addAttribute("secProviders", providers);
-
-            return new ModelAndView(ACCOUNT_SETUP_VIEW);
+        if(result.hasErrors()){
+            model.addAttribute("pending",
+                               info.getStatus().equals(AccountStatus.PENDING));
+            return new ModelAndView(ACCOUNT_SETUP_VIEW, model.asMap());
         }
 
         AccountService accountService =
             getAccountManagerService().getAccount(id);
         ServerDetails serverDetails = accountService.retrieveServerDetails();
-
-        //setup account
-        getRootAccountManagerService().setupStorageProvider(
-            serverDetails.getPrimaryStorageProviderAccountId(),
-            accountSetupForm.getPrimaryStorageUsername(),
-            accountSetupForm.getPrimaryStoragePassword());
-
-        if(accountSetupForm.getSecondaryUsername0() != null) {
-            //setup account
-            getRootAccountManagerService().setupStorageProvider(
-                accountSetupForm.getSecondaryId0(),
-                accountSetupForm.getSecondaryUsername0(),
-                accountSetupForm.getSecondaryPassword0());
+        
+        //save primary
+        saveStorageProvider(accountSetupForm.getPrimaryStorageCredentials());
+        
+        //save secondary
+        for(StorageCredentials cred :  accountSetupForm.getSecondaryStorageCredentailsList()){
+            saveStorageProvider(cred);
         }
 
-        if(accountSetupForm.getSecondaryUsername1() != null) {
-            //setup account
-            getRootAccountManagerService().setupStorageProvider(
-                accountSetupForm.getSecondaryId1(),
-                accountSetupForm.getSecondaryUsername1(),
-                accountSetupForm.getSecondaryPassword1());
-        }
-
-        if(accountSetupForm.getSecondaryUsername2() != null) {
-            //setup account
-            getRootAccountManagerService().setupStorageProvider(
-                accountSetupForm.getSecondaryId2(),
-                accountSetupForm.getSecondaryUsername2(),
-                accountSetupForm.getSecondaryPassword2());
-        }
-
-        if(accountSetupForm.isComputeCredentialsSame()) {
-            accountSetupForm.setComputeUsername(
-                accountSetupForm.getPrimaryStorageUsername());
-            accountSetupForm.setComputePassword(
-                accountSetupForm.getPrimaryStoragePassword());
-        }
-
-        getRootAccountManagerService().setupComputeProvider(
+        //save compute
+        rams.setupComputeProvider(
             serverDetails.getComputeProviderAccountId(),
             accountSetupForm.getComputeUsername(),
             accountSetupForm.getComputePassword(),
@@ -245,9 +182,26 @@ public class AccountsController extends AbstractRootController{
             accountSetupForm.getComputeKeypair(),
             accountSetupForm.getComputeSecurityGroup());
 
-        getRootAccountManagerService().activateAccount(id);
-        setSuccessFeedback("Successfully setup and activated acccount", redirectAttributes);
+        String message = "Successfully configured providers ";
+
+        AccountStatus status = info.getStatus();
+        //activate only if pending
+        if(AccountStatus.PENDING.equals(status)){
+            getRootAccountManagerService().activateAccount(id);
+            message += "and activated acccount";
+        }
+
+        setSuccessFeedback(message, redirectAttributes);
+
         return createRedirectMav(BASE_MAPPING);
+    }
+
+    private void
+        saveStorageProvider(StorageCredentials storageCredentials) throws DBConcurrentUpdateException  {
+        getRootAccountManagerService().setupStorageProvider(storageCredentials.getId(),
+                                                            storageCredentials.getUsername(),
+                                                            storageCredentials.getPassword());
+        
     }
 
     public DuracloudInstanceManagerService getInstanceManagerService() {

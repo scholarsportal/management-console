@@ -94,7 +94,7 @@
                 </th>
 
                 <th
-                 colspan="4">
+                 colspan="6">
                   <spring:message
                    code="account.status" />
                 </th>
@@ -143,15 +143,6 @@
                   <td>
                     <c:choose>
                       <c:when
-                       test="${a.accountInfo.status == 'PENDING'}">
-                        <a
-                         href="${currentUri}/byid/${a.accountInfo.id}/setup"
-                         class="button">     
-                         <spring:message
-                          code="configure" />
-                        </a>
-                      </c:when>
-                      <c:when
                        test="${a.accountInfo.status == 'INACTIVE'}">
                         <form
                          action="${currentUri}/byid/${a.accountInfo.id}/activate"
@@ -176,8 +167,15 @@
                         <!-- placeholder -->
                       </c:otherwise>
                     </c:choose>                    
+                    
                   </td>
-
+                  <td>
+                    <a
+                      href="${currentUri}/byid/${a.accountInfo.id}/setup"
+                      class="button"> 
+                      <spring:message code="account.configureproviders" />
+                    </a>
+                  </td>
                   <td><!-- placeholder -->
                     <c:if
                      test="${a.instanceStatus == null}">
