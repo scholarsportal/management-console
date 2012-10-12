@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.flow.createaccount.CreateAccountFlowHandler;
 import org.junit.Assert;
@@ -29,8 +30,9 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
 
     @Test
     public void testCreateCommunityAccount() throws Exception {
-        UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         rootBot.login();
+
+        UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         assertNewAccountFormIsPresent();
         String accountName = "test"+System.currentTimeMillis();
         Map<String,String> fields = createNewAccountFormInput(accountName,AccountType.COMMUNITY);
@@ -89,17 +91,56 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
 
     @Test
     public void testCreateFullAccount() throws Exception {
-        UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         rootBot.login();
+        UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         assertNewAccountFormIsPresent();
         String accountName = "test"+System.currentTimeMillis();
         Map<String,String> fields = createNewAccountFormInput(accountName,AccountType.FULL);
         fillForm(fields);
+        
         clickAndWait("id=next");
         Assert.assertTrue(isElementPresent("id=fullAccountForm"));
+        //check rackspace box
+        sc.check("css=input[value='RACKSPACE']");
+
         clickAndWait("id=finish");
         assertInfoMessagePresent();
         assertAccountInList(accountName);
+        
+        //click configure account.
+        clickAndWait("css=tr[data-name='"+accountName+"'] .configure");
+        
+        //enter insufficient data
+        sc.type("id=primaryStorageCredentials.username", "username");
+        sc.type("id=primaryStorageCredentials.password", "password");
+
+        //click ok
+        clickAndWait("id=ok");
+
+        //verify errors
+        Assert.assertTrue(isElementPresent("css=input[id='secondaryStorageCredentailsList0.username'][class~='error']"));
+        
+        //complete form
+        Assert.assertTrue(isTextPresent("rackspace"));
+        
+        sc.type("id=secondaryStorageCredentailsList0.username", "username");
+        sc.type("id=secondaryStorageCredentailsList0.password", "password");
+
+        sc.type("id=computeUsername", "username");
+        sc.type("id=computePassword", "password");
+        sc.type("id=computeElasticIP", "elasticIP");
+        sc.type("id=computeKeypair", "keypair");
+        sc.type("id=computeSecurityGroup", "security");
+
+        clickAndWait("id=ok");
+        //verify info message
+        assertInfoMessagePresent();
+        
+        //verify activated.
+        String status = sc.getText("css=tr[data-name='"+accountName+"'] .status");
+        Assert.assertEquals(AccountStatus.ACTIVE, AccountStatus.valueOf(status));
+
+        //delete account
         deleteAccount(accountName);
     }
 

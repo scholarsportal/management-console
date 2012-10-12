@@ -80,6 +80,10 @@
                   <form:hidden
                    path="secondaryStorageCredentailsList[${loop.index}].id">
                   </form:hidden>
+                  <form:hidden
+                   path="secondaryStorageCredentailsList[${loop.index}].providerType">
+                  </form:hidden>
+
               <ol>
               <li>
                   <form:label

@@ -127,7 +127,7 @@
                     </c:if>
                   </td>
 
-                  <td>${a.accountInfo.status}</td>
+                  <td class="status">${a.accountInfo.status}</td>
 
                   <td>
                     <a target="_blank"
@@ -172,7 +172,7 @@
                   <td>
                     <a
                       href="${currentUri}/byid/${a.accountInfo.id}/setup"
-                      class="button"> 
+                      class="button configure"> 
                       <spring:message code="account.configureproviders" />
                     </a>
                   </td>
