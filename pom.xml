@@ -60,6 +60,7 @@
     <module>account-management-app</module>
     <module>account-management-db-converter</module>
     <module>shib-idp2</module>
+    <module>ait-sync</module>
   </modules>
   <profiles>
     <profile>
@@ -522,7 +523,7 @@
       <dependency>
         <groupId>com.thoughtworks.xstream</groupId>
         <artifactId>xstream</artifactId>
-        <version>1.2.2</version>
+        <version>1.4.3</version>
       </dependency>
 
       <dependency>
@@ -813,6 +814,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.expression</artifactId>
+      <version>${org.springframework.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-oxm</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
     <dependency>

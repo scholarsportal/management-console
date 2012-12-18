@@ -1,0 +1,33 @@
+****************************************************************************************************
+* The Archive-It Ingest App        
+* @author dbernstein@duraspace.org
+****************************************************************************************************
+To build and deploy on a running tomcat instance
+mvn clean install
+****************************************************************************************************
+* Notes on Running Integration Tests
+****************************************************************************************************
+You might need to install the following packages if you want the selenium tests to work:
+
+sudo apt-get install firefox 
+sudo apt-get install xvfb
+sudo apt-get install xauth
+sudo apt-get install xfonts-base
+
+To run the tests you must enable the selenium test profile: 
+
+mvn clean integration-test -Pprofile-selenium -Dcredentials.file.path=/path/to/ama-init.xml -DargLine="-Droot.username=rootUsername -Droot.password=rootPassword 
+
+To enable debugging on port 5005 with your IDE  append the following to the above command:
+-Dmaven.surefire.debug=true
+NOTE: you must attach your debugger after running the above mvn command - the jvm will pause until you do. 
+
+To run a single test append the following to the above command
+-Dtest=YourTestHere ----> e.g. -Dtest=TestRootConsole
+
+****************************************************************************************************
+* Eclipse Users
+****************************************************************************************************
+To generate project and classpath files for eclipse, simply run the following from the project root:
+
+mvn eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true
