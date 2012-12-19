@@ -5,7 +5,6 @@ import junit.framework.Assert;
 import org.duracloud.aitsync.domain.Mapping;
 import org.duracloud.aitsync.domain.MappingForm;
 import org.duracloud.aitsync.service.MappingManager;
-import org.duracloud.aitsync.service.RestUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -23,13 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class ConfigControllerTest {
     private ConfigController controller;
     private MappingManager mappingManager;
-    private RestUtils restUtils;
     
     @Before
     public void setUp() throws Exception {
         mappingManager = EasyMock.createMock(MappingManager.class);
-        restUtils = EasyMock.createMock(RestUtils.class);
-        controller = new ConfigController(mappingManager, restUtils);
+        controller = new ConfigController(mappingManager);
     }
 
     @After
@@ -44,10 +41,10 @@ public class ConfigControllerTest {
         mappingManager.addMapping(EasyMock.isA(Mapping.class));
         EasyMock.expectLastCall();
 
-        EasyMock.replay(mappingManager, restUtils, result);
+        EasyMock.replay(mappingManager, result);
         ModelAndView m = controller.add(mapping, result);
         Assert.assertNotNull(m);
-        EasyMock.verify(mappingManager, restUtils, result);
+        EasyMock.verify(mappingManager, result);
     }
 
 

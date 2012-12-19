@@ -33,12 +33,10 @@ public class ConfigController extends BaseController {
     private Logger log = LoggerFactory.getLogger(ConfigController.class);
 
     private MappingManager mappingManager;
-    private RestUtils restUtils;
 
     @Autowired
-    public ConfigController(MappingManager mappingManager, RestUtils restUtils) {
+    public ConfigController(MappingManager mappingManager) {
         this.mappingManager = mappingManager;
-        this.restUtils = restUtils;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -51,7 +49,6 @@ public class ConfigController extends BaseController {
 
         if (result.hasErrors()) {
             message = "failed to add map: invalid parameters";
-            restUtils.setStatus(response, HttpStatus.BAD_REQUEST);
         } else {
             try {
                 this.mappingManager.addMapping(form.toMapping());
