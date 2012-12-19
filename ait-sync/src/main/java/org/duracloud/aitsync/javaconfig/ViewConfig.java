@@ -1,10 +1,12 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.javaconfig;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.duracloud.aitsync.domain.Mapping;
+import org.duracloud.aitsync.domain.StatusSummary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -38,13 +40,13 @@ public class ViewConfig {
 
         MarshallingView view = new MarshallingView();
         XStreamMarshaller xsm = new XStreamMarshaller();
-        xsm.setAnnotatedClasses(new Class[] { StatusSummary.class });
+        xsm.setAnnotatedClasses(new Class[] { 
+                                    StatusSummary.class, 
+                                    Mapping.class });
         view.setMarshaller(xsm);
         dvs.add(view);
         dvs.add(new MappingJacksonJsonView());
-
         r.setDefaultViews(dvs);
-
         return r;
     }
 

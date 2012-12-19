@@ -1,12 +1,12 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.duracloud.aitsync.domain.State;
+import org.duracloud.aitsync.domain.StatusSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,10 +23,6 @@ public class SyncController extends BaseController {
 
     private Logger log = LoggerFactory.getLogger(SyncController.class);
 
-    @Autowired
-    public SyncController(RestUtils restUtils) {
-        super(restUtils);
-    }
 
     @RequestMapping(value = "/start", method = RequestMethod.POST)
     public ModelAndView start() {

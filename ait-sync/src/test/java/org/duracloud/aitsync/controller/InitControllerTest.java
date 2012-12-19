@@ -1,12 +1,11 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.duracloud.aitsync.InitController;
-import org.duracloud.aitsync.RestUtils;
+import org.duracloud.aitsync.service.RestUtils;
 import org.easymock.EasyMock;
 import org.junit.Test;
 /**

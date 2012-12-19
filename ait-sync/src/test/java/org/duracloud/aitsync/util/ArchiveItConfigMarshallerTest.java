@@ -1,9 +1,8 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.util;
 
 import junit.framework.Assert;
 
-import org.duracloud.aitsync.ArchiveItConfig;
-import org.duracloud.aitsync.ArchiveItConfigMarshaller;
+import org.duracloud.aitsync.domain.ArchiveItConfig;
 import org.junit.Test;
 
 public class ArchiveItConfigMarshallerTest {

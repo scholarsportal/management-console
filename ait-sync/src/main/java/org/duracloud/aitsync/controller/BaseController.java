@@ -1,6 +1,7 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class BaseController {
  
-    protected RestUtils restUtils;
-
     @Autowired
     protected HttpServletRequest request;
 
-    public BaseController(RestUtils restUtils) {
-        this.restUtils = restUtils;
-    }
+    @Autowired
+    protected HttpServletResponse response;
+
 
 }

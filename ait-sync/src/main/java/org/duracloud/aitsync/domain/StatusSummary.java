@@ -1,4 +1,4 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

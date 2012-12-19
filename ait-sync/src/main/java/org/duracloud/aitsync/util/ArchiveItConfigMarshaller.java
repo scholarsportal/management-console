@@ -1,7 +1,8 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.util;
 
-import java.io.IOException;
 import java.io.InputStream;
+
+import org.duracloud.aitsync.domain.ArchiveItConfig;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;

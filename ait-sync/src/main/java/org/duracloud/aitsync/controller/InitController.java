@@ -1,10 +1,13 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.duracloud.aitsync.domain.ArchiveItConfig;
+import org.duracloud.aitsync.service.RestUtils;
+import org.duracloud.aitsync.util.ArchiveItConfigMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class InitController extends BaseController{
     
+    protected RestUtils restUtils;
+
     @Autowired
     public InitController(RestUtils restUtils) {
-        super(restUtils);
+        this.restUtils = restUtils;
     }
 
 

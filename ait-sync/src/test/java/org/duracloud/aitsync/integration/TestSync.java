@@ -1,6 +1,5 @@
 package org.duracloud.aitsync.integration;
 
-import static org.junit.Assert.*;
 import junit.framework.Assert;
 
 import org.apache.http.HttpStatus;

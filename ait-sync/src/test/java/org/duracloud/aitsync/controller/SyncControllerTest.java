@@ -1,7 +1,8 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.controller;
 
 import junit.framework.Assert;
 
+import org.duracloud.aitsync.domain.StatusSummary;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class SyncControllerTest {
     
     @Before
     public void setUp() throws Exception {
-        syncController = new SyncController(new RestUtilsImpl());
+        syncController = new SyncController();
     }
 
     @After

@@ -1,5 +1,7 @@
-package org.duracloud.aitsync;
+package org.duracloud.aitsync.javaconfig;
 
+import org.duracloud.aitsync.service.RestUtils;
+import org.duracloud.aitsync.service.RestUtilsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
