@@ -1,14 +1,19 @@
 package org.duracloud.aitsync.integration;
 
-import junit.framework.Assert;
-
-import org.apache.http.HttpStatus;
+import org.apache.commons.httpclient.HttpStatus;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 
+ * @author Daniel Bernstein
+ * Date:  12/24/2012
+ *
+ */
 public class TestSync {
     private  RestTemplate restTemplate = new RestTemplate();
     private String host = "localhost";

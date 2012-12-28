@@ -1,6 +1,6 @@
 <html>
 	<body>
-		<h1>Archive-It Ingest: Init</h1>
+		<h1>Archive-It Sync: Init</h1>
         <p>${result.message}</p>
 	</body> 
 </html>

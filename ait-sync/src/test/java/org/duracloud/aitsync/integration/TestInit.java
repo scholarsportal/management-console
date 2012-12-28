@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-import junit.framework.Assert;
-
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;

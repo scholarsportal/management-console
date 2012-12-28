@@ -1,4 +1,4 @@
-package org.duracloud.aitsync.service;
+package org.duracloud.aitsync.mapping;
 /**
  * 
  * @author danny

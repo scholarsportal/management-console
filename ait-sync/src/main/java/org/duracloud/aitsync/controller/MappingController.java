@@ -1,19 +1,18 @@
 package org.duracloud.aitsync.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.duracloud.aitsync.domain.Mapping;
 import org.duracloud.aitsync.domain.MappingForm;
-import org.duracloud.aitsync.service.MappingAlreadyExistsException;
-import org.duracloud.aitsync.service.MappingManager;
-import org.duracloud.aitsync.service.RestUtils;
+import org.duracloud.aitsync.mapping.MappingAlreadyExistsException;
+import org.duracloud.aitsync.mapping.MappingManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,14 +27,14 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  */
 @Controller
-public class ConfigController extends BaseController {
+public class MappingController extends BaseController {
 
-    private Logger log = LoggerFactory.getLogger(ConfigController.class);
+    private Logger log = LoggerFactory.getLogger(MappingController.class);
 
     private MappingManager mappingManager;
 
     @Autowired
-    public ConfigController(MappingManager mappingManager) {
+    public MappingController(MappingManager mappingManager) {
         this.mappingManager = mappingManager;
     }
 
@@ -77,6 +76,14 @@ public class ConfigController extends BaseController {
         }
         map.put("message", message);
         return mav;
+    }
+
+    public ModelAndView getMappings() {
+        List<Mapping> mappings = this.mappingManager.getMappings();
+        ModelAndView mav = new ModelAndView("mappings");
+        mav.addObject(mappings);
+        return mav;
+
     }
 
 }

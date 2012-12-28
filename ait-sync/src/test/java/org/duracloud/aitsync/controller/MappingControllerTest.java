@@ -1,12 +1,13 @@
 package org.duracloud.aitsync.controller;
 
-import junit.framework.Assert;
+import java.util.ArrayList;
 
 import org.duracloud.aitsync.domain.Mapping;
 import org.duracloud.aitsync.domain.MappingForm;
-import org.duracloud.aitsync.service.MappingManager;
+import org.duracloud.aitsync.mapping.MappingManager;
 import org.easymock.EasyMock;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
@@ -16,17 +17,17 @@ import org.springframework.web.servlet.ModelAndView;
  * 
  * @author Daniel Bernstein
  * @created 12/18/2012
- *
+ * 
  */
 
-public class ConfigControllerTest {
-    private ConfigController controller;
+public class MappingControllerTest {
+    private MappingController controller;
     private MappingManager mappingManager;
-    
+
     @Before
     public void setUp() throws Exception {
         mappingManager = EasyMock.createMock(MappingManager.class);
-        controller = new ConfigController(mappingManager);
+        controller = new MappingController(mappingManager);
     }
 
     @After
@@ -47,10 +48,10 @@ public class ConfigControllerTest {
         EasyMock.verify(mappingManager, result);
     }
 
-
     @Test
     public void testRemoveMapping() {
-        EasyMock.expect(mappingManager.removeMapping(EasyMock.anyLong())).andReturn(new Mapping());
+        EasyMock.expect(mappingManager.removeMapping(EasyMock.anyLong()))
+                .andReturn(new Mapping());
         EasyMock.expectLastCall();
         EasyMock.replay(mappingManager);
         ModelAndView m = controller.remove(1l);
@@ -58,5 +59,15 @@ public class ConfigControllerTest {
         EasyMock.verify(mappingManager);
     }
 
-    
+    @Test
+    public void testGetMappings() {
+        EasyMock.expect(mappingManager.getMappings())
+                .andReturn(new ArrayList<Mapping>());
+        EasyMock.expectLastCall();
+        EasyMock.replay(mappingManager);
+        ModelAndView m = controller.getMappings();
+        Assert.assertNotNull(m);
+        EasyMock.verify(mappingManager);
+    }
+
 }

@@ -1,18 +1,23 @@
 package org.duracloud.aitsync.service;
 
-import java.io.File;
-
-import junit.framework.Assert;
-
 import org.duracloud.aitsync.domain.Mapping;
+import org.duracloud.aitsync.mapping.MappingManagerImpl;
+import org.duracloud.aitsync.test.Utils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
+/**
+ * 
+ * @author Daniel Bernstein
+ * Date:  12/24/2012
+ *
+ */
 public class MappingManagerImplTest {
 
     @Before
     public void setUp() throws Exception {
+        Utils.configureStateDirectory();
     }
 
     @After
@@ -21,7 +26,6 @@ public class MappingManagerImplTest {
 
     @Test
     public void test() throws Exception {
-        configureStateDirectory();
 
         ConfigManagerImpl cm = new ConfigManagerImpl();
 
@@ -62,14 +66,6 @@ public class MappingManagerImplTest {
 
 
 
-    protected void configureStateDirectory() {
-        File sd =
-            new File(System.getProperty("java.tmp.dir")
-                + File.separator + "test" + System.currentTimeMillis());
-        sd.deleteOnExit();
-        sd.mkdirs();
-        System.setProperty(ConfigManagerImpl.DURACLOUD_AITSYNC_STATE_DIR,
-                           sd.getAbsolutePath());
-    }
+
 
 }

@@ -2,6 +2,7 @@ package org.duracloud.aitsync.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+
 /**
  * @author Daniel Bernstein
  * @created 12/17/2012

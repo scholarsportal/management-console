@@ -1,8 +1,9 @@
-package org.duracloud.aitsync.service;
+package org.duracloud.aitsync.mapping;
 
 import java.util.List;
 
 import org.duracloud.aitsync.domain.Mapping;
+
 
 /**
  * 

@@ -1,8 +1,9 @@
 package org.duracloud.aitsync.domain;
 
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
+
+
 
 
 /**

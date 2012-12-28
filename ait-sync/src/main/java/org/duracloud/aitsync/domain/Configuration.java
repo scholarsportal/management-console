@@ -6,7 +6,7 @@ package org.duracloud.aitsync.domain;
  * @created 12/17/2012
  * 
  */
-public class ArchiveItConfig {
+public class Configuration {
     private String duracloudHost;
     private String duracloudPort;
     private String duracloudUsername;

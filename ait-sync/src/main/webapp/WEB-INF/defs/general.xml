@@ -4,8 +4,10 @@
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 
 <tiles-definitions>
-  <definition name="status" template="/WEB-INF/jsp/init.jsp" />
+  <definition name="init" template="/WEB-INF/jsp/init.jsp" />
   <definition name="status" template="/WEB-INF/jsp/status.jsp" />
+  <definition name="mappings" template="/WEB-INF/jsp/mappings.jsp" />
+
   <definition name="login" template="/WEB-INF/jsp/login.jsp" />
   <definition name="exception" template="/WEB-INF/jsp/exception.jsp" />
 

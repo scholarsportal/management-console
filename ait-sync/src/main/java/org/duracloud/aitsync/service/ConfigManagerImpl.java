@@ -2,14 +2,19 @@ package org.duracloud.aitsync.service;
 
 import java.io.File;
 
+import org.duracloud.aitsync.domain.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 
 /**
  * 
  * @author Daniel Bernstein
- * 
+ * Date:  12/24/2012
+ *
  */
+@Component
 public class ConfigManagerImpl implements ConfigManager {
     private Logger log = LoggerFactory.getLogger(ConfigManagerImpl.class);
 
@@ -17,6 +22,8 @@ public class ConfigManagerImpl implements ConfigManager {
         "duracloud.aitsync.state.dir";
     private File stateDirectory;
 
+    private Configuration config;
+    
     public ConfigManagerImpl() {
         String path = System.getProperty(DURACLOUD_AITSYNC_STATE_DIR);
         if (path == null) {
@@ -33,8 +40,28 @@ public class ConfigManagerImpl implements ConfigManager {
 
     }
 
+    @Override 
+    public File getStateDirectory(){
+        return this.stateDirectory;
+    }
+    
     @Override
-    public File getMappingsFile() {
-        return new File(stateDirectory, "mappings.xml");
+    public int getMaxConcurrentWorkers(){
+        return 5;
+    }
+    
+    @Override
+    public String getDuracloudUsername() {
+        return this.config.getDuracloudUsername();
+    }
+    
+    @Override
+    public Configuration getConfiguration() {
+        return this.config;
+    }
+    
+    @Override
+    public void initialize(Configuration config) {
+         this.config = config;
     }
 }

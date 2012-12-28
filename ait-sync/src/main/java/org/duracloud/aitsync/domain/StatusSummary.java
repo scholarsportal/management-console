@@ -1,6 +1,9 @@
 package org.duracloud.aitsync.domain;
 
+import org.duracloud.aitsync.service.SyncManager;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 
 /**
  * 
@@ -10,14 +13,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias(value="stateSummary")
 public class StatusSummary {
-    private State state;
+    private SyncManager.State state;
 
-    public StatusSummary(State state) {
+    public StatusSummary(SyncManager.State state) {
         super();
         this.state = state;
     }
 
-    public State getState() {
+    public SyncManager.State getState() {
         return state;
     }
 

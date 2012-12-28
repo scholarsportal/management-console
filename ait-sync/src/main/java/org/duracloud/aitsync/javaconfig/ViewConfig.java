@@ -23,6 +23,11 @@ import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles2.TilesView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
+/**
+ * @author Daniel Bernstein
+ * @created 12/17/2012
+ *
+ */
 @Configuration
 public class ViewConfig {
     @Bean

@@ -5,17 +5,19 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.duracloud.aitsync.domain.Configuration;
+import org.duracloud.aitsync.service.ConfigManager;
 import org.duracloud.aitsync.service.RestUtils;
 import org.easymock.EasyMock;
 import org.junit.Test;
+
 /**
  * 
  * @author Daniel Bernstein
  * @created 12/17/2012
- *
+ * 
  */
 public class InitControllerTest {
-
 
     @Test
     public void testInit() throws IOException {
@@ -26,8 +28,12 @@ public class InitControllerTest {
         RestUtils restUtils = EasyMock.createMock(RestUtils.class);
         EasyMock.expect(restUtils.getInputStream(EasyMock.anyObject(HttpServletRequest.class)))
                 .andReturn(is);
-        EasyMock.replay(request, restUtils);
-        InitController ic = new InitController(restUtils);
+
+        ConfigManager configManager = EasyMock.createMock(ConfigManager.class);
+        configManager.initialize(EasyMock.isA(Configuration.class));
+        EasyMock.expectLastCall();
+        EasyMock.replay(request, restUtils, configManager);
+        InitController ic = new InitController(restUtils, configManager);
         ic.init();
         EasyMock.verify(request, restUtils);
     }

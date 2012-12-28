@@ -5,9 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.duracloud.aitsync.domain.ArchiveItConfig;
+import org.duracloud.aitsync.domain.Configuration;
+import org.duracloud.aitsync.service.ConfigManager;
 import org.duracloud.aitsync.service.RestUtils;
-import org.duracloud.aitsync.util.ArchiveItConfigMarshaller;
+import org.duracloud.aitsync.util.ConfigurationMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class InitController extends BaseController{
     
     protected RestUtils restUtils;
-
+    private ConfigManager configManager;
+    
     @Autowired
-    public InitController(RestUtils restUtils) {
+    public InitController(RestUtils restUtils, ConfigManager configManager) {
         this.restUtils = restUtils;
+        this.configManager = configManager;
     }
 
 
@@ -40,10 +43,13 @@ public class InitController extends BaseController{
     public ModelAndView init() throws IOException {
         log.debug("initializing...");
         InputStream is = restUtils.getInputStream(request);
-        ArchiveItConfig config = ArchiveItConfigMarshaller.unmarshall(is);
+        Configuration config = ConfigurationMarshaller.unmarshall(is);
+        
+        configManager.initialize(config);
         log.info("successfully initialized archiveit-ingest: {}", config);
         Map<String,String> map = new HashMap<String,String>();
-        map.put("message", "You have successfully initialized archive-it ingest application.");
+        
+        map.put("message", "You have successfully initialized archive-it sync application.");
         ModelAndView mav = new ModelAndView("command", "result", map);
         return mav;
     }
