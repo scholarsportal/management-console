@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.duracloud.aitsync.config.ConfigManager;
 import org.duracloud.aitsync.domain.Mapping;
-import org.duracloud.aitsync.service.ConfigManager;
 import org.duracloud.aitsync.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

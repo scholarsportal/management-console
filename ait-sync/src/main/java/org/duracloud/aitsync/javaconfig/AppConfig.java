@@ -1,11 +1,11 @@
 package org.duracloud.aitsync.javaconfig;
 
+import org.duracloud.aitsync.config.ConfigManager;
+import org.duracloud.aitsync.config.ConfigManagerImpl;
 import org.duracloud.aitsync.mapping.MappingManager;
 import org.duracloud.aitsync.mapping.MappingManagerImpl;
-import org.duracloud.aitsync.service.ConfigManager;
-import org.duracloud.aitsync.service.ConfigManagerImpl;
-import org.duracloud.aitsync.service.RestUtils;
-import org.duracloud.aitsync.service.RestUtilsImpl;
+import org.duracloud.aitsync.util.RestUtils;
+import org.duracloud.aitsync.util.RestUtilsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

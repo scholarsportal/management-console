@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.duracloud.aitsync.config.ConfigManager;
 import org.duracloud.aitsync.domain.Configuration;
-import org.duracloud.aitsync.service.ConfigManager;
-import org.duracloud.aitsync.service.RestUtils;
 import org.duracloud.aitsync.util.ConfigurationMarshaller;
+import org.duracloud.aitsync.util.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

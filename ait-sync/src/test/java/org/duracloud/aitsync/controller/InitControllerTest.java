@@ -5,9 +5,9 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.duracloud.aitsync.config.ConfigManager;
 import org.duracloud.aitsync.domain.Configuration;
-import org.duracloud.aitsync.service.ConfigManager;
-import org.duracloud.aitsync.service.RestUtils;
+import org.duracloud.aitsync.util.RestUtils;
 import org.easymock.EasyMock;
 import org.junit.Test;
 

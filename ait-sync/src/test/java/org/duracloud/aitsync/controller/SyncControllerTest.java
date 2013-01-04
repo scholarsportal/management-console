@@ -1,8 +1,8 @@
 package org.duracloud.aitsync.controller;
 
 import org.duracloud.aitsync.domain.StatusSummary;
-import org.duracloud.aitsync.service.SyncManager;
-import org.duracloud.aitsync.service.SyncManager.State;
+import org.duracloud.aitsync.manager.SyncManager;
+import org.duracloud.aitsync.manager.SyncManager.State;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;

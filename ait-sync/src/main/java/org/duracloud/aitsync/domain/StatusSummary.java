@@ -1,6 +1,6 @@
 package org.duracloud.aitsync.domain;
 
-import org.duracloud.aitsync.service.SyncManager;
+import org.duracloud.aitsync.manager.SyncManager;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 

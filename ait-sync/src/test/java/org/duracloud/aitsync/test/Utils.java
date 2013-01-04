@@ -2,7 +2,7 @@ package org.duracloud.aitsync.test;
 
 import java.io.File;
 
-import org.duracloud.aitsync.service.ConfigManagerImpl;
+import org.duracloud.aitsync.config.ConfigManagerImpl;
 /**
  * 
  * @author Daniel Bernstein
