@@ -32,6 +32,12 @@
       <groupId>org.duracloud</groupId>
       <artifactId>computeprovider</artifactId>
       <version>${duracloud.artifact.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>

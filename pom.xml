@@ -145,7 +145,7 @@
           <plugin>
             <groupId>com.atlassian.maven.plugins</groupId>
             <artifactId>maven-clover2-plugin</artifactId>
-            <version>2.6.2</version>
+            <version>3.1.8</version>
             <configuration>
               <licenseLocation>${cloverLicense}</licenseLocation>
               <targetPercentage>50%</targetPercentage>
@@ -155,6 +155,7 @@
               <generateHtml>true</generateHtml>
               <generateHistorical>true</generateHistorical>
               <historyDir>${user.home}/.clover/history/${project.artifact}</historyDir>
+              <jdk>1.7</jdk>
             </configuration>
           </plugin>
         </plugins>
@@ -164,7 +165,7 @@
   </profiles>
 
   <properties>
-    <duracloud.artifact.version>2.0.3</duracloud.artifact.version>
+    <duracloud.artifact.version>2.3.1</duracloud.artifact.version>
     <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
     <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
     <org.springframework.security.version>3.1.0.RELEASE</org.springframework.security.version>
@@ -328,8 +329,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
@@ -337,6 +338,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.3</version>
         <configuration>
           <warName>${artifactId}-${version}</warName>
           <webResources>
@@ -525,12 +527,6 @@
       </dependency>
 
       <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
-        <version>1.3.0</version>
-      </dependency>
-
-      <dependency>
         <groupId>javax.xml.stream</groupId>
         <artifactId>com.springsource.javax.xml.stream</artifactId>
         <version>1.0.1</version>
@@ -619,7 +615,7 @@
       <dependency>
         <groupId>commons-validator</groupId>
         <artifactId>commons-validator</artifactId>
-        <version>1.3.1</version>
+        <version>1.4.0</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
