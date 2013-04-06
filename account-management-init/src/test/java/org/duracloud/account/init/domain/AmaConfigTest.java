@@ -28,6 +28,11 @@ public class AmaConfigTest {
     private String ldapUserDn = "ldap-user-dn";
     private String ldapPassword = "ldap-password";
     private String ldapUrl = "ldap-url";
+    private String idUtilHost = "id-util-host";
+    private String idUtilPort = "id-util-port";
+    private String idUtilCtxt = "id-util-context";
+    private String idUtilUsername = "id-util-username";
+    private String idUtilPassword = "id-util-password";
 
     private EncryptionUtil encryptionUtil;
 
@@ -45,6 +50,11 @@ public class AmaConfigTest {
         amaConfig.setLdapUserDn(ldapUserDn);
         amaConfig.setLdapPassword(ldapPassword);
         amaConfig.setLdapUrl(ldapUrl);
+        amaConfig.setIdUtilHost(idUtilHost);
+        amaConfig.setIdUtilPort(idUtilPort);
+        amaConfig.setIdUtilCtxt(idUtilCtxt);
+        amaConfig.setIdUtilUsername(idUtilUsername);
+        amaConfig.setIdUtilPassword(idUtilPassword);
 
         encryptionUtil = new EncryptionUtil();
     }
@@ -72,6 +82,15 @@ public class AmaConfigTest {
         Assert.assertTrue(xml.contains(encLdapUserDn));
         Assert.assertTrue(xml.contains(encLdapPassword));
         Assert.assertTrue(xml.contains(ldapUrl));
+
+        String encIdUsername = encryptionUtil.encrypt(idUtilUsername);
+        String encIdPassword = encryptionUtil.encrypt(idUtilPassword);
+
+        Assert.assertTrue(xml.contains(idUtilHost));
+        Assert.assertTrue(xml.contains(idUtilPort));
+        Assert.assertTrue(xml.contains(idUtilCtxt));
+        Assert.assertTrue(xml.contains(encIdUsername));
+        Assert.assertTrue(xml.contains(encIdPassword));
     }
 
     @Test

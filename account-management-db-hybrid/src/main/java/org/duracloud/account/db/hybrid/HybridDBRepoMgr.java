@@ -152,10 +152,12 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
                 new DuracloudAccountClusterRepoImpl(dbClientMgr);
         }
 
-        idUtil.initialize(userRepo,
-                          groupRepo,
+        idUtil.initialize(config.getIdUtilHost(),
+                          config.getIdUtilPort(),
+                          config.getIdUtilCtxt(),
+                          config.getIdUtilUsername(),
+                          config.getIdUtilPassword(),
                           accountRepo,
-                          rightsRepo,
                           userInvitationRepo,
                           instanceRepo,
                           serverImageRepo,

@@ -67,6 +67,18 @@ public class AmaInitDocumentBinding {
                 config.setLdapUrl(ldap.getChildText("url"));
             }
 
+            Element idUtil = root.getChild("idutil");
+            if (null != idUtil) {
+                config.setIdUtilHost(idUtil.getChildText("host"));
+                config.setIdUtilPort(idUtil.getChildText("port"));
+                config.setIdUtilCtxt(idUtil.getChildText("ctxt"));
+
+                String encIdUsername = idUtil.getChildText("username");
+                String encIdPassword = idUtil.getChildText("password");
+                config.setIdUtilUsername(decrypt(encIdUsername));
+                config.setIdUtilPassword(decrypt(encIdPassword));
+            }
+
             config.setHost(root.getChildText("host"));
             config.setPort(root.getChildText("port"));
             config.setCtxt(root.getChildText("ctxt"));
@@ -100,6 +112,11 @@ public class AmaInitDocumentBinding {
             String ldapUserDn = encrypt(amaConfig.getLdapUserDn());
             String ldapPassword = encrypt(amaConfig.getLdapPassword());
             String ldapUrl = amaConfig.getLdapUrl();
+            String idUtilHost = amaConfig.getIdUtilHost();
+            String idUtilPort = amaConfig.getIdUtilPort();
+            String idUtilCtxt = amaConfig.getIdUtilCtxt();
+            String idUtilUsername = encrypt(amaConfig.getIdUtilUsername());
+            String idUtilPassword = encrypt(amaConfig.getIdUtilPassword());
             Collection emails = amaConfig.getAdminAddresses();
 
             xml.append("<ama>");
@@ -126,6 +143,14 @@ public class AmaInitDocumentBinding {
             xml.append("    <password>" + ldapPassword + "</password>");
             xml.append("    <url>" + ldapUrl + "</url>");
             xml.append("  </ldap>");
+
+            xml.append("  <idutil>");
+            xml.append("    <host>" + idUtilHost + "</host>");
+            xml.append("    <port>" + idUtilPort + "</port>");
+            xml.append("    <ctxt>" + idUtilCtxt + "</ctxt>");
+            xml.append("    <username>" + idUtilUsername + "</username>");
+            xml.append("    <password>" + idUtilPassword + "</password>");
+            xml.append("  </idutil>");
 
             xml.append("  <host>" + host + "</host>");
             xml.append("  <port>" + port + "</port>");

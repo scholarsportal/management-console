@@ -33,6 +33,11 @@ public class AmaInitDocumentBindingTest {
     private String ldapUserDn = "ldap-user-dn";
     private String ldapPassword = "ldap-password";
     private String ldapUrl = "ldap-url";
+    private String idUtilHost = "id-util-host";
+    private String idUtilPort = "id-util-port";
+    private String idUtilCtxt = "id-util-context";
+    private String idUtilUsername = "id-util-username";
+    private String idUtilPassword = "id-util-password";
 
     private EncryptionUtil encryptionUtil;
 
@@ -70,6 +75,12 @@ public class AmaInitDocumentBindingTest {
         Assert.assertEquals(ldapPassword, amaConfig.getLdapPassword());
         Assert.assertEquals(ldapUrl, amaConfig.getLdapUrl());
 
+        Assert.assertEquals(idUtilHost, amaConfig.getIdUtilHost());
+        Assert.assertEquals(idUtilPort, amaConfig.getIdUtilPort());
+        Assert.assertEquals(idUtilCtxt, amaConfig.getIdUtilCtxt());
+        Assert.assertEquals(idUtilUsername, amaConfig.getIdUtilUsername());
+        Assert.assertEquals(idUtilPassword, amaConfig.getIdUtilPassword());
+
         Assert.assertEquals("/init", amaConfig.getInitResource());
     }
 
@@ -78,6 +89,8 @@ public class AmaInitDocumentBindingTest {
         String encPassword = encryptionUtil.encrypt(password);
         String encLdapUserDn = encryptionUtil.encrypt(ldapUserDn);
         String encLdapPassword = encryptionUtil.encrypt(ldapPassword);
+        String encIdUsername = encryptionUtil.encrypt(idUtilUsername);
+        String encIdPassword = encryptionUtil.encrypt(idUtilPassword);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<ama>");
@@ -98,6 +111,13 @@ public class AmaInitDocumentBindingTest {
         sb.append("    <password>" + encLdapPassword + "</password>");
         sb.append("    <url>" + ldapUrl + "</url>");
         sb.append("  </ldap>");
+        sb.append("  <idutil>");
+        sb.append("    <host>" + idUtilHost + "</host>");
+        sb.append("    <port>" + idUtilPort + "</port>");
+        sb.append("    <ctxt>" + idUtilCtxt + "</ctxt>");
+        sb.append("    <username>" + encIdUsername + "</username>");
+        sb.append("    <password>" + encIdPassword + "</password>");
+        sb.append("  </idutil>");
         sb.append("</ama>");
 
         return new ByteArrayInputStream(sb.toString().getBytes());
@@ -117,6 +137,11 @@ public class AmaInitDocumentBindingTest {
         amaConfig.setLdapUserDn(ldapUserDn);
         amaConfig.setLdapPassword(ldapPassword);
         amaConfig.setLdapUrl(ldapUrl);
+        amaConfig.setIdUtilHost(idUtilHost);
+        amaConfig.setIdUtilPort(idUtilPort);
+        amaConfig.setIdUtilCtxt(idUtilCtxt);
+        amaConfig.setIdUtilUsername(idUtilUsername);
+        amaConfig.setIdUtilPassword(idUtilPassword);
 
         String doc = AmaInitDocumentBinding.createDocumentFrom(amaConfig);
         Assert.assertNotNull(doc);
@@ -138,5 +163,14 @@ public class AmaInitDocumentBindingTest {
         Assert.assertTrue(doc.contains(encLdapUserDn));
         Assert.assertTrue(doc.contains(encLdapPassword));
         Assert.assertTrue(doc.contains(ldapUrl));
+
+        Assert.assertTrue(doc.contains(idUtilHost));
+        Assert.assertTrue(doc.contains(idUtilPort));
+        Assert.assertTrue(doc.contains(idUtilCtxt));
+
+        String encIdUsername = encryptionUtil.encrypt(idUtilUsername);
+        String encIdPassword = encryptionUtil.encrypt(idUtilPassword);
+        Assert.assertTrue(doc.contains(encIdUsername));
+        Assert.assertTrue(doc.contains(encIdPassword));
     }
 }

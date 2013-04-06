@@ -9,10 +9,21 @@ package org.duracloud.account.db;
  */
 public interface IdUtil {
 
-    public void initialize(DuracloudUserRepo userRepo,
-                           DuracloudGroupRepo groupRepo,
+    /**
+     * This method initializes the IdUtil to the underlying tables.
+     *
+     * @param host of id-generator
+     * @param port of id-generator
+     * @param context of id-generator
+     * @param username of id-generator
+     * @param password of id-generator
+     */
+    public void initialize(String host,
+                           String port,
+                           String context,
+                           String username,
+                           String password,
                            DuracloudAccountRepo accountRepo,
-                           DuracloudRightsRepo rightsRepo,
                            DuracloudUserInvitationRepo userInvitationRepo,
                            DuracloudInstanceRepo instanceRepo,
                            DuracloudServerImageRepo serverImageRepo,

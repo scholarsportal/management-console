@@ -6,17 +6,19 @@ package org.duracloud.account.db.impl;
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
-import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
-import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
-import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBUninitializedException;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.web.RestHttpHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,10 +29,14 @@ import java.util.Collections;
  */
 public class IdUtilImpl implements IdUtil {
 
+    private final Logger log = LoggerFactory.getLogger(IdUtilImpl.class);
+
+    private String host;
+    private String port;
+    private String context;
+    private RestHttpHelper restHelper;
+
     private int accountId = -1;
-    private int userId = -1;
-    private int groupId = -1;
-    private int rightsId = -1;
     private int userInvitationId = -1;
     private int instanceId = -1;
     private int serverImageId = -1;
@@ -40,10 +46,12 @@ public class IdUtilImpl implements IdUtil {
     private int serverDetailsId = -1;
     private int accountClusterId = -1;
 
-    public void initialize(DuracloudUserRepo userRepo,
-                           DuracloudGroupRepo groupRepo,
+    public void initialize(String host,
+                           String port,
+                           String context,
+                           String username,
+                           String password,
                            DuracloudAccountRepo accountRepo,
-                           DuracloudRightsRepo rightsRepo,
                            DuracloudUserInvitationRepo userInvitationRepo,
                            DuracloudInstanceRepo instanceRepo,
                            DuracloudServerImageRepo serverImageRepo,
@@ -52,10 +60,49 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudServiceRepositoryRepo serviceRepositoryRepo,
                            DuracloudServerDetailsRepo serverDetailsRepo,
                            DuracloudAccountClusterRepo accountClusterRepo) {
+        initialize(host,
+                   port,
+                   context,
+                   new RestHttpHelper(new Credential(username, password)),
+                   accountRepo,
+                   userInvitationRepo,
+                   instanceRepo,
+                   serverImageRepo,
+                   computeProviderAccountRepo,
+                   storageProviderAccountRepo,
+                   serviceRepositoryRepo,
+                   serverDetailsRepo,
+                   accountClusterRepo);
+    }
+
+    // For unit-test
+    protected void initialize(String host,
+                              String port,
+                              String context,
+                              RestHttpHelper restHelper,
+                              DuracloudAccountRepo accountRepo,
+                              DuracloudUserInvitationRepo userInvitationRepo,
+                              DuracloudInstanceRepo instanceRepo,
+                              DuracloudServerImageRepo serverImageRepo,
+                              DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
+                              DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
+                              DuracloudServiceRepositoryRepo serviceRepositoryRepo,
+                              DuracloudServerDetailsRepo serverDetailsRepo,
+                              DuracloudAccountClusterRepo accountClusterRepo) {
+        if (null == host || null == port || null == context) {
+            throw new IllegalArgumentException("Args must not be null!");
+        }
+
+        this.host = host;
+        this.port = port;
+        this.context = context;
+
+        if (null == restHelper) {
+            restHelper = new RestHttpHelper();
+        }
+        this.restHelper = restHelper;
+
         this.accountId = max(accountRepo.getIds());
-        this.userId = max(userRepo.getIds());
-        this.groupId = max(groupRepo.getIds());
-        this.rightsId = max(rightsRepo.getIds());
         this.userInvitationId = max(userInvitationRepo.getIds());
         this.instanceId = max(instanceRepo.getIds());
         this.serverImageId = max(serverImageRepo.getIds());
@@ -74,7 +121,8 @@ public class IdUtilImpl implements IdUtil {
     }
 
     private void checkInitialized() {
-        if (accountId < 0 || userId < 0 || rightsId < 0 || userInvitationId < 0) {
+        if (null == host || null == port || null == context ||
+                null == restHelper || accountId < 0 || userInvitationId < 0) {
             throw new DBUninitializedException("IdUtil must be initialized");
         }
     }
@@ -83,24 +131,6 @@ public class IdUtilImpl implements IdUtil {
     public synchronized int newAccountId() {
         checkInitialized();
         return ++accountId;
-    }
-
-    @Override
-    public synchronized int newUserId() {
-        checkInitialized();
-        return ++userId;
-    }
-
-    @Override
-    public synchronized int newGroupId() {
-        checkInitialized();
-        return ++groupId;
-    }
-
-    @Override
-    public synchronized int newRightsId() {
-        checkInitialized();
-        return ++rightsId;
     }
 
     @Override
@@ -149,6 +179,90 @@ public class IdUtilImpl implements IdUtil {
     public int newAccountClusterId() {
         checkInitialized();
         return ++accountClusterId;
+    }
+
+    @Override
+    public int newUserId() {
+        return doGetId("user");
+    }
+
+    @Override
+    public int newRightsId() {
+        return doGetId("rights");
+    }
+
+    @Override
+    public int newGroupId() {
+        return doGetId("group");
+    }
+
+    private synchronized int doGetId(String resource) {
+        checkInitialized();
+
+        RestHttpHelper.HttpResponse response;
+        try {
+            response = restHelper.post(getBaseUrl() + "/" + resource,
+                                       null,
+                                       null);
+        } catch (Exception e) {
+            log.error("Error getting new '" + resource + "' ID!", e);
+            throw new DuraCloudRuntimeException(
+                    "Error getting '" + resource + "' ID: msg = " + e.getMessage(),
+                    e);
+        }
+
+        String body;
+        try {
+            body = response.getResponseBody();
+
+        } catch (Exception e) {
+            log.error("Error getting response body for '" + resource + "' ID!",
+                      e);
+            throw new DuraCloudRuntimeException(
+                    "Error getting response body for '" + resource + "' ID: msg = " + e
+                            .getMessage(),
+                    e);
+        }
+
+        if (null == body) {
+            log.error("Response was null for new '{}' ID!", resource);
+        }
+
+        try {
+            return Integer.parseInt(body);
+
+        } catch (Exception e) {
+            log.error("Error parsing integer from new '" + resource + "' ID body: {}",
+                      body,
+                      e);
+            throw new DuraCloudRuntimeException(
+                    "Error parsing integer from new '" + resource + "' ID body: " + body,
+                    e);
+        }
+    }
+
+    private String getBaseUrl() {
+        return getProtocol() + getHost() + ":" + getPort() + "/" + getContext() + "/id";
+    }
+
+    private String getProtocol() {
+        String protocol = "http://";
+        if (getPort().equals("443")) {
+            protocol = "https://";
+        }
+        return protocol;
+    }
+
+    private String getHost() {
+        return host;
+    }
+
+    private String getPort() {
+        return port;
+    }
+
+    private String getContext() {
+        return context;
     }
 
 }

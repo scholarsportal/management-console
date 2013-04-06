@@ -90,6 +90,13 @@ public class DbBackupDriver {
         amaConfig.setLdapUserDn(ldapUserDn);
         amaConfig.setLdapPassword(ldapPassword);
 
+        // Not used below
+        amaConfig.setIdUtilHost("example.org");
+        amaConfig.setIdUtilPort("80");
+        amaConfig.setIdUtilCtxt("not-used");
+        amaConfig.setIdUtilUsername("not-used");
+        amaConfig.setIdUtilPassword("not-used");
+
         return new DbUtil(amaConfig, getWorkDir(props));
     }
 
@@ -99,7 +106,7 @@ public class DbBackupDriver {
         String storeBucket = getProperty(props, STORE_BUCKET);
 
         String bucketId = "x." + storeUsername + "." + storeBucket;
-        bucketId = bucketId.toLowerCase();;
+        bucketId = bucketId.toLowerCase();
 
         return new StoreUtilS3Impl(storeUsername, storePassword, bucketId);
     }

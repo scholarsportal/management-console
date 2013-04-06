@@ -59,6 +59,11 @@ public class HybridDBRepoMgrTest {
     private static final String ldapUserDn = "";
     private static final String ldapPassword = "";
     private static final String ldapUrl = "ldap://test.org:389";
+    private static final String idUtilHost = "id-util-host";
+    private static final String idUtilPort = "id-util-port";
+    private static final String idUtilCtxt = "id-util-ctxt";
+    private static final String idUtilUsername = "id-util-username";
+    private static final String idUtilPassword = "id-util-password";
 
     final String DOMAIN_PREFIX = "p-";
 
@@ -98,6 +103,11 @@ public class HybridDBRepoMgrTest {
         config.setLdapUserDn(ldapUserDn);
         config.setLdapPassword(ldapPassword);
         config.setLdapUrl(ldapUrl);
+        config.setIdUtilHost(idUtilHost);
+        config.setIdUtilPort(idUtilPort);
+        config.setIdUtilCtxt(idUtilCtxt);
+        config.setIdUtilUsername(idUtilUsername);
+        config.setIdUtilPassword(idUtilPassword);
 
         repoMgr.setDbClientMgr(dbClientMgr);
         repoMgr.setLdapTemplate(ldapTemplate);
@@ -174,10 +184,12 @@ public class HybridDBRepoMgrTest {
     }
 
     private void createIdUtilMocks() {
-        idUtil.initialize(EasyMock.isA(DuracloudUserRepo.class),
-                          EasyMock.isA(DuracloudGroupRepo.class),
+        idUtil.initialize(EasyMock.isA(String.class),
+                          EasyMock.isA(String.class),
+                          EasyMock.isA(String.class),
+                          EasyMock.isA(String.class),
+                          EasyMock.isA(String.class),
                           EasyMock.isA(DuracloudAccountRepo.class),
-                          EasyMock.isA(DuracloudRightsRepo.class),
                           EasyMock.isA(DuracloudUserInvitationRepo.class),
                           EasyMock.isA(DuracloudInstanceRepo.class),
                           EasyMock.isA(DuracloudServerImageRepo.class),

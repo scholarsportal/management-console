@@ -35,6 +35,13 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     protected static final String ldapPasswordKey = "password";
     protected static final String ldapUrlKey = "url";
 
+    protected final static String idUtilKey = "idutil";
+    protected final static String idUtilHostKey = "host";
+    protected final static String idUtilPortKey = "port";
+    protected final static String idUtilCtxtKey = "ctxt";
+    protected final static String idUtilUsernameKey = "username";
+    protected final static String idUtilPasswordKey = "password";
+
     private String awsUsername;
     private String awsPassword;
     private String host;
@@ -44,6 +51,11 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     private String ldapUserDn;
     private String ldapPassword;
     private String ldapUrl;
+    private String idUtilHost;
+    private String idUtilPort;
+    private String idUtilCtxt;
+    private String idUtilUsername;
+    private String idUtilPassword;
 
     private Map<String, String> adminAddresses = new HashMap<String, String>();
 
@@ -70,6 +82,9 @@ public class AmaConfig extends BaseConfig implements AppConfig {
         } else if (prefix.equalsIgnoreCase(ldapKey)) {
             loadLdap(suffix, value);
 
+        } else if (prefix.equalsIgnoreCase(idUtilKey)) {
+            loadIdUtil(suffix, value);
+
         } else {
             String msg = "unknown key: " + key + " (" + value + ")";
             log.error(msg);
@@ -92,6 +107,29 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
         } else {
             String msg = "unknown ldap key: " + key + " (" + value + ")";
+            log.error(msg);
+            throw new DuraCloudRuntimeException(msg);
+        }
+    }
+
+    private void loadIdUtil(String key, String value) {
+        if (key.equalsIgnoreCase(idUtilHostKey)) {
+            idUtilHost = value;
+
+        } else if (key.equalsIgnoreCase(idUtilPortKey)) {
+            idUtilPort = value;
+
+        } else if (key.equalsIgnoreCase(idUtilCtxtKey)) {
+            idUtilCtxt = value;
+
+        } else if (key.equalsIgnoreCase(idUtilUsernameKey)) {
+            idUtilUsername = value;
+
+        } else if (key.equalsIgnoreCase(idUtilPasswordKey)) {
+            idUtilPassword = value;
+
+        } else {
+            String msg = "unknown idUtil key: " + key + " (" + value + ")";
             log.error(msg);
             throw new DuraCloudRuntimeException(msg);
         }
@@ -185,5 +223,45 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public void setLdapUrl(String ldapUrl) {
         this.ldapUrl = ldapUrl;
+    }
+
+    public String getIdUtilHost() {
+        return idUtilHost;
+    }
+
+    public void setIdUtilHost(String idUtilHost) {
+        this.idUtilHost = idUtilHost;
+    }
+
+    public String getIdUtilPort() {
+        return idUtilPort;
+    }
+
+    public void setIdUtilPort(String idUtilPort) {
+        this.idUtilPort = idUtilPort;
+    }
+
+    public String getIdUtilCtxt() {
+        return idUtilCtxt;
+    }
+
+    public void setIdUtilCtxt(String idUtilCtxt) {
+        this.idUtilCtxt = idUtilCtxt;
+    }
+
+    public String getIdUtilUsername() {
+        return idUtilUsername;
+    }
+
+    public void setIdUtilUsername(String idUtilUsername) {
+        this.idUtilUsername = idUtilUsername;
+    }
+
+    public String getIdUtilPassword() {
+        return idUtilPassword;
+    }
+
+    public void setIdUtilPassword(String idUtilPassword) {
+        this.idUtilPassword = idUtilPassword;
     }
 }

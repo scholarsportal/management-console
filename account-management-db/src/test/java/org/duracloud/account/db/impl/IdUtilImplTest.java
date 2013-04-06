@@ -15,6 +15,8 @@ import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.common.web.RestHttpHelper;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -32,10 +34,14 @@ public class IdUtilImplTest {
 
     private IdUtilImpl idUtil;
 
+    private static final String host = "host";
+    private static final String port = "port";
+    private static final String context = "context";
+
+    private RestHttpHelper restHelper;
+    private RestHttpHelper.HttpResponse response;
+
     private DuracloudAccountRepo accountRepo;
-    private DuracloudUserRepo userRepo;
-    private DuracloudGroupRepo groupRepo;
-    private DuracloudRightsRepo rightsRepo;
     private DuracloudUserInvitationRepo userInvitationRepo;
     private DuracloudInstanceRepo instanceRepo;
     private DuracloudServerImageRepo serverImageRepo;
@@ -49,10 +55,12 @@ public class IdUtilImplTest {
 
     @Before
     public void setUp() throws Exception {
+        restHelper = EasyMock.createMock("RestHttpHelper",
+                                         RestHttpHelper.class);
+        response = EasyMock.createMock("HttpResponse",
+                                       RestHttpHelper.HttpResponse.class);
+
         accountRepo = createMockAccountRepo(COUNT);
-        userRepo = createMockUserRepo(COUNT);
-        groupRepo = createMockGroupRepo(COUNT);
-        rightsRepo = createMockRightsRepo(COUNT);
         userInvitationRepo = createMockUserInvitationRepo(COUNT);
         instanceRepo = createMockInstanceRepo(COUNT);
         serverImageRepo = createMockServerImageRepo(COUNT);
@@ -63,10 +71,14 @@ public class IdUtilImplTest {
         accountClusterRepo = createMockAccountClusterRepo(COUNT);
 
         idUtil = new IdUtilImpl();
-        idUtil.initialize(userRepo,
-                          groupRepo,
+    }
+
+    private void initialize() {
+        idUtil.initialize(host,
+                          port,
+                          context,
+                          restHelper,
                           accountRepo,
-                          rightsRepo,
                           userInvitationRepo,
                           instanceRepo,
                           serverImageRepo,
@@ -77,11 +89,24 @@ public class IdUtilImplTest {
                           accountClusterRepo);
     }
 
+    private void replayMocks() {
+        EasyMock.replay(restHelper,
+                        response,
+                        accountRepo,
+                        userInvitationRepo,
+                        instanceRepo,
+                        serverImageRepo,
+                        computeProviderAccountRepo,
+                        storageProviderAccountRepo,
+                        serviceRepositoryRepo,
+                        serverDetailsRepo,
+                        accountClusterRepo);
+    }
+
     private DuracloudUserInvitationRepo createMockUserInvitationRepo(int count) {
         DuracloudUserInvitationRepo repo =
             EasyMock.createMock(DuracloudUserInvitationRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -89,30 +114,6 @@ public class IdUtilImplTest {
         DuracloudAccountRepo repo =
             EasyMock.createMock(DuracloudAccountRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
-        return repo;
-    }
-
-    private DuracloudUserRepo createMockUserRepo(int count) {
-        DuracloudUserRepo repo =
-            EasyMock.createMock(DuracloudUserRepo.class);
-        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
-        return repo;
-    }
-
-    private DuracloudGroupRepo createMockGroupRepo(int count) {
-        DuracloudGroupRepo repo = EasyMock.createMock(DuracloudGroupRepo.class);
-        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
-        return repo;
-    }
-
-    private DuracloudRightsRepo createMockRightsRepo(int count) {
-        DuracloudRightsRepo repo =
-            EasyMock.createMock(DuracloudRightsRepo.class);
-        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -120,7 +121,6 @@ public class IdUtilImplTest {
         DuracloudInstanceRepo repo =
             EasyMock.createMock(DuracloudInstanceRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -128,7 +128,6 @@ public class IdUtilImplTest {
         DuracloudServerImageRepo repo =
             EasyMock.createMock(DuracloudServerImageRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -136,7 +135,6 @@ public class IdUtilImplTest {
         DuracloudComputeProviderAccountRepo repo =
             EasyMock.createMock(DuracloudComputeProviderAccountRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -144,7 +142,6 @@ public class IdUtilImplTest {
         DuracloudStorageProviderAccountRepo repo =
             EasyMock.createMock(DuracloudStorageProviderAccountRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -152,7 +149,6 @@ public class IdUtilImplTest {
         DuracloudServiceRepositoryRepo repo =
             EasyMock.createMock(DuracloudServiceRepositoryRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -160,7 +156,6 @@ public class IdUtilImplTest {
         DuracloudServerDetailsRepo repo =
             EasyMock.createMock(DuracloudServerDetailsRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -168,7 +163,6 @@ public class IdUtilImplTest {
         DuracloudAccountClusterRepo repo =
             EasyMock.createMock(DuracloudAccountClusterRepo.class);
         EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        EasyMock.replay(repo);
         return repo;
     }
 
@@ -182,10 +176,9 @@ public class IdUtilImplTest {
 
     @After
     public void tearDown() throws Exception {
+        EasyMock.verify(restHelper);
+        EasyMock.verify(response);
         EasyMock.verify(accountRepo);
-        EasyMock.verify(userRepo);
-        EasyMock.verify(groupRepo);
-        EasyMock.verify(rightsRepo);
         EasyMock.verify(userInvitationRepo);
         EasyMock.verify(instanceRepo);
         EasyMock.verify(serverImageRepo);
@@ -196,57 +189,120 @@ public class IdUtilImplTest {
     }
 
     @Test
-    public void testNewAccountId() throws Exception {
-        Assert.assertEquals(COUNT, idUtil.newAccountId());
-    }
-
-    @Test
     public void testNewUserId() throws Exception {
-        Assert.assertEquals(COUNT, idUtil.newUserId());
+        Integer id = 7;
+        createMocks(id.toString(), "user");
+        replayMocks();
+        initialize();
+
+        Integer result = idUtil.newUserId();
+        Assert.assertEquals(id, result);
     }
 
     @Test
-    public void testNewGroupId() throws Exception {
-        Assert.assertEquals(COUNT, idUtil.newGroupId());
+    public void testNewUserIdError() throws Exception {
+        createMocks("not a number", "user");
+        replayMocks();
+        initialize();
+
+        boolean thrown = false;
+        try {
+            idUtil.newUserId();
+            Assert.fail("exception expected");
+        } catch (DuraCloudRuntimeException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
     }
 
     @Test
     public void testNewRightsId() throws Exception {
-        Assert.assertEquals(COUNT, idUtil.newRightsId());
+        Integer id = 7;
+        createMocks(id.toString(), "rights");
+        replayMocks();
+        initialize();
+
+        Integer result = idUtil.newRightsId();
+        Assert.assertEquals(id, result);
+    }
+
+    @Test
+    public void testNewRightsIdError() throws Exception {
+        createMocks("not a number", "rights");
+        replayMocks();
+        initialize();
+
+        boolean thrown = false;
+        try {
+            idUtil.newRightsId();
+            Assert.fail("exception expected");
+        } catch (DuraCloudRuntimeException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
+    }
+
+    private void createMocks(String id, String resource) throws Exception {
+        EasyMock.expect(response.getResponseBody()).andReturn(id);
+        EasyMock.expect(restHelper.post("http://" + host + ":" + port + "/" + context + "/id/" + resource,
+                                        null,
+                                        null)).andReturn(response);
+    }
+
+
+    @Test
+    public void testNewAccountId() throws Exception {
+        replayMocks();
+        initialize();
+        Assert.assertEquals(COUNT, idUtil.newAccountId());
     }
 
     @Test
     public void testNewUserInvitationId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newUserInvitationId());
     }
 
     @Test
     public void testNewInstanceInvitationId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
     @Test
     public void testNewServerImageId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
     @Test
     public void testNewProviderAccountId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
     @Test
     public void testNewServiceRepositoryId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
     @Test
     public void testNewServerDetailsId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newServerDetailsId());
     }
 
     @Test
     public void testNewAccountClusterId() throws Exception {
+        replayMocks();
+        initialize();
         Assert.assertEquals(COUNT, idUtil.newAccountClusterId());
     }
 
