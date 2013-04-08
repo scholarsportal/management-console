@@ -21,8 +21,8 @@
       <script type="text/javascript" language="JavaScript">
         function same(form) {
             if(form.computeCredentialsSame.checked){
-                form.computeUsername.value = form.primaryStorageUsername.value;
-                form.computePassword.value = form.primaryStoragePassword.value;
+                form.computeUsername.value = form.primaryStorageCredentialsusername.value;
+                form.computePassword.value = form.primaryStorageCredentialspassword.value;
             }
         }
       </script>
@@ -35,6 +35,9 @@
        method="POST">
         <fieldset>
           <legend>Primary Storage</legend>
+              <form:hidden
+               path="primaryStorageCredentials.id">
+              </form:hidden>
           <ol>
             <li>
               <form:label
@@ -42,6 +45,7 @@
                path="primaryStorageCredentials.username"><spring:message code="username"/></form:label>
 
               <form:input
+               id="primaryStorageCredentialsusername"
                cssErrorClass="error"
                path="primaryStorageCredentials.username"
                onclick="same(this.form)"
@@ -58,10 +62,11 @@
                cssErrorClass="error"
                path="primaryStorageCredentials.password"><spring:message code="password"/></form:label>
               <form:password
+               id="primaryStorageCredentialspassword"
                cssErrorClass="error"
                showPassword="true"
                path="primaryStorageCredentials.password"
-               onclick="same(this.form)"/>                      
+               onclick="same(this.form)"/>
               <form:errors
                path="primaryStorageCredentials.password"
                cssClass="error"
