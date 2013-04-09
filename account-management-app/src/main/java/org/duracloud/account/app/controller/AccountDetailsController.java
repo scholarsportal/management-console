@@ -3,15 +3,22 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountService;
+import org.duracloud.account.util.UserFeedbackUtil;
 import org.duracloud.account.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
+import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +28,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 
@@ -66,6 +73,55 @@ public class AccountDetailsController extends AbstractAccountController {
             providerForm.getProvider()));
         return createAccountRedirectModelAndView(accountId, ACCOUNT_DETAILS_PATH);
     }
+
+    
+    @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/remove", method = RequestMethod.POST)
+    public View removeProvider(@PathVariable int accountId,
+                                       @PathVariable String providerType,
+                                       RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException,
+            DBConcurrentUpdateException {
+        log.debug("attempting to remove provider {} from  account {}",
+                  providerType,
+                  accountId);
+        AccountService accountService =
+            accountManagerService.getAccount(accountId);
+
+        StorageProviderType spType =
+            StorageProviderType.fromString(providerType);
+
+        Set<StorageProviderAccount> ssps =
+            accountService.getSecondaryStorageProviders();
+        boolean removed = false;
+        for (StorageProviderAccount spa : ssps) {
+            if (spa.getProviderType().equals(spType)) {
+                accountService.removeStorageProvider(spa.getId());
+                String message =
+                    "Successfully removed provider (" + providerType + ")!";
+                log.info(message + " from account " + accountId);
+                UserFeedbackUtil.addFlash(message,
+                                          Severity.INFO,
+                                          redirectAttributes);
+                removed = true;
+                break;
+            }
+        }
+
+        if (!removed) {
+            String message =
+                "Unable to remove provider ("
+                    + providerType
+                    + ").  A provider of that type is not a secondary provider associated with this account.";
+            log.info(message + " from account " + accountId);
+            UserFeedbackUtil.addFlash(message,
+                                      Severity.ERROR,
+                                      redirectAttributes);
+        }
+
+        return createAccountRedirectView(accountId,
+                                                 ACCOUNT_DETAILS_PATH);
+    }
+
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
     public ModelAndView

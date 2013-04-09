@@ -214,7 +214,17 @@
                               <td>${p.providerType}</td>
 
                               <td>(Secondary)</td>
-                              <td></td>
+                              <td>
+                                <sec:authorize access="hasAnyRole('ROLE_ROOT')">
+                                    <form
+                                     action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/details/providers/${p.providerType}/remove"
+                                     method="post">
+                                      <button style="margin-right:8px !important"
+                                       type="submit" onclick="Ask('Are you sure you want to delete this provider?',this); return false;">
+                                      Remove</button>
+                                    </form>
+                                </sec:authorize>
+                              </td>
                             </tr>
                     </c:forEach>
               </table></td>

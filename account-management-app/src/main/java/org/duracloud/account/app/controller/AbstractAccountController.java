@@ -33,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -151,6 +152,18 @@ public abstract class AbstractAccountController extends AbstractController {
      */
     protected ModelAndView createAccountRedirectModelAndView(int accountId,
                                                              String suffix) {
+       
+        return new ModelAndView(createAccountRedirectView(accountId, suffix));
+    }
+    
+    /**
+     * 
+     * @param accountId
+     * @param suffix
+     * @return
+     */
+    protected View createAccountRedirectView(int accountId,
+                                           String suffix) {
         String url =
             MessageFormat.format("{0}{1}{2}",
                                  ACCOUNTS_PATH,
@@ -159,8 +172,10 @@ public abstract class AbstractAccountController extends AbstractController {
 
         RedirectView redirectView = new RedirectView(url, true);
         redirectView.setExposeModelAttributes(false);
-        return new ModelAndView(redirectView);
+        
+        return redirectView;
     }
+
 
 	protected void loadBillingInfo(int accountId, Model model) {
         //TODO LoadBillingInfo
