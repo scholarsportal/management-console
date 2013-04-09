@@ -5,6 +5,7 @@ package org.duracloud.account.util;
 
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.db.error.UserAlreadyExistsException;
@@ -113,6 +114,24 @@ public interface DuracloudUserService {
                                String newPassword)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException;
 
+
+    /**
+     * @param userId
+     * @param oldPassword
+     * @param oldPasswordEncoded
+     * @param newPassword
+     * @throws DBNotFoundException
+     * @throws InvalidPasswordException
+     * @throws DBConcurrentUpdateException
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public void changePasswordInternal(int userId,
+                               String oldPassword,
+                               boolean oldPasswordEncoded,
+                               String newPassword)
+        throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException;
+
+    
     /**
      * This method generates a random password, replaces the existing password
      * with the randomly generated one, and sends an email to the address on
@@ -132,6 +151,16 @@ public interface DuracloudUserService {
                                String securityAnswer)
         throws DBNotFoundException, InvalidPasswordException, DBConcurrentUpdateException, UnsentEmailException;
 
+    /**
+     * Returns a user password change invitation
+     * @param redemptionCode
+     * @return
+     * @throws DBNotFoundException
+     */
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    UserInvitation retrievePassordChangeInvitation(String redemptionCode)
+        throws DBNotFoundException;
+    
     /**
      * This method loads a DuracloudUser from the persistence layer and
      * populate its rights info.
@@ -166,6 +195,11 @@ public interface DuracloudUserService {
     public int redeemAccountInvitation(int userId, String redemptionCode)
         throws InvalidRedemptionCodeException;
 
+    
+    @Secured({"role:ROLE_ANONYMOUS, scope:ANY"})
+    public void redeemPasswordChangeRequest(int userId, String redemptionCode)
+        throws InvalidRedemptionCodeException;
+
     /**
      * This method persists the arg user details.
      *
@@ -185,4 +219,5 @@ public interface DuracloudUserService {
                                  String securityQuestion,
                                  String securityAnswer)
         throws DBNotFoundException, DBConcurrentUpdateException;
+
 }

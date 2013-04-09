@@ -33,21 +33,21 @@ import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.notification.Notifier;
 import org.duracloud.account.util.usermgmt.UserDetailsPropagator;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -64,17 +64,20 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private Notifier notifier;
     private AccountUtil accountUtil;
     private DuracloudInstanceManagerService instanceManagerService;
+    private DuracloudUserService userService;
 
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
                                     UserDetailsPropagator propagator,
                                     AccountUtil accountUtil,
-                                    DuracloudInstanceManagerService instanceManagerService) {
+                                    DuracloudInstanceManagerService instanceManagerService,
+                                    DuracloudUserService userService) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
         this.accountUtil = accountUtil;
         this.instanceManagerService = instanceManagerService;
+        this.userService = userService;
     }
 
 	@Override
@@ -92,26 +95,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
         DuracloudUser user = getUserRepo().findById(userId);
 
-        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
-        String generatedPassword =
-            Long.toString(Math.abs(new Random().nextLong()), 36);
-        user.setPassword(util.generateChecksum(generatedPassword));
-
-        getUserRepo().save(user);
-
-        Set<AccountRights> rightsSet =
-            repoMgr.getRightsRepo().findByUserId(userId);
-        // Propagate changes for each of the user's accounts
-        if(!isUserRoot(rightsSet)) { // Do no propagate if user is root
-            for(AccountRights rights : rightsSet) {
-                log.debug("Propagating password update to account {}",
-                          rights.getAccountId());
-                propagator.propagateUserUpdate(rights.getAccountId(),
-                                               userId);
-            }
+        try {
+            userService.forgotPassword(user.getUsername(), user.getSecurityQuestion(), user.getSecurityAnswer());
+        } catch (InvalidPasswordException e) {
+            log.error("This should never happen!",e);
         }
-
-        getNotifier().sendNotificationPasswordReset(user, generatedPassword);
 	}
 
     private boolean isUserRoot(Set<AccountRights> rightsSet) {

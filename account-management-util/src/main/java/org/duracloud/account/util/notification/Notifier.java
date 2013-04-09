@@ -4,6 +4,8 @@
 
 package org.duracloud.account.util.notification;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
@@ -34,13 +36,16 @@ public class Notifier {
     }
 
     public void sendNotificationPasswordReset(DuracloudUser user,
-                                               String newPassword) {
+                                               String redemptionCode, 
+                                               Date date) {
         String subject = "DuraCloud Account Management: Password Reset";
         StringBuilder message = new StringBuilder();
-        message.append("Your password has been reset. Please use the ");
-        message.append("following password to log into DuraCloud: ");
-        message.append(newPassword);
-        message.append(getProfileBaseMsg());
+        message.append("You have requested to reset your password.");
+        message.append("Click on this following link to change your password:\n");
+        message.append(AmaEndpoint.getUrl()+"/users/change-password/"+redemptionCode+"\n");
+        message.append("This link is good for one password change only and will expire on " + date);
+        message.append("\n\n");
+        message.append("The DuraCloud team");
         sendEmail(subject, message.toString(), user.getEmail());
     }
 

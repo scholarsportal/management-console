@@ -42,7 +42,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -368,6 +367,38 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
     }
 
+    
+    @Override
+    public void changePasswordInternal(int userId,
+                                       String oldPassword,
+                                       boolean oldPasswordEncoded,
+                                       String newPassword)
+        throws DBNotFoundException,
+            InvalidPasswordException,
+            DBConcurrentUpdateException {
+        changePassword(userId, oldPassword, oldPasswordEncoded, newPassword);
+    }
+    
+    @Override
+    public void redeemPasswordChangeRequest(int userId, String redemptionCode)
+        throws InvalidRedemptionCodeException {
+
+        log.info("Redeeming change request for user with ID {}", userId);
+
+        DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
+
+        // Retrieve the invitation
+        UserInvitation invitation;
+        try {
+            invitation = invRepo.findByRedemptionCode(redemptionCode);
+        } catch(DBNotFoundException e) {
+            throw new InvalidRedemptionCodeException(redemptionCode);
+        }
+
+        // Delete the invitation
+        invRepo.delete(invitation.getId());
+    }
+    
     private void propagateUserUpdate(int userId, String username) {
         Set<AccountRights> rightsSet =
             repoMgr.getRightsRepo().findByUserId(userId);
@@ -403,17 +434,37 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             throw new InvalidPasswordException(user.getId());
         }
 
-        Random r = new Random();
-        String generatedPassword = Long.toString(Math.abs(r.nextLong()), 36);
-
-        changePassword(user.getId(),
-                       user.getPassword(),
-                       true,
-                       generatedPassword);
-
-        getNotifier().sendNotificationPasswordReset(user, generatedPassword);
+        ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+        String code = username + System.currentTimeMillis();
+        String redemptionCode = cksumUtil.generateChecksum(code);
+        int id = repoMgr.getIdUtil().newUserInvitationId();
+        int expirationDays = 14;
+        UserInvitation userInvitation = new UserInvitation(id,
+                                                           -1,
+                                                           "n/a",
+                                                           "n/a",
+                                                           "n/a",
+                                                           "n/a",
+                                                           username,
+                                                           user.getEmail(),
+                                                           expirationDays,
+                                                           redemptionCode);
+        
+        this.repoMgr.getUserInvitationRepo().save(userInvitation);
+        
+        getNotifier().sendNotificationPasswordReset(user,
+                                                    redemptionCode,
+                                                    userInvitation.getExpirationDate());
     }
-
+    
+    @Override 
+    public UserInvitation
+        retrievePassordChangeInvitation(String redemptionCode)
+            throws DBNotFoundException {
+        return this.repoMgr.getUserInvitationRepo()
+                           .findByRedemptionCode(redemptionCode);
+    }
+    
     @Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {

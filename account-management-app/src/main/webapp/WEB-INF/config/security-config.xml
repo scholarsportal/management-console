@@ -28,6 +28,16 @@
     <intercept-url pattern="**" access="permitAll"/>
     <http-basic/>
   </http>
+
+  <http pattern="/users/change-password/**"
+        auto-config="false"
+        use-expressions="true"
+        create-session="stateless">
+    <intercept-url pattern="**" access="permitAll"  />
+
+    <http-basic/>
+  </http>
+
   <http pattern="/users/new"
         auto-config="false"
         use-expressions="true"

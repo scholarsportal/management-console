@@ -15,22 +15,26 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
+import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudAccount;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.InstanceType;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.util.UserFeedbackUtil;
 import org.duracloud.account.util.error.InvalidPasswordException;
 import org.duracloud.account.util.error.InvalidRedemptionCodeException;
 import org.duracloud.account.util.error.UnsentEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.binding.message.Message;
+import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,6 +46,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -55,6 +60,12 @@ import org.springframework.web.servlet.view.RedirectView;
 @Lazy
 @RequestMapping(AbstractController.USERS_MAPPING)
 public class UserController extends AbstractController {
+
+    protected static final String FORGOT_PASSWORD_SUCCESS_VIEW = "forgot-password-success";
+
+    private static final String ANONYMOUS_CHANGE_PASSWORD_VIEW = "anonymous-change-password";
+
+    private static final String ANONYMOUS_CHANGE_PASSWORD_FAILURE_VIEW = "anonymous-change-password-failure";
 
     public static final String USER_KEY = "user";
 
@@ -298,6 +309,69 @@ public class UserController extends AbstractController {
 
     }
 
+    @RequestMapping(value = { "/change-password/{redemptionCode}" }, method = RequestMethod.GET)
+    public String
+        anonymousPasswordChange(@PathVariable String redemptionCode,
+                                Model model) throws DBNotFoundException {
+        log.debug("opening change password form  for invitation {}",
+                  redemptionCode);
+        if (checkRedemptionCode(redemptionCode, model) == null) {
+            return ANONYMOUS_CHANGE_PASSWORD_FAILURE_VIEW;
+        }
+        model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+        return ANONYMOUS_CHANGE_PASSWORD_VIEW;
+    }
+
+    protected UserInvitation checkRedemptionCode(String redemptionCode, Model model) {
+        try{
+            return this.userService.retrievePassordChangeInvitation(redemptionCode);
+        }catch(DBNotFoundException ex){
+            model.addAttribute(UserFeedbackUtil.FEEDBACK_KEY,
+                               UserFeedbackUtil.create(Severity.ERROR,
+                                                       "This invitation is not valid."));
+            return null;
+        }
+    }
+
+    @RequestMapping(value = {  "/change-password/{redemptionCode}" }, method = RequestMethod.POST)
+    public String anonymousPasswordChange(@PathVariable String redemptionCode,
+                                          @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
+                                 BindingResult result,
+                                 Model model) throws Exception {
+
+        UserInvitation invitation = checkRedemptionCode(redemptionCode, model);
+        if(invitation == null){
+            return ANONYMOUS_CHANGE_PASSWORD_FAILURE_VIEW;
+        }
+
+        String username = invitation.getAdminUsername();
+        DuracloudUser user = this.userService.loadDuracloudUserByUsernameInternal(username);
+
+        // check for errors
+        if (!result.hasErrors()) {
+            log.info("changing user password for {}", username);
+            int id = user.getId();
+            try {
+                this.userService.changePasswordInternal(id,
+                                                form.getOldPassword(),
+                                                false,
+                                                form.getPassword());
+                
+                this.userService.redeemPasswordChangeRequest(user.getId(), redemptionCode);
+                model.addAttribute("adminUrl", AmaEndpoint.getUrl());
+                return "anonymous-change-password-success";
+                
+            } catch (InvalidPasswordException e) {
+                result.addError(new FieldError(CHANGE_PASSWORD_FORM_KEY,
+                                               "oldPassword",
+                                               "The old password is not correct"));
+            }
+        }
+
+        return ANONYMOUS_CHANGE_PASSWORD_VIEW;
+
+    }
+    
     /**
      * @param user
      * @param mav
@@ -476,9 +550,7 @@ public class UserController extends AbstractController {
                 return FORGOT_PASSWORD_VIEW;
             }
 
-            String redirect = "redirect:/";
-
-            return redirect;
+            return FORGOT_PASSWORD_SUCCESS_VIEW;
         }
 
         return FORGOT_PASSWORD_VIEW;

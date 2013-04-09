@@ -478,6 +478,31 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
     }
 
     @Test
+    public void testRedeemPasswordChangeRequest() throws Exception {
+        String redemptionCode = "ABCD";
+        int invitationId = 0;
+        int expirationDays = 2;
+        UserInvitation invitation = new UserInvitation(invitationId,
+                                                       acctId,
+                                                       "test",
+                                                       "my@email.com",
+                                                       expirationDays,
+                                                       redemptionCode);
+        EasyMock.expect(
+            invitationRepo.findByRedemptionCode(EasyMock.isA(String.class)))
+            .andReturn(invitation)
+            .anyTimes();
+
+
+        invitationRepo.delete(EasyMock.anyInt());
+        EasyMock.expectLastCall().anyTimes();
+
+        replayMocks();
+
+        userService.redeemPasswordChangeRequest(userId, redemptionCode);
+    }
+
+    @Test
     public void testRevokeUserRights() throws Exception {
         Set<Role> roles = new HashSet<Role>();
         roles.add(Role.ROLE_USER);
@@ -571,6 +596,16 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         setUpChangePassword(username, true, true, Role.ROLE_USER);
 
         userService.changePassword(userId, "password", false, password);
+    }
+
+    
+    @Test
+    public void testChangePasswordInternal() throws Exception {
+        String username = "test-username";
+        String password = "test-newPassword";
+        setUpChangePassword(username, true, true, Role.ROLE_USER);
+
+        userService.changePasswordInternal(userId, "password", false, password);
     }
 
     @Test
@@ -801,6 +836,17 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
 
         DuracloudUser updatedUser = userCapture.getValue();
         Assert.assertEquals(newEmail, updatedUser.getEmail());
+    }
+    
+    @Test
+    public void testRetrievePassordChangeInvitation() throws Exception{
+        String code = "code";
+        UserInvitation ui = EasyMock.createMock(UserInvitation.class);
+        EasyMock.expect(this.invitationRepo.findByRedemptionCode(code)).andReturn(ui);
+        EasyMock.replay(ui);
+        replayMocks();
+        userService.retrievePassordChangeInvitation(code);
+        EasyMock.verify(ui);
     }
 
 }

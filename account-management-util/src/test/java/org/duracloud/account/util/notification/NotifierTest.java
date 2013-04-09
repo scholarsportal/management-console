@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.util.notification;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.notification.Emailer;
@@ -11,9 +16,6 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author: Bill Branan
@@ -80,12 +82,12 @@ public class NotifierTest {
             .times(1);
         replayMocks();
 
-        String newPassword = "newpass";
-        notifier.sendNotificationPasswordReset(user, newPassword);
+        String redemptionCode = "redemptionCode";
+        notifier.sendNotificationPasswordReset(user, redemptionCode, new Date());
         String msg = message.getValue();
         assertNotNull(msg);
-        assertTrue("Message should contain new password",
-                   msg.contains(newPassword));
+        assertTrue("Message should contain redemptionCode",
+                   msg.contains(redemptionCode));
         assertTrue(host + " :: " + msg, msg.contains(host));
         assertTrue(msg, !msg.contains("manage.duracloud.org"));
     }

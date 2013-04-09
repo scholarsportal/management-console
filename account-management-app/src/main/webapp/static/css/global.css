@@ -98,6 +98,7 @@ input:-webkit-autofill {
 {
 	display:inline-block;
 	border-bottom: 0 !important;
+	white-space:nowrap;
 }
 
 

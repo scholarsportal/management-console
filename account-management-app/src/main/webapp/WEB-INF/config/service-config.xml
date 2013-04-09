@@ -143,6 +143,7 @@
     <constructor-arg ref="userDetailsPropagator" />
     <constructor-arg ref="accountUtil" />
     <constructor-arg ref="instanceManagerService" />
+    <constructor-arg ref="duracloudUserService" />
   </bean>
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->

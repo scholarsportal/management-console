@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudUserService;
@@ -270,7 +271,7 @@ public class UserControllerTest extends AmaControllerTestBase {
                                                     null);
 
         Assert.assertNotNull(view);
-        Assert.assertEquals("redirect:/", view);
+        Assert.assertEquals(UserController.FORGOT_PASSWORD_SUCCESS_VIEW, view);
 
     }
 
@@ -295,6 +296,47 @@ public class UserControllerTest extends AmaControllerTestBase {
         Assert.assertNotNull(mav);
     }
 
+    @Test
+    public void testAnonymousChangePassword() throws Exception {
+        ChangePasswordForm cbangePasswordForm = createMock(ChangePasswordForm.class);
+        setupNoBindingResultErrors();
+        EasyMock.expect(cbangePasswordForm.getOldPassword())
+                .andReturn("")
+                .anyTimes();
+        EasyMock.expect(cbangePasswordForm.getPassword())
+                .andReturn("")
+                .anyTimes();
+        
+
+        userService = EasyMock.createMock(DuracloudUserService.class);
+        EasyMock.expect(userService.loadDuracloudUserByUsernameInternal(EasyMock.isA(String.class)))
+                .andReturn(createUser())
+                .anyTimes();
+        userService.changePasswordInternal(EasyMock.anyInt(),
+                                   EasyMock.isA(String.class),
+                                   EasyMock.anyBoolean(),
+                                   EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+        
+        userService.redeemPasswordChangeRequest(EasyMock.anyInt(),EasyMock.isA(String.class));
+        EasyMock.expectLastCall();
+
+        EasyMock.expect(userService.retrievePassordChangeInvitation(EasyMock.isA(String.class))).andReturn(new UserInvitation(1, -1, "n/a", "n/a", "n/a", "n/a","username", "email", 1, "aaa" ));
+
+        
+        EasyMock.replay(userService);
+        userController.setUserService(userService);        
+        
+        replayMocks();
+
+        String view = userController.anonymousPasswordChange("ABC",
+                                                    cbangePasswordForm,
+                                                    result,
+                                                    model);
+        Assert.assertNotNull(view);
+    }
+
+    
     @Test
     public void testForgotPasswordErrors() throws Exception {
         setupHasBindingResultErrors(true);

@@ -31,6 +31,11 @@
   <definition name="user-new-success" template="/WEB-INF/jspx/users/user-new-success.jspx" />
 
   <definition name="forgot-password" template="/WEB-INF/jspx/users/forgot-password.jspx" />
+  <definition name="forgot-password-success" template="/WEB-INF/jspx/users/forgot-password-success.jspx" />
+  <definition name="anonymous-change-password" template="/WEB-INF/jspx/users/anonymous-change-password.jspx" />
+  <definition name="anonymous-change-password-success" template="/WEB-INF/jspx/users/anonymous-change-password-success.jspx" />
+  <definition name="anonymous-change-password-failure" template="/WEB-INF/jspx/users/anonymous-change-password-failure.jspx" />
+  
   <definition name="user-edit" template="/WEB-INF/jspx/users/user/user-edit.jspx" />
   <definition name="user-change-password" template="/WEB-INF/jspx/users/user/change-password.jspx" />
 

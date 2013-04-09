@@ -3,30 +3,29 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountCluster;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.DuracloudInstanceService;
+import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
-import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -35,18 +34,39 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
     private RootAccountManagerServiceImpl rootService;
 
+    private DuracloudUserService us;
+    
     @Before
     @Override
     public void before() throws Exception {
         super.before();
 
+        us = EasyMock.createMock(DuracloudUserService.class);
+
         rootService = new RootAccountManagerServiceImpl(repoMgr,
                                                         notificationMgr,
                                                         propagator,
                                                         accountUtil,
-                                                        instanceManagerService);
+                                                        instanceManagerService,
+                                                        us);
+        
+
+
     }
 
+    @Override
+    protected void replayMocks() {
+        super.replayMocks();
+        EasyMock.replay(us);
+
+    }
+    
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        EasyMock.verify(us);
+
+    }
     @Test
     public void testAddDuracloudImage() {
         //TODO implement test;
@@ -587,42 +607,18 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
 
     @Test
     public void testResetUsersPassword() throws Exception {
-        setUpResetUsersPassword();
-
-        rootService.resetUsersPassword(1);
-    }
-
-    private void setUpResetUsersPassword() throws Exception {
         DuracloudUser user = newDuracloudUser(1, "test");
 
         EasyMock.expect(userRepo.findById(EasyMock.anyInt()))
             .andReturn(user);
         
-        userRepo.save(user);
+        us.forgotPassword(EasyMock.isA(String.class),EasyMock.isA(String.class),EasyMock.isA(String.class));
         EasyMock.expectLastCall();
-
-        Set<AccountRights> rights = new HashSet<AccountRights>();
-        rights.add(
-            new AccountRights(0, 1, 1, Role.ROLE_ADMIN.getRoleHierarchy()));
-
-        EasyMock.expect(rightsRepo.findByUserId(EasyMock.anyInt()))
-            .andReturn(rights);
-
-        propagator.propagateUserUpdate(EasyMock.anyInt(), EasyMock.anyInt());
-        EasyMock.expectLastCall();
-
-        Emailer emailer = EasyMock.createMock("Emailer",
-                                              Emailer.class);
-        emailer.send(EasyMock.anyObject(String.class),
-                     EasyMock.anyObject(String.class),
-                     EasyMock.anyObject(String.class));
-        EasyMock.expectLastCall();
-
-        EasyMock.expect(notificationMgr.getEmailer())
-            .andReturn(emailer);
-
-        EasyMock.replay(emailer);
         replayMocks();
+        
+        rootService.resetUsersPassword(1);
+
     }
+
 
 }
