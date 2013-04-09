@@ -104,8 +104,11 @@ public class AccountController extends AbstractAccountController {
                accountInfo.getStatus().equals(AccountInfo.AccountStatus.INACTIVE) ) {
                 Set<String> versions = instanceManagerService.getVersions();
                 model.addAttribute(DC_VERSIONS_KEY, versions);
+                
+                AccountInstanceForm accountInstanceForm =  new AccountInstanceForm();
+                accountInstanceForm.setVersion(instanceManagerService.getLatestVersion());
                 model.addAttribute(NEW_INSTANCE_FORM,
-                                   new AccountInstanceForm());
+                                  accountInstanceForm);
             }
         }
     }

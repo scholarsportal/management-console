@@ -380,7 +380,6 @@ public class UserController extends AbstractController {
         throws DuracloudInstanceNotAvailableException {
         mav.addObject(USER_KEY, user);
         Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
-        mav.addObject(NEW_INSTANCE_FORM, new AccountInstanceForm());
 
         List<DuracloudAccount> activeAccounts = new ArrayList<DuracloudAccount>();
         List<DuracloudAccount> inactiveAccounts = new ArrayList<DuracloudAccount>();
@@ -411,8 +410,14 @@ public class UserController extends AbstractController {
         mav.addObject("inactiveAccounts", inactiveAccounts);
         mav.addObject("pendingAccounts", pendingAccounts);
         mav.addObject("cancelledAccounts", cancelledAccounts);
+        String latestVersion = instanceManagerService.getLatestVersion();
+        mav.addObject("latestVersion", latestVersion);
 
-        mav.addObject("latestVersion", instanceManagerService.getLatestVersion());
+        AccountInstanceForm accountInstanceForm = new AccountInstanceForm();
+        accountInstanceForm.setVersion(latestVersion);
+        mav.addObject(NEW_INSTANCE_FORM, accountInstanceForm);
+
+
     }
 
     private DuracloudAccount loadAccountInstances(AccountInfo accountInfo,
