@@ -176,6 +176,11 @@
             <div
                class="dc-second-subgroup">
                 
+                <div class="tip">
+                  <p>If you have forgotten your old password you can <a target="_NEW" href="${pageContext.request.contextPath}/users/forgot-password"><em>reset your password here</em></a>.
+                  </p>
+                </div>
+                
           <form:form
            action="${pageContext.request.contextPath}/users/byid/${user.username}/change-password"
            method="POST"
@@ -257,8 +262,6 @@
 
                   Save</button>
                 </div>
-
-
             </div>
           </form:form>
 </div></div>

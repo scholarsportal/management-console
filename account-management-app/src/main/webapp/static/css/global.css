@@ -836,14 +836,27 @@ th.headerSortDown {
 	color: #050;
 }
 
+
+
 .message-holder .error {
 	border:1px solid #F00;
 	background-color: #FAA;
 	color: #500;
 }
 
-.message-holder .warning {
+.message-holder .warning, .tip {
 	border:1px solid #FF0;
 	background-color: #FFA;
 	color: #550;
 }
+
+.tip {
+  padding:10px;
+  margin: 20px;
+}
+
+.tip  a {
+  
+  color: #090;
+}
+
