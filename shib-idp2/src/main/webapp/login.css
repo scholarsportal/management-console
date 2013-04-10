@@ -22,7 +22,7 @@ body,ol,ul,li,button,fieldset,form,label,legend,table,tr,th,td {
 }
 
 .horizontal-list li {
-  display: inline-block;
+  display: inline;
   border-bottom: 0 !important;
 }
 
@@ -114,19 +114,16 @@ body {
 }
 
 form ol li {
-  line-height: 30px;
+  /*line-height: 30px;*/
   list-style: none;
   margin-bottom: 5px;
+  margin-left: 2px;
+  text-align: right;
 }
 
-form ol ol li {
-  background: none;
-  border: none;
-  float: left;
-}
 
 form label {
-  float: left;
+  /*float: left*/;
   font-size: 13px;
   width: 250px;
   text-align: right;
@@ -134,16 +131,10 @@ form label {
   margin-right: 10px;
 }
 
-form fieldset fieldset label {
-  background: none no-repeat left 50%;
-  line-height: 20px;
-  padding: 0 0 0 30px;
-  width: auto;
+fieldset {
+	text-align: right;
 }
 
-form fieldset fieldset label:hover {
-  cursor: pointer;
-}
 
 form input:not  ([type=radio]  ),form select,form textarea {
   border-radius: 0 !important;

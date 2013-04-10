@@ -79,7 +79,7 @@ String mcHost = (String)p.getProperty("managementConsoleHost");
       <ul class="horizontal-list">
 
 <li><a href="http://<%=mcHost%>/ama/users/forgot-password">Forgot
-            Password</a></li><li><a href="http://<%=mcHost%>/ama/users/new" id="new-user-link">Create New
+            Password</a>&nbsp; </li><li>&nbsp; <a href="http://<%=mcHost%>/ama/users/new" id="new-user-link">Create New
             Profile</a></li>
       </ul>
     </div>
