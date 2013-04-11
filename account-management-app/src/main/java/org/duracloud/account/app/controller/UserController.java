@@ -318,7 +318,7 @@ public class UserController extends AbstractController {
         if (checkRedemptionCode(redemptionCode, model) == null) {
             return ANONYMOUS_CHANGE_PASSWORD_FAILURE_VIEW;
         }
-        model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new ChangePasswordForm());
+        model.addAttribute(CHANGE_PASSWORD_FORM_KEY, new AnonymousChangePasswordForm());
         return ANONYMOUS_CHANGE_PASSWORD_VIEW;
     }
 
@@ -335,7 +335,7 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = {  "/change-password/{redemptionCode}" }, method = RequestMethod.POST)
     public String anonymousPasswordChange(@PathVariable String redemptionCode,
-                                          @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
+                                          @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid AnonymousChangePasswordForm form,
                                  BindingResult result,
                                  Model model) throws Exception {
 
@@ -353,8 +353,8 @@ public class UserController extends AbstractController {
             int id = user.getId();
             try {
                 this.userService.changePasswordInternal(id,
-                                                form.getOldPassword(),
-                                                false,
+                                                user.getPassword(),
+                                                true,
                                                 form.getPassword());
                 
                 this.userService.redeemPasswordChangeRequest(user.getId(), redemptionCode);
