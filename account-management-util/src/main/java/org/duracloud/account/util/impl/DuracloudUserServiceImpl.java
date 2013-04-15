@@ -461,8 +461,16 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     public UserInvitation
         retrievePassordChangeInvitation(String redemptionCode)
             throws DBNotFoundException {
-        return this.repoMgr.getUserInvitationRepo()
+        UserInvitation invite =  this.repoMgr.getUserInvitationRepo()
                            .findByRedemptionCode(redemptionCode);
+        
+        if(invite.getExpirationDate().getTime() < System.currentTimeMillis()){
+            log.info("invitation {} has expired. Deleting from repo...",invite);
+            this.repoMgr.getUserInvitationRepo().delete(invite.getId());
+            throw new DBNotFoundException("Invitation has expired: " + invite);
+        }else{
+            return invite;
+        }
     }
     
     @Override

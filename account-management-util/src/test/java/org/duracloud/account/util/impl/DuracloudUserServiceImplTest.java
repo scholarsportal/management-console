@@ -3,6 +3,12 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
@@ -27,11 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -837,15 +838,41 @@ public class DuracloudUserServiceImplTest extends DuracloudServiceTestBase {
         DuracloudUser updatedUser = userCapture.getValue();
         Assert.assertEquals(newEmail, updatedUser.getEmail());
     }
+
     
     @Test
-    public void testRetrievePassordChangeInvitation() throws Exception{
+    public void testRetrievePassordChangeInvitationExpired() throws Exception{
+        testRetrievePassordChangeInvitation(new Date(System.currentTimeMillis()-1000000));
+    }
+    
+    @Test
+    public void testRetrievePassordChangeInvitationUnexpired() throws Exception{
+        testRetrievePassordChangeInvitation(new Date(System.currentTimeMillis()+1000000));
+    }
+
+    private  void testRetrievePassordChangeInvitation(Date expirationDate) throws Exception{
         String code = "code";
         UserInvitation ui = EasyMock.createMock(UserInvitation.class);
+        EasyMock.expect(ui.getExpirationDate()).andReturn(expirationDate);
+ 
+        boolean expired = expirationDate.getTime() < System.currentTimeMillis();
+        if(expired){
+            EasyMock.expect(ui.getId()).andReturn(0);
+            this.invitationRepo.delete(EasyMock.anyInt());
+            EasyMock.expectLastCall();
+        }
+
         EasyMock.expect(this.invitationRepo.findByRedemptionCode(code)).andReturn(ui);
         EasyMock.replay(ui);
         replayMocks();
-        userService.retrievePassordChangeInvitation(code);
+        try{
+            userService.retrievePassordChangeInvitation(code);
+            Assert.assertEquals(expired, false);
+
+        }catch(DBNotFoundException ex){
+            Assert.assertEquals(expired, true);
+        }
+
         EasyMock.verify(ui);
     }
 
