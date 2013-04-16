@@ -74,7 +74,7 @@ public class RootBot extends AdminBot {
 
     private void clickDelete(String username) {
         String deleteUserSelector =
-            "css=.users [data-username='" + username + "'] button.delete";
+            "css=#users [data-username='" + username + "'] button.delete";
         
         //verify that the element in question is present
         Assert.assertTrue(sc.isElementPresent(deleteUserSelector));

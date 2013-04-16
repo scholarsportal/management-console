@@ -127,7 +127,7 @@ public abstract class AbstractIntegrationTest {
     protected Selenium createSeleniumClient(String url) {
         Selenium s =  new DefaultSelenium("localhost", 4444, "*pifirefox", url);
         s.start("addCustomRequestHeader=true");
-        //setRemoteUser(s,System.getProperty("rootUsername", "monkey"));
+        s.setTimeout(SeleniumHelper.DEFAULT_PAGE_LOAD_WAIT_IN_MS);
         return s;
     }
 

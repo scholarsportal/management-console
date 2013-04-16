@@ -169,6 +169,9 @@ public class AccountSetupForm {
             return this.providerType;
         }
         
+        public void setProviderType(StorageProviderType providerType) {
+            this.providerType = providerType;
+        }
         
         public String getUsername() {
             return username;

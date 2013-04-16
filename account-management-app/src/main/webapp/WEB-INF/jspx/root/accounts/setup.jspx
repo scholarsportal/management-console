@@ -4,6 +4,7 @@
  xmlns="http://www.w3.org/1999/xhtml"
  xmlns:jsp="http://java.sun.com/JSP/Page"
  xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:fn="http://java.sun.com/jsp/jstl/functions"
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:form="http://www.springframework.org/tags/form"
  xmlns:spring="http://www.springframework.org/tags">
@@ -81,13 +82,11 @@
                varStatus="loop"
                items="${setupAccountForm.secondaryStorageCredentailsList}">
             <fieldset>
-              <legend>Secondary Storage : ${s.providerType}</legend>
+              <legend>Secondary Storage : ${setupAccountForm.secondaryStorageCredentailsList[loop.index].providerType}</legend>
                   <form:hidden
                    path="secondaryStorageCredentailsList[${loop.index}].id">
                   </form:hidden>
-                  <form:hidden
-                   path="secondaryStorageCredentailsList[${loop.index}].providerType">
-                  </form:hidden>
+                  <input type="hidden" name="secondaryStorageCredentailsList[${loop.index}].providerType" value="${fn:toUpperCase(setupAccountForm.secondaryStorageCredentailsList[loop.index].providerType)}"/>
 
               <ol>
               <li>

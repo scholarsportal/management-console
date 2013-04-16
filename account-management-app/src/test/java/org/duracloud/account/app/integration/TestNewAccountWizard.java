@@ -10,6 +10,7 @@ import java.util.Map;
 import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.flow.createaccount.CreateAccountFlowHandler;
+import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -111,8 +112,8 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
         clickAndWait("css=tr[data-name='"+accountName+"'] .configure");
         
         //enter insufficient data
-        sc.type("id=primaryStorageCredentials.username", "username");
-        sc.type("id=primaryStorageCredentials.password", "password");
+        sc.type("id=primaryStorageCredentialsusername", "username");
+        sc.type("id=primaryStorageCredentialspassword", "password");
 
         //click ok
         clickAndWait("id=ok");
@@ -121,7 +122,7 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
         Assert.assertTrue(isElementPresent("css=input[id='secondaryStorageCredentailsList0.username'][class~='error']"));
         
         //complete form
-        Assert.assertTrue(isTextPresent("rackspace"));
+        Assert.assertTrue(isTextPresent(StorageProviderType.RACKSPACE.name()));
         
         sc.type("id=secondaryStorageCredentailsList0.username", "username");
         sc.type("id=secondaryStorageCredentailsList0.password", "password");
