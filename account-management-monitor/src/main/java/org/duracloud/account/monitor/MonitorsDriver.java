@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
 import org.duracloud.account.db.backup.util.EmailUtil;
 import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
+import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
 import org.duracloud.account.monitor.hadoop.HadoopServiceMonitorDriver;
 import org.duracloud.account.monitor.instance.InstanceMonitorDriver;
 import org.duracloud.account.monitor.storereporter.StoreReporterMonitorDriver;
@@ -24,14 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static org.duracloud.account.monitor.MonitorsDriver.Monitor.DUPLICATION;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.HADOOP;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.INSTANCE;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.STORE_REPORTER;
 
 /**
- * This class is the command-line driver for executing monitors for both
- * hadoop jobs, and instance health across all accounts managed by the
- * Management Console defined by the configuration credentials.
+ * This class is the command-line driver for executing monitors for
+ * hadoop jobs, instance health, storage reporting, and duplication checks that
+ * are run across DuraCloud accounts managed by the Management Console that is
+ * defined by the configuration credentials.
  *
  * @author Andrew Woods
  *         Date: 7/18/11
@@ -58,7 +61,7 @@ public class MonitorsDriver {
      * This enum defines the types of monitors available through this driver.
      */
     public enum Monitor {
-        HADOOP, INSTANCE, STORE_REPORTER;
+        HADOOP, INSTANCE, STORE_REPORTER, DUPLICATION;
 
         public Runnable getMonitorDriver(Properties props) {
             if (this.equals(HADOOP)) {
@@ -70,6 +73,9 @@ public class MonitorsDriver {
             } else if (this.equals(STORE_REPORTER)) {
                 return new StoreReporterMonitorDriver(props);
 
+            } else if (this.equals(DUPLICATION)) {
+                return new DuplicationMonitorDriver(props);
+
             } else {
                 throw new DuraCloudRuntimeException("Unknown type: " + this);
             }
@@ -79,7 +85,6 @@ public class MonitorsDriver {
             return name().toLowerCase();
         }
     }
-
 
     public MonitorsDriver(Properties props) {
         this.props = props;
@@ -185,6 +190,8 @@ public class MonitorsDriver {
             msg.append(INSTANCE);
             msg.append("' | '");
             msg.append(STORE_REPORTER);
+            msg.append("' | '");
+            msg.append(DUPLICATION);
             msg.append("'");
             System.err.println(usage(msg.toString()));
             System.exit(1);
@@ -223,14 +230,17 @@ public class MonitorsDriver {
         sb.append("\n\n");
         sb.append("Usage: ");
         sb.append("MonitorsDriver ");
-        sb.append("<hadoop|instance|store_reporter> <properties-file>");
+        sb.append("<hadoop|instance|store_reporter|duplication> ");
+        sb.append("<properties-file>");
         sb.append("\n\t");
         sb.append("Where '");
         sb.append(HADOOP);
         sb.append("', '");
         sb.append(INSTANCE);
-        sb.append("', or '");
+        sb.append("', '");
         sb.append(STORE_REPORTER);
+        sb.append("', or '");
+        sb.append(DUPLICATION);
         sb.append("' must be provided to indicate the monitoring target.");
         sb.append("\n\t");
         sb.append("And where 'properties-file' contains the necessary ");
