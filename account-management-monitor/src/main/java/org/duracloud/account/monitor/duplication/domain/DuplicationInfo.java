@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class holds details about the duplication status of the spaces in a
@@ -18,14 +19,12 @@ import java.util.Map;
 public class DuplicationInfo {
 
     private String host;
-    private Map<String, Long> primarySpaceCounts;
-    private Map<String, Long> secondarySpaceCounts;
+    private Map<String, Store> stores;
     private List<String> issues;
 
     public DuplicationInfo(String host) {
         this.host = host;
-        this.primarySpaceCounts = new HashMap<>();
-        this.secondarySpaceCounts = new HashMap<>();
+        this.stores = new HashMap<>();
         this.issues = new ArrayList<>();
     }
 
@@ -41,24 +40,28 @@ public class DuplicationInfo {
         return issues.size() > 0;
     }
 
-    public void addPrimarySpace(String spaceId, long count) {
-        primarySpaceCounts.put(spaceId, count);
+    public void addSpaceCount(String storeId, String spaceId, long count) {
+        checkStore(storeId);
+        stores.get(storeId).addSpace(spaceId, count);
     }
 
-    public void addSecondarySpace(String spaceId, long count) {
-        secondarySpaceCounts.put(spaceId, count);
+    private void checkStore(String storeId) {
+        if(!stores.containsKey(storeId)) {
+            stores.put(storeId, new Store(storeId));
+        }
     }
 
     public String getHost() {
         return host;
     }
 
-    public Map<String, Long> getPrimarySpaceCounts() {
-        return primarySpaceCounts;
+    public Set<String> getStoreIds() {
+        return stores.keySet();
     }
 
-    public Map<String, Long> getSecondarySpaceCounts() {
-        return secondarySpaceCounts;
+    public Map<String, Long> getSpaceCounts(String storeId) {
+        checkStore(storeId);
+        return stores.get(storeId).getSpaceCounts();
     }
 
     @Override
@@ -80,6 +83,28 @@ public class DuplicationInfo {
         }
         sb.append("\n");
         return sb.toString();
+    }
+
+    private class Store {
+        private String storeId;
+        private Map<String, Long> spaceCounts;
+
+        public Store(String storeId) {
+            this.storeId = storeId;
+            spaceCounts = new HashMap<>();
+        }
+
+        public String getStoreId() {
+            return storeId;
+        }
+
+        public void addSpace(String spaceId, long count) {
+            spaceCounts.put(spaceId, count);
+        }
+
+        public Map<String, Long> getSpaceCounts() {
+            return spaceCounts;
+        }
     }
 
 }

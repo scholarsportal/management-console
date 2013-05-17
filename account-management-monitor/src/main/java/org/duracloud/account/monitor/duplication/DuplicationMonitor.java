@@ -66,31 +66,37 @@ public class DuplicationMonitor extends BaseMonitor {
                 // Connect to storage providers
                 ContentStoreManager storeManager = getStoreManager(host);
                 ContentStore primary = storeManager.getPrimaryContentStore();
-                ContentStore secondary =
-                    getSecondaryStore(storeManager, primary.getStoreId());
+                String primaryStoreId = primary.getStoreId();
+                List<ContentStore> secondaryList =
+                    getSecondaryStores(storeManager, primaryStoreId);
 
-                // Get list of spaces to compare
+                // Get primary space listing and count
                 List<String> primarySpaces = getSpaces(host, primary);
-                List<String> secondarySpaces = getSpaces(host, secondary);
+                countSpaces(host, info, primary, primarySpaces);
 
-                if(primarySpaces.size() != secondarySpaces.size()) {
-                    info.addIssue("The spaces listings do not match " +
-                                  "between primary and secondary providers.");
+                // Get space listing and space counts for secondary providers
+                for(ContentStore secondary : secondaryList) {
+                    List<String> secondarySpaces = getSpaces(host, secondary);
+                    if(primarySpaces.size() != secondarySpaces.size()) {
+                        info.addIssue("The spaces listings do not match " +
+                                      "between primary and secondary " +
+                                      "provider: " +
+                                      secondary.getStorageProviderType());
+                    }
+                    // Determine item count for secondary provider spaces
+                    countSpaces(host, info, secondary, secondarySpaces);
                 }
 
-                // Determine item count for each space in both providers
-                countSpaces(host, info, primary, primarySpaces, true);
-                countSpaces(host, info, secondary, secondarySpaces, false);
-
                 // Compare the space counts between providers
-                compareSpaces(info);
-                report.addDupInfo(host, info);
+                compareSpaces(primaryStoreId, info);
             } catch (Exception e) {
                 String error = e.getClass() + " exception encountered while " +
                     "running dup monitor for host " + host +
                     ". Exception message: " + e.getMessage();
                 log.error(error);
                 info.addIssue(error);
+            } finally {
+                report.addDupInfo(host, info);
             }
         }
 
@@ -110,23 +116,21 @@ public class DuplicationMonitor extends BaseMonitor {
     }
 
     /*
-     * Get the secondary storage provider. Note that it is expected that
-     * each account has only 2 storage providers, primary and one secondary.
+     * Get the secondary storage providers.
      */
-    protected ContentStore getSecondaryStore(ContentStoreManager storeManager,
-                                             String primaryStoreId)
+    protected List<ContentStore> getSecondaryStores(ContentStoreManager storeManager,
+                                                    String primaryStoreId)
         throws ContentStoreException {
         Map<String, ContentStore> stores =
             new HashMap(storeManager.getContentStores());
-        if(stores.keySet().size() != 2) {
-            String error = "Expecting exactly 2 storage providers " +
-                           "(one primary and one secondary) " +
-                           ". Instead found: " + stores.size();
-            throw new RuntimeException(error);
-        }
+        List<ContentStore> secondaryStores = new ArrayList<>();
 
-        stores.remove(primaryStoreId);
-        return stores.values().iterator().next();
+        for(ContentStore store : stores.values()) {
+            if(!store.getStoreId().equals(primaryStoreId)) {
+                secondaryStores.add(store);
+            }
+        }
+        return secondaryStores;
     }
 
     /*
@@ -152,18 +156,19 @@ public class DuplicationMonitor extends BaseMonitor {
      * Perform a content count for all spaces in the list for the given account
      */
     protected void countSpaces(String host,
-                             DuplicationInfo info,
-                             ContentStore store,
-                             List<String> spaces,
-                             boolean primary) {
+                               DuplicationInfo info,
+                               ContentStore store,
+                               List<String> spaces) {
+        String storeId = store.getStoreId();
+        String storeType = store.getStorageProviderType();
         for(String spaceId : spaces) {
             try {
+                log.info("Counting space '" + spaceId + "' in store " +
+                          storeType + " for host " + host + " ...");
                 long count = getSpaceCount(store, spaceId);
-                if(primary) {
-                    info.addPrimarySpace(spaceId, count);
-                } else {
-                    info.addSecondarySpace(spaceId, count);
-                }
+                log.info("Count for space '" + spaceId + "' in store " +
+                         storeType + " for host " + host + ": " + count);
+                info.addSpaceCount(storeId, spaceId, count);
             } catch(ContentStoreException e) {
                 String error = "ContentStoreException encountered " +
                     "attempting to get count of space " + spaceId +
@@ -171,11 +176,7 @@ public class DuplicationMonitor extends BaseMonitor {
                     ". Exception message: " + e.getMessage();
                 log.error(error);
                 info.addIssue(error);
-                if(primary) {
-                    info.addPrimarySpace(spaceId, -1);
-                } else {
-                    info.addSecondarySpace(spaceId, -1);
-                }
+                info.addSpaceCount(storeId, spaceId, -1);
             }
         }
     }
@@ -191,22 +192,25 @@ public class DuplicationMonitor extends BaseMonitor {
     /*
      * Compare the counted number of space items between storage providers
      */
-    protected void compareSpaces(DuplicationInfo info) {
-        Map<String, Long> primarySpaces = info.getPrimarySpaceCounts();
-        Map<String, Long> secondarySpaces = info.getSecondarySpaceCounts();
+    protected void compareSpaces(String primaryStoreId, DuplicationInfo info) {
+        Map<String, Long> primarySpaces = info.getSpaceCounts(primaryStoreId);
+        for(String storeId : info.getStoreIds()) {
+            Map<String, Long> secondarySpaces = info.getSpaceCounts(storeId);
 
-        for(String spaceId : primarySpaces.keySet()) {
-            Long primaryCount = primarySpaces.get(spaceId);
-            Long secondaryCount = secondarySpaces.get(spaceId);
+            for(String spaceId : primarySpaces.keySet()) {
+                Long primaryCount = primarySpaces.get(spaceId);
+                Long secondaryCount = secondarySpaces.get(spaceId);
 
-            if(null == secondaryCount) {
-                info.addIssue("The secondary provider is missing space: " +
-                              spaceId);
-            } else if(!primaryCount.equals(secondaryCount)) {
-                info.addIssue("The content item counts for the space " +
-                    spaceId + " do not match between primary and secondary " +
-                    "providers. Primary count: " + primaryCount +
-                    ". Secondary count: " + secondaryCount + ".");
+                if(null == secondaryCount) {
+                    info.addIssue("The secondary provider (ID=" + storeId +
+                                  ") is missing space: " + spaceId);
+                } else if(!primaryCount.equals(secondaryCount)) {
+                    info.addIssue("The content item counts for the space " +
+                        spaceId + " do not match between primary and secondary " +
+                        "providers. Primary count: " + primaryCount +
+                        ". Secondary (ID=" + storeId + ") " +
+                        "count: " + secondaryCount + ".");
+                }
             }
         }
     }

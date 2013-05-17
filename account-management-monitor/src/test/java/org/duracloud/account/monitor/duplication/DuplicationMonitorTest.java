@@ -67,7 +67,7 @@ public class DuplicationMonitorTest {
     }
 
     @Test
-    public void testGetSecondaryStore() throws Exception {
+    public void testGetSecondaryStores() throws Exception {
         String primaryId = "primary-id";
         String secondaryId = "secondary-id";
         Map<String, ContentStore> stores = new HashMap<>();
@@ -80,8 +80,9 @@ public class DuplicationMonitorTest {
 
         replayMocks();
 
-        ContentStore secondary =
-            dupMonitor.getSecondaryStore(storeManager, primaryId);
+        List<ContentStore> secondaries =
+            dupMonitor.getSecondaryStores(storeManager, primaryId);
+        ContentStore secondary = secondaries.iterator().next();
         assertNotNull(secondary);
         assertEquals(secondaryId, secondary.getStoreId());
     }
@@ -123,9 +124,15 @@ public class DuplicationMonitorTest {
         String host = "host";
         String space1 = "space-1";
         String space2 = "space-2";
+        String storeId = "store-id";
+        String storeType = "store-type";
         DuplicationInfo dupInfo = new DuplicationInfo(host);
         List<String> spaces = Arrays.asList(space1, space2);
 
+        EasyMock.expect(store.getStorageProviderType())
+                .andReturn(storeType);
+        EasyMock.expect(store.getStoreId())
+                .andReturn(storeId);
         EasyMock.expect(store.getSpaceContents(space1))
                 .andReturn(Arrays.asList("1").iterator());
         EasyMock.expect(store.getSpaceContents(space2))
@@ -133,8 +140,8 @@ public class DuplicationMonitorTest {
 
         replayMocks();
 
-        dupMonitor.countSpaces(host, dupInfo, store, spaces, true);
-        Map<String, Long> spaceCounts = dupInfo.getPrimarySpaceCounts();
+        dupMonitor.countSpaces(host, dupInfo, store, spaces);
+        Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
         assertEquals(new Long(1), spaceCounts.get(space1));
         assertEquals(new Long(2), spaceCounts.get(space2));
     }
@@ -145,12 +152,14 @@ public class DuplicationMonitorTest {
         assertFalse(dupInfo.hasIssues());
         assertEquals(0, dupInfo.getIssues().size());
 
+        String primaryStoreId = "primary";
+        String secStoreId = "secondary";
         String space1 = "space-1";
-        dupInfo.addPrimarySpace(space1, 100);
-        dupInfo.addSecondarySpace(space1, 200);
+        dupInfo.addSpaceCount(primaryStoreId, space1, 100);
+        dupInfo.addSpaceCount(secStoreId, space1, 200);
         assertFalse(dupInfo.hasIssues());
 
-        dupMonitor.compareSpaces(dupInfo);
+        dupMonitor.compareSpaces(primaryStoreId, dupInfo);
         assertTrue(dupInfo.hasIssues());
         assertEquals(1, dupInfo.getIssues().size());
 

@@ -48,26 +48,38 @@ public class DuplicationInfoTest {
         assertTrue(dupInfo.toString().contains("ISSUES"));
 
         // Check primary space counts
-        Map<String, Long> primaryCounts = dupInfo.getPrimarySpaceCounts();
+        String primaryStoreId = "primary";
+        Map<String, Long> primaryCounts = dupInfo.getSpaceCounts(primaryStoreId);
         assertEquals(0, primaryCounts.size());
 
-        dupInfo.addPrimarySpace("space1", 1);
-        dupInfo.addPrimarySpace("space2", 2);
-        primaryCounts = dupInfo.getPrimarySpaceCounts();
+        dupInfo.addSpaceCount(primaryStoreId, "space1", 1);
+        dupInfo.addSpaceCount(primaryStoreId, "space2", 2);
+        primaryCounts = dupInfo.getSpaceCounts(primaryStoreId);
         assertEquals(2, primaryCounts.size());
         assertEquals(new Long(1), primaryCounts.get("space1"));
         assertEquals(new Long(2), primaryCounts.get("space2"));
 
         // Check secondary space counts
-        Map<String, Long> secondaryCounts = dupInfo.getSecondarySpaceCounts();
+        String secStoreId = "secondary";
+        Map<String, Long> secondaryCounts = dupInfo.getSpaceCounts(secStoreId);
         assertEquals(0, secondaryCounts.size());
 
-        dupInfo.addSecondarySpace("space1", 1);
-        dupInfo.addSecondarySpace("space2", 2);
-        secondaryCounts = dupInfo.getSecondarySpaceCounts();
+        dupInfo.addSpaceCount(secStoreId, "space1", 1);
+        dupInfo.addSpaceCount(secStoreId, "space2", 2);
+        secondaryCounts = dupInfo.getSpaceCounts(secStoreId);
         assertEquals(2, secondaryCounts.size());
         assertEquals(new Long(1), secondaryCounts.get("space1"));
         assertEquals(new Long(2), secondaryCounts.get("space2"));
+
+        // Check tertiary space counts
+        String terStoreId = "tertiary";
+        Map<String, Long> tertiaryCounts = dupInfo.getSpaceCounts(terStoreId);
+        assertEquals(0, tertiaryCounts.size());
+
+        dupInfo.addSpaceCount(terStoreId, "space1", 1);
+        tertiaryCounts = dupInfo.getSpaceCounts(terStoreId);
+        assertEquals(1, tertiaryCounts.size());
+        assertEquals(new Long(1), tertiaryCounts.get("space1"));
     }
 
 }
