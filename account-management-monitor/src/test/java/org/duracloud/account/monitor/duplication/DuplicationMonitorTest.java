@@ -140,10 +140,35 @@ public class DuplicationMonitorTest {
 
         replayMocks();
 
-        dupMonitor.countSpaces(host, dupInfo, store, spaces);
+        dupMonitor.countSpaces(host, dupInfo, store, spaces, true);
         Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
         assertEquals(new Long(1), spaceCounts.get(space1));
         assertEquals(new Long(2), spaceCounts.get(space2));
+    }
+
+    @Test
+    public void testCountSpacesInStores() throws Exception {
+        String host = "host";
+        String storeId = "store-id";
+        String storeType = "store-type";
+        String space1 = "space-1";
+        String space1store = space1 + ":" + storeId;
+        String space2store = "space-2:" + storeId + "-alt";
+        DuplicationInfo dupInfo = new DuplicationInfo(host);
+        List<String> spaces = Arrays.asList(space1store, space2store);
+
+        EasyMock.expect(store.getStorageProviderType())
+                .andReturn(storeType);
+        EasyMock.expect(store.getStoreId())
+                .andReturn(storeId);
+        EasyMock.expect(store.getSpaceContents(space1))
+                .andReturn(Arrays.asList("1").iterator());
+
+        replayMocks();
+
+        dupMonitor.countSpaces(host, dupInfo, store, spaces, false);
+        Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
+        assertEquals(new Long(1), spaceCounts.get(space1));
     }
 
     @Test
@@ -162,6 +187,33 @@ public class DuplicationMonitorTest {
         dupMonitor.compareSpaces(primaryStoreId, dupInfo);
         assertTrue(dupInfo.hasIssues());
         assertEquals(1, dupInfo.getIssues().size());
+
+        replayMocks();
+    }
+
+    @Test
+    public void testCompareSpacesInStores() throws Exception {
+        String host = "host";
+
+        DuplicationInfo dupInfo = new DuplicationInfo(host);
+        assertFalse(dupInfo.hasIssues());
+        assertEquals(0, dupInfo.getIssues().size());
+
+        String primaryStoreId = "primary";
+        String secStoreId = "secondary";
+        String terStoreId = "tertiary";
+        String space1 = "space-1";
+        dupHosts.put(host, space1 + ":" + secStoreId);
+
+        dupInfo.addSpaceCount(primaryStoreId, space1, 100);
+        dupInfo.addSpaceCount(secStoreId, space1, 200);
+        dupInfo.addSpaceCount(terStoreId, space1, 300);
+        assertFalse(dupInfo.hasIssues());
+
+        dupMonitor.compareSpaces(primaryStoreId, dupInfo);
+        assertTrue(dupInfo.hasIssues());
+        assertEquals(1, dupInfo.getIssues().size());
+        assertTrue(dupInfo.getIssues().get(0).contains(secStoreId));
 
         replayMocks();
     }
