@@ -1,7 +1,7 @@
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
+import org.duracloud.account.db.model.ServiceRepository.ServiceRepositoryType;
+import org.duracloud.account.db.model.ServicePlan;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.text.MessageFormat;

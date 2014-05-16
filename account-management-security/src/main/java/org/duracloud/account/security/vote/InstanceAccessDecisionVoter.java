@@ -4,12 +4,12 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +67,14 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
             decision = super.voteHasRole(role, userRoles);
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
-            int acctId = getAcctId(invocation);
+            Long acctId = getAcctId(invocation);
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT_PEER_UPDATE)) {
             // Does user have required role on the account AND
             //  does the calling user have adequate rights to update the
             //  target user from previous roles to new roles?
-            int acctId = getAcctId(invocation);
+            Long acctId = getAcctId(invocation);
             if (hasVote(voteUserHasRoleOnAccount(user, role, acctId))) {
                 Set<AccountRights> existingRights = getAllUserRightsForAcct(
                     acctId);
@@ -96,21 +96,23 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     private Set<AccountRights> getUpdatedRights(Object[] arguments,
-                                                int acctId) {
+                                                Long acctId) {
         Set<AccountRights> rights = new HashSet<AccountRights>();
 
         Set<DuracloudUser> users = getUsersArg(arguments);
         for (DuracloudUser user : users) {
-            rights.add(new AccountRights(-1,
-                                         acctId,
-                                         user.getId(),
-                                         user.getRolesByAcct(acctId)));
+            Set<AccountRights> userRights = user.getAccountRights();
+            for(AccountRights accountRights: userRights) {
+                if(accountRights.getAccount().getId().equals(acctId)) {
+                    rights.add(accountRights);
+                }
+            }
         }
         return rights;
     }
 
-    private int voteUserHasRoleOnAcctToUpdateUsers(int userId,
-                                                   int acctId,
+    private int voteUserHasRoleOnAcctToUpdateUsers(Long userId,
+                                                   Long acctId,
                                                    Set<AccountRights> existingRights,
                                                    Set<AccountRights> updatedRights) {
         AccountRights userRights = getUserRightsForAcct(userId, acctId);
@@ -139,7 +141,7 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
         return (Set<DuracloudUser>) arguments[USER_INDEX];
     }
 
-    private int getAcctId(MethodInvocation invocation) {
+    private Long getAcctId(MethodInvocation invocation) {
         DuracloudInstanceService instanceService = (DuracloudInstanceService) invocation
             .getThis();
         return instanceService.getAccountId();

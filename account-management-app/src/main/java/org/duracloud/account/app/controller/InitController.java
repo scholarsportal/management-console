@@ -3,16 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.io.InputStream;
-
-import org.duracloud.account.common.domain.AmaEndpoint;
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.domain.Initable;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
-import org.duracloud.account.util.notification.NotificationMgr;
-import org.duracloud.account.util.sys.EventMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.io.InputStream;
 
 /**
  * @author Andrew Woods
@@ -50,12 +48,12 @@ public class InitController extends AbstractController {
 
         AmaConfig config = AmaInitDocumentBinding.createAmaConfigFrom(request);
         try {
-            repoMgr.initialize(config);
+            //repoMgr.initialize(config);  no longer need to initialize
             notificationMgr.initialize(config);
             systemMonitor.initialize(config);
             AmaEndpoint.initialize(config.getHost(),
-                                   config.getPort(),
-                                   config.getCtxt());
+                    config.getPort(),
+                    config.getCtxt());
 
         } catch (Exception e) {
             text = "initialization failed: " + e.getMessage();

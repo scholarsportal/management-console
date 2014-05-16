@@ -3,21 +3,16 @@
  */
 package org.duracloud.account.security.vote;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.impl.DuracloudUserServiceImpl;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.impl.DuracloudUserServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -29,6 +24,8 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.*;
 
 /**
  * @author Andrew Woods
@@ -73,10 +70,10 @@ public class UserAccessDecisionVoterTest {
     }
 
     private void doTestScopeAny(Role userRole, int expectedDecision) {
-        int userId = 5;
+        Long userId = 5L;
         authentication = createAuthentication(userId,
                                               userRole.getRoleHierarchy());
-        invocation = createInvocation(-1, -1, null);
+        invocation = createInvocation(-1L, -1L, null);
         securityConfig = createSecurityConfig(SecuredRule.Scope.ANY);
 
         doTest(expectedDecision);
@@ -124,24 +121,33 @@ public class UserAccessDecisionVoterTest {
         throws DBNotFoundException {
         Role userRole = Role.ROLE_ADMIN;
 
-        int userId = 3;
-        int acctId = 5;
-        int otherUserId = 6;
-        int otherAcctId = argAcctId >= 0 ? argAcctId : acctId;
+        Long userId = 3L;
+        Long acctId = 5L;
+        Long otherUserId = 6L;
+        Long otherAcctId = argAcctId >= 0 ? argAcctId : acctId;
 
-        AccountRights rights = new AccountRights(-1,
-                                                 acctId,
-                                                 userId,
-                                                 userRole.getRoleHierarchy());
-        AccountRights otherRights = new AccountRights(-1,
-                                                      otherAcctId,
-                                                      otherUserId,
-                                                      otherUserRole.getRoleHierarchy());
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setId(acctId);
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        AccountRights rights = new AccountRights();
+        rights.setAccount(accountInfo);
+        rights.setUser(user);
+        rights.setRoles(userRole.getRoleHierarchy());
 
-        authentication = createAuthentication(rights.getUserId(),
+        AccountInfo otherAccountInfo = new AccountInfo();
+        otherAccountInfo.setId(otherAcctId);
+        DuracloudUser otherUser = new DuracloudUser();
+        otherUser.setId(otherUserId);
+        AccountRights otherRights = new AccountRights();
+        otherRights.setAccount(otherAccountInfo);
+        otherRights.setUser(otherUser);
+        otherRights.setRoles(otherUserRole.getRoleHierarchy());
+
+        authentication = createAuthentication(rights.getUser().getId(),
                                               rights.getRoles());
-        invocation = createInvocation(otherRights.getAccountId(),
-                                      otherRights.getUserId(),
+        invocation = createInvocation(otherRights.getAccount().getId(),
+                                      otherRights.getUser().getId(),
                                       null);
         securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ACCT_PEER);
 
@@ -207,27 +213,36 @@ public class UserAccessDecisionVoterTest {
         throws DBNotFoundException {
         Role userRole = Role.ROLE_ADMIN;
 
-        int userId = 3;
-        int acctId = 5;
-        int otherUserId = 6;
-        int otherAcctId = argAcctId >= 0 ? argAcctId : acctId;
+        Long userId = 3L;
+        Long acctId = 5L;
+        Long otherUserId = 6L;
+        Long otherAcctId = argAcctId >= 0 ? argAcctId : acctId;
 
-        AccountRights rights = new AccountRights(-1,
-                                                 acctId,
-                                                 userId,
-                                                 userRole.getRoleHierarchy());
-        AccountRights otherRights = new AccountRights(-1,
-                                                      otherAcctId,
-                                                      otherUserId,
-                                                      otherUserRole.getRoleHierarchy());
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setId(acctId);
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        AccountRights rights = new AccountRights();
+        rights.setAccount(accountInfo);
+        rights.setUser(user);
+        rights.setRoles(userRole.getRoleHierarchy());
+
+        AccountInfo otherAccountInfo = new AccountInfo();
+        otherAccountInfo.setId(otherAcctId);
+        DuracloudUser otherUser = new DuracloudUser();
+        otherUser.setId(otherUserId);
+        AccountRights otherRights = new AccountRights();
+        otherRights.setAccount(otherAccountInfo);
+        otherRights.setUser(otherUser);
+        otherRights.setRoles(otherUserRole.getRoleHierarchy());
 
         Set<Role> newArgRoles =
             null == argRoles ? otherUserRole.getRoleHierarchy() : argRoles;
 
-        authentication = createAuthentication(rights.getUserId(),
+        authentication = createAuthentication(rights.getUser().getId(),
                                               rights.getRoles());
-        invocation = createInvocation(otherRights.getAccountId(),
-                                      otherRights.getUserId(),
+        invocation = createInvocation(otherRights.getAccount().getId(),
+                                      otherRights.getUser().getId(),
                                       null,
                                       newArgRoles);
         securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ACCT_PEER_UPDATE);
@@ -270,9 +285,9 @@ public class UserAccessDecisionVoterTest {
     private void doTestScopeSelf(Role userRole,
                                  int expectedDecision,
                                  int targetId) {
-        int acctId = -1;
-        int userId = 5;
-        int targetUserId = targetId > -1 ? targetId : userId;
+        Long acctId = -1L;
+        Long userId = 5L;
+        Long targetUserId = targetId > -1 ? targetId : userId;
         String username = null;
         authentication = createAuthentication(userId,
                                               userRole.getRoleHierarchy());
@@ -314,8 +329,8 @@ public class UserAccessDecisionVoterTest {
     private void doTestScopeSelfName(Role userRole,
                                      int expectedDecision,
                                      String targetName) {
-        int acctId = -1;
-        int userId = -1;
+        Long acctId = -1L;
+        Long userId = -1L;
         String username = "good-username";
         String targetUserName = targetName != null ? targetName : username;
         authentication = createAuthentication(userId,
@@ -340,21 +355,21 @@ public class UserAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        int argAcctId = otherRights.getAccountId();
-        if (rights.getAccountId() == otherRights.getAccountId()) {
+        Long argAcctId = otherRights.getAccount().getId();
+        if (rights.getAccount().getId() == otherRights.getAccount().getId()) {
             // This is the case when the calling user has rights on the acct.
             EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
-                                                                rights.getUserId()))
+                                                                rights.getUser().getId()))
                 .andReturn(rights)
                 .times(2);
             EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
-                                                                otherRights.getUserId()))
+                                                                otherRights.getUser().getId()))
                 .andReturn(otherRights);
 
         } else {
             // This is the case when the calling user does NOT have rights on the acct.
             EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
-                                                                rights.getUserId()))
+                                                                rights.getUser().getId()))
                 .andReturn(null);
         }
 
@@ -366,23 +381,25 @@ public class UserAccessDecisionVoterTest {
         return mgr;
     }
 
-    private Authentication createAuthentication(int userId, Set<Role> roles) {
+    private Authentication createAuthentication(Long userId, Set<Role> roles) {
         return createAuthentication(userId, "username", roles);
     }
 
-    private Authentication createAuthentication(int userId,
+    private Authentication createAuthentication(Long userId,
                                                 String username,
                                                 Set<Role> roles) {
         Authentication auth = EasyMock.createMock("Authentication",
                                                   Authentication.class);
-        DuracloudUser user = new DuracloudUser(userId,
-                                               username,
-                                               "password",
-                                               "firstName",
-                                               "lastName",
-                                               "email",
-                                               "question",
-                                               "answer");
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        user.setUsername(username);
+        user.setPassword("password");
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmail("email");
+        user.setSecurityQuestion("question");
+        user.setSecurityAnswer("answer");
+
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         Collection<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
@@ -394,14 +411,14 @@ public class UserAccessDecisionVoterTest {
         return auth;
     }
 
-    private MethodInvocation createInvocation(int acctId,
-                                              int userId,
+    private MethodInvocation createInvocation(Long acctId,
+                                              Long userId,
                                               String username) {
         return createInvocation(acctId, userId, username, null);
     }
 
-    private MethodInvocation createInvocation(int acctId,
-                                              int userId,
+    private MethodInvocation createInvocation(Long acctId,
+                                              Long userId,
                                               String username,
                                               Set<Role> roles) {
         MethodInvocation inv = EasyMock.createMock("MethodInvocation",

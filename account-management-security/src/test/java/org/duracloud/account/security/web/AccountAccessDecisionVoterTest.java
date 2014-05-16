@@ -4,7 +4,7 @@
 package org.duracloud.account.security.web;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.db.util.AccountManagerService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,8 +41,8 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     @Test
     public void testDeny() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
-            AccountManagerService.class.getMethod("getAccount", int.class),
-            new Object[]{1});
+            AccountManagerService.class.getMethod("getAccount", Long.class),
+            new Object[]{1L});
 
         int decision = decisionVoter.vote(createUserAuthentication(
             USER_AUTHORITIES), invocation, attributes);
@@ -52,8 +52,8 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     @Test
     public void testRootAccess() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
-            accountManagerService.getClass().getMethod("getAccount", int.class),
-            new Object[]{1});
+            accountManagerService.getClass().getMethod("getAccount", Long.class),
+            new Object[]{1L});
 
         int decision = decisionVoter.vote(createRootAuthentication(),
                                           invocation,
@@ -64,8 +64,8 @@ public class AccountAccessDecisionVoterTest extends AccessDecisionVoterTestBase 
     @Test
     public void testGranted() throws Exception {
         MethodInvocation invocation = createMockMethodInvoker(
-            accountManagerService.getClass().getMethod("getAccount", int.class),
-            new Object[]{0});
+            accountManagerService.getClass().getMethod("getAccount", Long.class),
+            new Object[]{0L});
 
         int decision = decisionVoter.vote(createUserAuthentication(
             USER_AUTHORITIES), invocation, attributes);

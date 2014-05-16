@@ -3,27 +3,16 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.validation.Valid;
-
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudAccount;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountService;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.UserInvitation;
+import org.duracloud.account.db.model.util.DuracloudAccount;
+import org.duracloud.account.db.util.AccountService;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
+import org.duracloud.account.db.util.error.UnsentEmailException;
+import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.util.EmailAddressesParser;
-import org.duracloud.account.util.error.AccountNotFoundException;
-import org.duracloud.account.util.error.UnsentEmailException;
-import org.duracloud.account.util.notification.NotificationMgr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,10 +24,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * 
@@ -96,7 +88,7 @@ public class AccountUsersController extends AbstractAccountController {
      * @throws AccountNotFoundException
      */
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.GET)
-    public String get(@PathVariable int accountId, Model model)
+    public String get(@PathVariable Long accountId, Model model)
         throws Exception {
         addUserToModel(model);
         return get(getAccountService(accountId), model);
@@ -104,7 +96,7 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_USERS_MAPPING+"/adduser", method = RequestMethod.POST)
     public ModelAndView
-        addUser(@PathVariable int accountId,
+        addUser(@PathVariable Long accountId,
                 @ModelAttribute(USERNAME_FORM_KEY) @Valid UsernameForm usernameForm,
                 BindingResult result,
                 Model model,
@@ -144,7 +136,7 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
     public ModelAndView sendInvitations(
-        @PathVariable int accountId,
+        @PathVariable Long accountId,
         @ModelAttribute(INVITATION_FORM_KEY) @Valid InvitationForm invitationForm,
         BindingResult result, Model model,
         RedirectAttributes redirectAttributes) throws Exception {
@@ -171,7 +163,7 @@ public class AccountUsersController extends AbstractAccountController {
                             + "account {0} for {1} expiring on {2}";
                     String message =
                         MessageFormat.format(template,
-                                             ui.getAccountId(),
+                                             ui.getAccount().getId(),
                                              ui.getUserEmail(),
                                              ui.getExpirationDate());
                     log.info(message);
@@ -204,7 +196,7 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserInvitation(
-        @PathVariable int accountId, @PathVariable int invitationId, Model model)
+        @PathVariable Long accountId, @PathVariable Long invitationId, Model model)
         throws Exception {
         log.info("remove invitation {} from account {}",
             invitationId,
@@ -217,7 +209,7 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserFromAccount(
-        @PathVariable int accountId, @PathVariable int userId, Model model)
+        @PathVariable Long accountId, @PathVariable Long userId, Model model)
         throws Exception {
         log.info("delete user {} from account {}", userId, accountId);
         userService.revokeUserRights(accountId, userId);
@@ -231,7 +223,7 @@ public class AccountUsersController extends AbstractAccountController {
     }
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.GET)
-    public String getEditUserForm(@PathVariable int accountId, @PathVariable int userId, Model model)
+    public String getEditUserForm(@PathVariable Long accountId, @PathVariable Long userId, Model model)
         throws Exception {
         log.info("getEditUserForm user {} account {}", userId, accountId);
         AccountService accountService = getAccountService(accountId);
@@ -261,8 +253,8 @@ public class AccountUsersController extends AbstractAccountController {
 
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView
-        editUser(@PathVariable int accountId,
-                 @PathVariable int userId,
+        editUser(@PathVariable Long accountId,
+                 @PathVariable Long userId,
                  @ModelAttribute(EDIT_ACCOUNT_USERS_FORM_KEY) AccountUserEditForm accountUserEditForm,
                  BindingResult result,
                  Model model,
@@ -296,7 +288,7 @@ public class AccountUsersController extends AbstractAccountController {
      * @param accountId
      * @return
      */
-    private AccountService getAccountService(int accountId)
+    private AccountService getAccountService(Long accountId)
         throws AccountNotFoundException {
         return this.accountManagerService.getAccount(accountId);
     }
@@ -345,7 +337,7 @@ public class AccountUsersController extends AbstractAccountController {
      * @return
      */
     private List<AccountUser> buildUserList(
-        int accountId, Set<DuracloudUser> users) {
+        Long accountId, Set<DuracloudUser> users) {
         List<AccountUser> list = new LinkedList<AccountUser>();
         boolean hasMoreThanOneOwner =
             accountHasMoreThanOneOwner(users, accountId);
@@ -378,7 +370,7 @@ public class AccountUsersController extends AbstractAccountController {
      */
     public class AccountUser implements Comparable<AccountUser> {
         public AccountUser(
-            int id, String username, String firstName, String lastName,
+            Long id, String username, String firstName, String lastName,
             String email, InvitationStatus status, Role role, boolean deletable) {
             super();
             this.id = id;
@@ -391,7 +383,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.deletable = deletable;
         }
 
-        private int id;
+        private Long id;
         private String username;
         private String firstName;
         private String lastName;
@@ -400,7 +392,7 @@ public class AccountUsersController extends AbstractAccountController {
         private Role role;
         private boolean deletable;
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
 
@@ -452,7 +444,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.role = role;
         }
 
-        public int getInvitationId() {
+        public Long getInvitationId() {
             return this.invitation.getId();
         }
 

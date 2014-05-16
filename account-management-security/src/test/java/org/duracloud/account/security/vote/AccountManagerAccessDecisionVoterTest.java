@@ -4,14 +4,14 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.impl.AccountManagerServiceImpl;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.impl.AccountManagerServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -71,7 +71,7 @@ public class AccountManagerAccessDecisionVoterTest {
     }
 
     private void doTestScopeAny(Role userRole, int expectedDecision) {
-        int userId = 5;
+        Long userId = 5L;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(null);
         securityConfig = createSecurityConfig(SecuredRule.Scope.ANY);
@@ -103,8 +103,8 @@ public class AccountManagerAccessDecisionVoterTest {
 
     private void doTestScopeSelfAcct(Role userRole, int expectedDecision)
         throws DBNotFoundException {
-        int userId = 5;
-        int acctId = 9;
+        Long userId = 5L;
+        Long acctId = 9L;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(acctId);
         securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ACCT);
@@ -142,8 +142,8 @@ public class AccountManagerAccessDecisionVoterTest {
     private void doTestScopeSelf(Role userRole,
                                  int expectedDecision,
                                  int targetId) {
-        int userId = 5;
-        int targetUserId = targetId > -1 ? targetId : userId;
+        Long userId = 5L;
+        Long targetUserId = targetId > -1 ? targetId : userId;
         authentication = createAuthentication(userId, userRole);
         invocation = createInvocation(userRole.equals(accessRole) ? targetUserId : null);
         securityConfig = createSecurityConfig(SecuredRule.Scope.SELF_ID);
@@ -158,7 +158,9 @@ public class AccountManagerAccessDecisionVoterTest {
     private AccountRights createRights(Role role) {
         Set<Role> roles = new HashSet<Role>();
         roles.add(role);
-        return new AccountRights(-1, -1, -1, roles);
+        AccountRights accountRights = new AccountRights();
+        accountRights.setRoles(roles);
+        return accountRights;
     }
 
     private DuracloudRepoMgr createRepoMgr(AccountRights rights)
@@ -169,8 +171,8 @@ public class AccountManagerAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyInt(),
-                                                            EasyMock.anyInt()))
+        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyLong(),
+                                                            EasyMock.anyLong()))
             .andReturn(rights);
 
         EasyMock.expect(mgr.getRightsRepo()).andReturn(rightsRepo);
@@ -179,17 +181,18 @@ public class AccountManagerAccessDecisionVoterTest {
         return mgr;
     }
 
-    private Authentication createAuthentication(int userId, Role role) {
+    private Authentication createAuthentication(Long userId, Role role) {
         Authentication auth = EasyMock.createMock("Authentication",
                                                   Authentication.class);
-        DuracloudUser user = new DuracloudUser(userId,
-                                               "username",
-                                               "password",
-                                               "firstName",
-                                               "lastName",
-                                               "email",
-                                               "question",
-                                               "answer");
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        user.setUsername("username");
+        user.setPassword("password");
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmail("email");
+        user.setSecurityQuestion("question");
+        user.setSecurityAnswer("answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         Collection<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
@@ -199,7 +202,7 @@ public class AccountManagerAccessDecisionVoterTest {
         return auth;
     }
 
-    private MethodInvocation createInvocation(Integer id) {
+    private MethodInvocation createInvocation(Long id) {
         MethodInvocation inv = EasyMock.createMock("MethodInvocation",
                                                    MethodInvocation.class);
 
@@ -207,7 +210,6 @@ public class AccountManagerAccessDecisionVoterTest {
                                                        .getMethods()[0]);
 
         AccountManagerServiceImpl serviceImpl = new AccountManagerServiceImpl(
-            null,
             null,
             null,
             null,

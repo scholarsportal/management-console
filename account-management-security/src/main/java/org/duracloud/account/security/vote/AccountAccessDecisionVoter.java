@@ -4,10 +4,10 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.AccountService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public class AccountAccessDecisionVoter extends BaseAccessDecisionVoter {
             decision = super.voteHasRole(role, userRoles);
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
-            int acctId = getAcctId(invocation);
+            Long acctId = getAcctId(invocation);
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
         } else {
@@ -71,7 +71,7 @@ public class AccountAccessDecisionVoter extends BaseAccessDecisionVoter {
         return castVote(decision, invocation);
     }
 
-    private int getAcctId(MethodInvocation invocation) {
+    private Long getAcctId(MethodInvocation invocation) {
         AccountService acctService = (AccountService) invocation.getThis();
         return acctService.getAccountId();
     }

@@ -31,10 +31,10 @@ public class HadoopUtilFactoryImplTest {
     public void testGetHadoopUtil() throws Exception {
         StorageProviderType type = StorageProviderType.AMAZON_S3;
 
-        int id0 = 0;
+        Long id0 = 0L;
         StorageProviderAccount storageAcct0 = createStorageAccount(id0, type);
 
-        int id1 = 1;
+        Long id1 = 1L;
         StorageProviderAccount storageAcct1 = createStorageAccount(id1, type);
 
         HadoopUtil hadoopUtil0 = factory.getHadoopUtil(storageAcct0);
@@ -50,7 +50,7 @@ public class HadoopUtilFactoryImplTest {
 
     @Test
     public void testGetHadoopUtilError() throws HadoopNotActivatedException {
-        int id = 0;
+        Long id = 0L;
         StorageProviderType type = StorageProviderType.RACKSPACE;
         StorageProviderAccount storageAcct = createStorageAccount(id, type);
 
@@ -65,7 +65,7 @@ public class HadoopUtilFactoryImplTest {
         Assert.assertTrue(thrown);
     }
 
-    private StorageProviderAccount createStorageAccount(int id,
+    private StorageProviderAccount createStorageAccount(Long id,
                                                         StorageProviderType type) {
         String username = "username-" + id;
         String password = "password-" + id;

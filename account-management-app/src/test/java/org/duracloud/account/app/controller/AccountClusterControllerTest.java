@@ -3,18 +3,16 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.util.AccountClusterService;
-import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.util.AccountClusterService;
+import org.duracloud.account.db.util.RootAccountManagerService;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AccountClusterControllerTest extends AmaControllerTestBase {
     private AccountClusterController accountClusterController;
@@ -51,17 +49,17 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testDelete() throws Exception {
-        this.rootAccountManagerService.deleteAccountCluster(1);
+        this.rootAccountManagerService.deleteAccountCluster(1L);
         EasyMock.expectLastCall();
         addFlashAttribute();
 
         replayMocks();
-        this.accountClusterController.delete(1, redirectAttributes);
+        this.accountClusterController.delete(1L, redirectAttributes);
     }
 
     @Test
     public void testEdit() throws Exception {
-        int clusterId = 1;
+        Long clusterId = 1L;
         AccountClusterForm form = new AccountClusterForm();
         form.setName("cluster");
         EasyMock.expect(result.hasErrors()).andReturn(false);
@@ -84,7 +82,7 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
     
     @Test
     public void testClusterDetail() throws Exception{
-        int clusterId = 1;
+        Long clusterId = 1L;
         setGetClusterAndLoadedAccounts(clusterId);
         replayMocks();
 
@@ -94,9 +92,13 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
     }
 
     
-    private void setGetClusterAndLoadedAccounts(int clusterId) throws Exception{
-        List<Integer> ids = Arrays.asList(new Integer[]{TEST_ACCOUNT_ID});
-        AccountCluster cluster = new AccountCluster(0, "test", new HashSet<Integer>(ids));
+    private void setGetClusterAndLoadedAccounts(Long clusterId) throws Exception{
+        AccountInfo accountInfo = createAccountInfo(TEST_ACCOUNT_ID);
+        AccountCluster cluster = new AccountCluster();
+        cluster.setId(0L);
+        cluster.setClusterName("test");
+        cluster.getClusterAccounts().add(accountInfo);
+
         EasyMock.expect(accountManagerService.getAccountCluster(clusterId))
                 .andReturn(accountClusterService);
         EasyMock.expect(accountClusterService.retrieveAccountCluster())
@@ -105,7 +107,7 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetAddAccounts() throws Exception{
-        int clusterId = 1;
+        Long clusterId = 1L;
         setGetClusterAndLoadedAccounts(clusterId);
         this.rootAccountManagerService.listAllAccounts(EasyMock.anyObject(String.class));
         Set<AccountInfo> set = new HashSet<AccountInfo>();
@@ -118,15 +120,15 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testPostAddAccounts() throws Exception{
-        int clusterId = 1;
+        Long clusterId = 1L;
         AccountSelectionForm form = new AccountSelectionForm();
-        form.setAccountIds(new Integer[]{TEST_ACCOUNT_ID,TEST_ACCOUNT_ID+1});
+        form.setAccountIds(new Long[]{TEST_ACCOUNT_ID,TEST_ACCOUNT_ID+1});
 
         EasyMock.expect(accountManagerService.getAccountCluster(clusterId))
                 .andReturn(accountClusterService);
         
         
-        this.accountClusterService.addAccountToCluster(EasyMock.anyInt());
+        this.accountClusterService.addAccountToCluster(EasyMock.anyLong());
         EasyMock.expectLastCall().times(2);
         addFlashAttribute();
         replayMocks();
@@ -135,15 +137,15 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testRemoveAccounts() throws Exception{
-        int clusterId = 1;
+        Long clusterId = 1L;
         AccountSelectionForm form = new AccountSelectionForm();
-        form.setAccountIds(new Integer[]{TEST_ACCOUNT_ID,TEST_ACCOUNT_ID+1});
+        form.setAccountIds(new Long[]{TEST_ACCOUNT_ID,TEST_ACCOUNT_ID+1});
 
         EasyMock.expect(accountManagerService.getAccountCluster(clusterId))
                 .andReturn(accountClusterService);
         
         
-        this.accountClusterService.removeAccountFromCluster(EasyMock.anyInt());
+        this.accountClusterService.removeAccountFromCluster(EasyMock.anyLong());
         EasyMock.expectLastCall().times(2);
         addFlashAttribute();
         replayMocks();

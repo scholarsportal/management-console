@@ -11,13 +11,13 @@ package org.duracloud.account.app.controller;
  */
 public class AccountSelectionForm {
     
-    private Integer[] accountIds;
+    private Long[] accountIds;
 
-    public Integer[] getAccountIds() {
+    public Long[] getAccountIds() {
         return accountIds;
     }
 
-    public void setAccountIds(Integer[] accountIds) {
+    public void setAccountIds(Long[] accountIds) {
         this.accountIds = accountIds;
     }
 }

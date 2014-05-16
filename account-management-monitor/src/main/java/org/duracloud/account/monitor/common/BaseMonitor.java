@@ -62,8 +62,8 @@ public abstract class BaseMonitor {
 
     protected ServerImage findServerImage(AccountInfo acct)
         throws DBNotFoundException {
-        Set<Integer> instanceIds = instanceRepo.findByAccountId(acct.getId());
-        int instanceId = instanceIds.iterator().next();
+        Set<Long> instanceIds = instanceRepo.findByAccountId(acct.getId());
+        Long instanceId = instanceIds.iterator().next();
         DuracloudInstance instance = instanceRepo.findById(instanceId);
 
         return imageRepo.findById(instance.getImageId());
@@ -74,7 +74,7 @@ public abstract class BaseMonitor {
         List<AccountInfo> allAccts = getDuracloudAccts();
 
         for (AccountInfo acct : allAccts) {
-            Set<Integer> result = null;
+            Set<Long> result = null;
             try {
                 result = instanceRepo.findByAccountId(acct.getId());
 
@@ -98,8 +98,8 @@ public abstract class BaseMonitor {
     protected List<AccountInfo> getDuracloudAccts() {
         List<AccountInfo> acctInfos = new ArrayList<>();
 
-        Set<Integer> ids = acctRepo.getIds();
-        for (int id : ids) {
+        Set<Long> ids = acctRepo.getIds();
+        for (Long id : ids) {
             try {
                 acctInfos.add(acctRepo.findById(id));
 

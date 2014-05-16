@@ -3,19 +3,13 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.util.AccountClusterService;
-import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.util.AccountClusterService;
+import org.duracloud.account.db.util.AccountManagerService;
+import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.util.UrlHelper;
-import org.duracloud.account.util.error.AccountClusterNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -60,26 +60,25 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     }
 
     @RequestMapping(BY_ID_MAPPING)
-    public ModelAndView details(@PathVariable("id") int id) throws Exception{
+    public ModelAndView details(@PathVariable("id") Long id) throws Exception{
         
         AccountManagerService ams = getAccountManagerService();
         AccountClusterService clusterService = ams.getAccountCluster(id);
         AccountCluster cluster = clusterService.retrieveAccountCluster();
-        Set<Integer> accountIds = cluster.getClusterAccountIds();
-        List<AccountInfo> accounts = loadAccounts(accountIds, ams);
+        Set<AccountInfo> accounts = cluster.getClusterAccounts();
         ModelAndView mav = new ModelAndView(getBaseViewId() + "/detail");
         mav.addObject("accounts", accounts);
         mav.addObject("cluster", cluster);
         return mav;
     }
     
-    private List<AccountInfo> loadAccounts(Set<Integer> accountIds,
+    private List<AccountInfo> loadAccounts(Set<Long> accountIds,
                                                 AccountManagerService ams)
         throws AccountNotFoundException {
 
         List<AccountInfo> accounts =
             new ArrayList<AccountInfo>(accountIds.size());
-        for (Integer accountId : accountIds) {
+        for (Long accountId : accountIds) {
             AccountInfo accountInfo =
                 ams.getAccount(accountId).retrieveAccountInfo();
             accounts.add(accountInfo);
@@ -94,15 +93,15 @@ public class AccountClusterController extends AbstractRootCrudController<Account
 
     @RequestMapping(value = { BY_ID_MAPPING + "/remove-accounts" }, method = RequestMethod.POST)
     public ModelAndView
-        removeAccounts(@PathVariable("id") int id,
+        removeAccounts(@PathVariable("id") Long id,
                        AccountSelectionForm accountSelectionForm,
                        RedirectAttributes redirectAttributes) throws Exception {
         AccountManagerService ams = getAccountManagerService();
         AccountClusterService clusterService = ams.getAccountCluster(id);
-        Integer[] accountIds = accountSelectionForm.getAccountIds();
+        Long[] accountIds = accountSelectionForm.getAccountIds();
         int removedCount = 0;
         if(accountIds != null){
-            for(Integer accountId : accountIds){
+            for(Long accountId : accountIds){
                 clusterService.removeAccountFromCluster(accountId);
                 removedCount++;
             }
@@ -118,16 +117,16 @@ public class AccountClusterController extends AbstractRootCrudController<Account
 
     @RequestMapping(value = { BY_ID_MAPPING + "/add-accounts" }, method = RequestMethod.GET)
     public ModelAndView
-        getAddAccounts(@PathVariable("id") int id) throws Exception {
+        getAddAccounts(@PathVariable("id") Long id) throws Exception {
         
         AccountManagerService ams = getAccountManagerService();
         AccountClusterService clusterService = ams.getAccountCluster(id);
         AccountCluster cluster = clusterService.retrieveAccountCluster();
-        Set<Integer> accountIds = cluster.getClusterAccountIds();
+        Set<AccountInfo> accounts = cluster.getClusterAccounts();
         Set<AccountInfo> allAccounts = getRootAccountManagerService().listAllAccounts(null);
         List<AccountInfo> accountsNotInCluster = new LinkedList<AccountInfo>(allAccounts);
         for(AccountInfo account : allAccounts){
-            if(accountIds.contains(account.getId())){
+            if(accounts.contains(account)){
                 accountsNotInCluster.remove(account);
             }
         }
@@ -142,16 +141,16 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     
     @RequestMapping(value = { BY_ID_MAPPING + "/add-accounts" }, method = RequestMethod.POST)
     public ModelAndView
-        postAddAccounts(@PathVariable("id") int id,
+        postAddAccounts(@PathVariable("id") Long id,
                        AccountSelectionForm accountSelectionForm,
                        RedirectAttributes redirectAttributes) throws Exception {
-        Integer[] accountIds = accountSelectionForm.getAccountIds();
+        Long[] accountIds = accountSelectionForm.getAccountIds();
 
         AccountManagerService ams = getAccountManagerService();
         AccountClusterService clusterService = ams.getAccountCluster(id);
         int addedCount = 0;
         if(accountIds != null){
-            for(Integer accountId : accountIds){
+            for(Long accountId : accountIds){
                 clusterService.addAccountToCluster(accountId);
                 addedCount++;
             }
@@ -173,7 +172,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     }
 
     @Override
-    protected Object getEntity(int id) {
+    protected Object getEntity(Long id) {
         AccountClusterService service;
         try {
             service = getAccountManagerService().getAccountCluster(id);
@@ -193,7 +192,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     }
 
     @Override
-    protected void update(int id, AccountClusterForm form) {
+    protected void update(Long id, AccountClusterForm form) {
         try {
             AccountClusterService acs = getAccountManagerService().getAccountCluster(id);
             acs.renameAccountCluster(form.getName());
@@ -204,7 +203,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     }
 
     @Override
-    protected void delete(int id) {
+    protected void delete(Long id) {
         getRootAccountManagerService().deleteAccountCluster(id);
     }
 

@@ -3,8 +3,8 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.db.error.UserAlreadyExistsException;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;

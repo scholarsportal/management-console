@@ -3,6 +3,10 @@
  */
 package org.duracloud.account.db.util;
 
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -88,7 +92,11 @@ public class DbUtilDriver {
             System.exit(1);
         }
 
-        DbUtil dbUtil = new DbUtil(credsFile, workDir);
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("jpa-config.xml");
+        DuracloudRepoMgr repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
+
+        DbUtil dbUtil = new DbUtil(repoMgr, credsFile, workDir);
         dbUtil.runCommand(command);
     }
 

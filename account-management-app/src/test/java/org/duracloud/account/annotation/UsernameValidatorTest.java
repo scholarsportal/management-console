@@ -3,17 +3,17 @@
  */
 package org.duracloud.account.annotation;
 
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-
-import org.duracloud.account.db.error.UserAlreadyExistsException;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.InvalidUsernameException;
-import org.duracloud.account.util.error.ReservedPrefixException;
-import org.duracloud.account.util.error.ReservedUsernameException;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.ReservedPrefixException;
+import org.duracloud.account.db.util.error.ReservedUsernameException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"

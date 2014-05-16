@@ -3,20 +3,15 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountType;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountService;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.util.AccountService;
+import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.UserFeedbackUtil;
-import org.duracloud.account.util.error.AccountClusterNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.Set;
 
 /**
  * 
@@ -45,7 +43,7 @@ public class AccountDetailsController extends AbstractAccountController {
         ACCOUNT_PATH + ACCOUNT_DETAILS_PATH;
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
-    public String get(@PathVariable int accountId, Model model)
+    public String get(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException, DBNotFoundException, AccountClusterNotFoundException {
         AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
@@ -61,10 +59,10 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
-    public ModelAndView addProvider(@PathVariable int accountId,
+    public ModelAndView addProvider(@PathVariable Long accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
 					   BindingResult result,
-					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+					   Model model) throws AccountNotFoundException {
         log.info("addProvider account {}", accountId);
 
         AccountService accountService =
@@ -76,11 +74,10 @@ public class AccountDetailsController extends AbstractAccountController {
 
     
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/remove", method = RequestMethod.POST)
-    public View removeProvider(@PathVariable int accountId,
+    public View removeProvider(@PathVariable Long accountId,
                                        @PathVariable String providerType,
                                        RedirectAttributes redirectAttributes)
-        throws AccountNotFoundException,
-            DBConcurrentUpdateException {
+        throws AccountNotFoundException {
         log.debug("attempting to remove provider {} from  account {}",
                   providerType,
                   accountId);
@@ -125,9 +122,8 @@ public class AccountDetailsController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
     public ModelAndView
-        enableProviderRrs(@PathVariable int accountId)
-            throws AccountNotFoundException,
-                DBConcurrentUpdateException {
+        enableProviderRrs(@PathVariable Long accountId)
+            throws AccountNotFoundException {
         log.info("enableProviderRrs account {}", accountId);
 
         setProviderRrs(accountId, true);
@@ -136,8 +132,8 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
-    public ModelAndView disableProviderRrs(@PathVariable int accountId,
-					   Model model) throws AccountNotFoundException, DBConcurrentUpdateException {
+    public ModelAndView disableProviderRrs(@PathVariable Long accountId,
+					   Model model) throws AccountNotFoundException {
         log.info("disableProviderRrs account {}", accountId);
 
         setProviderRrs(accountId, false);

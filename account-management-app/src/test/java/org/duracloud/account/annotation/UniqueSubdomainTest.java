@@ -3,8 +3,7 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.util.AccountManagerService;
+import org.duracloud.account.db.util.AccountManagerService;
 import org.duracloud.annotation.MockConstraintValidatorContext;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -21,7 +20,7 @@ public class UniqueSubdomainTest {
 	private UniqueSubdomainValidator v = null;
 	
 	@Before
-	public void before() throws DBConcurrentUpdateException{
+	public void before() {
 		this.ams = EasyMock.createMock(AccountManagerService.class);
 		EasyMock.expect(this.ams.subdomainAvailable("opendomain")).andReturn(true);
 		EasyMock.expect(this.ams.subdomainAvailable("inusedomain")).andReturn(false);

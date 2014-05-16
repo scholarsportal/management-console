@@ -3,14 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.duracloud.account.common.domain.ServerImage;
+import org.duracloud.account.db.model.ServerImage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -61,7 +61,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     }
 
     @Override
-    protected Object getEntity(int id) {
+    protected Object getEntity(Long id) {
         return getRootAccountManagerService().getServerImage(id);
     }
 
@@ -69,7 +69,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     protected ServerImageForm loadForm(Object obj) {
         ServerImage entity = (ServerImage)obj;
         ServerImageForm form = form();
-        form.setProviderAccountId(entity.getProviderAccountId());
+        form.setProviderAccountId(entity.getProviderAccount().getId());
         form.setProviderImageId(entity.getProviderImageId());
         form.setVersion(entity.getVersion());
         form.setDescription(entity.getDescription());
@@ -79,7 +79,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     }
 
     @Override
-    protected void update(int id, ServerImageForm form) {
+    protected void update(Long id, ServerImageForm form) {
         getRootAccountManagerService().editServerImage(id,
                                                        form.getProviderAccountId(),
                                                        form.getProviderImageId(),
@@ -90,7 +90,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     }
 
     @Override
-    protected void delete(int id) {
+    protected void delete(Long id) {
         getRootAccountManagerService().deleteServerImage(id);
     }
 

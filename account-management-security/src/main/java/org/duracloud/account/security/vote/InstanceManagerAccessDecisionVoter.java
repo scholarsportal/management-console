@@ -4,10 +4,10 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
             decision = voteHasRole(role, userRoles);
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
-            int acctId = getAccountIdArg(invocation.getArguments());
+            Long acctId = getAccountIdArg(invocation.getArguments());
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
         } else {
@@ -73,11 +73,11 @@ public class InstanceManagerAccessDecisionVoter extends BaseAccessDecisionVoter 
         return castVote(decision, invocation);
     }
 
-    private int getAccountIdArg(Object[] arguments) {
+    private Long getAccountIdArg(Object[] arguments) {
         if (arguments.length != 1 && arguments.length != 2) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Integer) arguments[ACCT_ID_INDEX];
+        return (Long) arguments[ACCT_ID_INDEX];
     }
 
     private int castVote(int decision, MethodInvocation invocation) {

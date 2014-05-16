@@ -41,7 +41,7 @@ public class InstanceMonitorTest {
     public void setUp() throws Exception {
         accts = new ArrayList<AccountInfo>();
         for (int i = 0; i < NUM_ACCTS; ++i) {
-            accts.add(createAccount(i));
+            accts.add(createAccount(new Long(i)));
         }
 
         acctRepo = EasyMock.createMock("DuracloudAccountRepo",
@@ -97,9 +97,9 @@ public class InstanceMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Set<Integer> ids = new HashSet<Integer>();
+        Set<Long> ids = new HashSet<Long>();
         for (AccountInfo acct : accts) {
-            int id = acct.getId();
+            Long id = acct.getId();
             ids.add(id);
 
             EasyMock.expect(instanceRepo.findByAccountId(id)).andReturn(ids);
@@ -112,7 +112,7 @@ public class InstanceMonitorTest {
         EasyMock.expect(acctRepo.getIds()).andReturn(ids);
     }
 
-    private InstanceUtil createInstanceUtil(boolean valid, int id) {
+    private InstanceUtil createInstanceUtil(boolean valid, Long id) {
         InstanceUtil util = EasyMock.createMock("InstanceUtil",
                                                 InstanceUtil.class);
         if (valid || id != 0) {
@@ -139,15 +139,15 @@ public class InstanceMonitorTest {
         return info;
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(Long id) {
         return new AccountInfo(id,
                                "subdomain-" + id,
                                "acctName-" + id,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }

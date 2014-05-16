@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor;
+package org.duracloud.account.monitor.hadoop;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
@@ -118,7 +118,7 @@ public class HadoopServiceMonitorTest {
     }
 
     private StorageProviderAccount createStorageProviderAcct() {
-        return new StorageProviderAccount(0,
+        return new StorageProviderAccount(0L,
                                           StorageProviderType.AMAZON_S3,
                                           "username",
                                           "password",
@@ -130,17 +130,18 @@ public class HadoopServiceMonitorTest {
         // repo mocks
         StorageProviderAccount storageProviderAcct =
             createStorageProviderAcct();
-        Set<Integer> ids = new HashSet<Integer>();
+        Set<Long> ids = new HashSet<Long>();
         for (int i = 0; i < numAccts; ++i) {
-            ids.add(i);
-            AccountInfo acctInfo = createAcctInfo(i);
-            EasyMock.expect(acctRepo.findById(i)).andReturn(acctInfo);
+            Long id = new Long(i);
+            ids.add(id);
+            AccountInfo acctInfo = createAcctInfo(id);
+            EasyMock.expect(acctRepo.findById(id)).andReturn(acctInfo);
 
-            ServerDetails serverDetails = createServerDetails(i);
-            EasyMock.expect(serverDetailsRepo.findById(i))
+            ServerDetails serverDetails = createServerDetails(id);
+            EasyMock.expect(serverDetailsRepo.findById(id))
                     .andReturn(serverDetails).anyTimes();
 
-            EasyMock.expect(storageProviderAcctRepo.findById(i)).andReturn(
+            EasyMock.expect(storageProviderAcctRepo.findById(id)).andReturn(
                 storageProviderAcct);
         }
         EasyMock.expect(acctRepo.getIds()).andReturn(ids);
@@ -205,29 +206,29 @@ public class HadoopServiceMonitorTest {
 
     private void createMockExpectationsAccountNotFound(int numAccts)
         throws DBNotFoundException {
-        Set<Integer> ids = new HashSet<Integer>();
+        Set<Long> ids = new HashSet<Long>();
         for (int i = 0; i < numAccts; ++i) {
-            ids.add(i);
+            ids.add(new Long(i));
         }
         EasyMock.expect(acctRepo.getIds()).andReturn(ids);
-        EasyMock.expect(acctRepo.findById(0)).andThrow(new DBNotFoundException(
+        EasyMock.expect(acctRepo.findById(0L)).andThrow(new DBNotFoundException(
             "canned-exception"));
     }
 
-    private AccountInfo createAcctInfo(int id) {
+    private AccountInfo createAcctInfo(Long id) {
         return new AccountInfo(id,
                                "subdomain-" + id,
                                null,
                                null,
                                null,
-                               -1,
+                               -1L,
                                id,
-                               -1,
+                               -1L,
                                null,
                                AccountType.FULL);
     }
 
-    private ServerDetails createServerDetails(int id) {
+    private ServerDetails createServerDetails(Long id) {
         return new ServerDetails(id, id, id, null, null, null);
     }
     

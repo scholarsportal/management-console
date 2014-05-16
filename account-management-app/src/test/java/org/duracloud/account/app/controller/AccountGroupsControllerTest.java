@@ -4,9 +4,9 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.app.controller.GroupsForm.Action;
-import org.duracloud.account.common.domain.DuracloudGroup;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.util.DuracloudGroupService;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.util.DuracloudGroupService;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,12 +15,7 @@ import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 
@@ -33,7 +28,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     private static final String TEST_GROUP_NAME = "test";
     private AccountGroupsController accountGroupsController;
     private DuracloudGroupService groupService;
-    private Integer accountId = AmaControllerTestBase.TEST_ACCOUNT_ID;
+    private Long accountId = AmaControllerTestBase.TEST_ACCOUNT_ID;
 
     @Before
     public void before() throws Exception {
@@ -52,11 +47,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
     }
 
     private Set<DuracloudGroup> createGroups() {
-        int groupId = 2;
+        Long groupId = 2L;
         String groupName = DuracloudGroup.PREFIX + TEST_GROUP_NAME;
-        DuracloudGroup group =
-            new DuracloudGroup(groupId, groupName, accountId);
-        group.addUserId(createUser().getId());
+        DuracloudGroup group = createGroup(groupId, groupName, accountId);
+        group.getUsers().add(createUser());
         Set<DuracloudGroup> set = new HashSet<DuracloudGroup>();
         set.add(group);
         return set;
@@ -80,11 +74,10 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetGroupsAddGroup() throws Exception {
-        int groupId = 3;
+        Long groupId = 3L;
         String groupName = DuracloudGroup.PREFIX + "group2";
 
-        DuracloudGroup group =
-            new DuracloudGroup(groupId, groupName, accountId);
+        DuracloudGroup group = createGroup(groupId, groupName, accountId);
         EasyMock.expect(groupService.createGroup(
             DuracloudGroup.PREFIX + groupName, accountId)).andReturn(group);
 
@@ -199,7 +192,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         this.groupService
             .updateGroupUsers(EasyMock.anyObject(DuracloudGroup.class),
                               (Set<DuracloudUser>) EasyMock.anyObject(),
-                              EasyMock.anyInt());
+                              EasyMock.anyLong());
         EasyMock.expectLastCall().once();
 
         EasyMock.replay(request, session);
@@ -290,4 +283,11 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         return ((Collection<? extends Object>) getModelAttribute(name)).size();
     }
 
+    private DuracloudGroup createGroup(Long groupId, String groupName, Long accountId) {
+        DuracloudGroup group = new DuracloudGroup();
+        group.setId(groupId);
+        group.setName(groupName);
+        group.setAccount(createAccountInfo(accountId));
+        return group;
+    }
 }

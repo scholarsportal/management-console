@@ -4,12 +4,11 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.security.domain.SecuredRule;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
@@ -92,7 +91,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
 
     protected int voteUserHasRoleOnAccount(DuracloudUser user,
                                            String role,
-                                           int acctId) {
+                                           Long acctId) {
         log.trace("Does user {} have role {} on acct {}?",
                   new Object[]{user.getId(), role, acctId});
 
@@ -114,9 +113,9 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         return ACCESS_DENIED;
     }
 
-    protected int voteUserHasRoleOnAcctToUpdateOthersRoles(int userId,
-                                                           int acctId,
-                                                           int otherUserId,
+    protected int voteUserHasRoleOnAcctToUpdateOthersRoles(Long userId,
+                                                           Long acctId,
+                                                           Long otherUserId,
                                                            Set<Role> otherRoles) {
         log.trace("Voting if user {} has roles on acct {} to manage {}.",
                   new Object[]{userId, acctId, otherUserId});
@@ -177,30 +176,25 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         return vote == ACCESS_GRANTED;
     }
 
-    protected int numUsersForAccount(int acctId) {
+    protected int numUsersForAccount(Long acctId) {
         Set<AccountRights> rights =
-            repoMgr.getRightsRepo().findByAccountId(acctId);
+            repoMgr.getRightsRepo().findByAccountIdCheckRoot(acctId);
         return (null != rights) ? rights.size() : 0;
     }
 
-    protected AccountRights getUserRightsForAcct(int userId, int acctId) {
+    protected AccountRights getUserRightsForAcct(Long userId, Long acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
-        AccountRights rights = null;
-        try {
-            rights = rightsRepo.findAccountRightsForUser(acctId, userId);
-        } catch (DBNotFoundException e) {
-            log.error("No rights for user:{}, acct:{}", userId, acctId);
-        }
+        AccountRights rights = rightsRepo.findAccountRightsForUser(acctId, userId);
         return rights;
     }
 
-    protected Set<AccountRights> getAllUserRightsForAcct(int acctId) {
+    protected Set<AccountRights> getAllUserRightsForAcct(Long acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         Set<AccountRights> rights = null;
-        return rightsRepo.findByAccountId(acctId);
+        return rightsRepo.findByAccountIdCheckRoot(acctId);
     }
 
-    protected int voteMyUserId(DuracloudUser user, int userId) {
+    protected int voteMyUserId(DuracloudUser user, Long userId) {
         return user.getId() == userId ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
@@ -212,15 +206,9 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         Object principal = authentication.getPrincipal();
         if (principal instanceof String) {
             log.trace("Unknown user {}", principal);
-            return new DuracloudUser(-1,
-                                     (String) principal,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     -1);
+            DuracloudUser user = new DuracloudUser();
+            user.setUsername((String)principal);
+            return user;
         } else {
             return (DuracloudUser) principal;
         }

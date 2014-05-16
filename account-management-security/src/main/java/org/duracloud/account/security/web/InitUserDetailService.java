@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.security.web;
 
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.InitUserCredential;
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.util.InitUserCredential;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,21 +30,22 @@ public class InitUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException(username + " not found");
         }
 
-        DuracloudUser initUser = new DuracloudUser(-1,
-                                                   init.getUsername(),
-                                                   init.getInitEncodedPassword(),
-                                                   "Init",
-                                                   "User",
-                                                   "none@none.org",
-                                                   "question",
-                                                   "answer");
-
+        DuracloudUser initUser = new DuracloudUser();
+        initUser.setUsername(init.getUsername());
+        initUser.setPassword(init.getInitEncodedPassword());
+        initUser.setFirstName("Init");
+        initUser.setLastName("User");
+        initUser.setEmail("none@none.org");
+        initUser.setSecurityQuestion("question");
+        initUser.setSecurityAnswer("answer");
 
         Set<Role> roles = new HashSet<Role>();
         roles.add(Role.ROLE_INIT);
 
         Set<AccountRights> rightsSet = new HashSet<AccountRights>();
-        rightsSet.add(new AccountRights(-1, -1, -1, roles));
+        AccountRights accountRights = new AccountRights();
+        accountRights.setRoles(roles);
+        rightsSet.add(accountRights);
 
         initUser.setAccountRights(rightsSet);
 

@@ -4,13 +4,12 @@
 package org.duracloud.account.flow.createaccount;
 
 import junit.framework.Assert;
-
 import org.duracloud.account.app.controller.AmaTestBase;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
-import org.duracloud.account.common.domain.AccountCreationInfo;
-import org.duracloud.account.common.domain.AccountType;
-import org.duracloud.account.common.domain.DuracloudUser;
+import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.util.MessageHelper;
 import org.easymock.EasyMock;
 import org.junit.Before;

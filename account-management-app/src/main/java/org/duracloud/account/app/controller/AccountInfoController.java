@@ -3,18 +3,11 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountClusterService;
-import org.duracloud.account.util.error.AccountClusterNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -43,7 +40,7 @@ public class AccountInfoController extends AbstractAccountController {
                                         EDIT_PATH;
 
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.GET)
-    public String getEditForm(@PathVariable int accountId, Model model)
+    public String getEditForm(@PathVariable Long accountId, Model model)
         throws AccountNotFoundException, AccountClusterNotFoundException {
         log.info("getEditForm account {}", accountId);
 
@@ -55,13 +52,13 @@ public class AccountInfoController extends AbstractAccountController {
         editForm.setDepartment(accountInfo.getDepartment());
         editForm.setOrgName(accountInfo.getOrgName());
         editForm.setAcctName(accountInfo.getAcctName());
-        editForm.setAccountClusterId(accountInfo.getAccountClusterId());
+        AccountCluster accountCluster = accountInfo.getAccountCluster();
+        Long accountClusterId = null;
+        editForm.setAccountClusterId(accountClusterId);
         List<AccountCluster> accountClusters = new LinkedList<AccountCluster>();
-        int clusterId = accountInfo.getAccountClusterId();
-        if(clusterId > -1){
-            AccountClusterService acs = 
-                this.accountManagerService.getAccountCluster(clusterId);
-            accountClusters.add(acs.retrieveAccountCluster());
+        if(accountCluster != null){
+            accountClusters.add(accountCluster);
+            editForm.setAccountClusterId(accountCluster.getId());
         }
         model.addAttribute(EDIT_ACCOUNT_INFO_FORM_KEY, editForm);
 
@@ -72,12 +69,11 @@ public class AccountInfoController extends AbstractAccountController {
 
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView editInfo(
-                           @PathVariable int accountId,
+                           @PathVariable Long accountId,
                            @ModelAttribute(EDIT_ACCOUNT_INFO_FORM_KEY) 
                            @Valid AccountEditForm accountEditForm,
 					   BindingResult result,
 					   Model model) throws AccountNotFoundException, 
-					                       DBConcurrentUpdateException, 
 					                       DBNotFoundException {
         
         log.info("editInfo account {}", accountId);

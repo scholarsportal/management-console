@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.compute;
 
-import org.duracloud.account.common.domain.InstanceType;
+import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 
 /**

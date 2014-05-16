@@ -3,32 +3,23 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.util.AccountService;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * 
@@ -57,7 +48,7 @@ public class UsersController extends AbstractRootController{
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
                 for(AccountRights account : user.getAccountRights()) {
-                    if(user.isRootForAcct(account.getAccountId())) {
+                    if(user.isRootForAcct(account.getAccount().getId())) {
                         rootUser = true;
                         break;
                     }
@@ -67,21 +58,23 @@ public class UsersController extends AbstractRootController{
                     // User account relationship able to be deleted?
                     boolean deletable = true;
 
-                    AccountService accountService = getAccountManagerService().getAccount(account.getAccountId());
-                    AccountInfo accountInfo = accountService.retrieveAccountInfo();
+                    AccountInfo accountInfo = account.getAccount();
+                    AccountService accountService = getAccountManagerService().getAccount(account.getAccount().getId());
+//                    AccountService accountService = getAccountManagerService().getAccount(account.getAccountId());
+//                    AccountInfo accountInfo = accountService.retrieveAccountInfo();
 
-                    if(user.isOwnerForAcct(account.getAccountId())) {
+                    if(user.isOwnerForAcct(account.getAccount().getId())) {
                         if(!accountHasMoreThanOneOwner(accountService.getUsers(),
-                                                       account.getAccountId())) {
+                                                       account.getAccount().getId())) {
                             deletable = false;
                             removable = false;
                         }
                     }
 
-                    accounts.add(new Account(account.getAccountId(),
+                    accounts.add(new Account(account.getAccount().getId(),
                                              accountInfo.getAcctName(),
                                              accountInfo.getSubdomain(),
-                                             user.getRoleByAcct(account.getAccountId()),
+                                             user.getRoleByAcct(account.getAccount().getId()),
                                              deletable));
                     
                     } catch (AccountNotFoundException e) {
@@ -111,7 +104,7 @@ public class UsersController extends AbstractRootController{
     
     @RequestMapping(value = { BY_ID_MAPPING + "/reset" }, method = RequestMethod.POST)
     public ModelAndView resetUsersPassword(
-        @PathVariable int id, RedirectAttributes redirectAttributes)
+        @PathVariable Long id, RedirectAttributes redirectAttributes)
         throws Exception {
         log.debug("resetting user {}'s password.", id);    
         getRootAccountManagerService().resetUsersPassword(id);
@@ -123,7 +116,7 @@ public class UsersController extends AbstractRootController{
     
     @RequestMapping(value = BY_ID_DELETE_MAPPING , method = RequestMethod.POST)
     public ModelAndView deleteUser(
-        @PathVariable int id, RedirectAttributes redirectAttributes)
+        @PathVariable Long id, RedirectAttributes redirectAttributes)
         throws Exception {
         log.info("delete user {}", id);
 
@@ -135,8 +128,8 @@ public class UsersController extends AbstractRootController{
     
     
     @RequestMapping(value = BY_ID_MAPPING + "/revoke", method = RequestMethod.POST)
-    public ModelAndView revokeUserRightsFromAccount(@PathVariable("id") int userId, 
-                                                    @RequestParam(required=true) int accountId,
+    public ModelAndView revokeUserRightsFromAccount(@PathVariable("id") Long userId,
+                                                    @RequestParam(required=true) Long accountId,
                                                     RedirectAttributes redirectAttributes) 
                                                         throws Exception {
 
@@ -154,11 +147,11 @@ public class UsersController extends AbstractRootController{
 
     
     @RequestMapping(value = BY_ID_MAPPING + "/changerole", method = RequestMethod.POST)
-    public ModelAndView changeUserRole(@PathVariable("id") int userId,
+    public ModelAndView changeUserRole(@PathVariable("id") Long userId,
                  @ModelAttribute @Valid AccountUserEditForm accountUserEditForm,
                  BindingResult result,
                  RedirectAttributes redirectAttributes) throws Exception {
-        int accountId = accountUserEditForm.getAccountId();
+        Long accountId = accountUserEditForm.getAccountId();
         log.debug("editUser account {}", accountId);
 
         boolean hasErrors = result.hasErrors();
@@ -185,7 +178,7 @@ public class UsersController extends AbstractRootController{
 
     public class User implements Comparable<User> {
         public User(
-            int id, String username, String firstName, String lastName,
+            Long id, String username, String firstName, String lastName,
             String email, boolean deletable, Set<Account> accounts) {
             super();
             this.id = id;
@@ -197,7 +190,7 @@ public class UsersController extends AbstractRootController{
             this.accounts = accounts;
         }
 
-        private int id;
+        private Long id;
         private String username;
         private String firstName;
         private String lastName;
@@ -205,7 +198,7 @@ public class UsersController extends AbstractRootController{
         private boolean deletable;
         private Set<Account> accounts;
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
 
@@ -241,7 +234,7 @@ public class UsersController extends AbstractRootController{
 
     public class Account implements Comparable<Account> {
         public Account(
-            int id, String accountName, String subdomain, Role role, boolean deletable) {
+            Long id, String accountName, String subdomain, Role role, boolean deletable) {
             super();
             this.id = id;
             this.accountName = accountName;
@@ -250,13 +243,13 @@ public class UsersController extends AbstractRootController{
             this.deletable = deletable;
         }
 
-        private int id;
+        private Long id;
         private String accountName;
         private String subdomain;
         private Role role;
         private boolean deletable;
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
 

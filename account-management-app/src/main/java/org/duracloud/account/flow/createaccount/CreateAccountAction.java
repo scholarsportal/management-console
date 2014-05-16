@@ -3,18 +3,15 @@
  */
 package org.duracloud.account.flow.createaccount;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.duracloud.account.app.controller.AccountDetailsController;
 import org.duracloud.account.app.controller.AccountsController;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
-import org.duracloud.account.common.domain.AccountCreationInfo;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.ServicePlan;
+import org.duracloud.account.db.model.util.AccountCreationInfo;
+import org.duracloud.account.db.util.AccountManagerService;
+import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.util.MessageHelper;
 import org.duracloud.account.util.UrlHelper;
 import org.duracloud.account.util.UserFeedbackUtil;
@@ -27,6 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -79,7 +79,7 @@ public class CreateAccountAction extends AbstractAction {
                                     servicePlan,
                                     newAccountForm.getAccountType(),
                                     newAccountForm.getAccountClusterId() == null
-                                        ? -1
+                                        ? -1L
                                         : newAccountForm.getAccountClusterId());
 
         AccountService as = accountManagerService.createAccount(aci, owner);
@@ -89,7 +89,7 @@ public class CreateAccountAction extends AbstractAction {
 
         String contextPath = context.getExternalContext().getContextPath();
         String accountName = newAccountForm.getAcctName();
-        int accountId = as.getAccountId();
+        Long accountId = as.getAccountId();
 
         Message message;
 

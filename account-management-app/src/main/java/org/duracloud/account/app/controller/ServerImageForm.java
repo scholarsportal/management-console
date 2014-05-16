@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import java.text.MessageFormat;
 
 public class ServerImageForm {
-    private int providerAccountId;
+    private Long providerAccountId;
 
     @NotBlank(message = "You must specify a provider image id.")
     private String providerImageId;
@@ -20,11 +20,11 @@ public class ServerImageForm {
 
     private boolean latest;
 
-    public int getProviderAccountId() {
+    public Long getProviderAccountId() {
         return providerAccountId;
     }
 
-    public void setProviderAccountId(int providerAccountId) {
+    public void setProviderAccountId(Long providerAccountId) {
         this.providerAccountId = providerAccountId;
     }
 

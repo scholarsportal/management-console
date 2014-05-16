@@ -4,7 +4,7 @@
 package org.duracloud.account.security.web;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDecisionVoter;

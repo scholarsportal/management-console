@@ -91,7 +91,7 @@
     </beans:property>
   </beans:bean>
 
-  <beans:bean id="securityContextUtil" class="org.duracloud.account.util.security.SecurityContextUtil"/>
+  <beans:bean id="securityContextUtil" class="org.duracloud.account.db.util.security.SecurityContextUtil"/>
 
   <beans:bean id="initDetailsService" class="org.duracloud.account.security.web.InitUserDetailService"/>
 

@@ -3,11 +3,11 @@
  */
 package org.duracloud.account.annotation;
 
+import org.duracloud.account.db.util.AccountManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.duracloud.account.util.AccountManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"

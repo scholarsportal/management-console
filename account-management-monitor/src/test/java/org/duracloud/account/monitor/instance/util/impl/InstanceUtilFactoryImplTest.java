@@ -25,8 +25,8 @@ public class InstanceUtilFactoryImplTest {
 
     @Test
     public void testGetInstanceUtil() throws Exception {
-        AccountInfo acct0 = createAccount(0);
-        AccountInfo acct1 = createAccount(1);
+        AccountInfo acct0 = createAccount(0L);
+        AccountInfo acct1 = createAccount(1L);
 
         InstanceUtil instanceUtil0 = factory.getInstanceUtil(acct0);
         Assert.assertNotNull(instanceUtil0);
@@ -39,15 +39,15 @@ public class InstanceUtilFactoryImplTest {
         Assert.assertEquals(instanceUtil0, instanceUtilX);
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(Long id) {
         return new AccountInfo(id,
                                "subdomain-" + id,
                                "acctName-" + id,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }

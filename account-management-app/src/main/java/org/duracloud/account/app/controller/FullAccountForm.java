@@ -3,17 +3,15 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.duracloud.account.common.domain.ServicePlan;
+import org.duracloud.account.db.model.ServicePlan;
 import org.duracloud.account.util.StorageProviderTypeUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 

@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
-import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.db.model.ServicePlan;
+import org.duracloud.account.db.model.ServiceRepository;
+import org.duracloud.account.db.model.ServiceRepository.ServiceRepositoryType;
+import org.duracloud.account.db.util.RootAccountManagerService;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,16 +64,16 @@ public class ServiceRepositoryControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testDelete() throws Exception {
-        rootAccountManagerService.deleteServiceRepository(1);
+        rootAccountManagerService.deleteServiceRepository(1L);
         EasyMock.expectLastCall();
         replayMocks();
-        this.serviceRepositoryController.delete(1, redirectAttributes);
+        this.serviceRepositoryController.delete(1L, redirectAttributes);
     }
 
     @Test
     public void testEdit() throws Exception {
         // set up mocks, and args
-        int repoId = 7;
+        Long repoId = 7L;
 
         ServiceRepoForm serviceRepoForm = new ServiceRepoForm();
         serviceRepoForm.setServiceRepoType(ServiceRepositoryType.PRIVATE);

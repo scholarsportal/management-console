@@ -4,13 +4,13 @@
  */
 package org.duracloud.account.annotation;
 
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.duracloud.account.db.error.UserAlreadyExistsException;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.InvalidUsernameException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Daniel Bernstein

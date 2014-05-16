@@ -3,16 +3,16 @@
  */
 package org.duracloud.account.app.integration;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
-import org.duracloud.account.common.domain.AccountType;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
+import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.flow.createaccount.CreateAccountFlowHandler;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class TestNewAccountWizard extends AbstractIntegrationTest {
         UrlHelper.openRelative(sc, "/"+CreateAccountFlowHandler.FLOW_ID);
         assertNewAccountFormIsPresent();
         String accountName = "test"+System.currentTimeMillis();
-        Map<String,String> fields = createNewAccountFormInput(accountName,AccountType.COMMUNITY);
+        Map<String,String> fields = createNewAccountFormInput(accountName, AccountType.COMMUNITY);
         fillForm(fields);
         clickAndWait("id=next");
         

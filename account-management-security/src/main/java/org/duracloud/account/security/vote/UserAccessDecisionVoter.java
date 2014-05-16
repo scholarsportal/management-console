@@ -4,12 +4,12 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.DuracloudUserService;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
             // Does user have required role AND
             //  is call acting on the calling user's userId?
             if (hasVote(voteHasRole(role, userRoles))) {
-                int userId = getUserIdArg(methodArgs);
+                Long userId = getUserIdArg(methodArgs);
                 decision = voteMyUserId(user, userId);
             }
 
@@ -89,16 +89,16 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT)) {
             // Does user have required role on the account?
-            int acctId = getAccountIdArg(methodArgs);
+            Long acctId = getAccountIdArg(methodArgs);
             decision = voteUserHasRoleOnAccount(user, role, acctId);
 
         } else if (scope.equals(SecuredRule.Scope.SELF_ACCT_PEER)) {
             // Does user have required role on the account AND
             //  does the calling user have adequate rights to manage the
             //  target user?
-            int acctId = getAccountIdArg(methodArgs);
+            Long acctId = getAccountIdArg(methodArgs);
             if (hasVote(voteUserHasRoleOnAccount(user, role, acctId))) {
-                int otherUserId = getOtherUserIdArg(methodArgs);
+                Long otherUserId = getOtherUserIdArg(methodArgs);
                 decision = voteUserHasRoleOnAcctToManageOther(user.getId(),
                                                               acctId,
                                                               otherUserId);
@@ -108,8 +108,8 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
             // Does user have required role on the account AND
             //  does the calling user have adequate rights to update the
             //  target user from previous roles to new roles?
-            int acctId = getAccountIdArg(methodArgs);
-            int otherUserId = getOtherUserIdArg(methodArgs);
+            Long acctId = getAccountIdArg(methodArgs);
+            Long otherUserId = getOtherUserIdArg(methodArgs);
             Set<Role> otherRoles = getOtherRolesArg(methodArgs);
             if (hasVote(voteUserHasRoleOnAccount(user, role, acctId))) {
                 decision = voteUserHasRoleOnAcctToUpdateOthersRoles(user.getId(),
@@ -135,9 +135,9 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
 
 
 
-    private int voteUserHasRoleOnAcctToManageOther(int userId,
-                                                   int acctId,
-                                                   int otherUserId) {
+    private int voteUserHasRoleOnAcctToManageOther(Long userId,
+                                                   Long acctId,
+                                                   Long otherUserId) {
         log.trace("Voting if user {} has roles on acct {} to manage {}.",
                   new Object[]{userId, acctId, otherUserId});
 
@@ -155,15 +155,15 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     private int voteUserIsCreatingNewAcct(DuracloudUser user,
-                                          int acctId,
-                                          int otherUserId,
+                                          Long acctId,
+                                          Long otherUserId,
                                           Set<Role> otherRoles) {
         return hasVote(voteMyUserId(user, otherUserId)) &&
             accountIsEmpty(acctId) &&
             isOwner(otherRoles) ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
-    private boolean accountIsEmpty(int acctId) {
+    private boolean accountIsEmpty(Long acctId) {
         return numUsersForAccount(acctId) == 0;
     }
 
@@ -193,21 +193,21 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     /**
      * This method returns peer userId argument of the target method invocation.
      */
-    private int getOtherUserIdArg(Object[] arguments) {
+    private Long getOtherUserIdArg(Object[] arguments) {
         if (arguments.length <= OTHER_USER_ID_INDEX) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Integer) arguments[OTHER_USER_ID_INDEX];
+        return (Long) arguments[OTHER_USER_ID_INDEX];
     }
 
     /**
      * This method returns userId argument of the target method invocation.
      */
-    private int getUserIdArg(Object[] arguments) {
+    private Long getUserIdArg(Object[] arguments) {
         if (arguments.length <= USER_ID_INDEX) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Integer) arguments[USER_ID_INDEX];
+        return (Long) arguments[USER_ID_INDEX];
     }
 
     private String getUsernameArg(Object[] arguments) {
@@ -220,11 +220,11 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     /**
      * This method returns acctId argument of the target method invocation.
      */
-    private int getAccountIdArg(Object[] arguments) {
+    private Long getAccountIdArg(Object[] arguments) {
         if (arguments.length <= ACCT_ID_INDEX) {
             log.error("Illegal number of args: " + arguments.length);
         }
-        return (Integer) arguments[ACCT_ID_INDEX];
+        return (Long) arguments[ACCT_ID_INDEX];
     }
 
     private int castVote(int decision, MethodInvocation invocation) {

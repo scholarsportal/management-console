@@ -7,39 +7,20 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.BaseDomainData;
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.DuracloudGroup;
-import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.BaseRepo;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.db.hybrid.HybridDBRepoMgr;
-import org.duracloud.account.db.impl.IdUtilImpl;
+import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Performs the work of the Account Management DB Util.
@@ -56,12 +37,12 @@ public class DbUtil {
     private DuracloudRepoMgr repoMgr;
     private File workDir;
 
-    public DbUtil(File configFile, File workDir) {
-        this(getAmaConfig(configFile), workDir);
+    public DbUtil(DuracloudRepoMgr repoMgr, File configFile, File workDir) {
+        this(repoMgr, getAmaConfig(configFile), workDir);
     }
 
-    public DbUtil(AmaConfig config, File workDir) {
-        this.repoMgr = getRepoManager(config);
+    public DbUtil(DuracloudRepoMgr repoMgr, AmaConfig config, File workDir) {
+        this.repoMgr = repoMgr;
         this.workDir = workDir;
     }
 
@@ -108,31 +89,22 @@ public class DbUtil {
         return config;
     }
 
-    private DuracloudRepoMgr getRepoManager(AmaConfig config) {
-        DuracloudRepoMgr repoMgr = new HybridDBRepoMgr(new IdUtilImpl());
-        repoMgr.initialize(config);
+    private DuracloudRepoMgr getRepoManager() {
         return repoMgr;
     }
 
     private void doGet() {
-        for(BaseRepo repo : repoMgr.getAllRepos()) {
+        for(JpaRepository repo : repoMgr.getAllRepos()) {
             writeRepo(repo);
         }
     }
 
-    private void writeRepo(BaseRepo repo) {
-        try {
-            List items = new ArrayList();
-            for(int id : (Set<Integer>)repo.getIds()) {
-                items.add(repo.findById(id));
-            }
-            if(items.size() > 0) {
-                String serialized = serialize(items);
-                String name = items.get(0).getClass().getSimpleName() + ".xml";
-                writeToFile(serialized, name);
-            }
-        } catch (DBNotFoundException e) {
-            log.error("Item not found: " + e.getMessage());
+    private void writeRepo(JpaRepository repo) {
+        List<BaseEntity> items = repo.findAll();
+        if(items.size() > 0) {
+            String serialized = serialize(items);
+            String name = items.get(0).getClass().getSimpleName() + ".xml";
+            writeToFile(serialized, name);
         }
     }
 
@@ -151,49 +123,30 @@ public class DbUtil {
         for(File inputFile : workDir.listFiles()) {
             if(inputFile.length() > 0) {
                 String xml = readFromFile(inputFile);
-                for(BaseDomainData item : (List<BaseDomainData>)deserialize(xml)) {
-                    saveItem(item);
-                }
+                List<BaseEntity> entities = (List<BaseEntity>)deserialize(xml);
+                saveEntities(entities);
             }
         }
     }
 
     private String readFromFile(File inFile) {
         try {
-        return FileUtils.readFileToString(inFile, "UTF-8");
+            return FileUtils.readFileToString(inFile, "UTF-8");
         } catch(IOException e) {
             throw new RuntimeException("Could not read from file " + inFile +
                                        " due to error " + e.getMessage());
         }
     }
 
-    private void saveItem(BaseDomainData item) {
-        BaseRepo repo = getRepo(item);
-        try {
-            BaseDomainData repoVersion =
-                (BaseDomainData)repo.findById(item.getId());
-            if(item.equals(repoVersion)) {
-                return; // No reason to update
-            }
-        } catch(DBNotFoundException e) {
-            // Item does not exist, set counter to 0 and continue
-            item.setCounter(0);
-        }
-
-        try {
-            System.out.println("Updating item of type " +
-                               item.getClass().getSimpleName() +
-                               " with ID " + item.getId());
-            repo.save(item);
-        } catch (DBConcurrentUpdateException e) {
-            log.error("Unable to save item of type " +
-                item.getClass().getName() + " with ID " + item.getId() +
-                " due to concurrent update exception: " + e.getMessage());
+    private void saveEntities(List<BaseEntity> entities) {
+        if(! entities.isEmpty()) {
+            JpaRepository repo = getRepo(entities.get(0));
+            repo.save(entities);
         }
     }
 
-    private BaseRepo getRepo(BaseDomainData item) {
-        BaseRepo repo;
+    private JpaRepository getRepo(BaseEntity item) {
+        JpaRepository repo;
         if(item instanceof DuracloudUser) {
             repo = repoMgr.getUserRepo();
         } else if(item instanceof AccountInfo) {
@@ -226,12 +179,10 @@ public class DbUtil {
     }
 
     private void doClear() {
-        for(BaseRepo repo : repoMgr.getAllRepos()) {
+        for(JpaRepository repo : repoMgr.getAllRepos()) {
             System.out.println("Removing all items from repo " +
                 repo.getClass().getSimpleName());
-            for(int id : (Set<Integer>)repo.getIds()) {
-                repo.delete(id);
-            }
+            repo.deleteAllInBatch();
         }
     }
 

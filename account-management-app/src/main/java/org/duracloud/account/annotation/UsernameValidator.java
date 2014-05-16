@@ -4,12 +4,12 @@
  */
 package org.duracloud.account.annotation;
 
-import org.duracloud.account.common.domain.DuracloudGroup;
-import org.duracloud.account.db.error.UserAlreadyExistsException;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.InvalidUsernameException;
-import org.duracloud.account.util.error.ReservedPrefixException;
-import org.duracloud.account.util.error.ReservedUsernameException;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.ReservedPrefixException;
+import org.duracloud.account.db.util.error.ReservedUsernameException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

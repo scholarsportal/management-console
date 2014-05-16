@@ -3,9 +3,9 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
+import org.duracloud.account.db.model.ServicePlan;
+import org.duracloud.account.db.model.ServiceRepository;
+import org.duracloud.account.db.model.ServiceRepository.ServiceRepositoryType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,7 +68,7 @@ public class ServiceRepositoryController extends AbstractRootCrudController<Serv
     }
 
     @Override
-    protected Object getEntity(int id) {
+    protected Object getEntity(Long id) {
         return getRootAccountManagerService().getServiceRepository(id);
     }
 
@@ -88,7 +88,7 @@ public class ServiceRepositoryController extends AbstractRootCrudController<Serv
     }
 
     @Override
-    protected void update(int id, ServiceRepoForm form) {
+    protected void update(Long id, ServiceRepoForm form) {
         getRootAccountManagerService().editServiceRepository(id,
                                                         form.getServiceRepoType(),
                                                         form.getServicePlan(),
@@ -102,7 +102,7 @@ public class ServiceRepositoryController extends AbstractRootCrudController<Serv
     }
 
     @Override
-    protected void delete(int id) {
+    protected void delete(Long id) {
         getRootAccountManagerService().deleteServiceRepository(id);
     }
 

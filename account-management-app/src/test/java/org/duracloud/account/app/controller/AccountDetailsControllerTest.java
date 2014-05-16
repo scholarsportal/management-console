@@ -3,14 +3,14 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -31,9 +31,15 @@ public class AccountDetailsControllerTest extends AmaControllerTestBase {
     @Test
     public void testRemoveProvider() throws Exception {
         Set<StorageProviderAccount> spa = new HashSet<StorageProviderAccount>();
-        spa.add(new StorageProviderAccount(0,StorageProviderType.RACKSPACE, "test", "test", false));
+        StorageProviderAccount storage = new StorageProviderAccount();
+        storage.setId(0L);
+        storage.setProviderType(StorageProviderType.RACKSPACE);
+        storage.setUsername("test");
+        storage.setPassword("test");
+        storage.setRrs(false);
+        spa.add(storage);
         EasyMock.expect(this.accountService.getSecondaryStorageProviders()).andReturn(spa);
-        this.accountService.removeStorageProvider(EasyMock.anyInt());
+        this.accountService.removeStorageProvider(EasyMock.anyLong());
         addFlashAttribute();
         replayMocks();
         this.controller.removeProvider(TEST_ACCOUNT_ID, StorageProviderType.RACKSPACE.toString(), redirectAttributes);

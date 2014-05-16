@@ -5,8 +5,8 @@ package org.duracloud.account.security.web;
 
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;
@@ -43,7 +43,7 @@ public class AccountAccessDecisionVoter extends AbstractAccessDecisionVoter {
 
         int decision = ACCESS_ABSTAIN;
 		if(rmi.getMethod().getName().equals("getAccount")){
-			Integer accountId = (Integer)rmi.getArguments()[0];
+            Long accountId = (Long)rmi.getArguments()[0];
 
 			log.trace("intercepted getAccount({})", accountId);
 
