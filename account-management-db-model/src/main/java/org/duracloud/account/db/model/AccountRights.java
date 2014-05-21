@@ -21,8 +21,8 @@ public class AccountRights extends BaseEntity {
     @JoinColumn(name="account_id", nullable=false)
     private AccountInfo account;
 
-    @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="user_id", nullable=false)
+    @ManyToOne(fetch= FetchType.EAGER, optional=true)
+    @JoinColumn(name="user_id", nullable=true)
     private DuracloudUser user;
 
     @ElementCollection(targetClass=Role.class)

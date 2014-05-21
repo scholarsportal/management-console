@@ -7,7 +7,14 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 import java.util.Date;
 
 /**
@@ -18,7 +25,9 @@ import java.util.Date;
 public abstract class BaseEntity implements Identifiable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="idOrGenerate")
+    @GenericGenerator(name="idOrGenerate",
+                      strategy="org.duracloud.account.db.model.util.UseIdOrGenerate")
     protected Long id;
 
     private Date created = new Date();

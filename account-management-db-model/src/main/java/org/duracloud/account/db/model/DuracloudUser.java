@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
     private boolean credentialsNonExpired = true;
     private boolean accountNonLocked = true;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="user")
     private Set<AccountRights> accountRights = new HashSet<AccountRights>();
 
     public String getUsername() {

@@ -57,11 +57,11 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
      * The details needed to manage servers associated with this
      * account
      */
-    @OneToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="server_details_id", nullable=false)
+    @OneToOne(fetch=FetchType.EAGER, optional=true)
+    @JoinColumn(name="server_details_id", nullable=true)
     private ServerDetails serverDetails;
 
-     @ManyToOne(fetch= FetchType.EAGER, optional=true)
+    @ManyToOne(fetch= FetchType.EAGER, optional=true)
     @JoinColumn(name="account_cluster_id", nullable=true)
     private AccountCluster accountCluster;
 

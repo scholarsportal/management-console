@@ -7,7 +7,20 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.BaseEntity;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.ServiceRepository;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
@@ -20,7 +33,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Performs the work of the Account Management DB Util.
@@ -120,7 +135,15 @@ public class DbUtil {
     }
 
     private void doPut() {
-        for(File inputFile : workDir.listFiles()) {
+        // Defines the order to import the different entity types.  This is necessary
+        // because of defined and enforced JPA relationships.
+        String[] files = {"AccountCluster", "DuracloudUser", "ServiceRepository",
+            "StorageProviderAccount", "ComputeProviderAccount", "ServerDetails",
+            "AccountInfo", "ServerImage", "DuracloudInstance", "DuracloudGroup",
+            "UserInvitation", "AccountRights"};
+
+        for(String fileName: files) {
+            File inputFile = new File(workDir, fileName+".xml");
             if(inputFile.length() > 0) {
                 String xml = readFromFile(inputFile);
                 List<BaseEntity> entities = (List<BaseEntity>)deserialize(xml);
@@ -140,8 +163,82 @@ public class DbUtil {
 
     private void saveEntities(List<BaseEntity> entities) {
         if(! entities.isEmpty()) {
-            JpaRepository repo = getRepo(entities.get(0));
-            repo.save(entities);
+            final JpaRepository repo = getRepo(entities.get(0));
+
+            for(final BaseEntity entity: entities) {
+
+                // Entities with relationship need to have their related
+                // entities looked up and then set to save properly.
+                if(entity instanceof ServerDetails) {
+                    ServerDetails sd = (ServerDetails) entity;
+                    sd.setComputeProviderAccount(
+                        repoMgr.getComputeProviderAccountRepo().findOne(
+                            sd.getComputeProviderAccount().getId()));
+                    sd.setPrimaryStorageProviderAccount(
+                        repoMgr.getStorageProviderAccountRepo().findOne(
+                            sd.getPrimaryStorageProviderAccount().getId()));
+
+                    Set<StorageProviderAccount> storageProviderAccounts =
+                        sd.getSecondaryStorageProviderAccounts();
+                    if(storageProviderAccounts.size() > 0) {
+                        Set<StorageProviderAccount> accounts = new HashSet<>();
+                        for(StorageProviderAccount sp: storageProviderAccounts) {
+                            StorageProviderAccount account =
+                                repoMgr.getStorageProviderAccountRepo()
+                                       .findOne(sp.getId());
+                            accounts.add(account);
+                        }
+                        sd.setSecondaryStorageProviderAccounts(accounts);
+                    }
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof AccountInfo) {
+                    AccountInfo ai = (AccountInfo) entity;
+                    ai.setServerDetails(repoMgr.getServerDetailsRepo().findOne(
+                        ai.getServerDetails().getId()));
+                    ai.setAccountCluster(repoMgr.getAccountClusterRepo().findOne(
+                        ai.getAccountCluster().getId()));
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof ServerImage) {
+                    ServerImage si = (ServerImage) entity;
+                    si.setProviderAccount(repoMgr.getComputeProviderAccountRepo()
+                        .findOne(si.getId()));
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof DuracloudInstance) {
+                    DuracloudInstance di = (DuracloudInstance) entity;
+                    di.setImage(repoMgr.getServerImageRepo().findOne(
+                        di.getImage().getId()));
+                    di.setAccount(repoMgr.getAccountRepo().findOne(
+                        di.getAccount().getId()));
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof DuracloudGroup) {
+                    DuracloudGroup dg = (DuracloudGroup) entity;
+                    dg.setAccount(repoMgr.getAccountRepo().findOne(
+                        dg.getAccount().getId()));
+                    if(dg.getUsers().size() > 0) {
+                        Set<DuracloudUser> users = new HashSet<>();
+                        for(DuracloudUser user: dg.getUsers()) {
+                            users.add(repoMgr.getUserRepo().findOne(user.getId()));
+                        }
+                        dg.setUsers(users);
+                    }
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof AccountRights) {
+                    AccountRights rights = (AccountRights) entity;
+                    rights.setAccount(repoMgr.getAccountRepo().findOne(
+                        rights.getAccount().getId()));
+
+                    rights.setUser(repoMgr.getUserRepo().findOne(
+                        rights.getUser().getId()));
+                    repo.saveAndFlush(entity);
+                } else if(entity instanceof UserInvitation) {
+                    UserInvitation ui = (UserInvitation) entity;
+                    ui.setAccount(repoMgr.getAccountRepo().findOne(
+                        ui.getAccount().getId()));
+                    repo.saveAndFlush(entity);
+                } else {
+                    repo.saveAndFlush(entity);
+                }
+            }
         }
     }
 
