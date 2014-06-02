@@ -227,7 +227,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Set<UserInvitation> getPendingInvitations() {
-        Set<UserInvitation> invitations =
+        List<UserInvitation> invitations =
             repoMgr.getUserInvitationRepo().findByAccountId(account.getId());
 
         Date now = new Date();
