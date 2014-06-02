@@ -52,19 +52,7 @@ public class DbUtil {
     private DuracloudRepoMgr repoMgr;
     private File workDir;
 
-    public DbUtil(DuracloudRepoMgr repoMgr, File configFile, File workDir) {
-        this(repoMgr, getAmaConfig(configFile), workDir);
-    }
-
-    public DbUtil(DuracloudRepoMgr repoMgr, AmaConfig config, File workDir) {
-        this.repoMgr = repoMgr;
-        this.workDir = workDir;
-    }
-
-    /**
-     * Only to be used by unit tests
-     */
-    protected DbUtil(DuracloudRepoMgr repoMgr, File workDir) {
+    public DbUtil(DuracloudRepoMgr repoMgr, File workDir) {
         this.repoMgr = repoMgr;
         this.workDir = workDir;
     }
@@ -137,9 +125,9 @@ public class DbUtil {
     private void doPut() {
         // Defines the order to import the different entity types.  This is necessary
         // because of defined and enforced JPA relationships.
-        String[] files = {"AccountCluster", "DuracloudUser", "ServiceRepository",
-            "StorageProviderAccount", "ComputeProviderAccount", "ServerDetails",
-            "AccountInfo", "ServerImage", "DuracloudInstance", "DuracloudGroup",
+        String[] files = {"AccountCluster", "ServiceRepository", "StorageProviderAccount",
+            "ComputeProviderAccount", "ServerDetails", "AccountInfo",
+            "DuracloudUser", "ServerImage", "DuracloudInstance", "DuracloudGroup",
             "UserInvitation", "AccountRights"};
 
         for(String fileName: files) {
@@ -293,7 +281,7 @@ public class DbUtil {
 
     private XStream getXStream() {
         XStream xstream = new XStream(new DomDriver());
-        xstream.setMode(XStream.NO_REFERENCES);        
+        xstream.setMode(XStream.ID_REFERENCES);        
         xstream.alias(DuracloudUser.class.getSimpleName(), DuracloudUser.class);
         xstream.alias(DuracloudGroup.class.getSimpleName(), DuracloudGroup.class);
         xstream.alias(AccountInfo.class.getSimpleName(), AccountInfo.class);
