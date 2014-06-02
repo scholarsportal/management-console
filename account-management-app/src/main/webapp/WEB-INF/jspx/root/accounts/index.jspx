@@ -119,10 +119,10 @@
                   </td>
                   <td>${a.accountInfo.type}</td>
                   <td>
-                    <c:set var="clusterId" value="${a.accountInfo.accountClusterId}"/>
+                    <c:set var="clusterId" value="${a.accountInfo.accountCluster.id}"/>
                     <c:if test="${not empty clusterId and clusterId gt -1}">
                       <a href="${pageContext.request.contextPath}/root/clusters/byid/${clusterId}">
-                        <spring:message code="account.cluster"/>
+                        ${a.accountInfo.accountCluster.clusterName}
                       </a>
                     </c:if>
                   </td>
