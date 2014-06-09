@@ -135,7 +135,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         securityGroups.add(securityGroup);
         request.setSecurityGroups(securityGroups);
         request.setKeyName(keyname);
-        request.setInstanceType(convertDuracloudInstanceTypeToNative(instanceType));
+        request.setInstanceType(convertDuracloudInstanceTypeToNativeM1(instanceType));
         if(includeZone) {
             request.setPlacement(new Placement(availabilityZone));
         }
@@ -288,6 +288,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         if (null == result && null != e) {
             StringBuilder error = new StringBuilder();
             error.append("Error describing instance: " + providerInstanceId);
+            error.append(e);
             log.error(error.toString());
             throw new DuracloudInstanceNotAvailableException(error.toString(), e);
         }
@@ -312,7 +313,10 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
                          .iterator().next().getInstanceType();
             
             for (InstanceType it : InstanceType.values()) {
-                if (convertDuracloudInstanceTypeToNative(it).equals(instanceType)) {
+                if (convertDuracloudInstanceTypeToNativeM1(it).equals(instanceType)) {
+                    return it;
+                }
+                if (convertDuracloudInstanceTypeToNativeM3(it).equals(instanceType)) {
                     return it;
                 }
             }
@@ -330,7 +334,11 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
     }
 
-    protected String convertDuracloudInstanceTypeToNative(InstanceType it) {
+    protected String convertDuracloudInstanceTypeToNativeM1(InstanceType it) {
         return "m1." + it.name().toLowerCase();
+    }
+
+    protected String convertDuracloudInstanceTypeToNativeM3(InstanceType it) {
+        return "m3." + it.name().toLowerCase();
     }
 }

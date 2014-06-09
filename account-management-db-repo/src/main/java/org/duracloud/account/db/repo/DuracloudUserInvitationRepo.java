@@ -11,7 +11,7 @@ import org.duracloud.account.db.model.UserInvitation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author Erik Paulsson
@@ -36,5 +36,5 @@ public interface DuracloudUserInvitationRepo extends JpaRepository<UserInvitatio
      * @param id the identifier of the DuraCloud account
      * @return set of outstanding invitations for the given account
      */
-    public Set<UserInvitation> findByAccountId(Long id);
+    public List<UserInvitation> findByAccountId(Long id);
 }

@@ -85,22 +85,7 @@ public class DbBackupDriver {
         String ldapUserDn = getProperty(props, LDAP_USERDN);
         String ldapPassword = getProperty(props, LDAP_PASSWORD);
 
-        AmaConfig amaConfig = new AmaConfig();
-        amaConfig.setUsername(dbUsername);
-        amaConfig.setPassword(dbPassword);
-        amaConfig.setLdapUrl(ldapUrl);
-        amaConfig.setLdapBaseDn(ldapBaseDn);
-        amaConfig.setLdapUserDn(ldapUserDn);
-        amaConfig.setLdapPassword(ldapPassword);
-
-        // Not used below
-        amaConfig.setIdUtilHost("example.org");
-        amaConfig.setIdUtilPort("80");
-        amaConfig.setIdUtilCtxt("not-used");
-        amaConfig.setIdUtilUsername("not-used");
-        amaConfig.setIdUtilPassword("not-used");
-
-        return new DbUtil(repoMgr, amaConfig, getWorkDir(props));
+        return new DbUtil(repoMgr, getWorkDir(props));
     }
 
     private StoreUtil buildStoreUtil(Properties props) {
