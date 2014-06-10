@@ -14,9 +14,6 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
-import org.duracloud.account.common.domain.ServiceRepository.ServiceRepositoryType;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
@@ -25,7 +22,6 @@ import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.account.db.IdUtil;
@@ -433,30 +429,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	}
 
 	@Override
-	public Set<ServiceRepository> listAllServiceRepositories(String filter) {
-		Set<Integer> repoIds = getServiceRepositoryRepo().getIds();
-		Set<ServiceRepository> repositories = new HashSet<ServiceRepository>();
-        ServiceRepository repository = null;
-		for(int id : repoIds){
-            try{
-				repository = getServiceRepositoryRepo().findById(id);
-			}catch(DBNotFoundException ex){
-				log.error("No Service Repository found with ID {}", id);
-                continue;
-			}
-
-            if(filter == null ||
-                (repository.getHostName().startsWith(filter))
-            ){
-
-                repositories.add(repository);
-            }
-		}
-		return repositories;
-
-	}
-
-	@Override
 	public void createServerImage(int providerAccountId,
                                   String providerImageId,
                                   String version,
@@ -550,89 +522,11 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         getServerImageRepo().delete(id);
 	}
 
-	@Override
-	public void createServiceRepository(ServiceRepositoryType serviceRepositoryType,
-                                        ServicePlan servicePlan,
-                                        String hostName,
-                                        String spaceId,
-                                        String serviceXmlId,
-                                        String version,
-                                        String username,
-                                        String password) {
-        try{
-            int id = getIdUtil().newServiceRepositoryId();
-
-            ServiceRepository serviceRepo =
-                new ServiceRepository(id,
-                                      serviceRepositoryType,
-                                      servicePlan,
-                                      hostName,
-                                      spaceId,
-                                      serviceXmlId,
-                                      version,
-                                      username,
-                                      password);
-
-            getServiceRepositoryRepo().save(serviceRepo);
-        }catch(DBConcurrentUpdateException ex){
-            log.error("Error creating Service Repo");
-        }
-	}
-
-	@Override
-	public void editServiceRepository(int id,
-                                      ServiceRepositoryType serviceRepositoryType,
-                                      ServicePlan servicePlan,
-                                      String hostName,
-                                      String spaceId,
-                                      String serviceXmlId,
-                                      String version,
-                                      String username,
-                                      String password) {
-        try{
-            ServiceRepository serviceRepo = getServiceRepositoryRepo().findById(id);
-
-            serviceRepo.setServiceRepositoryType(serviceRepositoryType);
-            serviceRepo.setServicePlan(servicePlan);
-            serviceRepo.setHostName(hostName);
-            serviceRepo.setSpaceId(spaceId);
-            serviceRepo.setServiceXmlId(serviceXmlId);
-            serviceRepo.setVersion(version);
-            serviceRepo.setUsername(username);
-            serviceRepo.setPassword(password);
-
-            getServiceRepositoryRepo().save(serviceRepo);
-        }catch(DBNotFoundException ex){
-            log.error("No Service Repo found with ID {}", id);
-        }catch(DBConcurrentUpdateException ex){
-            log.error("Error updating Service Repo");
-        }
-	}
-
-	@Override
-	public ServiceRepository getServiceRepository(int id) {
-        try{
-            return getServiceRepositoryRepo().findById(id);
-        }catch(DBNotFoundException ex){
-            log.error("No Service Repo found with ID {}", id);
-        }
-        return null;
-	}
-
-	@Override
-	public void deleteServiceRepository(int id) {
-        log.info("Deleting service repo with ID {}", id);
-
-        getServiceRepositoryRepo().delete(id);
-	}
 
     private DuracloudServerImageRepo getServerImageRepo() {
         return repoMgr.getServerImageRepo();
     }
 
-    private DuracloudServiceRepositoryRepo getServiceRepositoryRepo() {
-        return repoMgr.getServiceRepositoryRepo();
-    }
 
     private DuracloudUserRepo getUserRepo() {
         return repoMgr.getUserRepo();

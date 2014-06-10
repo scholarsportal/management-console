@@ -9,7 +9,7 @@
   <url>http://duracloud.org</url>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>3.0.0</maven>
   </prerequisites>
 
   <inceptionYear>2009</inceptionYear>
@@ -80,22 +80,23 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>tomcat-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>tomcat-deploy</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>deploy-only</goal>
-                </goals>
-                <configuration>
-                  <server>tomcat-server</server>
-                  <url>http://localhost:${tomcat.port}/manager</url>
-                  <update>true</update>
-                </configuration>
-              </execution>
-            </executions>
+              <groupId>org.apache.tomcat.maven</groupId>
+              <artifactId>tomcat7-maven-plugin</artifactId>
+              <version>2.2</version>
+              <executions>
+                  <execution>
+                      <id>tomcat-deploy</id>
+                      <phase>pre-integration-test</phase>
+                      <goals>
+                          <goal>deploy-only</goal>
+                      </goals>
+                      <configuration>
+                          <server>tomcat-server</server>
+                          <url>http://localhost:${tomcat.port}/manager/text</url>
+                          <update>true</update>
+                      </configuration>
+                  </execution>
+              </executions>
           </plugin>
         </plugins>
       </build>
@@ -165,10 +166,10 @@
   </profiles>
 
   <properties>
-    <duracloud.artifact.version>2.3.1</duracloud.artifact.version>
-    <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
-    <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
-    <org.springframework.security.version>3.1.0.RELEASE</org.springframework.security.version>
+    <duracloud.artifact.version>3.2.0-SNAPSHOT</duracloud.artifact.version>
+    <org.springframework.version>4.0.5.RELEASE</org.springframework.version>
+    <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
+    <org.springframework.webflow.version>2.3.3.RELEASE</org.springframework.webflow.version>
     <tomcat.port.default>8080</tomcat.port.default>
     <database.home.default>/opt/derby/duracloudDB</database.home.default>
     <unitTests>**/*Test.class</unitTests>
@@ -777,23 +778,18 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web</artifactId>
+      <artifactId>spring-web</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${org.springframework.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web.servlet</artifactId>
-      <version>${org.springframework.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.context</artifactId>

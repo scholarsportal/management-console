@@ -8,7 +8,6 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.*;
 import org.duracloud.account.util.AccountServiceFactory;
 import org.duracloud.account.util.DuracloudInstanceManagerService;
@@ -50,7 +49,6 @@ public class DuracloudServiceTestBase {
     protected DuracloudComputeProviderAccountRepo computeProviderAcctRepo;
     protected DuracloudInstanceManagerService instanceManagerService;
     protected DuracloudServerImageRepo serverImageRepo;
-    protected DuracloudServiceRepositoryRepo serviceRepositoryRepo;
     protected DuracloudServerDetailsRepo serverDetailsRepo;
 
     protected IdUtil idUtil;
@@ -104,8 +102,6 @@ public class DuracloudServiceTestBase {
                                       DuracloudInstanceManagerService.class);
         serverImageRepo = EasyMock.createMock("DuracloudServerImageRepo",
                                       DuracloudServerImageRepo.class);
-        serviceRepositoryRepo = EasyMock.createMock("DuracloudServiceRepositoryRepo",
-                                      DuracloudServiceRepositoryRepo.class);
         serverDetailsRepo = EasyMock.createMock("DuracloudServerDetailsRepo",
                                                 DuracloudServerDetailsRepo.class);
 
@@ -156,9 +152,6 @@ public class DuracloudServiceTestBase {
         EasyMock.expect(repoMgr.getServerImageRepo())
             .andReturn(serverImageRepo)
             .anyTimes();
-        EasyMock.expect(repoMgr.getServiceRepositoryRepo())
-            .andReturn(serviceRepositoryRepo)
-            .anyTimes();
         EasyMock.expect(repoMgr.getServerDetailsRepo())
             .andReturn(serverDetailsRepo)
             .anyTimes();
@@ -193,7 +186,6 @@ public class DuracloudServiceTestBase {
         EasyMock.verify(idUtil);
         EasyMock.verify(instanceManagerService);
         EasyMock.verify(serverImageRepo);
-        EasyMock.verify(serviceRepositoryRepo);
         EasyMock.verify(serverDetailsRepo);
     }
 
@@ -231,7 +223,6 @@ public class DuracloudServiceTestBase {
                                        "dept-" + acctId,
                                        StorageProviderType.AMAZON_S3,
                                        secStorProvTypes,
-                                       ServicePlan.PROFESSIONAL,
                                        type,
                                        acctId);
     }
@@ -258,14 +249,11 @@ public class DuracloudServiceTestBase {
         int primStorageProvAcctId = 0;
         Set<Integer> secStorageProvAcctIds = new HashSet<Integer>();
         secStorageProvAcctIds.add(0);
-        Set<Integer> secServiceRepoIds = new HashSet<Integer>();
 
         return new ServerDetails(serverDetailsId,
                                  computeProvAcctId,
                                  primStorageProvAcctId,
-                                 secStorageProvAcctIds,
-                                 secServiceRepoIds,
-                                 ServicePlan.PROFESSIONAL);
+                                 secStorageProvAcctIds);
     }
 
     protected void replayMocks() {
@@ -288,7 +276,6 @@ public class DuracloudServiceTestBase {
         EasyMock.replay(repoMgr);
         EasyMock.replay(instanceManagerService);
         EasyMock.replay(serverImageRepo);
-        EasyMock.replay(serviceRepositoryRepo);
         EasyMock.replay(serverDetailsRepo);
     }
 }

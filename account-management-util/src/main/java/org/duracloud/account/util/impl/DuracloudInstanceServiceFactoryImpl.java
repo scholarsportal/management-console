@@ -15,7 +15,7 @@ import org.duracloud.account.util.security.SecurityContextUtil;
 import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.duracloud.security.error.NoUserLoggedInException;
+import org.duracloud.common.error.NoUserLoggedInException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDecisionVoter;

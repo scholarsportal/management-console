@@ -3,7 +3,6 @@
  */
 package org.duracloud.account.util.instance;
 
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.common.web.RestHttpHelper;
 
@@ -21,12 +20,10 @@ public interface DurabossUpdater {
      *
      * @param host           of DuraBoss
      * @param durabossConfig of DuraBoss
-     * @param servicePlan    of account
      * @param restHelper     for connecting to DuraBoss
      */
     public void startDuraboss(String host,
                               DurabossConfig durabossConfig,
-                              ServicePlan servicePlan,
                               RestHttpHelper restHelper);
 
     /**
@@ -34,11 +31,9 @@ public interface DurabossUpdater {
      *
      * @param host           of DuraBoss
      * @param durabossConfig of DuraBoss
-     * @param servicePlan    of account
      * @param restHelper     for connecting to DuraBoss
      */
     public void stopDuraboss(String host,
                              DurabossConfig durabossConfig,
-                             ServicePlan servicePlan,
                              RestHttpHelper restHelper);
 }

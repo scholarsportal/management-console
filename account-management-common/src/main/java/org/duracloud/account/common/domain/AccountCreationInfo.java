@@ -49,11 +49,6 @@ public class AccountCreationInfo {
     private Set<StorageProviderType> secondaryStorageProviderTypes;
 
     /*
-     * The type of package chosen for this account.
-     */
-    private ServicePlan servicePlan;
-
-    /*
      * The type of account to create.
      */
     private AccountType accountType;
@@ -69,7 +64,6 @@ public class AccountCreationInfo {
                                String department,
                                StorageProviderType primaryStorageProviderType,
                                Set<StorageProviderType> secondaryStorageProviderTypes,
-                               ServicePlan servicePlan,
                                AccountType accountType,
                                int accountClusterId) {
         this.subdomain = subdomain;
@@ -78,7 +72,6 @@ public class AccountCreationInfo {
         this.department = department;
         this.primaryStorageProviderType = primaryStorageProviderType;
         this.secondaryStorageProviderTypes = secondaryStorageProviderTypes;
-        this.servicePlan = servicePlan;
         this.accountType = accountType;
         this.accountClusterId = accountClusterId;
     }
@@ -107,9 +100,6 @@ public class AccountCreationInfo {
         return secondaryStorageProviderTypes;
     }
 
-    public ServicePlan getServicePlan() {
-        return servicePlan;
-    }
 
     public AccountType getAccountType() {
         return accountType;

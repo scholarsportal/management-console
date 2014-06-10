@@ -7,17 +7,12 @@ import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
-import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
-import org.duracloud.account.util.error.DuracloudServiceRepositoryNotAvailableException;
 import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
 import org.duracloud.account.util.instance.InstanceUtil;
@@ -25,7 +20,6 @@ import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.StorageAccount;
@@ -74,9 +68,6 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-        config.setDuraserviceHost(instance.getHostName());
-        config.setDuraservicePort(DEFAULT_SSL_PORT);
-        config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
         config.setAmaUrl(AmaEndpoint.getUrl());
         return config;
     }
@@ -147,100 +138,11 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         }
     }
 
-    public DuraserviceConfig getDuraserviceConfig() {
-        DuraserviceConfig config = new DuraserviceConfig();
-
-        String instanceHost = instance.getHostName();
-
-        // Get the Server Image (for version)
-        String imageVersion;
-        String servicesAdminVersion;
-        try {
-            ServerImage image =
-                repoMgr.getServerImageRepo().findById(instance.getImageId());
-            imageVersion= image.getVersion();
-            servicesAdminVersion =
-                imageVersion.replaceAll("-SNAPSHOT", ".SNAPSHOT");
-        } catch(DBNotFoundException e) {
-            String error = "Server Image with ID: " + instance.getImageId() +
-                           " does not exist in the database.";
-            throw new DuracloudServerImageNotAvailableException(error, e);
-        }
-
-        // Primary Instance
-        DuraserviceConfig.PrimaryInstance primaryInstance =
-            new DuraserviceConfig.PrimaryInstance();
-        primaryInstance.setHost(instanceHost);
-        primaryInstance.setServicesAdminPort(DEFAULT_SERVICES_ADMIN_PORT);
-        primaryInstance.setServicesAdminContext(
-            DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX + servicesAdminVersion);
-        config.setPrimaryInstance(primaryInstance);
-
-        // User Store
-        DuraserviceConfig.UserStore userStore
-            = new DuraserviceConfig.UserStore();
-        userStore.setHost(instanceHost);
-        userStore.setPort(DEFAULT_SSL_PORT);
-        userStore.setContext(DEFAULT_DURASTORE_CONTEXT);
-        userStore.setMsgBrokerUrl("failover:tcp://" + instanceHost + ":" +
-                                      DEFAULT_MSG_BROKER_PORT);
-        config.setUserStore(userStore);
-
-        // Get Service Repo (for: host, space-id, username, password)
-        // Just use the first item on the service-repos list for now
-        String serviceStoreHost;
-        String serviceStoreSpaceId;
-        String serviceStoreServiceXmlId;
-        String serviceStoreUsername;
-        String serviceStorePassword;
-
-        ServerDetails serverDetails =
-            accountUtil.getServerDetails(getAccount());
-        ServicePlan servicePlan = serverDetails.getServicePlan();
-        ServiceRepository serviceRepo;
-        try {
-            serviceRepo = repoMgr.getServiceRepositoryRepo()
-                .findByVersionAndPlan(imageVersion, servicePlan);
-        } catch(DBNotFoundException e) {
-            String error = "No Service Repositories for version " +
-                            imageVersion + " exist in the database.";
-            throw new DuracloudServiceRepositoryNotAvailableException(error, e);
-        }
-
-        /* TODO: Make use of secondary service repos
-        Set<Integer> secondaryRepoIds =
-            getAccount().getSecondaryServiceRepositoryIds();
-        */
-
-        serviceStoreHost = serviceRepo.getHostName();
-        serviceStoreSpaceId = serviceRepo.getSpaceId();
-        serviceStoreServiceXmlId = serviceRepo.getServiceXmlId();
-        serviceStoreUsername = serviceRepo.getUsername();
-        serviceStorePassword = serviceRepo.getPassword();
-
-        // Service Store
-        DuraserviceConfig.ServiceStore serviceStore
-            = new DuraserviceConfig.ServiceStore();
-        serviceStore.setHost(serviceStoreHost);
-        serviceStore.setPort(DEFAULT_SSL_PORT);
-        serviceStore.setContext(DEFAULT_DURASTORE_CONTEXT);
-        serviceStore.setUsername(serviceStoreUsername);
-        serviceStore.setPassword(serviceStorePassword);
-        serviceStore.setSpaceId(serviceStoreSpaceId);
-        serviceStore.setServiceXmlId(serviceStoreServiceXmlId);
-        config.setServiceStore(serviceStore);
-
-        return config;
-    }
-
     public DurabossConfig getDurabossConfig() {
         DurabossConfig config = new DurabossConfig();
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-        config.setDuraserviceHost(instance.getHostName());
-        config.setDuraservicePort(DEFAULT_SSL_PORT);
-        config.setDuraserviceContext(DuraserviceConfig.QUALIFIER);
 
         NotificationConfig notificationConfig = new NotificationConfig();
         notificationConfig.setType(NOTIFICATION_TYPE);

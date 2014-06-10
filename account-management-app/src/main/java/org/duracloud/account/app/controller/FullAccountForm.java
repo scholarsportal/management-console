@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.util.StorageProviderTypeUtil;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Scope;
@@ -29,8 +28,6 @@ public class FullAccountForm  implements Serializable{
     
     private boolean useReducedRedundancy = false;
     
-    private ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
-
     public List<StorageProviderType> getSecondaryStorageProviderOptions() {
         return StorageProviderTypeUtil.getAvailableSecondaryTypes();
     }
@@ -52,11 +49,4 @@ public class FullAccountForm  implements Serializable{
         this.useReducedRedundancy = useReducedRedundancy;
     }
 
-    public ServicePlan getServicePlan() {
-        return servicePlan;
-    }
-
-    public void setServicePlan(ServicePlan servicePlan) {
-        this.servicePlan = servicePlan;
-    }
 }

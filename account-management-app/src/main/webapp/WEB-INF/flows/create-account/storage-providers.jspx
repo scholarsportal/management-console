@@ -30,28 +30,6 @@
       <form:form
         modelAttribute="fullAccountForm"
         method="POST">
-        <fieldset>
-          <ol>
-            <li>
-              <legend>Service Plans</legend>
-              <form:label
-                cssErrorClass="error"
-                path="servicePlan">
-                <spring:message code="account.serviceplan"/>
-              </form:label>
-              <form:select
-                cssErrorClass="error"
-                path="servicePlan"
-                items="${newAccountForm.servicePlans}" /> 
-                <a
-                 class="servicePlan"
-                 target="_blank"
-                 href="http://duracloud.org/pricing"> <spring:message
-                 code="account.plandescriptions" /> 
-                </a>
-              </li>    
-            </ol>
-        </fieldset> 
 
         <fieldset>
           <legend><spring:message code="account.reducedredundancy"/></legend>

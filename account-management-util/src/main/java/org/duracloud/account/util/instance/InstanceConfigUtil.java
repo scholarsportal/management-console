@@ -5,7 +5,6 @@ package org.duracloud.account.util.instance;
 
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 
 /**
@@ -25,12 +24,6 @@ public interface InstanceConfigUtil {
      * @return the information needed to initialize DuraStore
      */
     public DurastoreConfig getDurastoreConfig();
-
-    /**
-     * Collects the DuraService configuration for a DuraCloud instance
-     * @return the information needed to initialize DuraService
-     */
-    public DuraserviceConfig getDuraserviceConfig();
 
     /**
      * Collects the DuraBoss configuration for a DuraCloud instance

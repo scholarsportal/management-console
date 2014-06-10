@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor.domain;
+package org.duracloud.account.monitor.hadoop.domain;
 
 import org.duracloud.account.monitor.hadoop.domain.HadoopServiceInfo;
 import org.duracloud.account.monitor.hadoop.util.HadoopUtil;

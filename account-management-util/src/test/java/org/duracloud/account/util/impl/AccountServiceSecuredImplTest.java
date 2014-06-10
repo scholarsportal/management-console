@@ -318,13 +318,13 @@ public class AccountServiceSecuredImplTest {
 
     @Test
     public void testAddStorageProvider() throws Exception {
-        acctService.addStorageProvider(StorageProviderType.EMC);
+        acctService.addStorageProvider(StorageProviderType.AMAZON_S3);
         EasyMock.expectLastCall();
 
         setMockVoterExpectations(AccessDecisionVoter.ACCESS_GRANTED);
         replayMocks();
 
-        acctServiceImpl.addStorageProvider(StorageProviderType.EMC);
+        acctServiceImpl.addStorageProvider(StorageProviderType.AMAZON_S3);
     }
 
     @Test
@@ -334,7 +334,7 @@ public class AccountServiceSecuredImplTest {
 
         boolean thrown = false;
         try {
-            acctServiceImpl.addStorageProvider(StorageProviderType.EMC);
+            acctServiceImpl.addStorageProvider(StorageProviderType.AMAZON_S3);
             Assert.fail("exception expected");
         } catch (AccessDeniedException e) {
             thrown = true;

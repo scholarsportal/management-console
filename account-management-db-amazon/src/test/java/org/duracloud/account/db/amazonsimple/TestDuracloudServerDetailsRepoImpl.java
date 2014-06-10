@@ -3,8 +3,12 @@
  */
 package org.duracloud.account.db.amazonsimple;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.junit.After;
@@ -13,11 +17,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -32,18 +31,12 @@ public class TestDuracloudServerDetailsRepoImpl extends BaseTestDuracloudRepoImp
     private static final int computeProviderAccountId = 1;
     private static final int primaryStorageProviderAccountId = 5;
     private static Set<Integer> secondaryStorageProviderAccountIds = null;
-    private static Set<Integer> secondaryServiceRepositoryIds = null;
-    private static ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
 
     @BeforeClass
     public static void initialize() throws Exception {
         secondaryStorageProviderAccountIds = new HashSet<Integer>();
         secondaryStorageProviderAccountIds.add(10);
         secondaryStorageProviderAccountIds.add(15);
-
-        secondaryServiceRepositoryIds = new HashSet<Integer>();
-        secondaryServiceRepositoryIds.add(1);
-        secondaryServiceRepositoryIds.add(2);
     }
 
     @Before
@@ -145,9 +138,7 @@ public class TestDuracloudServerDetailsRepoImpl extends BaseTestDuracloudRepoImp
         return new ServerDetails(id,
                                  computeProviderAccountId,
                                  primaryStorageProviderAccountId,
-                                 secondaryStorageProviderAccountIds,
-                                 secondaryServiceRepositoryIds,
-                                 servicePlan);
+                                 secondaryStorageProviderAccountIds);
     }
 
     private void verifyServerDetails(final ServerDetails details) {

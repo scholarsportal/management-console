@@ -3,20 +3,20 @@
  */
 package org.duracloud.account.db.amazonsimple.converter;
 
-import com.amazonaws.services.simpledb.model.Attribute;
-import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-import com.amazonaws.services.simpledb.util.SimpleDBUtils;
-import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.db.util.FormatUtil;
-import org.slf4j.LoggerFactory;
+import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.duracloud.account.db.BaseRepo.COUNTER_ATT;
+import org.duracloud.account.common.domain.ServerDetails;
+import org.duracloud.account.db.util.FormatUtil;
+import org.slf4j.LoggerFactory;
+
+import com.amazonaws.services.simpledb.model.Attribute;
+import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
+import com.amazonaws.services.simpledb.util.SimpleDBUtils;
 
 /**
  * @author: Bill Branan
@@ -35,9 +35,6 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
         "PRIMARY_STORAGE_PROVIDER_ACCOUNT_ID";
     protected static final String SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT =
         "SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS";
-    protected static final String SECONDARY_SERVICE_REPOSITORY_IDS_ATT =
-        "SECONDARY_SERVICE_REPOSITORY_IDS";
-    protected static final String SERVICE_PLAN_ATT = "SERVICE_PLAN";
 
     @Override
     public List<ReplaceableAttribute> toAttributesAndIncrement(ServerDetails details) {
@@ -56,13 +53,6 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
             SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT,
             idsAsString(details.getSecondaryStorageProviderAccountIds()),
             true));
-        atts.add(new ReplaceableAttribute(
-            SECONDARY_SERVICE_REPOSITORY_IDS_ATT,
-            idsAsString(details.getSecondaryServiceRepositoryIds()),
-            true));
-        atts.add(new ReplaceableAttribute(SERVICE_PLAN_ATT,
-                                          details.getServicePlan().name(),
-                                          true));
         atts.add(new ReplaceableAttribute(COUNTER_ATT, counter, true));
 
         return atts;
@@ -74,8 +64,6 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
         int computeProviderAccountId = -1;
         int primaryStorageProviderAccountId = -1;
         Set<Integer> secondaryStorageProviderAccountIds = null;
-        Set<Integer> secondaryServiceRepositoryIds = null;
-        ServicePlan servicePlan = null;
 
         for (Attribute att : atts) {
             String name = att.getName();
@@ -100,12 +88,6 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
             } else if (SECONDARY_STORAGE_PROVIDER_ACCOUNT_IDS_ATT.equals(name)) {
                 secondaryStorageProviderAccountIds = idsFromString(value);
 
-            } else if (SECONDARY_SERVICE_REPOSITORY_IDS_ATT.equals(name)) {
-                secondaryServiceRepositoryIds = idsFromString(value);
-
-            } else if (SERVICE_PLAN_ATT.equals(name)) {
-                servicePlan = ServicePlan.valueOf(value);
-
             } else {
                 StringBuilder msg = new StringBuilder("Unexpected name: ");
                 msg.append(name);
@@ -121,8 +103,6 @@ public class DuracloudServerDetailsConverter extends BaseDomainConverter
                                  computeProviderAccountId,
                                  primaryStorageProviderAccountId,
                                  secondaryStorageProviderAccountIds,
-                                 secondaryServiceRepositoryIds,
-                                 servicePlan,
                                  counter);
     }
 

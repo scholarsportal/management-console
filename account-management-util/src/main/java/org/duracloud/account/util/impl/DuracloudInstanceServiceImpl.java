@@ -13,7 +13,6 @@ import org.duracloud.account.common.domain.InstanceType;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
@@ -40,7 +39,6 @@ import org.duracloud.account.util.util.AccountClusterUtil;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.model.Credential;
@@ -210,11 +208,9 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         DurabossConfig durabossConfig = instanceConfigUtil.getDurabossConfig();
         RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());
 
-        ServicePlan servicePlan = getServicePlan();
         try {
             durabossUpdater.stopDuraboss(host,
                                          durabossConfig,
-                                         servicePlan,
                                          restHelper);
         } catch (Exception e) {
             // Do not let DuraBoss errors stop the instance shutdown.
@@ -225,17 +221,6 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         computeProvider.stop(instance.getProviderInstanceId());
         // Remove this instance from the DB
         repoMgr.getInstanceRepo().delete(instance.getId());
-    }
-
-    private ServicePlan getServicePlan()  {
-        AccountInfo account;
-        try {
-            account = getAccount();
-        } catch (DBNotFoundException e) {
-            return null;
-        }
-        ServerDetails serverDetails = accountUtil.getServerDetails(account);
-        return serverDetails.getServicePlan();
     }
 
     @Override
@@ -346,8 +331,6 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             instanceConfigUtil.getDuradminConfig();
         DurastoreConfig durastoreConfig =
             instanceConfigUtil.getDurastoreConfig();
-        DuraserviceConfig duraserviceConfig =
-            instanceConfigUtil.getDuraserviceConfig();
         DurabossConfig durabossConfig =
             instanceConfigUtil.getDurabossConfig();
 
@@ -357,14 +340,11 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         instanceUpdater.initializeInstance(host,
                                            duradminConfig,
                                            durastoreConfig,
-                                           duraserviceConfig,
                                            durabossConfig,
                                            restHelper);
 
-        ServicePlan servicePlan = getServicePlan();
         durabossUpdater.startDuraboss(host,
                                       durabossConfig,
-                                      servicePlan,
                                       restHelper);
     }
 

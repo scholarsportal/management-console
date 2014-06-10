@@ -138,7 +138,7 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
 
     @Test
     public void testAddStorageProvider() throws Exception {
-        StorageProviderType typeToAdd = StorageProviderType.MICROSOFT_AZURE;
+        StorageProviderType typeToAdd = StorageProviderType.AMAZON_S3;
 
         EasyMock.expect(providerAccountUtil.
             createEmptyStorageProviderAccount(typeToAdd))

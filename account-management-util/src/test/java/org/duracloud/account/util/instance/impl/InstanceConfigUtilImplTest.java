@@ -8,21 +8,17 @@ import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountUtil;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.StorageAccount;
@@ -60,7 +56,6 @@ public class InstanceConfigUtilImplTest {
     protected DuracloudServerDetailsRepo serverDetailsRepo;
     protected DuracloudStorageProviderAccountRepo storageProviderAcctRepo;
     protected DuracloudServerImageRepo serverImageRepo;
-    protected DuracloudServiceRepositoryRepo serviceRepositoryRepo;
     private String notificationUsername = "notUser";
     private String notificationPassword = "notPass";
     private String notificationFromAddress = "notAddress";
@@ -93,9 +88,6 @@ public class InstanceConfigUtilImplTest {
         serverImageRepo =
             EasyMock.createMock("DuracloudServerImageRepo",
                                 DuracloudServerImageRepo.class);
-        serviceRepositoryRepo =
-            EasyMock.createMock("DuracloudServiceRepositoryRepo",
-                                DuracloudServiceRepositoryRepo.class);
         serverDetailsRepo =
             EasyMock.createMock("DuracloudServerDetailsRepo",
                                 DuracloudServerDetailsRepo.class);
@@ -121,7 +113,6 @@ public class InstanceConfigUtilImplTest {
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
-                        serviceRepositoryRepo,
                         serverDetailsRepo);
     }
 
@@ -135,7 +126,6 @@ public class InstanceConfigUtilImplTest {
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
-                        serviceRepositoryRepo,
                         serverDetailsRepo);
     }
 
@@ -144,7 +134,7 @@ public class InstanceConfigUtilImplTest {
         String hostName = "host";
         EasyMock.expect(instance.getHostName())
             .andReturn(hostName)
-            .times(2);
+            .times(1);
 
         replayMocks();
 
@@ -156,12 +146,6 @@ public class InstanceConfigUtilImplTest {
                      config.getDurastorePort());
         assertEquals(DurastoreConfig.QUALIFIER,
                      config.getDurastoreContext());
-
-        assertEquals(hostName, config.getDuraserviceHost());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
-                     config.getDuraservicePort());
-        assertEquals(DuraserviceConfig.QUALIFIER,
-                     config.getDuraserviceContext());
 
         assertEquals(AmaEndpoint.getUrl(), config.getAmaUrl());
 
@@ -255,120 +239,14 @@ public class InstanceConfigUtilImplTest {
             .andReturn(serverDetails);
     }
 
-    @Test
-    public void testGetDuraserviceConfig() throws Exception {
-        String instanceHost = "host";
-        EasyMock.expect(instance.getHostName())
-            .andReturn(instanceHost)
-            .times(1);
 
-        EasyMock.expect(repoMgr.getServerImageRepo())
-            .andReturn(serverImageRepo)
-            .times(1);
-
-        int serverImageId = 0;
-        EasyMock.expect(instance.getImageId())
-            .andReturn(serverImageId)
-            .times(1);
-
-        String version = "version";
-        ServerImage serverImage = new ServerImage(serverImageId,
-                                                  0,
-                                                  "providerImageId",
-                                                  version,
-                                                  "description",
-                                                  "rootPass",
-                                                  false);
-        EasyMock.expect(serverImageRepo.findById(serverImageId))
-            .andReturn(serverImage)
-            .times(1);
-
-        final int acctId = 3;
-        EasyMock.expect(instance.getAccountId()).andReturn(acctId);
-        EasyMock.expect(repoMgr.getAccountRepo()).andReturn(accountRepo);
-        EasyMock.expect(accountRepo.findById(acctId)).andReturn(account);
-
-        setUpGetServerDetails();
-        EasyMock.expect(serverDetails.getServicePlan())
-            .andReturn(ServicePlan.PROFESSIONAL);
-
-        EasyMock.expect(repoMgr.getServiceRepositoryRepo())
-            .andReturn(serviceRepositoryRepo)
-            .times(1);
-
-        ServiceRepository.ServiceRepositoryType serviceRepoType =
-            ServiceRepository.ServiceRepositoryType.VERIFIED;
-        ServicePlan servicePlan = ServicePlan.PROFESSIONAL;
-        int serviceRepoId = 1;
-        String serviceRepoHost = "serviceRepoHost";
-        String serviceRepoSpaceId = "serviceRepoSpaceId";
-        String serviceRepoServiceXmlId = "serviceRepoServiceXmlId";
-        String serviceRepoUsername = "serviceRepoUsername";
-        String serviceRepoPassword = "serviceRepoPassword";
-        ServiceRepository serviceRepo = new ServiceRepository(serviceRepoId,
-                                                              serviceRepoType,
-                                                              servicePlan,
-                                                              serviceRepoHost,
-                                                              serviceRepoSpaceId,
-                                                              serviceRepoServiceXmlId,
-                                                              version,
-                                                              serviceRepoUsername,
-                                                              serviceRepoPassword);
-        EasyMock.expect(serviceRepositoryRepo.findByVersionAndPlan(version,
-                                                                   servicePlan))
-            .andReturn(serviceRepo);
-
-        replayMocks();
-
-        DuraserviceConfig config = instanceConfigUtil.getDuraserviceConfig();
-        assertNotNull(config);
-
-        // Primary Instance
-        DuraserviceConfig.PrimaryInstance primaryInstance =
-            config.getPrimaryInstance();
-        assertNotNull(primaryInstance);
-
-        assertEquals(instanceHost, primaryInstance.getHost());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICES_ADMIN_PORT,
-                     primaryInstance.getServicesAdminPort());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX +
-                     version,
-                     primaryInstance.getServicesAdminContext());
-
-        // User Store
-        DuraserviceConfig.UserStore userStore = config.getUserStore();
-        assertNotNull(userStore);
-
-        assertEquals(instanceHost, userStore.getHost());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
-                     userStore.getPort());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_DURASTORE_CONTEXT,
-                     userStore.getContext());
-        assertEquals("failover:tcp://" + instanceHost + ":" +
-                     InstanceConfigUtilImpl.DEFAULT_MSG_BROKER_PORT ,
-                     userStore.getMsgBrokerUrl());
-
-        // Service Store
-        DuraserviceConfig.ServiceStore serviceStore = config.getServiceStore();
-        assertNotNull(serviceStore);
-
-        assertEquals(serviceRepoHost, serviceStore.getHost());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
-                     serviceStore.getPort());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_DURASTORE_CONTEXT,
-                     serviceStore.getContext());
-        assertEquals(serviceRepoUsername, serviceStore.getUsername());
-        assertEquals(serviceRepoPassword, serviceStore.getPassword());
-        assertEquals(serviceRepoSpaceId, serviceStore.getSpaceId());
-        assertEquals(serviceRepoServiceXmlId, serviceStore.getServiceXmlId());
-    }
 
     @Test
     public void testGetDurabossConfig() {
         String hostName = "host";
         EasyMock.expect(instance.getHostName())
             .andReturn(hostName)
-            .times(2);
+            .times(1);
 
         replayMocks();
 
@@ -380,12 +258,6 @@ public class InstanceConfigUtilImplTest {
                      config.getDurastorePort());
         assertEquals(DurastoreConfig.QUALIFIER,
                      config.getDurastoreContext());
-
-        assertEquals(hostName, config.getDuraserviceHost());
-        assertEquals(InstanceConfigUtilImpl.DEFAULT_SSL_PORT,
-                     config.getDuraservicePort());
-        assertEquals(DuraserviceConfig.QUALIFIER,
-                     config.getDuraserviceContext());
 
         assertEquals(InstanceUtil.DURABOSS_CONTEXT,
                      config.getDurabossContext());

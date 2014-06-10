@@ -58,12 +58,18 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>duraboss-api</artifactId>
+      <artifactId>security</artifactId>
+      <version>${duracloud.artifact.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.duracloud</groupId>
+      <artifactId>common</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>executorclient</artifactId>
+      <artifactId>duraboss-api</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
 

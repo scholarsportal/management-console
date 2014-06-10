@@ -12,7 +12,6 @@ import javax.validation.Valid;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
 import org.duracloud.account.common.domain.InstanceType;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.error.DBConcurrentUpdateException;
 import org.duracloud.account.db.error.DBNotFoundException;
@@ -329,11 +328,6 @@ public class AccountController extends AbstractAccountController {
         DuracloudInstanceService instanceService =
             instanceManagerService.getInstanceService(instanceId);
         instanceService.stop();
-    }
-
-    @ModelAttribute("servicePlans")
-    public List<ServicePlan> getServicePlans() {
-        return Arrays.asList(ServicePlan.values());
     }
 
     @ModelAttribute("accountTypes")

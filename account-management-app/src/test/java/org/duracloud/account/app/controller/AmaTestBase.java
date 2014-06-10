@@ -115,7 +115,7 @@ public class AmaTestBase {
     }
     
     protected ServerDetails createServerDetails() {
-        return new ServerDetails(TEST_ACCOUNT_ID, 0, 0, null, null, null);
+        return new ServerDetails(TEST_ACCOUNT_ID, 0, 0, null);
     }
 
 

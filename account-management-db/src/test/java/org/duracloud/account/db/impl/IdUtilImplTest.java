@@ -3,18 +3,17 @@
  */
 package org.duracloud.account.db.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
-import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
-import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
-import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
-import org.duracloud.account.db.DuracloudUserRepo;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.web.RestHttpHelper;
 import org.easymock.EasyMock;
@@ -22,9 +21,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -47,7 +43,6 @@ public class IdUtilImplTest {
     private DuracloudServerImageRepo serverImageRepo;
     private DuracloudComputeProviderAccountRepo computeProviderAccountRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAccountRepo;
-    private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
     private DuracloudServerDetailsRepo serverDetailsRepo;
     private DuracloudAccountClusterRepo accountClusterRepo;
 
@@ -66,7 +61,6 @@ public class IdUtilImplTest {
         serverImageRepo = createMockServerImageRepo(COUNT);
         computeProviderAccountRepo = createMockComputeProviderAccountRepo(COUNT);
         storageProviderAccountRepo = createMockStorageProviderAccountRepo(COUNT);
-        serviceRepositoryRepo = createMockServiceRepositoryRepo(COUNT);
         serverDetailsRepo = createMockServerDetailsRepo(COUNT);
         accountClusterRepo = createMockAccountClusterRepo(COUNT);
 
@@ -84,7 +78,6 @@ public class IdUtilImplTest {
                           serverImageRepo,
                           computeProviderAccountRepo,
                           storageProviderAccountRepo,
-                          serviceRepositoryRepo,
                           serverDetailsRepo,
                           accountClusterRepo);
     }
@@ -98,7 +91,6 @@ public class IdUtilImplTest {
                         serverImageRepo,
                         computeProviderAccountRepo,
                         storageProviderAccountRepo,
-                        serviceRepositoryRepo,
                         serverDetailsRepo,
                         accountClusterRepo);
     }
@@ -145,12 +137,6 @@ public class IdUtilImplTest {
         return repo;
     }
 
-    private DuracloudServiceRepositoryRepo createMockServiceRepositoryRepo(int count) {
-        DuracloudServiceRepositoryRepo repo =
-            EasyMock.createMock(DuracloudServiceRepositoryRepo.class);
-        EasyMock.expect(repo.getIds()).andReturn(createIds(count));
-        return repo;
-    }
 
     private DuracloudServerDetailsRepo createMockServerDetailsRepo(int count) {
         DuracloudServerDetailsRepo repo =
@@ -183,7 +169,6 @@ public class IdUtilImplTest {
         EasyMock.verify(instanceRepo);
         EasyMock.verify(serverImageRepo);
         EasyMock.verify(storageProviderAccountRepo);
-        EasyMock.verify(serviceRepositoryRepo);
         EasyMock.verify(serverDetailsRepo);
         EasyMock.verify(accountClusterRepo);
     }
@@ -285,12 +270,6 @@ public class IdUtilImplTest {
         Assert.assertEquals(COUNT, idUtil.newInstanceId());
     }
 
-    @Test
-    public void testNewServiceRepositoryId() throws Exception {
-        replayMocks();
-        initialize();
-        Assert.assertEquals(COUNT, idUtil.newInstanceId());
-    }
 
     @Test
     public void testNewServerDetailsId() throws Exception {

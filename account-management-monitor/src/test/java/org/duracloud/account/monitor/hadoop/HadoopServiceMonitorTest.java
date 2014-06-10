@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor;
+package org.duracloud.account.monitor.hadoop;
 
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AccountType;
@@ -228,7 +228,7 @@ public class HadoopServiceMonitorTest {
     }
 
     private ServerDetails createServerDetails(int id) {
-        return new ServerDetails(id, id, id, null, null, null);
+        return new ServerDetails(id, id, id, null);
     }
     
     private enum Mode {

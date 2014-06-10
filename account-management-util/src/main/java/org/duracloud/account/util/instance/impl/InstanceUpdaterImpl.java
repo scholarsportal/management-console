@@ -9,7 +9,6 @@ import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.common.web.RestHttpHelper;
@@ -36,7 +35,6 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
     public void initializeInstance(String host,
                                    DuradminConfig duradminConfig,
                                    DurastoreConfig durastoreConfig,
-                                   DuraserviceConfig duraserviceConfig,
                                    DurabossConfig durabossConfig,
                                    RestHttpHelper restHelper){
         log.info("Initializing DuraCloud applications at host {}", host);
@@ -44,14 +42,12 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         if(StringUtils.isBlank(host) ||
            null == duradminConfig ||
            null == durastoreConfig ||
-           null == duraserviceConfig  ||
            null == durabossConfig ||
            null == restHelper) {
             StringBuilder msg = new StringBuilder("Invalid arguments: ");
             msg.append(host + ", ");
             msg.append(duradminConfig + ", ");
             msg.append(durastoreConfig + ", ");
-            msg.append(duraserviceConfig + ", ");
             msg.append(durabossConfig + ", ");
             msg.append(restHelper);
 
@@ -60,10 +56,6 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
 
         Application durastoreApp = getDurastoreApplication(host, restHelper) ;
         checkResponse("DuraStore", durastoreApp.initialize(durastoreConfig));
-
-        Application duraserviceApp = getDuraserviceApplication(host, restHelper);
-        checkResponse("DuraService",
-                      duraserviceApp.initialize(duraserviceConfig));
 
         Application durabossApp = getDurabossApplication(host, restHelper);
         checkResponse("DuraBoss", durabossApp.initialize(durabossConfig));
@@ -99,7 +91,6 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         List<Application> apps = new ArrayList<Application>();
         apps.add(getDuradminApplication(host, restHelper));
         apps.add(getDurastoreApplication(host, restHelper));
-        apps.add(getDuraserviceApplication(host, restHelper));
         apps.add(getDurabossApplication(host, restHelper));
         return apps;
     }
@@ -114,10 +105,6 @@ public class InstanceUpdaterImpl implements InstanceUpdater, InstanceUtil {
         return new Application(host, port, DURASTORE_CONTEXT, restHelper);
     }
 
-    private Application getDuraserviceApplication(String host,
-                                                  RestHttpHelper restHelper) {
-        return new Application(host, port, DURASERVICE_CONTEXT, restHelper);
-    }
 
     private Application getDurabossApplication(String host,
                                                RestHttpHelper restHelper) {

@@ -18,7 +18,6 @@ import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerDetails;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.db.BaseRepo;
@@ -210,8 +209,6 @@ public class DbUtil {
             repo = repoMgr.getComputeProviderAccountRepo();
         } else if(item instanceof StorageProviderAccount) {
             repo = repoMgr.getStorageProviderAccountRepo();
-        } else if(item instanceof ServiceRepository) {
-            repo = repoMgr.getServiceRepositoryRepo();
         } else if(item instanceof DuracloudGroup) {
             repo = repoMgr.getGroupRepo();
         } else if(item instanceof ServerDetails) {
@@ -260,8 +257,6 @@ public class DbUtil {
                       ComputeProviderAccount.class);
         xstream.alias(StorageProviderAccount.class.getSimpleName(),
                       StorageProviderAccount.class);
-        xstream.alias(ServiceRepository.class.getSimpleName(),
-                      ServiceRepository.class);        
         xstream.alias(Role.class.getSimpleName(), Role.class);
         xstream.alias(StorageProviderType.class.getSimpleName(),
                       StorageProviderType.class);

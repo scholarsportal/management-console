@@ -3,19 +3,26 @@
  */
 package org.duracloud.account.util.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.common.domain.AccountRights;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.Role;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.db.error.DBNotFoundException;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.instance.InstanceUpdater;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
-import org.duracloud.appconfig.domain.DuraserviceConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
@@ -23,16 +30,6 @@ import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.duracloud.account.common.domain.ServicePlan.PROFESSIONAL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author: Bill Branan
@@ -101,15 +98,8 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instanceConfigUtil.getDurabossConfig())
                 .andReturn(new DurabossConfig());
 
-        EasyMock.expect(instance.getAccountId()).andReturn(accountId);
-        EasyMock.expect(accountRepo.findById(accountId)).andReturn(account);
-        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
-            serverDetails);
-        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
-
         durabossUpdater.stopDuraboss(EasyMock.isA(String.class),
                                      EasyMock.isA(DurabossConfig.class),
-                                     EasyMock.isA(ServicePlan.class),
                                      EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
 
@@ -207,26 +197,18 @@ public class DuracloudInstanceServiceImplTest
             duradminConfig);
         EasyMock.expect(instanceConfigUtil.getDurastoreConfig())
             .andReturn(new DurastoreConfig());
-        EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
-            .andReturn(new DuraserviceConfig());
         EasyMock.expect(instanceConfigUtil.getDurabossConfig())
             .andReturn(new DurabossConfig());
 
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
-                                           EasyMock.isA(DuraserviceConfig.class),
                                            EasyMock.isA(DurabossConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
 
-        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
-            serverDetails);
-        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
-
         durabossUpdater.startDuraboss(EasyMock.isA(String.class),
                                       EasyMock.isA(DurabossConfig.class),
-                                      EasyMock.isA(ServicePlan.class),
                                       EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
 
@@ -271,9 +253,6 @@ public class DuracloudInstanceServiceImplTest
         EasyMock.expect(instanceConfigUtil.getDurastoreConfig())
             .andReturn(new DurastoreConfig())
             .times(1);
-        EasyMock.expect(instanceConfigUtil.getDuraserviceConfig())
-            .andReturn(new DuraserviceConfig())
-            .times(1);
         EasyMock.expect(instanceConfigUtil.getDurabossConfig())
             .andReturn(new DurabossConfig())
             .times(1);
@@ -283,19 +262,13 @@ public class DuracloudInstanceServiceImplTest
         instanceUpdater.initializeInstance(EasyMock.isA(String.class),
                                            EasyMock.isA(DuradminConfig.class),
                                            EasyMock.isA(DurastoreConfig.class),
-                                           EasyMock.isA(DuraserviceConfig.class),
                                            EasyMock.isA(DurabossConfig.class),
                                            EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall()
             .times(1);
 
-        EasyMock.expect(accountUtil.getServerDetails(account)).andReturn(
-            serverDetails);
-        EasyMock.expect(serverDetails.getServicePlan()).andReturn(PROFESSIONAL);
-
         durabossUpdater.startDuraboss(EasyMock.isA(String.class),
                                       EasyMock.isA(DurabossConfig.class),
-                                      EasyMock.isA(ServicePlan.class),
                                       EasyMock.isA(RestHttpHelper.class));
         EasyMock.expectLastCall();
 

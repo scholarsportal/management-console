@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
 import org.duracloud.account.common.domain.AccountType;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -45,9 +44,6 @@ public class NewAccountForm implements Serializable {
 
     private Integer accountClusterId;
 
-    public List<ServicePlan> getServicePlans(){
-        return new LinkedList<ServicePlan>(Arrays.asList(ServicePlan.values()));
-    }
 
     public List<AccountType> getAccountTypes(){
         return new LinkedList<AccountType>(Arrays.asList(AccountType.values()));

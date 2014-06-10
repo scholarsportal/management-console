@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.monitor.util;
+package org.duracloud.account.monitor.hadoop.util;
 
 import org.duracloud.account.monitor.hadoop.util.HadoopUtil;
 import org.junit.Assert;

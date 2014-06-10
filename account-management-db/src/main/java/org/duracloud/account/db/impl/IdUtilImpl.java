@@ -3,14 +3,16 @@
  */
 package org.duracloud.account.db.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
-import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
+import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.IdUtil;
 import org.duracloud.account.db.error.DBUninitializedException;
@@ -19,9 +21,6 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.web.RestHttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author: Bill Branan
@@ -42,7 +41,6 @@ public class IdUtilImpl implements IdUtil {
     private int serverImageId = -1;
     private int computeProviderAccountId = -1;
     private int storageProviderAccountId = -1;
-    private int serviceRepositoryId = -1;
     private int serverDetailsId = -1;
     private int accountClusterId = -1;
 
@@ -57,7 +55,6 @@ public class IdUtilImpl implements IdUtil {
                            DuracloudServerImageRepo serverImageRepo,
                            DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
                            DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
-                           DuracloudServiceRepositoryRepo serviceRepositoryRepo,
                            DuracloudServerDetailsRepo serverDetailsRepo,
                            DuracloudAccountClusterRepo accountClusterRepo) {
         initialize(host,
@@ -70,7 +67,6 @@ public class IdUtilImpl implements IdUtil {
                    serverImageRepo,
                    computeProviderAccountRepo,
                    storageProviderAccountRepo,
-                   serviceRepositoryRepo,
                    serverDetailsRepo,
                    accountClusterRepo);
     }
@@ -86,7 +82,6 @@ public class IdUtilImpl implements IdUtil {
                               DuracloudServerImageRepo serverImageRepo,
                               DuracloudComputeProviderAccountRepo computeProviderAccountRepo,
                               DuracloudStorageProviderAccountRepo storageProviderAccountRepo,
-                              DuracloudServiceRepositoryRepo serviceRepositoryRepo,
                               DuracloudServerDetailsRepo serverDetailsRepo,
                               DuracloudAccountClusterRepo accountClusterRepo) {
         if (null == host || null == port || null == context) {
@@ -108,7 +103,6 @@ public class IdUtilImpl implements IdUtil {
         this.serverImageId = max(serverImageRepo.getIds());
         this.computeProviderAccountId = max(computeProviderAccountRepo.getIds());
         this.storageProviderAccountId = max(storageProviderAccountRepo.getIds());
-        this.serviceRepositoryId = max(serviceRepositoryRepo.getIds());
         this.serverDetailsId = max(serverDetailsRepo.getIds());
         this.accountClusterId = max(accountClusterRepo.getIds());
     }
@@ -161,12 +155,6 @@ public class IdUtilImpl implements IdUtil {
     public int newStorageProviderAccountId() {
         checkInitialized();
         return ++storageProviderAccountId;
-    }
-
-    @Override
-    public int newServiceRepositoryId() {
-        checkInitialized();
-        return ++serviceRepositoryId;
     }
 
     @Override

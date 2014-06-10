@@ -14,7 +14,6 @@ import org.duracloud.account.db.DuracloudInstanceRepo;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
@@ -139,7 +138,7 @@ public class HybridDBRepoMgrTest {
     }
 
     private void createSimpleDbMocks() {
-        final int numAmazonTables = 9;
+        final int numAmazonTables = 8;
 
         AmazonSimpleDB simpleDB = EasyMock.createMock("AmazonSimpleDB",
                                                       AmazonSimpleDB.class);
@@ -164,8 +163,6 @@ public class HybridDBRepoMgrTest {
             DOMAIN_PREFIX + "_COMPUTE_PROVIDER_ACCOUNT_DOMAIN";
         String storageProviderAccountTable =
             DOMAIN_PREFIX + "_STORAGE_PROVIDER_ACCOUNT_DOMAIN";
-        String serviceRepositoryTable =
-            DOMAIN_PREFIX + "_SERVICE_REPOSITORY_DOMAIN";
         String serverDetailsTable = DOMAIN_PREFIX + "_SERVER_DETAILS_DOMAIN";
         String accountClusterTable = DOMAIN_PREFIX + "_ACCOUNT_CLUSTER_DOMAIN";
 
@@ -176,7 +173,6 @@ public class HybridDBRepoMgrTest {
         domains.add(serverImageTable);
         domains.add(computeProviderAccountTable);
         domains.add(storageProviderAccountTable);
-        domains.add(serviceRepositoryTable);
         domains.add(serverDetailsTable);
         domains.add(accountClusterTable);
 
@@ -195,7 +191,6 @@ public class HybridDBRepoMgrTest {
                           EasyMock.isA(DuracloudServerImageRepo.class),
                           EasyMock.isA(DuracloudComputeProviderAccountRepo.class),
                           EasyMock.isA(DuracloudStorageProviderAccountRepo.class),
-                          EasyMock.isA(DuracloudServiceRepositoryRepo.class),
                           EasyMock.isA(DuracloudServerDetailsRepo.class),
                           EasyMock.isA(DuracloudAccountClusterRepo.class));
         EasyMock.expectLastCall();

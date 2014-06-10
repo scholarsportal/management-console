@@ -13,8 +13,6 @@ import org.duracloud.account.common.domain.ComputeProviderAccount;
 import org.duracloud.account.common.domain.DuracloudGroup;
 import org.duracloud.account.common.domain.DuracloudUser;
 import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.common.domain.ServicePlan;
-import org.duracloud.account.common.domain.ServiceRepository;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.util.DuracloudInstanceService;
@@ -158,32 +156,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         Assert.assertEquals(1, serverImages.size());
     }
 
-    @Test
-    public void testListAllServiceRepositories() throws Exception {
-        int id = 1;
-        ServiceRepository serviceRepository = new ServiceRepository(id,
-                                                  ServiceRepository.ServiceRepositoryType.PRIVATE,
-                                                  ServicePlan.TRIAL,
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "");
-
-        Set<Integer> ids = new HashSet<Integer>();
-        ids.add(id);
-
-        EasyMock.expect(serviceRepositoryRepo.getIds()).andReturn(ids);
-        EasyMock.expect(serviceRepositoryRepo.findById(id)).andReturn(serviceRepository);
-
-        replayMocks();
-
-        String filter = null;
-        Set<ServiceRepository> serviceRepositories = rootService.listAllServiceRepositories(filter);
-        Assert.assertNotNull(serviceRepositories);
-        Assert.assertEquals(1, serviceRepositories.size());
-    }
 
     @Test
     public void testCreateServerImage() throws Exception {
@@ -248,74 +220,6 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
         rootService.deleteServerImage(1);
     }
 
-    @Test
-    public void testCreateServiceRepository() throws Exception {
-        EasyMock.expect(idUtil.newServiceRepositoryId())
-            .andReturn(1);
-        serviceRepositoryRepo.save(EasyMock.isA(ServiceRepository.class));
-        EasyMock.expectLastCall();
-
-        replayMocks();
-
-        rootService.createServiceRepository(ServiceRepository.ServiceRepositoryType.PRIVATE,
-                                            ServicePlan.TRIAL,
-                                            "",
-                                            "",
-                                            "",
-                                            "",
-                                            "",
-                                            "");
-    }
-
-    @Test
-    public void testEditServiceRepository() throws Exception {
-        ServiceRepository serviceRepository = new ServiceRepository(1,
-                                                  ServiceRepository.ServiceRepositoryType.PRIVATE,
-                                                  ServicePlan.TRIAL,
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "",
-                                                  "");
-        EasyMock.expect(serviceRepositoryRepo.findById(EasyMock.anyInt()))
-            .andReturn(serviceRepository);
-
-        serviceRepositoryRepo.save(EasyMock.isA(ServiceRepository.class));
-        EasyMock.expectLastCall();
-
-        replayMocks();
-
-        rootService.editServiceRepository(1,
-                                          ServiceRepository.ServiceRepositoryType.PRIVATE,
-                                          ServicePlan.TRIAL,
-                                          "",
-                                          "",
-                                          "",
-                                          "",
-                                          "",
-                                          "");
-    }
-
-    @Test
-    public void testGetServiceRepository() throws Exception {
-        EasyMock.expect(serviceRepositoryRepo.findById(EasyMock.anyInt()))
-            .andReturn(null);
-
-        replayMocks();
-
-        rootService.getServiceRepository(1);
-    }
-
-    @Test
-    public void testDeleteServiceRepository() throws Exception {
-        serviceRepositoryRepo.delete(EasyMock.anyInt());
-        EasyMock.expectLastCall();
-
-        replayMocks();
-
-        rootService.deleteServiceRepository(1);
-    }
 
     @Test
     public void testDeleteUser() throws Exception {

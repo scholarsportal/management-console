@@ -11,7 +11,6 @@ public interface InstanceUtil {
 
     public final static String DURADMIN_CONTEXT = "duradmin";
     public final static String DURASTORE_CONTEXT = "durastore";
-    public final static String DURASERVICE_CONTEXT = "duraservice";
     public final static String DURABOSS_CONTEXT = "duraboss";
 
 }

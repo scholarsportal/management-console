@@ -12,7 +12,6 @@ import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
 import org.duracloud.account.common.domain.AccountCreationInfo;
 import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ServicePlan;
 import org.duracloud.account.util.AccountManagerService;
 import org.duracloud.account.util.AccountService;
 import org.duracloud.account.util.MessageHelper;
@@ -56,13 +55,11 @@ public class CreateAccountAction extends AbstractAction {
                                                  .getAuthentication()
                                                  .getPrincipal();
 
-        ServicePlan servicePlan = null;
         boolean reducedRedundancy = false;
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
 
         if (!newAccountForm.isCommunity()) {
-            servicePlan = fullAccountForm.getServicePlan();
             if (fullAccountForm.getSecondaryStorageProviders() != null) {
                 secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
             }
@@ -76,7 +73,6 @@ public class CreateAccountAction extends AbstractAction {
                                     newAccountForm.getDepartment(),
                                     StorageProviderType.AMAZON_S3,
                                     secondaryStorageProviders,
-                                    servicePlan,
                                     newAccountForm.getAccountType(),
                                     newAccountForm.getAccountClusterId() == null
                                         ? -1

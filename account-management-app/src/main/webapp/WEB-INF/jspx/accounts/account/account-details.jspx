@@ -101,14 +101,6 @@
                   <td>${accountInfo.department}</td>
                 </tr>
 
-                <c:if test="${serverDetails != null}">
-                <tr>
-                  <td align="right">Service Plan:</td>
-
-                  <td>${serverDetails.servicePlan.text}</td>
-                </tr>
-                </c:if>
-
                 <tr>
                   <td align="right">Type:</td>
 

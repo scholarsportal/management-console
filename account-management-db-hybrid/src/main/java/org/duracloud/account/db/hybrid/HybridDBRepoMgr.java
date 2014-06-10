@@ -3,6 +3,9 @@
  */
 package org.duracloud.account.db.hybrid;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.duracloud.account.db.BaseRepo;
 import org.duracloud.account.db.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.DuracloudAccountRepo;
@@ -13,7 +16,6 @@ import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudRightsRepo;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.DuracloudServiceRepositoryRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.DuracloudUserRepo;
@@ -25,7 +27,6 @@ import org.duracloud.account.db.amazonsimple.DuracloudComputeProviderAccountRepo
 import org.duracloud.account.db.amazonsimple.DuracloudInstanceRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudServerDetailsRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudServerImageRepoImpl;
-import org.duracloud.account.db.amazonsimple.DuracloudServiceRepositoryRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudStorageProviderAccountRepoImpl;
 import org.duracloud.account.db.amazonsimple.DuracloudUserInvitationRepoImpl;
 import org.duracloud.account.db.error.DBException;
@@ -38,9 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class serves both SimpleDB and LDAP repos.
@@ -61,7 +59,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
     private DuracloudServerImageRepo serverImageRepo;
     private DuracloudComputeProviderAccountRepo computeProviderAccountRepo;
     private DuracloudStorageProviderAccountRepo storageProviderAccountRepo;
-    private DuracloudServiceRepositoryRepo serviceRepositoryRepo;
     private DuracloudServerDetailsRepo serverDetailsRepo;
     private DuracloudAccountClusterRepo accountClusterRepo;
 
@@ -103,8 +100,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
                 DOMAIN_PREFIX + "_COMPUTE_PROVIDER_ACCOUNT_DOMAIN";
             String storageProviderAccountTable =
                 DOMAIN_PREFIX + "_STORAGE_PROVIDER_ACCOUNT_DOMAIN";
-            String serviceRepositoryTable =
-                DOMAIN_PREFIX + "_SERVICE_REPOSITORY_DOMAIN";
             String serverDetailsTable =
                 DOMAIN_PREFIX + "_SERVER_DETAILS_DOMAIN";
             String accountClusterTable =
@@ -125,9 +120,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
             storageProviderAccountRepo =
                 new DuracloudStorageProviderAccountRepoImpl(dbClientMgr,
                                                             storageProviderAccountTable);
-            serviceRepositoryRepo = new DuracloudServiceRepositoryRepoImpl(
-                dbClientMgr,
-                serviceRepositoryTable);
             serverDetailsRepo = new DuracloudServerDetailsRepoImpl(dbClientMgr,
                                                                    serverDetailsTable);
             accountClusterRepo =
@@ -145,8 +137,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
                 new DuracloudComputeProviderAccountRepoImpl(dbClientMgr);
             storageProviderAccountRepo =
                 new DuracloudStorageProviderAccountRepoImpl(dbClientMgr);
-            serviceRepositoryRepo = new DuracloudServiceRepositoryRepoImpl(
-                dbClientMgr);
             serverDetailsRepo = new DuracloudServerDetailsRepoImpl(dbClientMgr);
             accountClusterRepo =
                 new DuracloudAccountClusterRepoImpl(dbClientMgr);
@@ -163,7 +153,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
                           serverImageRepo,
                           computeProviderAccountRepo,
                           storageProviderAccountRepo,
-                          serviceRepositoryRepo,
                           serverDetailsRepo,
                           accountClusterRepo);
     }
@@ -254,12 +243,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
         return this.storageProviderAccountRepo;
     }
 
-    @Override
-    public DuracloudServiceRepositoryRepo getServiceRepositoryRepo() {
-        checkInitialized(this.serviceRepositoryRepo,
-                         "DuracloudServiceRepositoryRepo");
-        return this.serviceRepositoryRepo;
-    }
 
     @Override
     public DuracloudServerDetailsRepo getServerDetailsRepo() {
@@ -292,7 +275,6 @@ public class HybridDBRepoMgr implements DuracloudRepoMgr {
         repos.add(getServerImageRepo());
         repos.add(getComputeProviderAccountRepo());
         repos.add(getStorageProviderAccountRepo());
-        repos.add(getServiceRepositoryRepo());
         repos.add(getServerDetailsRepo());
         repos.add(getAccountClusterRepo());
         return repos;

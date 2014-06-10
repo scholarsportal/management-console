@@ -134,18 +134,11 @@ public class AccountManagerServiceImpl implements AccountManagerService {
                     secondaryStorageProviderAccountIds.add(id);
                 }
 
-                // Empty set for now. Will want to provide a way for users to
-                // specify service repos, but likely not on account creation.
-                Set<Integer> secondaryServiceRepositoryIds =
-                    new HashSet<Integer>();
-
                 ServerDetails serverDetails =
                     new ServerDetails(serverDetailsId,
                                       computeProviderAccountId,
                                       primaryStorageProviderAccountId,
-                                      secondaryStorageProviderAccountIds,
-                                      secondaryServiceRepositoryIds,
-                                      accountCreationInfo.getServicePlan());
+                                      secondaryStorageProviderAccountIds);
 
                 getServerDetailsRepo().save(serverDetails);
             }

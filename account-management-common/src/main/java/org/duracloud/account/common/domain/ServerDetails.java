@@ -27,28 +27,16 @@ public class ServerDetails extends BaseDomainData {
      */
     private Set<Integer> secondaryStorageProviderAccountIds;
 
-    /**
-     * The IDs of all ServiceRepositories used to store service binaries
-     */
-    private Set<Integer> secondaryServiceRepositoryIds;
 
-    /*
-     * The service plan for this account
-     */
-    private ServicePlan servicePlan;
 
 	public ServerDetails(int id,
                          int computeProviderAccountId,
                          int primaryStorageProviderAccountId,
-                         Set<Integer> secondaryStorageProviderAccountIds,
-                         Set<Integer> secondaryServiceRepositoryIds,
-                         ServicePlan servicePlan) {
+                         Set<Integer> secondaryStorageProviderAccountIds) {
 		this(id,
              computeProviderAccountId,
              primaryStorageProviderAccountId,
              secondaryStorageProviderAccountIds,
-             secondaryServiceRepositoryIds,
-             servicePlan,
              0);
 	}
 
@@ -56,16 +44,12 @@ public class ServerDetails extends BaseDomainData {
                        int computeProviderAccountId,
                        int primaryStorageProviderAccountId,
                        Set<Integer> secondaryStorageProviderAccountIds,
-                       Set<Integer> secondaryServiceRepositoryIds,
-                       ServicePlan servicePlan,
                        int counter) {
 		super();
 		this.id = id;
         this.computeProviderAccountId = computeProviderAccountId;
         this.primaryStorageProviderAccountId = primaryStorageProviderAccountId;
         this.secondaryStorageProviderAccountIds = secondaryStorageProviderAccountIds;
-        this.secondaryServiceRepositoryIds = secondaryServiceRepositoryIds;
-        this.servicePlan = servicePlan;
         this.counter = counter;
 	}
 
@@ -79,14 +63,6 @@ public class ServerDetails extends BaseDomainData {
 
     public Set<Integer> getSecondaryStorageProviderAccountIds() {
         return secondaryStorageProviderAccountIds;
-    }
-
-    public Set<Integer> getSecondaryServiceRepositoryIds() {
-        return secondaryServiceRepositoryIds;
-    }
-
-    public ServicePlan getServicePlan() {
-        return servicePlan;
     }
 
     /*
@@ -110,19 +86,10 @@ public class ServerDetails extends BaseDomainData {
             that.primaryStorageProviderAccountId) {
             return false;
         }
-        if (secondaryServiceRepositoryIds !=
-            null ? !secondaryServiceRepositoryIds
-            .equals(that.secondaryServiceRepositoryIds) :
-            that.secondaryServiceRepositoryIds != null) {
-            return false;
-        }
         if (secondaryStorageProviderAccountIds !=
             null ? !secondaryStorageProviderAccountIds
             .equals(that.secondaryStorageProviderAccountIds) :
             that.secondaryStorageProviderAccountIds != null) {
-            return false;
-        }
-        if (servicePlan != that.servicePlan) {
             return false;
         }
 
@@ -138,10 +105,6 @@ public class ServerDetails extends BaseDomainData {
         result = 31 * result + primaryStorageProviderAccountId;
         result = 31 * result + (secondaryStorageProviderAccountIds !=
             null ? secondaryStorageProviderAccountIds.hashCode() : 0);
-        result = 31 * result + (secondaryServiceRepositoryIds !=
-            null ? secondaryServiceRepositoryIds.hashCode() : 0);
-        result =
-            31 * result + (servicePlan != null ? servicePlan.hashCode() : 0);
         return result;
     }
 

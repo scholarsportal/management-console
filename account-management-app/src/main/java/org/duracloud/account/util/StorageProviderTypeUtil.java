@@ -11,7 +11,6 @@ public class StorageProviderTypeUtil {
     static {
         SECONDARY_PROVIDER_TYPES = new ArrayList<>();
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.RACKSPACE);
-        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.MICROSOFT_AZURE);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SDSC);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.AMAZON_GLACIER);
     }

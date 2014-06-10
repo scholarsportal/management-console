@@ -98,7 +98,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
      * - The ComputeProviderAccount and StorageProviderAccount information for
      *     this user was updated in the AMA database to include credentials,
      *     elastic IP, security group, and keypair values
-     * - The ServiceRepository and Image information for the latest release was
+     * - The Image information for the latest release was
      *     added to the AMA database
      */
     @Override
