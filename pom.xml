@@ -58,7 +58,6 @@
     <module>account-management-compute-amazon</module>
     <module>account-management-monitor</module>
     <module>account-management-app</module>
-    <module>shib-idp2</module>
   </modules>
   <profiles>
     <profile>

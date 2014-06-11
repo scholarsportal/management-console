@@ -84,10 +84,6 @@ public abstract class AbstractIntegrationTest {
     }
     
 
-    protected void setRemoteUser(Selenium s, String username) {
-        LoginHelper.setRemoteUser(s, username);
-    }
-
     /**
 	 * 
 	 */

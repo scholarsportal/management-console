@@ -24,7 +24,6 @@ public class TestUser extends AbstractIntegrationTest{
 	public void before() throws Exception {
 		super.before();
 		username = createNewUser();
-		setRemoteUser(this.sc,username);
 		openUserProfile();
 	}
 
@@ -54,7 +53,6 @@ public class TestUser extends AbstractIntegrationTest{
         verifyUserProfilePage(username);
         logout();
 	    String username2 = createNewUser();
-	    setRemoteUser(this.sc,username2);
         openUserProfile();
         verifyUserProfilePage(username2);
 	    

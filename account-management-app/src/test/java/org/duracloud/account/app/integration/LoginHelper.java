@@ -28,22 +28,15 @@ public class LoginHelper {
 
     
     public static boolean loginQuietly(Selenium sc, String username, String password) {
-        /*
         sc.type("username", username);
         sc.type("password", password);
         SeleniumHelper.clickAndWait(sc,"login-button");
         return isLoggedIn(sc);
-        */
-        setRemoteUser(sc, username);
-        return true;
     }
     
-    public static void setRemoteUser(Selenium sc, String username){
-        sc.addCustomRequestHeader("REMOTE_USER", username);
-    }
-
+ 
     public static void logout(Selenium sc) {
-        //UrlHelper.openRelative(sc, "/j_spring_security_logout");
+        UrlHelper.openRelative(sc, "/j_spring_security_logout");
         
     }
 
