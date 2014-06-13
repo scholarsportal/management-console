@@ -3,28 +3,17 @@
  */
 package org.duracloud.account.util.instance.impl;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.AmaEndpoint;
 import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.common.domain.ServerDetails;
+import org.duracloud.account.common.domain.ServerImage;
 import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerDetailsRepo;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
-import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.util.instance.InstanceUtil;
 import org.duracloud.account.util.notification.NotificationMgrConfig;
 import org.duracloud.account.util.util.AccountUtil;
@@ -39,6 +28,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 /**
  * @author: Bill Branan
  * Date: 2/24/11
@@ -51,7 +51,6 @@ public class InstanceConfigUtilImplTest {
     protected AccountInfo account;
     protected ServerDetails serverDetails;
     protected DuracloudRepoMgr repoMgr;
-    protected AmaConfig amaConfig;
     protected AccountUtil accountUtil;
     protected DuracloudAccountRepo accountRepo;
     protected DuracloudServerDetailsRepo serverDetailsRepo;
@@ -93,10 +92,6 @@ public class InstanceConfigUtilImplTest {
             EasyMock.createMock("DuracloudServerDetailsRepo",
                                 DuracloudServerDetailsRepo.class);
 
-        amaConfig =
-                EasyMock.createMock("AmaConfig",
-                                    AmaConfig.class);
-        
         NotificationMgrConfig notConfig =
             new NotificationMgrConfig(notificationFromAddress,
                                       notificationUsername,
@@ -106,8 +101,7 @@ public class InstanceConfigUtilImplTest {
         instanceConfigUtil = new InstanceConfigUtilImpl(instance,
                                                         repoMgr,
                                                         accountUtil,
-                                                        notConfig,
-                                                        amaConfig);
+                                                        notConfig);
     }
 
     protected void replayMocks() {
@@ -119,8 +113,7 @@ public class InstanceConfigUtilImplTest {
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
-                        serverDetailsRepo,
-                        amaConfig);
+                        serverDetailsRepo);
     }
 
     @After
@@ -133,8 +126,7 @@ public class InstanceConfigUtilImplTest {
                         accountRepo,
                         storageProviderAcctRepo,
                         serverImageRepo,
-                        serverDetailsRepo,
-                        amaConfig);
+                        serverDetailsRepo);
     }
 
     @Test
@@ -196,10 +188,6 @@ public class InstanceConfigUtilImplTest {
         EasyMock.expect(repoMgr.getStorageProviderAccountRepo())
             .andReturn(storageProviderAcctRepo)
             .times(1);
-
-        EasyMock.expect(amaConfig.getAuditQueue()).andReturn("audit-queue");
-        EasyMock.expect(amaConfig.getUsername()).andReturn("username");
-        EasyMock.expect(amaConfig.getPassword()).andReturn("password");
 
         replayMocks();
 

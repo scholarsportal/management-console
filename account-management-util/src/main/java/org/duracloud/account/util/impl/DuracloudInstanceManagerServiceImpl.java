@@ -190,7 +190,7 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                       computeProviderAcct.getKeypair(),
                                       computeProviderAcct.getElasticIp(),
                                       instanceType,
-                                      account.getSubdomain() + ".duracloud.org");
+                                      account.getSubdomain()+".duracloud.org");
     
         }catch(RuntimeException ex){
             repoMgr.getInstanceRepo().delete(instance.getId());

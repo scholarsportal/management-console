@@ -317,8 +317,7 @@ public class DuracloudInstanceServiceImplTest
                                                    accountUtil,
                                                    accountClusterUtil,
                                                    computeProviderUtil,
-                                                   notConfig,
-                                                   amaConfig);
+                                                   notConfig);
     }
 
     @Test

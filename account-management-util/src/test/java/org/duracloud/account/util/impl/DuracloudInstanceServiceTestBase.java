@@ -13,7 +13,6 @@ import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.*;
-import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.instance.DurabossUpdater;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
@@ -68,8 +67,7 @@ public class DuracloudInstanceServiceTestBase {
     protected ServerImage serverImage;
     protected IdUtil idUtil;
     protected NotificationMgrConfig notConfig;
-    protected AmaConfig amaConfig;
-    
+
     @Before
     public void setup() throws Exception {
         Set<Integer> ids = new HashSet<Integer>();
@@ -129,6 +127,7 @@ public class DuracloudInstanceServiceTestBase {
                                 DuracloudAccountClusterRepo.class);
         serverImage = EasyMock.createMock("ServerImage", ServerImage.class);
         idUtil = EasyMock.createMock("IdUtil", IdUtil.class);
+
         EasyMock.expect(repoMgr.getComputeProviderAccountRepo())
             .andReturn(computeProviderAcctRepo)
             .anyTimes();
@@ -168,10 +167,7 @@ public class DuracloudInstanceServiceTestBase {
                                               notificationUsername,
                                               notificationPassword,
                                               notificationAdminAddresses);
-        amaConfig = new AmaConfig();
-        amaConfig.setAuditQueue("audit-queue");
-        amaConfig.setUsername("username");
-        amaConfig.setPassword("password");
+
         service = new DuracloudInstanceServiceImpl(accountId,
                                                    instance,
                                                    repoMgr,
@@ -182,8 +178,7 @@ public class DuracloudInstanceServiceTestBase {
                                                    instanceUpdater,
                                                    instanceConfigUtil,
                                                    durabossUpdater,
-                                                   notConfig,
-                                                   amaConfig);
+                                                   notConfig);
 
     }
 

@@ -30,7 +30,6 @@ public class InitializerTest {
 
     private String username = "username";
     private String password = "password";
-    private String auditQueueName = "auditQueue";
 
     private String admin0 = "a@g.com";
     private String admin1 = "x@y.org";
@@ -69,10 +68,6 @@ public class InitializerTest {
 
         props.put(user, username);
         props.put(pass, password);
-
-        String auditQueue = ama + AmaConfig.auditKey + dot + AmaConfig.auditQueueKey;
-        props.put(auditQueue, auditQueueName);
-
 
         int i = 0;
         String email0 = ama + AmaConfig.adminEmailKey + dot + i++;
@@ -121,12 +116,6 @@ public class InitializerTest {
 
         Assert.assertEquals(username, user);
         Assert.assertEquals(password, pass);
-
-        
-        String auditQueue = config.getAuditQueue();
-        Assert.assertNotNull(auditQueue);
-
-        Assert.assertEquals(auditQueueName, auditQueue);
 
         Collection<String> emails = config.getAdminAddresses();
         Assert.assertNotNull(emails);

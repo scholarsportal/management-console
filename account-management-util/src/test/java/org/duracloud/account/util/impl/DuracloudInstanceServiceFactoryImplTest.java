@@ -4,7 +4,6 @@
 package org.duracloud.account.util.impl;
 
 import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.util.AmaConfigMgr;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.security.AnnotationParser;
@@ -30,7 +29,6 @@ public class DuracloudInstanceServiceFactoryImplTest
     private SecurityContextUtil securityContext;
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
-    private AmaConfigMgr amaConfigMgr;
 
     @Before
     public void setUp() throws Exception {
@@ -44,7 +42,6 @@ public class DuracloudInstanceServiceFactoryImplTest
                                                AnnotationParser.class);
         notificationMgr = EasyMock.createMock("NotificationMgr",
                                               NotificationMgr.class);
-		amaConfigMgr = EasyMock.createMock("AmaConfigMgr", AmaConfigMgr.class);
 
         // set up securityContext
         EasyMock.expect(securityContext.getAuthentication()).andReturn(null);
@@ -61,8 +58,7 @@ public class DuracloudInstanceServiceFactoryImplTest
                                                           accountClusterUtil,
                                                           computeProviderUtil,
                                                           annotationParser,
-                                                          notificationMgr,
-                                                          amaConfigMgr);
+                                                          notificationMgr);
     }
 
     @After
@@ -72,8 +68,7 @@ public class DuracloudInstanceServiceFactoryImplTest
                         securityContext,
                         computeProviderUtil,
                         annotationParser,
-                        notificationMgr,
-                        amaConfigMgr);
+                        notificationMgr);
     }
 
     @Override
@@ -82,8 +77,7 @@ public class DuracloudInstanceServiceFactoryImplTest
         EasyMock.replay(voter,
                         securityContext,
                         annotationParser,
-                        notificationMgr,
-                        amaConfigMgr);
+                        notificationMgr);
     }
 
     @Test
@@ -92,7 +86,6 @@ public class DuracloudInstanceServiceFactoryImplTest
         DuracloudInstance instance = createInstance(acctId);
 
         EasyMock.expect(notificationMgr.getConfig()).andReturn(null).once();
-        EasyMock.expect(amaConfigMgr.getConfig()).andReturn(amaConfig).once();
 
         replayMocks();
 

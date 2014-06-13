@@ -11,7 +11,6 @@ import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.init.domain.Initable;
 import org.duracloud.account.init.xml.AmaInitDocumentBinding;
-import org.duracloud.account.util.AmaConfigMgr;
 import org.duracloud.account.util.notification.NotificationMgr;
 import org.duracloud.account.util.sys.EventMonitor;
 import org.slf4j.Logger;
@@ -41,9 +40,6 @@ public class InitController extends AbstractController {
     private NotificationMgr notificationMgr;
 
     @Autowired
-    private AmaConfigMgr amaConfigMgr;
-
-    @Autowired
     @Qualifier("sysMonitor")
     private Initable systemMonitor;
 
@@ -57,7 +53,6 @@ public class InitController extends AbstractController {
             repoMgr.initialize(config);
             notificationMgr.initialize(config);
             systemMonitor.initialize(config);
-            amaConfigMgr.initialize(config);
             AmaEndpoint.initialize(config.getHost(),
                                    config.getPort(),
                                    config.getCtxt());
@@ -84,10 +79,5 @@ public class InitController extends AbstractController {
     // This method is only used by tests. It is not required for injection.
     public void setSystemMonitor(Initable systemMonitor) {
         this.systemMonitor = systemMonitor;
-    }
-
-    // This method is only used by tests. It is not required for injection.
-    public void setAmaConfigMgr(AmaConfigMgr amaConfigMgr) {
-        this.amaConfigMgr = amaConfigMgr;
     }
 }

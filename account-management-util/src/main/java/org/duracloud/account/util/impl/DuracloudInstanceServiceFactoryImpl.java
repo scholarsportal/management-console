@@ -7,7 +7,6 @@ import org.duracloud.account.common.domain.DuracloudInstance;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AmaConfigMgr;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.util.notification.NotificationMgr;
@@ -39,8 +38,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private ComputeProviderUtil computeUtil;
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
-    private AmaConfigMgr amaConfigMgr;
-    
+
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
@@ -48,8 +46,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
                                                AccountClusterUtil accountClusterUtil,
                                                ComputeProviderUtil computeUtil,
                                                AnnotationParser annotationParser,
-                                               NotificationMgr notificationMgr,
-                                               AmaConfigMgr amaConfigMgr) {
+                                               NotificationMgr notificationMgr) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
@@ -58,7 +55,6 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
         this.computeUtil = computeUtil;
         this.annotationParser = annotationParser;
         this.notificationMgr = notificationMgr;
-        this.amaConfigMgr = amaConfigMgr;
     }
 
     @Override
@@ -71,8 +67,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             accountUtil,
             accountClusterUtil,
             computeUtil,
-            notificationMgr.getConfig(),
-            amaConfigMgr.getConfig());
+            notificationMgr.getConfig());
 
         Authentication authentication = getAuthentication();
         return new DuracloudInstanceServiceSecuredImpl(instanceService,

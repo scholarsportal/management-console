@@ -19,7 +19,6 @@ public class AmaConfigTest {
 
     private String username = "user-name";
     private String password = "pass-word";
-    private String auditQueue = "audit-queue";
     private String host = "host";
     private String port = "8008";
     private String ctxt = "context";
@@ -42,8 +41,6 @@ public class AmaConfigTest {
         amaConfig = new AmaConfig();
         amaConfig.setUsername(username);
         amaConfig.setPassword(password);
-        amaConfig.setAuditQueue(auditQueue);
-
         amaConfig.setHost(host);
         amaConfig.setPort(port);
         amaConfig.setCtxt(ctxt);
