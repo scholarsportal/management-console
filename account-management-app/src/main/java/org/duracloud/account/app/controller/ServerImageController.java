@@ -37,7 +37,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     @ModelAttribute("providerAccountIds")
     public List<String> getProviderAccounts() {
         List<String> list = new ArrayList<String>();
-        list.add("0");
+        list.add("1");
         return list;
     }
 
