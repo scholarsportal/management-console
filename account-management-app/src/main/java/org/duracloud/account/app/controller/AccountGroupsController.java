@@ -29,8 +29,7 @@ import java.util.*;
 
 /**
  * 
- * @author  Daniel Bernstein
- *         Date: Nov 9, 2011
+ * @author Daniel Bernstein Date: Nov 9, 2011
  */
 @Controller
 @Lazy
@@ -48,75 +47,69 @@ public class AccountGroupsController extends AbstractAccountController {
     protected static String GROUP_KEY = "group";
 
     protected static final String GROUPS_PATH = ACCOUNT_PATH + "/groups";
-    protected static final String GROUP_PATH = GROUPS_PATH + "/{groupName:[a-z0-9._\\-@]+}";
+    protected static final String GROUP_PATH = GROUPS_PATH
+            + "/{groupName:[a-z0-9._\\-@]+}";
     protected static final String GROUP_EDIT_PATH = GROUP_PATH + "/edit";
 
-    private static final String GROUP_NAME_RESERVED_ERROR_CODE =
-        "error.groupName.reserved";
-    private static final String GROUP_NAME_INVALID_ERROR_CODE =
-        "error.groupName.invalid";
-    private static final String GROUP_NAME_EXISTS_ERROR_CODE =
-        "error.groupName.exists";
-    private static final String GROUP_NAME_RESERVED_MESSAGE =
-        "The group name you specified is a reserved name. Please try another.";
-    private static final String GROUP_NAME_INVALID_MESSAGE =
-        "Group names can contain only lowercase letters, numbers, '.', '@'," +
-            "'-', or '_' and must start and end only with letters or numbers.";
-    private static final String GROUP_NAME_EXISTS_MESSAGE =
-        "This group already exists. Please choose another name.";
+    private static final String GROUP_NAME_RESERVED_ERROR_CODE = "error.groupName.reserved";
+    private static final String GROUP_NAME_INVALID_ERROR_CODE = "error.groupName.invalid";
+    private static final String GROUP_NAME_EXISTS_ERROR_CODE = "error.groupName.exists";
+    private static final String GROUP_NAME_RESERVED_MESSAGE = "The group name you specified is a reserved name. Please try another.";
+    private static final String GROUP_NAME_INVALID_MESSAGE = "Group names can contain only lowercase letters, numbers, '.', '@',"
+            + "'-', or '_' and must start and end only with letters or numbers.";
+    private static final String GROUP_NAME_EXISTS_MESSAGE = "This group already exists. Please choose another name.";
 
     @Autowired
     protected DuracloudGroupService duracloudGroupService;
-    
+
     @RequestMapping(value = GROUPS_PATH, method = RequestMethod.GET)
     public String getGroups(@PathVariable Long accountId, Model model)
-        throws Exception {
+            throws Exception {
         addGroupsObjectsToModel(getAccountService(accountId), model);
         return GROUPS_VIEW_ID;
     }
 
     @RequestMapping(value = GROUPS_PATH, method = RequestMethod.POST)
-    public String modifyGroups(@PathVariable Long accountId,
-                               Model model,
-                               @ModelAttribute(GROUPS_FORM_KEY) @Valid GroupsForm form,
-                               BindingResult result) throws Exception {
+    public String modifyGroups(@PathVariable Long accountId, Model model,
+            @ModelAttribute(GROUPS_FORM_KEY) @Valid GroupsForm form,
+            BindingResult result) throws Exception {
 
         AccountService as = this.accountManagerService.getAccount(accountId);
         GroupsForm.Action action = form.getAction();
 
-        if(action == Action.ADD){
+        if (action == Action.ADD) {
             String name = form.getGroupName();
             String groupName = DuracloudGroup.PREFIX + name;
             try {
                 duracloudGroupService.createGroup(groupName, accountId);
 
             } catch (InvalidGroupNameException e) {
-                if (groupName.equalsIgnoreCase(DuracloudGroup.PUBLIC_GROUP_NAME)) {
+                if (groupName
+                        .equalsIgnoreCase(DuracloudGroup.PUBLIC_GROUP_NAME)) {
                     result.rejectValue(GROUP_NAME_KEY,
-                                       GROUP_NAME_RESERVED_ERROR_CODE,
-                                       GROUP_NAME_RESERVED_MESSAGE);
+                            GROUP_NAME_RESERVED_ERROR_CODE,
+                            GROUP_NAME_RESERVED_MESSAGE);
 
                 } else {
                     result.rejectValue(GROUP_NAME_KEY,
-                                       GROUP_NAME_INVALID_ERROR_CODE,
-                                       GROUP_NAME_INVALID_MESSAGE);
+                            GROUP_NAME_INVALID_ERROR_CODE,
+                            GROUP_NAME_INVALID_MESSAGE);
                 }
 
             } catch (DuracloudGroupAlreadyExistsException e) {
                 result.rejectValue(GROUP_NAME_KEY,
-                                   GROUP_NAME_EXISTS_ERROR_CODE,
-                                   GROUP_NAME_EXISTS_MESSAGE);
+                        GROUP_NAME_EXISTS_ERROR_CODE, GROUP_NAME_EXISTS_MESSAGE);
             }
 
             if (!result.hasFieldErrors()) {
                 return formatGroupRedirect(accountId, name, "/edit");
             }
-        }else {
+        } else {
             String[] groups = form.getGroupNames();
-            if(groups != null){
+            if (groups != null) {
                 for (String name : groups) {
-                    DuracloudGroup group = duracloudGroupService.getGroup(
-                        DuracloudGroup.PREFIX + name, accountId);
+                    DuracloudGroup group = duracloudGroupService.getGroup(name,
+                            accountId);
                     removeGroup(group, accountId);
                 }
             }
@@ -129,8 +122,7 @@ public class AccountGroupsController extends AbstractAccountController {
 
     @RequestMapping(value = GROUP_PATH, method = RequestMethod.GET)
     public String getGroup(@PathVariable Long accountId,
-                           @PathVariable String groupName,
-                           Model model) throws Exception {
+            @PathVariable String groupName, Model model) throws Exception {
 
         addUserToModel(model);
         model.addAttribute(GROUPS_FORM_KEY, new GroupsForm());
@@ -144,8 +136,8 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private List<DuracloudGroup> getGroups(Long accountId) {
-        Set<DuracloudGroup> set =
-            this.duracloudGroupService.getGroups(accountId);
+        Set<DuracloudGroup> set = this.duracloudGroupService
+                .getGroups(accountId);
         List<DuracloudGroup> list = new LinkedList<DuracloudGroup>();
         if (set != null) {
             list.addAll(set);
@@ -156,12 +148,11 @@ public class AccountGroupsController extends AbstractAccountController {
 
     @RequestMapping(value = GROUP_EDIT_PATH, method = RequestMethod.GET)
     public String editGroup(@PathVariable Long accountId,
-                            @PathVariable String groupName,
-                            HttpServletRequest request,
-                            Model model) throws Exception {
+            @PathVariable String groupName, HttpServletRequest request,
+            Model model) throws Exception {
 
         AccountService as = getAccountService(accountId);
-        
+
         List<DuracloudGroup> groups = getGroups(accountId);
         addGroupsObjectsToModel(as, groups, model);
 
@@ -170,24 +161,20 @@ public class AccountGroupsController extends AbstractAccountController {
 
         model.addAttribute(GROUP_FORM_KEY, new GroupForm());
         Set<DuracloudUser> groupUsers = group.getUsers();
-        
+
         addAvailableUsersToModel(as, groupUsers, model);
         HttpSession session = request.getSession();
         session.removeAttribute(GROUP_USERS_KEY);
-        addGroupUsersIfNotAlreadyInSession(group,
-                                           model,
-                                           session);
+        addGroupUsersIfNotAlreadyInSession(group, model, session);
         return GROUP_EDIT_VIEW_ID;
     }
 
     @RequestMapping(value = GROUP_EDIT_PATH, method = RequestMethod.POST)
-    public String
-        editGroup(@PathVariable Long accountId,
-                  @PathVariable String groupName,
-                  @ModelAttribute(GROUP_FORM_KEY) @Valid GroupForm form,
-                  HttpServletRequest request,
-                  Model model) throws Exception {
-        
+    public String editGroup(@PathVariable Long accountId,
+            @PathVariable String groupName,
+            @ModelAttribute(GROUP_FORM_KEY) @Valid GroupForm form,
+            HttpServletRequest request, Model model) throws Exception {
+
         GroupForm.Action action = form.getAction();
         AccountService as = getAccountService(accountId);
         List<DuracloudGroup> groups = getGroups(accountId);
@@ -196,21 +183,21 @@ public class AccountGroupsController extends AbstractAccountController {
 
         HttpSession session = request.getSession();
 
-        List<DuracloudUser> groupUsers =
-            addGroupUsersIfNotAlreadyInSession(group, model, session);
+        List<DuracloudUser> groupUsers = addGroupUsersIfNotAlreadyInSession(
+                group, model, session);
 
         // handle save case
         if (action == GroupForm.Action.SAVE) {
             Set<DuracloudUser> users = new HashSet<DuracloudUser>(groupUsers);
             save(group, users, accountId, form);
             session.removeAttribute(GROUP_USERS_KEY);
-            
+
             return formatGroupRedirect(accountId, groupName, null);
-         
+
         }
 
-        Collection<DuracloudUser> availableUsers =
-            getAvailableUsers(as, groupUsers);
+        Collection<DuracloudUser> availableUsers = getAvailableUsers(as,
+                groupUsers);
 
         if (action == GroupForm.Action.ADD) {
             // handle add
@@ -241,8 +228,9 @@ public class AccountGroupsController extends AbstractAccountController {
                 form.setGroupUsernames(null);
                 form.setAvailableUsernames(groupUsernames);
             }
-        } else{
-            throw new DuraCloudRuntimeException("[" + action + "] not supported.");
+        } else {
+            throw new DuraCloudRuntimeException("[" + action
+                    + "] not supported.");
         }
 
         model.addAttribute(GROUP_FORM_KEY, form);
@@ -252,18 +240,18 @@ public class AccountGroupsController extends AbstractAccountController {
         return GROUP_EDIT_VIEW_ID;
     }
 
-    
-    private String formatGroupRedirect(Long accountId, String groupName, String suffix) {
-        String redirect =  "redirect:" + ACCOUNTS_PATH + GROUP_PATH;
+    private String formatGroupRedirect(Long accountId, String groupName,
+            String suffix) {
+        String redirect = "redirect:" + ACCOUNTS_PATH + GROUP_PATH;
         redirect = redirect.replace("{accountId}", String.valueOf(accountId));
-        redirect = redirect.replaceAll("\\{groupName.*\\}", String.valueOf(groupName));
+        redirect = redirect.replaceAll("\\{groupName.*\\}",
+                String.valueOf(groupName));
         redirect += (suffix != null ? suffix : "");
         return redirect;
     }
 
     private void addAvailableUsersToModel(Collection<DuracloudUser> allUsers,
-                                          Collection<DuracloudUser> groupUsers,
-                                          Model model) {
+            Collection<DuracloudUser> groupUsers, Model model) {
         if (allUsers != null && groupUsers != null) {
             allUsers.removeAll(groupUsers);
         }
@@ -271,7 +259,7 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private DuracloudUser getUser(String username,
-                                  Collection<DuracloudUser> users) {
+            Collection<DuracloudUser> users) {
         for (DuracloudUser user : users) {
             if (user.getUsername().equals(username)) {
                 return user;
@@ -281,12 +269,10 @@ public class AccountGroupsController extends AbstractAccountController {
         return null;
     }
 
-    private List<DuracloudUser>
-        addGroupUsersIfNotAlreadyInSession(DuracloudGroup group,
-                                           Model model,
-                                           HttpSession session) {
-        List<DuracloudUser> groupUsers =
-            (List<DuracloudUser>) session.getAttribute(GROUP_USERS_KEY);
+    private List<DuracloudUser> addGroupUsersIfNotAlreadyInSession(
+            DuracloudGroup group, Model model, HttpSession session) {
+        List<DuracloudUser> groupUsers = (List<DuracloudUser>) session
+                .getAttribute(GROUP_USERS_KEY);
         if (groupUsers == null) {
             groupUsers = new LinkedList<DuracloudUser>();
             groupUsers.addAll(group.getUsers());
@@ -299,11 +285,9 @@ public class AccountGroupsController extends AbstractAccountController {
         return groupUsers;
     }
 
-    private void save(DuracloudGroup group,
-                      Set<DuracloudUser> groupUsers,
-                      Long accountId,
-                      GroupForm form)
-        throws DuracloudGroupNotFoundException {
+    private void save(DuracloudGroup group, Set<DuracloudUser> groupUsers,
+            Long accountId, GroupForm form)
+            throws DuracloudGroupNotFoundException {
         duracloudGroupService.updateGroupUsers(group, groupUsers, accountId);
         form.reset();
     }
@@ -317,44 +301,39 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private void addGroupsObjectsToModel(AccountService as, Model model)
-        throws Exception {
+            throws Exception {
         Long accountId = as.retrieveAccountInfo().getId();
         addGroupsObjectsToModel(as, this.getGroups(accountId), model);
     }
 
     private void addGroupsObjectsToModel(AccountService as,
-                                         List<DuracloudGroup> groups,
-                                         Model model)
-        throws Exception {
+            List<DuracloudGroup> groups, Model model) throws Exception {
         addUserToModel(model);
         model.addAttribute("accountId", as.getAccountId());
-        if(!model.asMap().containsKey(GROUPS_FORM_KEY)){
+        if (!model.asMap().containsKey(GROUPS_FORM_KEY)) {
             model.addAttribute(GROUPS_FORM_KEY, new GroupsForm());
         }
         addGroupsToModel(model, groups);
     }
 
-    
     private void addAvailableUsersToModel(AccountService as,
-                                          Collection<DuracloudUser> groupUsers,
-                                          Model model) {
-        Collection<DuracloudUser> availableUsers =
-            getAvailableUsers(as, groupUsers);
+            Collection<DuracloudUser> groupUsers, Model model) {
+        Collection<DuracloudUser> availableUsers = getAvailableUsers(as,
+                groupUsers);
         addAvailableUsersToModel(availableUsers, groupUsers, model);
     }
 
-    private Collection<DuracloudUser>
-        getAvailableUsers(AccountService as,
-                          Collection<DuracloudUser> groupUsers) {
+    private Collection<DuracloudUser> getAvailableUsers(AccountService as,
+            Collection<DuracloudUser> groupUsers) {
         Set<DuracloudUser> allUsers = as.getUsers();
         LinkedList<DuracloudUser> list = new LinkedList<DuracloudUser>();
         list.addAll(allUsers);
-        for(DuracloudUser user : allUsers){
-            if(user.isRootForAcct(as.getAccountId())){
+        for (DuracloudUser user : allUsers) {
+            if (user.isRootForAcct(as.getAccountId())) {
                 list.remove(user);
             }
         }
-        
+
         if (groupUsers != null) {
             list.removeAll(groupUsers);
         }
@@ -363,14 +342,13 @@ public class AccountGroupsController extends AbstractAccountController {
         return list;
     }
 
-    private static Comparator<DuracloudUser> USERNAME_COMPARATOR =
-        new Comparator<DuracloudUser>() {
+    private static Comparator<DuracloudUser> USERNAME_COMPARATOR = new Comparator<DuracloudUser>() {
 
-            @Override
-            public int compare(DuracloudUser o1, DuracloudUser o2) {
-                return o1.getUsername().compareTo(o2.getUsername());
-            }
-        };
+        @Override
+        public int compare(DuracloudUser o1, DuracloudUser o2) {
+            return o1.getUsername().compareTo(o2.getUsername());
+        }
+    };
 
     private void addGroupToModel(DuracloudGroup group, Model model) {
         model.addAttribute(GROUP_KEY, group);
@@ -378,27 +356,24 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     private DuracloudGroup getGroup(String groupName,
-                                    List<DuracloudGroup> groups)
-        throws DuracloudGroupNotFoundException {
-        for (DuracloudGroup g : groups) {
-            if (g.getName().equalsIgnoreCase(DuracloudGroup.PREFIX + groupName)) {
+            List<DuracloudGroup> groups) throws DuracloudGroupNotFoundException {
+        for (DuracloudGroup g : groups) { 
+            if (g.getName().equalsIgnoreCase(groupName)) {
                 return g;
             }
         }
-        
-        throw new DuracloudGroupNotFoundException("no group named '" +
-                                                  groupName +
-                                                  "' found in group set.");
+
+        throw new DuracloudGroupNotFoundException("no group named '"
+                + groupName + "' found in group set.");
     }
 
     private void addGroupsToModel(Model model, List<DuracloudGroup> groups) {
         model.addAttribute("groups", groups);
     }
 
-
     public void setDuracloudGroupService(DuracloudGroupService groupService) {
-       this.duracloudGroupService = groupService;
-        
+        this.duracloudGroupService = groupService;
+
     }
 
 }
