@@ -41,6 +41,7 @@ public class Initializer extends BaseConfig {
     protected static final String hostKey = "host";
     protected static final String portKey = "port";
     protected static final String contextKey = "context";
+    
 
     private String amaHost;
     private String amaPort;

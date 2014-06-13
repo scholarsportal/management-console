@@ -12,6 +12,7 @@ import org.duracloud.account.db.DuracloudAccountRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.util.error.DuracloudProviderAccountNotAvailableException;
 import org.duracloud.account.util.error.InstanceAccountNotFoundException;
 import org.duracloud.account.util.instance.InstanceConfigUtil;
@@ -22,6 +23,7 @@ import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
+import org.duracloud.storage.domain.AuditConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
@@ -39,11 +41,7 @@ import java.util.Set;
 public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     protected static final String DEFAULT_SSL_PORT = "443";
-    protected static final String DEFAULT_SERVICES_ADMIN_PORT = "8089";
-    protected static final String DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX =
-        "org.duracloud.services.admin_";
     protected static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
-    protected static final String DEFAULT_MSG_BROKER_PORT = "61617";
     protected static final String DEFAULT_SERVICE_COMPUTE_TYPE = "AMAZON_EC2";
     protected static final String DEFAULT_SERVICE_COMPUTE_IMAGE_ID = "unknown";
     protected static final String NOTIFICATION_TYPE = "EMAIL";
@@ -52,15 +50,18 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
     private DuracloudRepoMgr repoMgr;
     private AccountUtil accountUtil;
     private NotificationMgrConfig notMgrConfig;
-
+    private AmaConfig amaConfig;
+    
     public InstanceConfigUtilImpl(DuracloudInstance instance,
                                   DuracloudRepoMgr repoMgr,
                                   AccountUtil accountUtil,
-                                  NotificationMgrConfig notMgrConfig) {
+                                  NotificationMgrConfig notMgrConfig,
+                                  AmaConfig amaConfig) {
         this.instance = instance;
         this.repoMgr = repoMgr;
         this.accountUtil = accountUtil;
         this.notMgrConfig = notMgrConfig;
+        this.amaConfig = amaConfig;
     }
 
     public DuradminConfig getDuradminConfig() {
@@ -96,6 +97,10 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         }
 
         config.setStorageAccounts(storageAccts);
+        AuditConfig audit = config.getAuditConfig();
+        audit.setAuditQueueName(this.amaConfig.getAuditQueue());
+        audit.setAuditUsername(this.amaConfig.getUsername());
+        audit.setAuditPassword(this.amaConfig.getPassword());
         return config;
     }
 
@@ -143,7 +148,6 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-
         NotificationConfig notificationConfig = new NotificationConfig();
         notificationConfig.setType(NOTIFICATION_TYPE);
         notificationConfig.setUsername(notMgrConfig.getUsername());

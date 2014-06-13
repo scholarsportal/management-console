@@ -27,6 +27,9 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     public static final String awsUsernameKey = "username";
     public static final String awsPasswordKey = "password";
+    public static String auditKey = "audit";
+    public static String auditQueueKey = "queue";
+
     public static final String adminEmailKey = "admin";
     public static final String ldapKey = "ldap";
 
@@ -44,6 +47,7 @@ public class AmaConfig extends BaseConfig implements AppConfig {
 
     private String awsUsername;
     private String awsPassword;
+    private String auditQueue;
     private String host;
     private String port;
     private String ctxt;
@@ -75,6 +79,11 @@ public class AmaConfig extends BaseConfig implements AppConfig {
         } else if (prefix.equalsIgnoreCase(awsPasswordKey)) {
             this.awsPassword = value;
 
+        } else if (prefix.equalsIgnoreCase(auditKey)) {
+            if(suffix.equalsIgnoreCase(auditQueueKey)){
+                this.auditQueue = value;
+            }
+        	
         } else if (prefix.equalsIgnoreCase(adminEmailKey)) {
             String id = suffix;
             adminAddresses.put(id, value);
@@ -160,6 +169,14 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     public void setPassword(String awsPassword) {
         this.awsPassword = awsPassword;
     }
+
+    public String getAuditQueue(){
+    	return this.auditQueue;
+    }
+    
+	public void setAuditQueue(String auditQueue) {
+		this.auditQueue = auditQueue;
+	}
 
     public String getHost() {
         return host;
@@ -264,4 +281,5 @@ public class AmaConfig extends BaseConfig implements AppConfig {
     public void setIdUtilPassword(String idUtilPassword) {
         this.idUtilPassword = idUtilPassword;
     }
+
 }

@@ -27,6 +27,10 @@
     <constructor-arg value="notifications@duracloud.org"/>
   </bean>
 
+  <bean id="amaConfigMgr"
+        class="org.duracloud.account.util.AmaConfigMgrImpl">
+  </bean>
+
   <bean id="systemMonitor"
         class="org.duracloud.account.util.sys.impl.SystemMonitorImpl">
     <constructor-arg ref="notificationMgr"/>
@@ -123,6 +127,7 @@
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="annotationParser"/>
     <constructor-arg ref="notificationMgr"/>
+    <constructor-arg ref="amaConfigMgr"/>
   </bean>
 
   <bean id="instanceManagerService"

@@ -24,6 +24,9 @@ public interface DuracloudComputeProvider{
      * @param elasticIp the IP address to be associated with this instance
      *
      * @param instanceType the type of hardward to be used for the instance 
+	 *
+     * @param instanceName the instance name that makes the instance easily 
+     * 					   identifiable in the aws console 
      * 
      * @return provider instance ID
      */
@@ -31,7 +34,8 @@ public interface DuracloudComputeProvider{
                         String securityGroup,
                         String keyname,
                         String elasticIp, 
-                        InstanceType instanceType);
+                        InstanceType instanceType,
+                        String instanceName);
 
     /**
      * Stops a running instance.

@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -34,6 +36,7 @@ public class AmazonComputeProviderTest {
 
     private void doTestStart(boolean valid) throws Exception {
         String instanceId = "my-instance-id";
+        String instanceName = "instance-name";
         String imageId = "abcd-image-id";
         String securityGroup = "security-group";
         String keyname = "keyname";
@@ -64,6 +67,12 @@ public class AmazonComputeProviderTest {
                 new Reservation().withInstances(
                     new Instance().withInstanceId(instanceId)));
 
+        Capture<CreateTagsRequest> createTagsCapture =
+                new Capture<CreateTagsRequest>();
+        
+        mockEC2Client.createTags(EasyMock.capture(createTagsCapture));
+        EasyMock.expectLastCall();
+        
         Capture<RunInstancesRequest> requestCapture =
             new Capture<RunInstancesRequest>();
         EasyMock.expect(
@@ -94,7 +103,8 @@ public class AmazonComputeProviderTest {
                                                           keyname,
                                                           elasticIp,
                                                           false,
-                                                          InstanceType.SMALL);
+                                                          InstanceType.SMALL, 
+                                                          instanceName);
         assertEquals(instanceId, resultInstanceId);
 
         EasyMock.verify(mockEC2Client);
@@ -112,6 +122,12 @@ public class AmazonComputeProviderTest {
             terminateCapture.getValue();
         assertEquals(1, terminateRequest.getInstanceIds().size());
         assertEquals(instanceId, terminateRequest.getInstanceIds().get(0));
+        
+        CreateTagsRequest createTags = createTagsCapture.getValue();
+        Tag tag = createTags.getTags().get(0);
+        Assert.assertEquals("Name",tag.getKey());
+        Assert.assertEquals(instanceName, tag.getValue());
+        
     }
 
     @Test

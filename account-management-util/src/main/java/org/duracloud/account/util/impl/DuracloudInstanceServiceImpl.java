@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.util.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.common.domain.AccountInfo;
 import org.duracloud.account.common.domain.ComputeProviderAccount;
@@ -22,6 +27,7 @@ import org.duracloud.account.db.DuracloudGroupRepo;
 import org.duracloud.account.db.DuracloudRepoMgr;
 import org.duracloud.account.db.DuracloudServerImageRepo;
 import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.account.util.DuracloudInstanceService;
 import org.duracloud.account.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.util.error.DuracloudServerImageNotAvailableException;
@@ -46,11 +52,6 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -85,7 +86,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                         AccountUtil accountUtil,
                                         AccountClusterUtil accountClusterUtil,
                                         ComputeProviderUtil computeProviderUtil,
-                                        NotificationMgrConfig notMgrConfig)
+                                        NotificationMgrConfig notMgrConfig,
+                                        AmaConfig amaConfig)
         throws DBNotFoundException {
         this(accountId,
              instance,
@@ -97,7 +99,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
              null,
              null,
              null,
-             notMgrConfig);
+             notMgrConfig,
+             amaConfig);
     }
 
     protected DuracloudInstanceServiceImpl(int accountId,
@@ -110,7 +113,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            InstanceUpdater instanceUpdater,
                                            InstanceConfigUtil instanceConfigUtil,
                                            DurabossUpdater durabossUpdater,
-                                           NotificationMgrConfig notMgrConfig)
+                                           NotificationMgrConfig notMgrConfig,
+                                           AmaConfig amaConfig)
         throws DBNotFoundException {
 
         this.accountId = accountId;
@@ -137,7 +141,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             this.instanceConfigUtil = new InstanceConfigUtilImpl(instance,
                                                                  repoMgr,
                                                                  accountUtil,
-                                                                 notMgrConfig);
+                                                                 notMgrConfig,
+                                                                 amaConfig);
         }
 
         if (null == durabossUpdater){

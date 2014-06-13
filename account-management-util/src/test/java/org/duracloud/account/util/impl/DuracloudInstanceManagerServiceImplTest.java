@@ -142,7 +142,8 @@ public class DuracloudInstanceManagerServiceImplTest
                                               securityGroup,
                                               keypair,
                                               elasticIp, 
-                                              InstanceType.SMALL))
+                                              InstanceType.SMALL,
+                                              "subdomain.duracloud.org"))
             .andReturn(providerInstanceId)
             .times(1);
 
@@ -165,6 +166,7 @@ public class DuracloudInstanceManagerServiceImplTest
         EasyMock.expectLastCall()
             .times(2);
 
+        EasyMock.expect(this.account.getSubdomain()).andReturn(subdomain);
         setUpInitComputeProvider();
         replayMocks();
 

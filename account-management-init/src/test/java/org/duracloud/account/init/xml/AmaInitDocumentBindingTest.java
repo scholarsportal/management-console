@@ -21,9 +21,10 @@ import java.util.Collection;
  */
 public class AmaInitDocumentBindingTest {
 
-    private InputStream xml;
+    private InputStream sb;
     private String username = "user-name";
     private String password = "pass-word";
+    private String auditQueue = "audit-queue";
     private String host = "host";
     private String port = "8765";
     private String ctxt = "ctxt";
@@ -48,19 +49,21 @@ public class AmaInitDocumentBindingTest {
 
     @After
     public void tearDown() throws IOException {
-        if (null != xml) {
-            xml.close();
+        if (null != sb) {
+            sb.close();
         }
     }
 
     @Test
     public void testCreateAmaConfigFrom() throws Exception {
-        xml = createInputStream();
-        AmaConfig amaConfig = AmaInitDocumentBinding.createAmaConfigFrom(xml);
+        sb = createInputStream();
+        AmaConfig amaConfig = AmaInitDocumentBinding.createAmaConfigFrom(sb);
         Assert.assertNotNull(amaConfig);
 
         Assert.assertEquals(username, amaConfig.getUsername());
         Assert.assertEquals(password, amaConfig.getPassword());
+        Assert.assertEquals(auditQueue, amaConfig.getAuditQueue());
+
         Assert.assertEquals(host, amaConfig.getHost());
         Assert.assertEquals(port, amaConfig.getPort());
         Assert.assertEquals(ctxt, amaConfig.getCtxt());
@@ -118,6 +121,10 @@ public class AmaInitDocumentBindingTest {
         sb.append("    <username>" + encIdUsername + "</username>");
         sb.append("    <password>" + encIdPassword + "</password>");
         sb.append("  </idutil>");
+        sb.append("  <audit>");
+        sb.append("    <queue>" + auditQueue + "</queue>");
+        sb.append("  </audit>");
+
         sb.append("</ama>");
 
         return new ByteArrayInputStream(sb.toString().getBytes());
@@ -128,6 +135,7 @@ public class AmaInitDocumentBindingTest {
         AmaConfig amaConfig = new AmaConfig();
         amaConfig.setUsername(username);
         amaConfig.setPassword(password);
+        amaConfig.setAuditQueue(auditQueue);
         amaConfig.setHost(host);
         amaConfig.setPort(port);
         amaConfig.setCtxt(ctxt);
@@ -150,6 +158,8 @@ public class AmaInitDocumentBindingTest {
         String encPassword = encryptionUtil.encrypt(password);
         Assert.assertTrue(doc.contains(encUsername));
         Assert.assertTrue(doc.contains(encPassword));
+        Assert.assertTrue(doc.contains(auditQueue));
+        
 
         Assert.assertTrue(doc.contains(host));
         Assert.assertTrue(doc.contains(port));

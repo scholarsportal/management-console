@@ -43,9 +43,16 @@ public class AmaInitDocumentBinding {
             Element credential = root.getChild("credential");
             String encUsername = credential.getChildText("username");
             String encPassword = credential.getChildText("password");
+
             config.setUsername(decrypt(encUsername));
             config.setPassword(decrypt(encPassword));
 
+            Element audit = root.getChild("audit");
+            if(audit != null){
+                config.setAuditQueue(audit.getChildText("queue"));
+            }
+
+            
             Element admin = root.getChild("admin");
             if (null != admin) {
                 Iterator<Element> emails = admin.getChildren().iterator();
@@ -105,6 +112,8 @@ public class AmaInitDocumentBinding {
         if (null != amaConfig) {
             String username = encrypt(amaConfig.getUsername());
             String password = encrypt(amaConfig.getPassword());
+            String auditQueue = amaConfig.getAuditQueue();
+
             String host = amaConfig.getHost();
             String port = amaConfig.getPort();
             String ctxt = amaConfig.getCtxt();
@@ -155,6 +164,9 @@ public class AmaInitDocumentBinding {
             xml.append("  <host>" + host + "</host>");
             xml.append("  <port>" + port + "</port>");
             xml.append("  <ctxt>" + ctxt + "</ctxt>");
+            xml.append("  <audit>");
+            xml.append("    <queue>" + auditQueue + "</queue>");
+            xml.append("  </audit>");
             xml.append("</ama>");
         }
         return xml.toString();
