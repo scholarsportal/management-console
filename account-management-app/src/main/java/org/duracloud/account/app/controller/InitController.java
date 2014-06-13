@@ -85,4 +85,9 @@ public class InitController extends AbstractController {
     public void setSystemMonitor(Initable systemMonitor) {
         this.systemMonitor = systemMonitor;
     }
+
+    // This method is only used by tests. It is not required for injection.
+    public void setAmaConfigMgr(AmaConfigMgr amaConfigMgr) {
+        this.amaConfigMgr = amaConfigMgr;
+    }
 }
