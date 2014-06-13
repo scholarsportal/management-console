@@ -7,8 +7,17 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.*;
 import java.util.Set;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * @author Erik Paulsson
@@ -18,17 +27,17 @@ import java.util.Set;
 public class AccountRights extends BaseEntity {
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="account_id", nullable=false)
+    @JoinColumn(name="account_id", nullable=false, columnDefinition = "bigint(20)")
     private AccountInfo account;
 
     @ManyToOne(fetch= FetchType.EAGER, optional=true)
-    @JoinColumn(name="user_id", nullable=true)
+    @JoinColumn(name="user_id", nullable=true, columnDefinition = "bigint(20)")
     private DuracloudUser user;
 
     @ElementCollection(targetClass=Role.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name="account_rights_role",
-                     joinColumns=@JoinColumn(name="account_rights_id"))
+                     joinColumns=@JoinColumn(name="account_rights_id", columnDefinition = "bigint(20)"))
     @Column(name="role")
     private Set<Role> roles;
 

@@ -13,4 +13,5 @@ package org.duracloud.account.db.model;
  */
 public interface Identifiable {
     public Long getId();
+    public void setId(Long id);
 }

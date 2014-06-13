@@ -7,6 +7,8 @@
  */
 package org.duracloud.account.db.model;
 
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,38 +17,33 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * @author Erik Paulsson
- *         Date: 7/10/13
+ * @author Erik Paulsson Date: 7/10/13
  */
 @Entity
 public class ServerDetails extends BaseEntity {
 
     /**
-     * The ComputeProviderAccount which is the compute provider for
-     * an instance
+     * The ComputeProviderAccount which is the compute provider for an instance
      */
-    @OneToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="compute_provider_account_id", nullable=false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "compute_provider_account_id", nullable = false, columnDefinition = "bigint(20)")
     private ComputeProviderAccount computeProviderAccount;
 
     /**
      * The StorageProviderAccount which is used for primary storage
      */
-    @OneToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="primary_storage_provider_account_id", nullable=false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "primary_storage_provider_account_id", nullable = false, columnDefinition = "bigint(20)")
     private StorageProviderAccount primaryStorageProviderAccount;
 
     /**
      * The StorageProviderAccounts which are used for secondary storage
      */
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "server_details_id")
-    private Set<StorageProviderAccount> secondaryStorageProviderAccounts =
-            new HashSet<StorageProviderAccount>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+    @JoinColumn(name = "server_details_id", nullable = true, columnDefinition = "bigint(20)")
+    private Set<StorageProviderAccount> secondaryStorageProviderAccounts;
 
     /*
      * The service plan for this account
@@ -58,7 +55,8 @@ public class ServerDetails extends BaseEntity {
         return computeProviderAccount;
     }
 
-    public void setComputeProviderAccount(ComputeProviderAccount computeProviderAccount) {
+    public void setComputeProviderAccount(
+            ComputeProviderAccount computeProviderAccount) {
         this.computeProviderAccount = computeProviderAccount;
     }
 
@@ -66,7 +64,8 @@ public class ServerDetails extends BaseEntity {
         return primaryStorageProviderAccount;
     }
 
-    public void setPrimaryStorageProviderAccount(StorageProviderAccount primaryStorageProviderAccount) {
+    public void setPrimaryStorageProviderAccount(
+            StorageProviderAccount primaryStorageProviderAccount) {
         this.primaryStorageProviderAccount = primaryStorageProviderAccount;
     }
 
@@ -74,7 +73,8 @@ public class ServerDetails extends BaseEntity {
         return secondaryStorageProviderAccounts;
     }
 
-    public void setSecondaryStorageProviderAccounts(Set<StorageProviderAccount> secondaryStorageProviderAccounts) {
+    public void setSecondaryStorageProviderAccounts(
+            Set<StorageProviderAccount> secondaryStorageProviderAccounts) {
         this.secondaryStorageProviderAccounts = secondaryStorageProviderAccounts;
     }
 

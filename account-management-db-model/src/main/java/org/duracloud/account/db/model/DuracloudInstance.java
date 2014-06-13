@@ -7,7 +7,11 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * @author Erik Paulsson
@@ -22,14 +26,14 @@ public class DuracloudInstance extends BaseEntity {
      * The Image on which this instance is based.
      */
     @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="image_id", nullable=false)
+    @JoinColumn(name="image_id", nullable=false, columnDefinition = "bigint(20)")
     private ServerImage image;
 
     /**
      * The ID of the Account for which this instance was created
      */
     @OneToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="account_id", nullable=false)
+    @JoinColumn(name="account_id", nullable=false, columnDefinition = "bigint(20)")
     private AccountInfo account;
 
     /**

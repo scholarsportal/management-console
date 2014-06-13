@@ -7,11 +7,17 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
- * @author Erik Paulsson
- *         Date: 7/10/13
+ * @author Erik Paulsson Date: 7/10/13
  */
 @Entity
 public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
@@ -20,8 +26,7 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     }
 
     /*
-     * The subdomain of duracloud.org which will be used to access the instance
-     * associated with this account
+     * The subdomain of duracloud.org which will be used to access the instance associated with this account
      */
     private String subdomain;
 
@@ -36,8 +41,7 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     private String orgName;
 
     /*
-     * The name of the department (if applicable) of the organization
-     * responsible for the content in this account
+     * The name of the department (if applicable) of the organization responsible for the content in this account
      */
     private String department;
 
@@ -54,15 +58,14 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     private AccountType type;
 
     /*
-     * The details needed to manage servers associated with this
-     * account
+     * The details needed to manage servers associated with this account
      */
-    @OneToOne(fetch=FetchType.EAGER, optional=true)
-    @JoinColumn(name="server_details_id", nullable=true)
+    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "server_details_id", nullable = true, columnDefinition = "bigint(20)")
     private ServerDetails serverDetails;
 
-    @ManyToOne(fetch= FetchType.EAGER, optional=true)
-    @JoinColumn(name="account_cluster_id", nullable=true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "account_cluster_id", nullable = true, columnDefinition = "bigint(20)")
     private AccountCluster accountCluster;
 
     public String getSubdomain() {
