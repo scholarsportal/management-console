@@ -35,6 +35,8 @@ public class AccountSetupForm {
     @NotBlank(message="Security group is required")
     private String computeSecurityGroup;
 
+    @NotBlank(message="Audit queue is required")
+    private String auditQueue;
     
     
     public AccountSetupForm(
@@ -55,6 +57,7 @@ public class AccountSetupForm {
             this.computeElasticIP = compute.getElasticIp();
             this.computeKeypair = compute.getKeypair();
             this.computeSecurityGroup = compute.getSecurityGroup();
+            this.auditQueue = compute.getAuditQueue();
         }
     }
 
@@ -112,6 +115,14 @@ public class AccountSetupForm {
 
     public void setComputeSecurityGroup(String computeSecurityGroup) {
         this.computeSecurityGroup = computeSecurityGroup;
+    }
+    
+    public String getAuditQueue() {
+        return auditQueue;
+    }
+    
+    public void setAuditQueue(String auditQueue) {
+        this.auditQueue = auditQueue;
     }
     
     public StorageCredentials getPrimaryStorageCredentials() {

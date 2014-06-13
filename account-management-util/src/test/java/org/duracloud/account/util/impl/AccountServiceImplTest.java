@@ -126,7 +126,8 @@ public class AccountServiceImplTest extends DuracloudServiceTestBase {
                                        "password",
                                        "ip",
                                        "security-group",
-                                       "keypair");
+                                       "keypair",
+                                       "audit-queue");
         EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
             .andReturn(compute)
             .times(1);

@@ -40,6 +40,7 @@ public class DuracloudProviderAccountUtil {
                                        ComputeProviderAccount.PLACEHOLDER_VALUE,
                                        ComputeProviderAccount.PLACEHOLDER_VALUE,
                                        ComputeProviderAccount.PLACEHOLDER_VALUE,
+                                       ComputeProviderAccount.PLACEHOLDER_VALUE,
                                        ComputeProviderAccount.PLACEHOLDER_VALUE);
 
         DuracloudComputeProviderAccountRepo repo =

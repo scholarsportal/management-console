@@ -470,6 +470,7 @@ public class RootAccountManagerServiceImplTest extends DuracloudServiceTestBase 
                                                                      "test",
                                                                      "test",
                                                                      "test",
+                                                                     "test",
                                                                      "test");
 
         EasyMock.expect(computeProviderAcctRepo.findById(EasyMock.anyInt()))
