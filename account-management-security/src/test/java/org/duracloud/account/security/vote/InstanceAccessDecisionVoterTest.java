@@ -364,6 +364,7 @@ public class InstanceAccessDecisionVoterTest {
         user.setEmail("email");
         user.setSecurityQuestion("question");
         user.setSecurityAnswer("answer");
+        user.setAccountRights(new HashSet<AccountRights>());
         user.getAccountRights().add(right);
         return user;
     }
