@@ -7,15 +7,16 @@
  */
 package org.duracloud.account.db.model;
 
-import org.hibernate.annotations.GenericGenerator;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.TableGenerator;
 import javax.persistence.Version;
-import java.util.Date;
+
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * @author Erik Paulsson
@@ -25,21 +26,23 @@ import java.util.Date;
 public abstract class BaseEntity implements Identifiable {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="idOrGenerate")
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="idOrGenerate")
     @GenericGenerator(name="idOrGenerate",
                       strategy="org.duracloud.account.db.model.util.UseIdOrGenerate")
+    @Column(columnDefinition="bigint(20) AUTO_INCREMENT")
     protected Long id;
 
-    private Date created = new Date();
+    private Date created;
 
     @Version
-    private Date modified = new Date();
+    private Date modified;
 
     @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

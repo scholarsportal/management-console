@@ -3,7 +3,20 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.util.AccountService;
@@ -15,8 +28,6 @@ import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -231,7 +242,7 @@ public class AccountServiceImpl implements AccountService {
             repoMgr.getUserInvitationRepo().findByAccountId(account.getId());
 
         Date now = new Date();
-        Set<UserInvitation> pendingInvitations = new TreeSet<UserInvitation>();
+        Set<UserInvitation> pendingInvitations = new HashSet<UserInvitation>();
 
         for (UserInvitation ui : invitations) {
             if(ui.getExpirationDate().before(now)) {

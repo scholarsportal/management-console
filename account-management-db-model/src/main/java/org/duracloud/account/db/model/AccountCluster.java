@@ -7,10 +7,10 @@
  */
 package org.duracloud.account.db.model;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Erik Paulsson
@@ -25,7 +25,7 @@ public class AccountCluster extends BaseEntity {
      * The IDs of all Accounts which are part of the cluster
      */
     @OneToMany(mappedBy="accountCluster")
-    private Set<AccountInfo> clusterAccounts = new HashSet<AccountInfo>();
+    private Set<AccountInfo> clusterAccounts;
 
     public String getClusterName() {
         return clusterName;

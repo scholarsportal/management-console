@@ -29,7 +29,7 @@ public class ServerImage extends BaseEntity {
      * The ComputeProviderAccount on which this server image is hosted.
      */
     @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="provider_account_id", nullable=false)
+    @JoinColumn(name="provider_account_id", nullable=false, columnDefinition = "bigint(20)")
     private ComputeProviderAccount providerAccount;
 
     /**

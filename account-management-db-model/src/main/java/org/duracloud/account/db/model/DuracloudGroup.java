@@ -7,9 +7,14 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 /**
  * @author Erik Paulsson
@@ -25,12 +30,12 @@ public class DuracloudGroup extends BaseEntity {
 
     @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(name="group_user",
-        joinColumns=@JoinColumn(name="group_id", referencedColumnName="id"),
-        inverseJoinColumns=@JoinColumn(name="user_id", referencedColumnName="id"))
-    private Set<DuracloudUser> users = new HashSet<DuracloudUser>();
+        joinColumns=@JoinColumn(name="group_id", referencedColumnName="id", columnDefinition = "bigint(20)"),
+        inverseJoinColumns=@JoinColumn(name="user_id", referencedColumnName="id", columnDefinition = "bigint(20)"))
+    private Set<DuracloudUser> users;
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="account_id", nullable=false)
+    @JoinColumn(name="account_id", nullable=false, columnDefinition = "bigint(20)")
     private AccountInfo account;
 
     public String getName() {

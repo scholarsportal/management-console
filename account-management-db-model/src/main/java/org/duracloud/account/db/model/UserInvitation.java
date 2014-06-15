@@ -7,11 +7,12 @@
  */
 package org.duracloud.account.db.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Date;
 
 /**
  * @author Erik Paulsson
@@ -21,7 +22,7 @@ import java.util.Date;
 public class UserInvitation extends BaseEntity {
 
     @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="account_id", nullable=false)
+    @JoinColumn(name="account_id", nullable=false, columnDefinition = "bigint(20)")
     private AccountInfo account;
 
     private String accountName;

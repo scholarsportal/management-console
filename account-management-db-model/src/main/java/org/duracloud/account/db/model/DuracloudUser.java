@@ -7,17 +7,18 @@
  */
 package org.duracloud.account.db.model;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author Erik Paulsson
@@ -40,7 +41,7 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
     private boolean accountNonLocked = true;
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="user")
-    private Set<AccountRights> accountRights = new HashSet<AccountRights>();
+    private Set<AccountRights> accountRights;
 
     public String getUsername() {
         return username;
