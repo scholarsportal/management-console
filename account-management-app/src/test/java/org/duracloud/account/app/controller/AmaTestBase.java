@@ -126,7 +126,7 @@ public class AmaTestBase {
         rights.setAccount(createAccountInfo(TEST_ACCOUNT_ID));
         rights.setUser(user);
         rights.setRoles(roles);
-
+        user.setAccountRights(new HashSet<AccountRights>());
         user.getAccountRights().add(rights);
         return user;
     }

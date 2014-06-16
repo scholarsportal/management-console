@@ -97,6 +97,7 @@ public class AccountClusterControllerTest extends AmaControllerTestBase {
         AccountCluster cluster = new AccountCluster();
         cluster.setId(0L);
         cluster.setClusterName("test");
+        cluster.setClusterAccounts(new HashSet<AccountInfo>());
         cluster.getClusterAccounts().add(accountInfo);
 
         EasyMock.expect(accountManagerService.getAccountCluster(clusterId))

@@ -50,6 +50,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         Long groupId = 2L;
         String groupName = DuracloudGroup.PREFIX + TEST_GROUP_NAME;
         DuracloudGroup group = createGroup(groupId, groupName, accountId);
+        group.setUsers(new HashSet<DuracloudUser>());
         group.getUsers().add(createUser());
         Set<DuracloudGroup> set = new HashSet<DuracloudGroup>();
         set.add(group);
