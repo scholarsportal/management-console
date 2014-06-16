@@ -10,6 +10,7 @@
 
 
   <h1>Manage Account Groups</h1>
+  <h2>${account.name}</h2>
 
   <div class="dc-subgroup account-groups">
   <table>
@@ -58,7 +59,7 @@
                       </td>
                       <td>
                         <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.name}">  
-                          ${ug.name}
+                          ${ug.prettyName}
                         </a>                      
                       </td>
                       </tr>

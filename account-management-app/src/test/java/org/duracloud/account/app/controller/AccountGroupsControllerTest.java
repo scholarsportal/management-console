@@ -109,7 +109,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         GroupsForm form = new GroupsForm();
         form.setAction(Action.REMOVE);
-        form.setGroupNames(new String[] { TEST_GROUP_NAME });
+        form.setGroupNames(new String[] { DuracloudGroup.PREFIX + TEST_GROUP_NAME });
 
         String view = this.accountGroupsController.modifyGroups(accountId,
                                                                 model,
@@ -128,7 +128,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         String view =
             this.accountGroupsController.getGroup(accountId,
-                                                  TEST_GROUP_NAME,
+                                                  DuracloudGroup.PREFIX+TEST_GROUP_NAME,
                                                   model);
         Assert.assertEquals(AccountGroupsController.GROUP_VIEW_ID, view);
         Assert.assertNotNull(getModelAttribute(AccountGroupsController.GROUP_KEY));
@@ -160,7 +160,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         replayMocks();
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
                                                    request,
                                                    model);
         Assert.assertEquals(AccountGroupsController.GROUP_EDIT_VIEW_ID, view);
@@ -205,7 +205,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
 
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
                                                    form,
                                                    request,
                                                    model);
@@ -251,7 +251,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         form.setGroupUsernames(new String[] { testUsername });
         String view =
             this.accountGroupsController.editGroup(accountId,
-                                                   TEST_GROUP_NAME,
+                                                   DuracloudGroup.PREFIX+TEST_GROUP_NAME,
                                                    form,
                                                    request,
                                                    model);
@@ -267,7 +267,7 @@ public class AccountGroupsControllerTest extends AmaControllerTestBase {
         form.setAvailableUsernames(new String[] { testUsername });
 
         this.accountGroupsController.editGroup(accountId,
-                                               TEST_GROUP_NAME,
+                                               DuracloudGroup.PREFIX+TEST_GROUP_NAME,
                                                form,
                                                request,
                                                model);

@@ -45,6 +45,10 @@ public class DuracloudGroup extends BaseEntity {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getPrettyName(){
+        return this.name.substring(this.name.indexOf(PREFIX)+PREFIX.length());
+    }
 
     public Set<DuracloudUser> getUsers() {
         return users;

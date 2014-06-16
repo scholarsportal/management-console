@@ -102,7 +102,7 @@ public class AccountGroupsController extends AbstractAccountController {
             }
 
             if (!result.hasFieldErrors()) {
-                return formatGroupRedirect(accountId, name, "/edit");
+                return formatGroupRedirect(accountId, groupName, "/edit");
             }
         } else {
             String[] groups = form.getGroupNames();
