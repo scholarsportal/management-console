@@ -24,7 +24,7 @@
     
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>account-management-common</artifactId>
+      <artifactId>account-management-db-model</artifactId>
       <version>${project.version}</version>
     </dependency>
         

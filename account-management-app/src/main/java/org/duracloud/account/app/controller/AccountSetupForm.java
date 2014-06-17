@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.StorageProviderAccount;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -145,7 +145,7 @@ public class AccountSetupForm {
     }
 
     public static class StorageCredentials {
-        private int id;
+        private Long id;
         @NotBlank(message="Username is required")
         private String username;
         @NotBlank(message="Password is required")
@@ -169,10 +169,10 @@ public class AccountSetupForm {
         
         public StorageCredentials() {}
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
-        public void setId(int id) {
+        public void setId(Long id) {
             this.id = id;
         }
         

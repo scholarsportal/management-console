@@ -3,27 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.CreditCardPaymentInfo;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.util.*;
+import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.StorageProviderTypeUtil;
-import org.duracloud.account.util.error.AccountClusterNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -35,6 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The default view for this application
@@ -123,7 +113,7 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param model
      * @throws AccountClusterNotFoundException 
      */
-    protected AccountInfo loadAccountInfo(int accountId, Model model)
+    protected AccountInfo loadAccountInfo(Long accountId, Model model)
         throws AccountNotFoundException, AccountClusterNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
@@ -134,13 +124,8 @@ public abstract class AbstractAccountController extends AbstractController {
     protected AccountInfo loadAccountInfo(AccountService accountService,
                                           Model model) throws AccountClusterNotFoundException{
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
-        ServerDetails serverDetails = accountService.retrieveServerDetails();
-        AccountCluster cluster = null;
-        int clusterId = accountInfo.getAccountClusterId();
-        if( clusterId > -1){
-            cluster = this.accountManagerService.getAccountCluster(clusterId)
-                                                .retrieveAccountCluster();
-        }
+        ServerDetails serverDetails = accountInfo.getServerDetails();
+        AccountCluster cluster = accountInfo.getAccountCluster();
         addAccountInfoToModel(accountInfo, serverDetails, cluster, model);
         return accountInfo;
     }
@@ -150,7 +135,7 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param suffix
      * @return
      */
-    protected ModelAndView createAccountRedirectModelAndView(int accountId,
+    protected ModelAndView createAccountRedirectModelAndView(Long accountId,
                                                              String suffix) {
        
         return new ModelAndView(createAccountRedirectView(accountId, suffix));
@@ -162,7 +147,7 @@ public abstract class AbstractAccountController extends AbstractController {
      * @param suffix
      * @return
      */
-    protected View createAccountRedirectView(int accountId,
+    protected View createAccountRedirectView(Long accountId,
                                            String suffix) {
         String url =
             MessageFormat.format("{0}{1}{2}",
@@ -177,12 +162,12 @@ public abstract class AbstractAccountController extends AbstractController {
     }
 
 
-	protected void loadBillingInfo(int accountId, Model model) {
+	protected void loadBillingInfo(Long accountId, Model model) {
         //TODO LoadBillingInfo
-        model.addAttribute("billingInfo", new CreditCardPaymentInfo());
+        //model.addAttribute("billingInfo", new CreditCardPaymentInfo());
     }
 
-    protected void loadProviderInfo(int accountId, Model model)
+    protected void loadProviderInfo(Long accountId, Model model)
         throws AccountNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
@@ -230,8 +215,8 @@ public abstract class AbstractAccountController extends AbstractController {
         return this.userService.loadDuracloudUserByUsername(username);
     }
 
-    protected void setProviderRrs(int accountId, boolean rrs)
-        throws AccountNotFoundException, DBConcurrentUpdateException {
+    protected void setProviderRrs(Long accountId, boolean rrs)
+        throws AccountNotFoundException {
         AccountService accountService =
             accountManagerService.getAccount(accountId);
         accountService.setPrimaryStorageProviderRrs(rrs);

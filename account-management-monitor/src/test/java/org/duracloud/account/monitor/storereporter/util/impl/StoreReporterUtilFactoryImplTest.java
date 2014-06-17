@@ -28,8 +28,8 @@ public class StoreReporterUtilFactoryImplTest {
 
     @Test
     public void testGetInstanceUtil() throws Exception {
-        AccountInfo acct0 = createAccount(0);
-        AccountInfo acct1 = createAccount(1);
+        AccountInfo acct0 = createAccount(0L);
+        AccountInfo acct1 = createAccount(1L);
 
         StoreReporterUtil reporterUtil0 = factory.getStoreReporterUtil(acct0,
                                                                        credential);
@@ -45,15 +45,15 @@ public class StoreReporterUtilFactoryImplTest {
         Assert.assertEquals(reporterUtil0, reporterUtilX);
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(Long id) {
         return new AccountInfo(id,
                                "subdomain-" + id,
                                "acctName-" + id,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }

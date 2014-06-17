@@ -4,13 +4,11 @@
 package org.duracloud.account.init;
 
 import org.duracloud.account.init.domain.AmaConfig;
-import org.duracloud.appconfig.ApplicationInitializer;
 import org.duracloud.appconfig.domain.Application;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;

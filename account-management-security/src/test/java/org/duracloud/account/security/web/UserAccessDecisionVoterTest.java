@@ -3,12 +3,14 @@
  */
 package org.duracloud.account.security.web;
 
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,9 +20,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_ABSTAIN;
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_DENIED;
-import static org.springframework.security.access.AccessDecisionVoter.ACCESS_GRANTED;
+import static org.springframework.security.access.AccessDecisionVoter.*;
 
 /**
  * 
@@ -98,8 +98,8 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
     @Test
     public void testUserGrantRevokeWithAccountOwnedByAnotherUser() throws Exception{
         //test user grants/revokes rights to/from anybody
-        int accountId = 0;
-        int userId = 1;
+        Long accountId = 0L;
+        Long userId = 1L;
 
         // Set user rights
         expectRightsForAccount(accountId, userId);
@@ -123,34 +123,45 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
     @Test 
     public void testUserGrantRevokeOnNewAccount() throws Exception{
         //ie new in the sense that no one else has rights to associated with it
-        int accountId = 0;
-        int userId = 1;
+        Long accountId = 0L;
+        Long userId = 1L;
         Object[] params = { accountId, userId };
         expectNotRightsForAccount(accountId);
         testRevokeUserRights(ACCESS_GRANTED, USER_AUTHORITIES, params);
     }
 
-    private void expectRightsForAccount(int accountId, int userId)
-        throws DBNotFoundException{
+    private void expectRightsForAccount(Long accountId, Long userId)
+        throws DBNotFoundException {
         reinitRightsMock();
         Set<AccountRights> set = new HashSet<AccountRights>();
-        set.add(new AccountRights(1, accountId, userId, OWNER_AUTHORITIES));
-        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
-        .andReturn(set);
+
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setId(accountId);
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        AccountRights accountRights = new AccountRights();
+        accountRights.setId(1L);
+        accountRights.setAccount(accountInfo);
+        accountRights.setUser(user);
+        accountRights.setRoles(OWNER_AUTHORITIES);
+        set.add(accountRights);
+
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountIdCheckRoot(accountId))
+                .andReturn(set);
         replayRightsMock();        
     }
 
-    private void expectNotRightsForAccount(int accountId) {
+    private void expectNotRightsForAccount(Long accountId) {
         reinitRightsMock();
-        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountIdCheckRoot(accountId))
             .andReturn(new HashSet<AccountRights>());
         replayRightsMock();        
     }
 
     @Test
     public void testOwnerGrantRevoke() throws Exception{
-        int accountId = 0;
-        int userId = 1;
+        Long accountId = 0L;
+        Long userId = 1L;
 
         // Set user rights
         Role[] roles = new Role[]{Role.ROLE_USER};
@@ -170,36 +181,47 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
     
     @Test
     public void testAdminGrantRevoke() throws Exception{
-        int accountId = 0;
-        int userId = 1;
+        Long accountId = 0L;
+        Long userId = 1L;
         reinitRightsMock();
 
         //admin grants admin rights to user
-        expect(0,1, USER_AUTHORITIES);
+        expect(0L,1L, USER_AUTHORITIES);
         Role[] roles = new Role[]{Role.ROLE_ADMIN};
         Object[] adminRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_GRANTED, ADMIN_AUTHORITIES, adminRoleParams);
 
         //admin grants owner rights to admin
-        expect(0,1, ADMIN_AUTHORITIES);
+        expect(0L,1L, ADMIN_AUTHORITIES);
         roles = new Role[]{Role.ROLE_OWNER};
         Object[] ownerRoleParams = { accountId, userId, roles };
         testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, ownerRoleParams);
 
         //admin revokes admin rights from owner
-        expect(0,1, OWNER_AUTHORITIES);
+        expect(0L,1L, OWNER_AUTHORITIES);
         testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, adminRoleParams);
 
         //admin revokes owner rights from owner
         testSetUserRights(ACCESS_DENIED, ADMIN_AUTHORITIES, ownerRoleParams);
     }    
 
-    private void expect(int accountId, int userId, Set<Role> authorities)
+    private void expect(Long accountId, Long userId, Set<Role> authorities)
         throws Exception {
         reinitRightsMock();
+
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setId(accountId);
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        AccountRights accountRights = new AccountRights();
+        accountRights.setId(1L);
+        accountRights.setAccount(accountInfo);
+        accountRights.setUser(user);
+        accountRights.setRoles(authorities);
+
         EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().
             findByAccountIdAndUserId(accountId, userId))
-        .andReturn(new AccountRights(1, accountId, userId, authorities));
+        .andReturn(accountRights);
         replayRightsMock();
     }
 
@@ -221,8 +243,8 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
                                Set<Role> callerAuthorities,
                                Object[] params) throws Exception {
         Method method = userService.getClass().getMethod("setUserRights",
-                                                         Integer.TYPE,
-                                                         Integer.TYPE,
+                                                         Long.class,
+                                                         Long.class,
                                                          Role[].class);
         int voteResult = adv.vote(createUserAuthentication(callerAuthorities),
                                   createMockMethodInvoker(method, params),
@@ -234,8 +256,8 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
                                   Set<Role> callerAuthorities,
                                   Object[] params) throws Exception {
         Method method = userService.getClass().getMethod("revokeUserRights",
-                                                         Integer.TYPE,
-                                                         Integer.TYPE);
+                                                         Long.class,
+                                                         Long.class);
         int voteResult = adv.vote(createUserAuthentication(callerAuthorities),
                                   createMockMethodInvoker(method, params),
                                   attributes);

@@ -3,25 +3,19 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Set;
-
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.util.UserFeedbackUtil;
-import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.Set;
 
 /**
  * Base class for all controllers.
@@ -68,7 +62,7 @@ public abstract class AbstractController {
     }
 
     protected void setUserRights(DuracloudUserService userService,
-                                 int accountId, int userId, Role role) {
+                                 Long accountId, Long userId, Role role) {
         Set<Role> roles = role.getRoleHierarchy();
 
         userService.setUserRights(accountId,
@@ -81,7 +75,7 @@ public abstract class AbstractController {
      * @return
      */
     protected boolean accountHasMoreThanOneOwner(
-        Set<DuracloudUser> users, int accountId) {
+        Set<DuracloudUser> users, Long accountId) {
         int ownerCount = 0;
         for (DuracloudUser u : users) {
             if (u.isOwnerForAcct(accountId) && !u.isRootForAcct(accountId)) {

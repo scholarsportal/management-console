@@ -3,8 +3,8 @@
  */
 package org.duracloud.account.security.vote;
 
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.util.RootAccountManagerService;
 
 /**
  * This class votes on calls to the RootAccountManagerService.

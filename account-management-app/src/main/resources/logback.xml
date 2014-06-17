@@ -24,6 +24,12 @@
       <pattern>%-14p %d{yyyy/MM/dd HH:mm:ss} [%t] (%F:%L\\) [%M(\\)] - %m%n</pattern>
     </encoder>
   </appender>
+  <!--<logger name="org.springframework.data" level="TRACE">-->
+    <!--<appender-ref ref="DURACLOUD"/>-->
+  <!--</logger>-->
+  <!--<logger name="org.springframework.orm.jpa" level="TRACE">-->
+    <!--<appender-ref ref="DURACLOUD"/>-->
+  <!--</logger>-->
   <logger name="org.duracloud" level="${log.level}">
     <appender-ref ref="DURACLOUD"/>
   </logger>

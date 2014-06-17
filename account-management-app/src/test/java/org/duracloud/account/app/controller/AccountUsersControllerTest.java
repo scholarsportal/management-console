@@ -3,15 +3,11 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.UserInvitation;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +16,9 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -42,7 +41,7 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     
     @Test
     public void testAddUserByUsername() throws Exception {
-        int accountId = 2;
+        Long accountId = 2L;
         UsernameForm usernameForm = new UsernameForm();
         usernameForm.setUsername(TEST_USERNAME);
         Model model = new ExtendedModelMap();
@@ -98,13 +97,9 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
      * @return
      */
     private UserInvitation createUserInvitation() {
-        return new UserInvitation(2,
-            TEST_ACCOUNT_ID.intValue(),
-            "testuser",
-            "test@duracloud.org",
-            14,
-            "xyz",
-            0);
+        UserInvitation ui = new UserInvitation(2L, createAccountInfo(TEST_ACCOUNT_ID),
+            null, null, null, null, "testuser", "test@duracloud.org", 14, "xyz");
+        return ui;
     }
 
     @Test
@@ -124,8 +119,8 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         Assert.assertTrue(model.containsAttribute(AccountUsersController.USERS_KEY));
     }
 
-    private void setupGet(int accountId)
-        throws DBConcurrentUpdateException, AccountNotFoundException, DBNotFoundException {
+    private void setupGet(Long accountId)
+        throws AccountNotFoundException, DBNotFoundException {
         EasyMock.expect(accountService.retrieveAccountInfo())
             .andReturn(createAccountInfo())
             .times(1);
@@ -147,17 +142,17 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
     public void testDeleteUserInvitation() throws Exception {
         EasyMock.expect(accountManagerService.getAccount(TEST_ACCOUNT_ID))
             .andReturn(accountService);
-        this.accountService.deleteUserInvitation(1);
+        this.accountService.deleteUserInvitation(1L);
         EasyMock.expectLastCall();
         replayMocks();
         
         Model model = new ExtendedModelMap();
-        this.accountUsersController.deleteUserInvitation(TEST_ACCOUNT_ID, 1, model);
+        this.accountUsersController.deleteUserInvitation(TEST_ACCOUNT_ID, 1L, model);
    }
 
     @Test
     public void testDeleteUser() throws Exception {
-        userService.revokeUserRights(TEST_ACCOUNT_ID, 1);
+        userService.revokeUserRights(TEST_ACCOUNT_ID, 1L);
         EasyMock.expectLastCall();
         EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
             .andReturn(createUser())
@@ -165,15 +160,15 @@ public class AccountUsersControllerTest extends AmaControllerTestBase {
         
         replayMocks();
         this.accountUsersController.deleteUserFromAccount(TEST_ACCOUNT_ID,
-                                                          1,
+                                                          1L,
                                                           model);
     }
 
     @Test
     public void testEditUser() throws Exception {
         // set up mocks, and args
-        int acctId = 7;
-        int userId = 9;
+        Long acctId = 7L;
+        Long userId = 9L;
 
         AccountUserEditForm acctUserEditForm = new AccountUserEditForm();
         acctUserEditForm.setRole(Role.ROLE_ADMIN.name());

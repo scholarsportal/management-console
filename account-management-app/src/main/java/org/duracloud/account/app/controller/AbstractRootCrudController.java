@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.db.util.RootAccountManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

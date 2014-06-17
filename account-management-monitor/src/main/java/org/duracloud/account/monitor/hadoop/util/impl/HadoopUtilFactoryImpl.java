@@ -19,10 +19,10 @@ import java.util.Map;
  */
 public class HadoopUtilFactoryImpl implements HadoopUtilFactory {
 
-    private Map<Integer, HadoopUtil> utils;
+    private Map<Long, HadoopUtil> utils;
 
     public HadoopUtilFactoryImpl() {
-        utils = new HashMap<Integer, HadoopUtil>();
+        utils = new HashMap<Long, HadoopUtil>();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class HadoopUtilFactoryImpl implements HadoopUtilFactory {
             throw new UnsupportedStorageProviderException(type);
         }
 
-        int acctId = storageAcct.getId();
+        Long acctId = storageAcct.getId();
 
         HadoopUtil util = utils.get(acctId);
         if (null == util) {

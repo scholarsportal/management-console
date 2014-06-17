@@ -42,8 +42,8 @@ public class HadoopServiceReportTest {
     public void testAddAcctError() {
         Assert.assertFalse(report.hasErrors());
 
-        final int id0 = 0;
-        final int id1 = 1;
+        final Long id0 = 0L;
+        final Long id1 = 1L;
         final String error0 = "error-msg-0";
         final String error1 = "error-msg-1";
 
@@ -70,22 +70,22 @@ public class HadoopServiceReportTest {
 
     @Test
     public void testAddAcctServices() throws Exception {
-        int id0 = 0;
+        Long id0 = 0L;
         int numRunning0 = 3;
         int numComplete0 = 3;
         AccountInfo acct0 = addToReport(id0, numRunning0, numComplete0, report);
 
-        int id1 = 1;
+        Long id1 = 1L;
         int numRunning1 = 2;
         int numComplete1 = 3;
         AccountInfo acct1 = addToReport(id1, numRunning1, numComplete1, report);
 
-        int id2 = 2;
+        Long id2 = 2L;
         int numRunning2 = 0;
         int numComplete2 = 1;
         AccountInfo acct2 = addToReport(id2, numRunning2, numComplete2, report);
 
-        int id3 = 3;
+        Long id3 = 3L;
         int numRunning3 = 0;
         int numComplete3 = 0;
         AccountInfo acct3 = addToReport(id3, numRunning3, numComplete3, report);
@@ -127,13 +127,13 @@ public class HadoopServiceReportTest {
         verifyServices(id3, numComplete3, STATE.COMPLETED, services3);
     }
 
-    private void verifyServices(int id,
+    private void verifyServices(Long id,
                                 int num,
                                 STATE state,
                                 Collection<HadoopServiceInfo> services) {
         if (num > 0) {
             for (int i = 0; i < num; ++i) {
-                String name = serviceName(id, i, state);
+                String name = serviceName(id, new Long(i), state);
                 verifyContains(name, services);
             }
         }
@@ -151,7 +151,7 @@ public class HadoopServiceReportTest {
         Assert.fail("Name not found in services: " + name + ", " + services);
     }
 
-    private AccountInfo addToReport(int id,
+    private AccountInfo addToReport(Long id,
                                     int numRunning,
                                     int numCompleted,
                                     HadoopServiceReport report) {
@@ -169,13 +169,13 @@ public class HadoopServiceReportTest {
         return acct;
     }
 
-    private Collection<HadoopServiceInfo> createServices(int id,
+    private Collection<HadoopServiceInfo> createServices(Long id,
                                                          int num,
                                                          HadoopUtil.STATE state) {
         Date now = new Date();
         Set<HadoopServiceInfo> services = new HashSet<HadoopServiceInfo>();
         for (int i = 0; i < num; ++i) {
-            services.add(new HadoopServiceInfo(serviceName(id, i, state),
+            services.add(new HadoopServiceInfo(serviceName(id, new Long(i), state),
                                                state.name(),
                                                now,
                                                now));
@@ -183,19 +183,19 @@ public class HadoopServiceReportTest {
         return services;
     }
 
-    private String serviceName(int id, int i, HadoopUtil.STATE state) {
+    private String serviceName(Long id, Long i, HadoopUtil.STATE state) {
         return SERVICE_NAME_PREFIX + id + "-" + i + "-" + state.name();
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(Long id) {
         return new AccountInfo(id,
                                SUBDOMAIN_PREFIX + id,
                                null,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }

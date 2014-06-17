@@ -12,7 +12,9 @@
         http://www.springframework.org/schema/mvc 
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd        
         " >
+  <context:annotation-config/>
   <context:component-scan base-package="org.duracloud"/>
+  <import resource="config/jpa-config.xml" />
   <import resource="config/service-config.xml" />  
   <import resource="config/security-config.xml" />  
   <import resource="config/view-config.xml" />

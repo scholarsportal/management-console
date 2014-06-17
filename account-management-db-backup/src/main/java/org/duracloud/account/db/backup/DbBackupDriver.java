@@ -10,9 +10,12 @@ import org.duracloud.account.db.backup.util.StoreUtil;
 import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
 import org.duracloud.account.db.backup.util.impl.FileSystemUtilImpl;
 import org.duracloud.account.db.backup.util.impl.StoreUtilS3Impl;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DbUtil;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,8 +61,8 @@ public class DbBackupDriver {
     private DbBackup dbBackup;
     private EmailUtil emailUtil;
 
-    public DbBackupDriver(Properties props) {
-        DbUtil dbUtil = buildDbUtil(props);
+    public DbBackupDriver(Properties props , DuracloudRepoMgr repoMgr) {
+        DbUtil dbUtil = buildDbUtil(props, repoMgr);
         StoreUtil storeUtil = buildStoreUtil(props);
         FileSystemUtil fileSystemUtil = new FileSystemUtilImpl();
         File workDir = getWorkDir(props);
@@ -74,7 +77,7 @@ public class DbBackupDriver {
                                      previousDir);
     }
 
-    private DbUtil buildDbUtil(Properties props) {
+    private DbUtil buildDbUtil(Properties props, DuracloudRepoMgr repoMgr) {
         String dbUsername = getProperty(props, AWS_USERNAME);
         String dbPassword = getProperty(props, AWS_PASSWORD);
         String ldapUrl = getProperty(props, LDAP_URL);
@@ -82,22 +85,7 @@ public class DbBackupDriver {
         String ldapUserDn = getProperty(props, LDAP_USERDN);
         String ldapPassword = getProperty(props, LDAP_PASSWORD);
 
-        AmaConfig amaConfig = new AmaConfig();
-        amaConfig.setUsername(dbUsername);
-        amaConfig.setPassword(dbPassword);
-        amaConfig.setLdapUrl(ldapUrl);
-        amaConfig.setLdapBaseDn(ldapBaseDn);
-        amaConfig.setLdapUserDn(ldapUserDn);
-        amaConfig.setLdapPassword(ldapPassword);
-
-        // Not used below
-        amaConfig.setIdUtilHost("example.org");
-        amaConfig.setIdUtilPort("80");
-        amaConfig.setIdUtilCtxt("not-used");
-        amaConfig.setIdUtilUsername("not-used");
-        amaConfig.setIdUtilPassword("not-used");
-
-        return new DbUtil(amaConfig, getWorkDir(props));
+        return new DbUtil(repoMgr, getWorkDir(props));
     }
 
     private StoreUtil buildStoreUtil(Properties props) {
@@ -219,7 +207,11 @@ public class DbBackupDriver {
             IOUtils.closeQuietly(inputStream);
         }
 
-        DbBackupDriver driver = new DbBackupDriver(props);
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("jpa-config.xml");
+        DuracloudRepoMgr repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
+
+        DbBackupDriver driver = new DbBackupDriver(props, repoMgr);
         driver.backup();
     }
 

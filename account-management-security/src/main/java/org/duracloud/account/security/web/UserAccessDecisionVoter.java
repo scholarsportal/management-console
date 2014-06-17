@@ -4,12 +4,11 @@
 package org.duracloud.account.security.web;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +62,8 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
                 return ACCESS_DENIED;
             }
 
-            Integer accountId = getAccountId(rmi.getArguments());
-            Integer userId = getUserId(rmi.getArguments());
+            Long accountId = getAccountId(rmi.getArguments());
+            Long userId = getUserId(rmi.getArguments());
             Set<Role> setToRoles = getRoles(rmi.getArguments());
 
             DuracloudUser user = getUser(authentication);
@@ -99,13 +98,9 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
 
                 // an admin can only change the rights of an admin, user or user
                 // without rights.
-                Set<Role> calleeRoles = null;
-                try {
-                    AccountRights rights =
-                        rightsRepo().findByAccountIdAndUserId(accountId, userId);
-                    calleeRoles = rights.getRoles();
-                } catch (DBNotFoundException e) {
-                }
+                AccountRights rights =
+                    rightsRepo().findByAccountIdAndUserId(accountId, userId);
+                Set<Role> calleeRoles = rights.getRoles();
 
                 if (calleeRoles != null) {
                     return calleeRoles.contains(Role.ROLE_OWNER)
@@ -119,14 +114,14 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
         return ACCESS_ABSTAIN;
     }
 
-    private Integer getAccountId(Object[] methodArgs) {
+    private Long getAccountId(Object[] methodArgs) {
         log.trace("Returning 'accountId' at index: {}", ACCT_ID_INDEX);
-        return (Integer) methodArgs[ACCT_ID_INDEX];
+        return (Long) methodArgs[ACCT_ID_INDEX];
     }
 
-    private Integer getUserId(Object[] methodArgs) {
+    private Long getUserId(Object[] methodArgs) {
         log.trace("Returning 'userId' at index: {}", USER_ID_INDEX);
-        return (Integer) methodArgs[USER_ID_INDEX];
+        return (Long) methodArgs[USER_ID_INDEX];
     }
 
     private Set<Role> getRoles(Object[] methodArgs) {
@@ -144,9 +139,9 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
         return roles;
     }
 
-    private boolean accountHasRights(Integer accountId) {
+    private boolean accountHasRights(Long accountId) {
         Set<AccountRights> rights =
-            rightsRepo().findByAccountId(accountId);
+            rightsRepo().findByAccountIdCheckRoot(accountId);
         return (rights != null && rights.size() > 0);
     }
     

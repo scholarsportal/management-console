@@ -1,0 +1,540 @@
+/*
+ * Copyright (c) 2009-2010 DuraSpace. All rights reserved.
+ */
+package org.duracloud.account.db.util.impl;
+
+import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.util.InitUserCredential;
+import org.duracloud.account.db.repo.DuracloudGroupRepo;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.*;
+import org.duracloud.account.db.util.notification.NotificationMgr;
+import org.duracloud.account.db.util.notification.Notifier;
+import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
+import org.duracloud.common.model.Credential;
+import org.duracloud.common.util.ChecksumUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Andrew Woods
+ *         Date: Oct 9, 2010
+ */
+public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetailsService {
+    
+	private Logger log = LoggerFactory.getLogger(DuracloudUserServiceImpl.class);
+
+    private DuracloudRepoMgr repoMgr;
+    private UserDetailsPropagator propagator;
+    private NotificationMgr notificationMgr;
+    private Notifier notifier;
+    
+    public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
+                                    NotificationMgr notificationMgr,
+                                    UserDetailsPropagator propagator) {
+        this.repoMgr = duracloudRepoMgr;
+        this.notificationMgr = notificationMgr;
+        this.propagator = propagator;
+    }
+
+    @Override
+    public void checkUsername(String username)
+        throws InvalidUsernameException, UserAlreadyExistsException {
+
+        if (!isValidUsername(username)) {
+            throw new InvalidUsernameException(username);
+        }
+        
+        if (isReservedPrefix(username)) {
+            throw new ReservedPrefixException(username);
+        }
+
+        if (isReservedName(username)) {
+            throw new ReservedUsernameException(username);
+        }
+
+        DuracloudUser user = repoMgr.getUserRepo().findByUsername(username);
+        if(user != null) {
+            throw new UserAlreadyExistsException(username);
+        }
+    }
+
+    private boolean isValidUsername(String username) {
+        if(username == null){
+            return false;
+        }
+        
+        return username.matches("\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
+        
+    }
+
+    private boolean isReservedName(String username) {
+        Credential init = new InitUserCredential();
+        return ServerImage.DC_ROOT_USERNAME.equalsIgnoreCase(username) ||
+            init.getUsername().equalsIgnoreCase(username);
+    }
+
+    private boolean isReservedPrefix(String username) {
+        if(username.startsWith(DuracloudGroup.PREFIX)){
+            return true;
+        }
+        
+        return false;
+    }
+
+    
+    @Override
+    public DuracloudUser createNewUser(String username,
+                                       String password,
+                                       String firstName,
+                                       String lastName,
+                                       String email,
+                                       String securityQuestion,
+                                       String securityAnswer)
+        throws UserAlreadyExistsException, InvalidUsernameException {
+
+
+        checkUsername(username);
+        
+        ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+
+
+
+        DuracloudUser user = new DuracloudUser();
+        user.setUsername(username);
+        user.setPassword(util.generateChecksum(password));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setSecurityQuestion(securityQuestion);
+        user.setSecurityAnswer(securityAnswer);
+        repoMgr.getUserRepo().save(user);
+
+        log.info("New user created with username {}", username);
+        getNotifier().sendNotificationCreateNewUser(user);
+        return user;
+    }
+
+
+    @Override
+    public boolean setUserRights(Long acctId, Long userId, Role... roles) {
+        return setUserRightsInternal(acctId, userId, roles);
+    }
+
+    private boolean setUserRightsInternal(Long acctId, Long userId, Role... roles) {
+
+        Set<Role> roleSet = new HashSet<Role>();
+        for (Role role : roles) {
+            roleSet.add(role);
+        }
+
+        log.info("Updating user rights for user {} on account {} to roles " +
+                 asString(roleSet), userId, acctId);
+
+        boolean result = doSetUserRights(acctId, userId, roleSet);
+        if(result) {
+            propagator.propagateRights(acctId, userId, roleSet);
+        }
+        return result;
+    }
+
+    private boolean doSetUserRights(Long acctId, Long userId, Set<Role> roles) {
+        if(null == roles) {
+            throw new IllegalArgumentException("Role may not be null");
+        }
+
+        Set<Role> oldRoles = null;
+        Set<Role> newRoles = new HashSet<Role>();
+        for (Role role : roles) {
+            newRoles.addAll(role.getRoleHierarchy());
+        }
+
+        DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+        AccountRights rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
+        if(rights != null) {
+            oldRoles = rights.getRoles();
+        } else {
+            log.info("New rights will be added for user {} on account {}",
+                    userId, acctId);
+        }
+
+        boolean updatedNeeded = !newRoles.equals(oldRoles);
+        if (updatedNeeded) {
+            if(oldRoles != null &&
+               oldRoles.contains(Role.ROLE_OWNER) &&
+               !newRoles.contains(Role.ROLE_OWNER)) {
+
+                verifyAccountOwnerExists(acctId, userId, rightsRepo);
+            }
+            
+            saveRights(acctId, userId, newRoles, rights);
+        }
+        return updatedNeeded;
+    }
+
+    private void verifyAccountOwnerExists(Long acctId,
+                                          Long userId,
+                                          DuracloudRightsRepo rightsRepo) {
+        List<AccountRights > acctRightsList =
+            rightsRepo.findByAccountId(acctId);
+
+        // Determine the list of root users
+        Set<Long> roots = new HashSet<Long>();
+        for(AccountRights acctRights : acctRightsList) {
+            if(acctRights.getRoles().contains(Role.ROLE_ROOT)) {
+                roots.add(acctRights.getUser().getId());
+            }
+        }
+
+        // Determine the list of owners who are not root users
+        Set<Long> owners = new HashSet<Long>();
+        for(AccountRights acctRights : acctRightsList) {
+            if(acctRights.getRoles().contains(Role.ROLE_OWNER) &&
+               !roots.contains(acctRights.getUser().getId())) {
+                owners.add(acctRights.getUser().getId());
+            }
+        }
+
+        // Ensure at least one non-root owner is maintained on the account
+        if(owners.size() == 1 && owners.contains(userId)) {
+            String err = "Cannot remove owner rights from user with ID " +
+                userId + " from account with ID " + acctId +
+                ". This account must maintain at least one owner.";
+            throw new AccountRequiresOwnerException(err);
+        }
+    }
+
+    private String asString(Set<Role> roles) {
+        StringBuilder sb = new StringBuilder();
+        for (Role role : roles) {
+            sb.append(role.name());
+            sb.append(",");
+        }
+
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
+    }    
+
+    private void saveRights(Long acctId,
+                            Long userId,
+                            Set<Role> roles,
+                            AccountRights rights) {
+        if(null == rights) {
+            AccountInfo account = repoMgr.getAccountRepo().findOne(acctId);
+            DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+
+            rights = new AccountRights();
+            rights.setAccount(account);
+            rights.setUser(user);
+            rights.setRoles(roles);
+        } else {
+            rights.setRoles(roles);
+        }
+        repoMgr.getRightsRepo().save(rights);
+    }
+
+    @Override
+    public void revokeUserRights(Long acctId, Long userId) {
+        log.info("Revoking rights for user {} on account {}", userId, acctId);
+
+        doRevokeUserRights(acctId, userId);
+        removeUserFromAccountGroups(acctId, userId);
+        propagator.propagateRevocation(acctId, userId);
+    }
+
+    private void doRevokeUserRights(Long acctId, Long userId) {
+        DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+        verifyAccountOwnerExists(acctId, userId, rightsRepo);
+        AccountRights rights =
+            rightsRepo.findByAccountIdAndUserId(acctId, userId);
+        if(rights != null) {
+            rightsRepo.delete(rights.getId());
+        }
+    }
+
+    private void removeUserFromAccountGroups(Long acctId, Long userId) {
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();
+        List<DuracloudGroup > acctGroups = groupRepo.findByAccountId(acctId);
+        for(DuracloudGroup group : acctGroups) {
+            Set<DuracloudUser> groupUsers = group.getUsers();
+            if(groupUsers.contains(user)) {
+                groupUsers.remove(user);
+                groupRepo.save(group);
+            }
+        }
+    }
+
+    @Override
+    public void changePassword(Long userId,
+                               String oldPassword,
+                               boolean oldPasswordEncoded,
+                               String newPassword)
+        throws DBNotFoundException, InvalidPasswordException {
+        if(null != newPassword && !newPassword.equals(oldPassword)) {
+            log.info("Changing password for user with ID {}", userId);
+
+            ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
+
+            DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+            if(user == null) {
+                throw new DBNotFoundException("User with ID: "+userId+" does not exist.");
+            }
+            if(!oldPasswordEncoded) {
+                oldPassword = util.generateChecksum(oldPassword);
+            }
+            if(!user.getPassword().equals(oldPassword)){
+                throw new InvalidPasswordException(userId);
+            }
+
+            user.setPassword(util.generateChecksum(newPassword));
+            repoMgr.getUserRepo().save(user);
+
+            propagateUserUpdate(userId);
+        }
+    }
+
+    
+    @Override
+    public void changePasswordInternal(Long userId,
+                                       String oldPassword,
+                                       boolean oldPasswordEncoded,
+                                       String newPassword)
+        throws DBNotFoundException, InvalidPasswordException {
+        changePassword(userId, oldPassword, oldPasswordEncoded, newPassword);
+    }
+    
+    @Override
+    public void redeemPasswordChangeRequest(Long userId, String redemptionCode)
+        throws InvalidRedemptionCodeException {
+
+        log.info("Redeeming change request for user with ID {}", userId);
+
+        DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
+
+        // Retrieve the invitation
+        UserInvitation invitation = invRepo.findByRedemptionCode(redemptionCode);
+        if (invitation == null) {
+            throw new InvalidRedemptionCodeException(redemptionCode);
+        }
+
+        // Delete the invitation
+        invRepo.delete(invitation.getId());
+    }
+    
+    private void propagateUserUpdate(Long userId) {
+        List<AccountRights > rightsList =
+            repoMgr.getRightsRepo().findByUserId(userId);
+        // Propagate changes for each of the user's accounts
+        if(!isUserRoot(rightsList)) { // Do no propagate if user is root
+            for(AccountRights rights : rightsList) {
+                propagator.propagateUserUpdate(rights.getAccount().getId(), userId);
+            }
+        }
+    }
+
+    private boolean isUserRoot(List<AccountRights> rightsList) {
+        for(AccountRights rights : rightsList) {
+            if(rights.getRoles().contains(Role.ROLE_ROOT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void forgotPassword(String username,
+                               String securityQuestion,
+                               String securityAnswer)
+        throws DBNotFoundException, InvalidPasswordException, UnsentEmailException {
+        log.info("Resolving forgotten password for user {}", username);
+
+        DuracloudUser user = loadDuracloudUserByUsernameInternal(username);
+
+        if(!user.getSecurityQuestion().equalsIgnoreCase(securityQuestion) ||
+           !user.getSecurityAnswer().equalsIgnoreCase(securityAnswer)) {
+            throw new InvalidPasswordException(user.getId());
+        }
+
+        ChecksumUtil cksumUtil = new ChecksumUtil(ChecksumUtil.Algorithm.MD5);
+        String code = username + System.currentTimeMillis();
+        String redemptionCode = cksumUtil.generateChecksum(code);
+        int expirationDays = 14;
+        UserInvitation userInvitation = new UserInvitation(null,
+                                                           null,
+                                                           "n/a",
+                                                           "n/a",
+                                                           "n/a",
+                                                           "n/a",
+                                                           username,
+                                                           user.getEmail(),
+                                                           expirationDays,
+                                                           redemptionCode);
+        
+        this.repoMgr.getUserInvitationRepo().save(userInvitation);
+        
+        getNotifier().sendNotificationPasswordReset(user,
+                                                    redemptionCode,
+                                                    userInvitation.getExpirationDate());
+    }
+    
+    @Override 
+    public UserInvitation
+        retrievePassordChangeInvitation(String redemptionCode)
+            throws  DBNotFoundException {
+        UserInvitation invite =  this.repoMgr.getUserInvitationRepo()
+                           .findByRedemptionCode(redemptionCode);
+        if(invite == null) {
+            throw new DBNotFoundException("Change password invitation with" +
+                    " redemption code: "+redemptionCode+" does not exist");
+        }
+        if(invite.getExpirationDate().getTime() < System.currentTimeMillis()){
+            log.info("invitation {} has expired. Deleting from repo...",invite);
+            this.repoMgr.getUserInvitationRepo().delete(invite.getId());
+            throw new DBNotFoundException("Invitation has expired: " + invite);
+        }else{
+            return invite;
+        }
+    }
+    
+    @Override
+	public UserDetails loadUserByUsername(String username)
+			throws UsernameNotFoundException {
+        try {
+            return loadDuracloudUserByUsername(username);
+        } catch(DBNotFoundException e) {
+            throw new UsernameNotFoundException(e.getMessage());
+		}
+    }
+
+    @Override
+    public DuracloudUser loadDuracloudUserByUsername(String username)
+            throws DBNotFoundException {
+        return loadDuracloudUserByUsernameInternal(username);
+    }
+
+    @Override
+    public DuracloudUser loadDuracloudUserByUsernameInternal(String username)
+            throws  DBNotFoundException {
+        DuracloudUser user = repoMgr.getUserRepo().findByUsername(username);
+        if(user == null) {
+            throw new DBNotFoundException("User with username: "+username+" does not exist");
+        }
+        return user;
+    }
+
+    @Override
+    public DuracloudUser loadDuracloudUserByIdInternal(Long userId) throws DBNotFoundException {
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        if(user == null) {
+            throw new DBNotFoundException("User with ID: "+userId+" does not exist");
+        }
+        return user;
+    }    
+
+    @Override
+    public Long redeemAccountInvitation(Long userId, String redemptionCode)
+        throws InvalidRedemptionCodeException {
+        log.info("Redeeming account invitation for user with ID {}", userId);
+
+        DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
+
+        // Retrieve the invitation
+        UserInvitation invitation = invRepo.findByRedemptionCode(redemptionCode);
+        if(invitation == null) {
+            throw new InvalidRedemptionCodeException(redemptionCode);
+        }
+
+        // Add the user to the account if they are not already a member
+        if(!userHasAccountRights(userId, invitation.getAccount().getId())) {
+            setUserRights(invitation.getAccount().getId(), userId, Role.ROLE_USER);
+        }
+
+        // Delete the invitation
+        invRepo.delete(invitation.getId());
+
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        DuracloudUser adminUser =
+            repoMgr.getUserRepo().findByUsername(invitation.getAdminUsername());
+        if(adminUser == null) {
+            String msg = "Exception encountered attempting to send admin user " +
+                    invitation.getAdminUsername() + " notice that user with id " +
+                    userId + " accepted their account invitation";
+            DBNotFoundException e = new DBNotFoundException("Admin user with" +
+                    " username: "+invitation.getAdminUsername()+ "does not exist");
+            throw new UnsentEmailException(msg, e);
+        }
+        getNotifier().
+            sendNotificationRedeemedInvitation(user, adminUser.getEmail());
+
+        //return accountId
+        return invitation.getAccount().getId();
+    }
+
+    private boolean userHasAccountRights(Long userId, Long accountId) {
+        DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
+        AccountRights rights = rightsRepo.findByAccountIdAndUserId(accountId, userId);
+        return rights != null;
+    }
+
+    @Override
+    public void storeUserDetails(
+            Long userId, String firstName, String lastName, String email,
+        String securityQuestion, String securityAnswer) throws DBNotFoundException {
+        log.info("Updating user details for user with ID {}", userId);
+
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        if(user == null) {
+            throw new DBNotFoundException("User with ID: "+userId+" does not exist");
+        }
+        boolean emailUpdate = !user.getEmail().equals(email);
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setSecurityQuestion(securityQuestion);
+        user.setSecurityAnswer(securityAnswer);
+        repoMgr.getUserRepo().save(user);
+
+        if(emailUpdate) {
+            propagateUserUpdate(userId);
+        }
+    }
+
+    private Notifier getNotifier() {
+        if(null == notifier) {
+            notifier = new Notifier(notificationMgr.getEmailer());
+        }
+        return notifier;
+    }
+
+    @Override
+    public boolean addUserToAccount(Long acctId, Long userId) throws DBNotFoundException {
+        boolean added = setUserRightsInternal(acctId, userId, Role.ROLE_USER);
+        if(added){
+            DuracloudUser user = loadDuracloudUserByIdInternal(userId);
+            AccountInfo accountInfo =
+                repoMgr.getAccountRepo().findOne(acctId);
+            if(accountInfo == null) {
+                throw new DBNotFoundException("Account with ID: "+acctId+" does not exist");
+            }
+            getNotifier().sendNotificationUserAddedToAccount(user, accountInfo);
+        }
+        
+        return added;
+    }
+
+}

@@ -31,7 +31,7 @@ public class StoreReporterReportTest {
         String error = "error message-";
         int numErrors = 5;
         for (int i = 0; i < numErrors; ++i) {
-            AccountInfo acct = createAccountInfo(i);
+            AccountInfo acct = createAccountInfo(new Long(i));
             report.addAcctError(acct, error + i);
 
             idSum += i;
@@ -45,7 +45,7 @@ public class StoreReporterReportTest {
         Assert.assertEquals(numErrors, errors.size());
 
         for (AccountInfo acct : errors.keySet()) {
-            int id = acct.getId();
+            Long id = acct.getId();
 
             idSum -= id;
             Assert.assertEquals(subdomain(id), acct.getSubdomain());
@@ -71,8 +71,8 @@ public class StoreReporterReportTest {
     public void testAddAcctInfo() throws Exception {
         int numAccts = 8;
         for (int i = 0; i < numAccts; ++i) {
-            AccountInfo acct = createAccountInfo(i);
-            StoreReporterInfo instance = new StoreReporterInfo(subdomain(i));
+            AccountInfo acct = createAccountInfo(new Long(i));
+            StoreReporterInfo instance = new StoreReporterInfo(subdomain(new Long(i)));
             report.addAcctInfo(acct, instance);
         }
 
@@ -100,20 +100,20 @@ public class StoreReporterReportTest {
         }
     }
 
-    private AccountInfo createAccountInfo(int id) {
+    private AccountInfo createAccountInfo(Long id) {
         return new AccountInfo(id,
                                subdomain(id),
                                "acctName-" + id,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }
 
-    private String subdomain(int id) {
+    private String subdomain(Long id) {
         return "subdomain-" + id;
     }
 

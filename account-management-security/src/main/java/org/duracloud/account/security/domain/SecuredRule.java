@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.security.domain;
 
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.Role;
 
 import java.util.StringTokenizer;
 

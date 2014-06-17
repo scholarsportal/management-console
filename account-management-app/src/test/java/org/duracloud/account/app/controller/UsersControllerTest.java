@@ -6,10 +6,10 @@ package org.duracloud.account.app.controller;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.util.RootAccountManagerService;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.util.RootAccountManagerService;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,28 +49,28 @@ public class UsersControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testReset() throws Exception{
-        this.rootAccountManagerService.resetUsersPassword(0);
+        this.rootAccountManagerService.resetUsersPassword(0L);
         EasyMock.expectLastCall();
         addFlashAttribute();
 
         replayMocks();
-        usersController.resetUsersPassword(0, redirectAttributes);
+        usersController.resetUsersPassword(0L, redirectAttributes);
     }
 
     
     @Test
     public void testDelete() throws Exception {
-        this.rootAccountManagerService.deleteUser(0);
+        this.rootAccountManagerService.deleteUser(0L);
         EasyMock.expectLastCall();
         addFlashAttribute();
         replayMocks();
-        usersController.deleteUser(0, redirectAttributes);
+        usersController.deleteUser(0L, redirectAttributes);
     }
 
     @Test
     public void testRevoke() throws Exception{
-        int userId = TEST_USER_ID; 
-        int accountId = TEST_ACCOUNT_ID;
+        Long userId = TEST_USER_ID;
+        Long accountId = TEST_ACCOUNT_ID;
         this.userService.revokeUserRights(accountId, userId);
         EasyMock.expectLastCall();
         addFlashAttribute();
@@ -80,8 +80,8 @@ public class UsersControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testChange() throws Exception{
-        int userId = TEST_USER_ID; 
-        int accountId = TEST_ACCOUNT_ID;
+        Long userId = TEST_USER_ID;
+        Long accountId = TEST_ACCOUNT_ID;
         Role role = Role.ROLE_ADMIN;
         Set<Role> roles = role.getRoleHierarchy();
         EasyMock.expect(this.userService.setUserRights(accountId, userId, roles.toArray(new Role[0]))).andReturn(true);

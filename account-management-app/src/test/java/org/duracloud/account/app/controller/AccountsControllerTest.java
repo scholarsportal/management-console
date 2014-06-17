@@ -3,20 +3,20 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-
 import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.StorageProviderAccount;
-import org.duracloud.account.util.RootAccountManagerService;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.computeprovider.domain.ComputeProviderType;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -42,11 +42,11 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testDeleteAccount() throws Exception {
-        rootAccountManagerService.deleteAccount(1);
+        rootAccountManagerService.deleteAccount(1L);
         EasyMock.expectLastCall();
         addFlashAttribute();
         replayMocks();
-        this.accountsController.delete(1, redirectAttributes);
+        this.accountsController.delete(1L, redirectAttributes);
     }
 
     @Test
@@ -55,25 +55,24 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
         
-        StorageProviderAccount spa =
-            new StorageProviderAccount(0,
-                                       StorageProviderType.AMAZON_S3,
-                                       "username",
-                                       "password",
-                                       true);
+        StorageProviderAccount spa = new StorageProviderAccount();
+        spa.setId(0L);
+        spa.setProviderType(StorageProviderType.AMAZON_S3);
+        spa.setUsername("username");
+        spa.setPassword("password");
+        spa.setRrs(true);
         
         EasyMock.expect(accountService.getPrimaryStorageProvider())
                 .andReturn(spa);
 
-        ComputeProviderAccount cpa =
-            new ComputeProviderAccount(0,
-                                       ComputeProviderType.AMAZON_EC2,
-                                       "username",
-                                       "password",
-                                       "ip",
-                                       "security",
-                                       "keypair",
-                                       "audit-queue");
+        ComputeProviderAccount cpa = new ComputeProviderAccount();
+        cpa.setProviderType(ComputeProviderType.AMAZON_EC2);
+        cpa.setUsername("username");
+        cpa.setPassword("password");
+        cpa.setElasticIp("ip");
+        cpa.setSecurityGroup("security");
+        cpa.setKeypair("keypair");
+        cpa.setAuditQueue("audit");
 
         EasyMock.expect(accountService.getComputeProvider()).andReturn(cpa);
         
@@ -90,12 +89,12 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
 
         
-        rootAccountManagerService.setupStorageProvider(EasyMock.anyInt(),
+        rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
 
-        rootAccountManagerService.setupComputeProvider(EasyMock.anyInt(),
+        rootAccountManagerService.setupComputeProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
@@ -103,7 +102,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
                                                        EasyMock.isA(String.class));
         EasyMock.expectLastCall();
 
-        rootAccountManagerService.activateAccount(EasyMock.anyInt());
+        rootAccountManagerService.activateAccount(EasyMock.anyLong());
         EasyMock.expectLastCall();
 
         AccountSetupForm setupForm = new AccountSetupForm();

@@ -1,27 +1,22 @@
 package org.duracloud.account.app.controller;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.UserInvitation;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.DuracloudUserService;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.UserInvitation;
+import org.duracloud.account.db.util.DuracloudInstanceManagerService;
+import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 public class UserControllerTest extends AmaControllerTestBase {
     private UserController userController;
@@ -312,16 +307,18 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(userService.loadDuracloudUserByUsernameInternal(EasyMock.isA(String.class)))
                 .andReturn(createUser())
                 .anyTimes();
-        userService.changePasswordInternal(EasyMock.anyInt(),
+        userService.changePasswordInternal(EasyMock.anyLong(),
                                    EasyMock.isA(String.class),
                                    EasyMock.anyBoolean(),
                                    EasyMock.isA(String.class));
         EasyMock.expectLastCall();
         
-        userService.redeemPasswordChangeRequest(EasyMock.anyInt(),EasyMock.isA(String.class));
+        userService.redeemPasswordChangeRequest(EasyMock.anyLong(),EasyMock.isA(String.class));
         EasyMock.expectLastCall();
 
-        EasyMock.expect(userService.retrievePassordChangeInvitation(EasyMock.isA(String.class))).andReturn(new UserInvitation(1, -1, "n/a", "n/a", "n/a", "n/a","username", "email", 1, "aaa" ));
+        EasyMock.expect(userService.retrievePassordChangeInvitation(EasyMock.isA(String.class)))
+                .andReturn(new UserInvitation(1L, createAccountInfo(-1L), "n/a", "n/a", "n/a",
+                        "n/a", "username", "email", 1, "aaa"));
 
         
         EasyMock.replay(userService);
@@ -374,7 +371,7 @@ public class UserControllerTest extends AmaControllerTestBase {
     }
 
     private void initializeMockUserServiceStoreUser() throws Exception {
-        userService.storeUserDetails(EasyMock.anyInt(),
+        userService.storeUserDetails(EasyMock.anyLong(),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
@@ -401,7 +398,7 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(userService.loadDuracloudUserByUsername(TEST_USERNAME))
                 .andReturn(createUser())
                 .anyTimes();
-        userService.changePassword(EasyMock.anyInt(),
+        userService.changePassword(EasyMock.anyLong(),
                                    EasyMock.isA(String.class),
                                    EasyMock.anyBoolean(),
                                    EasyMock.isA(String.class));
@@ -417,7 +414,7 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(iterator.hasNext()).andReturn(false).anyTimes();
         EasyMock.expect(set.iterator()).andReturn(iterator).anyTimes();
 
-        EasyMock.expect(accountManagerService.findAccountsByUserId(EasyMock.anyInt()))
+        EasyMock.expect(accountManagerService.findAccountsByUserId(EasyMock.anyLong()))
                 .andReturn(set)
                 .anyTimes();
         EasyMock.replay(accountManagerService, set, iterator);

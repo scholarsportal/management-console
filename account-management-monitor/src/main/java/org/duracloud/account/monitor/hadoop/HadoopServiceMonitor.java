@@ -81,8 +81,8 @@ public class HadoopServiceMonitor {
     private List<AccountInfo> getDuracloudAccts() {
         List<AccountInfo> acctInfos = new ArrayList<AccountInfo>();
 
-        Set<Integer> ids = acctRepo.getIds();
-        for (int id : ids) {
+        Set<Long> ids = acctRepo.getIds();
+        for (Long id : ids) {
             try {
                 acctInfos.add(acctRepo.findById(id));
 
@@ -180,7 +180,7 @@ public class HadoopServiceMonitor {
     private HadoopUtil getHadoopUtil(AccountInfo acct)
         throws HadoopMonitorException {
 
-        int serverDetailsId = acct.getServerDetailsId();
+        Long serverDetailsId = acct.getServerDetailsId();
         if(serverDetailsId < 0) {
             String error = "Account " + acct.getSubdomain() + " cannot be " +
                            "monitored, as it has no associated ServerDetails.";
@@ -191,7 +191,7 @@ public class HadoopServiceMonitor {
         try {
             ServerDetails serverDetails =
                 serverDetailsRepo.findById(serverDetailsId);
-            int storageAcctId =
+            Long storageAcctId =
                 serverDetails.getPrimaryStorageProviderAccountId();
             storageAcct = getAmazonStorageAcct(storageAcctId);
 
@@ -234,7 +234,7 @@ public class HadoopServiceMonitor {
         return hadoopUtil;
     }
 
-    private StorageProviderAccount getAmazonStorageAcct(int storageAcctId)
+    private StorageProviderAccount getAmazonStorageAcct(Long storageAcctId)
         throws DBNotFoundException {
         return storageProviderAcctRepo.findById(storageAcctId);
     }

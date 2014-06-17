@@ -3,6 +3,10 @@
  */
 package org.duracloud.account.db.util;
 
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -54,8 +58,8 @@ import java.io.IOException;
 public class DbUtilDriver {   
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
-            usage("Three arguments are required, you supplied: " + args.length);
+        if (args.length != 2) {
+            usage("Two arguments are required, you supplied: " + args.length);
             System.exit(1);
         }
 
@@ -73,13 +77,7 @@ public class DbUtilDriver {
             System.exit(1);
         }
 
-        File credsFile = new File(args[1]);
-        if (!credsFile.exists()) {
-            usage("Credential file does not exist: " + credsFile.getPath());
-            System.exit(1);
-        }
-
-        File workDir = new File(args[2]);
+        File workDir = new File(args[1]);
         if (!workDir.exists()) {
             usage("The work directory must exist: " + workDir.getPath());
             System.exit(1);
@@ -88,7 +86,11 @@ public class DbUtilDriver {
             System.exit(1);
         }
 
-        DbUtil dbUtil = new DbUtil(credsFile, workDir);
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("jpa-config.xml");
+        DuracloudRepoMgr repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
+
+        DbUtil dbUtil = new DbUtil(repoMgr, workDir);
         dbUtil.runCommand(command);
     }
 
@@ -98,7 +100,7 @@ public class DbUtilDriver {
         sb.append("\n\n");
         sb.append("Usage: ");
         sb.append("\n\t");
-        sb.append("DbUtilDriver [get/put/clear] [credentials-file] [work-dir]");
+        sb.append("DbUtilDriver [get/put/clear] [work-dir]");
         sb.append("\n\n\t\t");
         sb.append("GET - retrieves and stores all db data in work-dir");
         sb.append("\n\n\t\t");
@@ -107,12 +109,6 @@ public class DbUtilDriver {
         sb.append("CLEAR - performs a GET, then removes all data from db");        
         sb.append("\n\n\t");
         sb.append("where [get/put/clear] is one of get, put, or clear commands");
-        sb.append("\n\n\t");
-        sb.append("where [credentials-file] is an xml file containing provider");
-        sb.append("\n\n\t\t");
-        sb.append("credentials, this file can be the same as the file used to");
-        sb.append("\n\n\t\t");
-        sb.append("initialize the AMA");
         sb.append("\n\n\t");
         sb.append("where [work-dir] is a directory to which db data will be");
         sb.append("\n\n\t\t");

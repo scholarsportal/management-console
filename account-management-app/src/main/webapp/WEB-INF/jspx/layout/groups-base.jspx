@@ -10,6 +10,7 @@
 
 
   <h1>Manage Account Groups</h1>
+  <h2>${account.name}</h2>
 
   <div class="dc-subgroup account-groups">
   <table>
@@ -50,15 +51,15 @@
             </script>
             <ul class="groups-list">
               <c:forEach items="${groups}" var="ug">
-                <li class="${not empty group and group.displayName eq ug.displayName ? 'selected' :''}">
+                <li class="${not empty group and group.name eq ug.name ? 'selected' :''}">
                   <table>
                     <tr>
                       <td width="20px">
-                        <form:checkbox path="groupNames" value="${ug.displayName}" />
+                        <form:checkbox path="groupNames" value="${ug.name}" />
                       </td>
                       <td>
-                        <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.displayName}">  
-                          ${ug.displayName}
+                        <a href="${pageContext.request.contextPath}/accounts/byid/${accountId}/groups/${ug.name}">  
+                          ${ug.prettyName}
                         </a>                      
                       </td>
                       </tr>

@@ -39,7 +39,7 @@ public class StoreReporterMonitorTest {
     private DuracloudServerImageRepo imageRepo;
     private StoreReporterUtilFactory factory;
 
-    private static final int IMAGE_ID = 345;
+    private static final Long IMAGE_ID = 345L;
     private static final String ROOT_PASS = "root-pass";
 
     private List<AccountInfo> accts;
@@ -49,7 +49,7 @@ public class StoreReporterMonitorTest {
     public void setUp() throws Exception {
         accts = new ArrayList<AccountInfo>();
         for (int i = 0; i < NUM_ACCTS; ++i) {
-            accts.add(createAccount(i));
+            accts.add(createAccount(new Long(i)));
         }
 
         acctRepo = EasyMock.createMock("DuracloudAccountRepo",
@@ -110,19 +110,19 @@ public class StoreReporterMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Set<Integer> ids = new HashSet<Integer>();
-        Set<Integer> instanceIds = new HashSet<Integer>();
-        int instanceId = 7;
+        Set<Long> ids = new HashSet<Long>();
+        Set<Long> instanceIds = new HashSet<Long>();
+        Long instanceId = 7L;
         instanceIds.add(instanceId);
         Credential credential = new Credential(ServerImage.DC_ROOT_USERNAME,
                                                ROOT_PASS);
 
         for (AccountInfo acct : accts) {
-            int id = acct.getId();
+            Long id = acct.getId();
             ids.add(id);
 
             EasyMock.expect(instanceRepo.findByAccountId(id))
-                    .andReturn(new HashSet<Integer>(instanceIds))
+                    .andReturn(new HashSet<Long>(instanceIds))
                     .times(2);
 
             DuracloudInstance instance = createMockDuracloudInstance(id);
@@ -141,8 +141,8 @@ public class StoreReporterMonitorTest {
         EasyMock.expect(acctRepo.getIds()).andReturn(ids);
     }
 
-    private DuracloudInstance createMockDuracloudInstance(int id) {
-        int accountId = 9;
+    private DuracloudInstance createMockDuracloudInstance(Long id) {
+        Long accountId = 9L;
         String hostName = "hostname";
         String providerInstanceId = "8";
         boolean initialized = true;
@@ -155,7 +155,7 @@ public class StoreReporterMonitorTest {
     }
 
     private ServerImage createMockServerImage() {
-        int providerAccountId = 789;
+        Long providerAccountId = 789L;
         String providerImageId = "providerImageId";
         String version = "version";
         String description = "description";
@@ -169,7 +169,7 @@ public class StoreReporterMonitorTest {
                                latest);
     }
 
-    private StoreReporterUtil createStoreReporterUtil(boolean valid, int id) {
+    private StoreReporterUtil createStoreReporterUtil(boolean valid, Long id) {
         StoreReporterUtil util = EasyMock.createMock("StoreReporterUtil",
                                                      StoreReporterUtil.class);
         if (valid || id != 0) {
@@ -196,15 +196,15 @@ public class StoreReporterMonitorTest {
         return info;
     }
 
-    private AccountInfo createAccount(int id) {
+    private AccountInfo createAccount(Long id) {
         return new AccountInfo(id,
                                "subdomain-" + id,
                                "acctName-" + id,
                                null,
                                null,
-                               -1,
-                               -1,
-                               -1,
+                               -1L,
+                               -1L,
+                               -1L,
                                null,
                                null);
     }

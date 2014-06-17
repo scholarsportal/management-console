@@ -3,15 +3,15 @@
  */
 package org.duracloud.account.flow.createaccount;
 
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.util.AccountManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.duracloud.account.common.domain.AccountCluster;
-import org.duracloud.account.util.AccountManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class CreateAccountFlowHelper {
     private AccountManagerService accountManagerService;
     
     public List<AccountClusterData> getAccountClusters(){
-        Set<AccountCluster> accountClusters = 
+        Set<AccountCluster> accountClusters =
                                 (Set<AccountCluster>) 
                                     accountManagerService.listAccountClusters(null);
      
@@ -45,15 +45,15 @@ public class CreateAccountFlowHelper {
      * 
      */
     public static class AccountClusterData implements Serializable{
-        private int id;
+        private Long id;
         private String clusterName;
         
-        public AccountClusterData(int id, String clusterName){
+        public AccountClusterData(Long id, String clusterName){
             this.id = id;
             this.clusterName = clusterName;
         }
 
-        public int getId() {
+        public Long getId() {
             return id;
         }
 

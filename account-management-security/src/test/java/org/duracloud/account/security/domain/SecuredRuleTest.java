@@ -3,13 +3,9 @@
  */
 package org.duracloud.account.security.domain;
 
-import org.duracloud.account.common.domain.Role;
-import org.junit.After;
+import org.duracloud.account.db.model.Role;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Andrew Woods

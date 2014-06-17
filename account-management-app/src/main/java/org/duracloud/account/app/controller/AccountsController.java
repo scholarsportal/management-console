@@ -3,41 +3,35 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
-import org.duracloud.account.common.domain.ComputeProviderAccount;
-import org.duracloud.account.common.domain.DuracloudAccount;
-import org.duracloud.account.common.domain.ServerDetails;
-import org.duracloud.account.common.domain.StorageProviderAccount;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.db.error.DBConcurrentUpdateException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.AccountService;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.RootAccountManagerService;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.model.util.DuracloudAccount;
+import org.duracloud.account.db.util.AccountService;
+import org.duracloud.account.db.util.DuracloudInstanceManagerService;
+import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.RootAccountManagerService;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 /**
  * 
  * @author Daniel Bernstein
@@ -86,8 +80,8 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_DELETE_MAPPING}, method = RequestMethod.POST)
-    public ModelAndView delete(@PathVariable int id, RedirectAttributes redirectAttributes)
-        throws AccountNotFoundException, DBConcurrentUpdateException {
+    public ModelAndView delete(@PathVariable Long id, RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
         String accountName = accountService.retrieveAccountInfo().getAcctName();
         getRootAccountManagerService().deleteAccount(id);
@@ -98,8 +92,8 @@ public class AccountsController extends AbstractRootController{
 
     
     @RequestMapping(value = { BY_ID_MAPPING +"/activate"}, method = RequestMethod.POST)
-    public ModelAndView activate(@PathVariable int id, RedirectAttributes redirectAttributes)
-        throws AccountNotFoundException, DBConcurrentUpdateException {
+    public ModelAndView activate(@PathVariable Long id, RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.ACTIVE);
         String accountName = accountService.retrieveAccountInfo().getAcctName();
@@ -109,8 +103,8 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_MAPPING +"/deactivate"}, method = RequestMethod.POST)
-    public ModelAndView deactivate(@PathVariable int id, RedirectAttributes redirectAttributes)
-        throws AccountNotFoundException, DBConcurrentUpdateException {
+    public ModelAndView deactivate(@PathVariable Long id, RedirectAttributes redirectAttributes)
+        throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
         accountService.storeAccountStatus(AccountInfo.AccountStatus.INACTIVE);
         String accountName = accountService.retrieveAccountInfo().getAcctName();
@@ -122,7 +116,7 @@ public class AccountsController extends AbstractRootController{
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.GET)
     public String getSetupAccount(
-        @PathVariable int id, Model model)
+        @PathVariable Long id, Model model)
         throws Exception {
         log.info("setup account {}", id);
 
@@ -145,7 +139,7 @@ public class AccountsController extends AbstractRootController{
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.POST)
     public ModelAndView setupAccount(
-        @PathVariable int id,
+        @PathVariable Long id,
         @ModelAttribute(SETUP_ACCOUNT_FORM_KEY) @Valid AccountSetupForm accountSetupForm,
                        BindingResult result, Model model,
                        RedirectAttributes redirectAttributes)
@@ -175,7 +169,7 @@ public class AccountsController extends AbstractRootController{
 
         //save compute
         rams.setupComputeProvider(
-            serverDetails.getComputeProviderAccountId(),
+            serverDetails.getComputeProviderAccount().getId(),
             accountSetupForm.getComputeUsername(),
             accountSetupForm.getComputePassword(),
             accountSetupForm.getComputeElasticIP(),
@@ -197,7 +191,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     private void
-        saveStorageProvider(StorageCredentials storageCredentials) throws DBConcurrentUpdateException  {
+        saveStorageProvider(StorageCredentials storageCredentials) {
         getRootAccountManagerService().setupStorageProvider(storageCredentials.getId(),
                                                             storageCredentials.getUsername(),
                                                             storageCredentials.getPassword());

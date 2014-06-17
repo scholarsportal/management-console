@@ -101,7 +101,7 @@
                items="${serverImages}">
                 <tr
                  data-providerImageId="${i.providerImageId}">
-                  <td>${i.providerAccountId}</td>
+                  <td>${i.providerAccount.id}</td>
 
                   <td>${i.providerImageId}</td>
 

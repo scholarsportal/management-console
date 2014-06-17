@@ -3,22 +3,19 @@
  */
 package org.duracloud.account.security.web;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
 import org.easymock.EasyMock;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * 
@@ -54,23 +51,32 @@ public class AccessDecisionVoterTestBase {
     }
 
     protected Authentication createUserAuthentication(Set<Role> authorities) {
-        return createMockAuthentication(createUser(authorities, TEST_USERNAME, 0,0));
+        return createMockAuthentication(createUser(authorities, TEST_USERNAME, 0L,0L));
 
     }
     
-    protected DuracloudUser createUser(Set<Role> authorities, String username, int accountId, int userId) {
-        DuracloudUser user =
-            new DuracloudUser(userId,
-                username,
-                "test",
-                "test",
-                "test",
-                "test@test",
-                "test",
-                "test");
+    protected DuracloudUser createUser(Set<Role> authorities, String username, Long accountId, Long userId) {
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        user.setUsername(username);
+        user.setPassword("test");
+        user.setFirstName("test");
+        user.setLastName("test");
+        user.setEmail("test@test");
+        user.setSecurityQuestion("test");
+        user.setSecurityAnswer("test");
         Set<AccountRights> rights = new HashSet<AccountRights>();
-        rights.add(new AccountRights(0, accountId, userId, authorities));
+
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setId(accountId);
+        AccountRights accountRights = new AccountRights();
+        accountRights.setId(0L);
+        accountRights.setAccount(accountInfo);
+        accountRights.setUser(user);
+        accountRights.setRoles(authorities);
+        rights.add(accountRights);
         user.setAccountRights(rights);
+
         return user;
     }
 

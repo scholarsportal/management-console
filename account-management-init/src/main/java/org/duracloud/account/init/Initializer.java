@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.init;
 
-import org.duracloud.account.common.domain.InitUserCredential;
+import org.duracloud.account.db.model.util.InitUserCredential;
 import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.appconfig.domain.AppConfig;
 import org.duracloud.appconfig.domain.Application;
@@ -15,11 +15,7 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

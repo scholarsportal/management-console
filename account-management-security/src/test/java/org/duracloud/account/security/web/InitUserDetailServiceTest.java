@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.security.web;
 
-import org.duracloud.account.common.domain.Role;
+import org.duracloud.account.db.model.Role;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;

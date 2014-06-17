@@ -6,13 +6,14 @@ package org.duracloud.account.app.controller;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.InstanceType;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.error.AccountClusterNotFoundException;
-import org.duracloud.account.util.error.AccountNotFoundException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.InstanceType;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.util.DuracloudInstanceManagerService;
+import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
+import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,6 +22,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
+
 
 /**
  * @contributor "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -158,10 +160,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
         Set<DuracloudInstanceService> instanceServices = new HashSet<DuracloudInstanceService>();
         instanceServices.add(instanceService);
 
-        EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+        EasyMock.expect(instanceManagerService.getInstanceServices(EasyMock.anyLong()))
             .andReturn(instanceServices);
 
-        EasyMock.expect(instanceManagerService.getInstanceService(EasyMock.anyInt()))
+        EasyMock.expect(instanceManagerService.getInstanceService(EasyMock.anyLong()))
             .andReturn(instanceService);
 
         if (initUsers) {
@@ -173,12 +175,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
         EasyMock.expect(instanceService.getStatus()).andReturn("status");
 
-        DuracloudInstance instance = new DuracloudInstance(0,
-                                                           0,
-                                                           0,
-                                                           "host",
-                                                           "providerInstanceId",
-                                                           false);
+        DuracloudInstance instance = createInstance(false);
         EasyMock.expect(instanceService.getInstanceInfo()).andReturn(instance);
     
         addFlashAttribute();
@@ -235,7 +232,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
         instanceServices.add(instanceService);
 
         EasyMock.expect(
-            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            instanceManagerService.getInstanceServices(EasyMock.anyLong()))
             .andReturn(instanceServices)
             .times(times);
 
@@ -243,16 +240,14 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .andReturn("status")
             .times(times);
 
-        DuracloudInstance instance =
-            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId", false);
+        DuracloudInstance instance = createInstance(false);
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
             .times(times);
     }
 
     private void initializeMockInstanceAvailable() throws Exception {
-        DuracloudInstance instance =
-            new DuracloudInstance(0, 0, 0, "host", "providerInstanceId", true);
+        DuracloudInstance instance = createInstance(true);
 
         EasyMock.expect(instanceService.getInstanceInfo())
             .andReturn(instance)
@@ -262,12 +257,25 @@ public class AccountControllerTest extends AmaControllerTestBase {
         instanceServices.add(instanceService);
 
         EasyMock.expect(
-            instanceManagerService.getInstanceServices(EasyMock.anyInt()))
+            instanceManagerService.getInstanceServices(EasyMock.anyLong()))
             .andReturn(instanceServices)
             .times(1);
     }
 
-    private void initRestart(int accountId) throws Exception {
+    private DuracloudInstance createInstance(boolean initialized) {
+        DuracloudInstance instance = new DuracloudInstance();
+        instance.setId(0L);
+        ServerImage image = new ServerImage();
+        image.setId(0L);
+        instance.setImage(image);
+        instance.setAccount(createAccountInfo(0L));
+        instance.setHostName("host");
+        instance.setProviderInstanceId("providerInstanceId");
+        instance.setInitialized(initialized);
+        return instance;
+    }
+
+    private void initRestart(Long accountId) throws Exception {
         EasyMock.expect(instanceManagerService.
             getInstanceService(accountId))
             .andReturn(instanceService)
@@ -278,14 +286,14 @@ public class AccountControllerTest extends AmaControllerTestBase {
             .times(1);
     }
 
-    private void initStart(int accountId, String version) throws Exception {
+    private void initStart(Long accountId, String version) throws Exception {
         EasyMock.expect(instanceManagerService.
             createInstance(accountId, version, InstanceType.SMALL))
             .andReturn(instanceService)
             .anyTimes();
     }
 
-    private void initStop(int accountId) throws Exception {
+    private void initStop(Long accountId) throws Exception {
         EasyMock.expect(instanceManagerService.
             getInstanceService(accountId))
             .andReturn(instanceService)

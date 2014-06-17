@@ -4,14 +4,14 @@
 package org.duracloud.account.security.vote;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.common.domain.AccountRights;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.Role;
-import org.duracloud.account.db.DuracloudRepoMgr;
-import org.duracloud.account.db.DuracloudRightsRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.impl.DuracloudInstanceManagerServiceImpl;
 import org.duracloud.account.security.domain.SecuredRule;
-import org.duracloud.account.util.impl.DuracloudInstanceManagerServiceImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -70,7 +70,7 @@ public class InstanceManagerAccessDecisionVoterTest {
     }
 
     private void doTestScopeAny(Role userRole, int expectedDecision) {
-        int userId = 5;
+        Long userId = 5L;
         boolean withAuthorities = true;
         authentication = createAuthentication(userId,
                                               userRole,
@@ -105,8 +105,8 @@ public class InstanceManagerAccessDecisionVoterTest {
 
     private void doTestScopeSelfAcct(Role userRole, int expectedDecision)
         throws DBNotFoundException {
-        int userId = 5;
-        int acctId = 9;
+        Long userId = 5L;
+        Long acctId = 9L;
         boolean withAuthorities = false;
         authentication = createAuthentication(userId,
                                               userRole,
@@ -125,7 +125,9 @@ public class InstanceManagerAccessDecisionVoterTest {
     private AccountRights createRights(Role role) {
         Set<Role> roles = new HashSet<Role>();
         roles.add(role);
-        return new AccountRights(-1, -1, -1, roles);
+        AccountRights accountRights = new AccountRights();
+        accountRights.setRoles(roles);
+        return accountRights;
     }
 
     private DuracloudRepoMgr createRepoMgr(AccountRights rights)
@@ -136,8 +138,8 @@ public class InstanceManagerAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyInt(),
-                                                            EasyMock.anyInt()))
+        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyLong(),
+                                                            EasyMock.anyLong()))
             .andReturn(rights);
 
         EasyMock.expect(mgr.getRightsRepo()).andReturn(rightsRepo);
@@ -146,19 +148,20 @@ public class InstanceManagerAccessDecisionVoterTest {
         return mgr;
     }
 
-    private Authentication createAuthentication(int userId,
+    private Authentication createAuthentication(Long userId,
                                                 Role role,
                                                 boolean withAuthorities) {
         Authentication auth = EasyMock.createMock("Authentication",
                                                   Authentication.class);
-        DuracloudUser user = new DuracloudUser(userId,
-                                               "username",
-                                               "password",
-                                               "firstName",
-                                               "lastName",
-                                               "email",
-                                               "question",
-                                               "answer");
+        DuracloudUser user = new DuracloudUser();
+        user.setId(userId);
+        user.setUsername("username");
+        user.setPassword("password");
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmail("email");
+        user.setSecurityQuestion("question");
+        user.setSecurityAnswer("answer");
         EasyMock.expect(auth.getPrincipal()).andReturn(user);
 
         Set<GrantedAuthority> userRoles = new HashSet<GrantedAuthority>();
@@ -171,7 +174,7 @@ public class InstanceManagerAccessDecisionVoterTest {
         return auth;
     }
 
-    private MethodInvocation createInvocation(Integer id) {
+    private MethodInvocation createInvocation(Long id) {
         MethodInvocation inv = EasyMock.createMock("MethodInvocation",
                                                    MethodInvocation.class);
 

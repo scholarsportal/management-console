@@ -85,7 +85,7 @@ public abstract class AbstractCrudController<T> extends AbstractController{
     protected abstract void create(T form);
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.GET)
-    public ModelAndView edit(@PathVariable int id){
+    public ModelAndView edit(@PathVariable Long id){
         
         T form = getFormById(id);
         log.debug("retrieved form: id={} -> form=", id, form);
@@ -93,18 +93,18 @@ public abstract class AbstractCrudController<T> extends AbstractController{
         return new ModelAndView(getEditViewId(), "form", form);
     }
     
-    protected T getFormById(int id){
+    protected T getFormById(Long id){
         Object entity = getEntity(id);
         return loadForm(entity);
     }
 
-    protected abstract Object getEntity(int id);
+    protected abstract Object getEntity(Long id);
 
     protected abstract T loadForm(Object entity);
 
     @RequestMapping(value = BY_ID_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView
-        update(@PathVariable int id, @ModelAttribute("form") @Valid T form,
+        update(@PathVariable Long id, @ModelAttribute("form") @Valid T form,
                           BindingResult bindingResult, Model model,RedirectAttributes redirectAttributes) {
         boolean hasErrors = bindingResult.hasErrors();
         if(hasErrors){
@@ -124,11 +124,11 @@ public abstract class AbstractCrudController<T> extends AbstractController{
         return "Update successful!";
     }
 
-    protected abstract void update(int id, T form);
+    protected abstract void update(Long id, T form);
 
     @RequestMapping(value = BY_ID_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView
-        delete(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         
         delete(id);
         setSuccessFeedback(deleteSuccessMessage(),
@@ -142,6 +142,6 @@ public abstract class AbstractCrudController<T> extends AbstractController{
         return "Successfully deleted!";
     }
 
-    abstract protected void delete(int id);
+    abstract protected void delete(Long id);
 
 }

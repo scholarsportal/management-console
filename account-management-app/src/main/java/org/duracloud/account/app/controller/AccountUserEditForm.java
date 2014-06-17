@@ -7,7 +7,7 @@ public class AccountUserEditForm {
     @NotNull
     private String role;
     @NotNull
-    private int accountId;
+    private Long accountId;
     
     public String getRole() {
         return role;
@@ -17,11 +17,11 @@ public class AccountUserEditForm {
         this.role = role;
     }
 
-    public void setAccountId(int accountId){
+    public void setAccountId(Long accountId){
         this.accountId = accountId;
     }
 
-    public int getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 }

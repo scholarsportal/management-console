@@ -3,35 +3,25 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import com.amazonaws.services.ec2.model.InstanceType;
 import org.apache.commons.lang.StringUtils;
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.AccountInfo.AccountStatus;
-import org.duracloud.account.common.domain.AmaEndpoint;
-import org.duracloud.account.common.domain.DuracloudAccount;
-import org.duracloud.account.common.domain.DuracloudUser;
-import org.duracloud.account.common.domain.InstanceType;
-import org.duracloud.account.common.domain.UserInvitation;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.account.util.AccountManagerService;
-import org.duracloud.account.util.DuracloudInstanceManagerService;
-import org.duracloud.account.util.DuracloudInstanceService;
-import org.duracloud.account.util.DuracloudUserService;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo.AccountStatus;
+import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.UserInvitation;
+import org.duracloud.account.db.model.util.DuracloudAccount;
+import org.duracloud.account.db.util.AccountManagerService;
+import org.duracloud.account.db.util.DuracloudInstanceManagerService;
+import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.DuracloudUserService;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.error.InvalidPasswordException;
+import org.duracloud.account.db.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.duracloud.account.util.UserFeedbackUtil;
-import org.duracloud.account.util.error.InvalidPasswordException;
-import org.duracloud.account.util.error.InvalidRedemptionCodeException;
-import org.duracloud.account.util.error.UnsentEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.binding.message.Message;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -46,10 +36,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.*;
 
 /**
  * The default view for this application
@@ -248,7 +241,7 @@ public class UserController extends AbstractController {
         }
 
         log.info("updating user profile for {}", username);
-        int id = this.userService.loadDuracloudUserByUsername(username).getId();
+        Long id = this.userService.loadDuracloudUserByUsername(username).getId();
         this.userService.storeUserDetails(id,
                                           form.getFirstName(),
                                           form.getLastName(),
@@ -280,7 +273,7 @@ public class UserController extends AbstractController {
         // check for errors
         if (!result.hasErrors()) {
             log.info("changing user password for {}", username);
-            int id = user.getId();
+            Long id = user.getId();
             try {
                 this.userService.changePassword(id,
                                                 form.getOldPassword(),
@@ -350,7 +343,7 @@ public class UserController extends AbstractController {
         // check for errors
         if (!result.hasErrors()) {
             log.info("changing user password for {}", username);
-            int id = user.getId();
+            Long id = user.getId();
             try {
                 this.userService.changePasswordInternal(id,
                                                 user.getPassword(),
@@ -481,7 +474,7 @@ public class UserController extends AbstractController {
                                                             newUserForm.getSecurityAnswer());
 
         String redemptionCode = newUserForm.getRedemptionCode();
-        int accountId = -1;
+        Long accountId = -1L;
         if (!StringUtils.isEmpty(redemptionCode)) {
             try {
                 accountId = this.userService.redeemAccountInvitation(user.getId(),

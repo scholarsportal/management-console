@@ -3,8 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.common.domain.InstanceType;
-
+import org.duracloud.account.db.model.InstanceType;
 
 /**
  * @author: Bill Branan

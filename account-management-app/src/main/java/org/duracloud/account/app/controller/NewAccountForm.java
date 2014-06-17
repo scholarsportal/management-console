@@ -4,14 +4,12 @@
 package org.duracloud.account.app.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.duracloud.account.annotation.UniqueSubdomainConstraint;
-import org.duracloud.account.common.domain.AccountType;
-import org.duracloud.storage.domain.StorageProviderType;
+import org.duracloud.account.db.model.AccountType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.context.annotation.Scope;
@@ -42,7 +40,7 @@ public class NewAccountForm implements Serializable {
 
     private AccountType accountType;
 
-    private Integer accountClusterId;
+    private Long accountClusterId;
 
 
     public List<AccountType> getAccountTypes(){
@@ -92,11 +90,11 @@ public class NewAccountForm implements Serializable {
         this.accountType = accountType;
     }
 
-    public Integer getAccountClusterId() {
+    public Long getAccountClusterId() {
         return accountClusterId;
     }
 
-    public void setAccountClusterId(Integer accountClusterId) {
+    public void setAccountClusterId(Long accountClusterId) {
         this.accountClusterId = accountClusterId;
     }
     

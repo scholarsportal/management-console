@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.util.notification.NotificationMgr;
+import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.notification.Emailer;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 public class AmaControllerTestBase extends AmaTestBase {
 
-    protected static final Integer TEST_INSTANCE_ID = 1;
+    protected static final Long TEST_INSTANCE_ID = 1L;
     
     protected NotificationMgr notificationMgr;
     protected Emailer emailer;
