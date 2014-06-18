@@ -46,27 +46,26 @@
     <http-basic/>
   </http>
 
+
+
   <!--Security Filters for Browser endpoints-->
   <http pattern="/**"
         auto-config="false"
         use-expressions="true"
-        entry-point-ref="http403ForbiddenEntryPoint">
-    <access-denied-handler error-page="/access-denied" />
+       >
     <intercept-url pattern="/root/**" access="hasRole('ROLE_ROOT')" />
     <intercept-url pattern="/accounts/new" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/accounts/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/byid/**" access="hasRole('ROLE_USER')" />
     <intercept-url pattern="/users/profile" access="hasRole('ROLE_USER')"  />
-    <form-login login-page="/login" always-use-default-target="false"
+    <form-login login-page="/login" 
+                always-use-default-target="false"
                 default-target-url="/users/profile"
                 authentication-failure-url="/login?error=true" />
     <http-basic />
     <logout invalidate-session="true" delete-cookies="jsessionid"/>
   </http>
 
-
-  <beans:bean id="http403ForbiddenEntryPoint"
-                class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
   <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager" >
