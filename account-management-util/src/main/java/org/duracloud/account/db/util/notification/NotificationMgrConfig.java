@@ -4,8 +4,6 @@
 
 package org.duracloud.account.db.util.notification;
 
-import java.util.Collection;
-
 /**
  * @author: Bill Branan
  * Date: 12/8/11
@@ -15,14 +13,14 @@ public class NotificationMgrConfig {
     private String fromAddress;
     private String username;
     private String password;
-    private Collection<String> adminAddresses;
+    private String adminAddress;
 
     public NotificationMgrConfig(String fromAddress, String username,
-                                 String password, Collection<String> adminAddresses) {
+                                 String password, String adminAddress) {
         this.fromAddress = fromAddress;
         this.username = username;
         this.password = password;
-        this.adminAddresses = adminAddresses;
+        this.adminAddress = adminAddress;
     }
 
     public String getFromAddress() {
@@ -37,7 +35,7 @@ public class NotificationMgrConfig {
         return password;
     }
 
-    public Collection<String> getAdminAddresses() {
-        return adminAddresses;
+    public String getAdminAddress() {
+        return adminAddress;
     }
 }

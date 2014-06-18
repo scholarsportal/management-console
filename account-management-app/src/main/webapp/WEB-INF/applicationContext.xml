@@ -14,6 +14,24 @@
         " >
   <context:annotation-config/>
   <context:component-scan base-package="org.duracloud"/>
+
+  <context:property-placeholder location="file:///${user.home}/duracloud-mc/mc-config.properties" />
+
+  <bean id="mcConfig" class="org.duracloud.account.db.util.config.McConfig">
+    <constructor-arg value="${mc.host}"/>
+    <constructor-arg value="${mc.port}"/>
+    <constructor-arg value="${mc.context}"/>
+    <constructor-arg value="${notification.user}"/>
+    <constructor-arg value="${notification.pass}"/>
+    <constructor-arg value="${notification.from-address}"/>
+    <constructor-arg value="${notification.admin-address}"/>
+    <constructor-arg value="${db.host}"/>
+    <constructor-arg value="${db.port}"/>
+    <constructor-arg value="${db.name}"/>
+    <constructor-arg value="${db.user}"/>
+    <constructor-arg value="${db.pass}"/>
+  </bean>
+
   <import resource="config/jpa-config.xml" />
   <import resource="config/service-config.xml" />  
   <import resource="config/security-config.xml" />  

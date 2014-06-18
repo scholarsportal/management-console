@@ -166,5 +166,5 @@ public interface AccountService {
      * @param emailer
      */
     @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void cancelAccount(String username, Emailer emailer, Collection<String> adminAddresses);
+    public void cancelAccount(String username, Emailer emailer, String adminAddress);
 }

@@ -4,7 +4,12 @@
 package org.duracloud.account.db.util.impl;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.error.AccessDeniedException;
 import org.duracloud.account.db.util.security.AnnotationParser;
@@ -19,7 +24,6 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -168,9 +172,9 @@ public class AccountServiceSecuredImpl implements AccountService {
 
     @Override
     public void cancelAccount(String username, Emailer emailer,
-                              Collection<String> adminAddresses) {
-        throwIfAccessDenied(username, emailer, adminAddresses);
-        accountService.cancelAccount(username, emailer, adminAddresses);
+                              String adminAddress) {
+        throwIfAccessDenied(username, emailer, adminAddress);
+        accountService.cancelAccount(username, emailer, adminAddress);
     }
 
     @Override

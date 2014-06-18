@@ -264,8 +264,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void cancelAccount(String username, Emailer emailer,
-                              Collection<String> adminAddresses) {
+    public void cancelAccount(String username,
+                              Emailer emailer,
+                              String adminAddress) {
         log.info("Cancelling account with id {} and subdomain {}",
                  account.getId(), account.getSubdomain());
 
@@ -274,10 +275,7 @@ public class AccountServiceImpl implements AccountService {
         String body = "A request has been made by " + username +
             " to cancel account " + account.getAcctName()+ " with subdomain " +
             account.getSubdomain();
-
-        for(String admin : adminAddresses) {
-            emailer.send(subject, body, admin);
-        }
+        emailer.send(subject, body, adminAddress);
 
         //Set the account to cancelled
         storeAccountStatus(AccountInfo.AccountStatus.CANCELLED);

@@ -13,15 +13,6 @@
   <jpa:repositories base-package="org.duracloud.account.db.repo" />
   <tx:annotation-driven />
 
-  <bean
-    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>/WEB-INF/config/db.properties</value>
-      </list>
-    </property>
-  </bean>
-
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
     <property name="driverClassName" value="com.mysql.jdbc.Driver" />

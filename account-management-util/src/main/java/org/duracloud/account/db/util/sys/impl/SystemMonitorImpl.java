@@ -6,18 +6,15 @@ package org.duracloud.account.db.util.sys.impl;
 import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
+import org.duracloud.account.db.util.config.McConfig;
 import org.duracloud.account.db.util.notification.NotificationMgr;
-import org.duracloud.account.init.domain.AmaConfig;
-import org.duracloud.account.init.domain.Initable;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -26,25 +23,20 @@ import java.util.Set;
  * @author Andrew Woods
  *         Date: 3/21/11
  */
-public class SystemMonitorImpl extends EventMonitorBase implements Initable {
+public class SystemMonitorImpl extends EventMonitorBase {
 
     private Logger log = LoggerFactory.getLogger(SystemMonitorImpl.class);
 
-    private Set<String> recipients = new HashSet<String>();
+    private Set<String> recipients = new HashSet<>();
 
-    public SystemMonitorImpl(NotificationMgr notificationMgr) {
+    public SystemMonitorImpl(NotificationMgr notificationMgr,
+                             McConfig config) {
         super(notificationMgr);
-    }
 
-    public void initialize(AmaConfig config) {
-        Collection emails = config.getAdminAddresses();
-        if (null != emails && emails.size() > 0) {
+        String adminEmail = config.getNotificationAdminAddress();
+        if (null != adminEmail) {
             recipients.clear();
-
-            Iterator<String> itr = emails.iterator();
-            while (itr.hasNext()) {
-                recipients.add(itr.next());
-            }
+            recipients.add(adminEmail);
         }
     }
 

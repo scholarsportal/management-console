@@ -118,10 +118,8 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         notificationConfig.setPassword(notMgrConfig.getPassword());
         notificationConfig.setOriginator(notMgrConfig.getFromAddress());
 
-        List<String> admins = new ArrayList<String>();
-        for(String admin : notMgrConfig.getAdminAddresses()) {
-            admins.add(admin);
-        }
+        List<String> admins = new ArrayList<>();
+        admins.add(notMgrConfig.getAdminAddress());
         notificationConfig.setAdmins(admins);
 
         Map<String, NotificationConfig> notificationConfigMap =

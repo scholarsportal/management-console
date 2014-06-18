@@ -19,13 +19,13 @@
   <bean id="notificationMgr"
         class="org.duracloud.account.db.util.notification.NotificationMgrImpl">
     <constructor-arg ref="notificationFactory"/>
-    <constructor-arg value="notifications@duracloud.org"/>
+    <constructor-arg ref="mcConfig"/>
   </bean>
 
   <bean id="systemMonitor"
         class="org.duracloud.account.db.util.sys.impl.SystemMonitorImpl">
     <constructor-arg ref="notificationMgr"/>
-    <qualifier value="sysMonitor"/>
+    <constructor-arg ref="mcConfig"/>
   </bean>
 
   <bean id="customerMonitor"

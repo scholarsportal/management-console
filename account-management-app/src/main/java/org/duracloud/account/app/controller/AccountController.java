@@ -381,7 +381,9 @@ public class AccountController extends AbstractAccountController {
 
         //Cancel the account
         AccountService accountService = accountManagerService.getAccount(accountId);
-        accountService.cancelAccount(username, notificationMgr.getEmailer(), notificationMgr.getConfig().getAdminAddresses());
+        accountService.cancelAccount(username,
+                                     notificationMgr.getEmailer(),
+                                     notificationMgr.getConfig().getAdminAddress());
 
         return createUserRedirectModelAndView(username);
     }

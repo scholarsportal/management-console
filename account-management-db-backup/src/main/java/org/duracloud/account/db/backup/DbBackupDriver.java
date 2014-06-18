@@ -12,7 +12,6 @@ import org.duracloud.account.db.backup.util.impl.FileSystemUtilImpl;
 import org.duracloud.account.db.backup.util.impl.StoreUtilS3Impl;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DbUtil;
-import org.duracloud.account.init.domain.AmaConfig;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
