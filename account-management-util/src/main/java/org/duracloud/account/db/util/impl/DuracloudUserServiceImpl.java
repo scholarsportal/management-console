@@ -9,6 +9,7 @@ import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
+import org.duracloud.account.db.repo.DuracloudUserRepo;
 import org.duracloud.account.db.util.DuracloudUserService;
 import org.duracloud.account.db.util.error.*;
 import org.duracloud.account.db.util.notification.NotificationMgr;
@@ -261,6 +262,10 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         AccountRights rights =
             rightsRepo.findByAccountIdAndUserId(acctId, userId);
         if(rights != null) {
+            DuracloudUserRepo userRepo = repoMgr.getUserRepo();
+            DuracloudUser user = userRepo.findOne(userId);
+            user.getAccountRights().remove(rights);
+            userRepo.saveAndFlush(user);
             rightsRepo.delete(rights.getId());
         }
     }
