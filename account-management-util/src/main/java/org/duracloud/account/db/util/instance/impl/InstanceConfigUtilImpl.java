@@ -3,14 +3,17 @@
  */
 package org.duracloud.account.db.util.instance.impl;
 
+import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.db.model.*;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudComputeProviderAccountRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
 import org.duracloud.account.db.util.instance.InstanceConfigUtil;
 import org.duracloud.account.db.util.instance.InstanceUtil;
 import org.duracloud.account.db.util.notification.NotificationMgrConfig;
 import org.duracloud.appconfig.domain.*;
+import org.duracloud.storage.domain.AuditConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
@@ -75,6 +78,11 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                                                false));
         }
 
+        ComputeProviderAccount compute = serverDetails.getComputeProviderAccount();
+        AuditConfig audit = config.getAuditConfig();
+        audit.setAuditQueueName(compute.getAuditQueue());
+        audit.setAuditUsername(compute.getUsername());
+        audit.setAuditPassword(compute.getPassword());
         config.setStorageAccounts(storageAccts);
         return config;
     }
