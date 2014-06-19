@@ -3,7 +3,20 @@
  */
 package org.duracloud.account.app.controller;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
 import org.duracloud.account.app.controller.GroupsForm.Action;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.util.AccountService;
@@ -21,11 +34,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.util.*;
 
 /**
  * 
@@ -303,7 +311,9 @@ public class AccountGroupsController extends AbstractAccountController {
 
     private void addGroupsObjectsToModel(AccountService as, Model model)
             throws Exception {
-        Long accountId = as.retrieveAccountInfo().getId();
+        AccountInfo account = as.retrieveAccountInfo();
+        Long accountId = account.getId();
+        model.addAttribute(ACCOUNT_INFO_KEY, account);
         addGroupsObjectsToModel(as, this.getGroups(accountId), model);
     }
 

@@ -28,7 +28,7 @@
 
         <tiles:putAttribute
          name="content">
-          <h1>Manage Account Users</h1>
+          <h1>${accountInfo.acctName}: Manage Account Users</h1>
           <div
            id="account-list"
            class="account-record user-list">

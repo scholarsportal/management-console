@@ -17,7 +17,7 @@
       <tiles:insertDefinition name="user-base">
 
         <tiles:putAttribute name="content">
-          <h1>Instance Manager</h1>
+          <h1>${accountInfo.acctName}: Instance Manager</h1>
           <div class="dc-subgroup">
             <h2>Your Instance</h2>
             <div class="dc-subgroup-body">

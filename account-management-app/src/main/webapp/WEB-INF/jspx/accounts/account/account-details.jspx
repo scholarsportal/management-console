@@ -37,7 +37,7 @@
         <tiles:putAttribute
          name="content">
 
-          <h1>Account Information</h1>
+          <h1>${accountInfo.acctName}: Account Information</h1>
 
           <div
            class="two-by-one-layout">

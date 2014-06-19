@@ -9,8 +9,7 @@
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
 
 
-  <h1>Manage Account Groups</h1>
-  <h2>${account.name}</h2>
+  <h1>${accountInfo.acctName}: Manage Groups</h1>
 
   <div class="dc-subgroup account-groups">
   <table>

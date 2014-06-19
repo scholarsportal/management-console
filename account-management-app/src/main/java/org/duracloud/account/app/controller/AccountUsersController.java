@@ -300,6 +300,7 @@ public class AccountUsersController extends AbstractAccountController {
     private void loadAccountUsers(AccountService accountService, Model model)
         throws Exception {
         AccountInfo accountInfo = accountService.retrieveAccountInfo();
+        model.addAttribute(ACCOUNT_INFO_KEY, accountInfo);
         Set<DuracloudUser> users = accountService.getUsers();
         Set<UserInvitation> pendingUserInvitations =
             accountService.getPendingInvitations();
@@ -314,6 +315,7 @@ public class AccountUsersController extends AbstractAccountController {
         Collections.sort(accountUsers);
         addInvitationsToModel(pendingUserInvitations, accountService, model);
         model.addAttribute(USERS_KEY, accountUsers);
+        
     }
 
     /**
