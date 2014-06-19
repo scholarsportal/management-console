@@ -66,6 +66,7 @@ public class AccountGroupsController extends AbstractAccountController {
     public String getGroups(@PathVariable Long accountId, Model model)
             throws Exception {
         addGroupsObjectsToModel(getAccountService(accountId), model);
+
         return GROUPS_VIEW_ID;
     }
 
@@ -329,7 +330,7 @@ public class AccountGroupsController extends AbstractAccountController {
         LinkedList<DuracloudUser> list = new LinkedList<DuracloudUser>();
         list.addAll(allUsers);
         for (DuracloudUser user : allUsers) {
-            if (user.isRootForAcct(as.getAccountId())) {
+            if (user.isRoot()) {
                 list.remove(user);
             }
         }

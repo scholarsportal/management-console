@@ -138,7 +138,7 @@ public class InstanceManagerAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyLong(),
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyLong(),
                                                             EasyMock.anyLong()))
             .andReturn(rights);
 
@@ -168,7 +168,7 @@ public class InstanceManagerAccessDecisionVoterTest {
         userRoles.add(new SimpleGrantedAuthority(role.name()));
 
         if (withAuthorities) {
-            EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
+           EasyMock.expect(auth.getAuthorities()).andReturn((Collection)userRoles);
         }
 
         return auth;
@@ -178,7 +178,7 @@ public class InstanceManagerAccessDecisionVoterTest {
         MethodInvocation inv = EasyMock.createMock("MethodInvocation",
                                                    MethodInvocation.class);
 
-        EasyMock.expect(inv.getMethod()).andReturn(this.getClass()
+       EasyMock.expect(inv.getMethod()).andReturn(this.getClass()
                                                        .getMethods()[0]);
 
         DuracloudInstanceManagerServiceImpl serviceImpl =
@@ -186,9 +186,7 @@ public class InstanceManagerAccessDecisionVoterTest {
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
 
-        if (null != id) {
-            EasyMock.expect(inv.getArguments()).andReturn(new Object[]{id});
-        }
+        EasyMock.expect(inv.getArguments()).andReturn(new Object[]{id});
         return inv;
     }
 

@@ -42,25 +42,13 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     @Override
-    public int vote(Authentication authentication,
-                    MethodInvocation invocation,
-                    Collection<ConfigAttribute> configAttributes) {
+    protected int voteImpl(Authentication authentication,
+            MethodInvocation invocation,
+            Collection<ConfigAttribute> attributes, Object[] methodArgs,
+            DuracloudUser user, SecuredRule securedRule, String role,
+            SecuredRule.Scope scope) {
         int decision = ACCESS_DENIED;
 
-        if (!supportsTarget(invocation)) {
-            return castVote(ACCESS_ABSTAIN, invocation);
-        }
-
-        // Collect target method arguments
-        Object[] methodArgs = invocation.getArguments();
-
-        // Collect user making the call.
-        DuracloudUser user = getCurrentUser(authentication);
-
-        // Collect security constraints on method.
-        SecuredRule securedRule = getRule(configAttributes);
-        String role = securedRule.getRole().name();
-        SecuredRule.Scope scope = securedRule.getScope();
 
         if (scope.equals(SecuredRule.Scope.ANY)) {
             Collection<String> userRoles = getUserRoles(authentication);
@@ -147,12 +135,6 @@ public class InstanceAccessDecisionVoter extends BaseAccessDecisionVoter {
         return instanceService.getAccountId();
     }
 
-    private int castVote(int decision, MethodInvocation invocation) {
-        String methodName = invocation.getMethod().getName();
-        String className = invocation.getThis().getClass().getSimpleName();
-        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
-            decision)});
-        return decision;
-    }
+
 
 }

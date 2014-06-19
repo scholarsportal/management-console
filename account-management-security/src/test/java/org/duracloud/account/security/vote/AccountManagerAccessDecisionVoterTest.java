@@ -171,7 +171,7 @@ public class AccountManagerAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyLong(),
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyLong(),
                                                             EasyMock.anyLong()))
             .andReturn(rights);
 
@@ -209,6 +209,9 @@ public class AccountManagerAccessDecisionVoterTest {
         EasyMock.expect(inv.getMethod()).andReturn(this.getClass()
                                                        .getMethods()[0]);
 
+        EasyMock.expect(inv.getArguments()).andReturn(new Object[0]);
+
+        
         AccountManagerServiceImpl serviceImpl = new AccountManagerServiceImpl(
             null,
             null,

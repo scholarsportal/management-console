@@ -30,7 +30,6 @@ public class AccessDecisionVoterTestBase {
     protected static Set<Role> USER_AUTHORITIES;
     protected static Set<Role> ADMIN_AUTHORITIES;
     protected static Set<Role> OWNER_AUTHORITIES;
-    protected static Set<Role> ROOT_AUTHORITIES;
 
     static {
         USER_AUTHORITIES = new HashSet<Role>();
@@ -44,9 +43,6 @@ public class AccessDecisionVoterTestBase {
         OWNER_AUTHORITIES.add(Role.ROLE_OWNER);
         OWNER_AUTHORITIES.addAll(ADMIN_AUTHORITIES);
 
-        ROOT_AUTHORITIES = new HashSet<Role>();
-        ROOT_AUTHORITIES.add(Role.ROLE_ROOT);
-        ROOT_AUTHORITIES.addAll(OWNER_AUTHORITIES);
 
     }
 
@@ -81,10 +77,10 @@ public class AccessDecisionVoterTestBase {
     }
 
     protected Authentication createRootAuthentication() {
-        UserDetails r = EasyMock.createMock(UserDetails.class);
+        DuracloudUser r = EasyMock.createMock(DuracloudUser.class);
         Collection<? extends GrantedAuthority> authorities =
-            Arrays.asList(new GrantedAuthority[] { Role.ROLE_ROOT.authority() });
-
+            Arrays.asList(new GrantedAuthority[] { });
+        EasyMock.expect(r.isRoot()).andReturn(true).anyTimes();
         EasyMock.expect(r.getAuthorities())
             .andReturn((Collection)authorities);
         EasyMock.replay(r);

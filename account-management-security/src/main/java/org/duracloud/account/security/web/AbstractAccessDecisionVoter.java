@@ -4,6 +4,7 @@
 package org.duracloud.account.security.web;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +61,11 @@ public abstract class AbstractAccessDecisionVoter implements AccessDecisionVoter
 			Collection<ConfigAttribute> attributes);
 
 	protected boolean isRoot(Authentication authentication) {
-		if(!(authentication.getPrincipal() instanceof UserDetails)){
+		if(!(authentication.getPrincipal() instanceof DuracloudUser)){
 			return false;
 		}
 
-		return ((UserDetails)authentication.getPrincipal())
-					.getAuthorities()
-					.contains(Role.ROLE_ROOT.authority());
+		return ((DuracloudUser)authentication.getPrincipal()).isRoot();
 	}
 
     protected String decisionToString(int decision) {

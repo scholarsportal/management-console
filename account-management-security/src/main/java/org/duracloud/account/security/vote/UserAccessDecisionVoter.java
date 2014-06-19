@@ -46,25 +46,13 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     @Override
-    public int vote(Authentication authentication,
-                    MethodInvocation invocation,
-                    Collection<ConfigAttribute> configAttributes) {
+    protected int voteImpl(Authentication authentication,
+            MethodInvocation invocation,
+            Collection<ConfigAttribute> attributes, Object[] methodArgs,
+            DuracloudUser user, SecuredRule securedRule, String role,
+            SecuredRule.Scope scope) {
+        
         int decision = ACCESS_DENIED;
-
-        if (!supportsTarget(invocation)) {
-            return castVote(ACCESS_ABSTAIN, invocation);
-        }
-
-        // Collect target method arguments
-        Object[] methodArgs = invocation.getArguments();
-
-        // Collect user making the call.
-        DuracloudUser user = getCurrentUser(authentication);
-
-        // Collect security constraints on method.
-        SecuredRule securedRule = getRule(configAttributes);
-        String role = securedRule.getRole().name();
-        SecuredRule.Scope scope = securedRule.getScope();
 
         Collection<String> userRoles = getUserRoles(authentication);
 
@@ -225,14 +213,6 @@ public class UserAccessDecisionVoter extends BaseAccessDecisionVoter {
             log.error("Illegal number of args: " + arguments.length);
         }
         return (Long) arguments[ACCT_ID_INDEX];
-    }
-
-    private int castVote(int decision, MethodInvocation invocation) {
-        String methodName = invocation.getMethod().getName();
-        String className = invocation.getThis().getClass().getSimpleName();
-        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
-            decision)});
-        return decision;
     }
 
 }

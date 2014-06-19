@@ -3,6 +3,15 @@
  */
 package org.duracloud.account.security.web;
 
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_ABSTAIN;
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_DENIED;
+import static org.springframework.security.access.AccessDecisionVoter.ACCESS_GRANTED;
+
+import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -15,12 +24,6 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.springframework.security.access.AccessDecisionVoter.*;
 
 /**
  * 
@@ -133,7 +136,7 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
     private void expectRightsForAccount(Long accountId, Long userId)
         throws DBNotFoundException {
         reinitRightsMock();
-        Set<AccountRights> set = new HashSet<AccountRights>();
+        List<AccountRights> set = new LinkedList<AccountRights>();
 
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.setId(accountId);
@@ -146,15 +149,15 @@ public class UserAccessDecisionVoterTest extends AccessDecisionVoterTestBase {
         accountRights.setRoles(OWNER_AUTHORITIES);
         set.add(accountRights);
 
-        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountIdCheckRoot(accountId))
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
                 .andReturn(set);
         replayRightsMock();        
     }
 
     private void expectNotRightsForAccount(Long accountId) {
         reinitRightsMock();
-        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountIdCheckRoot(accountId))
-            .andReturn(new HashSet<AccountRights>());
+        EasyMock.expect(adv.getDuracloudRepoMgr().getRightsRepo().findByAccountId(accountId))
+            .andReturn(new LinkedList<AccountRights>());
         replayRightsMock();        
     }
 

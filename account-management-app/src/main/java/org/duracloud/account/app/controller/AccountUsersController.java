@@ -343,19 +343,17 @@ public class AccountUsersController extends AbstractAccountController {
             accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
             Role role = u.getRoleByAcct(accountId);
-            if(!role.equals(Role.ROLE_ROOT)) {
-                AccountUser au =
-                    new AccountUser(u.getId(),
-                        u.getUsername(),
-                        u.getFirstName(),
-                        u.getLastName(),
-                        u.getEmail(),
-                        InvitationStatus.ACTIVE,
-                        role,
-                        (!u.isOwnerForAcct(accountId) ||
-                             (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
-                list.add(au);
-            }
+            AccountUser au =
+                new AccountUser(u.getId(),
+                    u.getUsername(),
+                    u.getFirstName(),
+                    u.getLastName(),
+                    u.getEmail(),
+                    InvitationStatus.ACTIVE,
+                    role,
+                    (!u.isOwnerForAcct(accountId) ||
+                         (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
+            list.add(au);
         }
 
         return list;

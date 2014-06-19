@@ -42,17 +42,14 @@ public class UsersController extends AbstractRootController{
         Set<DuracloudUser> users = getRootAccountManagerService().listAllUsers(null);
         for(DuracloudUser user: users) {
             // Do not include root users in this view
-            boolean rootUser = false;
+            if(user.isRoot()){
+                continue;
+            }
             // User allowed to be removed from the system?
             boolean removable = true;
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
                 for(AccountRights account : user.getAccountRights()) {
-                    if(user.isRootForAcct(account.getAccount().getId())) {
-                        rootUser = true;
-                        break;
-                    }
-
                     try {
 
                     // User account relationship able to be deleted?
@@ -60,8 +57,6 @@ public class UsersController extends AbstractRootController{
 
                     AccountInfo accountInfo = account.getAccount();
                     AccountService accountService = getAccountManagerService().getAccount(account.getAccount().getId());
-//                    AccountService accountService = getAccountManagerService().getAccount(account.getAccountId());
-//                    AccountInfo accountInfo = accountService.retrieveAccountInfo();
 
                     if(user.isOwnerForAcct(account.getAccount().getId())) {
                         if(!accountHasMoreThanOneOwner(accountService.getUsers(),
@@ -83,16 +78,16 @@ public class UsersController extends AbstractRootController{
 
                 }
             }
-            if(!rootUser) {
-                u.add(new User(user.getId(),
-                               user.getUsername(),
-                               user.getFirstName(),
-                               user.getLastName(),
-                               user.getEmail(),
-                               removable,
-                               accounts));
-            }
+
+            u.add(new User(user.getId(),
+                           user.getUsername(),
+                           user.getFirstName(),
+                           user.getLastName(),
+                           user.getEmail(),
+                           removable,
+                           accounts));
         }
+    
         Collections.sort(u);
 
         ModelAndView mav = new ModelAndView(BASE_VIEW);

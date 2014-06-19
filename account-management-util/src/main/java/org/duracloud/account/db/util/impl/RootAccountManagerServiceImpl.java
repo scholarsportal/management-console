@@ -75,14 +75,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         }
 	}
 
-    private boolean isUserRoot(Set<AccountRights> rightsSet) {
-        for(AccountRights rights : rightsSet) {
-            if(rights.getRoles().contains(Role.ROLE_ROOT)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 	@Override
 	public void deleteUser(Long userId) {
@@ -182,9 +174,15 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         }
 
         // Delete the account rights
-        Set<AccountRights > rights =
-            getRightsRepo().findByAccountIdSkipRoot(accountId);
-        getRightsRepo().deleteInBatch(rights);
+        List<AccountRights > rightsList =
+            getRightsRepo().findByAccountId(accountId);
+        for(AccountRights rights : rightsList){
+            DuracloudUser user = rights.getUser();
+            user.getAccountRights().remove(rights);
+            getRightsRepo().save(rights);
+        }
+        
+        getRightsRepo().deleteInBatch(rightsList);
 
         // Delete the groups associated with the account
         DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();

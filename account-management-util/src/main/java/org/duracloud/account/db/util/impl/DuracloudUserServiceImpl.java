@@ -19,6 +19,7 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -192,8 +193,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         // Determine the list of root users
         Set<Long> roots = new HashSet<Long>();
         for(AccountRights acctRights : acctRightsList) {
-            if(acctRights.getRoles().contains(Role.ROLE_ROOT)) {
-                roots.add(acctRights.getUser().getId());
+            DuracloudUser user = acctRights.getUser();
+            if(user.isRoot()) {
+                roots.add(user.getId());
             }
         }
 
@@ -341,24 +343,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
     
     private void propagateUserUpdate(Long userId) {
-        List<AccountRights > rightsList =
-            repoMgr.getRightsRepo().findByUserId(userId);
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         // Propagate changes for each of the user's accounts
-        if(!isUserRoot(rightsList)) { // Do no propagate if user is root
+        if(!user.isRoot()) { // Do no propagate if user is root
+
+            List<AccountRights > rightsList =
+                    repoMgr.getRightsRepo().findByUserId(userId);
+
             for(AccountRights rights : rightsList) {
                 propagator.propagateUserUpdate(rights.getAccount().getId(), userId);
             }
         }
     }
 
-    private boolean isUserRoot(List<AccountRights> rightsList) {
-        for(AccountRights rights : rightsList) {
-            if(rights.getRoles().contains(Role.ROLE_ROOT)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public void forgotPassword(String username,
@@ -438,6 +435,19 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         if(user == null) {
             throw new DBNotFoundException("User with username: "+username+" does not exist");
         }
+        return addRootIfApplicable(user);
+    }
+
+    /**
+     * Adds root role to the granted authorities so that Role based authorizations work in the user interface.
+     * @param user
+     * @return
+     */
+    private DuracloudUser addRootIfApplicable(DuracloudUser user) {
+        if(user.isRoot()){
+            user.getAuthorities().add(new GrantedAuthorityImpl(Role.ROLE_ROOT.name()));
+        }
+        
         return user;
     }
 
@@ -447,7 +457,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         if(user == null) {
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
         }
-        return user;
+        return addRootIfApplicable(user);
     }    
 
     @Override

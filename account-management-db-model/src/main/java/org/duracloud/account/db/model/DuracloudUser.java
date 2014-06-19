@@ -42,6 +42,7 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
 
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="user")
     private Set<AccountRights> accountRights;
+    private boolean root = false;
 
     public String getUsername() {
         return username;
@@ -190,10 +191,6 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
         return hasRoleForAcct(accountId, Role.ROLE_ADMIN);
     }
 
-    public boolean isRootForAcct(Long accountId) {
-        return hasRoleForAcct(accountId, Role.ROLE_ROOT);
-    }
-
     public boolean hasRoleForAcct(Long accountId, Role role) {
         Set<Role> roles = getRolesByAcct(accountId);
         if (roles != null) {
@@ -201,5 +198,13 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
         }
 
         return false;
+    }
+
+    public boolean isRootUser() {
+        return root;
+    }
+    
+    public boolean isRoot() {
+        return root;
     }
 }

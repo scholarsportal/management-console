@@ -358,17 +358,17 @@ public class UserAccessDecisionVoterTest {
         Long argAcctId = otherRights.getAccount().getId();
         if (rights.getAccount().getId() == otherRights.getAccount().getId()) {
             // This is the case when the calling user has rights on the acct.
-            EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
+            EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 rights.getUser().getId()))
                 .andReturn(rights)
                 .times(2);
-            EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
+            EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 otherRights.getUser().getId()))
                 .andReturn(otherRights);
 
         } else {
             // This is the case when the calling user does NOT have rights on the acct.
-            EasyMock.expect(rightsRepo.findAccountRightsForUser(argAcctId,
+            EasyMock.expect(rightsRepo.findByAccountIdAndUserId(argAcctId,
                                                                 rights.getUser().getId()))
                 .andReturn(null);
         }

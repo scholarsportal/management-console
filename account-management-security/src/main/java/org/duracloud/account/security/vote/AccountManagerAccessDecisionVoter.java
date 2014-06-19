@@ -3,8 +3,11 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.util.Collection;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.AccountManagerService;
 import org.duracloud.account.security.domain.SecuredRule;
@@ -13,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
-
-import java.util.Collection;
 
 /**
  * This class votes on calls to the AccountManagerService.
@@ -37,23 +38,12 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
     }
 
     @Override
-    public int vote(Authentication authentication,
-                    MethodInvocation invocation,
-                    Collection<ConfigAttribute> configAttributes) {
+    protected int voteImpl(Authentication authentication,
+            MethodInvocation invocation,
+            Collection<ConfigAttribute> attributes, Object[] methodArgs,
+            DuracloudUser user, SecuredRule securedRule, String role,
+            SecuredRule.Scope scope) {
         int decision = ACCESS_DENIED;
-
-        if (!supportsTarget(invocation)) {
-            return castVote(ACCESS_ABSTAIN, invocation);
-        }
-
-        // Collect user making the call.
-        DuracloudUser user = getCurrentUser(authentication);
-
-        // Collect security constraints on method.
-        SecuredRule securedRule = getRule(configAttributes);
-        String role = securedRule.getRole().name();
-        SecuredRule.Scope scope = securedRule.getScope();
-
         Collection<String> userRoles = getUserRoles(authentication);
 
         if (scope.equals(SecuredRule.Scope.ANY)) {
@@ -84,14 +74,6 @@ public class AccountManagerAccessDecisionVoter extends BaseAccessDecisionVoter {
             log.error("Illegal number of args: " + arguments.length);
         }
         return (Long) arguments[0];
-    }
-
-    private int castVote(int decision, MethodInvocation invocation) {
-        String methodName = invocation.getMethod().getName();
-        String className = invocation.getThis().getClass().getSimpleName();
-        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
-            decision)});
-        return decision;
     }
 
 }

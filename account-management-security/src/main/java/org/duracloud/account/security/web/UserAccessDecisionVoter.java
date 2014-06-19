@@ -3,6 +3,11 @@
  */
 package org.duracloud.account.security.web;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -14,10 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -67,7 +68,7 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
             Set<Role> setToRoles = getRoles(rmi.getArguments());
 
             DuracloudUser user = getUser(authentication);
-            boolean isRoot = user.isRootForAcct(accountId);
+            boolean isRoot = user.isRoot();
             boolean isOwner = user.isOwnerForAcct(accountId);
             boolean isAdmin = user.isAdminForAcct(accountId);
 
@@ -140,8 +141,8 @@ public class UserAccessDecisionVoter extends AbstractAccessDecisionVoter {
     }
 
     private boolean accountHasRights(Long accountId) {
-        Set<AccountRights> rights =
-            rightsRepo().findByAccountIdCheckRoot(accountId);
+        List<AccountRights> rights =
+            rightsRepo().findByAccountId(accountId);
         return (rights != null && rights.size() > 0);
     }
     

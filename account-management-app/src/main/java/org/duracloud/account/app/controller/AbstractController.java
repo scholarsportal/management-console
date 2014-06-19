@@ -78,7 +78,7 @@ public abstract class AbstractController {
         Set<DuracloudUser> users, Long accountId) {
         int ownerCount = 0;
         for (DuracloudUser u : users) {
-            if (u.isOwnerForAcct(accountId) && !u.isRootForAcct(accountId)) {
+            if (u.isOwnerForAcct(accountId) && !u.isRoot()) {
                 ownerCount++;
                 if (ownerCount > 1) {
                     return true;

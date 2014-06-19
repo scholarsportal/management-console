@@ -233,7 +233,6 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 instanceConfigUtil.getDuradminConfig();
         DurastoreConfig durastoreConfig =
             instanceConfigUtil.getDurastoreConfig();
-                instanceConfigUtil.getDurastoreConfig();
         DurabossConfig durabossConfig =
                 instanceConfigUtil.getDurabossConfig();
 
@@ -313,16 +312,11 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             }
 
             List<String> grants = new ArrayList<String>();
-            boolean root = false;
             for (Role role : roles) {
                 grants.add(role.name());
-
-                if(role.equals(Role.ROLE_ROOT)) {
-                    root = true;
-                }
             }
 
-            if(!root) { // Do not include root users in user list for instance
+            if(!user.isRoot()) { // Do not include root users in user list for instance
                 SecurityUserBean bean =
                         new SecurityUserBean(username, password, grants);
                 bean.setEmail(email);

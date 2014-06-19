@@ -18,8 +18,7 @@ import java.util.List;
  *         Date: 7/8/13
  */
 @Repository(value="rightsRepo")
-public interface DuracloudRightsRepo extends JpaRepository<AccountRights, Long>,
-        DuracloudRightsRepoCustom {
+public interface DuracloudRightsRepo extends JpaRepository<AccountRights, Long>{
 
     /**
      * This method returns the set of rights for a given account

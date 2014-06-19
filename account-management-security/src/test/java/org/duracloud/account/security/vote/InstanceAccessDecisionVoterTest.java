@@ -3,6 +3,13 @@
  */
 package org.duracloud.account.security.vote;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
@@ -25,12 +32,6 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -239,11 +240,11 @@ public class InstanceAccessDecisionVoterTest {
             "DuracloudRightsRepo",
             DuracloudRightsRepo.class);
 
-        EasyMock.expect(rightsRepo.findByAccountIdCheckRoot(EasyMock.anyLong()))
-            .andReturn(rights);
+        EasyMock.expect(rightsRepo.findByAccountId(EasyMock.anyLong()))
+            .andReturn(new LinkedList<>(rights));
 
         int xFind = scope.equals(SecuredRule.Scope.SELF_ACCT_PEER_UPDATE) ? 2 : 1;
-        EasyMock.expect(rightsRepo.findAccountRightsForUser(EasyMock.anyLong(),
+        EasyMock.expect(rightsRepo.findByAccountIdAndUserId(EasyMock.anyLong(),
                                                             EasyMock.anyLong()))
             .andReturn(userRight)
             .times(xFind);

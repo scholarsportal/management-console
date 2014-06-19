@@ -154,13 +154,18 @@ public class AccountManagerServiceImpl implements AccountManagerService {
 
     @Override
     public Set<AccountInfo> findAccountsByUserId(Long userId) {
-        List<AccountRights> userRights = repoMgr.getRightsRepo().findByUserId(userId);;
-        Set<AccountInfo> userAccounts = new HashSet<AccountInfo>();
-        userAccounts = new HashSet<AccountInfo>();
-        for (AccountRights rights : userRights) {
-            userAccounts.add(rights.getAccount());
+        
+        DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
+        if(user.isRoot()){
+            return new HashSet<>(repoMgr.getAccountRepo().findAll());
+        }else{
+            List<AccountRights> userRights = repoMgr.getRightsRepo().findByUserId(userId);
+            Set<AccountInfo> userAccounts = new HashSet<>();
+            for (AccountRights rights : userRights) {
+                userAccounts.add(rights.getAccount());
+            }
+            return userAccounts;
         }
-        return userAccounts;
     }
 
     @Override

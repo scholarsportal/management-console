@@ -123,10 +123,6 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         AccountRights rights = getUserRightsForAcct(userId, acctId);
         AccountRights other = getUserRightsForAcct(otherUserId, acctId);
 
-        if (null != rights && isRoot(rights)) {
-           return ACCESS_GRANTED;
-        }
-
         if (null == rights || null == other) {
             log.warn("No rights found for users {}, {} on acct {}",
                      new Object[]{userId, otherUserId, acctId});
@@ -147,9 +143,6 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         return existing && updates ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
-    private boolean isRoot(AccountRights rights) {
-        return Role.ROLE_ROOT.equals(Role.highestRole(rights.getRoles()));
-    }
 
     protected int voteRolesAreSufficientToUpdateOther(Set<Role> roles,
                                                       Set<Role> other) {
@@ -178,20 +171,20 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
 
     protected int numUsersForAccount(Long acctId) {
         Set<AccountRights> rights =
-            repoMgr.getRightsRepo().findByAccountIdCheckRoot(acctId);
+            new HashSet<>(repoMgr.getRightsRepo().findByAccountId(acctId));
         return (null != rights) ? rights.size() : 0;
     }
 
     protected AccountRights getUserRightsForAcct(Long userId, Long acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
-        AccountRights rights = rightsRepo.findAccountRightsForUser(acctId, userId);
+        AccountRights rights = rightsRepo.findByAccountIdAndUserId(acctId, userId);
         return rights;
     }
 
     protected Set<AccountRights> getAllUserRightsForAcct(Long acctId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
         Set<AccountRights> rights = null;
-        return rightsRepo.findByAccountIdCheckRoot(acctId);
+        return new HashSet<>(rightsRepo.findByAccountId(acctId));
     }
 
     protected int voteMyUserId(DuracloudUser user, Long userId) {
@@ -226,4 +219,44 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
         }
         return s;
     }
+    
+    @Override
+    public final int vote(Authentication authentication, MethodInvocation invocation,
+            Collection<ConfigAttribute> attributes) {
+
+        if (!supportsTarget(invocation)) {
+            return castVote(ACCESS_ABSTAIN, invocation);
+        }
+
+        // Collect target method arguments
+        Object[] methodArgs = invocation.getArguments();
+
+        // Collect user making the call.
+        DuracloudUser user = getCurrentUser(authentication);
+        
+        if(user.isRootUser()){
+            return ACCESS_GRANTED;
+        }
+
+        // Collect security constraints on method.
+        SecuredRule securedRule = getRule(attributes);
+        String role = securedRule.getRole().name();
+        SecuredRule.Scope scope = securedRule.getScope();
+        return voteImpl(authentication, invocation, attributes, methodArgs,  user, securedRule, role, scope);
+    }
+    
+    protected int castVote(int decision, MethodInvocation invocation) {
+        String methodName = invocation.getMethod().getName();
+        String className = invocation.getThis().getClass().getSimpleName();
+        log.trace("{}.{}() = {}", new Object[]{className, methodName, asString(
+            decision)});
+        return decision;
+    }
+    
+    protected abstract int voteImpl(Authentication authentication,
+            MethodInvocation invocation,
+            Collection<ConfigAttribute> attributes, Object[] methodArgs,
+            DuracloudUser user, SecuredRule securedRule, String role,
+            SecuredRule.Scope scope);
+
 }
