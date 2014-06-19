@@ -108,7 +108,7 @@ public class AccountsController extends AbstractRootController{
         
         ComputeProviderAccount compute = as.getComputeProvider();
         AccountSetupForm form = new AccountSetupForm(primary, secondary,compute);
-
+        model.addAttribute(AbstractAccountController.ACCOUNT_INFO_KEY, info);
         model.addAttribute(SETUP_ACCOUNT_FORM_KEY, form);
         model.addAttribute("pending",
                            info.getStatus().equals(AccountStatus.PENDING));
@@ -126,6 +126,8 @@ public class AccountsController extends AbstractRootController{
 
         RootAccountManagerService rams = getRootAccountManagerService();
         AccountInfo info = rams.getAccount(id);
+
+        model.addAttribute(AbstractAccountController.ACCOUNT_INFO_KEY, info);
 
         if(result.hasErrors()){
             model.addAttribute("pending",

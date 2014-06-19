@@ -30,7 +30,7 @@
     </tiles:putAttribute>
     <tiles:putAttribute
      name="mainContent" cascade="true">
-	  <h1><spring:message code="account.configureproviders" /></h1>
+	  <h1>${accountInfo.acctName}: <spring:message code="account.configureproviders" /></h1>
       <form:form
        modelAttribute="setupAccountForm"
        method="POST">

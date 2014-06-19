@@ -30,7 +30,7 @@
          name="content">
           <tiles:insertDefinition name="groups-base">
               <tiles:putAttribute name="detail">
-                  <h1>${accountInfo.acctName}: ${group.prettyName}</h1>
+                  <h1>${group.prettyName}</h1>
                 <form:form modelAttribute="groupForm" method="post">
                 <table class="shuttle">
                   <tr>
