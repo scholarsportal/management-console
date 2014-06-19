@@ -52,30 +52,8 @@ public class AccountsController extends AbstractRootController{
 
     @RequestMapping("")
     public ModelAndView get() {
-        List<DuracloudAccount> accounts = new ArrayList<DuracloudAccount>();
-        for(AccountInfo accountInfo : getRootAccountManagerService().listAllAccounts(null)) {
-            DuracloudAccount duracloudAccount = new DuracloudAccount();
-            duracloudAccount.setAccountInfo(accountInfo);
-
-            Set<DuracloudInstanceService> instanceServices =
-                instanceManagerService.getInstanceServices(accountInfo.getId());
-            if (instanceServices.size() > 0) {
-                // Handle only a single instance for the time being
-                DuracloudInstanceService instanceService = instanceServices.iterator()
-                                                                           .next();
-                try {
-                    duracloudAccount.setInstanceStatus(instanceService.getStatus());
-                } catch (DuracloudInstanceNotAvailableException e) {
-                    log.warn(e.getMessage(), e);
-                    duracloudAccount.setInstanceStatus("Unavailable");
-                }
-            }
-
-            accounts.add(duracloudAccount);
-        }
-        
-        ModelAndView mav = new ModelAndView(BASE_VIEW, "accounts", accounts);
-        
+        ModelAndView mav = new ModelAndView(BASE_VIEW, "accounts",
+                getRootAccountManagerService().listAllAccounts(null));
         return mav;
     }
 

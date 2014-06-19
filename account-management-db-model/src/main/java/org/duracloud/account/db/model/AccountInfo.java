@@ -7,7 +7,6 @@
  */
 package org.duracloud.account.db.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -68,6 +67,17 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     @JoinColumn(name = "account_cluster_id", nullable = true, columnDefinition = "bigint(20)")
     private AccountCluster accountCluster;
 
+    @OneToOne(fetch = FetchType.EAGER, optional = true, mappedBy="account")
+    private DuracloudInstance instance;
+
+    public DuracloudInstance getInstance() {
+        return instance;
+    }
+    
+    public void setInstance(DuracloudInstance instance) {
+        this.instance = instance;
+    }
+    
     public String getSubdomain() {
         return subdomain;
     }

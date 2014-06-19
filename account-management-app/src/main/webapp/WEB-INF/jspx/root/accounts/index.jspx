@@ -106,46 +106,46 @@
                var="a"
                items="${accounts}">
                 <tr
-                 data-name="${a.accountInfo.acctName}">
+                 data-name="${a.acctName}">
                   <td>
                     <a target="_blank"
-                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/details">
-                    ${a.accountInfo.acctName}</a>
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.id}/details">
+                    ${a.acctName}</a>
                   </td>
                   <td>
                     <a
-                      href="http://${a.accountInfo.subdomain}.duracloud.org/duradmin"
-                      target="_blank">${a.accountInfo.subdomain}</a>
+                      href="http://${a.subdomain}.duracloud.org/duradmin"
+                      target="_blank">${a.subdomain}</a>
                   </td>
-                  <td>${a.accountInfo.type}</td>
+                  <td>${a.type}</td>
                   <td>
-                    <c:set var="clusterId" value="${a.accountInfo.accountCluster.id}"/>
+                    <c:set var="clusterId" value="${a.accountCluster.id}"/>
                     <c:if test="${not empty clusterId and clusterId gt -1}">
                       <a href="${pageContext.request.contextPath}/root/clusters/byid/${clusterId}">
-                        ${a.accountInfo.accountCluster.clusterName}
+                        ${a.accountCluster.clusterName}
                       </a>
                     </c:if>
                   </td>
 
-                  <td class="status">${a.accountInfo.status}</td>
+                  <td class="status">${a.status}</td>
 
                   <td>
                     <a target="_blank"
-                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/users"
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.id}/users"
                      class="button"><spring:message code="account.manageusersandroles" /></a>
                   </td>
                   <td>
                     <a target="_blank"
-                     href="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/groups"
+                     href="${pageContext.request.contextPath}/accounts/byid/${a.id}/groups"
                      class="button"><spring:message code="account.managegroups" /></a>
                   </td>
 
                   <td>
                     <c:choose>
                       <c:when
-                       test="${a.accountInfo.status == 'INACTIVE'}">
+                       test="${a.status == 'INACTIVE'}">
                         <form
-                         action="${currentUri}/byid/${a.accountInfo.id}/activate"
+                         action="${currentUri}/byid/${a.id}/activate"
                          method="post">
                           <button
                            type="submit"
@@ -153,9 +153,9 @@
                         </form>
                       </c:when>
                       <c:when
-                       test="${a.accountInfo.status == 'ACTIVE' and a.instanceStatus == null}">
+                       test="${a.status == 'ACTIVE' and a.instance == null}">
                         <form
-                         action="${currentUri}/byid/${a.accountInfo.id}/deactivate"
+                         action="${currentUri}/byid/${a.id}/deactivate"
                          method="post">
                           <button class="deactivate"
                            type="submit">
@@ -171,21 +171,21 @@
                   </td>
                   <td>
                     <a
-                      href="${currentUri}/byid/${a.accountInfo.id}/setup"
+                      href="${currentUri}/byid/${a.id}/setup"
                       class="button configure"> 
                       <spring:message code="account.configureproviders" />
                     </a>
                   </td>
                   <td><!-- placeholder -->
                     <c:if
-                     test="${a.instanceStatus == null}">
+                     test="${a.instance == null}">
 
                     <form
-                     action="${currentUri}/byid/${a.accountInfo.id}/delete"
+                     action="${currentUri}/byid/${a.id}/delete"
                      method="post">
                       <input type="hidden"
                        name="id"
-                       value="${a.accountInfo.id}" />
+                       value="${a.id}" />
 
                       <button
                        class="delete"

@@ -7,16 +7,33 @@
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.InstanceType;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.error.DuracloudInstanceUpdateException;
-import org.duracloud.account.db.util.instance.*;
+import org.duracloud.account.db.util.instance.DurabossUpdater;
+import org.duracloud.account.db.util.instance.InstanceAccessUtil;
+import org.duracloud.account.db.util.instance.InstanceConfigUtil;
+import org.duracloud.account.db.util.instance.InstanceInitListener;
+import org.duracloud.account.db.util.instance.InstanceUpdater;
 import org.duracloud.account.db.util.instance.impl.DurabossUpdaterImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceConfigUtilImpl;
@@ -32,11 +49,6 @@ import org.duracloud.common.web.RestHttpHelper;
 import org.duracloud.security.domain.SecurityUserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -176,6 +188,10 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         // Terminate the instance
         computeProvider.stop(instance.getProviderInstanceId());
         // Remove this instance from the DB
+        DuracloudAccountRepo accountRepo = repoMgr.getAccountRepo();
+        AccountInfo account = accountRepo.getOne(instance.getAccount().getId());
+        account.setInstance(null);
+        accountRepo.saveAndFlush(account);
         repoMgr.getInstanceRepo().delete(instance.getId());
     }
 
