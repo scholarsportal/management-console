@@ -99,6 +99,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
+                                                       EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class));
         EasyMock.expectLastCall();
 
@@ -115,6 +116,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         setupForm.setComputeElasticIP(test);
         setupForm.setComputeKeypair(test);
         setupForm.setComputeSecurityGroup(test);
+        setupForm.setAuditQueue("auditQueue");
         setupNoBindingResultErrors();
         addFlashAttribute();
         replayMocks();

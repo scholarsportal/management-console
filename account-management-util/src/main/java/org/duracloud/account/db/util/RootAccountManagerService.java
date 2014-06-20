@@ -176,10 +176,11 @@ public interface RootAccountManagerService {
      * @param elasticIp
      * @param keypair
      * @param securityGroup
+     * @param auditQueue
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupComputeProvider(Long id, String username, String password,
-                                     String elasticIp, String keypair, String securityGroup);
+                                     String elasticIp, String keypair, String securityGroup, String auditQueue);
 
     /**
      * Reset a user's password

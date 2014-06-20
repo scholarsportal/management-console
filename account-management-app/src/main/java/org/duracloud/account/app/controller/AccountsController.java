@@ -154,7 +154,8 @@ public class AccountsController extends AbstractRootController{
             accountSetupForm.getComputePassword(),
             accountSetupForm.getComputeElasticIP(),
             accountSetupForm.getComputeKeypair(),
-            accountSetupForm.getComputeSecurityGroup());
+            accountSetupForm.getComputeSecurityGroup(),
+            accountSetupForm.getAuditQueue());
 
         String message = "Successfully configured providers ";
 

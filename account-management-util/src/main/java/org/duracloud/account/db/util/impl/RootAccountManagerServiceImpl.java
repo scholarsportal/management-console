@@ -238,7 +238,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                      String password,
                                      String elasticIp,
                                      String keypair,
-                                     String securityGroup) {
+                                     String securityGroup,
+                                     String auditQueue) {
         log.info("Setting up compute provider with ID {}", providerId);
         ComputeProviderAccount computeProviderAcct =
             repoMgr.getComputeProviderAccountRepo().findOne(providerId);
@@ -247,6 +248,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         computeProviderAcct.setElasticIp(elasticIp);
         computeProviderAcct.setKeypair(keypair);
         computeProviderAcct.setSecurityGroup(securityGroup);
+        computeProviderAcct.setAuditQueue(auditQueue);
         repoMgr.getComputeProviderAccountRepo().save(computeProviderAcct);
     }
 
