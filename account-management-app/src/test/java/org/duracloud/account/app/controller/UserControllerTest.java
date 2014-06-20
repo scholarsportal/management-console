@@ -105,8 +105,6 @@ public class UserControllerTest extends AmaControllerTestBase {
     public void testGetUser() throws Exception {
         EasyMock.expect(instanceManagerService.getLatestVersion())
             .andReturn(null);
-        EasyMock.expect(instanceManagerService.getInstanceServices(TEST_ACCOUNT_ID))
-        .andReturn(new HashSet<DuracloudInstanceService>());
 
         HttpServletRequest request = createMock(HttpServletRequest.class);
         HttpSession session = createMock(HttpSession.class);

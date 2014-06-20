@@ -77,7 +77,7 @@
                         <c:if test="${a.userRole != 'ROLE_USER'}">
 
 
-                      <c:if test="${a.userRole == 'ROLE_ROOT' and a.instanceStatus == null}">
+                      <c:if test="${a.userRole == 'ROLE_ROOT' and a.accountInfo.instance == null}">
                             <td width="90" align="right" valign="middle">
                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/deactivate"
                               method="post">
@@ -127,7 +127,7 @@
                     </table>
                   </div>
                 </c:when>
-                <c:when test="${a.instanceStatus == null}">
+                <c:when test="${a.accountInfo.instance == null}">
                   <div class="instance-panel notice"><strong class="instructions">No instance associated with this account.</strong>
 
                   </div>
@@ -167,7 +167,7 @@
                       <th width="73" align="left" colspan="4"></th>
                       <th align="left">
                         <c:if test="${actionStatus != null}">
-                            <c:if test="${a.instance.initialized == false}">
+                            <c:if test="${a.accountInfo.instance.initialized == false}">
                                 Notice
                             </c:if>
                         </c:if>
@@ -175,11 +175,11 @@
                       </tr>
                     <tr>
                       <td align="left" valign="middle" class="instructions">
-                      	<c:out value="${a.instance.hostName}" />
+                      	<c:out value="${a.accountInfo.instance.hostName}" />
                       </td>
                       <td align="left" valign="middle" class="instructions">
                         <c:choose>
-                          <c:when test="${a.instance.initialized}">
+                          <c:when test="${a.accountInfo.instance.initialized}">
                             <form action="https://${a.accountInfo.subdomain}.duracloud.org/duradmin/j_spring_security_check" target="_blank" method="post">
                               <input type="hidden" value="${user.username}" name="j_username"/>
                               <input type="hidden" value="${user.password}" name="j_password"/>
@@ -196,20 +196,22 @@
                                 action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/available">
                               <button id="${a.accountInfo.id}" class="available" type="submit">Check Availability</button>
                             </form:form>
-			                <strong id="checking-${a.accountInfo.id}">Waiting for instance to become available...</strong>
+      			                <strong id="checking-${a.accountInfo.id}">Waiting for instance to become available...</strong>
                           </c:otherwise>
                         </c:choose>
                      </td>
                       <td align="center" valign="middle" class="instructions">
-                        <c:out value="${a.instanceVersion}" />
+                        <c:out value="${a.accountInfo.instance.image.version}" />
                       </td>
                       <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                         <td align="center" valign="middle" class="instructions">
-                          <c:out value="${a.instanceType}" />
+                         <span style="margin-right:10px"><!-- placeholder --></span> 
+                         <button  class="instance-type" data-account-id="${a.accountInfo.id}">View</button>
                         </td>
                       </sec:authorize>
                       <td align="center" valign="middle" class="instructions">
-                        <c:out value="${a.instanceStatus}" />
+                         <span style="margin-right:10px"><!-- placeholder --></span> 
+                         <button  class="instance-status" data-account-id="${a.accountInfo.id}">View</button>
                       </td>
 
                       <sec:authorize access="! hasAnyRole('ROLE_ROOT')">
@@ -217,8 +219,8 @@
                       </sec:authorize>                      
                       <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                       <td align="left" valign="middle">
-                        <c:if test="${a.instanceVersion != latestVersion}">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/upgrade"
+                        <c:if test="${a.accountInfo.instance.image.version != latestVersion}">
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.accountInfo.instance.id}/upgrade"
                                                                  id="instance-upgrade-form-${a.accountInfo.id}"
                                   method="post">
                             <button id="${a.accountInfo.id}" type="submit" class="upgrade" onclick="AskAndSubmitUpgrade(this); return false;">Upgrade</button>
@@ -226,26 +228,26 @@
                         </c:if>
                       </td>
                       <td align="left" valign="middle">
-                        <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/stop"
+                        <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.accountInfo.instance.id}/stop"
                               method="post">
                           <button type="submit" onclick="AskAndSubmit(this); return false;">Stop</button>
                         </form>
                       </td>
                       <td align="left" valign="middle">
-                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinit"
+                          <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.accountInfo.instance.id}/reinit"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInit(this); return false;">ReInit</button>
                           </form>
                       </td>
                        <td align="left" valign="middle">
-                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.instance.id}/reinitusers"
+                           <form action="${pageContext.request.contextPath}/accounts/byid/${a.accountInfo.id}/instance/byid/${a.accountInfo.instance.id}/reinitusers"
                                   method="post">
                             <button type="submit" onclick="AskAndSubmitInitUsers(this); return false;">ReInit Users</button>
                           </form>
                       </td>
                       <td align="left" valign="middle">
                         <c:if test="${actionStatus != null}">
-                          <c:if test="${a.instance.initialized == false}">
+                          <c:if test="${a.accountInfo.instance.initialized == false}">
                             <strong><c:out value="${actionStatus}" /></strong>
                           </c:if>
                         </c:if>

@@ -110,3 +110,27 @@ function AskAndActivate(t)
     t.form.submit();
   }
 }
+
+
+$(function(){
+	var retrieveProperty = function(property, element){
+		var that = element;
+		var accountId = $(element).attr("data-account-id");
+		
+		$.ajax({
+			url: window.location + "/accounts/"+ accountId + "/instance/"+property,
+ 	 	    beforeSend: function(){
+ 	 	    	$(that).siblings().html("loading...");
+ 	 	    }
+		}).done(function(data) {
+			$(that).siblings().html(data);
+		}).fail(function(data) {
+			alert('failed to retrieve data:' + data);
+		});
+
+	};
+	
+	$(".instance-status").click(function(){ retrieveProperty("status", this)});
+	$(".instance-type").click(function(){ retrieveProperty("type", this)});
+
+});

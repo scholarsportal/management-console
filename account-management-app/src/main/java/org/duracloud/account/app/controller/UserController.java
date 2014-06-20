@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -204,7 +205,27 @@ public class UserController extends AbstractController {
         prepareModel(username, mav);
         return mav;
     }
+    
+    @RequestMapping(value = { USER_ACCOUNTS_MAPPING + "/{accountId}/instance/{property}"}, method = RequestMethod.GET)
+    @ResponseBody
+    public String getInstanceStatus(@PathVariable String username, @PathVariable long accountId, @PathVariable String property)
+        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
+        Set<DuracloudInstanceService> instances = this.instanceManagerService.getInstanceServices(accountId);
+        if(instances != null && !instances.isEmpty()){
+            DuracloudInstanceService service = instances.iterator().next();
+            if(property.equals("status")){
+                return service.getStatus();
+            }else if( property.equals("type")){
+                return service.getInstanceType().name();
+            }else{
+                return property + " is not recognized.";
+            }
+        }else{
+            return "Not available";
+        }
+    }
 
+ 
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.GET)
     public String edit(@PathVariable String username, Model model) throws DBNotFoundException {
         log.debug("getting user accounts for {}", username);
@@ -374,10 +395,10 @@ public class UserController extends AbstractController {
         mav.addObject(USER_KEY, user);
         Set<AccountInfo> accounts = this.accountManagerService.findAccountsByUserId(user.getId());
 
-        List<DuracloudAccount> activeAccounts = new ArrayList<DuracloudAccount>();
-        List<DuracloudAccount> inactiveAccounts = new ArrayList<DuracloudAccount>();
-        List<DuracloudAccount> pendingAccounts = new ArrayList<DuracloudAccount>();
-        List<DuracloudAccount> cancelledAccounts = new ArrayList<DuracloudAccount>();
+        List<DuracloudAccount> activeAccounts = new ArrayList<>();
+        List<DuracloudAccount> inactiveAccounts = new ArrayList<>();
+        List<DuracloudAccount> pendingAccounts = new ArrayList<>();
+        List<DuracloudAccount> cancelledAccounts = new ArrayList<>();
 
         Iterator<AccountInfo> iterator = accounts.iterator();
         while (iterator.hasNext()) {
@@ -419,24 +440,6 @@ public class UserController extends AbstractController {
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
         duracloudAccount.setUserRole(user.getRoleByAcct(accountInfo.getId()));
-
-        Set<DuracloudInstanceService> instanceServices = instanceManagerService.getInstanceServices(accountInfo.getId());
-        if (instanceServices.size() > 0) {
-            // Handle only a single instance for the time being
-            DuracloudInstanceService instanceService = instanceServices.iterator()
-                                                                       .next();
-            duracloudAccount.setInstance(instanceService.getInstanceInfo());
-            duracloudAccount.setInstanceStatus(instanceService.getStatus());
-            duracloudAccount.setInstanceVersion(instanceService.getInstanceVersion());
-            duracloudAccount.setInstanceType(instanceService.getInstanceType());
-        } else {
-            AccountStatus accountStatus = accountInfo.getStatus();
-            if (AccountInfo.AccountStatus.ACTIVE.equals(accountStatus)
-                    || AccountInfo.AccountStatus.INACTIVE.equals(accountStatus)) {
-                Set<String> versions = instanceManagerService.getVersions();
-                duracloudAccount.setVersions(versions);
-            }
-        }
         return duracloudAccount;
     }
 
