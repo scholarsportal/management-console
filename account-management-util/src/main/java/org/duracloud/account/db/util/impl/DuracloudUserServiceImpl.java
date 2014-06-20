@@ -435,19 +435,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         if(user == null) {
             throw new DBNotFoundException("User with username: "+username+" does not exist");
         }
-        return addRootIfApplicable(user);
-    }
-
-    /**
-     * Adds root role to the granted authorities so that Role based authorizations work in the user interface.
-     * @param user
-     * @return
-     */
-    private DuracloudUser addRootIfApplicable(DuracloudUser user) {
-        if(user.isRoot()){
-            user.getAuthorities().add(new GrantedAuthorityImpl(Role.ROLE_ROOT.name()));
-        }
-        
         return user;
     }
 
@@ -457,7 +444,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         if(user == null) {
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
         }
-        return addRootIfApplicable(user);
+        return user;
     }    
 
     @Override

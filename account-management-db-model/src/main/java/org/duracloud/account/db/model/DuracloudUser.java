@@ -163,6 +163,10 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
                 }
             }
         }
+        
+        if(isRoot()){
+            authorities.add(new GrantedAuthorityImpl(Role.ROLE_ROOT.name()));
+        }
         return authorities;
     }
 
