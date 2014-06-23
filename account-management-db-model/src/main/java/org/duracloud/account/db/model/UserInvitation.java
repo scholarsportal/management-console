@@ -21,8 +21,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class UserInvitation extends BaseEntity {
 
-    @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="account_id", nullable=false, columnDefinition = "bigint(20)")
+    @ManyToOne(fetch= FetchType.EAGER, optional=true)
+    @JoinColumn(name="account_id", nullable=true, columnDefinition = "bigint(20)")
     private AccountInfo account;
 
     private String accountName;
