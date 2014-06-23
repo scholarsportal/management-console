@@ -51,8 +51,7 @@ public interface AccountManagerService {
      *
      */
     @Secured({"role:ROLE_USER, scope:ANY"})
-    public AccountService createAccount(AccountCreationInfo accountCreationInfo,
-                                        DuracloudUser owner) throws SubdomainAlreadyExistsException;
+    public AccountService createAccount(AccountCreationInfo accountCreationInfo) throws SubdomainAlreadyExistsException;
 
     /**
      * @param userId

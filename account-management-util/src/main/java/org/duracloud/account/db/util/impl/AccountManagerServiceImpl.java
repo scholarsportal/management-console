@@ -57,20 +57,18 @@ public class AccountManagerServiceImpl implements AccountManagerService {
     }
 
     @Override
-    public AccountService createAccount(AccountCreationInfo accountCreationInfo,
-                                        DuracloudUser owner)
+    public AccountService createAccount(AccountCreationInfo accountCreationInfo)
         throws SubdomainAlreadyExistsException {
-        log.info("Creating account with subdomain {} and owner {}",
-                 accountCreationInfo.getSubdomain(),
-                 owner.getUsername());
+        log.info("Creating account with subdomain {}",
+                 accountCreationInfo.getSubdomain());
 
-        AccountService acctService = doCreateAccount(accountCreationInfo, owner);
+        AccountService acctService = doCreateAccount(accountCreationInfo);
 
         // Notify monitors if account created successfully.
         Iterator<EventMonitor> itr = eventMonitors.iterator();
         while (itr.hasNext()) {
             try {
-                itr.next().accountCreated(accountCreationInfo, owner);
+                itr.next().accountCreated(accountCreationInfo);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
@@ -79,8 +77,7 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         return acctService;
     }
 
-    private synchronized AccountService doCreateAccount(AccountCreationInfo accountCreationInfo,
-                                                        DuracloudUser owner)
+    private synchronized AccountService doCreateAccount(AccountCreationInfo accountCreationInfo)
         throws SubdomainAlreadyExistsException {
         if (!subdomainAvailable(accountCreationInfo.getSubdomain())) {
             throw new SubdomainAlreadyExistsException();
@@ -140,8 +137,6 @@ public class AccountManagerServiceImpl implements AccountManagerService {
         }
 
         accountInfo = repoMgr.getAccountRepo().save(accountInfo);
-
-        userService.setUserRights(accountInfo.getId(), owner.getId(), Role.ROLE_OWNER);
 
         return accountServiceFactory.getAccount(accountInfo);
     }

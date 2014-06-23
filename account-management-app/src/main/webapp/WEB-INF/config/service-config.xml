@@ -28,11 +28,6 @@
     <constructor-arg ref="mcConfig"/>
   </bean>
 
-  <bean id="customerMonitor"
-        class="org.duracloud.account.db.util.sys.impl.CustomerMonitorImpl">
-    <constructor-arg ref="notificationMgr"/>
-  </bean>
-
   <bean id="duracloudUserService"
         class="org.duracloud.account.db.util.impl.DuracloudUserServiceImpl"
         primary="true"
@@ -64,7 +59,6 @@
     <constructor-arg>
       <set>
         <ref bean="systemMonitor"/>
-        <ref bean="customerMonitor"/>
       </set>
     </constructor-arg>
   </bean>

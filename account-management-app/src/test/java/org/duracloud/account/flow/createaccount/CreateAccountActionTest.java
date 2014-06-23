@@ -9,7 +9,6 @@ import org.duracloud.account.app.controller.AmaTestBase;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
 import org.duracloud.account.db.model.AccountType;
-import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.util.MessageHelper;
 import org.easymock.EasyMock;
@@ -68,8 +67,7 @@ public class CreateAccountActionTest extends AmaTestBase{
         //setup requestcontext
         setupRequestContext(AccountType.COMMUNITY, null);
 
-        this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class),
-                                                                 EasyMock.isA(DuracloudUser.class));
+        this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class));
         EasyMock.expectLastCall().andReturn(accountService);
         replayMocks();
         
@@ -87,8 +85,7 @@ public class CreateAccountActionTest extends AmaTestBase{
         setupRequestContext(AccountType.FULL, fullAccountForm);
 
         
-        EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class),
-                                                                 EasyMock.isA(DuracloudUser.class)))
+        EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class)))
                 .andReturn(accountService);
         
         accountService.setPrimaryStorageProviderRrs(true);

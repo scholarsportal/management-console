@@ -50,11 +50,6 @@ public class CreateAccountAction extends AbstractAction {
         FullAccountForm fullAccountForm =
             (FullAccountForm) context.getFlowScope().get("fullAccountForm");
         
-        DuracloudUser owner =
-            (DuracloudUser) SecurityContextHolder.getContext()
-                                                 .getAuthentication()
-                                                 .getPrincipal();
-
         boolean reducedRedundancy = false;
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
@@ -78,7 +73,7 @@ public class CreateAccountAction extends AbstractAction {
                                         ? -1L
                                         : newAccountForm.getAccountClusterId());
 
-        AccountService as = accountManagerService.createAccount(aci, owner);
+        AccountService as = accountManagerService.createAccount(aci);
         if(!newAccountForm.isCommunity()){
             as.setPrimaryStorageProviderRrs(reducedRedundancy);
         }

@@ -26,25 +26,22 @@ public abstract class EventMonitorBase implements EventMonitor {
     }
 
     @Override
-    public void accountCreated(AccountCreationInfo acctInfo,
-                               DuracloudUser user) {
-        log.debug("Acct created for, user:{}, acct:{}",
-                  user.getUsername(),
+    public void accountCreated(AccountCreationInfo acctInfo) {
+        log.debug("Acct created for acct:{}",
                   acctInfo.getSubdomain());
 
         Emailer emailer = notificationMgr.getEmailer();
 
         String subj = buildSubj(acctInfo);
-        String body = buildBody(acctInfo, user);
-        String[] recipients = buildRecipients(user);
+        String body = buildBody(acctInfo);
+        String[] recipients = buildRecipients();
 
         emailer.send(subj, body, recipients);
     }
 
     protected abstract String buildSubj(AccountCreationInfo acctInfo);
 
-    protected abstract String buildBody(AccountCreationInfo acctInfo,
-                                        DuracloudUser user);
+    protected abstract String buildBody(AccountCreationInfo acctInfo);
 
-    protected abstract String[] buildRecipients(DuracloudUser user);
+    protected abstract String[] buildRecipients();
 }
