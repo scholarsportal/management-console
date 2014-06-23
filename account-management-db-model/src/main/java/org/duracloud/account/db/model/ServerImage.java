@@ -26,13 +26,6 @@ public class ServerImage extends BaseEntity {
     public static final String DC_ROOT_USERNAME = "root";
 
     /**
-     * The ComputeProviderAccount on which this server image is hosted.
-     */
-    @ManyToOne(fetch= FetchType.EAGER, optional=false)
-    @JoinColumn(name="provider_account_id", nullable=false, columnDefinition = "bigint(20)")
-    private ComputeProviderAccount providerAccount;
-
-    /**
      * The ID given to this image by the hosting provider. This will likely
      * have a different name at each provider (e.g. at Amazon this is the
      * AMI ID, the Amazon Machine Image Identifier).
@@ -60,14 +53,6 @@ public class ServerImage extends BaseEntity {
      * value should be true on one and only one row in the Image table.
      */
     private boolean latest;
-
-    public ComputeProviderAccount getProviderAccount() {
-        return providerAccount;
-    }
-
-    public void setProviderAccount(ComputeProviderAccount providerAccount) {
-        this.providerAccount = providerAccount;
-    }
 
     public String getProviderImageId() {
         return providerImageId;

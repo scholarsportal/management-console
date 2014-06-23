@@ -25,7 +25,6 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
     public void testAdd() throws Exception {
         // set up mocks, and args
         ServerImageForm serverImageForm = new ServerImageForm();
-        serverImageForm.setProviderAccountId(1L);
         serverImageForm.setProviderImageId("id");
         serverImageForm.setDescription("desc");
         serverImageForm.setVersion("version");
@@ -34,12 +33,11 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
 
         EasyMock.expect(result.hasErrors()).andReturn(false);
 
-        rootAccountManagerService.createServerImage(serverImageForm.getProviderAccountId(),
-                          serverImageForm.getProviderImageId(),
-                          serverImageForm.getVersion(),
-                          serverImageForm.getDescription(),
-                          serverImageForm.getPassword(),
-                          serverImageForm.isLatest());
+        rootAccountManagerService.createServerImage(serverImageForm.getProviderImageId(),
+                                                      serverImageForm.getVersion(),
+                                                      serverImageForm.getDescription(),
+                                                      serverImageForm.getPassword(),
+                                                      serverImageForm.isLatest());
         EasyMock.expectLastCall();
         replayMocks();
         // method under test
@@ -62,7 +60,6 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
         Long imageId = 7L;
 
         ServerImageForm serverImageForm = new ServerImageForm();
-        serverImageForm.setProviderAccountId(1L);
         serverImageForm.setProviderImageId("id");
         serverImageForm.setDescription("desc");
         serverImageForm.setVersion("version");
@@ -72,7 +69,6 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
         EasyMock.expect(result.hasErrors()).andReturn(false);
 
         rootAccountManagerService.editServerImage(imageId,
-                          serverImageForm.getProviderAccountId(),
                           serverImageForm.getProviderImageId(),
                           serverImageForm.getVersion(),
                           serverImageForm.getDescription(),

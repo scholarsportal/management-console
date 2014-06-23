@@ -70,11 +70,6 @@
               <tr>
                 <th>
                   <spring:message
-                   code="serverimage.provideraccountid" />
-                </th>
-
-                <th>
-                  <spring:message
                    code="serverimage.imageid" />
                 </th>
 
@@ -101,7 +96,6 @@
                items="${serverImages}">
                 <tr
                  data-providerImageId="${i.providerImageId}">
-                  <td>${i.providerAccount.id}</td>
 
                   <td>${i.providerImageId}</td>
 

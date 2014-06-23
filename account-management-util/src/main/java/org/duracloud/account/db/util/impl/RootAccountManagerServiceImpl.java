@@ -308,8 +308,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 
 	@Override
-	public void createServerImage(Long providerAccountId,
-                                  String providerImageId,
+	public void createServerImage(String providerImageId,
                                   String version,
                                   String description,
                                   String password,
@@ -329,11 +328,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
             latest = true;
         }
 
-        ComputeProviderAccount providerAccount =
-                repoMgr.getComputeProviderAccountRepo().findOne(providerAccountId);
 
         ServerImage serverImage = new ServerImage();
-        serverImage.setProviderAccount(providerAccount);
         serverImage.setProviderImageId(providerImageId);
         serverImage.setVersion(version);
         serverImage.setDescription(description);
@@ -345,31 +341,29 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public void editServerImage(Long id,
-                Long providerAccountId,
                                 String providerImageId,
                                 String version,
                                 String description,
                                 String password,
                                 boolean latest) {
-        if(latest) {
-            //Remove current latest
-            ServerImage latestImage = getServerImageRepo().findLatest();
-            if(latestImage.getId() != id) {
-                latestImage.setLatest(!latest);
-                getServerImageRepo().save(latestImage);
-            }
-        }
-
-        ComputeProviderAccount providerAccount =
-                repoMgr.getComputeProviderAccountRepo().findOne(providerAccountId);
 
         ServerImage serverImage = getServerImageRepo().findOne(id);
-        serverImage.setProviderAccount(providerAccount);
+
+	    //Remove current latest
+        ServerImage latestImage = getServerImageRepo().findLatest();
+
+        if (!latestImage.getId().equals(id)) {
+            if(latest){
+                latestImage.setLatest(false);
+                getServerImageRepo().save(latestImage);
+            }
+            serverImage.setLatest(latest);
+        }
+
         serverImage.setProviderImageId(providerImageId);
         serverImage.setVersion(version);
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
-        serverImage.setLatest(latest);
         getServerImageRepo().save(serverImage);
     }
 

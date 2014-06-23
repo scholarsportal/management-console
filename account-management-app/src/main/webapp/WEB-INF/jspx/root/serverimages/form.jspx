@@ -17,21 +17,6 @@
       </legend>
 
       <ol>
-        <li>
-          <form:label
-           cssErrorClass="error"
-           path="providerAccountId">
-            <spring:message
-             code="serverimage.provideraccountid" />
-          </form:label>
-
-          <form:select
-           cssErrorClass="error"
-           path="providerAccountId">
-            <form:options
-             items="${providerAccountIds}" />
-          </form:select>
-        </li>
 
         <li>
           <form:label

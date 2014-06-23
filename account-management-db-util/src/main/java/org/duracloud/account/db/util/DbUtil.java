@@ -171,12 +171,6 @@ public class DbUtil {
                     ai.setAccountCluster(repoMgr.getAccountClusterRepo()
                             .findOne(ai.getAccountCluster().getId()));
                     repo.saveAndFlush(ai);
-                } else if (entity instanceof ServerImage) {
-                    ServerImage si = (ServerImage) entity;
-                    si.setProviderAccount(repoMgr
-                            .getComputeProviderAccountRepo()
-                            .findOne(si.getId()));
-                    repo.saveAndFlush(si);
                 } else if (entity instanceof DuracloudInstance) {
                     DuracloudInstance di = (DuracloudInstance) entity;
                     di.setImage(repoMgr.getServerImageRepo().findOne(

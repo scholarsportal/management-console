@@ -91,7 +91,6 @@ public interface RootAccountManagerService {
     /**
      * Creates a service image in the system
      *
-     * @param providerAccountId
      * @param providerImageId
      * @param version
      * @param description
@@ -99,8 +98,7 @@ public interface RootAccountManagerService {
      * @param latest
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void createServerImage(Long providerAccountId,
-                                  String providerImageId,
+    public void createServerImage(String providerImageId,
                                   String version,
                                   String description,
                                   String password,
@@ -109,7 +107,6 @@ public interface RootAccountManagerService {
      * Edits a service image in the system
      *
      * @param id
-     * @param providerAccountId
      * @param providerImageId
      * @param version
      * @param description
@@ -118,7 +115,6 @@ public interface RootAccountManagerService {
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServerImage(Long id,
-                                Long providerAccountId,
                                 String providerImageId,
                                 String version,
                                 String description,

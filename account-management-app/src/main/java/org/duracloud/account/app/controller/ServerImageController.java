@@ -51,8 +51,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
 
     @Override
     protected void create(ServerImageForm form) {
-        getRootAccountManagerService().createServerImage(form.getProviderAccountId(),
-                                                         form.getProviderImageId(),
+        getRootAccountManagerService().createServerImage(form.getProviderImageId(),
                                                          form.getVersion(),
                                                          form.getDescription(),
                                                          form.getPassword(),
@@ -69,7 +68,6 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     protected ServerImageForm loadForm(Object obj) {
         ServerImage entity = (ServerImage)obj;
         ServerImageForm form = form();
-        form.setProviderAccountId(entity.getProviderAccount().getId());
         form.setProviderImageId(entity.getProviderImageId());
         form.setVersion(entity.getVersion());
         form.setDescription(entity.getDescription());
@@ -81,7 +79,6 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
     @Override
     protected void update(Long id, ServerImageForm form) {
         getRootAccountManagerService().editServerImage(id,
-                                                       form.getProviderAccountId(),
                                                        form.getProviderImageId(),
                                                        form.getVersion(),
                                                        form.getDescription(),
