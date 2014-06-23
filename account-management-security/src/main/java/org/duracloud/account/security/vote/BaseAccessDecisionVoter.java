@@ -188,7 +188,7 @@ public abstract class BaseAccessDecisionVoter implements AccessDecisionVoter<Met
     }
 
     protected int voteMyUserId(DuracloudUser user, Long userId) {
-        return user.getId() == userId ? ACCESS_GRANTED : ACCESS_DENIED;
+        return user.getId().equals(userId) ? ACCESS_GRANTED : ACCESS_DENIED;
     }
 
     protected int voteMyUsername(DuracloudUser user, String username) {
