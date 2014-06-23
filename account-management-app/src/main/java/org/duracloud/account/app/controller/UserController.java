@@ -400,11 +400,14 @@ public class UserController extends AbstractController {
         List<DuracloudAccount> pendingAccounts = new ArrayList<>();
         List<DuracloudAccount> cancelledAccounts = new ArrayList<>();
 
+        Set<String> versions = this.instanceManagerService.getVersions();
+        
         Iterator<AccountInfo> iterator = accounts.iterator();
         while (iterator.hasNext()) {
             AccountInfo acctInfo = iterator.next();
             DuracloudAccount duracloudAccount = loadAccountInstances(acctInfo,
                                                                      user);
+            duracloudAccount.setVersions(versions);
             AccountStatus status = acctInfo.getStatus();
             if (AccountInfo.AccountStatus.ACTIVE.equals(status)) {
                 activeAccounts.add(duracloudAccount);

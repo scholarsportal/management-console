@@ -122,6 +122,12 @@ public class UserControllerTest extends AmaControllerTestBase {
         Set<AccountInfo> accounts = createAccountSet();
         EasyMock.expect(accountManagerService.findAccountsByUserId(u.getId()))
                 .andReturn(accounts);
+        
+        EasyMock.expect(instanceManagerService.getVersions()).andReturn(
+                new HashSet<>(Arrays.asList(
+                                new String[] { "version1",
+                                               "version2", 
+                                               "version3" })));
 
         replayMocks();
         
