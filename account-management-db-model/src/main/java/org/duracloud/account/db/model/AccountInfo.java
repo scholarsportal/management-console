@@ -7,6 +7,7 @@
  */
 package org.duracloud.account.db.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -59,7 +60,7 @@ public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     /*
      * The details needed to manage servers associated with this account
      */
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToOne(fetch = FetchType.EAGER, optional = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "server_details_id", nullable = true, columnDefinition = "bigint(20)")
     private ServerDetails serverDetails;
 

@@ -131,16 +131,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         clusterRepo.delete(clusterId);
     }
 
-//    private AccountCluster getCluster(Long clusterId,
-//                                      DuracloudAccountClusterRepo clusterRepo) {
-//        try {
-//            return clusterRepo.findById(clusterId);
-//        } catch(DBNotFoundException e) {
-//            String error = "Cluster with ID " + clusterId + " was not found " +
-//                           "in the database, so could not be deleted.";
-//            throw new DuraCloudRuntimeException(error);
-//        }
-//    }
 
     @Override
 	public void deleteAccount(Long accountId) {
@@ -156,21 +146,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                 return;
             }
 
-            ServerDetails serverDetails = account.getServerDetails();
-
-            // Delete the primary storage provider
-            getStorageRepo()
-                .delete(serverDetails.getPrimaryStorageProviderAccount());
-
-            // Delete any secondary storage providers
-            getStorageRepo().deleteInBatch(serverDetails.getSecondaryStorageProviderAccounts());
-
-            // Delete the compute provider
-            repoMgr.getComputeProviderAccountRepo()
-                .delete(serverDetails.getComputeProviderAccount());
-            
-            // Delete the server details
-            repoMgr.getServerDetailsRepo().delete(serverDetails);
         }
 
         // Delete the account rights
@@ -179,6 +154,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         for(AccountRights rights : rightsList){
             DuracloudUser user = rights.getUser();
             user.getAccountRights().remove(rights);
+            rights.getRoles().clear();
             getRightsRepo().save(rights);
         }
         

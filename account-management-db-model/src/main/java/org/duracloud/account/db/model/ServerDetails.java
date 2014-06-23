@@ -27,14 +27,14 @@ public class ServerDetails extends BaseEntity {
     /**
      * The ComputeProviderAccount which is the compute provider for an instance
      */
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "compute_provider_account_id", nullable = false, columnDefinition = "bigint(20)")
     private ComputeProviderAccount computeProviderAccount;
 
     /**
      * The StorageProviderAccount which is used for primary storage
      */
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "primary_storage_provider_account_id", nullable = false, columnDefinition = "bigint(20)")
     private StorageProviderAccount primaryStorageProviderAccount;
 
