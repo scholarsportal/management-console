@@ -320,6 +320,7 @@ public class AccountGroupsController extends AbstractAccountController {
     private void addGroupsObjectsToModel(AccountService as,
             List<DuracloudGroup> groups, Model model) throws Exception {
         addUserToModel(model);
+        model.addAttribute(ACCOUNT_INFO_KEY, as.retrieveAccountInfo());
         model.addAttribute("accountId", as.getAccountId());
         if (!model.asMap().containsKey(GROUPS_FORM_KEY)) {
             model.addAttribute(GROUPS_FORM_KEY, new GroupsForm());
