@@ -5,7 +5,8 @@
  xmlns:tiles="http://tiles.apache.org/tags-tiles"
  xmlns:spring="http://www.springframework.org/tags"
  xmlns:form="http://www.springframework.org/tags/form"
- xmlns:sec="http://www.springframework.org/security/tags">
+ xmlns:sec="http://www.springframework.org/security/tags"
+ xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page contentType="text/html;charset=UTF-8" />
   <form:form
    modelAttribute="form"
@@ -100,10 +101,15 @@
           <spring:message
            code="latest"
            var="latest" />
-
+          
           <form:checkbox
            label="${latest}"
-           path="latest" />
+           path="latest" 
+           disabled="${form.latest}"/>
+           
+           <c:if test="${form.latest}">
+            <form:hidden path="latest"/>
+           </c:if>
         </li>
       </ol>
     </fieldset>
