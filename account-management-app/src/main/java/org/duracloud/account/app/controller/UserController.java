@@ -3,13 +3,13 @@
  */
 package org.duracloud.account.app.controller;
 
-import com.amazonaws.services.ec2.model.InstanceType;
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.model.util.DuracloudAccount;
 import org.duracloud.account.db.util.AccountManagerService;
@@ -43,7 +43,11 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The default view for this application
