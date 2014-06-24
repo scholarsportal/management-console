@@ -32,7 +32,6 @@ public abstract class BaseEntity implements Identifiable {
     @Column(columnDefinition="bigint(20) AUTO_INCREMENT")
     protected Long id;
 
-    private Date created;
 
     @Version
     private Date modified;
@@ -45,14 +44,6 @@ public abstract class BaseEntity implements Identifiable {
     @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
     }
 
     public Date getModified() {
