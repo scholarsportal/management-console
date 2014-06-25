@@ -28,7 +28,7 @@ public class DuracloudGroup extends BaseEntity {
 
     private String name;
 
-    @ManyToMany(fetch=FetchType.LAZY)
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name="group_user",
         joinColumns=@JoinColumn(name="group_id", referencedColumnName="id", columnDefinition = "bigint(20)"),
         inverseJoinColumns=@JoinColumn(name="user_id", referencedColumnName="id", columnDefinition = "bigint(20)"))
