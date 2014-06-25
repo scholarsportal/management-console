@@ -3,12 +3,16 @@
  */
 package org.duracloud.account.db.util;
 
-import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.security.access.annotation.Secured;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -160,11 +164,4 @@ public interface AccountService {
     @Secured({"role:ROLE_ADMIN, scope:SELF_ACCT"})
     public void deleteUserInvitation(Long invitationId);
 
-    /**
-     * Cancels the account.
-     * @param username
-     * @param emailer
-     */
-    @Secured({"role:ROLE_OWNER, scope:SELF_ACCT"})
-    public void cancelAccount(String username, Emailer emailer, String adminAddress);
 }

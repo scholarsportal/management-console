@@ -1,6 +1,6 @@
 function AskAndCancel(t)
 {
-    Ask("Are you sure you want to cancel this account? Canceling this account will remove all stored data. Clicking OK will begin the cancellation process by notifying DuraCloud staff. Cancellation will only proceed if the account instance has first been stopped.",t);
+    Ask("Are you sure you want to cancel this account? Cancellation will only proceed if the account instance has first been stopped.",t);
 }
 
 function AskAndDisable(t)

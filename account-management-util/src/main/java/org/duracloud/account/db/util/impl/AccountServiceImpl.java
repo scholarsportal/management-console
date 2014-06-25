@@ -3,12 +3,6 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
@@ -28,6 +22,11 @@ import org.duracloud.notification.Emailer;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -261,24 +260,6 @@ public class AccountServiceImpl implements AccountService {
                  invitationId, account.getSubdomain());
 
         repoMgr.getUserInvitationRepo().delete(invitationId);
-    }
-
-    @Override
-    public void cancelAccount(String username,
-                              Emailer emailer,
-                              String adminAddress) {
-        log.info("Cancelling account with id {} and subdomain {}",
-                 account.getId(), account.getSubdomain());
-
-        //Send email requesting cancellation
-        String subject = "Cancel Account Request";
-        String body = "A request has been made by " + username +
-            " to cancel account " + account.getAcctName()+ " with subdomain " +
-            account.getSubdomain();
-        emailer.send(subject, body, adminAddress);
-
-        //Set the account to cancelled
-        storeAccountStatus(AccountInfo.AccountStatus.CANCELLED);
     }
 
 }
