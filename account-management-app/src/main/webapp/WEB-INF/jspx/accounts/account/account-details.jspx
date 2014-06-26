@@ -49,8 +49,7 @@
               <table width="100%">
                 <tr>
                   <td><strong class="accountlabel">Account Identification</strong></td>
-
-                  <sec:authorize access="hasAnyRole('ROLE_ROOT', 'ROLE_OWNER')">
+                  <c:if test="${userRole == 'ROLE_OWNER' || userRole == 'ROLE_ROOT'}">
                   <td align="right">
                   <ul class="horizontal-list">
                     <li>
@@ -66,7 +65,7 @@
                     </li>
                   </ul>
                   </td>
-                  </sec:authorize>
+                  </c:if>
                 </tr>
               </table><div style="height:20px"><!--  --></div><table class="datatablesimple">
                 <tr>
