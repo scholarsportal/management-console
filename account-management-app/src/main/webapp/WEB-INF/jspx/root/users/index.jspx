@@ -120,7 +120,12 @@
                       </ul>
                     </td>
 
-                    <td colspan="3"><!--  --></td>
+                    <td><!--  --></td>
+                    <td colspan="2"> 
+                        <c:if test="${u.root}">
+                            Root 
+                        </c:if> </td>
+                    
                   </tr>
 
                 <c:forEach
