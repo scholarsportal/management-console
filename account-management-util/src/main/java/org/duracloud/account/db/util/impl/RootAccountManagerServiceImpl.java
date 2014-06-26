@@ -42,6 +42,7 @@ import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author Andrew Woods
@@ -290,7 +291,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<ServerImage> listAllServerImages(String filter) {
-		List<ServerImage> imageList = getServerImageRepo().findAll();
+		List<ServerImage> imageList = getServerImageRepo().findAll(new Sort(Direction.DESC, "version"));
 		Set<ServerImage> images = new LinkedHashSet<ServerImage>();
         for(ServerImage image : imageList){
             if(filter == null ||
