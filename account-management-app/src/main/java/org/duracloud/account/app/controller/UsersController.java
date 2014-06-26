@@ -41,11 +41,6 @@ public class UsersController extends AbstractRootController{
         List<User> u = new ArrayList<User>();
         Set<DuracloudUser> users = getRootAccountManagerService().listAllUsers(null);
         for(DuracloudUser user: users) {
-            // Do not include root users in this view
-            if(user.isRoot()){
-                continue;
-            }
-            // User allowed to be removed from the system?
             boolean removable = true;
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
@@ -85,7 +80,8 @@ public class UsersController extends AbstractRootController{
                            user.getLastName(),
                            user.getEmail(),
                            removable,
-                           accounts));
+                           accounts,
+                           user.isRoot()));
         }
     
         Collections.sort(u);
@@ -174,7 +170,7 @@ public class UsersController extends AbstractRootController{
     public class User implements Comparable<User> {
         public User(
             Long id, String username, String firstName, String lastName,
-            String email, boolean deletable, Set<Account> accounts) {
+            String email, boolean deletable, Set<Account> accounts, boolean root) {
             super();
             this.id = id;
             this.username = username;
@@ -183,6 +179,7 @@ public class UsersController extends AbstractRootController{
             this.email = email;
             this.deletable = deletable;
             this.accounts = accounts;
+            this.root = root;
         }
 
         private Long id;
@@ -192,11 +189,16 @@ public class UsersController extends AbstractRootController{
         private String email;
         private boolean deletable;
         private Set<Account> accounts;
+        private boolean root = false;
 
         public Long getId() {
             return id;
         }
 
+        public boolean isRoot() {
+            return root;
+        }
+        
         public String getUsername() {
             return username;
         }
