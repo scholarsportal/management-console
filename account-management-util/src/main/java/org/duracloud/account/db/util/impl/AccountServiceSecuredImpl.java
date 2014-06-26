@@ -171,13 +171,6 @@ public class AccountServiceSecuredImpl implements AccountService {
     }
 
     @Override
-    public void cancelAccount(String username, Emailer emailer,
-                              String adminAddress) {
-        throwIfAccessDenied(username, emailer, adminAddress);
-        accountService.cancelAccount(username, emailer, adminAddress);
-    }
-
-    @Override
     public ServerDetails retrieveServerDetails() {
         throwIfAccessDenied();
         return accountService.retrieveServerDetails();

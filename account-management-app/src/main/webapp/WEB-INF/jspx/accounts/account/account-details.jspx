@@ -49,18 +49,9 @@
               <table width="100%">
                 <tr>
                   <td><strong class="accountlabel">Account Identification</strong></td>
-
                   <c:if test="${userRole == 'ROLE_OWNER' || userRole == 'ROLE_ROOT'}">
                   <td align="right">
-                        <form action="${pageContext.request.contextPath}/accounts/byid/${accountInfo.id}/cancel"
-                          method="post">
-                  <ul
-                   class="horizontal-list">
-                    <c:if test="${accountInfo.status != 'CANCELLED'}">
-                    <li>
-                        <button style="padding-bottom: 5px" type="submit" onclick="AskAndCancel(this); return false;">Cancel Account</button>
-                    </li>
-                    </c:if>
+                  <ul class="horizontal-list">
                     <li>
                       <a
                        id="account-edit-link"
@@ -73,7 +64,6 @@
                       Edit</a>
                     </li>
                   </ul>
-                  </form>
                   </td>
                   </c:if>
                 </tr>

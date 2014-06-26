@@ -3,12 +3,6 @@
  */
 package org.duracloud.account.app.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountType;
@@ -33,6 +27,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -362,30 +361,6 @@ public class AccountController extends AbstractAccountController {
     private ModelAndView createUserRedirectModelAndView(String username){
         RedirectView view = UserController.formatUserRedirect(username);
         return new ModelAndView(view);
-    }
-
-    @RequestMapping(value = { ACCOUNT_PATH + "/cancel" }, method = RequestMethod.POST)
-    public ModelAndView cancel(@PathVariable Long accountId,
-                         Model model)
-        throws AccountNotFoundException, DuracloudInstanceNotAvailableException {
-
-        //Verify there is not an instance running
-        Set<DuracloudInstanceService> instanceServices =
-            instanceManagerService.getInstanceServices(accountId);
-        if(instanceServices.size() > 0) {
-            throw new DuracloudInstanceNotAvailableException("An instance can not be running when trying to cancel an account.");
-        }
-
-        String username =
-            SecurityContextHolder.getContext().getAuthentication().getName();
-
-        //Cancel the account
-        AccountService accountService = accountManagerService.getAccount(accountId);
-        accountService.cancelAccount(username,
-                                     notificationMgr.getEmailer(),
-                                     notificationMgr.getConfig().getAdminAddress());
-
-        return createUserRedirectModelAndView(username);
     }
 
     public AuthenticationManager getAuthenticationManager() {

@@ -402,7 +402,6 @@ public class UserController extends AbstractController {
         List<DuracloudAccount> activeAccounts = new ArrayList<>();
         List<DuracloudAccount> inactiveAccounts = new ArrayList<>();
         List<DuracloudAccount> pendingAccounts = new ArrayList<>();
-        List<DuracloudAccount> cancelledAccounts = new ArrayList<>();
 
         Set<String> versions = this.instanceManagerService.getVersions();
         
@@ -419,18 +418,14 @@ public class UserController extends AbstractController {
                 inactiveAccounts.add(duracloudAccount);
             } else if (AccountInfo.AccountStatus.PENDING.equals(status)) {
                 pendingAccounts.add(duracloudAccount);
-            } else if (AccountInfo.AccountStatus.CANCELLED.equals(status)) {
-                cancelledAccounts.add(duracloudAccount);
             }
         }
         Collections.sort(activeAccounts);
         Collections.sort(inactiveAccounts);
         Collections.sort(pendingAccounts);
-        Collections.sort(cancelledAccounts);
         mav.addObject("activeAccounts", activeAccounts);
         mav.addObject("inactiveAccounts", inactiveAccounts);
         mav.addObject("pendingAccounts", pendingAccounts);
-        mav.addObject("cancelledAccounts", cancelledAccounts);
         String latestVersion = instanceManagerService.getLatestVersion();
         mav.addObject("latestVersion", latestVersion);
 

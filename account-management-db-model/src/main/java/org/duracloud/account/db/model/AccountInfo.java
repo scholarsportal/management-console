@@ -22,7 +22,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class AccountInfo extends BaseEntity implements Comparable<AccountInfo> {
     public enum AccountStatus {
-        PENDING, ACTIVE, INACTIVE, CANCELLED;
+        PENDING, ACTIVE, INACTIVE;
     }
 
     /*

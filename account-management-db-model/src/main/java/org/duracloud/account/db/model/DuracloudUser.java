@@ -183,6 +183,9 @@ public class DuracloudUser extends BaseEntity implements UserDetails {
     }
 
     public Role getRoleByAcct(Long accountId) {
+        if(isRoot()){
+            return Role.ROLE_ROOT;
+        }
         Set<Role> roles = getRolesByAcct(accountId);
         return Role.highestRole(roles);
     }
