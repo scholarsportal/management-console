@@ -83,11 +83,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         // Remove all user rights
         List<AccountRights> accountRights =
             getRightsRepo().findByUserId(userId);
-        getRightsRepo().deleteInBatch(accountRights);
-        for(AccountRights accountRight : accountRights) {
-            log.debug("Propagating rights revocation for user {} " +
-                      "to account {}", userId, accountRight.getAccount().getId());
-            propagator.propagateRevocation(accountRight.getAccount().getId(), userId);
+        for(AccountRights right : accountRights){
+            this.userService.revokeUserRights(right.getAccount().getId(), userId);
         }
 
         // Remove user from all groups
