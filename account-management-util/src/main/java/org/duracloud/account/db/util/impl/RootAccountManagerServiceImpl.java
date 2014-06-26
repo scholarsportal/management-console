@@ -3,9 +3,32 @@
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.NotImplementedException;
-import org.duracloud.account.db.model.*;
-import org.duracloud.account.db.repo.*;
+import org.duracloud.account.db.model.AccountCluster;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.StorageProviderAccount;
+import org.duracloud.account.db.repo.DuracloudAccountClusterRepo;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudGroupRepo;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudRightsRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
+import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
+import org.duracloud.account.db.repo.DuracloudUserRepo;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudUserService;
@@ -18,11 +41,8 @@ import org.duracloud.account.db.util.notification.Notifier;
 import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author Andrew Woods
@@ -240,8 +260,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<AccountInfo> listAllAccounts(String filter) {
-		List<AccountInfo> accounts = getAccountRepo().findAll();
-		Set<AccountInfo> accountInfos = new HashSet<AccountInfo>();
+		List<AccountInfo> accounts = getAccountRepo().findAll(new Sort("acctName"));
+		Set<AccountInfo> accountInfos = new LinkedHashSet<AccountInfo>();
 		for(AccountInfo acct : accounts){
             if(filter == null || acct.getOrgName().startsWith(filter)){
                 accountInfos.add(acct);
@@ -252,8 +272,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<DuracloudUser> listAllUsers(String filter) {
-		List<DuracloudUser> usersList = getUserRepo().findAll();
-		Set<DuracloudUser> users = new HashSet<DuracloudUser>();
+		List<DuracloudUser> usersList = getUserRepo().findAll(new Sort("username"));
+		Set<DuracloudUser> users = new LinkedHashSet<DuracloudUser>();
         for(DuracloudUser user: usersList){
             if(filter == null || (user.getUsername().startsWith(filter)
                     || user.getFirstName().startsWith(filter)
@@ -268,8 +288,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
 	@Override
 	public Set<ServerImage> listAllServerImages(String filter) {
-		List<ServerImage> imageList = getServerImageRepo().findAll();
-		Set<ServerImage> images = new HashSet<ServerImage>();
+		List<ServerImage> imageList = getServerImageRepo().findAll(new Sort(Direction.DESC, "version"));
+		Set<ServerImage> images = new LinkedHashSet<ServerImage>();
         for(ServerImage image : imageList){
             if(filter == null ||
                     (image.getProviderImageId().startsWith(filter))){
