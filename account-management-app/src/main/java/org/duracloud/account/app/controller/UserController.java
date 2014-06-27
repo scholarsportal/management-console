@@ -24,6 +24,7 @@ import org.duracloud.account.util.UserFeedbackUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -453,9 +454,15 @@ public class UserController extends AbstractController {
      * @param mav
      */
     private void prepareModel(String username, ModelAndView mav)
-        throws DBNotFoundException, DuracloudInstanceNotAvailableException {
-        DuracloudUser user = this.userService.loadDuracloudUserByUsernameInternal(username);
-        prepareModel(user, mav);
+        throws DuracloudInstanceNotAvailableException {
+        
+        DuracloudUser user;
+        try {
+            user = this.userService.loadDuracloudUserByUsernameInternal(username);
+            prepareModel(user, mav);
+        } catch (DBNotFoundException e) {
+            throw new AccessDeniedException("Access is denied", e);
+        }
     }
 
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
