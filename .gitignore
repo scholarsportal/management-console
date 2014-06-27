@@ -7,3 +7,5 @@
 *.ipr
 *.iws
 */target
+*.externalToolBuilders
+*_IS_UNDEFINED*
