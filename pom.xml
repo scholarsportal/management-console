@@ -161,7 +161,7 @@
   </profiles>
 
   <properties>
-    <duracloud.artifact.version>3.2.0-SNAPSHOT</duracloud.artifact.version>
+    <duracloud.artifact.version>3.1.1</duracloud.artifact.version>
     <org.springframework.version>4.0.5.RELEASE</org.springframework.version>
     <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
     <org.springframework.webflow.version>2.3.3.RELEASE</org.springframework.webflow.version>
