@@ -286,7 +286,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 accountId, instance.getHostName());
 
         // validate args
-        if (null == users || users.size() == 0) {
+        if (null == users) {
             String msg = "arg users is null for instance in acct: " + accountId;
             log.warn(msg);
             throw new DuracloudInstanceUpdateException(msg);

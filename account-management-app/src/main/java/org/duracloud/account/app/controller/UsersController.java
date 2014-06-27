@@ -45,32 +45,13 @@ public class UsersController extends AbstractRootController{
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
                 for(AccountRights account : user.getAccountRights()) {
-                    try {
-
-                    // User account relationship able to be deleted?
-                    boolean deletable = true;
 
                     AccountInfo accountInfo = account.getAccount();
-                    AccountService accountService = getAccountManagerService().getAccount(account.getAccount().getId());
-
-                    if(user.isOwnerForAcct(account.getAccount().getId())) {
-                        if(!accountHasMoreThanOneOwner(accountService.getUsers(),
-                                                       account.getAccount().getId())) {
-                            deletable = false;
-                            removable = false;
-                        }
-                    }
 
                     accounts.add(new Account(account.getAccount().getId(),
                                              accountInfo.getAcctName(),
                                              accountInfo.getSubdomain(),
-                                             user.getRoleByAcct(account.getAccount().getId()),
-                                             deletable));
-                    
-                    } catch (AccountNotFoundException e) {
-                        log.error(e.getMessage(), e);
-                    }
-
+                                             user.getRoleByAcct(account.getAccount().getId())));
                 }
             }
 
@@ -79,7 +60,6 @@ public class UsersController extends AbstractRootController{
                            user.getFirstName(),
                            user.getLastName(),
                            user.getEmail(),
-                           removable,
                            accounts,
                            user.isRoot()));
         }
@@ -170,14 +150,13 @@ public class UsersController extends AbstractRootController{
     public class User implements Comparable<User> {
         public User(
             Long id, String username, String firstName, String lastName,
-            String email, boolean deletable, Set<Account> accounts, boolean root) {
+            String email, Set<Account> accounts, boolean root) {
             super();
             this.id = id;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
-            this.deletable = deletable;
             this.accounts = accounts;
             this.root = root;
         }
@@ -187,7 +166,6 @@ public class UsersController extends AbstractRootController{
         private String firstName;
         private String lastName;
         private String email;
-        private boolean deletable;
         private Set<Account> accounts;
         private boolean root = false;
 
@@ -215,10 +193,6 @@ public class UsersController extends AbstractRootController{
             return email;
         }
 
-        public boolean isDeletable() {
-            return this.deletable;
-        }
-
         public Set<Account> getAccounts() {
             return accounts;
         }
@@ -231,20 +205,18 @@ public class UsersController extends AbstractRootController{
 
     public class Account implements Comparable<Account> {
         public Account(
-            Long id, String accountName, String subdomain, Role role, boolean deletable) {
+            Long id, String accountName, String subdomain, Role role) {
             super();
             this.id = id;
             this.accountName = accountName;
             this.subdomain = subdomain;
             this.role = role;
-            this.deletable = deletable;
         }
 
         private Long id;
         private String accountName;
         private String subdomain;
         private Role role;
-        private boolean deletable;
 
         public Long getId() {
             return id;
@@ -260,10 +232,6 @@ public class UsersController extends AbstractRootController{
 
         public Role getRole() {
             return role;
-        }
-
-        public boolean isDeletable() {
-            return this.deletable;
         }
 
         @Override

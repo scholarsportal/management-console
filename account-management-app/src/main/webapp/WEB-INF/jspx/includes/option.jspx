@@ -1,0 +1,22 @@
+<jsp:root
+ version="2.0"
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:jsp="http://java.sun.com/JSP/Page"
+ xmlns:tiles="http://tiles.apache.org/tags-tiles"
+ xmlns:form="http://www.springframework.org/tags/form"
+ xmlns:spring="http://www.springframework.org/tags"
+ xmlns:c="http://java.sun.com/jsp/jstl/core"
+ xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+ >
+  <jsp:directive.page contentType="text/html;charset=UTF-8" />
+   <c:choose>
+   <c:when test="${param.selected}">
+      <option value="${param.value}" selected="selected">${param.label}</option>
+   </c:when>  
+   <c:otherwise>
+      <option value="${param.value}">${param.label}</option>
+   </c:otherwise> 
+   </c:choose>   
+  
+</jsp:root>
+

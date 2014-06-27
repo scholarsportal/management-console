@@ -102,8 +102,6 @@
                     <td>
                       <ul
                        class="horizontal-list"><!--  -->
-                        <c:if
-                         test="${u.deletable}">
                           <li>
                                 <form
                                  action="${currentUri}/byid/${u.id}/delete"
@@ -116,7 +114,6 @@
                                   <spring:message code="delete"/></button>
                                 </form>
                           </li>
-                        </c:if>
                       </ul>
                     </td>
 
@@ -142,7 +139,6 @@
                   </td>
                   <td>${a.role.displayName}</td>
                     <td> <!--  -->
-                        <c:if test="${a.deletable}">
                           <div style="min-width:250px">
                           <ul class="horizontal-list">
                             <li>
@@ -211,7 +207,6 @@
                           </li>
                         </ul>
                         </div>
-                      </c:if>
                     </td>
                   </tr>
                 </c:forEach>

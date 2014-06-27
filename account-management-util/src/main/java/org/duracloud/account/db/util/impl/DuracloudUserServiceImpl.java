@@ -172,49 +172,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
         boolean updatedNeeded = !newRoles.equals(oldRoles);
         if (updatedNeeded) {
-            if(oldRoles != null &&
-               oldRoles.contains(Role.ROLE_OWNER) &&
-               !newRoles.contains(Role.ROLE_OWNER)) {
-
-                verifyAccountOwnerExists(acctId, userId, rightsRepo);
-            }
-            
             saveRights(acctId, userId, newRoles, rights);
         }
         return updatedNeeded;
-    }
-
-    private void verifyAccountOwnerExists(Long acctId,
-                                          Long userId,
-                                          DuracloudRightsRepo rightsRepo) {
-        List<AccountRights > acctRightsList =
-            rightsRepo.findByAccountId(acctId);
-
-        // Determine the list of root users
-        Set<Long> roots = new HashSet<Long>();
-        for(AccountRights acctRights : acctRightsList) {
-            DuracloudUser user = acctRights.getUser();
-            if(user.isRoot()) {
-                roots.add(user.getId());
-            }
-        }
-
-        // Determine the list of owners who are not root users
-        Set<Long> owners = new HashSet<Long>();
-        for(AccountRights acctRights : acctRightsList) {
-            if(acctRights.getRoles().contains(Role.ROLE_OWNER) &&
-               !roots.contains(acctRights.getUser().getId())) {
-                owners.add(acctRights.getUser().getId());
-            }
-        }
-
-        // Ensure at least one non-root owner is maintained on the account
-        if(owners.size() == 1 && owners.contains(userId)) {
-            String err = "Cannot remove owner rights from user with ID " +
-                userId + " from account with ID " + acctId +
-                ". This account must maintain at least one owner.";
-            throw new AccountRequiresOwnerException(err);
-        }
     }
 
     private String asString(Set<Role> roles) {
@@ -260,7 +220,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private void doRevokeUserRights(Long acctId, Long userId) {
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
-        verifyAccountOwnerExists(acctId, userId, rightsRepo);
         AccountRights rights =
             rightsRepo.findByAccountIdAndUserId(acctId, userId);
         if(rights != null) {

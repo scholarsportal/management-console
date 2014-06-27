@@ -304,14 +304,14 @@ public class AccountUsersController extends AbstractAccountController {
         Set<DuracloudUser> users = accountService.getUsers();
         Set<UserInvitation> pendingUserInvitations =
             accountService.getPendingInvitations();
-
+        DuracloudUser caller = getUser();
         DuracloudAccount duracloudAccount = new DuracloudAccount();
         duracloudAccount.setAccountInfo(accountInfo);
-        duracloudAccount.setUserRole(getUser().getRoleByAcct(accountInfo.getId()));
+        duracloudAccount.setUserRole(caller.getRoleByAcct(accountInfo.getId()));
         model.addAttribute("account", duracloudAccount);
 
         List<AccountUser> accountUsers =
-            buildUserList(accountInfo.getId(), users);
+            buildUserList(accountInfo.getId(), users,caller);
         Collections.sort(accountUsers);
         addInvitationsToModel(pendingUserInvitations, accountService, model);
         model.addAttribute(USERS_KEY, accountUsers);
@@ -339,10 +339,8 @@ public class AccountUsersController extends AbstractAccountController {
      * @return
      */
     private List<AccountUser> buildUserList(
-        Long accountId, Set<DuracloudUser> users) {
+        Long accountId, Set<DuracloudUser> users, DuracloudUser caller) {
         List<AccountUser> list = new LinkedList<AccountUser>();
-        boolean hasMoreThanOneOwner =
-            accountHasMoreThanOneOwner(users, accountId);
         for (DuracloudUser u : users) {
             Role role = u.getRoleByAcct(accountId);
             AccountUser au =
@@ -353,8 +351,12 @@ public class AccountUsersController extends AbstractAccountController {
                     u.getEmail(),
                     InvitationStatus.ACTIVE,
                     role,
-                    (!u.isOwnerForAcct(accountId) ||
-                         (u.isOwnerForAcct(accountId) && hasMoreThanOneOwner)));
+                    caller.isRoot() 
+                        || caller.isOwnerForAcct(accountId) 
+                        || (caller.isAdminForAcct(accountId) 
+                                && (role.equals(Role.ROLE_USER) 
+                                        || role.equals(Role.ROLE_ADMIN)))
+                );
             list.add(au);
         }
 
@@ -371,7 +373,7 @@ public class AccountUsersController extends AbstractAccountController {
     public class AccountUser implements Comparable<AccountUser> {
         public AccountUser(
             Long id, String username, String firstName, String lastName,
-            String email, InvitationStatus status, Role role, boolean deletable) {
+            String email, InvitationStatus status, Role role, boolean editable) {
             super();
             this.id = id;
             this.username = username;
@@ -380,7 +382,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.email = email;
             this.status = status;
             this.role = role;
-            this.deletable = deletable;
+            this.editable = editable;
         }
 
         private Long id;
@@ -390,7 +392,7 @@ public class AccountUsersController extends AbstractAccountController {
         private String email;
         private InvitationStatus status;
         private Role role;
-        private boolean deletable;
+        private boolean editable;
 
         public Long getId() {
             return id;
@@ -420,8 +422,8 @@ public class AccountUsersController extends AbstractAccountController {
             return role;
         }
 
-        public boolean isDeletable() {
-            return this.deletable;
+        public boolean isEditable() {
+            return this.editable;
         }
 
         @Override

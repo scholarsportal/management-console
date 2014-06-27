@@ -68,9 +68,8 @@
                     <td align="left">${u.email}</td>
 
                     <td align="left">${u.role.displayName}</td>
-                      
                      <c:choose>
-                          <c:when test="${u.deletable}">
+                     <c:when test="${u.editable}">
                         <form:form
                          id="account-users-edit-form"
                          method="post"
@@ -83,34 +82,32 @@
                              value="accountUsersEditForm" />
                           </jsp:include>
                               <td align="left">
-                                <form:select
+                                <select
                                  id="role"
                                  cssErrorClass="error"
-                                 path="role">
-                                <form:option value="${u.role}" label="${u.role.displayName}"/>
-                                <c:if test="${u.role == ownerRole}">
-                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
-                                        <form:option value="${adminRole}" label="${adminRole.displayName}"/>
-                                        <form:option value="${userRole}" label="${userRole.displayName}"/>
+                                 name="role" >
+                                    <jsp:include 
+                                      page="/WEB-INF/jspx/includes/option.jspx">
+                                        <jsp:param name="value" value="${userRole}"/>
+                                        <jsp:param name="label" value="${userRole.displayName}"/>
+                                        <jsp:param name="selected" value="${u.role == userRole}"/>
+                                    </jsp:include>
+                                    <jsp:include
+                                      page="/WEB-INF/jspx/includes/option.jspx">
+                                        <jsp:param name="value" value="${adminRole}"/>
+                                        <jsp:param name="label" value="${adminRole.displayName}"/>
+                                        <jsp:param name="selected" value="${u.role == adminRole}"/>
+                                    </jsp:include>
+                                    <c:if test="${account.userRole == 'ROLE_OWNER' || account.userRole == 'ROLE_ROOT' }">
+                                    <jsp:include
+                                      page="/WEB-INF/jspx/includes/option.jspx">
+                                        <jsp:param name="value" value="${ownerRole}"/>
+                                        <jsp:param name="label" value="${ownerRole.displayName}"/>
+                                        <jsp:param name="selected" value="${u.role == ownerRole}"/>
+                                    </jsp:include>
                                     </c:if>
-                                </c:if>
-                                <c:if test="${u.role == adminRole}">
-                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
-                                        <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
-                                    </c:if>
-                                    <c:if test="${account.userRole != 'ROLE_USER'}">
-                                        <form:option value="${userRole}" label="${userRole.displayName}"/>
-                                    </c:if>
-                                </c:if>
-                                <c:if test="${u.role == userRole}">
-                                    <c:if test="${(account.userRole == 'ROLE_OWNER') || (account.userRole == 'ROLE_ROOT')}">
-                                        <form:option value="${ownerRole}" label="${ownerRole.displayName}"/>
-                                    </c:if>
-                                    <c:if test="${account.userRole != 'ROLE_USER'}">
-                                        <form:option value="${adminRole}" label="${adminRole.displayName}"/>
-                                    </c:if>
-                                </c:if>
-                              </form:select>
+                                 </select>
+                                 
                           <button style="margin-left:8px !important"
                            type="submit">
 
@@ -121,14 +118,16 @@
 
                     </c:when>
                     <c:otherwise>
-                      <td align="left"></td>
+                      <td align="left">
+                         ${u.role}
+                      </td>
                     </c:otherwise>
                     </c:choose>
                     <td align="left">
                       <ul
                        class="horizontal-list">
                         <c:if
-                         test="${u.deletable}">
+                         test="${u.editable}">
                           <li>
                               <script type="text/javascript" language="JavaScript">
                                 function AskAndSubmit(t)

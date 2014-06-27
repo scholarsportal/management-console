@@ -74,6 +74,7 @@
                             
                         </td>
                         <td align="right" valign="middle"><span class="instructions" style="margin-left:">Status: ${a.accountInfo.status} </span></td>
+                        
                         <c:if test="${a.userRole != 'ROLE_USER'}">
 
 
