@@ -58,41 +58,13 @@ public class DbUtil {
         System.out.println("Running DB Util with command " + command.name()
                 + "\n\t using work directory: " + workDir.getAbsolutePath());
 
-        if (COMMAND.GET.equals(command)) {
-            doGet();
-        } else if (COMMAND.PUT.equals(command)) {
+        if (COMMAND.PUT.equals(command)) {
             doPut();
-        } else if (COMMAND.CLEAR.equals(command)) {
-            doGet();
-            doClear();
+        } else {
+            throw new UnsupportedOperationException("The " + command + " command is no longer supported.");
         }
     }
 
-    private void doGet() {
-        for (JpaRepository repo : repoMgr.getAllRepos()) {
-            writeRepo(repo);
-        }
-    }
-
-    private void writeRepo(JpaRepository repo) {
-        List<BaseEntity> items = repo.findAll();
-        if (items.size() > 0) {
-            String serialized = serialize(items);
-            String name = items.get(0).getClass().getSimpleName() + ".xml";
-            writeToFile(serialized, name);
-        }
-    }
-
-    private void writeToFile(String serialized, String fileName) {
-        File outFile = new File(workDir, fileName);
-        try {
-            FileUtils.writeStringToFile(outFile, serialized, "UTF-8");
-        } catch (IOException e) {
-            throw new RuntimeException("Could not write to file "
-                    + outFile.getAbsolutePath() + " due to error "
-                    + e.getMessage());
-        }
-    }
 
     private void doPut() {
         // Defines the order to import the different entity types. This is
@@ -240,18 +212,6 @@ public class DbUtil {
                     + item.getClass().getName());
         }
         return repo;
-    }
-
-    private void doClear() {
-        for (JpaRepository repo : repoMgr.getAllRepos()) {
-            System.out.println("Removing all items from repo "
-                    + repo.getClass().getSimpleName());
-            repo.deleteAllInBatch();
-        }
-    }
-
-    private String serialize(Object obj) {
-        return getXStream().toXML(obj);
     }
 
     private Object deserialize(String xml) {

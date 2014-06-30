@@ -65,15 +65,13 @@ public class DbUtilDriver {
 
         DbUtil.COMMAND command = null;
         String commandArg = args[0];
-        if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.GET.name())) {
-            command = DbUtil.COMMAND.GET;
-        } else if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.PUT.name())) {
+        if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.PUT.name())) {
             command = DbUtil.COMMAND.PUT;
-        } else if(commandArg.equalsIgnoreCase(DbUtil.COMMAND.CLEAR.name())) {
-            command = DbUtil.COMMAND.CLEAR;
-        } else {
-            usage("The first argument must be either GET, PUT, or CLEAR. " +
-                  "You supplied: " + commandArg);
+        }else {
+            usage("The first argument must PUT. " +
+            		"The previously supported command GET and CLEAR " +
+            		"have been removed since the move to MC 2.0.0 "
+                    + "You supplied: " + commandArg);
             System.exit(1);
         }
 
@@ -100,21 +98,13 @@ public class DbUtilDriver {
         sb.append("\n\n");
         sb.append("Usage: ");
         sb.append("\n\t");
-        sb.append("DbUtilDriver [get/put/clear] [work-dir]");
+        sb.append("DbUtilDriver [get] [work-dir]");
         sb.append("\n\n\t\t");
         sb.append("GET - retrieves and stores all db data in work-dir");
-        sb.append("\n\n\t\t");
-        sb.append("PUT - updates db based on files in work-dir");
-        sb.append("\n\n\t\t");
-        sb.append("CLEAR - performs a GET, then removes all data from db");        
         sb.append("\n\n\t");
-        sb.append("where [get/put/clear] is one of get, put, or clear commands");
-        sb.append("\n\n\t");
-        sb.append("where [work-dir] is a directory to which db data will be");
+        sb.append("where [work-dir] is a directory from which data will be");
         sb.append("\n\n\t\t");
-        sb.append("written, in the case of a get, or from which data will be");
-        sb.append("\n\n\t\t");
-        sb.append("read, in the case of a put or clear");
+        sb.append("read");
 
         System.out.println(sb.toString());
     }    

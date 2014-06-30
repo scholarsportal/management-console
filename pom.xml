@@ -46,7 +46,6 @@
   <modules>
     <module>account-management-security</module>
     <module>account-management-db-util</module>
-    <module>account-management-db-backup</module>
     <module>account-management-compute</module>
     <module>account-management-compute-amazon</module>
     <!--<module>account-management-monitor</module>-->
