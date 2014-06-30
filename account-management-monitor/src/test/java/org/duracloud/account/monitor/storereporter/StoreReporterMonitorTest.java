@@ -108,18 +108,26 @@ public class StoreReporterMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Long instanceId = 7L;
-        List<DuracloudInstance> instances = new ArrayList<>();
-        instances.add(createMockDuracloudInstance(instanceId));
         Credential credential = new Credential(ServerImage.DC_ROOT_USERNAME,
                                                ROOT_PASS);
 
+        List<DuracloudInstance> instances = new ArrayList<>();
+        EasyMock.expect(instanceRepo.findAll())
+        .andReturn(instances)
+        .times(1);
+        
+        long instanceId = 0;
         for (AccountInfo acct : accts) {
             Long id = acct.getId();
 
-            EasyMock.expect(instanceRepo.findAll())
-                    .andReturn(instances)
-                    .times(1);
+            instanceId++;
+            
+            DuracloudInstance instance = createMockDuracloudInstance(instanceId);
+            instances.add(instance);
+
+            acct.setInstance(instance);
+            instance.setAccount(acct);
+
 
             StoreReporterUtil util = createStoreReporterUtil(valid, id);
             EasyMock.expect(factory.getStoreReporterUtil(acct, credential))

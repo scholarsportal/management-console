@@ -102,17 +102,12 @@ public class InstanceMonitorTest {
 
             DuracloudInstance instance = new DuracloudInstance();
             instance.setId(id);
+            instance.setAccount(acct);
             instances.add(instance);
-
-            EasyMock.expect(instanceRepo.findByAccountId(id))
-                    .andReturn(instances);
-
-            EasyMock.expect(acctRepo.findOne(id)).andReturn(acct);
-
             InstanceUtil util = createInstanceUtil(valid, id);
             EasyMock.expect(factory.getInstanceUtil(acct)).andReturn(util);
         }
-        EasyMock.expect(acctRepo.findAll()).andReturn(accts);
+        EasyMock.expect(instanceRepo.findAll()).andReturn(instances);
     }
 
     private InstanceUtil createInstanceUtil(boolean valid, Long id) {
