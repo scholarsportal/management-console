@@ -4,11 +4,9 @@
 package org.duracloud.account.monitor.instance;
 
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
-import org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl;
-import org.duracloud.account.db.amazonsimple.DuracloudInstanceRepoImpl;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.instance.domain.InstanceReport;
 import org.duracloud.account.monitor.instance.util.InstanceUtilFactory;
@@ -36,12 +34,10 @@ public class InstanceMonitorDriver extends MonitorsDriver implements Runnable {
     public InstanceMonitorDriver(Properties props) {
         super(props);
 
-        AmazonSimpleDBClientMgr dbClientMgr = buildDBClientMgr(props);
+        DuracloudRepoMgr repoMgr = getRepoMgr();
 
-        DuracloudAccountRepo acctRepo =
-            new DuracloudAccountRepoImpl(dbClientMgr);
-        DuracloudInstanceRepo instanceRepo = new DuracloudInstanceRepoImpl(
-            dbClientMgr);
+        DuracloudAccountRepo acctRepo = repoMgr.getAccountRepo();
+        DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
 
         InstanceUtilFactory instanceUtilFactory = new InstanceUtilFactoryImpl();
 

@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.storereporter.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtilFactory;
 import org.duracloud.common.model.Credential;
@@ -46,15 +46,11 @@ public class StoreReporterUtilFactoryImplTest {
     }
 
     private AccountInfo createAccount(Long id) {
-        return new AccountInfo(id,
-                               "subdomain-" + id,
-                               "acctName-" + id,
-                               null,
-                               null,
-                               -1L,
-                               -1L,
-                               -1L,
-                               null,
-                               null);
+        AccountInfo account = new AccountInfo();
+        account.setId(id);
+        account.setSubdomain("subdomain-" + id);
+        account.setAcctName("acctName-" + id);
+        return account;
     }
+
 }

@@ -7,20 +7,17 @@
  */
 package org.duracloud.account.monitor.common;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
-import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.common.model.Credential;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Bill Branan
@@ -62,56 +59,19 @@ public abstract class BaseMonitor {
 
     protected ServerImage findServerImage(AccountInfo acct)
         throws DBNotFoundException {
-        Set<Long> instanceIds = instanceRepo.findByAccountId(acct.getId());
-        Long instanceId = instanceIds.iterator().next();
-        DuracloudInstance instance = instanceRepo.findById(instanceId);
-
-        return imageRepo.findById(instance.getImageId());
+        List<DuracloudInstance> instances =
+            instanceRepo.findByAccountId(acct.getId());
+        return instances.iterator().next().getImage();
     }
 
-    protected List<AccountInfo> getDuracloudAcctsHavingInstances() {
-        List<AccountInfo> acctsHavingInstances = new ArrayList<>();
-        List<AccountInfo> allAccts = getDuracloudAccts();
-
-        for (AccountInfo acct : allAccts) {
-            Set<Long> result = null;
-            try {
-                result = instanceRepo.findByAccountId(acct.getId());
-
-            } catch (DBNotFoundException e) {
-                StringBuilder sb = new StringBuilder("No instance found ");
-                sb.append("for account id ");
-                sb.append(acct.getId());
-                sb.append(" (");
-                sb.append(acct.getSubdomain());
-                sb.append(")");
-                log.info(sb.toString());
-            }
-
-            if (null != result && result.size() != 0) {
-                acctsHavingInstances.add(acct);
-            }
-        }
-        return acctsHavingInstances;
+    protected List<DuracloudInstance> getDuracloudInstances() {
+        return instanceRepo.findAll();
     }
 
-    protected List<AccountInfo> getDuracloudAccts() {
-        List<AccountInfo> acctInfos = new ArrayList<>();
-
-        Set<Long> ids = acctRepo.getIds();
-        for (Long id : ids) {
-            try {
-                acctInfos.add(acctRepo.findById(id));
-
-            } catch (DBNotFoundException e) {
-                StringBuilder error = new StringBuilder("Error getting ");
-                error.append("account with id ");
-                error.append(id);
-                log.error(error.toString());
-                throw new DuraCloudRuntimeException(error.toString(), e);
-            }
-        }
-        return acctInfos;
+    protected Credential getRootCredential(DuracloudInstance instance) {
+        String rootPassword = instance.getImage().getDcRootPassword();
+        return new Credential(ServerImage.DC_ROOT_USERNAME, rootPassword);
     }
+
 
 }

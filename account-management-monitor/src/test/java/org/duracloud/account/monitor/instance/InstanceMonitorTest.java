@@ -3,9 +3,10 @@
  */
 package org.duracloud.account.monitor.instance;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.monitor.instance.domain.InstanceInfo;
 import org.duracloud.account.monitor.instance.domain.InstanceReport;
 import org.duracloud.account.monitor.instance.util.InstanceUtil;
@@ -17,10 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -97,19 +96,23 @@ public class InstanceMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Set<Long> ids = new HashSet<Long>();
+        List<DuracloudInstance> instances = new ArrayList<>();
         for (AccountInfo acct : accts) {
             Long id = acct.getId();
-            ids.add(id);
 
-            EasyMock.expect(instanceRepo.findByAccountId(id)).andReturn(ids);
+            DuracloudInstance instance = new DuracloudInstance();
+            instance.setId(id);
+            instances.add(instance);
 
-            EasyMock.expect(acctRepo.findById(id)).andReturn(acct);
+            EasyMock.expect(instanceRepo.findByAccountId(id))
+                    .andReturn(instances);
+
+            EasyMock.expect(acctRepo.findOne(id)).andReturn(acct);
 
             InstanceUtil util = createInstanceUtil(valid, id);
             EasyMock.expect(factory.getInstanceUtil(acct)).andReturn(util);
         }
-        EasyMock.expect(acctRepo.getIds()).andReturn(ids);
+        EasyMock.expect(acctRepo.findAll()).andReturn(accts);
     }
 
     private InstanceUtil createInstanceUtil(boolean valid, Long id) {
@@ -140,16 +143,11 @@ public class InstanceMonitorTest {
     }
 
     private AccountInfo createAccount(Long id) {
-        return new AccountInfo(id,
-                               "subdomain-" + id,
-                               "acctName-" + id,
-                               null,
-                               null,
-                               -1L,
-                               -1L,
-                               -1L,
-                               null,
-                               null);
+        AccountInfo account = new AccountInfo();
+        account.setId(id);
+        account.setSubdomain("subdomain-" + id);
+        account.setAcctName("acctName-" + id);
+        return account;
     }
 
 }

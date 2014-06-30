@@ -3,10 +3,10 @@
  */
 package org.duracloud.account.monitor.duplication;
 
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.error.DBNotFoundException;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
+import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
 import org.duracloud.account.monitor.duplication.domain.DuplicationReport;

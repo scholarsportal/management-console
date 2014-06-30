@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.storereporter.domain;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class StoreReporterReportTest {
         String error = "error message-";
         int numErrors = 5;
         for (int i = 0; i < numErrors; ++i) {
-            AccountInfo acct = createAccountInfo(new Long(i));
+            AccountInfo acct = createAccount(new Long(i));
             report.addAcctError(acct, error + i);
 
             idSum += i;
@@ -71,7 +71,7 @@ public class StoreReporterReportTest {
     public void testAddAcctInfo() throws Exception {
         int numAccts = 8;
         for (int i = 0; i < numAccts; ++i) {
-            AccountInfo acct = createAccountInfo(new Long(i));
+            AccountInfo acct = createAccount(new Long(i));
             StoreReporterInfo instance = new StoreReporterInfo(subdomain(new Long(i)));
             report.addAcctInfo(acct, instance);
         }
@@ -100,19 +100,14 @@ public class StoreReporterReportTest {
         }
     }
 
-    private AccountInfo createAccountInfo(Long id) {
-        return new AccountInfo(id,
-                               subdomain(id),
-                               "acctName-" + id,
-                               null,
-                               null,
-                               -1L,
-                               -1L,
-                               -1L,
-                               null,
-                               null);
+    private AccountInfo createAccount(Long id) {
+        AccountInfo account = new AccountInfo();
+        account.setId(id);
+        account.setSubdomain(subdomain(id));
+        account.setAcctName("acctName-" + id);
+        return account;
     }
-
+    
     private String subdomain(Long id) {
         return "subdomain-" + id;
     }

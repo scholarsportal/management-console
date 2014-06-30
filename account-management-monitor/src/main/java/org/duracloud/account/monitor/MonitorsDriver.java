@@ -4,16 +4,17 @@
 package org.duracloud.account.monitor;
 
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
 import org.duracloud.account.db.backup.util.EmailUtil;
 import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
-import org.duracloud.account.monitor.hadoop.HadoopServiceMonitorDriver;
 import org.duracloud.account.monitor.instance.InstanceMonitorDriver;
 import org.duracloud.account.monitor.storereporter.StoreReporterMonitorDriver;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,13 +27,12 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.DUPLICATION;
-import static org.duracloud.account.monitor.MonitorsDriver.Monitor.HADOOP;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.INSTANCE;
 import static org.duracloud.account.monitor.MonitorsDriver.Monitor.STORE_REPORTER;
 
 /**
  * This class is the command-line driver for executing monitors for
- * hadoop jobs, instance health, storage reporting, and duplication checks that
+ * instance health, storage reporting, and duplication checks that
  * are run across DuraCloud accounts managed by the Management Console that is
  * defined by the configuration credentials.
  *
@@ -56,18 +56,16 @@ public class MonitorsDriver {
 
     private Properties props;
     private EmailUtil emailUtil;
+    private DuracloudRepoMgr repoMgr;
 
     /**
      * This enum defines the types of monitors available through this driver.
      */
     public enum Monitor {
-        HADOOP, INSTANCE, STORE_REPORTER, DUPLICATION;
+        INSTANCE, STORE_REPORTER, DUPLICATION;
 
         public Runnable getMonitorDriver(Properties props) {
-            if (this.equals(HADOOP)) {
-                return new HadoopServiceMonitorDriver(props);
-
-            } else if (this.equals(INSTANCE)) {
+            if (this.equals(INSTANCE)) {
                 return new InstanceMonitorDriver(props);
 
             } else if (this.equals(STORE_REPORTER)) {
@@ -89,6 +87,14 @@ public class MonitorsDriver {
     public MonitorsDriver(Properties props) {
         this.props = props;
         this.emailUtil = buildEmailUtil(props);
+
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("jpa-config.xml");
+        this.repoMgr = context.getBean("repoMgr", DuracloudRepoMgr.class);
+    }
+
+    public DuracloudRepoMgr getRepoMgr() {
+        return repoMgr;
     }
 
     /**
@@ -147,13 +153,6 @@ public class MonitorsDriver {
         return recipients;
     }
 
-    protected AmazonSimpleDBClientMgr buildDBClientMgr(Properties props) {
-        String awsUsername = getProperty(props, AWS_USERNAME);
-        String awsPassword = getProperty(props, AWS_PASSWORD);
-
-        return new AmazonSimpleDBClientMgr(awsUsername, awsPassword);
-    }
-
     protected String getProperty(Properties props, String key) {
         String property = props.getProperty(key);
         if (null == property) {
@@ -185,8 +184,6 @@ public class MonitorsDriver {
 
         } catch (Exception e) {
             StringBuilder msg = new StringBuilder("Target must be '");
-            msg.append(HADOOP);
-            msg.append("' | '");
             msg.append(INSTANCE);
             msg.append("' | '");
             msg.append(STORE_REPORTER);
@@ -234,8 +231,6 @@ public class MonitorsDriver {
         sb.append("<properties-file>");
         sb.append("\n\t");
         sb.append("Where '");
-        sb.append(HADOOP);
-        sb.append("', '");
         sb.append(INSTANCE);
         sb.append("', '");
         sb.append(STORE_REPORTER);

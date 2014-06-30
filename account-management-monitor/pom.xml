@@ -55,6 +55,12 @@
 
     <dependency>
       <groupId>org.duracloud</groupId>
+      <artifactId>account-management-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.duracloud</groupId>
       <artifactId>notification</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>

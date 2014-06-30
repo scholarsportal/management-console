@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.storereporter.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtilFactory;
 import org.duracloud.common.model.Credential;
