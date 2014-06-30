@@ -110,7 +110,7 @@ public class DuplicationMonitor extends BaseMonitor {
         throws DBNotFoundException {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, PORT, CONTEXT);
-        Credential credential = getRootCredential(getAccount(host));
+        Credential credential = getRootCredential(getAccount(host).getInstance());
         storeManager.login(credential);
         return storeManager;
     }

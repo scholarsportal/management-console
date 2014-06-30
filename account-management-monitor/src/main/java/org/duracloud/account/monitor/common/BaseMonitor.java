@@ -50,14 +50,7 @@ public abstract class BaseMonitor {
         return acctRepo.findBySubdomain(subdomain);
     }
 
-    protected Credential getRootCredential(AccountInfo acct)
-        throws DBNotFoundException {
-        ServerImage serverImage = findServerImage(acct);
-        String rootPassword = serverImage.getDcRootPassword();
-        return new Credential(ServerImage.DC_ROOT_USERNAME, rootPassword);
-    }
-
-    protected ServerImage findServerImage(AccountInfo acct)
+     protected ServerImage findServerImage(AccountInfo acct)
         throws DBNotFoundException {
         List<DuracloudInstance> instances =
             instanceRepo.findByAccountId(acct.getId());
