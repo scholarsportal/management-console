@@ -4,9 +4,9 @@
 package org.duracloud.account.monitor;
 
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.backup.util.EmailUtil;
-import org.duracloud.account.db.backup.util.impl.EmailUtilImpl;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.email.EmailUtil;
+import org.duracloud.account.email.EmailUtilImpl;
 import org.duracloud.account.monitor.duplication.DuplicationMonitorDriver;
 import org.duracloud.account.monitor.instance.InstanceMonitorDriver;
 import org.duracloud.account.monitor.storereporter.StoreReporterMonitorDriver;
