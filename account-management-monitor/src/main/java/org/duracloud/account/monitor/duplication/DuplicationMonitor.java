@@ -3,6 +3,15 @@
  */
 package org.duracloud.account.monitor.duplication;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.db.repo.DuracloudServerImageRepo;
@@ -17,12 +26,6 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.error.ContentStoreException;
 import org.duracloud.storage.util.StorageProviderUtil;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class manages the actual monitoring of content duplication across
@@ -110,7 +113,15 @@ public class DuplicationMonitor extends BaseMonitor {
         throws DBNotFoundException {
         ContentStoreManager storeManager =
             new ContentStoreManagerImpl(host, PORT, CONTEXT);
-        Credential credential = getRootCredential(getAccount(host).getInstance());
+        AccountInfo account = getAccount(host);
+        DuracloudInstance instance = account.getInstance();
+        if(instance == null){
+            throw new DBNotFoundException(
+                    MessageFormat
+                            .format("There is no instance associated with account host ({0}): account id = {1}",
+                                    host, account.getId()));
+        }
+        Credential credential = getRootCredential(instance);
         storeManager.login(credential);
         return storeManager;
     }
