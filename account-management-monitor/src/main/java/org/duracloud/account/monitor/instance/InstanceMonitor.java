@@ -3,9 +3,10 @@
  */
 package org.duracloud.account.monitor.instance;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.instance.domain.InstanceReport;
 import org.duracloud.account.monitor.instance.util.InstanceUtil;
@@ -43,15 +44,17 @@ public class InstanceMonitor extends BaseMonitor {
         log.info("starting monitor");
         InstanceReport report = new InstanceReport();
 
-        List<AccountInfo> accts = getDuracloudAcctsHavingInstances();
-        for (AccountInfo acct : accts) {
-            doMonitorInstances(report, acct);
+        List<DuracloudInstance> instances = getDuracloudInstances();
+        for (DuracloudInstance instance : instances) {
+            doMonitorInstances(report, instance);
         }
 
         return report;
     }
 
-    private void doMonitorInstances(InstanceReport report, AccountInfo acct) {
+    private void doMonitorInstances(InstanceReport report,
+                                    DuracloudInstance instance) {
+        AccountInfo acct = instance.getAccount();
         log.info("monitoring instance: {} ({})",
                  acct.getAcctName(),
                  acct.getSubdomain());

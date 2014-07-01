@@ -3,10 +3,11 @@
  */
 package org.duracloud.account.monitor.storereporter;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
 import org.duracloud.account.monitor.common.BaseMonitor;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterReport;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
@@ -46,21 +47,22 @@ public class StoreReporterMonitor extends BaseMonitor {
         log.info("starting store-reporter monitor");
         StoreReporterReport report = new StoreReporterReport();
 
-        List<AccountInfo> accts = getDuracloudAcctsHavingInstances();
-        for (AccountInfo acct : accts) {
-            doMonitorStoreReporters(report, acct);
+        List<DuracloudInstance> instances = getDuracloudInstances();
+        for (DuracloudInstance instance : instances) {
+            doMonitorStoreReporters(report, instance);
         }
 
         return report;
     }
 
     private void doMonitorStoreReporters(StoreReporterReport report,
-                                         AccountInfo acct) {
+                                         DuracloudInstance instance) {
+        AccountInfo acct = instance.getAccount();
         log.info("monitoring store-reporter: {} ({})",
                  acct.getAcctName(),
                  acct.getSubdomain());
         try {
-            Credential credential = getRootCredential(acct);
+            Credential credential = getRootCredential(instance);
             StoreReporterUtil reporterUtil =
                 reporterUtilFactory.getStoreReporterUtil(acct, credential);
             report.addAcctInfo(acct, reporterUtil.pingStorageReporter());

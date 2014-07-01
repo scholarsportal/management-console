@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.instance.util;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 
 /**
  * This interface defines the contract of a factory that creates instances of

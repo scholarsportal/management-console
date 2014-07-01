@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.storereporter.domain;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

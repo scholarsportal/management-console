@@ -7,9 +7,9 @@
  */
 package org.duracloud.account.monitor.duplication;
 
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
 import org.duracloud.account.monitor.duplication.domain.DuplicationInfo;
 import org.duracloud.client.ContentStore;
 import org.duracloud.client.ContentStoreImpl;
@@ -140,10 +140,35 @@ public class DuplicationMonitorTest {
 
         replayMocks();
 
-        dupMonitor.countSpaces(host, dupInfo, store, spaces);
+        dupMonitor.countSpaces(host, dupInfo, store, spaces, true);
         Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
         assertEquals(new Long(1), spaceCounts.get(space1));
         assertEquals(new Long(2), spaceCounts.get(space2));
+    }
+
+    @Test
+    public void testCountSpacesInStores() throws Exception {
+        String host = "host";
+        String storeId = "store-id";
+        String storeType = "store-type";
+        String space1 = "space-1";
+        String space1store = space1 + ":" + storeId;
+        String space2store = "space-2:" + storeId + "-alt";
+        DuplicationInfo dupInfo = new DuplicationInfo(host);
+        List<String> spaces = Arrays.asList(space1store, space2store);
+
+        EasyMock.expect(store.getStorageProviderType())
+                .andReturn(storeType);
+        EasyMock.expect(store.getStoreId())
+                .andReturn(storeId);
+        EasyMock.expect(store.getSpaceContents(space1))
+                .andReturn(Arrays.asList("1").iterator());
+
+        replayMocks();
+
+        dupMonitor.countSpaces(host, dupInfo, store, spaces, false);
+        Map<String, Long> spaceCounts = dupInfo.getSpaceCounts(storeId);
+        assertEquals(new Long(1), spaceCounts.get(space1));
     }
 
     @Test

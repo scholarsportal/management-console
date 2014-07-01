@@ -3,12 +3,12 @@
  */
 package org.duracloud.account.monitor.storereporter;
 
-import org.duracloud.account.common.domain.AccountInfo;
-import org.duracloud.account.common.domain.DuracloudInstance;
-import org.duracloud.account.common.domain.ServerImage;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterInfo;
 import org.duracloud.account.monitor.storereporter.domain.StoreReporterReport;
 import org.duracloud.account.monitor.storereporter.util.StoreReporterUtil;
@@ -21,10 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andrew Woods
@@ -110,63 +108,62 @@ public class StoreReporterMonitorTest {
     }
 
     private void createMockExpectations(boolean valid) throws Exception {
-        Set<Long> ids = new HashSet<Long>();
-        Set<Long> instanceIds = new HashSet<Long>();
-        Long instanceId = 7L;
-        instanceIds.add(instanceId);
         Credential credential = new Credential(ServerImage.DC_ROOT_USERNAME,
                                                ROOT_PASS);
 
+        List<DuracloudInstance> instances = new ArrayList<>();
+        EasyMock.expect(instanceRepo.findAll())
+        .andReturn(instances)
+        .times(1);
+        
+        long instanceId = 0;
         for (AccountInfo acct : accts) {
             Long id = acct.getId();
-            ids.add(id);
 
-            EasyMock.expect(instanceRepo.findByAccountId(id))
-                    .andReturn(new HashSet<Long>(instanceIds))
-                    .times(2);
+            instanceId++;
+            
+            DuracloudInstance instance = createMockDuracloudInstance(instanceId);
+            instances.add(instance);
 
-            DuracloudInstance instance = createMockDuracloudInstance(id);
-            EasyMock.expect(instanceRepo.findById(instanceId)).andReturn(
-                instance);
+            acct.setInstance(instance);
+            instance.setAccount(acct);
 
-            ServerImage image = createMockServerImage();
-            EasyMock.expect(imageRepo.findById(IMAGE_ID)).andReturn(image);
-
-            EasyMock.expect(acctRepo.findById(id)).andReturn(acct);
 
             StoreReporterUtil util = createStoreReporterUtil(valid, id);
             EasyMock.expect(factory.getStoreReporterUtil(acct, credential))
                     .andReturn(util);
         }
-        EasyMock.expect(acctRepo.getIds()).andReturn(ids);
     }
 
     private DuracloudInstance createMockDuracloudInstance(Long id) {
-        Long accountId = 9L;
         String hostName = "hostname";
         String providerInstanceId = "8";
         boolean initialized = true;
-        return new DuracloudInstance(id,
-                                     IMAGE_ID,
-                                     accountId,
-                                     hostName,
-                                     providerInstanceId,
-                                     initialized);
+
+        DuracloudInstance instance = new DuracloudInstance();
+        instance.setId(id);
+        instance.setHostName(hostName);
+        instance.setProviderInstanceId(providerInstanceId);
+        instance.setInitialized(initialized);
+        instance.setImage(createMockServerImage());
+
+        return instance;
     }
 
     private ServerImage createMockServerImage() {
-        Long providerAccountId = 789L;
         String providerImageId = "providerImageId";
         String version = "version";
         String description = "description";
         boolean latest = true;
-        return new ServerImage(IMAGE_ID,
-                               providerAccountId,
-                               providerImageId,
-                               version,
-                               description,
-                               ROOT_PASS,
-                               latest);
+
+        ServerImage serverImage = new ServerImage();
+        serverImage.setId(IMAGE_ID);
+        serverImage.setProviderImageId(providerImageId);
+        serverImage.setProviderImageId(version);
+        serverImage.setDescription(description);
+        serverImage.setDcRootPassword(ROOT_PASS);
+        serverImage.setLatest(latest);
+        return serverImage;
     }
 
     private StoreReporterUtil createStoreReporterUtil(boolean valid, Long id) {
@@ -197,16 +194,11 @@ public class StoreReporterMonitorTest {
     }
 
     private AccountInfo createAccount(Long id) {
-        return new AccountInfo(id,
-                               "subdomain-" + id,
-                               "acctName-" + id,
-                               null,
-                               null,
-                               -1L,
-                               -1L,
-                               -1L,
-                               null,
-                               null);
+        AccountInfo account = new AccountInfo();
+        account.setId(id);
+        account.setSubdomain("subdomain-" + id);
+        account.setAcctName("acctName-" + id);
+        return account;
     }
 
 }

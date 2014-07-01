@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.instance.domain;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,16 +101,11 @@ public class InstanceReportTest {
     }
 
     private AccountInfo createAccountInfo(Long id) {
-        return new AccountInfo(id,
-                               subdomain(id),
-                               "acctName-" + id,
-                               null,
-                               null,
-                               -1L,
-                               -1L,
-                               -1L,
-                               null,
-                               null);
+        AccountInfo account = new AccountInfo();
+        account.setId(id);
+        account.setSubdomain(subdomain(id));
+        account.setAcctName("acctName-" + id);
+        return account;
     }
 
     private String subdomain(Long id) {

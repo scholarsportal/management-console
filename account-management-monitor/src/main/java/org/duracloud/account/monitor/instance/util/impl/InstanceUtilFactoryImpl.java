@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.monitor.instance.util.impl;
 
-import org.duracloud.account.common.domain.AccountInfo;
+import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.monitor.instance.util.InstanceUtil;
 import org.duracloud.account.monitor.instance.util.InstanceUtilFactory;
 

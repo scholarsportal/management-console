@@ -4,13 +4,10 @@
 package org.duracloud.account.monitor.duplication;
 
 import org.apache.commons.io.IOUtils;
-import org.duracloud.account.db.DuracloudAccountRepo;
-import org.duracloud.account.db.DuracloudInstanceRepo;
-import org.duracloud.account.db.DuracloudServerImageRepo;
-import org.duracloud.account.db.amazonsimple.AmazonSimpleDBClientMgr;
-import org.duracloud.account.db.amazonsimple.DuracloudAccountRepoImpl;
-import org.duracloud.account.db.amazonsimple.DuracloudInstanceRepoImpl;
-import org.duracloud.account.db.amazonsimple.DuracloudServerImageRepoImpl;
+import org.duracloud.account.db.repo.DuracloudAccountRepo;
+import org.duracloud.account.db.repo.DuracloudInstanceRepo;
+import org.duracloud.account.db.repo.DuracloudRepoMgr;
+import org.duracloud.account.db.repo.DuracloudServerImageRepo;
 import org.duracloud.account.monitor.MonitorsDriver;
 import org.duracloud.account.monitor.duplication.domain.DuplicationReport;
 import org.duracloud.account.monitor.duplication.util.DuplicationPropReader;
@@ -39,14 +36,11 @@ public class DuplicationMonitorDriver extends MonitorsDriver implements Runnable
     public DuplicationMonitorDriver(Properties props) {
         super(props);
 
-        AmazonSimpleDBClientMgr dbClientMgr = buildDBClientMgr(props);
+        DuracloudRepoMgr repoMgr = getRepoMgr();
 
-        DuracloudAccountRepo acctRepo =
-            new DuracloudAccountRepoImpl(dbClientMgr);
-        DuracloudInstanceRepo instanceRepo =
-            new DuracloudInstanceRepoImpl(dbClientMgr);
-        DuracloudServerImageRepo imageRepo =
-            new DuracloudServerImageRepoImpl(dbClientMgr);
+        DuracloudAccountRepo acctRepo = repoMgr.getAccountRepo();
+        DuracloudInstanceRepo instanceRepo = repoMgr.getInstanceRepo();
+        DuracloudServerImageRepo imageRepo = repoMgr.getServerImageRepo();
 
         DuplicationPropReader propReader = new DuplicationPropReader();
         Map<String, String> dupHosts = propReader.readDupProps(props);
