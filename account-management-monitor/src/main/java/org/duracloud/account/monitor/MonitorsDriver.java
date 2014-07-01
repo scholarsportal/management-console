@@ -227,7 +227,7 @@ public class MonitorsDriver {
         sb.append("\n\n");
         sb.append("Usage: ");
         sb.append("MonitorsDriver ");
-        sb.append("<hadoop|instance|store_reporter|duplication> ");
+        sb.append("<instance|store_reporter|duplication> ");
         sb.append("<properties-file>");
         sb.append("\n\t");
         sb.append("Where '");
