@@ -6,6 +6,10 @@
 #    3) tar gzips the resulting .sql file.
 #    4) pushes the gzipped file to a duracloud account.
 #    
+#  The following properties are expected to exist in the specified prop files
+#  db.host,db.port,db.name,db.user,db.pass,duracloud.host,duracloud.port,
+#  duracloud.user,duracloud.password, duracloud.space
+#
 # Author: Daniel Bernstein
 #   Date: 07/09/2014
 
