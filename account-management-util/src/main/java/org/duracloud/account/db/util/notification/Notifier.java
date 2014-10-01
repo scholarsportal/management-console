@@ -20,9 +20,10 @@ import java.util.Date;
 public class Notifier {
 
     private Emailer emailer;
-
-    public Notifier(Emailer emailer) {
+    private AmaEndpoint amaEndpoint;
+    public Notifier(Emailer emailer, AmaEndpoint amaEndpoint) {
         this.emailer = emailer;
+        this.amaEndpoint = amaEndpoint;
     }
 
     public void sendNotificationCreateNewUser(DuracloudUser user) {
@@ -42,7 +43,7 @@ public class Notifier {
         StringBuilder message = new StringBuilder();
         message.append("You have requested to reset your password.");
         message.append("Click on this following link to change your password:\n");
-        message.append(AmaEndpoint.getUrl()+"/users/change-password/"+redemptionCode+"\n");
+        message.append(amaEndpoint.getUrl()+"/users/change-password/"+redemptionCode+"\n");
         message.append("This link is good for one password change only and will expire on " + date);
         message.append("\n\n");
         message.append("The DuraCloud team");
@@ -55,7 +56,7 @@ public class Notifier {
         message.append("information (including your password) or view ");
         message.append("any associated DuraCloud accounts, please ");
         message.append("visit: ");
-        message.append(AmaEndpoint.getUrl());
+        message.append(amaEndpoint.getUrl());
         message.append("\n\n");
         message.append("The DuraCloud team");
         return message.toString();
@@ -69,7 +70,7 @@ public class Notifier {
         message.append("account invitation: ");
         message.append(user.getUsername());
         message.append(". To edit the permissions of this user, please visit ");
-        message.append(AmaEndpoint.getUrl());
+        message.append(amaEndpoint.getUrl());
         message.append("\n\n");
         message.append("The DuraCloud team");
         sendEmail(subject, message.toString(), adminEmail);

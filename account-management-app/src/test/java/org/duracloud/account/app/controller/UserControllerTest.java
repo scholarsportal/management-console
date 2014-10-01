@@ -1,6 +1,7 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
@@ -324,10 +325,12 @@ public class UserControllerTest extends AmaControllerTestBase {
                 .andReturn(new UserInvitation(1L, createAccountInfo(-1L), "n/a", "n/a", "n/a",
                         "n/a", "username", "email", 1, "aaa"));
 
-        
+        AmaEndpoint endpoint = EasyMock.createMock(AmaEndpoint.class);
+        EasyMock.expect(endpoint.getUrl()).andReturn("test");
         EasyMock.replay(userService);
         userController.setUserService(userService);        
-        
+       
+        userController.setAmaEndpoint(endpoint);
         replayMocks();
 
         String view = userController.anonymousPasswordChange("ABC",

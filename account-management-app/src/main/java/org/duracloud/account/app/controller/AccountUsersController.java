@@ -454,10 +454,6 @@ public class AccountUsersController extends AbstractAccountController {
             return this.invitation.getRedemptionCode();
         }
 
-        public String getRedemptionURL() {
-            return this.invitation.getRedemptionURL();
-        }
-
         public String getEmail() {
             return this.invitation.getUserEmail();
         }

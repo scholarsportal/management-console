@@ -5,7 +5,7 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.db.util.config;
+package org.duracloud.account.config;
 
 /**
  * Configuration properties for the Management Console

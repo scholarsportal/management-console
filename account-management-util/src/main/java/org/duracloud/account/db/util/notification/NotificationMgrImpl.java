@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.db.util.notification;
 
-import org.duracloud.account.db.util.config.McConfig;
+import org.duracloud.account.config.McConfig;
 import org.duracloud.notification.Emailer;
 import org.duracloud.notification.NotificationFactory;
 import org.slf4j.Logger;

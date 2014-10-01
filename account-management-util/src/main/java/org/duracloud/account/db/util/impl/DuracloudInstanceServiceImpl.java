@@ -17,6 +17,7 @@ import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudInstance;
@@ -80,7 +81,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                         DuracloudRepoMgr repoMgr,
                                         AccountClusterUtil accountClusterUtil,
                                         ComputeProviderUtil computeProviderUtil,
-                                        NotificationMgrConfig notMgrConfig) {
+                                        NotificationMgrConfig notMgrConfig,
+                                        AmaEndpoint amaEndpoint) {
         this(accountId,
                 instance,
                 repoMgr,
@@ -90,7 +92,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 null,
                 null,
                 null,
-                notMgrConfig);
+                notMgrConfig, 
+                amaEndpoint);
     }
 
     protected DuracloudInstanceServiceImpl(Long accountId,
@@ -102,7 +105,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            InstanceUpdater instanceUpdater,
                                            InstanceConfigUtil instanceConfigUtil,
                                            DurabossUpdater durabossUpdater,
-                                           NotificationMgrConfig notMgrConfig) {
+                                           NotificationMgrConfig notMgrConfig,
+                                           AmaEndpoint amaEndpoint) {
 
         this.accountId = accountId;
         this.instance = instance;
@@ -114,7 +118,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.instanceConfigUtil = instanceConfigUtil;
         this.durabossUpdater = durabossUpdater;
         this.notMgrConfig = notMgrConfig;
-
+        
         if (null == computeProvider) {
             initializeComputeProvider();
         }
@@ -126,7 +130,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         if (null == instanceConfigUtil) {
             this.instanceConfigUtil = new InstanceConfigUtilImpl(instance,
                     repoMgr,
-                    notMgrConfig);
+                    notMgrConfig,
+                    amaEndpoint);
         }
 
         if (null == durabossUpdater){

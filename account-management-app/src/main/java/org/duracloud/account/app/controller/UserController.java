@@ -102,6 +102,10 @@ public class UserController extends AbstractController {
     @Autowired(required = true)
     protected DuracloudInstanceManagerService instanceManagerService;
 
+    @Autowired
+    private AmaEndpoint amaEndpoint;
+    
+    
     /**
      * 
      * @param userService
@@ -377,7 +381,7 @@ public class UserController extends AbstractController {
                                                 form.getPassword());
                 
                 this.userService.redeemPasswordChangeRequest(user.getId(), redemptionCode);
-                model.addAttribute("adminUrl", AmaEndpoint.getUrl());
+                model.addAttribute("adminUrl", amaEndpoint.getUrl());
                 return "anonymous-change-password-success";
                 
             } catch (InvalidPasswordException e) {
@@ -604,5 +608,9 @@ public class UserController extends AbstractController {
 
     public void setInstanceManagerService(DuracloudInstanceManagerService instanceManagerService) {
         this.instanceManagerService = instanceManagerService;
+    }
+
+    public void setAmaEndpoint(AmaEndpoint amaEndpoint) {
+        this.amaEndpoint = amaEndpoint;
     }
 }

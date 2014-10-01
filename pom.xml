@@ -44,6 +44,7 @@
   </organization>
 
   <modules>
+    <module>account-management-common</module>
     <module>account-management-security</module>
     <module>account-management-db-util</module>
     <module>account-management-compute</module>

@@ -40,13 +40,16 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     private UserDetailsPropagator propagator;
     private NotificationMgr notificationMgr;
     private Notifier notifier;
+    private AmaEndpoint amaEndpoint;
     
     public DuracloudUserServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                     NotificationMgr notificationMgr,
-                                    UserDetailsPropagator propagator) {
+                                    UserDetailsPropagator propagator,
+                                    AmaEndpoint amaEndpoint) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
+        this.amaEndpoint = amaEndpoint;
     }
 
     @Override
@@ -477,7 +480,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
 
     private Notifier getNotifier() {
         if(null == notifier) {
-            notifier = new Notifier(notificationMgr.getEmailer());
+            notifier = new Notifier(notificationMgr.getEmailer(), amaEndpoint);
         }
         return notifier;
     }

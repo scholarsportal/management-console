@@ -3,9 +3,15 @@
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
@@ -23,11 +29,6 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
  */
@@ -37,12 +38,13 @@ public class AccountServiceImpl implements AccountService {
     // writes go to both it and the persistence layer.
     private AccountInfo account;
     private DuracloudRepoMgr repoMgr;
-
+    private AmaEndpoint amaEndpoint;
     /**
      * @param acct
      */
-    public AccountServiceImpl(AccountInfo acct,
+    public AccountServiceImpl(AmaEndpoint amaEndpoint, AccountInfo acct,
                               DuracloudRepoMgr repoMgr) {
+        this.amaEndpoint = amaEndpoint;
         this.account = acct;
         this.repoMgr = repoMgr;
     }
@@ -222,8 +224,9 @@ public class AccountServiceImpl implements AccountService {
 
     private void sendEmail(UserInvitation invitation, Emailer emailer) {
         try {
-            emailer.send(invitation.getSubject(),
-                         invitation.getBody(),
+            InvitationMessageFormatter formatter = new InvitationMessageFormatter(invitation, amaEndpoint);
+            emailer.send(formatter.getSubject(),
+                         formatter.getBody(),
                          invitation.getUserEmail());
 
         } catch (Exception e) {

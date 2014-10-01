@@ -23,6 +23,12 @@
 
         <dependency>
             <groupId>org.duracloud</groupId>
+            <artifactId>account-management-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.duracloud</groupId>
             <artifactId>computeprovider</artifactId>
             <version>${duracloud.artifact.version}</version>
             <exclusions>

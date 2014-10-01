@@ -4,6 +4,7 @@
 package org.duracloud.account.db.util.impl;
 
 import org.duracloud.account.compute.ComputeProviderUtil;
+import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
@@ -35,14 +36,15 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private ComputeProviderUtil computeUtil;
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
-
+    private AmaEndpoint amaEndpoint;
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
                                                AccountClusterUtil accountClusterUtil,
                                                ComputeProviderUtil computeUtil,
                                                AnnotationParser annotationParser,
-                                               NotificationMgr notificationMgr) {
+                                               NotificationMgr notificationMgr,
+                                               AmaEndpoint amaEndpoint) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
@@ -50,6 +52,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
         this.computeUtil = computeUtil;
         this.annotationParser = annotationParser;
         this.notificationMgr = notificationMgr;
+        this.amaEndpoint = amaEndpoint;
     }
 
     @Override
@@ -60,7 +63,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             repoMgr,
             accountClusterUtil,
             computeUtil,
-            notificationMgr.getConfig());
+            notificationMgr.getConfig(),
+            amaEndpoint);
 
         Authentication authentication = getAuthentication();
         return new DuracloudInstanceServiceSecuredImpl(instanceService,

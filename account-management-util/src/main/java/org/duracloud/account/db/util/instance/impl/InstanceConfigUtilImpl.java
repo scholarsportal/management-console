@@ -38,13 +38,16 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
     private NotificationMgrConfig notMgrConfig;
+    private AmaEndpoint amaEndpoint;
 
     public InstanceConfigUtilImpl(DuracloudInstance instance,
                                   DuracloudRepoMgr repoMgr,
-                                  NotificationMgrConfig notMgrConfig) {
+                                  NotificationMgrConfig notMgrConfig,
+                                  AmaEndpoint amaEndpoint) {
         this.instance = instance;
         this.repoMgr = repoMgr;
         this.notMgrConfig = notMgrConfig;
+        this.amaEndpoint = amaEndpoint;
     }
 
     public DuradminConfig getDuradminConfig() {
@@ -52,7 +55,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDurastoreHost(instance.getHostName());
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
-        config.setAmaUrl(AmaEndpoint.getUrl());
+        config.setAmaUrl(amaEndpoint.getUrl());
         return config;
     }
 

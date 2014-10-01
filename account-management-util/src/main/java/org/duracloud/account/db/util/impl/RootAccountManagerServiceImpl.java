@@ -14,6 +14,7 @@ import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
+import org.duracloud.account.db.model.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -58,17 +59,19 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
     private Notifier notifier;
     private DuracloudInstanceManagerService instanceManagerService;
     private DuracloudUserService userService;
-
+    private AmaEndpoint amaEndpoint;
     public RootAccountManagerServiceImpl(DuracloudRepoMgr duracloudRepoMgr,
                                          NotificationMgr notificationMgr,
                                          UserDetailsPropagator propagator,
                                          DuracloudInstanceManagerService instanceManagerService,
-                                         DuracloudUserService userService) {
+                                         DuracloudUserService userService,
+                                         AmaEndpoint amaEndpoint) {
         this.repoMgr = duracloudRepoMgr;
         this.notificationMgr = notificationMgr;
         this.propagator = propagator;
         this.instanceManagerService = instanceManagerService;
         this.userService = userService;
+        this.amaEndpoint = amaEndpoint;
     }
 
 	@Override
@@ -404,7 +407,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 
     private Notifier getNotifier() {
         if(null == notifier) {
-            notifier = new Notifier(notificationMgr.getEmailer());
+            notifier = new Notifier(notificationMgr.getEmailer(), amaEndpoint);
         }
         return notifier;
     }

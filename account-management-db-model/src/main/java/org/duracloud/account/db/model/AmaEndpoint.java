@@ -3,37 +3,32 @@
  */
 package org.duracloud.account.db.model;
 
+import org.duracloud.account.config.McConfig;
 /**
  * @author Andrew Woods
  *         Date: 3/21/11
  */
 public class AmaEndpoint {
-
-    private static String host = "localhost";
-    private static String port = "8080";
-    private static String ctxt = "ama";
-
-    public static void initialize(String h, String p, String c) {
-        host = h;
-        port = p;
-        ctxt = c;
+    private McConfig config;
+    public AmaEndpoint(McConfig config){
+         this.config = config;
     }
 
-    public static String getHost() {
-        return host;
+    public String getHost() {
+        return config.getMcHost();
     }
 
-    public static String getCtxt() {
-        return ctxt;
+    public String getCtxt() {
+        return config.getMcContext();
     }
 
-    public static String getPort() {
-        return port;
+    public  String getPort() {
+        return config.getMcPort();
     }
 
-    public static String getUrl() {
-        String proto = port.equals("443") ? "https" : "http";
-        return proto + "://" + host + ":" + port + "/" + ctxt;
+    public  String getUrl() {
+        String proto = getPort().equals("443") ? "https" : "http";
+        return proto + "://" + getHost() + ":" + getPort() + "/" + getCtxt();
     }
 
 }

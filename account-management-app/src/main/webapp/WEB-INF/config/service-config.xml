@@ -26,6 +26,7 @@
         class="org.duracloud.account.db.util.sys.impl.SystemMonitorImpl">
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="mcConfig"/>
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="duracloudUserService"
@@ -36,6 +37,7 @@
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="duracloudGroupService"
@@ -70,6 +72,7 @@
     <constructor-arg ref="acctVoter"/>
     <constructor-arg ref="securityContextUtil"/>
     <constructor-arg ref="annotationParser"/>
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="computeProviderFactory"
@@ -106,6 +109,7 @@
     <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="instanceServiceFactory"/>
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="rootAccountManagerService"
@@ -117,6 +121,7 @@
     <constructor-arg ref="userDetailsPropagator" />
     <constructor-arg ref="instanceManagerService" />
     <constructor-arg ref="duracloudUserService" />
+    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <!--This service pushes UserDetails updates down to the DuraCloud instances-->
