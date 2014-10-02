@@ -100,6 +100,8 @@
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="annotationParser"/>
     <constructor-arg ref="notificationMgr"/>
+    <constructor-arg ref="amaEndpoint"/>
+
   </bean>
 
   <bean id="instanceManagerService"
@@ -109,7 +111,6 @@
     <constructor-arg ref="accountClusterUtil"/>
     <constructor-arg ref="computeProviderUtil"/>
     <constructor-arg ref="instanceServiceFactory"/>
-    <constructor-arg ref="amaEndpoint"/>
   </bean>
 
   <bean id="rootAccountManagerService"

@@ -17,11 +17,11 @@
 
   <context:property-placeholder location="file:///${user.home}/duracloud-mc/mc-config.properties" />
 
-  <bean id="amaEndpoint" class="org.duracloud.account.config.AmaEndpoint">
+  <bean id="amaEndpoint" class="org.duracloud.account.db.model.AmaEndpoint">
     <constructor-arg ref="mcConfig"/>
   </bean>
 
-  <bean id="mcConfig" class="org.duracloud.account.db.util.config.McConfig">
+  <bean id="mcConfig" class="org.duracloud.account.config.McConfig">
     <constructor-arg value="${mc.host}"/>
     <constructor-arg value="${mc.port}"/>
     <constructor-arg value="${mc.context}"/>
