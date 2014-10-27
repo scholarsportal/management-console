@@ -13,7 +13,7 @@ import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;

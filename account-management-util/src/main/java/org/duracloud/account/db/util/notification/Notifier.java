@@ -6,7 +6,7 @@ package org.duracloud.account.db.util.notification;
 
 import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.util.error.UnsentEmailException;
 import org.duracloud.notification.Emailer;

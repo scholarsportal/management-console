@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.duracloud.account.config.McConfig;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.storage.domain.StorageProviderType;

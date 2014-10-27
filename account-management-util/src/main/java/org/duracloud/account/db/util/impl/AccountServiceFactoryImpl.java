@@ -4,7 +4,7 @@
 package org.duracloud.account.db.util.impl;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.AccountServiceFactory;

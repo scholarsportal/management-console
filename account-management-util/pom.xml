@@ -27,19 +27,19 @@
         <dependency>
             <groupId>org.duracloud</groupId>
             <artifactId>account-management-db-model</artifactId>
-            <version>${project.version}</version>
+            <version>${duracloud.artifact.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.duracloud</groupId>
             <artifactId>account-management-db-repo</artifactId>
-            <version>${project.version}</version>
+            <version>${duracloud.artifact.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.duracloud</groupId>
             <artifactId>account-management-compute</artifactId>
-            <version>${project.version}</version>
+            <version>${duracloud.artifact.version}</version>
         </dependency>
 
     <dependency>
@@ -80,14 +80,9 @@
     </dependency>
     <dependency>
       <groupId>org.duracloud</groupId>
-      <artifactId>duraboss-api</artifactId>
+      <artifactId>notification</artifactId>
       <version>${duracloud.artifact.version}</version>
     </dependency>
-        <dependency>
-            <groupId>org.duracloud</groupId>
-            <artifactId>notification</artifactId>
-            <version>${duracloud.artifact.version}</version>
-        </dependency>
 
         <!--External dependencies-->
         <dependency>

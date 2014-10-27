@@ -7,7 +7,7 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.UserInvitation;
 /**
  * 

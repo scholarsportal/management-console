@@ -1,9 +1,8 @@
 /*
  * Copyright (c) 2009-2011 DuraSpace. All rights reserved.
  */
-package org.duracloud.account.db.model;
+package org.duracloud.account.config;
 
-import org.duracloud.account.config.McConfig;
 /**
  * @author Andrew Woods
  *         Date: 3/21/11

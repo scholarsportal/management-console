@@ -3,7 +3,18 @@
  */
 package org.duracloud.account.db.util.impl;
 
-import org.duracloud.account.db.model.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.AccountRights;
+import org.duracloud.account.config.AmaEndpoint;
+import org.duracloud.account.db.model.DuracloudGroup;
+import org.duracloud.account.db.model.DuracloudUser;
+import org.duracloud.account.db.model.Role;
+import org.duracloud.account.db.model.ServerImage;
+import org.duracloud.account.db.model.UserInvitation;
 import org.duracloud.account.db.model.util.InitUserCredential;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -11,7 +22,14 @@ import org.duracloud.account.db.repo.DuracloudRightsRepo;
 import org.duracloud.account.db.repo.DuracloudUserInvitationRepo;
 import org.duracloud.account.db.repo.DuracloudUserRepo;
 import org.duracloud.account.db.util.DuracloudUserService;
-import org.duracloud.account.db.util.error.*;
+import org.duracloud.account.db.util.error.DBNotFoundException;
+import org.duracloud.account.db.util.error.InvalidPasswordException;
+import org.duracloud.account.db.util.error.InvalidRedemptionCodeException;
+import org.duracloud.account.db.util.error.InvalidUsernameException;
+import org.duracloud.account.db.util.error.ReservedPrefixException;
+import org.duracloud.account.db.util.error.ReservedUsernameException;
+import org.duracloud.account.db.util.error.UnsentEmailException;
+import org.duracloud.account.db.util.error.UserAlreadyExistsException;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.notification.Notifier;
 import org.duracloud.account.db.util.usermgmt.UserDetailsPropagator;
@@ -19,14 +37,9 @@ import org.duracloud.common.model.Credential;
 import org.duracloud.common.util.ChecksumUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Andrew Woods

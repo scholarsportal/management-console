@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.model.UserInvitation;

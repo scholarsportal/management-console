@@ -11,7 +11,7 @@ import java.util.Set;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
-import org.duracloud.account.db.model.AmaEndpoint;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
