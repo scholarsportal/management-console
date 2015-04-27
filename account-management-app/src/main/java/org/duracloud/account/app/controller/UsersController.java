@@ -7,11 +7,10 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.Role;
-import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudUserService;
-import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,7 +40,6 @@ public class UsersController extends AbstractRootController{
         List<User> u = new ArrayList<User>();
         Set<DuracloudUser> users = getRootAccountManagerService().listAllUsers(null);
         for(DuracloudUser user: users) {
-            boolean removable = true;
             Set<Account> accounts = new HashSet<Account>();
             if(user.getAccountRights() != null) {
                 for(AccountRights account : user.getAccountRights()) {
@@ -73,6 +71,7 @@ public class UsersController extends AbstractRootController{
         return mav;
     }
     
+    @Transactional
     @RequestMapping(value = { BY_ID_MAPPING + "/reset" }, method = RequestMethod.POST)
     public ModelAndView resetUsersPassword(
         @PathVariable Long id, RedirectAttributes redirectAttributes)
@@ -85,6 +84,7 @@ public class UsersController extends AbstractRootController{
     }
 
     
+    @Transactional
     @RequestMapping(value = BY_ID_DELETE_MAPPING , method = RequestMethod.POST)
     public ModelAndView deleteUser(
         @PathVariable Long id, RedirectAttributes redirectAttributes)
@@ -98,6 +98,7 @@ public class UsersController extends AbstractRootController{
     }
     
     
+    @Transactional
     @RequestMapping(value = BY_ID_MAPPING + "/revoke", method = RequestMethod.POST)
     public ModelAndView revokeUserRightsFromAccount(@PathVariable("id") Long userId,
                                                     @RequestParam(required=true) Long accountId,
@@ -116,7 +117,7 @@ public class UsersController extends AbstractRootController{
         return createRedirectMav(BASE_MAPPING);
     }
 
-    
+    @Transactional
     @RequestMapping(value = BY_ID_MAPPING + "/changerole", method = RequestMethod.POST)
     public ModelAndView changeUserRole(@PathVariable("id") Long userId,
                  @ModelAttribute @Valid AccountUserEditForm accountUserEditForm,

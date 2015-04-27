@@ -10,6 +10,7 @@ import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,7 +67,7 @@ public class AccountInfoController extends AbstractAccountController {
     }
 
 
-
+    @Transactional
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView editInfo(
                            @PathVariable Long accountId,

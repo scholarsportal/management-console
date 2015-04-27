@@ -10,6 +10,7 @@ import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,6 +38,7 @@ public class ProviderController extends AbstractAccountController {
         return "account-providers";
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/add", method = RequestMethod.POST)
     public ModelAndView addProvider(@PathVariable Long accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
@@ -51,6 +53,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/byid/{providerId}/delete", method = RequestMethod.POST)
     public ModelAndView deleteProviderFromAccount(
         @PathVariable Long accountId, @PathVariable Long providerId, Model model)
@@ -63,6 +66,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/enable", method = RequestMethod.POST)
     public ModelAndView enableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {
@@ -73,6 +77,7 @@ public class ProviderController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, "/providers");
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_PATH + "/providers/rrs/disable", method = RequestMethod.POST)
     public ModelAndView disableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {

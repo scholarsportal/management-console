@@ -4,20 +4,18 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
-import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
-import org.duracloud.account.db.model.util.DuracloudAccount;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
-import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.RootAccountManagerService;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,9 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 /**
  * 
  * @author Daniel Bernstein
@@ -58,6 +54,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_DELETE_MAPPING}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView delete(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -70,6 +67,7 @@ public class AccountsController extends AbstractRootController{
 
     
     @RequestMapping(value = { BY_ID_MAPPING +"/activate"}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView activate(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -81,6 +79,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = { BY_ID_MAPPING +"/deactivate"}, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView deactivate(@PathVariable Long id, RedirectAttributes redirectAttributes)
         throws AccountNotFoundException {
         AccountService accountService = getAccountManagerService().getAccount(id);
@@ -116,6 +115,7 @@ public class AccountsController extends AbstractRootController{
     }
 
     @RequestMapping(value = ACCOUNT_SETUP_MAPPING, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView setupAccount(
         @PathVariable Long id,
         @ModelAttribute(SETUP_ACCOUNT_FORM_KEY) @Valid AccountSetupForm accountSetupForm,

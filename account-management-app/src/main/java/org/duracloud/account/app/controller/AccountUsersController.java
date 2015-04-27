@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -94,6 +95,7 @@ public class AccountUsersController extends AbstractAccountController {
         return get(getAccountService(accountId), model);
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_USERS_MAPPING+"/adduser", method = RequestMethod.POST)
     public ModelAndView
         addUser(@PathVariable Long accountId,
@@ -134,6 +136,7 @@ public class AccountUsersController extends AbstractAccountController {
         return ACCOUNT_USERS_VIEW_ID;
     }
 
+    @Transactional
     @RequestMapping(value = ACCOUNT_USERS_MAPPING, method = RequestMethod.POST)
     public ModelAndView sendInvitations(
         @PathVariable Long accountId,
@@ -194,6 +197,7 @@ public class AccountUsersController extends AbstractAccountController {
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
 
+    @Transactional
     @RequestMapping(value = USERS_INVITATIONS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserInvitation(
         @PathVariable Long accountId, @PathVariable Long invitationId, Model model)
@@ -206,7 +210,8 @@ public class AccountUsersController extends AbstractAccountController {
 
         return createAccountRedirectModelAndView(accountId, ACCOUNT_USERS_PATH);
     }
-
+    
+    @Transactional
     @RequestMapping(value = USERS_DELETE_MAPPING, method = RequestMethod.POST)
     public ModelAndView deleteUserFromAccount(
         @PathVariable Long accountId, @PathVariable Long userId, Model model)
@@ -250,7 +255,8 @@ public class AccountUsersController extends AbstractAccountController {
         loadAccountInfo(accountId, model);        
         return ACCOUNT_USERS_EDIT_ID;
     }
-
+    
+    @Transactional
     @RequestMapping(value = USERS_EDIT_MAPPING, method = RequestMethod.POST)
     public ModelAndView
         editUser(@PathVariable Long accountId,

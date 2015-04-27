@@ -13,6 +13,7 @@ import org.duracloud.account.util.UrlHelper;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,6 +92,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
         return new AccountSelectionForm();
     }
 
+    @Transactional
     @RequestMapping(value = { BY_ID_MAPPING + "/remove-accounts" }, method = RequestMethod.POST)
     public ModelAndView
         removeAccounts(@PathVariable("id") Long id,
@@ -116,6 +118,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
     }
 
     @RequestMapping(value = { BY_ID_MAPPING + "/add-accounts" }, method = RequestMethod.GET)
+    @Transactional
     public ModelAndView
         getAddAccounts(@PathVariable("id") Long id) throws Exception {
         
@@ -140,6 +143,7 @@ public class AccountClusterController extends AbstractRootCrudController<Account
 
     
     @RequestMapping(value = { BY_ID_MAPPING + "/add-accounts" }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         postAddAccounts(@PathVariable("id") Long id,
                        AccountSelectionForm accountSelectionForm,

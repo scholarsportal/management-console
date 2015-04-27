@@ -29,6 +29,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -253,6 +254,7 @@ public class UserController extends AbstractController {
         return USER_EDIT_VIEW;
     }
 
+    @Transactional
     @RequestMapping(value = { USER_EDIT_MAPPING }, method = RequestMethod.POST)
     public ModelAndView update(@PathVariable String username,
                          @ModelAttribute(USER_PROFILE_FORM_KEY) @Valid UserProfileEditForm form,
@@ -292,6 +294,7 @@ public class UserController extends AbstractController {
         return CHANGE_PASSWORD_VIEW;
     }
 
+    @Transactional
     @RequestMapping(value = { CHANGE_PASSWORD_MAPPING }, method = RequestMethod.POST)
     public ModelAndView changePassword(@PathVariable String username,
                                  @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid ChangePasswordForm form,
@@ -356,6 +359,7 @@ public class UserController extends AbstractController {
         }
     }
 
+    @Transactional
     @RequestMapping(value = {  "/change-password/{redemptionCode}" }, method = RequestMethod.POST)
     public String anonymousPasswordChange(@PathVariable String redemptionCode,
                                           @ModelAttribute(CHANGE_PASSWORD_FORM_KEY) @Valid AnonymousChangePasswordForm form,
@@ -469,6 +473,7 @@ public class UserController extends AbstractController {
         }
     }
 
+    @Transactional
     @RequestMapping(value = { NEW_MAPPING }, method = RequestMethod.POST)
     public ModelAndView add(@ModelAttribute(NEW_USER_FORM_KEY) @Valid NewUserForm newUserForm,
                       BindingResult result,
@@ -521,6 +526,7 @@ public class UserController extends AbstractController {
         return view;
     }
 
+    @Transactional
     @RequestMapping(value = { FORGOT_PASSWORD_MAPPING }, method = RequestMethod.POST)
     public String forgotPassword(@ModelAttribute(FORGOT_PASSWORD_FORM_KEY) @Valid ForgotPasswordForm forgotPasswordForm,
                                  BindingResult result,

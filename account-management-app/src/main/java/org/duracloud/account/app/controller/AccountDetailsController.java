@@ -16,6 +16,7 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.springframework.binding.message.Severity;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,6 +60,7 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/add", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView addProvider(@PathVariable Long accountId,
                            @ModelAttribute("providerForm") @Valid ProviderForm providerForm,
 					   BindingResult result,
@@ -74,6 +76,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
     
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/{providerType}/remove", method = RequestMethod.POST)
+    @Transactional
     public View removeProvider(@PathVariable Long accountId,
                                        @PathVariable String providerType,
                                        RedirectAttributes redirectAttributes)
@@ -121,6 +124,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/enable", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         enableProviderRrs(@PathVariable Long accountId)
             throws AccountNotFoundException {
@@ -132,6 +136,7 @@ public class AccountDetailsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING + "/providers/rrs/disable", method = RequestMethod.POST)
+    @Transactional
     public ModelAndView disableProviderRrs(@PathVariable Long accountId,
 					   Model model) throws AccountNotFoundException {
         log.info("disableProviderRrs account {}", accountId);

@@ -28,6 +28,7 @@ import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -79,6 +80,7 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = GROUPS_PATH, method = RequestMethod.POST)
+    @Transactional
     public String modifyGroups(@PathVariable Long accountId, Model model,
             @ModelAttribute(GROUPS_FORM_KEY) @Valid GroupsForm form,
             BindingResult result) throws Exception {
@@ -179,6 +181,7 @@ public class AccountGroupsController extends AbstractAccountController {
     }
 
     @RequestMapping(value = GROUP_EDIT_PATH, method = RequestMethod.POST)
+    @Transactional
     public String editGroup(@PathVariable Long accountId,
             @PathVariable String groupName,
             @ModelAttribute(GROUP_FORM_KEY) @Valid GroupForm form,

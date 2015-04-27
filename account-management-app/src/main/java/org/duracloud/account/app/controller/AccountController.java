@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -111,6 +112,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_START_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView startInstance(@PathVariable Long accountId,
                                 @ModelAttribute(NEW_INSTANCE_FORM) @Valid AccountInstanceForm instanceForm,
                                 RedirectAttributes redirectAttributes)
@@ -178,6 +180,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_UPGRADE_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         upgradeInstance(@PathVariable Long accountId,
                         @PathVariable Long instanceId,
@@ -204,6 +207,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_RESTART_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         restartInstance(@PathVariable Long accountId,
                         @PathVariable Long instanceId,
@@ -231,6 +235,7 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_USERS_PATH},
                     method = RequestMethod.POST)
+    @Transactional
     public ModelAndView reInitializeUserRoles(@PathVariable Long accountId,
                                         @PathVariable Long instanceId,
                                         Model model,
@@ -260,6 +265,7 @@ public class AccountController extends AbstractAccountController {
 
     @RequestMapping(value = {INSTANCE_REINIT_PATH},
                     method = RequestMethod.POST)
+    @Transactional
     public ModelAndView reInitialize(@PathVariable Long accountId,
                                @PathVariable Long instanceId,
                                Model model,
@@ -304,6 +310,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { INSTANCE_STOP_PATH }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView
         stopInstance(@PathVariable Long accountId,
                      @PathVariable Long instanceId,
@@ -335,6 +342,7 @@ public class AccountController extends AbstractAccountController {
 
 
     @RequestMapping(value = { ACCOUNT_PATH + "/activate" }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView activate(@PathVariable Long accountId)
         throws AccountNotFoundException {
         AccountService accountService = accountManagerService.getAccount(
@@ -347,6 +355,7 @@ public class AccountController extends AbstractAccountController {
     }
 
     @RequestMapping(value = { ACCOUNT_PATH + "/deactivate" }, method = RequestMethod.POST)
+    @Transactional
     public ModelAndView deactivate(@PathVariable Long accountId,
                            Model model)
         throws AccountNotFoundException {

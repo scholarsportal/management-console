@@ -23,6 +23,7 @@ import org.springframework.binding.message.Message;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,6 +44,7 @@ public class CreateAccountAction extends AbstractAction {
     @Autowired
     private MessageSource messageSource = null;
     
+    @Transactional
     public Event doExecute(RequestContext context) throws Exception {
 
         NewAccountForm newAccountForm =
