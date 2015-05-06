@@ -36,6 +36,9 @@
             $(".remove-user").click(function(evt){
                 return doConfirm('<spring:message code="user.remove.confirm" javaScriptEscape="true"/>');
             });
+            
+            $("#users").tablesorter(); 
+
         });
                 
         </script>

@@ -21,7 +21,7 @@
 
     <tiles:putAttribute
      name="header-extensions">
-      <script xml:space="preserve">
+      <script xml:space="preserve" type="text/javascript">
       	function doConfirm(/*string*/message){
             var answer = confirm(message);
             if (answer) {
@@ -42,7 +42,12 @@
             $(".deactivate").click(function(evt){
               	return doConfirm('<spring:message code="account.deactivate.confirm" />');
             });
+
+            $("#accounts").tablesorter(); 
+
       	});
+      	
+
             
       </script>
     </tiles:putAttribute>
@@ -72,7 +77,7 @@
          test="${not empty accounts}">
           <table
            id="accounts"
-           class="entity-list">
+           class="entity-list ">
             <thead>
               <tr>
                 <th>
