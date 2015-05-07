@@ -62,6 +62,15 @@
   <definition name="/root/serverimages/new" template="/WEB-INF/jspx/root/serverimages/new.jspx" preparer="globalPreparer"/>
   <definition name="/root/serverimages/edit" template="/WEB-INF/jspx/root/serverimages/edit.jspx" preparer="globalPreparer"/>
 
+  <definition name="duracloudmill-base" extends="root-base">
+    <put-attribute name="title" />
+    <put-attribute name="primaryTab" cascade="true" value="duracloudmill" />
+    <put-attribute name="mainContent" cascade="true" />
+  </definition>
+
+  <definition name="/root/duracloudmill" template="/WEB-INF/jspx/root/duracloudmill/index.jspx" preparer="globalPreparer"/>
+  <definition name="/root/duracloudmill/edit" template="/WEB-INF/jspx/root/duracloudmill/edit.jspx" preparer="globalPreparer"/>
+
   <!-- account cluster views -->
   <definition name="clusters-base" extends="root-base">
     <put-attribute name="title" />

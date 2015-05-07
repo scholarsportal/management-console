@@ -3,7 +3,7 @@
  */
 package org.duracloud.account.compute;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;

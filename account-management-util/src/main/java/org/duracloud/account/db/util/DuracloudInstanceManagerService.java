@@ -3,11 +3,11 @@
  */
 package org.duracloud.account.db.util;
 
+import java.util.Set;
+
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.InstanceType;
 import org.springframework.security.access.annotation.Secured;
-
-import java.util.Set;
 
 /**
  * Lifecycle operations for Duracloud instances.

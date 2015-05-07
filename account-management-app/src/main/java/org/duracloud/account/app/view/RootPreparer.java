@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.apache.tiles.AttributeContext;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.ViewPreparer;
+import org.duracloud.account.app.controller.DuracloudMillController;
 import org.duracloud.account.app.controller.ServerImageController;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,8 @@ public class RootPreparer implements ViewPreparer {
             add(new Tab("/root/clusters", "clusters"));
             add(new Tab("/root/users", "users"));
             add(new Tab(ServerImageController.BASE_MAPPING, "serverimages"));
+            add(new Tab(DuracloudMillController.BASE_MAPPING, "duracloudmill"));
+
         }
     }
 
