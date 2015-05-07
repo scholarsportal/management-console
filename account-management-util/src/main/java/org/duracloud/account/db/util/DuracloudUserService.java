@@ -193,6 +193,7 @@ public interface DuracloudUserService {
      * @param email     of user
      * @param securityQuestion of user
      * @param securityAnswer of user
+     * @param allowableIPAddressRange 
      */
     @Secured({"role:ROLE_USER, scope:SELF_ID"})
     public void storeUserDetails(Long userId,
@@ -200,7 +201,8 @@ public interface DuracloudUserService {
                                  String lastName,
                                  String email,
                                  String securityQuestion,
-                                 String securityAnswer)
+                                 String securityAnswer, 
+                                 String allowableIPAddressRange)
             throws DBNotFoundException;
 
 }

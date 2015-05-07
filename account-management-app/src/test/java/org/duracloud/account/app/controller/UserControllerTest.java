@@ -170,6 +170,8 @@ public class UserControllerTest extends AmaControllerTestBase {
         EasyMock.expect(editForm.getFirstName()).andReturn("").anyTimes();
         EasyMock.expect(editForm.getLastName()).andReturn("").anyTimes();
         EasyMock.expect(editForm.getEmail()).andReturn("").anyTimes();
+        EasyMock.expect(editForm.getAllowableIPAddressRange()).andReturn("").anyTimes();
+
         EasyMock.expect(editForm.getSecurityQuestion())
                 .andReturn("")
                 .anyTimes();
@@ -379,6 +381,7 @@ public class UserControllerTest extends AmaControllerTestBase {
 
     private void initializeMockUserServiceStoreUser() throws Exception {
         userService.storeUserDetails(EasyMock.anyLong(),
+                                     EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),
                                      EasyMock.isA(String.class),

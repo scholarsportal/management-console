@@ -69,7 +69,7 @@
 
                     <td width="86%"
                      class="value required">
-                      <form:input
+                      <form:input size="50"
                        cssErrorClass="error"
                        id="first-name-text"
                        autofocus="true"
@@ -88,7 +88,7 @@
 
                     <td
                      class="value required">
-                      <form:input
+                      <form:input size="50"
                        cssErrorClass="error"
                        id="last-name-text"
                        path="lastName" />
@@ -106,10 +106,29 @@
 
                     <td
                      class="value required">
-                      <form:input
+                      <form:input size="50"
                        cssErrorClass="error"
                        id="email-text"
                        path="email" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td align="right"
+                     class="label">
+                      <form:label
+                       cssErrorClass="error"
+                       for="allowableIPAddressRange-text"
+                       path="allowableIPAddressRange">Allowable IP Range:</form:label>
+                    </td>
+
+                    <td
+                     class="value not-required">
+                     
+                      <form:input size="50" 
+                       cssErrorClass="error"
+                       id="allowableIPAddressRange-text"
+                       path="allowableIPAddressRange" />
                     </td>
                   </tr>
 
@@ -125,7 +144,7 @@
 
                     <td
                      class="value required">
-                      <form:input
+                      <form:input size="50"
                        cssErrorClass="error"
                        id="securityQuestion-text"
                        path="securityQuestion" />
@@ -144,7 +163,7 @@
 
                     <td
                      class="value required">
-                      <form:input
+                      <form:input size="50"
                        cssErrorClass="error"
                        id="securityAnswer-text"
                        path="securityAnswer" />
@@ -207,7 +226,7 @@
 
                     <td width="86%"
                      class="value required">
-                      <form:password
+                      <form:password size="50"
                        cssErrorClass="error"
                        id="old-password-text"
                        path="oldPassword" />
@@ -224,7 +243,7 @@
 
                     <td
                      class="value required">
-                      <form:password
+                      <form:password size="50"
                        cssErrorClass="error"
                        id="password-text"
                        path="password" />
@@ -241,7 +260,7 @@
 
                     <td
                      class="value required">
-                      <form:password
+                      <form:password size="50"
                        cssErrorClass="error"
                        id="confirm-password-text"
                        path="passwordConfirm" />

@@ -470,7 +470,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     @Override
     public void storeUserDetails(
             Long userId, String firstName, String lastName, String email,
-        String securityQuestion, String securityAnswer) throws DBNotFoundException {
+        String securityQuestion, String securityAnswer, String allowableIPAddressRange) throws DBNotFoundException {
         log.info("Updating user details for user with ID {}", userId);
 
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
@@ -484,6 +484,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         user.setEmail(email);
         user.setSecurityQuestion(securityQuestion);
         user.setSecurityAnswer(securityAnswer);
+        user.setAllowableIPAddressRange(allowableIPAddressRange);
         repoMgr.getUserRepo().save(user);
 
         if(emailUpdate) {

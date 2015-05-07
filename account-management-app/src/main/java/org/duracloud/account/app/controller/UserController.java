@@ -244,6 +244,7 @@ public class UserController extends AbstractController {
         form.setFirstName(user.getFirstName());
         form.setLastName(user.getLastName());
         form.setEmail(user.getEmail());
+        form.setAllowableIPAddressRange(user.getAllowableIPAddressRange());
         form.setSecurityQuestion(user.getSecurityQuestion());
         form.setSecurityAnswer(user.getSecurityAnswer());
         model.addAttribute(USER_PROFILE_FORM_KEY, form);
@@ -279,7 +280,8 @@ public class UserController extends AbstractController {
                                           form.getLastName(),
                                           form.getEmail(),
                                           form.getSecurityQuestion(),
-                                          form.getSecurityAnswer());
+                                          form.getSecurityAnswer(),
+                                          form.getAllowableIPAddressRange());
 
         return new ModelAndView(formatUserRedirect(username));
     }
