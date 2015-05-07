@@ -90,6 +90,24 @@
            cssClass="error"
            element="div" />
         </li>
+        <li>
+          <form:label
+           cssErrorClass="error"
+           path="iamRole">
+            <spring:message
+             code="serverimage.iamrole" />
+          </form:label>
+
+          <form:input
+           cssErrorClass="error"
+           path="iamRole" />
+
+          <form:errors
+           path="iamRole"
+           cssClass="error"
+           element="div" />
+        </li>
+
       </ol>
     </fieldset>
 

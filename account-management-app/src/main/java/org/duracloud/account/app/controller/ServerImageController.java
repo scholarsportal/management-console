@@ -55,7 +55,8 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                          form.getVersion(),
                                                          form.getDescription(),
                                                          form.getPassword(),
-                                                         form.isLatest());
+                                                         form.isLatest(),
+                                                         form.getIamRole());
         
     }
 
@@ -73,6 +74,7 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
         form.setDescription(entity.getDescription());
         form.setPassword(entity.getDcRootPassword());
         form.setLatest(entity.isLatest());
+        form.setIamRole(entity.getIamRole());
         return form;
     }
 
@@ -83,7 +85,8 @@ public class ServerImageController extends AbstractRootCrudController<ServerImag
                                                        form.getVersion(),
                                                        form.getDescription(),
                                                        form.getPassword(),
-                                                       form.isLatest());        
+                                                       form.isLatest(),
+                                                       form.getIamRole());        
     }
 
     @Override

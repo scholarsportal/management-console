@@ -307,7 +307,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                   String version,
                                   String description,
                                   String password,
-                                  boolean latest) {
+                                  boolean latest,
+                                  String iamRole) {
         DuracloudServerImageRepo imageRepo = getServerImageRepo();
         if(latest) {
             //Remove current latest
@@ -330,6 +331,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
         serverImage.setLatest(latest);
+        serverImage.setIamRole(iamRole);
 
         getServerImageRepo().save(serverImage);
     }
@@ -340,7 +342,8 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                 String version,
                                 String description,
                                 String password,
-                                boolean latest) {
+                                boolean latest,
+                                String iamRole) {
 
         ServerImage serverImage = getServerImageRepo().findOne(id);
 
@@ -359,6 +362,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         serverImage.setVersion(version);
         serverImage.setDescription(description);
         serverImage.setDcRootPassword(password);
+        serverImage.setIamRole(iamRole);
         getServerImageRepo().save(serverImage);
     }
 

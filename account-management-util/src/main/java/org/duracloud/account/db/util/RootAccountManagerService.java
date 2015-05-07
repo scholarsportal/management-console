@@ -96,13 +96,14 @@ public interface RootAccountManagerService {
      * @param description
      * @param password
      * @param latest
+     * @param iamRole 
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void createServerImage(String providerImageId,
                                   String version,
                                   String description,
                                   String password,
-                                  boolean latest);
+                                  boolean latest, String iamRole);
     /**
      * Edits a service image in the system
      *
@@ -112,6 +113,7 @@ public interface RootAccountManagerService {
      * @param description
      * @param password
      * @param latest
+     * @param iamRole
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void editServerImage(Long id,
@@ -119,7 +121,8 @@ public interface RootAccountManagerService {
                                 String version,
                                 String description,
                                 String password,
-                                boolean latest);
+                                boolean latest,
+                                String iamRole);
 
     /**
      * Gets a server image from the system

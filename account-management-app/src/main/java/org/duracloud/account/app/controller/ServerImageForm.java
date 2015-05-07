@@ -17,6 +17,9 @@ public class ServerImageForm {
     @NotBlank(message = "You must specify a password.")
     private String password;
 
+    @NotBlank(message = "You must specify an IAM Role")
+    private String iamRole;
+
     private boolean latest;
 
     public String getProviderImageId() {
@@ -71,5 +74,13 @@ public class ServerImageForm {
                                     this.password,
                                     this.latest);
         
+    }
+
+    public String getIamRole() {
+        return iamRole;
+    }
+
+    public void setIamRole(String iamRole) {
+        this.iamRole = iamRole;
     }
 }

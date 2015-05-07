@@ -24,25 +24,31 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
     @Test
     public void testAdd() throws Exception {
         // set up mocks, and args
-        ServerImageForm serverImageForm = new ServerImageForm();
-        serverImageForm.setProviderImageId("id");
-        serverImageForm.setDescription("desc");
-        serverImageForm.setVersion("version");
-        serverImageForm.setPassword("password");
-        serverImageForm.setLatest(true);
-
+        ServerImageForm serverImageForm = createServerImageForm();
         EasyMock.expect(result.hasErrors()).andReturn(false);
 
         rootAccountManagerService.createServerImage(serverImageForm.getProviderImageId(),
                                                       serverImageForm.getVersion(),
                                                       serverImageForm.getDescription(),
                                                       serverImageForm.getPassword(),
-                                                      serverImageForm.isLatest());
+                                                      serverImageForm.isLatest(),
+                                                      serverImageForm.getIamRole());
         EasyMock.expectLastCall();
         replayMocks();
         // method under test
         serverImagesController.create(serverImageForm, result, model, redirectAttributes);
 
+    }
+
+    private ServerImageForm createServerImageForm() {
+        ServerImageForm serverImageForm = new ServerImageForm();
+        serverImageForm.setProviderImageId("id");
+        serverImageForm.setDescription("desc");
+        serverImageForm.setVersion("version");
+        serverImageForm.setPassword("password");
+        serverImageForm.setLatest(true);
+        serverImageForm.setIamRole("iamRole");
+        return serverImageForm;
     }
 
     @Test
@@ -59,12 +65,7 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
         // set up mocks, and args
         Long imageId = 7L;
 
-        ServerImageForm serverImageForm = new ServerImageForm();
-        serverImageForm.setProviderImageId("id");
-        serverImageForm.setDescription("desc");
-        serverImageForm.setVersion("version");
-        serverImageForm.setPassword("password");
-        serverImageForm.setLatest(true);
+        ServerImageForm serverImageForm = createServerImageForm();
 
         EasyMock.expect(result.hasErrors()).andReturn(false);
 
@@ -73,7 +74,8 @@ public class ServerImageControllerTest extends AmaControllerTestBase {
                           serverImageForm.getVersion(),
                           serverImageForm.getDescription(),
                           serverImageForm.getPassword(),
-                          serverImageForm.isLatest());
+                          serverImageForm.isLatest(),
+                          serverImageForm.getIamRole());
         EasyMock.expectLastCall();
 
         replayMocks();
