@@ -154,7 +154,9 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         String providerInstanceId = null;
         
         try{
-            providerInstanceId = computeProvider.start(image.getProviderImageId(),
+            providerInstanceId =
+                computeProvider.start(image.getProviderImageId(),
+                                      image.getIamRole(),
                                       computeProviderAcct.getSecurityGroup(),
                                       computeProviderAcct.getKeypair(),
                                       computeProviderAcct.getElasticIp(),

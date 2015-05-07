@@ -3,20 +3,8 @@
  */
 package org.duracloud.account.compute;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.compute.error.InstanceStartupException;
-import org.duracloud.account.db.model.DuracloudInstance;
-import org.duracloud.account.db.model.InstanceType;
-import org.duracloud.common.error.DuraCloudRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.AssociateAddressRequest;
@@ -26,12 +14,32 @@ import com.amazonaws.services.ec2.model.DescribeAddressesRequest;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
 import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.model.CreateInstanceProfileRequest;
+import com.amazonaws.services.identitymanagement.model.CreateInstanceProfileResult;
+import com.amazonaws.services.identitymanagement.model.GetInstanceProfileRequest;
+import com.amazonaws.services.identitymanagement.model.GetInstanceProfileResult;
+import com.amazonaws.services.identitymanagement.model.InstanceProfile;
+import com.amazonaws.services.identitymanagement.model.NoSuchEntityException;
+import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
+import org.duracloud.account.compute.error.InstanceStartupException;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.InstanceType;
+import org.duracloud.common.error.DuraCloudRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Bill Branan
@@ -45,6 +53,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     private static final int SLEEP_TIME = 5000;
 
     private AmazonEC2Client ec2Client;
+    private AmazonIdentityManagementClient iamClient;
 
     private enum InstanceState {
         PENDING("pending"),
@@ -67,27 +76,35 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     public AmazonComputeProvider(String accessKey, String secretKey) {
         this.ec2Client =
             AmazonComputeConnector.getAmazonEC2Client(accessKey, secretKey);
+        this.iamClient = new AmazonIdentityManagementClient(
+            new BasicAWSCredentials(accessKey, secretKey));
     }
 
-    protected AmazonComputeProvider(AmazonEC2Client ec2Client) {
+    protected AmazonComputeProvider(AmazonEC2Client ec2Client,
+                                    AmazonIdentityManagementClient iamClient) {
         this.ec2Client = ec2Client;
+        this.iamClient = iamClient;
     }
 
     @Override
     public String start(String providerImageId,
+                        String iamRole,
                         String securityGroup,
                         String keyname,
                         String elasticIp,
                         InstanceType instanceType,
                         String instanceName) {
-        return doStart(providerImageId, securityGroup, keyname, elasticIp, true, instanceType, instanceName);
+        return doStart(providerImageId, iamRole, securityGroup, keyname,
+                       elasticIp, true, instanceType, instanceName);
     }
 
     protected String doStart(String providerImageId,
+                             String iamRole,
                              String securityGroup,
                              String keyname,
                              String elasticIp,
-                             boolean wait, InstanceType instanceType, 
+                             boolean wait,
+                             InstanceType instanceType,
                              String instanceName) {
         stopExistingInstances(elasticIp);
 
@@ -96,14 +113,14 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
         RunInstancesResult result;
         try {
-            result = doRun(providerImageId, securityGroup, keyname, zone, true, instanceType, instanceName);
+            result = doRun(providerImageId, iamRole, securityGroup, keyname, zone, true,
+                           instanceType, instanceName);
         } catch(AmazonServiceException e) {
             log.warn("Error attempting to start instance: {}. " +
                      "Attempting again with no zone setting.", e.getMessage());
             // Try again with no set zone.
-			result = doRun(providerImageId, securityGroup, keyname, null,
-					false, instanceType,
-					instanceName);
+			result = doRun(providerImageId, iamRole, securityGroup, keyname, null,
+					       false, instanceType,	instanceName);
         }
         String instanceId = result.getReservation().getInstances()
                                   .iterator().next().getInstanceId();
@@ -131,6 +148,7 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
     }
 
     private RunInstancesResult doRun(String providerImageId,
+                                     String iamRole,
                                      String securityGroup,
                                      String keyname,
                                      String availabilityZone,
@@ -145,6 +163,12 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
         request.setSecurityGroups(securityGroups);
         request.setKeyName(keyname);
         request.setInstanceType(convertDuracloudInstanceTypeToNativeM1(instanceType));
+
+        IamInstanceProfileSpecification iamProfileSpec = getIamProfileSpec(iamRole);
+        if(null != iamProfileSpec) {
+            request.setIamInstanceProfile(iamProfileSpec);
+        }
+
         if(includeZone) {
             request.setPlacement(new Placement(availabilityZone));
         }
@@ -161,6 +185,38 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
             ec2Client.createTags(createTagsRequest);
         }
         return result;
+    }
+
+    /**
+     * Retrieves an IAM profile spec for a given IAM role. Note that the role
+     * needs to already exist. The IAM profile is created if it does not already exist.
+     *
+     * @param iamRole name of the IAM role to be retrieved in profile form
+     * @return IAM instance profile or null if iamRole is null
+     */
+    private IamInstanceProfileSpecification getIamProfileSpec(String iamRole) {
+        if(null != iamRole) {
+            InstanceProfile instanceProfile;
+            try {
+                GetInstanceProfileResult getProfileResult =
+                    iamClient.getInstanceProfile(new GetInstanceProfileRequest()
+                                                     .withInstanceProfileName(iamRole));
+                instanceProfile = getProfileResult.getInstanceProfile();
+            } catch (NoSuchEntityException e) { // No existing entity, create one
+                CreateInstanceProfileResult createProfileResult =
+                    iamClient.createInstanceProfile(new CreateInstanceProfileRequest()
+                                                        .withInstanceProfileName(
+                                                            iamRole));
+                instanceProfile = createProfileResult.getInstanceProfile();
+            }
+
+            if (null != instanceProfile) {
+                return new IamInstanceProfileSpecification()
+                    .withArn(instanceProfile.getArn())
+                    .withName(instanceProfile.getInstanceProfileName());
+            }
+        }
+        return null;
     }
 
     private void stopExistingInstances(String elasticIp) {

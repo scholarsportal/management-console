@@ -17,7 +17,8 @@ public interface DuracloudComputeProvider{
      *
      * @param providerImageId the ID of the server image to use in creating
      *                        a new instance
-     * @param securityGroup     the security group which is used to define the
+     * @param iamRole role to be associated with any instances started
+     * @param securityGroup the security group which is used to define the
      *                      firewall settings for an instance
      * @param keyname the name of the key pair which can be used to access
      *                the instance server
@@ -31,6 +32,7 @@ public interface DuracloudComputeProvider{
      * @return provider instance ID
      */
     public String start(String providerImageId,
+                        String iamRole,
                         String securityGroup,
                         String keyname,
                         String elasticIp, 
