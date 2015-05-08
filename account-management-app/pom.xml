@@ -27,7 +27,6 @@
     <log.level.default>DEBUG</log.level.default>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <credentials.file.path>${basedir}/src/test/resources/credentials.xml</credentials.file.path>
-    <jquery.target.path>static/jquery</jquery.target.path>
   </properties>
 
   <!-- Build Configuration -->
@@ -47,18 +46,6 @@
               <filtering>true</filtering>
             </resource>
           </webResources>
-          <overlays>
-            <overlay>
-              <groupId>org.duracloud</groupId>
-              <artifactId>jquery</artifactId>
-              <type>zip</type>
-              <targetPath>${jquery.target.path}</targetPath>
-              <includes>
-                <include>jquery.js</include>
-                <include>jquery.min.js</include>
-              </includes>
-            </overlay>
-          </overlays>
         </configuration>
       </plugin>
       
@@ -333,12 +320,6 @@
       <artifactId>hibernate-validator</artifactId>
       <version>4.1.0.Final</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.duracloud</groupId>
-      <artifactId>jquery</artifactId>
-      <type>zip</type>
-      <version>1.7.1</version>
     </dependency>
     <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
