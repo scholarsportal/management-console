@@ -58,6 +58,7 @@ public class UsersController extends AbstractRootController{
                            user.getFirstName(),
                            user.getLastName(),
                            user.getEmail(),
+                           user.getAllowableIPAddressRange(),
                            accounts,
                            user.isRoot()));
         }
@@ -151,13 +152,14 @@ public class UsersController extends AbstractRootController{
     public class User implements Comparable<User> {
         public User(
             Long id, String username, String firstName, String lastName,
-            String email, Set<Account> accounts, boolean root) {
+            String email, String allowableIPAddressRange, Set<Account> accounts, boolean root) {
             super();
             this.id = id;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
+            this.allowableIPAddressRange = allowableIPAddressRange;
             this.accounts = accounts;
             this.root = root;
         }
@@ -168,6 +170,7 @@ public class UsersController extends AbstractRootController{
         private String lastName;
         private String email;
         private Set<Account> accounts;
+        private String allowableIPAddressRange;
         private boolean root = false;
 
         public Long getId() {
@@ -202,6 +205,11 @@ public class UsersController extends AbstractRootController{
         public int compareTo(User o) {
             return this.getUsername().compareTo(o.getUsername());
         }
+
+        public String getAllowableIPAddressRange() {
+            return allowableIPAddressRange;
+        }
+
     }
 
     public class Account implements Comparable<Account> {

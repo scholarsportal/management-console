@@ -63,6 +63,8 @@
 
                   <th><spring:message code="user.email"/></th>
 
+                  <th><spring:message code="user.allowableipaddressrange"/></th>
+
                   <th colspan="2"><!--  --></th>
 
                   <th><spring:message code="account"/></th>
@@ -85,6 +87,8 @@
                     <td>${u.lastName}</td>
 
                     <td>${u.email}</td>
+
+                    <td>${u.allowableIPAddressRange}</td>
 
                     <td>
                       <ul

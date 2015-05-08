@@ -244,6 +244,7 @@ public class AccountUsersController extends AbstractAccountController {
                         u.getEmail(),
                         InvitationStatus.ACTIVE,
                         u.getRoleByAcct(accountId),
+                        u.getAllowableIPAddressRange(),
                         false);
                 //TODO set current role for select box - based on hierarchy?
                 //editForm.setRole();
@@ -357,6 +358,7 @@ public class AccountUsersController extends AbstractAccountController {
                     u.getEmail(),
                     InvitationStatus.ACTIVE,
                     role,
+                    u.getAllowableIPAddressRange(),
                     caller.isRoot() 
                         || caller.isOwnerForAcct(accountId) 
                         || (caller.isAdminForAcct(accountId) 
@@ -377,9 +379,10 @@ public class AccountUsersController extends AbstractAccountController {
      * 
      */
     public class AccountUser implements Comparable<AccountUser> {
+
         public AccountUser(
             Long id, String username, String firstName, String lastName,
-            String email, InvitationStatus status, Role role, boolean editable) {
+            String email, InvitationStatus status, Role role, String allowableIPAddressRange, boolean editable) {
             super();
             this.id = id;
             this.username = username;
@@ -389,6 +392,7 @@ public class AccountUsersController extends AbstractAccountController {
             this.status = status;
             this.role = role;
             this.editable = editable;
+            this.allowableIPAddressRange = allowableIPAddressRange;
         }
 
         private Long id;
@@ -399,6 +403,7 @@ public class AccountUsersController extends AbstractAccountController {
         private InvitationStatus status;
         private Role role;
         private boolean editable;
+        private String allowableIPAddressRange;
 
         public Long getId() {
             return id;
@@ -435,6 +440,14 @@ public class AccountUsersController extends AbstractAccountController {
         @Override
         public int compareTo(AccountUser o) {
             return this.getUsername().compareTo(o.getUsername());
+        }
+
+        public String getAllowableIPAddressRange() {
+            return allowableIPAddressRange;
+        }
+
+        public void setAllowableIPAddressRange(String allowableIPAddressRange) {
+            this.allowableIPAddressRange = allowableIPAddressRange;
         }
     }
 
