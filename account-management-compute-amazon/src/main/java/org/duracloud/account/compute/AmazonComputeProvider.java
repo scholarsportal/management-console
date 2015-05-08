@@ -212,7 +212,6 @@ public class AmazonComputeProvider implements DuracloudComputeProvider {
 
             if (null != instanceProfile) {
                 return new IamInstanceProfileSpecification()
-                    .withArn(instanceProfile.getArn())
                     .withName(instanceProfile.getInstanceProfileName());
             }
         }
