@@ -37,13 +37,6 @@ import org.duracloud.storage.domain.impl.StorageAccountImpl;
 public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     protected static final String DEFAULT_SSL_PORT = "443";
-    protected static final String DEFAULT_SERVICES_ADMIN_PORT = "8089";
-    protected static final String DEFAULT_SERVICES_ADMIN_CONTEXT_PREFIX =
-        "org.duracloud.services.admin_";
-    protected static final String DEFAULT_DURASTORE_CONTEXT = "durastore";
-    protected static final String DEFAULT_MSG_BROKER_PORT = "61617";
-    protected static final String DEFAULT_SERVICE_COMPUTE_TYPE = "AMAZON_EC2";
-    protected static final String DEFAULT_SERVICE_COMPUTE_IMAGE_ID = "unknown";
     protected static final String NOTIFICATION_TYPE = "EMAIL";
 
     private DuracloudInstance instance;
@@ -72,23 +65,19 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
     public DurastoreConfig getDurastoreConfig() {
         DurastoreConfig config = new DurastoreConfig();
-        DuracloudStorageProviderAccountRepo storageProviderAcctRepo =
-            repoMgr.getStorageProviderAccountRepo();
-        Set<StorageAccount> storageAccts = new HashSet<StorageAccount>();
+        Set<StorageAccount> storageAccts = new HashSet<>();
         ServerDetails serverDetails = getAccount().getServerDetails();
 
         // Primary Storage Provider
         StorageProviderAccount primaryProviderAccount =
             serverDetails.getPrimaryStorageProviderAccount();
-        storageAccts.add(getStorageAccount(storageProviderAcctRepo,
-                                           primaryProviderAccount,
+        storageAccts.add(getStorageAccount(primaryProviderAccount,
                                            true));
         // Secondary Storage Providers
         Set<StorageProviderAccount> storageProviderAccounts =
             serverDetails.getSecondaryStorageProviderAccounts();
         for(StorageProviderAccount storageProviderAccount : storageProviderAccounts) {
-            storageAccts.add(getStorageAccount(storageProviderAcctRepo,
-                    storageProviderAccount,
+            storageAccts.add(getStorageAccount(storageProviderAccount,
                                                false));
         }
 
@@ -106,16 +95,13 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         return accountRepo.findOne(instance.getAccount().getId());
     }
 
-    private StorageAccount getStorageAccount(
-        DuracloudStorageProviderAccountRepo storageProviderAcctRepo,
-        StorageProviderAccount provider,
-        boolean primary) {
-
+    private StorageAccount getStorageAccount(StorageProviderAccount provider,
+                                             boolean primary) {
         StorageAccount storageAccount =
             new StorageAccountImpl(String.valueOf(provider.getId()),
-                               provider.getUsername(),
-                               provider.getPassword(),
-                               provider.getProviderType());
+                                   provider.getUsername(),
+                                   provider.getPassword(),
+                                   provider.getProviderType());
         storageAccount.setPrimary(primary);
 
         String storageClass = "rrs";
@@ -124,6 +110,14 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
 
         storageAccount.setOption(StorageAccount.OPTS.STORAGE_CLASS.name(),
                                  storageClass);
+
+        Map<String, String> providerProps = provider.getProperties();
+        if(null != providerProps && providerProps.size() > 0) {
+            for(String propKey : providerProps.keySet()) {
+                String propValue = providerProps.get(propKey);
+                storageAccount.setOption(propKey, propValue);
+            }
+        }
 
         return storageAccount;
     }
