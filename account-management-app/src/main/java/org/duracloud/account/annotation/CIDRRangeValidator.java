@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2009-2015 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.annotation;
-
-import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 /**
  * @author "Daniel Bernstein (dbernstein@duraspace.org)"
@@ -27,23 +30,20 @@ public class CIDRRangeValidator
      */
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        String ipv4Range = 
-                "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}" +
-        		"([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
         //may contain multiple values, semicolon separated.
         if(!StringUtils.isBlank(value)){
             String[] values = value.split(";");
             for(String val : values){
-                if(!Pattern.matches(ipv4Range, val)){
+                try{
+                    new IpAddressMatcher(val);
+                }catch(IllegalArgumentException ex){
                     return false;
                 }
             }
-            
             return true;
         }else{
             return true;
         }
-        
     }
 
     /*

@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2009-2015 DuraSpace. All rights reserved.
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ *     http://duracloud.org/license/
  */
 package org.duracloud.account.annotation;
 
@@ -20,9 +24,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy=CIDRRangeValidator.class)
 public @interface CIDRRangeConstraint {
 	 	String message() default "The CIDR Range is invalid.";
-
 		Class<?>[] groups() default {};
-
 		Class<? extends Payload>[] payload() default {};
 }
 
