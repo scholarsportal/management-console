@@ -311,6 +311,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String username = user.getUsername();
             String password = user.getPassword();
             String email = user.getEmail();
+            String ipLimits = user.getAllowableIPAddressRange();
             Set<Role> roles = getRolesByAccounts(user, clusterAcctIds);
 
             if(roles == null) {
@@ -341,6 +342,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 SecurityUserBean bean =
                         new SecurityUserBean(username, password, grants);
                 bean.setEmail(email);
+                bean.setIpLimits(ipLimits);
 
                 if(groups != null) {
                     for (DuracloudGroup group : groups) {

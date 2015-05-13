@@ -5,6 +5,7 @@ package org.duracloud.account.db.util.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
@@ -93,7 +94,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         }
         
         return username.matches("\\A(?![_.@\\-])[a-z0-9_.@\\-]+(?<![_.@\\-])\\Z");
-        
     }
 
     private boolean isReservedName(String username) {
@@ -109,7 +109,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         
         return false;
     }
-
     
     @Override
     public DuracloudUser createNewUser(String username,
@@ -121,12 +120,9 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
                                        String securityAnswer)
         throws UserAlreadyExistsException, InvalidUsernameException {
 
-
         checkUsername(username);
         
         ChecksumUtil util = new ChecksumUtil(ChecksumUtil.Algorithm.SHA_256);
-
-
 
         DuracloudUser user = new DuracloudUser();
         user.setUsername(username);
@@ -142,7 +138,6 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         getNotifier().sendNotificationCreateNewUser(user);
         return user;
     }
-
 
     @Override
     public boolean setUserRights(Long acctId, Long userId, Role... roles) {
@@ -369,8 +364,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
     
     @Override 
-    public UserInvitation
-        retrievePassordChangeInvitation(String redemptionCode)
+    public UserInvitation retrievePassordChangeInvitation(String redemptionCode)
             throws  DBNotFoundException {
         UserInvitation invite =  this.repoMgr.getUserInvitationRepo()
                            .findByRedemptionCode(redemptionCode);
@@ -414,7 +408,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public DuracloudUser loadDuracloudUserByIdInternal(Long userId) throws DBNotFoundException {
+    public DuracloudUser loadDuracloudUserByIdInternal(Long userId)
+        throws DBNotFoundException {
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
         if(user == null) {
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
@@ -468,9 +463,14 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
     }
 
     @Override
-    public void storeUserDetails(
-            Long userId, String firstName, String lastName, String email,
-        String securityQuestion, String securityAnswer, String allowableIPAddressRange) throws DBNotFoundException {
+    public void storeUserDetails(Long userId,
+                                 String firstName,
+                                 String lastName,
+                                 String email,
+                                 String securityQuestion,
+                                 String securityAnswer,
+                                 String allowableIPAddressRange)
+        throws DBNotFoundException {
         log.info("Updating user details for user with ID {}", userId);
 
         DuracloudUser user = repoMgr.getUserRepo().findOne(userId);
@@ -478,6 +478,8 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
             throw new DBNotFoundException("User with ID: "+userId+" does not exist");
         }
         boolean emailUpdate = !user.getEmail().equals(email);
+        boolean ipAddressUpdate = !Objects.equals(user.getAllowableIPAddressRange(),
+                                                  allowableIPAddressRange);
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -487,7 +489,7 @@ public class DuracloudUserServiceImpl implements DuracloudUserService, UserDetai
         user.setAllowableIPAddressRange(allowableIPAddressRange);
         repoMgr.getUserRepo().save(user);
 
-        if(emailUpdate) {
+        if(emailUpdate || ipAddressUpdate) {
             propagateUserUpdate(userId);
         }
     }
