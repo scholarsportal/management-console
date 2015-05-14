@@ -3,7 +3,12 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.ComputeProviderAccount;
@@ -24,10 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.text.MessageFormat;
-import java.util.List;
 /**
  * 
  * @author Daniel Bernstein
@@ -140,11 +141,11 @@ public class AccountsController extends AbstractRootController{
         ServerDetails serverDetails = accountService.retrieveServerDetails();
         
         //save primary
-        saveStorageProvider(accountSetupForm.getPrimaryStorageCredentials());
+        saveStorageProvider(accountSetupForm.getPrimaryStorageProviderSettings());
         
         //save secondary
-        for(StorageCredentials cred :  accountSetupForm.getSecondaryStorageCredentailsList()){
-            saveStorageProvider(cred);
+        for(StorageProviderSettings sp :  accountSetupForm.getSecondaryStorageProviderSettingsList()){
+            saveStorageProvider(sp);
         }
 
         //save compute
@@ -154,8 +155,7 @@ public class AccountsController extends AbstractRootController{
             accountSetupForm.getComputePassword(),
             accountSetupForm.getComputeElasticIP(),
             accountSetupForm.getComputeKeypair(),
-            accountSetupForm.getComputeSecurityGroup(),
-            accountSetupForm.getAuditQueue());
+            accountSetupForm.getComputeSecurityGroup());
 
         String message = "Successfully configured providers ";
 
@@ -172,10 +172,11 @@ public class AccountsController extends AbstractRootController{
     }
 
     private void
-        saveStorageProvider(StorageCredentials storageCredentials) {
-        getRootAccountManagerService().setupStorageProvider(storageCredentials.getId(),
-                                                            storageCredentials.getUsername(),
-                                                            storageCredentials.getPassword());
+        saveStorageProvider(StorageProviderSettings storageProviderSettings) {
+        getRootAccountManagerService().setupStorageProvider(storageProviderSettings.getId(),
+                storageProviderSettings.getUsername(),
+                storageProviderSettings.getPassword(),
+                storageProviderSettings.getProperties());
         
     }
 

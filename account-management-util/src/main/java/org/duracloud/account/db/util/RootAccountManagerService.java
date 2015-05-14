@@ -4,6 +4,7 @@
 package org.duracloud.account.db.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
@@ -162,9 +163,10 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
+     * @parma properties
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void setupStorageProvider(Long id, String username, String password);
+    public void setupStorageProvider(Long id, String username, String password, Map<String,String> properties);
 
     /**
      * Sets up a compute provider
@@ -175,11 +177,10 @@ public interface RootAccountManagerService {
      * @param elasticIp
      * @param keypair
      * @param securityGroup
-     * @param auditQueue
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
     public void setupComputeProvider(Long id, String username, String password,
-                                     String elasticIp, String keypair, String securityGroup, String auditQueue);
+                                     String elasticIp, String keypair, String securityGroup);
 
     /**
      * Reset a user's password

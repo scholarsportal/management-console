@@ -1,7 +1,9 @@
 package org.duracloud.account.app.controller;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -11,61 +13,60 @@ import org.duracloud.storage.domain.StorageProviderType;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class AccountSetupForm {
-    
+
     @Valid
-    private StorageCredentials primaryStorageCredentials;
-    
+    private StorageProviderSettings primaryStorageProviderSettings;
+
     @Valid
-    private List<StorageCredentials> secondaryStorageCredentailsList;
-    
+    private List<StorageProviderSettings> secondaryStorageProviderSettingsList;
+
     private boolean computeCredentialsSame;
 
-    @NotBlank(message="Compute account's username is required")
+    @NotBlank(message = "Compute account's username is required")
     private String computeUsername;
 
-    @NotBlank(message="Compute account's password is required")
+    @NotBlank(message = "Compute account's password is required")
     private String computePassword;
 
-    @NotBlank(message="Elastic IP is required")
+    @NotBlank(message = "Elastic IP is required")
     private String computeElasticIP;
 
-    @NotBlank(message="Keypair is required")
+    @NotBlank(message = "Keypair is required")
     private String computeKeypair;
 
-    @NotBlank(message="Security group is required")
+    @NotBlank(message = "Security group is required")
     private String computeSecurityGroup;
 
-    @NotBlank(message="Audit queue is required")
-    private String auditQueue;
-    
-    
-    public AccountSetupForm(
-        StorageProviderAccount primary,
-        List<StorageProviderAccount> secondaryList,
-        ComputeProviderAccount compute) {
+    public AccountSetupForm(StorageProviderAccount primary,
+            List<StorageProviderAccount> secondaryList,
+            ComputeProviderAccount compute) {
         this();
 
-        this.primaryStorageCredentials = new StorageCredentials(primary);
+        this.primaryStorageProviderSettings = createStorageProviderSettings(primary);
 
         for (StorageProviderAccount spa : secondaryList) {
-            this.secondaryStorageCredentailsList.add(new StorageCredentials(spa));
+            this.secondaryStorageProviderSettingsList
+                    .add(createStorageProviderSettings(spa));
         }
-        
-        if(compute != null){
+
+        if (compute != null) {
             this.computeUsername = compute.getUsername();
             this.computePassword = compute.getPassword();
             this.computeElasticIP = compute.getElasticIp();
             this.computeKeypair = compute.getKeypair();
             this.computeSecurityGroup = compute.getSecurityGroup();
-            this.auditQueue = compute.getAuditQueue();
         }
     }
 
-    public AccountSetupForm(){
-        this.primaryStorageCredentials = new StorageCredentials();
+    private StorageProviderSettings createStorageProviderSettings(
+            StorageProviderAccount spAccount) {
+            return new StorageProviderSettings(spAccount);
+    }
 
-        this. secondaryStorageCredentailsList =
-            new LinkedList<StorageCredentials>();
+    public AccountSetupForm() {
+        this.primaryStorageProviderSettings = new StorageProviderSettings();
+
+        this.secondaryStorageProviderSettingsList = new LinkedList<StorageProviderSettings>();
 
     }
 
@@ -116,85 +117,96 @@ public class AccountSetupForm {
     public void setComputeSecurityGroup(String computeSecurityGroup) {
         this.computeSecurityGroup = computeSecurityGroup;
     }
-    
-    public String getAuditQueue() {
-        return auditQueue;
-    }
-    
-    public void setAuditQueue(String auditQueue) {
-        this.auditQueue = auditQueue;
-    }
-    
-    public StorageCredentials getPrimaryStorageCredentials() {
-        return primaryStorageCredentials;
+
+    public StorageProviderSettings getPrimaryStorageProviderSettings() {
+        return primaryStorageProviderSettings;
     }
 
-
-    public void setPrimaryStorageCredentials(StorageCredentials primaryStorageCredentials) {
-        this.primaryStorageCredentials = primaryStorageCredentials;
+    public void setPrimaryStorageProviderSettings(
+            StorageProviderSettings primaryStorageProviderSettings) {
+        this.primaryStorageProviderSettings = primaryStorageProviderSettings;
     }
 
-    public List<StorageCredentials> getSecondaryStorageCredentailsList() {
-        return secondaryStorageCredentailsList;
+    public List<StorageProviderSettings> getSecondaryStorageProviderSettingsList() {
+        return secondaryStorageProviderSettingsList;
     }
 
-
-    public void
-        setSecondaryStorageCredentailsList(List<StorageCredentials> secondaryStorageCredentailsList) {
-        this.secondaryStorageCredentailsList = secondaryStorageCredentailsList;
+    public void setSecondaryStorageCredentailsList(
+            List<StorageProviderSettings> secondaryStorageProviderSettingsList) {
+        this.secondaryStorageProviderSettingsList = secondaryStorageProviderSettingsList;
     }
 
-    public static class StorageCredentials {
+    public static class StorageProviderSettings {
         private Long id;
-        @NotBlank(message="Username is required")
+        @NotBlank(message = "Username is required")
         private String username;
-        @NotBlank(message="Password is required")
+        @NotBlank(message = "Password is required")
         private String password;
         private StorageProviderType providerType;
 
-        public StorageCredentials(StorageProviderAccount storageProviderAccount) {
+        private Map<String, String> properties = new HashMap<>();
+
+
+        public StorageProviderSettings(
+                StorageProviderAccount storageProviderAccount) {
             this.username = storageProviderAccount.getUsername();
             this.password = storageProviderAccount.getPassword();
             this.id = storageProviderAccount.getId();
             this.providerType = storageProviderAccount.getProviderType();
-            
-            if("TBD".equals(this.username)){
+
+            if ("TBD".equals(this.username)) {
                 this.username = null;
             }
 
-            if("TBD".equals(this.password)){
+            if ("TBD".equals(this.password)) {
                 this.password = null;
             }
+            
+            this.properties = storageProviderAccount.getProperties();
         }
-        
-        public StorageCredentials() {}
+
+        public StorageProviderSettings() {
+        }
 
         public Long getId() {
             return id;
         }
+
         public void setId(Long id) {
             this.id = id;
         }
-        
-        public StorageProviderType getProviderType(){
+
+        public StorageProviderType getProviderType() {
             return this.providerType;
         }
-        
+
         public void setProviderType(StorageProviderType providerType) {
             this.providerType = providerType;
         }
-        
+
         public String getUsername() {
             return username;
         }
+
         public void setUsername(String username) {
             this.username = username;
         }
+
         public String getPassword() {
             return password;
         }
+
         public void setPassword(String password) {
             this.password = password;
         }
+
+        public Map<String, String> getProperties() {
+            return this.properties;
+        }
+ 
+        public void setProperties(Map<String, String> properties) {
+            this.properties = properties;
+        }
+
     }
 }

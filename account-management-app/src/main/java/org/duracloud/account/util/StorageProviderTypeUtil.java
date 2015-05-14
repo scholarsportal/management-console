@@ -13,6 +13,7 @@ public class StorageProviderTypeUtil {
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.RACKSPACE);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SDSC);
         SECONDARY_PROVIDER_TYPES.add(StorageProviderType.AMAZON_GLACIER);
+        SECONDARY_PROVIDER_TYPES.add(StorageProviderType.SNAPSHOT);
     }
     
     public static List<StorageProviderType> getAvailableSecondaryTypes() {

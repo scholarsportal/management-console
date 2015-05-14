@@ -11,3 +11,5 @@ alter table duracloud_user add column allowableipaddress_range varchar(255) NULL
 alter table server_image add column iam_role varchar(255) NULL;
 
 alter table storage_provider_account add column `storage_limit` int(11) NOT NULL DEFAULT 1;
+
+alter table compute_provider_account drop column `audit_queue`;

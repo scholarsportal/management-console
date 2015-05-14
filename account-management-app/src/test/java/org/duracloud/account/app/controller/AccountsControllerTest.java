@@ -3,7 +3,10 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.app.controller.AccountSetupForm.StorageCredentials;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.duracloud.account.app.controller.AccountSetupForm.StorageProviderSettings;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountInfo.AccountStatus;
 import org.duracloud.account.db.model.ComputeProviderAccount;
@@ -15,8 +18,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
-
-import java.util.ArrayList;
 
 /**
  * 
@@ -91,11 +92,11 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         
         rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
-                                                       EasyMock.isA(String.class));
+                                                       EasyMock.isA(String.class),
+                                                       EasyMock.isA(new HashMap<String,String>().getClass()));
         EasyMock.expectLastCall().anyTimes();
 
         rootAccountManagerService.setupComputeProvider(EasyMock.anyLong(),
-                                                       EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
@@ -108,7 +109,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
 
         AccountSetupForm setupForm = new AccountSetupForm();
         String test = "test";
-        StorageCredentials p = setupForm.getPrimaryStorageCredentials();
+        StorageProviderSettings p = setupForm.getPrimaryStorageProviderSettings();
         p.setUsername(test);
         p.setPassword(test);
         setupForm.setComputeUsername(test);
@@ -116,7 +117,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         setupForm.setComputeElasticIP(test);
         setupForm.setComputeKeypair(test);
         setupForm.setComputeSecurityGroup(test);
-        setupForm.setAuditQueue("auditQueue");
         setupNoBindingResultErrors();
         addFlashAttribute();
         replayMocks();

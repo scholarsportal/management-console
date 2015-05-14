@@ -6,14 +6,15 @@ package org.duracloud.account.db.util.impl;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
 import org.duracloud.account.db.model.AccountType;
-import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -218,12 +219,14 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	@Override
 	public void setupStorageProvider(Long providerId,
                                      String username,
-                                     String password) {
+                                     String password,
+                                     Map<String,String> properties) {
         log.info("Setting up storage provider with ID {}", providerId);
         StorageProviderAccount storageProviderAccount =
             getStorageRepo().findOne(providerId);
         storageProviderAccount.setUsername(username);
         storageProviderAccount.setPassword(password);
+        storageProviderAccount.getProperties().putAll(properties);
         getStorageRepo().save(storageProviderAccount);
     }
 
@@ -233,8 +236,7 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
                                      String password,
                                      String elasticIp,
                                      String keypair,
-                                     String securityGroup,
-                                     String auditQueue) {
+                                     String securityGroup) {
         log.info("Setting up compute provider with ID {}", providerId);
         ComputeProviderAccount computeProviderAcct =
             repoMgr.getComputeProviderAccountRepo().findOne(providerId);
@@ -243,7 +245,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         computeProviderAcct.setElasticIp(elasticIp);
         computeProviderAcct.setKeypair(keypair);
         computeProviderAcct.setSecurityGroup(securityGroup);
-        computeProviderAcct.setAuditQueue(auditQueue);
         repoMgr.getComputeProviderAccountRepo().save(computeProviderAcct);
     }
 
