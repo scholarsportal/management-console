@@ -311,7 +311,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String username = user.getUsername();
             String password = user.getPassword();
             String email = user.getEmail();
-            String ipLimits = user.getAllowableIPAddressRange();
+            String ipLimits = annotateAddressRange(user.getAllowableIPAddressRange());
             Set<Role> roles = getRolesByAccounts(user, clusterAcctIds);
 
             if(roles == null) {
@@ -359,6 +359,26 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         // do the update
         updateUserDetails(userBeans);
+    }
+
+    /**
+     * For a user account with an IP limitation, this method is used to update
+     * the list of allowed IPs to include the IP of the DuraCloud instance itself.
+     * This is required to allow the calls made between applications (like those
+     * made from DurAdmin to DuraStore) to pass through the IP range check.
+     *
+     * @param baseRange set of IP ranges set by the user
+     * @return baseRange plus the instance elastic IP, or null if baseRange is null
+     */
+    private String annotateAddressRange(String baseRange) {
+        if(null == baseRange || baseRange.equals("")) {
+            return baseRange;
+        } else {
+            String elasticIp = getAccount().getServerDetails()
+                                           .getComputeProviderAccount().getElasticIp();
+            String delimeter = ";";
+            return baseRange + delimeter + elasticIp + "/32";
+        }
     }
 
     private Set<Role> getRolesByAccounts(DuracloudUser user,
