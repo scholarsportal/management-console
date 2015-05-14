@@ -92,7 +92,8 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
                                                        EasyMock.isA(String.class),
-                                                       EasyMock.isA(new HashMap<String,String>().getClass()));
+                                                       EasyMock.isA(new HashMap<String,String>().getClass()),
+                                                       EasyMock.anyInt());
         EasyMock.expectLastCall().anyTimes();
 
         rootAccountManagerService.setupComputeProvider(EasyMock.anyLong(),

@@ -220,13 +220,15 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	public void setupStorageProvider(Long providerId,
                                      String username,
                                      String password,
-                                     Map<String,String> properties) {
+                                     Map<String,String> properties,
+                                     int storageLimit) {
         log.info("Setting up storage provider with ID {}", providerId);
         StorageProviderAccount storageProviderAccount =
             getStorageRepo().findOne(providerId);
         storageProviderAccount.setUsername(username);
         storageProviderAccount.setPassword(password);
         storageProviderAccount.getProperties().putAll(properties);
+        storageProviderAccount.setStorageLimit(storageLimit);
         getStorageRepo().save(storageProviderAccount);
     }
 

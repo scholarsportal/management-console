@@ -177,7 +177,8 @@ public class AccountsController extends AbstractRootController{
         getRootAccountManagerService().setupStorageProvider(storageProviderSettings.getId(),
                 storageProviderSettings.getUsername(),
                 storageProviderSettings.getPassword(),
-                storageProviderSettings.getProperties());
+                storageProviderSettings.getProperties(),
+                Integer.parseInt(storageProviderSettings.getStorageLimit()));
         
     }
 

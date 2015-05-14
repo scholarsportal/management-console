@@ -163,7 +163,8 @@
                   <td><table class="datatablesimple">
                         <tr>
                           <td>${primaryProvider.providerType}</td>
-                          <td>(Primary) props= ${primaryProvider.properties}</td>
+                          <td>(Primary)</td>
+                          <td>${primaryProvider.storageLimit} TB Limit</td>
                           <td>
                             <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                             <c:choose>
@@ -196,6 +197,7 @@
                               <td>${p.providerType}</td>
 
                               <td>(Secondary)</td>
+                              <td>${primaryProvider.storageLimit} TB Limit</td>
                               <td>
                                 <sec:authorize access="hasAnyRole('ROLE_ROOT')">
                                     <form

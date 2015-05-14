@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Digits;
 
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.StorageProviderAccount;
@@ -142,6 +143,11 @@ public class AccountSetupForm {
         private String username;
         @NotBlank(message = "Password is required")
         private String password;
+        
+        @NotBlank(message = "Storage Limit is required")
+        @Digits(integer=3, fraction=0)
+        private String storageLimit = "1";
+        
         private StorageProviderType providerType;
 
         private Map<String, String> properties = new HashMap<>();
@@ -163,6 +169,8 @@ public class AccountSetupForm {
             }
             
             this.properties = storageProviderAccount.getProperties();
+            this.storageLimit = storageProviderAccount.getStorageLimit()+"";
+            
         }
 
         public StorageProviderSettings() {
@@ -206,6 +214,14 @@ public class AccountSetupForm {
  
         public void setProperties(Map<String, String> properties) {
             this.properties = properties;
+        }
+
+        public String getStorageLimit() {
+            return storageLimit;
+        }
+
+        public void setStorageLimit(String storageLimit) {
+            this.storageLimit = storageLimit;
         }
 
     }

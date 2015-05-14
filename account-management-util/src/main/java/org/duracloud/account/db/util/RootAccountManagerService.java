@@ -163,10 +163,11 @@ public interface RootAccountManagerService {
      * @param id
      * @param username
      * @param password
+     * @param storageLimit 
      * @parma properties
      */
     @Secured({"role:ROLE_ROOT, scope:ANY"})
-    public void setupStorageProvider(Long id, String username, String password, Map<String,String> properties);
+    public void setupStorageProvider(Long id, String username, String password, Map<String,String> properties, int storageLimit);
 
     /**
      * Sets up a compute provider

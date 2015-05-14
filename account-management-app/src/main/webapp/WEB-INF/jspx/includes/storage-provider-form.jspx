@@ -47,6 +47,20 @@
 	               cssClass="error"
 	               element="div" />               
 	            </li>
+
+              <li>
+                <form:label
+                 cssErrorClass="error"
+                 path="${param.storageProvider}.storageLimit"><spring:message code="storageprovider.storagelimit"/></form:label>
+                <form:input
+                 cssErrorClass="error"
+                 path="${param.storageProvider}.storageLimit"
+                 onclick="same(this.form)"/>
+                <form:errors
+                 path="${param.storageProvider}.storageLimit"
+                 cssClass="error"
+                 element="div" />               
+              </li>
 	            
 	            <c:if test="${param.storageProviderType eq 'SNAPSHOT'}">
 	              <li>
