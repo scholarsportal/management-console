@@ -14,11 +14,13 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.DuracloudMill;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudStorageProviderAccountRepo;
+import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.instance.InstanceConfigUtil;
 import org.duracloud.account.db.util.instance.InstanceUtil;
 import org.duracloud.account.db.util.notification.NotificationMgrConfig;
@@ -42,16 +44,20 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
     private NotificationMgrConfig notMgrConfig;
+    private DuracloudMillConfigService duracloudMillService;
     private AmaEndpoint amaEndpoint;
 
     public InstanceConfigUtilImpl(DuracloudInstance instance,
                                   DuracloudRepoMgr repoMgr,
                                   NotificationMgrConfig notMgrConfig,
-                                  AmaEndpoint amaEndpoint) {
+                                  AmaEndpoint amaEndpoint,
+                                  DuracloudMillConfigService duracloudMillService) {
         this.instance = instance;
         this.repoMgr = repoMgr;
         this.notMgrConfig = notMgrConfig;
         this.amaEndpoint = amaEndpoint;
+        this.duracloudMillService = duracloudMillService;
+        
     }
 
     public DuradminConfig getDuradminConfig() {
@@ -81,9 +87,11 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
                                                false));
         }
 
+        DuracloudMill mill = duracloudMillService.get();
+        
         ComputeProviderAccount compute = serverDetails.getComputeProviderAccount();
         AuditConfig audit = config.getAuditConfig();
-        audit.setAuditQueueName(compute.getAuditQueue());
+        audit.setAuditQueueName(mill.getAuditQueue());
         audit.setAuditUsername(compute.getUsername());
         audit.setAuditPassword(compute.getPassword());
         config.setStorageAccounts(storageAccts);

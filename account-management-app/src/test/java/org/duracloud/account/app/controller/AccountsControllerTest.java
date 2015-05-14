@@ -73,7 +73,6 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         cpa.setElasticIp("ip");
         cpa.setSecurityGroup("security");
         cpa.setKeypair("keypair");
-        cpa.setAuditQueue("audit");
 
         EasyMock.expect(accountService.getComputeProvider()).andReturn(cpa);
         

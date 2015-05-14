@@ -9,6 +9,7 @@ import org.duracloud.account.db.model.DuracloudInstance;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudInstanceServiceFactory;
+import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.security.AnnotationParser;
 import org.duracloud.account.db.util.security.SecurityContextUtil;
@@ -37,6 +38,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
     private AmaEndpoint amaEndpoint;
+    private DuracloudMillConfigService duracloudMillService;
+    
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
@@ -44,7 +47,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
                                                ComputeProviderUtil computeUtil,
                                                AnnotationParser annotationParser,
                                                NotificationMgr notificationMgr,
-                                               AmaEndpoint amaEndpoint) {
+                                               AmaEndpoint amaEndpoint, 
+                                               DuracloudMillConfigService duracloudMillService) {
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
@@ -53,6 +57,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
         this.annotationParser = annotationParser;
         this.notificationMgr = notificationMgr;
         this.amaEndpoint = amaEndpoint;
+        this.duracloudMillService = duracloudMillService;
     }
 
     @Override
@@ -64,7 +69,8 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             accountClusterUtil,
             computeUtil,
             notificationMgr.getConfig(),
-            amaEndpoint);
+            amaEndpoint, 
+            duracloudMillService);
 
         Authentication authentication = getAuthentication();
         return new DuracloudInstanceServiceSecuredImpl(instanceService,

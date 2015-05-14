@@ -101,6 +101,7 @@
     <constructor-arg ref="annotationParser"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="amaEndpoint"/>
+    <constructor-arg ref="duracloudMillConfigService"/>
 
   </bean>
 

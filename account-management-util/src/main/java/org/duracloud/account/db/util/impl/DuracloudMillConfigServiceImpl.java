@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * @author Daniel Bernstein
  *
  */
-@Component
+@Component("duracloudMillConfigService")
 public class DuracloudMillConfigServiceImpl implements
         DuracloudMillConfigService {
     

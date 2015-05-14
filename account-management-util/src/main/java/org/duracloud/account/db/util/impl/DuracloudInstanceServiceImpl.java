@@ -29,6 +29,7 @@ import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.util.DuracloudInstanceService;
+import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.error.DuracloudInstanceUpdateException;
 import org.duracloud.account.db.util.instance.DurabossUpdater;
 import org.duracloud.account.db.util.instance.InstanceAccessUtil;
@@ -74,6 +75,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private DurabossUpdater durabossUpdater;
     private Credential rootCredential;
     private NotificationMgrConfig notMgrConfig;
+    private DuracloudMillConfigService duracloudMillService;
     private int timeoutMinutes = 20;
 
     public DuracloudInstanceServiceImpl(Long accountId,
@@ -82,7 +84,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                         AccountClusterUtil accountClusterUtil,
                                         ComputeProviderUtil computeProviderUtil,
                                         NotificationMgrConfig notMgrConfig,
-                                        AmaEndpoint amaEndpoint) {
+                                        AmaEndpoint amaEndpoint,
+                                        DuracloudMillConfigService duracloudMillService) {
         this(accountId,
                 instance,
                 repoMgr,
@@ -93,7 +96,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                 null,
                 null,
                 notMgrConfig, 
-                amaEndpoint);
+                amaEndpoint,
+                duracloudMillService);
     }
 
     protected DuracloudInstanceServiceImpl(Long accountId,
@@ -106,7 +110,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
                                            InstanceConfigUtil instanceConfigUtil,
                                            DurabossUpdater durabossUpdater,
                                            NotificationMgrConfig notMgrConfig,
-                                           AmaEndpoint amaEndpoint) {
+                                           AmaEndpoint amaEndpoint,
+                                           DuracloudMillConfigService duracloudMillService) {
 
         this.accountId = accountId;
         this.instance = instance;
@@ -118,6 +123,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.instanceConfigUtil = instanceConfigUtil;
         this.durabossUpdater = durabossUpdater;
         this.notMgrConfig = notMgrConfig;
+        this.duracloudMillService = duracloudMillService;
         
         if (null == computeProvider) {
             initializeComputeProvider();
@@ -131,7 +137,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             this.instanceConfigUtil = new InstanceConfigUtilImpl(instance,
                     repoMgr,
                     notMgrConfig,
-                    amaEndpoint);
+                    amaEndpoint,
+                    duracloudMillService);
         }
 
         if (null == durabossUpdater){
