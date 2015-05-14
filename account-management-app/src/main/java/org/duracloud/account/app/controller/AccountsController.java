@@ -157,7 +157,8 @@ public class AccountsController extends AbstractRootController{
             accountSetupForm.getComputeKeypair(),
             accountSetupForm.getComputeSecurityGroup());
 
-        String message = "Successfully configured providers ";
+        String message = MessageFormat
+                .format("Successfully configured providers for {0}",info.getAcctName());
 
         AccountStatus status = info.getStatus();
         //activate only if pending

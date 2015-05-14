@@ -88,7 +88,7 @@ public class AccountsControllerTest extends AmaControllerTestBase {
         AccountInfo info = createMock(AccountInfo.class);
         EasyMock.expect(info.getStatus()).andReturn(AccountStatus.PENDING);
         EasyMock.expect(rootAccountManagerService.getAccount(TEST_ACCOUNT_ID)).andReturn(info);
-
+        EasyMock.expect(info.getAcctName()).andReturn("test");
         
         rootAccountManagerService.setupStorageProvider(EasyMock.anyLong(),
                                                        EasyMock.isA(String.class),
