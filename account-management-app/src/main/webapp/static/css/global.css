@@ -844,8 +844,23 @@ th.headerSortDown {
 	color: #500;
 }
 
-.message-holder .warning {
+.message-holder .warning, .warning {
 	border:1px solid #FF0;
 	background-color: #FFA;
 	color: #550;
 }
+
+.helptext {
+	display:inline-block; 
+	width:50%;
+	font-size: 1.2em;
+}
+
+.helptext p {
+	padding: 0px 0px 5px 5px;
+}
+
+.value input, .label {
+  vertical-align:top;
+}
+

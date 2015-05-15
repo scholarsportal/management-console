@@ -35,7 +35,7 @@
           <form:form
            action="${pageContext.request.contextPath}/users/byid/${user.username}/edit"
            method="POST"
-           modelAttribute="userProfileEditForm">
+           modelAttribute="userProfileEditForm" >
              <table border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="accountlabel">Account Identification</td>
@@ -124,11 +124,19 @@
 
                     <td
                      class="value not-required">
-                     
                       <form:input size="50" 
                        cssErrorClass="error"
                        id="allowableIPAddressRange-text"
-                       path="allowableIPAddressRange" />
+                       path="allowableIPAddressRange"  placeholder="" />
+                      <div class="helptext">
+                      <p>
+                        This property allows you to restrict this user's access to both DuraCloud and the DuraCloud Management Console to specified IP Range(s) using the CIDR format. Your may 
+                        enter a single CIDR formatted address range. Multiple ranges must be semi-colon delimited with no spaces.  For example, "a.b.c.0/24" for one range or "a.b.c.0/24;a.b.d.e/32;..." for multiple ranges.
+                        <a href="http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing" target="_NEW">Read more about CIDR</a>
+                      </p>
+                      <p class="warning">WARNING: Be sure you know what you're doing by setting this field! It is possible restrict your ability to take corrective action if you make a mistake setting the range.</p>
+                      </div>
+                       
                     </td>
                   </tr>
 
