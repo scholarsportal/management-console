@@ -66,13 +66,13 @@
 	              <li>
 	                <form:label
 	                 cssErrorClass="error"
-	                 path="${param.storageProvider}.properties['snapshot-user']"><spring:message code="bridge.snapshotuser"/></form:label>
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"><spring:message code="bridge.snapshotuser"/></form:label>
 	                <form:input
 	                 cssErrorClass="error"
-	                 path="${param.storageProvider}.properties['snapshot-user']"
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"
 	                 onclick="same(this.form)"/>
 	                <form:errors
-	                 path="${param.storageProvider}.properties['snapshot-user']"
+	                 path="${param.storageProvider}.properties['SNAPSHOT_USER']"
 	                 cssClass="error"
 	                 element="div" />               
 	              </li>
@@ -80,13 +80,13 @@
                 <li>
                   <form:label
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-host']"><spring:message code="bridge.host"/></form:label>
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"><spring:message code="bridge.host"/></form:label>
                   <form:input
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-host']"
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"
                    onclick="same(this.form)"/>
                   <form:errors
-                   path="${param.storageProvider}.properties['bridge-host']"
+                   path="${param.storageProvider}.properties['BRIDGE_HOST']"
                    cssClass="error"
                    element="div" />               
                 </li>
@@ -94,40 +94,40 @@
                 <li>
                   <form:label
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-port']"><spring:message code="bridge.port"/></form:label>
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"><spring:message code="bridge.port"/></form:label>
                   <form:input
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-port']"
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"
                    onclick="same(this.form)"/>
                   <form:errors
-                   path="${param.storageProvider}.properties['bridge-port']"
+                   path="${param.storageProvider}.properties['BRIDGE_PORT']"
                    cssClass="error"
                    element="div" />               
                 </li>
                 <li>
                   <form:label
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-username']"><spring:message code="bridge.username"/></form:label>
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"><spring:message code="bridge.username"/></form:label>
                   <form:input
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-username']"
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"
                    onclick="same(this.form)"/>
                   <form:errors
-                   path="${param.storageProvider}.properties['bridge-username']"
+                   path="${param.storageProvider}.properties['BRIDGE_USER']"
                    cssClass="error"
                    element="div" />               
                 </li>
                 <li>
                   <form:label
                    cssErrorClass="error"
-                   path="${param.storageProvider}.properties['bridge-password']"><spring:message code="bridge.password"/></form:label>
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"><spring:message code="bridge.password"/></form:label>
                   <form:password 
                    cssErrorClass="error"
                    showPassword="true"
-                   path="${param.storageProvider}.properties['bridge-password']"
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"
                    onclick="same(this.form)"/>
                   <form:errors
-                   path="${param.storageProvider}.properties['bridge-password']"
+                   path="${param.storageProvider}.properties['BRIDGE_PASS']"
                    cssClass="error"
                    element="div" />               
                 </li>
