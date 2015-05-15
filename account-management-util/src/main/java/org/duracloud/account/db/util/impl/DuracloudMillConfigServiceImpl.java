@@ -53,6 +53,10 @@ public class DuracloudMillConfigServiceImpl implements
             String auditQueue,
             String auditLogSpaceId) {
         DuracloudMill dm = get();
+        if(null == dm) {
+            dm = new DuracloudMill();
+        }
+
         dm.setDbHost(dbHost);
         dm.setDbPort(dbPort);
         dm.setDbName(dbName);

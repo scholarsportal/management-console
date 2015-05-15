@@ -29,6 +29,7 @@ import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
 import org.duracloud.appconfig.domain.NotificationConfig;
 import org.duracloud.storage.domain.AuditConfig;
+import org.duracloud.storage.domain.DatabaseConfig;
 import org.duracloud.storage.domain.StorageAccount;
 import org.duracloud.storage.domain.impl.StorageAccountImpl;
 
@@ -86,15 +87,26 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
             storageAccts.add(getStorageAccount(storageProviderAccount,
                                                false));
         }
+        config.setStorageAccounts(storageAccts);
 
         DuracloudMill mill = duracloudMillService.get();
-        
         ComputeProviderAccount compute = serverDetails.getComputeProviderAccount();
-        AuditConfig audit = config.getAuditConfig();
-        audit.setAuditQueueName(mill.getAuditQueue());
-        audit.setAuditUsername(compute.getUsername());
-        audit.setAuditPassword(compute.getPassword());
-        config.setStorageAccounts(storageAccts);
+
+        AuditConfig auditConfig = config.getAuditConfig();
+        auditConfig.setAuditUsername(compute.getUsername());
+        auditConfig.setAuditPassword(compute.getPassword());
+        auditConfig.setAuditQueueName(mill.getAuditQueue());
+        auditConfig.setAuditLogSpaceId(mill.getAuditLogSpaceId());
+        config.setAuditConfig(auditConfig);
+
+        DatabaseConfig milldbConfig = new DatabaseConfig();
+        milldbConfig.setHost(mill.getDbHost());
+        milldbConfig.setPort(mill.getDbPort());
+        milldbConfig.setName(mill.getDbName());
+        milldbConfig.setUsername(mill.getDbUsername());
+        milldbConfig.setPassword(mill.getDbPassword());
+        config.setMillDbConfig(milldbConfig);
+
         return config;
     }
 

@@ -8,15 +8,15 @@
 package org.duracloud.account.db.util.impl;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.duracloud.account.db.model.DuracloudMill;
 import org.duracloud.account.db.repo.DuracloudMillRepo;
+import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
@@ -31,6 +31,14 @@ import org.junit.runner.RunWith;
  */
 @RunWith(EasyMockRunner.class)
 public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
+
+    private static final String host = "host";
+    private static final Integer port = 100;
+    private static final String name = "name";
+    private static final String username = "username";
+    private static final String password = "password";
+    private static final String auditQueue = "auditQueue";
+    private static final String auditLogSpaceId = "auditLogSpaceId";
 
     @Mock
     private DuracloudMillRepo repo;
@@ -57,19 +65,28 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
     }
 
     @Test
+    public void testSetNoPreviousSettings() {
+        expect(repo.findAll()).andReturn(new ArrayList<DuracloudMill>());
+        Capture<DuracloudMill> saveCapture = Capture.newInstance();
+        expect(repo.save(EasyMock.capture(saveCapture))).andReturn(null);
+        replayAll();
+
+        subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId);
+        DuracloudMill savedMill = saveCapture.getValue();
+        assertEquals(host, savedMill.getDbHost());
+        assertEquals(port, savedMill.getDbPort());
+        assertEquals(name, savedMill.getDbName());
+        assertEquals(username, savedMill.getDbUsername());
+        assertEquals(password, savedMill.getDbPassword());
+        assertEquals(auditQueue, savedMill.getAuditQueue());
+        assertEquals(auditLogSpaceId, savedMill.getAuditLogSpaceId());
+    }
+
+    @Test
     public void testSet() {
-        String host = "host";
-        Integer port = 100;
-        String name = "name";
-        String username = "username";
-        String password = "password";
-        String auditQueue = "auditQueue";
-        String auditLogSpaceId = "auditLogSpaceId";
-        
         DuracloudMill entity = createMock(DuracloudMill.class);
         expect(repo.findAll()).andReturn(Arrays.asList(entity));
         expect(repo.save(entity)).andReturn(entity);
-        
         
         entity.setDbHost(host);
         expectLastCall();
@@ -91,7 +108,6 @@ public class DuracloudMillConfigServiceImplTest extends EasyMockSupport{
         subject.set(host, port, name, username, password, auditQueue, auditLogSpaceId);
     }
 
-    
     @After
     public void tearDown(){
         verifyAll();
