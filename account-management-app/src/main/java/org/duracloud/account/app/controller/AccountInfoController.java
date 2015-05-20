@@ -3,9 +3,7 @@
  */
 package org.duracloud.account.app.controller;
 
-import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.springframework.context.annotation.Lazy;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 
@@ -42,7 +38,7 @@ public class AccountInfoController extends AbstractAccountController {
 
     @RequestMapping(value = INFO_EDIT_MAPPING, method = RequestMethod.GET)
     public String getEditForm(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         log.info("getEditForm account {}", accountId);
 
         loadAccountInfo(accountId, model);
@@ -53,14 +49,6 @@ public class AccountInfoController extends AbstractAccountController {
         editForm.setDepartment(accountInfo.getDepartment());
         editForm.setOrgName(accountInfo.getOrgName());
         editForm.setAcctName(accountInfo.getAcctName());
-        AccountCluster accountCluster = accountInfo.getAccountCluster();
-        Long accountClusterId = null;
-        editForm.setAccountClusterId(accountClusterId);
-        List<AccountCluster> accountClusters = new LinkedList<AccountCluster>();
-        if(accountCluster != null){
-            accountClusters.add(accountCluster);
-            editForm.setAccountClusterId(accountCluster.getId());
-        }
         model.addAttribute(EDIT_ACCOUNT_INFO_FORM_KEY, editForm);
 
         return ACCOUNT_INFO_EDIT_ID;

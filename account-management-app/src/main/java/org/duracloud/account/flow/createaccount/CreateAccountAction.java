@@ -56,12 +56,10 @@ public class CreateAccountAction extends AbstractAction {
         Set<StorageProviderType> secondaryStorageProviders =
             new HashSet<StorageProviderType>();
 
-        if (!newAccountForm.isCommunity()) {
-            if (fullAccountForm.getSecondaryStorageProviders() != null) {
-                secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
-            }
-            reducedRedundancy = fullAccountForm.isUseReducedRedundancy();
+        if (fullAccountForm.getSecondaryStorageProviders() != null) {
+            secondaryStorageProviders.addAll(fullAccountForm.getSecondaryStorageProviders());
         }
+        reducedRedundancy = fullAccountForm.isUseReducedRedundancy();
 
         AccountCreationInfo aci =
             new AccountCreationInfo(newAccountForm.getSubdomain(),
@@ -70,15 +68,12 @@ public class CreateAccountAction extends AbstractAction {
                                     newAccountForm.getDepartment(),
                                     StorageProviderType.AMAZON_S3,
                                     secondaryStorageProviders,
-                                    newAccountForm.getAccountType(),
                                     newAccountForm.getAccountClusterId() == null
                                         ? -1L
                                         : newAccountForm.getAccountClusterId());
 
         AccountService as = accountManagerService.createAccount(aci);
-        if(!newAccountForm.isCommunity()){
-            as.setPrimaryStorageProviderRrs(reducedRedundancy);
-        }
+        as.setPrimaryStorageProviderRrs(reducedRedundancy);
 
         String contextPath = context.getExternalContext().getContextPath();
         String accountName = newAccountForm.getAcctName();
@@ -86,33 +81,17 @@ public class CreateAccountAction extends AbstractAction {
 
         Message message;
 
-        if(newAccountForm.isCommunity()){
-            String pattern =
-                contextPath
-                    + AccountDetailsController.ACCOUNTS_PATH
-                    + AccountDetailsController.ACCOUNT_DETAILS_MAPPING;
-            String accountUri = UrlHelper.formatAccountId(accountId, pattern);
-            
-            Object[] args = new Object[] { accountName, accountUri };
-            message = 
-                messageHelper.createMessageSuccess(messageSource,
-                                                   "account.create.community.success",
-                                                   args);
-            
-        }else{
-            String pattern =
-                contextPath
-                    + AccountsController.BASE_MAPPING
-                    + AccountsController.ACCOUNT_SETUP_MAPPING;
-            String accountUri = UrlHelper.formatId(accountId, pattern);
-            
-            Object[] args = new Object[] { accountName, accountUri };
-            message = 
-                messageHelper.createMessageSuccess(messageSource,
-                                                   "account.create.full.success",
-                                                   args);
-            
-        }
+        String pattern =
+            contextPath
+                + AccountsController.BASE_MAPPING
+                + AccountsController.ACCOUNT_SETUP_MAPPING;
+        String accountUri = UrlHelper.formatId(accountId, pattern);
+        
+        Object[] args = new Object[] { accountName, accountUri };
+        message = 
+            messageHelper.createMessageSuccess(messageSource,
+                                               "account.create.full.success",
+                                               args);
         
         context.getFlowScope().put(UserFeedbackUtil.FEEDBACK_KEY, message);
         return success();

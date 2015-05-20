@@ -11,17 +11,14 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.duracloud.account.config.AmaEndpoint;
-import org.duracloud.account.db.model.AccountCluster;
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudGroup;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.ServerDetails;
 import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.model.StorageProviderAccount;
-import org.duracloud.account.db.repo.DuracloudAccountClusterRepo;
 import org.duracloud.account.db.repo.DuracloudAccountRepo;
 import org.duracloud.account.db.repo.DuracloudGroupRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
@@ -127,46 +124,18 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
 	}
 
     @Override
-    public void deleteAccountCluster(Long clusterId) {
-        log.info("Deleting account cluster with ID {}", clusterId);
-
-        // Find the cluster
-        DuracloudAccountClusterRepo clusterRepo = getClusterRepo();
-        AccountCluster cluster = clusterRepo.findOne(clusterId);
-
-        // Reset the cluster ID of all accounts in this cluster
-        Set<AccountInfo> clusterAccounts = cluster.getClusterAccounts();
-        DuracloudAccountRepo accountRepo = getAccountRepo();
-        for(AccountInfo account : clusterAccounts) {
-            account.setAccountCluster(null);
-            accountRepo.save(account);
-        }
-
-        // Propagate user/group changes for all accounts in this cluster
-        for(AccountInfo account : clusterAccounts) {
-            propagator.propagateClusterUpdate(account.getId(), clusterId);
-        }
-
-        // Remove the cluster
-        clusterRepo.delete(clusterId);
-    }
-
-
-    @Override
 	public void deleteAccount(Long accountId) {
         log.info("Deleting account with ID {}", accountId);
         AccountInfo account = getAccount(accountId);
 
-        if(account.getType().equals(AccountType.FULL)) {
-            Set<DuracloudInstanceService> instanceServices =
-                instanceManagerService.getInstanceServices(accountId);
-            if (instanceServices.size() > 0) {
-                log.error("Unable to delete account {} found an instance",
-                          accountId);
-                return;
-            }
-
+        Set<DuracloudInstanceService> instanceServices =
+            instanceManagerService.getInstanceServices(accountId);
+        if (instanceServices.size() > 0) {
+            log.error("Unable to delete account {} found an instance",
+                      accountId);
+            return;
         }
+
 
         // Delete the account rights
         List<AccountRights > rightsList =
@@ -189,25 +158,10 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         DuracloudUserInvitationRepo invRepo = repoMgr.getUserInvitationRepo();
         invRepo.deleteInBatch(invRepo.findByAccountId(accountId));
 
-        // Update cluster if necessary
-        removeAccountFromCluster(account);
-
         // Delete account
         getAccountRepo().delete(accountId);
 	}
 
-    private void removeAccountFromCluster(AccountInfo account) {
-        Long accountId = account.getId();
-        AccountCluster cluster = account.getAccountCluster();
-        if(cluster != null) { // Account is part of a cluster
-            // Update the cluster to no longer include this account
-            cluster.getClusterAccounts().remove(account);
-            repoMgr.getAccountClusterRepo().save(cluster);
-
-            // Propagate any changes to cluster users/groups
-            propagator.propagateClusterUpdate(accountId, cluster.getId());
-        }
-    }
 
     @Override
     public List<StorageProviderAccount> getSecondaryStorageProviders(Long accountId) {
@@ -407,9 +361,6 @@ public class RootAccountManagerServiceImpl implements RootAccountManagerService 
         return repoMgr.getStorageProviderAccountRepo();
     }
 
-    private DuracloudAccountClusterRepo getClusterRepo() {
-        return repoMgr.getAccountClusterRepo();
-    }
 
     private Notifier getNotifier() {
         if(null == notifier) {

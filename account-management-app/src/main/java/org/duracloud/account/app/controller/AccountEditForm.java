@@ -16,8 +16,6 @@ public class AccountEditForm {
 
     private String department;
     
-    private Long accountClusterId;
-
     @NotBlank(message = "You must specify an account name.")
     private String acctName;
 
@@ -45,12 +43,4 @@ public class AccountEditForm {
         this.department = department;
     }
 
-    public Long getAccountClusterId() {
-        return accountClusterId;
-    }
-
-    public void setAccountClusterId(Long accountClusterId) {
-        this.accountClusterId = accountClusterId;
-    }
-    
 }

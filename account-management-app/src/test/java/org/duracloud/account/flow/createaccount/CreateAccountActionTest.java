@@ -8,7 +8,6 @@ import junit.framework.Assert;
 import org.duracloud.account.app.controller.AmaTestBase;
 import org.duracloud.account.app.controller.FullAccountForm;
 import org.duracloud.account.app.controller.NewAccountForm;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.util.AccountCreationInfo;
 import org.duracloud.account.util.MessageHelper;
 import org.easymock.EasyMock;
@@ -45,11 +44,10 @@ public class CreateAccountActionTest extends AmaTestBase{
         this.action.setMessageHelper(this.messageHelper);
     }
 
-    private void setupRequestContext(AccountType accountType, FullAccountForm fullAccountForm) {
+    private void setupRequestContext(FullAccountForm fullAccountForm) {
         this.requestContext = createMock(RequestContext.class);
         LocalAttributeMap map = new LocalAttributeMap();
         NewAccountForm newAccountForm = new NewAccountForm();
-        newAccountForm.setAccountType(accountType);
         map.put("newAccountForm", newAccountForm);
         if(fullAccountForm != null){
             map.put("fullAccountForm", fullAccountForm);
@@ -62,27 +60,16 @@ public class CreateAccountActionTest extends AmaTestBase{
                 .andReturn(externalContext);
     }
 
-    @Test
-    public void testDoCreateCommunity() throws Exception {
-        //setup requestcontext
-        setupRequestContext(AccountType.COMMUNITY, null);
-
-        this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class));
-        EasyMock.expectLastCall().andReturn(accountService);
-        replayMocks();
-        
-        assertSuccess(this.action.doExecute(requestContext));
-    }
 
     
     @Test
-    public void testDoCreateFull() throws Exception {
+    public void testDoCreate() throws Exception {
 
         FullAccountForm fullAccountForm = new FullAccountForm();
         fullAccountForm.setUseReducedRedundancy(true);
 
         //setup requestcontext
-        setupRequestContext(AccountType.FULL, fullAccountForm);
+        setupRequestContext(fullAccountForm);
 
         
         EasyMock.expect(this.accountManagerService.createAccount(EasyMock.isA(AccountCreationInfo.class)))

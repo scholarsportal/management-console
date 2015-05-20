@@ -4,7 +4,6 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.AccountService;
@@ -48,10 +47,7 @@ public class AccountDetailsController extends AbstractAccountController {
         throws AccountNotFoundException, DBNotFoundException, AccountClusterNotFoundException {
         AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
-
-        if(AccountType.FULL.equals(accountInfo.getType())) {
-            loadProviderInfo(accountId, model);
-        }
+        loadProviderInfo(accountId, model);
 
         DuracloudUser user = getUser();
         model.addAttribute(UserController.USER_KEY, user);

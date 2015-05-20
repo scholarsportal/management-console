@@ -89,14 +89,6 @@
                   <spring:message
                    code="account.subdomain" />
                 </th>
-                <th>
-                  <spring:message
-                   code="account.type" />
-                </th>
-                <th>
-                  <spring:message
-                   code="account.cluster" />
-                </th>
 
                 <th
                  colspan="6">
@@ -121,15 +113,6 @@
                     <a
                       href="http://${a.subdomain}.duracloud.org/duradmin"
                       target="_blank">${a.subdomain}</a>
-                  </td>
-                  <td>${a.type}</td>
-                  <td>
-                    <c:set var="clusterId" value="${a.accountCluster.id}"/>
-                    <c:if test="${not empty clusterId and clusterId gt -1}">
-                      <a href="${pageContext.request.contextPath}/root/clusters/byid/${clusterId}">
-                        ${a.accountCluster.clusterName}
-                      </a>
-                    </c:if>
                   </td>
 
                   <td class="status">${a.status}</td>

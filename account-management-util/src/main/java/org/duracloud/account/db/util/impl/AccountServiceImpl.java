@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.AccountRights;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.config.AmaEndpoint;
 import org.duracloud.account.db.model.ComputeProviderAccount;
 import org.duracloud.account.db.model.DuracloudUser;
@@ -78,21 +77,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ServerDetails retrieveServerDetails() {
-        ServerDetails details = null;
-        if(account.getType().equals(AccountType.FULL)) {
-            details = account.getServerDetails();
-        }
-        return details;
+        return account.getServerDetails();
     }
 
     @Override
     public void storeServerDetails(ServerDetails serverDetails) {
-        if(account.getType().equals(AccountType.FULL)) {
-            repoMgr.getServerDetailsRepo().save(serverDetails);
-        } else {
-            throw new DuraCloudRuntimeException("Cannot store server details " +
-                                                "to Community account!");
-        }
+        repoMgr.getServerDetailsRepo().save(serverDetails);
     }
 
     @Override

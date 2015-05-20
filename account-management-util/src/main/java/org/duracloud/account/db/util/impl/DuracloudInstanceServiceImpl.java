@@ -41,7 +41,7 @@ import org.duracloud.account.db.util.instance.impl.InstanceAccessUtilImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceConfigUtilImpl;
 import org.duracloud.account.db.util.instance.impl.InstanceUpdaterImpl;
 import org.duracloud.account.db.util.notification.NotificationMgrConfig;
-import org.duracloud.account.db.util.util.AccountClusterUtil;
+import org.duracloud.account.db.util.util.UserFinderUtil;
 import org.duracloud.appconfig.domain.DurabossConfig;
 import org.duracloud.appconfig.domain.DuradminConfig;
 import org.duracloud.appconfig.domain.DurastoreConfig;
@@ -67,7 +67,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     private AccountInfo accountInfo;
     private DuracloudInstance instance;
     private DuracloudRepoMgr repoMgr;
-    private AccountClusterUtil accountClusterUtil;
+    private UserFinderUtil userFinderUtil;
     private ComputeProviderUtil computeProviderUtil;
     private DuracloudComputeProvider computeProvider;
     private InstanceUpdater instanceUpdater;
@@ -81,7 +81,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     public DuracloudInstanceServiceImpl(Long accountId,
                                         DuracloudInstance instance,
                                         DuracloudRepoMgr repoMgr,
-                                        AccountClusterUtil accountClusterUtil,
+                                        UserFinderUtil userFinderUtil,
                                         ComputeProviderUtil computeProviderUtil,
                                         NotificationMgrConfig notMgrConfig,
                                         AmaEndpoint amaEndpoint,
@@ -89,7 +89,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this(accountId,
                 instance,
                 repoMgr,
-                accountClusterUtil,
+                userFinderUtil,
                 computeProviderUtil,
                 null,
                 null,
@@ -103,7 +103,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
     protected DuracloudInstanceServiceImpl(Long accountId,
                                            DuracloudInstance instance,
                                            DuracloudRepoMgr repoMgr,
-                                           AccountClusterUtil accountClusterUtil,
+                                           UserFinderUtil accountClusterUtil,
                                            ComputeProviderUtil computeProviderUtil,
                                            DuracloudComputeProvider computeProvider,
                                            InstanceUpdater instanceUpdater,
@@ -116,7 +116,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         this.accountId = accountId;
         this.instance = instance;
         this.repoMgr = repoMgr;
-        this.accountClusterUtil = accountClusterUtil;
+        this.userFinderUtil = accountClusterUtil;
         this.computeProviderUtil = computeProviderUtil;
         this.computeProvider = computeProvider;
         this.instanceUpdater = instanceUpdater;
@@ -288,7 +288,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
     private void initializeUserRoles() {
         Set< DuracloudUser > users =
-                accountClusterUtil.getAccountClusterUsers(getAccount());
+                userFinderUtil.getAccountUsers(getAccount());
         setUserRoles(users);
     }
 
@@ -306,11 +306,8 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
 
         // collect groups for the cluster
         DuracloudGroupRepo groupRepo = repoMgr.getGroupRepo();
-        Set<Long> clusterAcctIds = getClusterAccountIds();
         Set<DuracloudGroup> groups = new HashSet<DuracloudGroup>();
-        for(Long clusterAcctId : clusterAcctIds) {
-            groups.addAll(groupRepo.findByAccountId(clusterAcctId));
-        }
+            groups.addAll(groupRepo.findByAccountId(accountId));
 
         // collect user roles for this account
         Set<SecurityUserBean> userBeans = new HashSet<SecurityUserBean>();
@@ -319,7 +316,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
             String password = user.getPassword();
             String email = user.getEmail();
             String ipLimits = annotateAddressRange(user.getAllowableIPAddressRange());
-            Set<Role> roles = getRolesByAccounts(user, clusterAcctIds);
+            Set<Role> roles = user.getRolesByAcct(accountId);
 
             if(roles == null) {
                 roles = new HashSet<Role>();
@@ -388,19 +385,7 @@ public class DuracloudInstanceServiceImpl implements DuracloudInstanceService,
         }
     }
 
-    private Set<Role> getRolesByAccounts(DuracloudUser user,
-                                         Set<Long> clusterAcctIds) {
-        Set<Role> roles = user.getRolesByAcct(accountId);
-        for (Long clusterAcctId : clusterAcctIds) {
-            roles.addAll(user.getRolesByAcct(clusterAcctId));
-        }
 
-        return roles;
-    }
-
-    private Set<Long> getClusterAccountIds() {
-        return accountClusterUtil.getClusterAccountIds(getAccount());
-    }
 
     private void updateUserDetails(Set<SecurityUserBean> userBeans) {
         RestHttpHelper restHelper = new RestHttpHelper(getRootCredential());

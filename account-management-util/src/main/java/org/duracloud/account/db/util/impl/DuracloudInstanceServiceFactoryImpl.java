@@ -13,7 +13,7 @@ import org.duracloud.account.db.util.DuracloudMillConfigService;
 import org.duracloud.account.db.util.notification.NotificationMgr;
 import org.duracloud.account.db.util.security.AnnotationParser;
 import org.duracloud.account.db.util.security.SecurityContextUtil;
-import org.duracloud.account.db.util.util.AccountClusterUtil;
+import org.duracloud.account.db.util.util.UserFinderUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.duracloud.common.error.NoUserLoggedInException;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     private DuracloudRepoMgr repoMgr;
     private AccessDecisionVoter voter;
     private SecurityContextUtil securityContext;
-    private AccountClusterUtil accountClusterUtil;
+    private UserFinderUtil userFinderUtil;
     private ComputeProviderUtil computeUtil;
     private AnnotationParser annotationParser;
     private NotificationMgr notificationMgr;
@@ -43,7 +43,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
     public DuracloudInstanceServiceFactoryImpl(DuracloudRepoMgr repoMgr,
                                                AccessDecisionVoter voter,
                                                SecurityContextUtil securityContext,
-                                               AccountClusterUtil accountClusterUtil,
+                                               UserFinderUtil userFinderUtil,
                                                ComputeProviderUtil computeUtil,
                                                AnnotationParser annotationParser,
                                                NotificationMgr notificationMgr,
@@ -52,7 +52,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
         this.repoMgr = repoMgr;
         this.voter = voter;
         this.securityContext = securityContext;
-        this.accountClusterUtil = accountClusterUtil;
+        this.userFinderUtil = userFinderUtil;
         this.computeUtil = computeUtil;
         this.annotationParser = annotationParser;
         this.notificationMgr = notificationMgr;
@@ -66,7 +66,7 @@ public class DuracloudInstanceServiceFactoryImpl implements DuracloudInstanceSer
             instance.getAccount().getId(),
             instance,
             repoMgr,
-            accountClusterUtil,
+            userFinderUtil,
             computeUtil,
             notificationMgr.getConfig(),
             amaEndpoint, 

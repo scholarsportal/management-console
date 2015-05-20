@@ -3,10 +3,19 @@
  */
 package org.duracloud.account.db.util.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.duracloud.account.compute.ComputeProviderUtil;
 import org.duracloud.account.compute.DuracloudComputeProvider;
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
-import org.duracloud.account.db.model.*;
+import org.duracloud.account.db.model.AccountInfo;
+import org.duracloud.account.db.model.ComputeProviderAccount;
+import org.duracloud.account.db.model.DuracloudInstance;
+import org.duracloud.account.db.model.InstanceType;
+import org.duracloud.account.db.model.ServerDetails;
+import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.repo.DuracloudInstanceRepo;
 import org.duracloud.account.db.repo.DuracloudRepoMgr;
 import org.duracloud.account.db.repo.DuracloudServerImageRepo;
@@ -14,14 +23,9 @@ import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
 import org.duracloud.account.db.util.DuracloudInstanceServiceFactory;
 import org.duracloud.account.db.util.error.DuracloudInstanceCreationException;
-import org.duracloud.account.db.util.util.AccountClusterUtil;
 import org.duracloud.common.error.DuraCloudRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Bill Branan
@@ -35,16 +39,13 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
     private static final String HOST_SUFFIX = ".duracloud.org";
 
     private DuracloudRepoMgr repoMgr;
-    private AccountClusterUtil accountClusterUtil;
     private ComputeProviderUtil computeUtil;
     private DuracloudInstanceServiceFactory instanceServiceFactory;
 
     public DuracloudInstanceManagerServiceImpl(DuracloudRepoMgr repoMgr,
-                                               AccountClusterUtil accountClusterUtil,
                                                ComputeProviderUtil computeUtil,
                                                DuracloudInstanceServiceFactory instanceServiceFactory) {
         this.repoMgr = repoMgr;
-        this.accountClusterUtil = accountClusterUtil;
         this.computeUtil = computeUtil;
         this.instanceServiceFactory = instanceServiceFactory;
     }
@@ -117,10 +118,6 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         // Get Account information
         AccountInfo account = repoMgr.getAccountRepo().findOne(accountId);
 
-        if(account.getType().equals(AccountType.COMMUNITY)) {
-            throw new DuraCloudRuntimeException("Cannot associate instance " +
-                                                "with a community account");
-        }
 
         // Create entry for new instance in DB
         String hostName = account.getSubdomain() + HOST_SUFFIX;
@@ -229,19 +226,5 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         return instanceRepo.findByAccountId(accountId);
     }
 
-    @Override
-    public Set<DuracloudInstanceService> getClusterInstanceServices(Long accountId) {
-        AccountInfo account = repoMgr.getAccountRepo().findOne(accountId);
-        Set<Long> accountIds = accountClusterUtil.getClusterAccountIds(account);
-        Set<DuracloudInstanceService> allInstanceServices =
-            new HashSet<DuracloudInstanceService>();
-        for(Long clusterAccountId : accountIds) {
-            Set<DuracloudInstanceService> instanceServices =
-                getInstanceServices(clusterAccountId);
-            if(null != instanceServices && instanceServices.size() > 0) {
-                allInstanceServices.addAll(instanceServices);
-            }
-        }
-        return allInstanceServices;
-    }
+
 }

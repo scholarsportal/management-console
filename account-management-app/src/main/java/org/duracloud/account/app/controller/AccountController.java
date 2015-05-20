@@ -5,7 +5,6 @@ package org.duracloud.account.app.controller;
 
 import org.duracloud.account.compute.error.DuracloudInstanceNotAvailableException;
 import org.duracloud.account.db.model.AccountInfo;
-import org.duracloud.account.db.model.AccountType;
 import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.util.AccountService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
@@ -333,11 +332,6 @@ public class AccountController extends AbstractAccountController {
         DuracloudInstanceService instanceService =
             instanceManagerService.getInstanceService(instanceId);
         instanceService.stop();
-    }
-
-    @ModelAttribute("accountTypes")
-    public List<AccountType> getAccountTypes() {
-        return Arrays.asList(AccountType.values());
     }
 
 

@@ -92,21 +92,6 @@
                 </tr>
 
                 <tr>
-                  <td align="right">Type:</td>
-
-                  <td>${accountInfo.type.text}</td>
-                </tr>
-                <sec:authorize access="hasAnyRole('ROLE_ROOT')">
-                  <c:if test="${not empty accountCluster}">
-                    <tr>
-                      <td align="right"><spring:message
-                          code="account.cluster" />:</td>
-
-                      <td>${accountCluster.clusterName}</td>
-                    </tr>
-                  </c:if>
-                </sec:authorize>
-                <tr>
                   <td align="right">Status:</td>
 
                   <td>${accountInfo.status}</td>
@@ -119,7 +104,6 @@
              id="provider-details"
              class="account-record">
 
-              <c:if test="${accountInfo.type.type == 'FULL'}">
               <table width="100%" border="0" cellpadding="4" cellspacing="0" >
                 <tr>
                   <td><strong class="accountlabel">Provider Information</strong></td>
@@ -217,7 +201,6 @@
                   <td class="datatablesimple"><p class="instructions">If you would like to add or remove a Storage Provider please contact DuraCloud support.</p></td>
                 </tr>
               </table>
-              </c:if>
             </div>
 
 </div>

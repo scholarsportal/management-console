@@ -215,9 +215,6 @@ public class AccountManagerAccessDecisionVoterTest {
         AccountManagerServiceImpl serviceImpl = new AccountManagerServiceImpl(
             null,
             null,
-            null,
-            null,
-            null,
             null);
 
         EasyMock.expect(inv.getThis()).andReturn(serviceImpl).times(2);
