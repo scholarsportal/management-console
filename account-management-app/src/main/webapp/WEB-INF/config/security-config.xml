@@ -69,14 +69,13 @@
 
   <!-- AuthN Manager -->
   <authentication-manager alias="authenticationManager" >
-    <authentication-provider user-service-ref="initDetailsService" >
-      <password-encoder ref="passwordEncoder"/>
-    </authentication-provider>
-    <authentication-provider user-service-ref="userDetailsService" >
-      <password-encoder ref="passwordEncoder"/>
-    </authentication-provider>
-    <authentication-provider user-service-ref="userDetailsService" />
+    <authentication-provider ref="authProvider" />
   </authentication-manager>
+
+  <beans:bean id="authProvider" class="org.duracloud.account.security.web.AuthProvider">
+    <beans:constructor-arg ref="duracloudUserService" />
+    <beans:constructor-arg ref="passwordEncoder"/>
+  </beans:bean>
   
   <beans:bean id="securityContextUtil" class="org.duracloud.account.db.util.security.SecurityContextUtil"/>
 

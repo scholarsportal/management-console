@@ -32,8 +32,7 @@
   <bean id="duracloudUserService"
         class="org.duracloud.account.db.util.impl.DuracloudUserServiceImpl"
         primary="true"
-        scope="singleton"
-        name="userDetailsService">
+        scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="notificationMgr"/>
     <constructor-arg ref="userDetailsPropagator" />
@@ -43,8 +42,7 @@
   <bean id="duracloudGroupService"
         class="org.duracloud.account.db.util.impl.DuracloudGroupServiceImpl"
         primary="true"
-        scope="singleton"
-        name="duracloudGroupService">
+        scope="singleton">
     <constructor-arg ref="repoMgr"/>
     <constructor-arg ref="userDetailsPropagator"/>
   </bean>
