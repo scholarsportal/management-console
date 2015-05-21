@@ -79,8 +79,6 @@
   
   <beans:bean id="securityContextUtil" class="org.duracloud.account.db.util.security.SecurityContextUtil"/>
 
-  <beans:bean id="initDetailsService" class="org.duracloud.account.security.web.InitUserDetailService"/>
-
   <beans:bean id="passwordEncoder"
     class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" >
    <beans:constructor-arg value="256"/>
