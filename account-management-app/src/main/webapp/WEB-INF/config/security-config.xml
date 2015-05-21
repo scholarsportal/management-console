@@ -72,7 +72,7 @@
     <authentication-provider ref="authProvider" />
   </authentication-manager>
 
-  <beans:bean id="authProvider" class="org.duracloud.account.security.web.AuthProvider">
+  <beans:bean id="authProvider" class="org.duracloud.account.security.auth.AuthProvider">
     <beans:constructor-arg ref="duracloudUserService" />
     <beans:constructor-arg ref="passwordEncoder"/>
   </beans:bean>

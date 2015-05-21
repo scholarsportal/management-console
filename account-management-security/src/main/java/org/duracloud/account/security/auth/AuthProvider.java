@@ -5,7 +5,7 @@
  *
  *     http://duracloud.org/license/
  */
-package org.duracloud.account.security.web;
+package org.duracloud.account.security.auth;
 
 import org.duracloud.account.db.model.DuracloudUser;
 import org.slf4j.Logger;
