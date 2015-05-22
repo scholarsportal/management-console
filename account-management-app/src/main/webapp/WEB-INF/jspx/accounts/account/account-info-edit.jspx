@@ -103,28 +103,7 @@
                          path="acctName" />
                       </td>
                     </tr>
-                   <!-- 
-                   <c:if test="${accountInfoEditForm.accountClusterId > -1}">
-                    <tr>
-                      <td align="right" nowrap="nowrap"
-                       class="label">
-                        <form:label path="acctName">
-                          <spring:message code="account.cluster"/>
-                        </form:label>
-                      </td>
 
-                      <td align="left"
-                       class="value required">
-                       
-                        <form:select path="accountClusterId">
-                          <form:option value="-1" label="No cluster selected"/>
-                          <form:options items="${accountClusters}" itemLabel="clusterName" itemValue="id"/>
-                        </form:select>
-                        </td>
-                    </tr>
-                    </c:if>
-                     -->
-                   
                   </table>
             <div
              style="height: 20px;"><!--  -->

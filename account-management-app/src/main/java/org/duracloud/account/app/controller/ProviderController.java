@@ -8,7 +8,6 @@
 package org.duracloud.account.app.controller;
 
 import org.duracloud.account.db.util.AccountService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.storage.domain.StorageProviderType;
@@ -33,9 +32,7 @@ public class ProviderController extends AbstractAccountController {
 
     @RequestMapping(value = { PROVIDER_PATH }, method = RequestMethod.GET)
     public String getProviders(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException,
-            DBNotFoundException,
-            AccountClusterNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         loadAccountInfo(accountId, model);
         loadProviderInfo(accountId, model);
         addUserToModel(model);

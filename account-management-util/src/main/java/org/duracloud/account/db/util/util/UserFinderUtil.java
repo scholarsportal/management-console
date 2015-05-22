@@ -32,18 +32,17 @@ public class UserFinderUtil {
     /**
      * Retrieves the users associated with the account
      * 
-     * @param account
-     *            from which the cluster it to be determined
-     * @return the set of users associated with all accounts in the cluster
+     * @param account for which users should be gathered
+
+     * @return the set of users associated with an account
      */
     public Set<DuracloudUser> getAccountUsers(AccountInfo account) {
 
         DuracloudRightsRepo rightsRepo = repoMgr.getRightsRepo();
-        DuracloudUserRepo userRepo = repoMgr.getUserRepo();
+        List<AccountRights> acctRights =
+            rightsRepo.findByAccountId(account.getId());
 
-        Set<DuracloudUser> users = new HashSet<DuracloudUser>();
-        List<AccountRights> acctRights = rightsRepo.findByAccountId(account
-                .getId());
+        Set<DuracloudUser> users = new HashSet<>();
         for (AccountRights rights : acctRights) {
             DuracloudUser user = rights.getUser();
 

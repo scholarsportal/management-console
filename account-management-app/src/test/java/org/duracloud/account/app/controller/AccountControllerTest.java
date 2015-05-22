@@ -16,7 +16,6 @@ import org.duracloud.account.db.model.InstanceType;
 import org.duracloud.account.db.model.ServerImage;
 import org.duracloud.account.db.util.DuracloudInstanceManagerService;
 import org.duracloud.account.db.util.DuracloudInstanceService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -60,12 +59,10 @@ public class AccountControllerTest extends AmaControllerTestBase {
      * Test method for org.duracloud.account.app.controller.AccountController
      * 
      * @throws AccountNotFoundException
-     * @throws AccountClusterNotFoundException 
      */
     @Test
     public void testGetHome()
-        throws AccountNotFoundException,
-            AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         replayMocks();
         String view = accountController.getHome(TEST_ACCOUNT_ID, model);
         Assert.assertEquals(AccountController.ACCOUNT_HOME, view);
@@ -219,8 +216,7 @@ public class AccountControllerTest extends AmaControllerTestBase {
 
     @Test
     public void testGetStatement()
-        throws AccountNotFoundException,
-            AccountClusterNotFoundException {
+        throws AccountNotFoundException {
         replayMocks();
         accountController.getStatement(TEST_ACCOUNT_ID, model);
         Assert.assertTrue(model.containsAttribute(AccountController.ACCOUNT_INFO_KEY));

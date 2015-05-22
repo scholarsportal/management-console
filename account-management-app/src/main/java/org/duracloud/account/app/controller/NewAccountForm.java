@@ -41,8 +41,6 @@ public class NewAccountForm implements Serializable {
     @Length(min = 3, max = 25, message = "Subdomain must be between 3 and 25 characters.")
     private String subdomain;
 
-    private Long accountClusterId;
-
     public String getSubdomain() {
         return subdomain;
     }
@@ -75,12 +73,4 @@ public class NewAccountForm implements Serializable {
         this.acctName = acctName;
     }
 
-    public Long getAccountClusterId() {
-        return accountClusterId;
-    }
-
-    public void setAccountClusterId(Long accountClusterId) {
-        this.accountClusterId = accountClusterId;
-    }
-    
 }

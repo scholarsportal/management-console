@@ -71,10 +71,7 @@ public class CreateAccountAction extends AbstractAction {
                                     newAccountForm.getOrgName(),
                                     newAccountForm.getDepartment(),
                                     StorageProviderType.AMAZON_S3,
-                                    secondaryStorageProviders,
-                                    newAccountForm.getAccountClusterId() == null
-                                        ? -1L
-                                        : newAccountForm.getAccountClusterId());
+                                    secondaryStorageProviders);
 
         AccountService as = accountManagerService.createAccount(aci);
         as.setPrimaryStorageProviderRrs(reducedRedundancy);

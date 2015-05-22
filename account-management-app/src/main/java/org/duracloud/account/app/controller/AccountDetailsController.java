@@ -11,7 +11,6 @@ import org.duracloud.account.db.model.AccountInfo;
 import org.duracloud.account.db.model.DuracloudUser;
 import org.duracloud.account.db.model.StorageProviderAccount;
 import org.duracloud.account.db.util.AccountService;
-import org.duracloud.account.db.util.error.AccountClusterNotFoundException;
 import org.duracloud.account.db.util.error.AccountNotFoundException;
 import org.duracloud.account.db.util.error.DBNotFoundException;
 import org.duracloud.account.util.UserFeedbackUtil;
@@ -48,7 +47,7 @@ public class AccountDetailsController extends AbstractAccountController {
 
     @RequestMapping(value = ACCOUNT_DETAILS_MAPPING, method = RequestMethod.GET)
     public String get(@PathVariable Long accountId, Model model)
-        throws AccountNotFoundException, DBNotFoundException, AccountClusterNotFoundException {
+        throws AccountNotFoundException, DBNotFoundException {
         AccountInfo accountInfo = loadAccountInfo(accountId, model);
         loadBillingInfo(accountId, model);
         loadProviderInfo(accountId, model);

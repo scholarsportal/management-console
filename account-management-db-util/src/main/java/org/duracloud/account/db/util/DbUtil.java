@@ -71,9 +71,8 @@ public class DbUtil {
 
     private void doPut() {
         // Defines the order to import the different entity types. This is
-        // necessary
-        // because of defined and enforced JPA relationships.
-        String[] files = { "AccountCluster", "ServiceRepository",
+        // necessary because of defined and enforced JPA relationships.
+        String[] files = { "ServiceRepository",
                 "StorageProviderAccount", "ComputeProviderAccount",
                 "ServerDetails", "AccountInfo", "DuracloudUser", "ServerImage",
                 "DuracloudInstance", "DuracloudGroup", "UserInvitation",

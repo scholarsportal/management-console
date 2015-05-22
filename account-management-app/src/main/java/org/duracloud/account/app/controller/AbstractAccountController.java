@@ -109,7 +109,7 @@ public abstract class AbstractAccountController extends AbstractController {
     /**
      * @param accountId
      * @param model
-     * @throws AccountClusterNotFoundException 
+     * @throws AccountNotFoundException
      */
     protected AccountInfo loadAccountInfo(Long accountId, Model model)
         throws AccountNotFoundException {
