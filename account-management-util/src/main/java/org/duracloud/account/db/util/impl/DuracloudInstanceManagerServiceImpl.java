@@ -132,9 +132,6 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
         instance.setProviderInstanceId(DuracloudInstance.PLACEHOLDER_PROVIDER_ID);
         instance.setInitialized(false);
 
-        instance = repoMgr.getInstanceRepo().save(instance);
-
-
         // Get info about compute provider account associated with this account
         ServerDetails serverDetails = account.getServerDetails();
         if(serverDetails == null) {
@@ -165,13 +162,11 @@ public class DuracloudInstanceManagerServiceImpl implements DuracloudInstanceMan
                                       account.getSubdomain()+".duracloud.org");
     
         }catch(RuntimeException ex){
-            repoMgr.getInstanceRepo().delete(instance.getId());
             throw new DuraCloudRuntimeException(ex.getMessage(), ex);
         }
 
         instance.setProviderInstanceId(providerInstanceId);
-        repoMgr.getInstanceRepo().save(instance);
-        return instance;
+        return repoMgr.getInstanceRepo().save(instance);
     }
 
     private DuracloudInstanceService initializeInstance(DuracloudInstance instance) {
