@@ -251,7 +251,7 @@
                           <c:if test="${account.userRole == 'ROLE_ROOT'}">
                           <li>
                             <a
-                             href="${up.redemptionURL}" class="instructions">
+                             href="${pageContext.request.contextPath}/users/redeem/${up.redemptionCode}" class="instructions">
                             Redemption URL</a>
                           </li>
                           </c:if>

@@ -21,7 +21,7 @@ public class InvitationMessageFormatter {
     public InvitationMessageFormatter(UserInvitation invitation,
             AmaEndpoint amaEndpoint) {
         this.invitation = invitation;
-        this.endpoint = endpoint;
+        this.endpoint = amaEndpoint;
     }
 
     public String getSubject() {
