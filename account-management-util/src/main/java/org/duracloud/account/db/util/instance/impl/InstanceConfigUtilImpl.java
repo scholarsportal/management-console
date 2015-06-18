@@ -71,6 +71,7 @@ public class InstanceConfigUtilImpl implements InstanceConfigUtil {
         config.setDurastorePort(DEFAULT_SSL_PORT);
         config.setDurastoreContext(DurastoreConfig.QUALIFIER);
         config.setAmaUrl(amaEndpoint.getUrl());
+        config.setMillDbEnabled(true);
         return config;
     }
 
