@@ -130,11 +130,17 @@
                        path="allowableIPAddressRange"  placeholder="" />
                       <div class="helptext">
                       <p>
-                        This property allows you to restrict this user's access to both DuraCloud and the DuraCloud Management Console to specified IP Range(s) using the CIDR format. Your may 
-                        enter a single CIDR formatted address range. Multiple ranges must be semi-colon delimited with no spaces.  For example, "a.b.c.0/24" for one range or "a.b.c.0/24;a.b.d.e/32;..." for multiple ranges.
+                        This property allows you to limit your ability to log in to DuraCloud for security purposes.
+                        When these limits are in place, you will only be allowed to log in if your IP address matches the range you enter here.
+                        You may enter a single CIDR formatted address range or multiple ranges.
+                        Multiple ranges must be semicolon delimited with no spaces.
+                        For example, "0.0.0.0/24" for one range or "0.0.0.0/24;1.1.1.1/32;..." for multiple ranges.
+                        Leave this field blank for no IP restrictions. If you are unsure, leave this field blank.
                         <a href="http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing" target="_NEW">Read more about CIDR</a>
                       </p>
-                      <p class="warning">WARNING: Be sure you know what you're doing by setting this field! It is possible restrict your ability to take corrective action if you make a mistake setting the range.</p>
+                      <p class="warning">WARNING: If this value is set to an IP range which does not include your current IP address,
+                                         you will not be able to log in to make a correction. If this occurs, contact your DuraCloud
+                                         administrator or DuraCloud support for assistance.</p>
                       </div>
                        
                     </td>
