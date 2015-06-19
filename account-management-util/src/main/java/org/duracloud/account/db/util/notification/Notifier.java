@@ -101,12 +101,6 @@ public class Notifier {
         sb.append(accountInfo.getSubdomain());
         sb.append(".duracloud.org with the following username: " + user.getUsername() + ".");
         sb.append("\n\n");
-        sb.append("Please note that the links above are not supported by ");
-        sb.append("Internet Explorer version 8 or prior. It is recommended ");
-        sb.append("that you use either Internet Explorer version 9 (or ");
-        sb.append("later) or another web browser to access DuraCloud.");
-        sb.append("\n");
-        sb.append("\n");
         sb.append("The DuraCloud team");
 
         sendEmail(subject, sb.toString(), user.getEmail());
